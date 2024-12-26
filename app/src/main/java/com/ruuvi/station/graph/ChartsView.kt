@@ -41,6 +41,7 @@ import com.ruuvi.station.util.ui.pxToDp
 import com.ruuvi.station.util.ui.scrollbar
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collectLatest
 import timber.log.Timber
 import java.text.DecimalFormat
 import java.util.*
@@ -59,6 +60,7 @@ fun ChartsView(
     newChartsUI: Boolean,
     size: Size,
     increasedChartSize: Boolean,
+    historyUpdater: (String) -> Flow<MutableList<ChartContainer>>,
     getHistory: (String) -> List<TagSensorReading>,
     getActiveAlarms: (String) -> List<Alarm>
 ) {
@@ -69,298 +71,103 @@ fun ChartsView(
         mutableStateOf<MutableList<ChartContainer>>(mutableListOf())
     }
 
-    LaunchedEffect(key1 = sensor.id) {
-        Timber.d("ChartView - chart containers fill ${sensor.id}")
+    var chartsInitialized by remember { mutableStateOf(false) }
 
-        val temperatureContainer = ChartContainer(ChartSensorType.TEMPERATURE, LineChart(context))
-        chartContainers.add(temperatureContainer)
-
-        if (sensor.latestMeasurement?.humidityValue != null) {
-            val humidityContainer = ChartContainer(ChartSensorType.HUMIDITY, LineChart(context))
-            chartContainers.add(humidityContainer)
-        }
-
-        if (sensor.latestMeasurement?.pressureValue != null) {
-            val pressureContainer = ChartContainer(ChartSensorType.PRESSURE, LineChart(context))
-            chartContainers.add(pressureContainer)
-        }
-
-        if (sensor.isAir()) {
-            sensor.latestMeasurement?.co2.let {
-                val co2Container = ChartContainer(ChartSensorType.CO2, LineChart(context))
-                chartContainers.add(co2Container)
-            }
-
-            sensor.latestMeasurement?.voc.let {
-                val vocContainer = ChartContainer(ChartSensorType.VOC, LineChart(context))
-                chartContainers.add(vocContainer)
-            }
-
-            sensor.latestMeasurement?.nox.let {
-                val noxContainer = ChartContainer(ChartSensorType.NOX, LineChart(context))
-                chartContainers.add(noxContainer)
-            }
-
-            sensor.latestMeasurement?.pm25.let {
-                val pm25Container = ChartContainer(ChartSensorType.PM25, LineChart(context))
-                chartContainers.add(pm25Container)
-            }
-
-            sensor.latestMeasurement?.luminosity.let {
-                val luminosityContainer = ChartContainer(ChartSensorType.LUMINOSITY, LineChart(context))
-                chartContainers.add(luminosityContainer)
-            }
-
-            sensor.latestMeasurement?.dBaAvg.let {
-                val soundContainer = ChartContainer(ChartSensorType.SOUND, LineChart(context))
-                chartContainers.add(soundContainer)
-            }
-        }
-
-        Timber.d("ChartView - initial setup ${sensor.id}")
-        chartsInitialSetup(
-            charts = chartContainers.map { it.chartSensorType to it.uiComponent },
-            unitsConverter = unitsConverter,
-            context = context
-        )
-
-        chartCleared.collect{
-            Timber.d("ChartView - chart cleared $it")
-            for (container in chartContainers) {
-                container.data?.clear()
-                container.uiComponent.fitScreen()
-            }
-        }
+    var chartsPerScreen by remember {
+        mutableIntStateOf(3)
     }
-
-    var viewPeriodLocal by remember { mutableStateOf<Period?>(viewPeriod) }
 
     var needsScroll by remember {
         mutableStateOf(true)
-    }
-
-    var chartsPerScreen by remember {
-        mutableStateOf(3)
-    }
-
-    var history by remember {
-        mutableStateOf<List<TagSensorReading>>(listOf())
-    }
-
-    var from by remember {
-        mutableStateOf(0L)
-    }
-
-    var to by remember {
-        mutableStateOf(0L)
     }
 
     var isLoading by remember {
         mutableStateOf(true)
     }
 
+    LaunchedEffect(key1 = sensor.id) {
+        Timber.d("ChartView - chart containers fill ${sensor.id}")
+        chartsInitialized = false
+
+        historyUpdater(sensor.id).collect { data ->
+            Timber.d("ChartView - new data collected ${data.size}")
+            for (newContainer in data) {
+                var container =
+                    chartContainers.firstOrNull { it.chartSensorType == newContainer.chartSensorType }
+
+                if (container == null) {
+                    container = ChartContainer(newContainer.chartSensorType, LineChart(context))
+                    chartContainers.add(container)
+                }
+
+                container.data = newContainer.data
+                container.to = newContainer.to
+                container.from = newContainer.from
+                container.limits = newContainer.limits
+            }
+
+            if (!chartsInitialized) {
+                Timber.d("ChartView - initial setup ${sensor.id}")
+                chartsInitialSetup(
+                    charts = chartContainers.mapNotNull { container -> container.uiComponent?.let { container.chartSensorType to it } },
+                    unitsConverter = unitsConverter,
+                    context = context
+                )
+                chartsInitialized = true
+                isLoading = false
+            }
+        }
+    }
+
+    LaunchedEffect(key1 = chartContainers.size, increasedChartSize) {
+        chartsPerScreen = if (increasedChartSize) {
+            min(2, chartContainers.size)
+        } else {
+            min(3, chartContainers.size)
+        }
+        needsScroll = chartsPerScreen < chartContainers.size
+    }
+
+    LaunchedEffect(key1 = sensor.id) {
+        chartCleared.collect{
+            Timber.d("ChartView - chart cleared $it")
+            for (container in chartContainers) {
+                container.data?.clear()
+                container.uiComponent?.fitScreen()
+            }
+        }
+    }
+
+    var viewPeriodLocal by remember { mutableStateOf<Period?>(viewPeriod) }
+
     if (viewPeriod != viewPeriodLocal) {
         Timber.d("ChartView - viewPeriod changed ${sensor.id} $viewPeriod $viewPeriodLocal")
         viewPeriodLocal = viewPeriod
         for (container in chartContainers) {
-            container.uiComponent.fitScreen()
+            container.uiComponent?.fitScreen()
         }
     }
 
-    var temperatureLimits by remember {mutableStateOf<Pair<Double, Double>?> (null)}
-    var humidityLimits by remember {mutableStateOf<Pair<Double, Double>?> (null)}
-    var pressureLimits by remember {mutableStateOf<Pair<Double, Double>?> (null)}
+//    var temperatureLimits by remember {mutableStateOf<Pair<Double, Double>?> (null)}
+//    var humidityLimits by remember {mutableStateOf<Pair<Double, Double>?> (null)}
+//    var pressureLimits by remember {mutableStateOf<Pair<Double, Double>?> (null)}
 
-    LaunchedEffect(key1 = selected, viewPeriod, increasedChartSize) {
-        Timber.d("ChartView - LaunchedEffect ${sensor.id} $selected $viewPeriod $increasedChartSize")
-        while (selected) {
-            delay(300)
-            Timber.d("ChartView - LaunchedEffect get history ${sensor.id}")
-            val freshHistory = getHistory.invoke(sensor.id)
-            val alarms = getActiveAlarms(sensor.id)
+//            val alarms = getActiveAlarms(sensor.id)
+//
+//            temperatureLimits = alarms.firstOrNull { it.alarmType == AlarmType.TEMPERATURE }?.let {
+//                unitsConverter.getTemperatureValue(it.min) to unitsConverter.getTemperatureValue(it.max)
+//            }
+//            humidityLimits = if (unitsConverter.getHumidityUnit() == HumidityUnit.PERCENT) {
+//                alarms.firstOrNull { it.alarmType == AlarmType.HUMIDITY }?.let {it.min to it.max }
+//            } else null
+//            pressureLimits = alarms.firstOrNull { it.alarmType == AlarmType.PRESSURE }?.let {
+//                unitsConverter.getPressureValue(it.min) to unitsConverter.getPressureValue(it.max)
+//            }
 
-            temperatureLimits = alarms.firstOrNull { it.alarmType == AlarmType.TEMPERATURE }?.let {
-                unitsConverter.getTemperatureValue(it.min) to unitsConverter.getTemperatureValue(it.max)
-            }
-            humidityLimits = if (unitsConverter.getHumidityUnit() == HumidityUnit.PERCENT) {
-                alarms.firstOrNull { it.alarmType == AlarmType.HUMIDITY }?.let {it.min to it.max }
-            } else null
-            pressureLimits = alarms.firstOrNull { it.alarmType == AlarmType.PRESSURE }?.let {
-                unitsConverter.getPressureValue(it.min) to unitsConverter.getPressureValue(it.max)
-            }
+//            if (history.isEmpty() ||
+//                (tempChart?.uiComponent != null && tempChart.uiComponent.highestVisibleX >= (tempChart.uiComponent.data?.xMax ?: Float.MIN_VALUE))) {
+//                history = freshHistory
 
-            val tempChart = chartContainers.firstOrNull { it.chartSensorType == ChartSensorType.TEMPERATURE }
-            if (history.isEmpty() ||
-                (tempChart?.uiComponent != null && tempChart.uiComponent.highestVisibleX >= (tempChart.uiComponent.data?.xMax ?: Float.MIN_VALUE))) {
-                history = freshHistory
-
-                if (history.isNotEmpty()) {
-                    Timber.d("ChartView - LaunchedEffect prepare datasets ${sensor.id} pointsCount = ${history.size} FROM = $from")
-                    from = if (viewPeriod is Period.All) {
-                        history[0].createdAt.time
-                    } else {
-                        Date().time - viewPeriod.value * 60 * 60 * 1000
-                    }
-                    to = Date().time
-
-                    val temperatureDataTemp = mutableListOf<Entry>()
-                    val humidityDataTemp = mutableListOf<Entry>()
-                    val pressureDataTemp = mutableListOf<Entry>()
-                    val batteryDataTemp = mutableListOf<Entry>()
-                    val accelerationDataTemp = mutableListOf<Entry>()
-                    val rssiDataTemp = mutableListOf<Entry>()
-                    val movementDataTemp = mutableListOf<Entry>()
-                    val co2DataTemp = mutableListOf<Entry>()
-                    val vocDataTemp = mutableListOf<Entry>()
-                    val noxDataTemp = mutableListOf<Entry>()
-                    val pm25DataTemp = mutableListOf<Entry>()
-                    val luminosityDataTemp = mutableListOf<Entry>()
-                    val soundDataTemp = mutableListOf<Entry>()
-
-                    history.forEach { item ->
-                        val timestamp = (item.createdAt.time - from).toFloat()
-                        item.temperature?.let { temperature ->
-                            temperatureDataTemp.add(Entry(timestamp, unitsConverter.getTemperatureValue(temperature).toFloat()))
-                        }
-                        item.humidity?.let { humidity ->
-                            val humidityValue = unitsConverter.getHumidityValue(humidity, item.temperature)
-                            if (humidityValue != null) {
-                                humidityDataTemp.add(Entry(timestamp, humidityValue.toFloat()))
-                            }
-                        }
-                        item.pressure?.let {pressure ->
-                            pressureDataTemp.add(Entry(timestamp, unitsConverter.getPressureValue(pressure).toFloat()))
-                        }
-                        if (newChartsUI) {
-                            item.voltage?.let {voltage ->
-                                batteryDataTemp.add(Entry(timestamp, voltage.toFloat()))
-                            }
-                            item.accelX?.let {accelX ->
-                                accelerationDataTemp.add(Entry(timestamp, accelX.toFloat()))
-                            }
-                            item.rssi?.let {rssi ->
-                                rssiDataTemp.add(Entry(timestamp, rssi.toFloat()))
-                            }
-                            item.movementCounter?.let {movements ->
-                                movementDataTemp.add(Entry(timestamp, movements.toFloat()))
-                            }
-                        }
-                        item.co2?.let { co2 ->
-                            co2DataTemp.add(Entry(timestamp, co2.toFloat()))
-                        }
-                        item.voc?.let { voc ->
-                            vocDataTemp.add(Entry(timestamp, voc.toFloat()))
-                        }
-                        item.nox?.let { nox ->
-                            noxDataTemp.add(Entry(timestamp, nox.toFloat()))
-                        }
-                        item.pm25?.let { pm25 ->
-                            pm25DataTemp.add(Entry(timestamp, pm25.toFloat()))
-                        }
-                        item.luminosity?.let { luminosity ->
-                            luminosityDataTemp.add(Entry(timestamp, luminosity.toFloat()))
-                        }
-                        item.dBaAvg?.let { dBaAvg ->
-                            soundDataTemp.add(Entry(timestamp, dBaAvg.toFloat()))
-                        }
-                    }
-                    val temperatureContainer = chartContainers.firstOrNull { it.chartSensorType == ChartSensorType.TEMPERATURE }
-                    temperatureContainer?.let {
-                        it.data = temperatureDataTemp
-                        it.limits = temperatureLimits
-                        it.from = from
-                        it.to = to
-                    }
-
-                    if (humidityDataTemp.isNotEmpty()) {
-                        val humidityContainer = chartContainers.firstOrNull { it.chartSensorType == ChartSensorType.HUMIDITY }
-                        humidityContainer?.let {
-                            it.data = humidityDataTemp
-                            it.limits = humidityLimits
-                            it.from = from
-                            it.to = to
-                        }
-                    }
-
-                    if (pressureDataTemp.isNotEmpty()) {
-                        val pressureContainer = chartContainers.firstOrNull { it.chartSensorType == ChartSensorType.PRESSURE }
-                        pressureContainer?.let {
-                            it.data = pressureDataTemp
-                            it.limits = pressureLimits
-                            it.from = from
-                            it.to = to
-                        }
-                    }
-
-                    if (co2DataTemp.isNotEmpty()) {
-                        val co2Container = chartContainers.firstOrNull { it.chartSensorType == ChartSensorType.CO2}
-                        co2Container?.let {
-                            it.data = co2DataTemp
-                            it.from = from
-                            it.to = to
-                        }
-                    }
-
-                    if (vocDataTemp.isNotEmpty()) {
-                        val vocContainer = chartContainers.firstOrNull { it.chartSensorType == ChartSensorType.VOC}
-                        vocContainer?.let {
-                            it.data = vocDataTemp
-                            it.from = from
-                            it.to = to
-                        }
-                    }
-
-                    if (noxDataTemp.isNotEmpty()) {
-                        val noxContainer = chartContainers.firstOrNull { it.chartSensorType == ChartSensorType.NOX}
-                        noxContainer?.let {
-                            it.data = noxDataTemp
-                            it.from = from
-                            it.to = to
-                        }
-                    }
-
-                    if (pm25DataTemp.isNotEmpty()) {
-                        val pm25Container = chartContainers.firstOrNull { it.chartSensorType == ChartSensorType.PM25}
-                        pm25Container?.let {
-                            it.data = pm25DataTemp
-                            it.from = from
-                            it.to = to
-                        }
-                    }
-
-                    if (luminosityDataTemp.isNotEmpty()) {
-                        val luminosityContainer = chartContainers.firstOrNull { it.chartSensorType == ChartSensorType.LUMINOSITY}
-                        luminosityContainer?.let {
-                            it.data = luminosityDataTemp
-                            it.from = from
-                            it.to = to
-                        }
-                    }
-
-                    if (soundDataTemp.isNotEmpty()) {
-                        val soundContainer = chartContainers.firstOrNull { it.chartSensorType == ChartSensorType.SOUND}
-                        soundContainer?.let {
-                            it.data = soundDataTemp
-                            it.from = from
-                            it.to = to
-                        }
-                    }
-                }
-            }
-
-            chartsPerScreen = if (increasedChartSize) {
-                min(2, chartContainers.size)
-            } else {
-                min(3, chartContainers.size)
-            }
-            needsScroll = chartsPerScreen < chartContainers.size
-            Timber.d("needsScroll $needsScroll increaseChartSize = $increasedChartSize chartsPerScreen=$chartsPerScreen containers = ${chartContainers.size}")
-            isLoading = false
-            delay(1000)
-            Timber.d("ChartView - LaunchedEffect ${sensor.id} end cycle")
-        }
-        Timber.d("ChartView - LaunchedEffect ${sensor.id} END")
-    }
 
     val configuration = LocalConfiguration.current
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
@@ -413,7 +220,7 @@ fun VerticalChartsPrototype(
 ) {
     val clearMarker = {
         for (chartContainer in chartContainers) {
-            chartContainer.uiComponent.highlightValue(null)
+            chartContainer.uiComponent?.highlightValue(null)
         }
     }
 
@@ -440,7 +247,7 @@ fun VerticalChartsPrototype(
                     if (data != null && to != null && from != null) {
                         item {
                             ChartViewPrototype(
-                                chartContainer.uiComponent,
+                                chartContainer.uiComponent!!,
                                 Modifier
                                     .height(height)
                                     .fillMaxWidth(),
@@ -469,7 +276,7 @@ fun VerticalChartsPrototype(
                     val to  = chartContainer.to
                     if (data != null && to != null && from != null) {
                         ChartViewPrototype(
-                            chartContainer.uiComponent,
+                            chartContainer.uiComponent!!,
                             Modifier
                                 .height(height)
                                 .fillMaxWidth(),
@@ -500,7 +307,7 @@ fun LandscapeChartsPrototype(
 ) {
     val clearMarker = {
         for (chartContainer in chartContainers) {
-            chartContainer.uiComponent.highlightValue(null)
+            chartContainer.uiComponent!!.highlightValue(null)
         }
     }
 
@@ -519,7 +326,7 @@ fun LandscapeChartsPrototype(
         val to  = chartContainer.to
         if (data != null && to != null && from != null) {
             ChartViewPrototype(
-                chartContainer.uiComponent,
+                chartContainer.uiComponent!!,
                 Modifier.fillMaxSize(),
                 data,
                 unitsConverter,

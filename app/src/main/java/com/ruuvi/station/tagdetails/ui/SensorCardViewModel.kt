@@ -3,6 +3,7 @@ package com.ruuvi.station.tagdetails.ui
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.github.mikephil.charting.data.Entry
 import com.ruuvi.gateway.tester.nfc.model.SensorNfсScanInfo
 import com.ruuvi.station.R
 import com.ruuvi.station.app.preferences.GlobalSettings
@@ -13,6 +14,8 @@ import com.ruuvi.station.bluetooth.model.SyncProgress
 import com.ruuvi.station.database.domain.AlarmRepository
 import com.ruuvi.station.database.domain.SensorHistoryRepository
 import com.ruuvi.station.database.tables.TagSensorReading
+import com.ruuvi.station.graph.model.ChartContainer
+import com.ruuvi.station.graph.model.ChartSensorType
 import com.ruuvi.station.network.domain.NetworkDataSyncInteractor
 import com.ruuvi.station.nfc.domain.NfcResultInteractor
 import com.ruuvi.station.settings.domain.AppSettingsInteractor
@@ -21,6 +24,8 @@ import com.ruuvi.station.tag.domain.TagInteractor
 import com.ruuvi.station.tagdetails.domain.TagDetailsInteractor
 import com.ruuvi.station.tagsettings.domain.CsvExporter
 import com.ruuvi.station.tagsettings.domain.XlsxExporter
+import com.ruuvi.station.units.domain.UnitsConverter
+import com.ruuvi.station.units.domain.aqi.AQI
 import com.ruuvi.station.util.Period
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -41,7 +46,8 @@ class SensorCardViewModel(
     private val csvExporter: CsvExporter,
     private val xlsxExporter: XlsxExporter,
     private val nfcResultInteractor: NfcResultInteractor,
-    private val alarmRepository: AlarmRepository
+    private val alarmRepository: AlarmRepository,
+    private val unitsConverter: UnitsConverter
     ): ViewModel() {
 
     val sensorsFlow: Flow<List<RuuviTag>> = flow {
@@ -79,6 +85,214 @@ class SensorCardViewModel(
     fun getSensorHistory(sensorId: String): List<TagSensorReading> {
         return tagDetailsInteractor.getTagReadings(sensorId)
     }
+
+    fun historyUpdater(sensorId: String): Flow<MutableList<ChartContainer>> =
+        flow<MutableList<ChartContainer>> {
+            while (true) {
+                val history = tagDetailsInteractor.getTagReadings(sensorId)
+
+                val from = if (chartViewPeriod.value is Period.All) {
+                    history[0].createdAt.time
+                } else {
+                    Date().time - chartViewPeriod.value.value * 60 * 60 * 1000
+                }
+                val to = Date().time
+
+                val temperatureDataTemp = mutableListOf<Entry>()
+                val humidityDataTemp = mutableListOf<Entry>()
+                val pressureDataTemp = mutableListOf<Entry>()
+                val batteryDataTemp = mutableListOf<Entry>()
+                val accelerationDataTemp = mutableListOf<Entry>()
+                val rssiDataTemp = mutableListOf<Entry>()
+                val movementDataTemp = mutableListOf<Entry>()
+                val co2DataTemp = mutableListOf<Entry>()
+                val vocDataTemp = mutableListOf<Entry>()
+                val noxDataTemp = mutableListOf<Entry>()
+                val pm25DataTemp = mutableListOf<Entry>()
+                val luminosityDataTemp = mutableListOf<Entry>()
+                val soundDataTemp = mutableListOf<Entry>()
+                val aqiDataTemp = mutableListOf<Entry>()
+
+                history.forEach { item ->
+                    val timestamp = (item.createdAt.time - from).toFloat()
+                    item.temperature?.let { temperature ->
+                        temperatureDataTemp.add(
+                            Entry(
+                                timestamp,
+                                unitsConverter.getTemperatureValue(temperature).toFloat()
+                            )
+                        )
+                    }
+                    item.humidity?.let { humidity ->
+                        val humidityValue =
+                            unitsConverter.getHumidityValue(humidity, item.temperature)
+                        if (humidityValue != null) {
+                            humidityDataTemp.add(Entry(timestamp, humidityValue.toFloat()))
+                        }
+                    }
+                    item.pressure?.let { pressure ->
+                        pressureDataTemp.add(
+                            Entry(
+                                timestamp,
+                                unitsConverter.getPressureValue(pressure).toFloat()
+                            )
+                        )
+                    }
+                    if (_newChartsUI.value) {
+                        item.voltage?.let { voltage ->
+                            batteryDataTemp.add(Entry(timestamp, voltage.toFloat()))
+                        }
+                        item.accelX?.let { accelX ->
+                            accelerationDataTemp.add(Entry(timestamp, accelX.toFloat()))
+                        }
+                        item.rssi?.let { rssi ->
+                            rssiDataTemp.add(Entry(timestamp, rssi.toFloat()))
+                        }
+                        item.movementCounter?.let { movements ->
+                            movementDataTemp.add(Entry(timestamp, movements.toFloat()))
+                        }
+                    }
+                    val aqi = AQI.Companion.getAQI(item.pm25, item.co2, item.voc, item.nox)
+                    aqi.score?.let {
+                        aqiDataTemp.add(Entry(timestamp, it.toFloat()))
+                    }
+                    item.co2?.let { co2 ->
+                        co2DataTemp.add(Entry(timestamp, co2.toFloat()))
+                    }
+                    item.voc?.let { voc ->
+                        vocDataTemp.add(Entry(timestamp, voc.toFloat()))
+                    }
+                    item.nox?.let { nox ->
+                        noxDataTemp.add(Entry(timestamp, nox.toFloat()))
+                    }
+                    item.pm25?.let { pm25 ->
+                        pm25DataTemp.add(Entry(timestamp, pm25.toFloat()))
+                    }
+                    item.luminosity?.let { luminosity ->
+                        luminosityDataTemp.add(Entry(timestamp, luminosity.toFloat()))
+                    }
+                    item.dBaAvg?.let { dBaAvg ->
+                        soundDataTemp.add(Entry(timestamp, dBaAvg.toFloat()))
+                    }
+                }
+
+                val chartContainers = mutableListOf<ChartContainer>()
+
+                if (temperatureDataTemp.isNotEmpty()) {
+                    chartContainers.add(ChartContainer(
+                        chartSensorType = ChartSensorType.TEMPERATURE,
+                        data = temperatureDataTemp,
+                        limits = null,
+                        from = from,
+                        to = to,
+                        uiComponent = null
+                    ))
+                }
+
+                if (humidityDataTemp.isNotEmpty()) {
+                    chartContainers.add(ChartContainer(
+                        chartSensorType = ChartSensorType.HUMIDITY,
+                        data = humidityDataTemp,
+                        limits = null,
+                        from = from,
+                        to = to,
+                        uiComponent = null
+                    ))
+                }
+
+                if (pressureDataTemp.isNotEmpty()) {
+                    chartContainers.add(ChartContainer(
+                        chartSensorType = ChartSensorType.PRESSURE,
+                        data = pressureDataTemp,
+                        limits = null,
+                        from = from,
+                        to = to,
+                        uiComponent = null
+                    ))
+                }
+
+                if (aqiDataTemp.isNotEmpty()) {
+                    chartContainers.add(ChartContainer(
+                        chartSensorType = ChartSensorType.AQI,
+                        data = aqiDataTemp,
+                        limits = null,
+                        from = from,
+                        to = to,
+                        uiComponent = null
+                    ))
+                }
+
+                if (co2DataTemp.isNotEmpty()) {
+                    chartContainers.add(ChartContainer(
+                        chartSensorType = ChartSensorType.CO2,
+                        data = co2DataTemp,
+                        limits = null,
+                        from = from,
+                        to = to,
+                        uiComponent = null
+                    ))
+                }
+
+                if (vocDataTemp.isNotEmpty()) {
+                    chartContainers.add(ChartContainer(
+                        chartSensorType = ChartSensorType.VOC,
+                        data = vocDataTemp,
+                        limits = null,
+                        from = from,
+                        to = to,
+                        uiComponent = null
+                    ))
+                }
+
+                if (noxDataTemp.isNotEmpty()) {
+                    chartContainers.add(ChartContainer(
+                        chartSensorType = ChartSensorType.NOX,
+                        data = noxDataTemp,
+                        limits = null,
+                        from = from,
+                        to = to,
+                        uiComponent = null
+                    ))
+                }
+
+                if (pm25DataTemp.isNotEmpty()) {
+                    chartContainers.add(ChartContainer(
+                        chartSensorType = ChartSensorType.PM25,
+                        data = pm25DataTemp,
+                        limits = null,
+                        from = from,
+                        to = to,
+                        uiComponent = null
+                    ))
+                }
+
+                if (luminosityDataTemp.isNotEmpty()) {
+                    chartContainers.add(ChartContainer(
+                        chartSensorType = ChartSensorType.LUMINOSITY,
+                        data = luminosityDataTemp,
+                        limits = null,
+                        from = from,
+                        to = to,
+                        uiComponent = null
+                    ))
+                }
+
+                if (soundDataTemp.isNotEmpty()) {
+                    chartContainers.add(ChartContainer(
+                        chartSensorType = ChartSensorType.SOUND,
+                        data = soundDataTemp,
+                        limits = null,
+                        from = from,
+                        to = to,
+                        uiComponent = null
+                    ))
+                }
+
+                emit(chartContainers)
+                Timber.d("historyUpdater emited ${chartContainers.size} containers")
+                delay(1000)
+            }
+        }.flowOn(Dispatchers.IO)
 
     fun getChartCleared(sensorId: String):Flow<String> = chartCleared.filter { it == sensorId }
 

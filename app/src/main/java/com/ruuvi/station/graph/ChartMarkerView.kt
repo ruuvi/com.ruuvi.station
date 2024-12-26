@@ -60,6 +60,7 @@ constructor(
             ChartSensorType.PM25 -> unitsConverter.getValue(e.y.toDouble(), Accuracy.Accuracy2, context.getString(R.string.unit_pm25))
             ChartSensorType.LUMINOSITY -> unitsConverter.getValue(e.y.toDouble(), Accuracy.Accuracy0, context.getString(R.string.unit_luminosity))
             ChartSensorType.SOUND -> unitsConverter.getValue(e.y.toDouble(), Accuracy.Accuracy2, context.getString(R.string.unit_sound))
+            ChartSensorType.AQI -> unitsConverter.getValue(e.y.toDouble(), Accuracy.Accuracy2, context.getString(R.string.aqi))
         }
 
         tvContent.text ="$valueText\n$timeText\n$dateText"

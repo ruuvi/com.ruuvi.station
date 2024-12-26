@@ -16,4 +16,5 @@ enum class ChartSensorType (val captionTemplate: Int) {
     PM25 (R.string.pm25_with_unit),
     LUMINOSITY (R.string.luminosity_with_unit),
     SOUND (R.string.sound_with_unit),
+    AQI (R.string.aqi)
 }

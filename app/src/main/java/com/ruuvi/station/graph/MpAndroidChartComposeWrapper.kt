@@ -80,7 +80,8 @@ fun ChartViewPrototype(
         ChartSensorType.PM25 -> stringResource(id = R.string.pm25_with_unit, stringResource(id = R.string.unit_pm25))
         ChartSensorType.LUMINOSITY -> stringResource(id = R.string.luminosity_with_unit, stringResource(id = R.string.unit_luminosity))
         ChartSensorType.SOUND -> stringResource(id = R.string.sound_with_unit, stringResource(id = R.string.unit_sound))
-    } 
+        ChartSensorType.AQI -> stringResource(id = R.string.aqi)
+    }
 
     val offset = RuuviStationTheme.dimensions.extended
     val description = getPrototypeChartDescription(
@@ -166,6 +167,7 @@ fun getPrototypeChartDescription(
         ChartSensorType.PM25 -> ::getSimpleValue
         ChartSensorType.LUMINOSITY -> ::getSimpleValue
         ChartSensorType.SOUND -> ::getSimpleValue
+        ChartSensorType.AQI -> ::getSimpleValue
     }
 
     val latestPoint = chartData.lastOrNull()

@@ -45,6 +45,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.github.mikephil.charting.charts.LineChart
+import com.github.mikephil.charting.data.Entry
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.ruuvi.gateway.tester.nfc.model.SensorNfсScanInfo
 import com.ruuvi.station.R
@@ -58,6 +59,8 @@ import com.ruuvi.station.database.tables.Alarm
 import com.ruuvi.station.database.tables.TagSensorReading
 import com.ruuvi.station.graph.ChartControlElement2
 import com.ruuvi.station.graph.ChartsView
+import com.ruuvi.station.graph.model.ChartContainer
+import com.ruuvi.station.graph.model.ChartSensorType
 import com.ruuvi.station.nfc.domain.NfcScanResponse
 import com.ruuvi.station.nfc.ui.NfcInteractor
 import com.ruuvi.station.tag.domain.RuuviTag
@@ -122,6 +125,7 @@ class SensorCardActivity : NfcActivity(), KodeinAware {
                         setShowCharts = viewModel::setShowCharts,
                         getActiveAlarms = viewModel::getActiveAlarms,
                         getHistory = viewModel::getSensorHistory,
+                        historyUpdater = viewModel::historyUpdater,
                         unitsConverter = unitsConverter,
                         viewPeriod = viewPeriod,
                         newChartsUI = newChartsUI,
@@ -220,6 +224,7 @@ fun SensorsPager(
     setShowCharts: (Boolean) -> Unit,
     getActiveAlarms: (String) -> List<Alarm>,
     getHistory: (String) -> List<TagSensorReading>,
+    historyUpdater: (String) -> Flow<MutableList<ChartContainer>>,
     unitsConverter: UnitsConverter,
     viewPeriod: Period,
     newChartsUI: Boolean,
@@ -375,6 +380,7 @@ fun SensorsPager(
                                 newChartsUI = newChartsUI,
                                 chartCleared = getChartClearedFlow(sensor.id),
                                 showChartStats = showChartStats,
+                                historyUpdater = historyUpdater,
                                 getActiveAlarms = getActiveAlarms,
                                 increasedChartSize = increasedChartSize,
                                 size = size
