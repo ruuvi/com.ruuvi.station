@@ -40,6 +40,7 @@ jobs:
         keyAlias: ${{ secrets.ALIAS }}
         keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
         keyPassword: ${{ secrets.KEY_PASSWORD }}
+        buildToolsVersion: 34.0.0
         
     - name: Sign release APK
       id: sign_apk
@@ -51,6 +52,7 @@ jobs:
         keyAlias: ${{ secrets.ALIAS }}
         keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
         keyPassword: ${{ secrets.KEY_PASSWORD }}
+        buildToolsVersion: 34.0.0
         
         
     - name: Sign bundle
@@ -63,6 +65,7 @@ jobs:
         keyAlias: ${{ secrets.ALIAS }}
         keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
         keyPassword: ${{ secrets.KEY_PASSWORD }}
+        buildToolsVersion: 34.0.0
 
     - name: Upload test APK
       uses: actions/upload-artifact@v3.1.2
