@@ -41,6 +41,7 @@ jobs:
         keyAlias: ${{ secrets.ALIAS }}
         keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
         keyPassword: ${{ secrets.KEY_PASSWORD }}
+        buildToolsVersion: 34.0.0
 
     - name: Upload to internal testing
       uses: r0adkll/upload-google-play@v1
