@@ -1,7 +1,6 @@
 package com.ruuvi.station.graph
 
 import android.content.res.Configuration
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -20,10 +19,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.AxisBase
-import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.formatter.IAxisValueFormatter
 import com.ruuvi.station.R
-import com.ruuvi.station.alarm.domain.AlarmType
 import com.ruuvi.station.app.ui.components.LoadingAnimation3dots
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.ruuviStationFonts
@@ -32,19 +29,15 @@ import com.ruuvi.station.database.tables.TagSensorReading
 import com.ruuvi.station.graph.model.ChartContainer
 import com.ruuvi.station.graph.model.ChartSensorType
 import com.ruuvi.station.tag.domain.RuuviTag
-import com.ruuvi.station.tag.domain.isAir
 import com.ruuvi.station.units.domain.UnitsConverter
-import com.ruuvi.station.units.model.HumidityUnit
 import com.ruuvi.station.units.model.PressureUnit
 import com.ruuvi.station.util.Period
 import com.ruuvi.station.util.ui.pxToDp
 import com.ruuvi.station.util.ui.scrollbar
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import timber.log.Timber
 import java.text.DecimalFormat
-import java.util.*
 import kotlin.math.min
 
 @Composable
@@ -89,7 +82,7 @@ fun ChartsView(
         Timber.d("ChartView - chart containers fill ${sensor.id}")
         chartsInitialized = false
 
-        historyUpdater(sensor.id).collect { data ->
+        historyUpdater(sensor.id).collectLatest { data ->
             Timber.d("ChartView - new data collected ${data.size}")
             for (newContainer in data) {
                 var container =
@@ -108,11 +101,13 @@ fun ChartsView(
 
             if (!chartsInitialized) {
                 Timber.d("ChartView - initial setup ${sensor.id}")
-                chartsInitialSetup(
-                    charts = chartContainers.mapNotNull { container -> container.uiComponent?.let { container.chartSensorType to it } },
-                    unitsConverter = unitsConverter,
-                    context = context
-                )
+                if (chartContainers.isNotEmpty()) {
+                    chartsInitialSetup(
+                        charts = chartContainers.mapNotNull { container -> container.uiComponent?.let { container.chartSensorType to it } },
+                        unitsConverter = unitsConverter,
+                        context = context
+                    )
+                }
                 chartsInitialized = true
                 isLoading = false
             }
@@ -148,27 +143,6 @@ fun ChartsView(
         }
     }
 
-//    var temperatureLimits by remember {mutableStateOf<Pair<Double, Double>?> (null)}
-//    var humidityLimits by remember {mutableStateOf<Pair<Double, Double>?> (null)}
-//    var pressureLimits by remember {mutableStateOf<Pair<Double, Double>?> (null)}
-
-//            val alarms = getActiveAlarms(sensor.id)
-//
-//            temperatureLimits = alarms.firstOrNull { it.alarmType == AlarmType.TEMPERATURE }?.let {
-//                unitsConverter.getTemperatureValue(it.min) to unitsConverter.getTemperatureValue(it.max)
-//            }
-//            humidityLimits = if (unitsConverter.getHumidityUnit() == HumidityUnit.PERCENT) {
-//                alarms.firstOrNull { it.alarmType == AlarmType.HUMIDITY }?.let {it.min to it.max }
-//            } else null
-//            pressureLimits = alarms.firstOrNull { it.alarmType == AlarmType.PRESSURE }?.let {
-//                unitsConverter.getPressureValue(it.min) to unitsConverter.getPressureValue(it.max)
-//            }
-
-//            if (history.isEmpty() ||
-//                (tempChart?.uiComponent != null && tempChart.uiComponent.highestVisibleX >= (tempChart.uiComponent.data?.xMax ?: Float.MIN_VALUE))) {
-//                history = freshHistory
-
-
     val configuration = LocalConfiguration.current
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
 
@@ -190,19 +164,19 @@ fun ChartsView(
                 showChartStats
             )
         } else {
-            Box (modifier = modifier.fillMaxSize()){
+            Box (modifier = modifier.fillMaxSize()) {
                 val height = (size.height / chartsPerScreen).pxToDp()
 
                 if (!size.isEmpty())
-                VerticalChartsPrototype(
-                    modifier =  Modifier,
-                    chartContainers = chartContainers,
-                    unitsConverter = unitsConverter,
-                    graphDrawDots = graphDrawDots,
-                    showChartStats = showChartStats,
-                    height = height,
-                    needsScroll = needsScroll
-                )
+                    VerticalChartsPrototype(
+                        modifier = Modifier,
+                        chartContainers = chartContainers,
+                        unitsConverter = unitsConverter,
+                        graphDrawDots = graphDrawDots,
+                        showChartStats = showChartStats,
+                        height = height,
+                        needsScroll = needsScroll
+                    )
             }
         }
     }
@@ -227,7 +201,6 @@ fun VerticalChartsPrototype(
     if (chartContainers.firstOrNull()?.data.isNullOrEmpty()) {
         EmptyCharts(modifier)
     } else {
-
         Timber.d("chart height $height $needsScroll")
         val listState = rememberLazyListState()
 

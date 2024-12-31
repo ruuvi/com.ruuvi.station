@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.github.mikephil.charting.data.Entry
 import com.ruuvi.gateway.tester.nfc.model.SensorNfсScanInfo
 import com.ruuvi.station.R
+import com.ruuvi.station.alarm.domain.AlarmType
 import com.ruuvi.station.app.preferences.GlobalSettings
 import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.app.ui.UiText
@@ -26,6 +27,7 @@ import com.ruuvi.station.tagsettings.domain.CsvExporter
 import com.ruuvi.station.tagsettings.domain.XlsxExporter
 import com.ruuvi.station.units.domain.UnitsConverter
 import com.ruuvi.station.units.domain.aqi.AQI
+import com.ruuvi.station.units.model.HumidityUnit
 import com.ruuvi.station.util.Period
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -88,6 +90,7 @@ class SensorCardViewModel(
 
     fun historyUpdater(sensorId: String): Flow<MutableList<ChartContainer>> =
         flow<MutableList<ChartContainer>> {
+            delay(200)
             while (true) {
                 val history = tagDetailsInteractor.getTagReadings(sensorId)
 
@@ -96,7 +99,13 @@ class SensorCardViewModel(
                 } else {
                     Date().time - chartViewPeriod.value.value * 60 * 60 * 1000
                 }
+                Timber.d("historyUpdater $from")
                 val to = Date().time
+                val alarms = getActiveAlarms(sensorId)
+
+//            if (history.isEmpty() ||
+//                (tempChart?.uiComponent != null && tempChart.uiComponent.highestVisibleX >= (tempChart.uiComponent.data?.xMax ?: Float.MIN_VALUE))) {
+//                history = freshHistory
 
                 val temperatureDataTemp = mutableListOf<Entry>()
                 val humidityDataTemp = mutableListOf<Entry>()
@@ -152,7 +161,7 @@ class SensorCardViewModel(
                             movementDataTemp.add(Entry(timestamp, movements.toFloat()))
                         }
                     }
-                    val aqi = AQI.Companion.getAQI(item.pm25, item.co2, item.voc, item.nox)
+                    val aqi = AQI.getAQI(item.pm25, item.co2, item.voc, item.nox)
                     aqi.score?.let {
                         aqiDataTemp.add(Entry(timestamp, it.toFloat()))
                     }
@@ -179,21 +188,31 @@ class SensorCardViewModel(
                 val chartContainers = mutableListOf<ChartContainer>()
 
                 if (temperatureDataTemp.isNotEmpty()) {
-                    chartContainers.add(ChartContainer(
-                        chartSensorType = ChartSensorType.TEMPERATURE,
-                        data = temperatureDataTemp,
-                        limits = null,
-                        from = from,
-                        to = to,
-                        uiComponent = null
-                    ))
+                    chartContainers.add(
+                        ChartContainer(
+                            chartSensorType = ChartSensorType.TEMPERATURE,
+                            data = temperatureDataTemp,
+                            limits = alarms.firstOrNull { it -> it.alarmType == AlarmType.TEMPERATURE }
+                                ?.let {
+                                    unitsConverter.getTemperatureValue(it.min) to unitsConverter.getTemperatureValue(
+                                        it.max
+                                    )
+                                },
+                            from = from,
+                            to = to,
+                            uiComponent = null
+                        )
+                    )
                 }
 
                 if (humidityDataTemp.isNotEmpty()) {
                     chartContainers.add(ChartContainer(
                         chartSensorType = ChartSensorType.HUMIDITY,
                         data = humidityDataTemp,
-                        limits = null,
+                        limits = if (unitsConverter.getHumidityUnit() == HumidityUnit.PERCENT) {
+                            alarms.firstOrNull { it.alarmType == AlarmType.HUMIDITY }
+                                ?.let { it.min to it.max }
+                        } else null,
                         from = from,
                         to = to,
                         uiComponent = null
@@ -201,14 +220,19 @@ class SensorCardViewModel(
                 }
 
                 if (pressureDataTemp.isNotEmpty()) {
-                    chartContainers.add(ChartContainer(
-                        chartSensorType = ChartSensorType.PRESSURE,
-                        data = pressureDataTemp,
-                        limits = null,
-                        from = from,
-                        to = to,
-                        uiComponent = null
-                    ))
+                    chartContainers.add(
+                        ChartContainer(
+                            chartSensorType = ChartSensorType.PRESSURE,
+                            data = pressureDataTemp,
+                            limits = alarms.firstOrNull { it.alarmType == AlarmType.PRESSURE }
+                                ?.let {
+                                    unitsConverter.getPressureValue(it.min) to unitsConverter.getPressureValue(it.max)
+                                },
+                            from = from,
+                            to = to,
+                            uiComponent = null
+                        )
+                    )
                 }
 
                 if (aqiDataTemp.isNotEmpty()) {
@@ -226,7 +250,8 @@ class SensorCardViewModel(
                     chartContainers.add(ChartContainer(
                         chartSensorType = ChartSensorType.CO2,
                         data = co2DataTemp,
-                        limits = null,
+                        limits = alarms.firstOrNull { it.alarmType == AlarmType.CO2 }
+                            ?.let { it.min to it.max },
                         from = from,
                         to = to,
                         uiComponent = null
@@ -237,7 +262,8 @@ class SensorCardViewModel(
                     chartContainers.add(ChartContainer(
                         chartSensorType = ChartSensorType.VOC,
                         data = vocDataTemp,
-                        limits = null,
+                        limits = alarms.firstOrNull { it.alarmType == AlarmType.VOC }
+                            ?.let { it.min to it.max },
                         from = from,
                         to = to,
                         uiComponent = null
@@ -248,7 +274,8 @@ class SensorCardViewModel(
                     chartContainers.add(ChartContainer(
                         chartSensorType = ChartSensorType.NOX,
                         data = noxDataTemp,
-                        limits = null,
+                        limits = alarms.firstOrNull { it.alarmType == AlarmType.NOX }
+                            ?.let { it.min to it.max },
                         from = from,
                         to = to,
                         uiComponent = null
@@ -259,7 +286,8 @@ class SensorCardViewModel(
                     chartContainers.add(ChartContainer(
                         chartSensorType = ChartSensorType.PM25,
                         data = pm25DataTemp,
-                        limits = null,
+                        limits = alarms.firstOrNull { it.alarmType == AlarmType.PM25 }
+                            ?.let { it.min to it.max },
                         from = from,
                         to = to,
                         uiComponent = null
@@ -270,7 +298,8 @@ class SensorCardViewModel(
                     chartContainers.add(ChartContainer(
                         chartSensorType = ChartSensorType.LUMINOSITY,
                         data = luminosityDataTemp,
-                        limits = null,
+                        limits = alarms.firstOrNull { it.alarmType == AlarmType.LUMINOSITY }
+                            ?.let { it.min to it.max },
                         from = from,
                         to = to,
                         uiComponent = null
@@ -281,7 +310,8 @@ class SensorCardViewModel(
                     chartContainers.add(ChartContainer(
                         chartSensorType = ChartSensorType.SOUND,
                         data = soundDataTemp,
-                        limits = null,
+                        limits = alarms.firstOrNull { it.alarmType == AlarmType.SOUND }
+                            ?.let { it.min to it.max },
                         from = from,
                         to = to,
                         uiComponent = null
@@ -452,6 +482,7 @@ class SensorCardViewModel(
     }
 
     fun getActiveAlarms(sensorId: String) = alarmRepository.getActiveAlarms(sensorId)
+
     fun saveSelected(sensorId: String) {
         _selectedSensor.value = sensorId
     }
