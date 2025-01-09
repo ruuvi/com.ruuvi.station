@@ -306,7 +306,6 @@ private fun addDataToChart(
 ) {
     Timber.d("ChartView - addDataToChart")
     val set = LineDataSet(data, label)
-    setLabelCount(context, chart)
     set.setDrawCircles(graphDrawDots)
     set.setDrawValues(false)
     set.setDrawFilled(true)
@@ -366,8 +365,7 @@ private fun addDataToChart(
             }
         }
     }
-    chart.notifyDataSetChanged()
-    chart.invalidate()
+    setLabelCount(context, chart)
 }
 
 fun getLimitLine(
@@ -404,8 +402,8 @@ private fun setLabelCount(context: Context, chart: LineChart) {
     val computeSize2 = Utils.calcTextSize(computePaint, dateText)
     val width = max(computeSize.width, computeSize2.width)
 
-    var labelCount = chart.viewPortHandler.contentWidth() / (width * 2)
-    var labelCountY = chart.viewPortHandler.contentHeight() / (computeSize.height * 2)
+    val labelCount = chart.viewPortHandler.contentWidth() / (width * 2)
+    val labelCountY = chart.viewPortHandler.contentHeight() / (computeSize.height * 2)
     Timber.d("setLabelCount ${chart.size} VIEWPORT ${chart.viewPortHandler.contentWidth()} x ${chart.viewPortHandler.contentHeight()} x = $labelCount y = $labelCountY")
     chart.xAxis.setLabelCount(labelCount.toInt(), false)
     chart.axisLeft.setLabelCount(min(labelCountY.toInt(), 8), false)
