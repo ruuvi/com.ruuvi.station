@@ -152,6 +152,8 @@ class DashboardActivity : NfcActivity(), KodeinAware {
                     ) {
                         bluetoothCheckReady = true
                     }
+                } else {
+                    bluetoothCheckReady = true
                 }
 
                 if (bluetoothCheckReady) {

@@ -260,6 +260,10 @@ fun NearbyDevicesPermissions(
     Timber.d("NearbyDevicesPermissions askToEnableBluetooth = $askToEnableBluetooth")
     val context = LocalContext.current
 
+    var showBluetoothPermissionDialog by remember {
+        mutableStateOf(false)
+    }
+
     val enableBluetoothLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) {
@@ -280,6 +284,16 @@ fun NearbyDevicesPermissions(
         }
     }
 
+    if (showBluetoothPermissionDialog) {
+        RuuviMessageDialog(
+            title = stringResource(id = R.string.permission_dialog_title),
+            message = stringResource(id = R.string.permission_dialog_request_message_api31)
+        ) {
+            showBluetoothPermissionDialog = false
+            bluetoothConnectPermissionState.launchMultiplePermissionRequest()
+        }
+    }
+
     LaunchedEffect(key1 = null) {
         Timber.d("Checking BT permissions")
         if (bluetoothConnectPermissionState.allPermissionsGranted) {
@@ -289,7 +303,11 @@ fun NearbyDevicesPermissions(
             }
         } else {
             Timber.d("NearbyDevicesPermissions requesting")
-            bluetoothConnectPermissionState.launchMultiplePermissionRequest()
+            if (bluetoothConnectPermissionState.shouldShowRationale) {
+                showBluetoothPermissionDialog = true
+            } else {
+                bluetoothConnectPermissionState.launchMultiplePermissionRequest()
+            }
         }
     }
 }
