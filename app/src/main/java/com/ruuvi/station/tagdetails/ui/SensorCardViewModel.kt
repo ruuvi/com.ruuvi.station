@@ -94,6 +94,11 @@ class SensorCardViewModel(
             while (true) {
                 val history = tagDetailsInteractor.getTagReadings(sensorId)
 
+                if (history.isEmpty()) {
+                    delay(1000)
+                    continue
+                }
+
                 val from = if (chartViewPeriod.value is Period.All) {
                     history[0].createdAt.time
                 } else {
