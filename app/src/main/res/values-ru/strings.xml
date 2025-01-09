@@ -188,7 +188,7 @@
     <string name="export_csv_header_format2_4">Дата,Температура (%1$s),Влажность (%2$s),Давление (%3$s),RSSI(dBm)</string>
     <string name="export_csv_header_format3">Дата,Температура (%1$s),Влажность (%2$s),Давление (%3$s),RSSI (dBm),Ускорение по X (g),Ускорение по Y (g),Ускорение по Z (g),Напряжение Батареи (V)</string>
     <string name="export_csv_header_format5">Дата,Температура (%1$s),Влажность (%2$s),Давление (%3$s),RSSI (dBm),Ускорение по X (g),Ускорение по Y (g),Ускорение по Z (g),Напряжение Батареи (V),Счетчик Движения (движений),Порядковый Номер Измерения,Мощность Передачи (dBm)</string>
-    <string name="export_csv_header_formatE0">Дата,AQI,Температура (%1$s),Влажность (%2$s),Давление (%3$s),Luminosity(lx),db Avg(dBA),db peak(dBA),CO2(ppm),VOC,NOX,PM1.0(µg/m³),PM2.5(µg/m³),PM4.0(µg/m³),PM10.0(µg/m³),RSSI (dBm),Ускорение по X (g),Ускорение по Y (g),Ускорение по Z (g),Напряжение Батареи (V),Счетчик Движения (движений),Порядковый Номер Измерения,Мощность Передачи (dBm)</string>
+    <string name="export_csv_header_formatE0">Дата,AQI,Температура (%1$s),Влажность (%2$s),Давление (%3$s),Luminosity(lx),dB Avg(dBA),dB peak(dBA),CO2(ppm),VOC,NOX,PM1.0(µg/m³),PM2.5(µg/m³),PM4.0(µg/m³),PM10.0(µg/m³),RSSI (dBm),Ускорение по X (g),Ускорение по Y (g),Ускорение по Z (g),Напряжение Батареи (V),Счетчик Движения (движений),Порядковый Номер Измерения,Мощность Передачи (dBm)</string>
     <string name="export_history">Выгрузить историю (csv)</string>
     <string name="export_history_xlsx">Выгрузить историю (xlsx)</string>
     <string name="file_not_supported">Тип файла не поддерживается</string>
@@ -299,6 +299,7 @@
     <string name="permission_background_dialog_title">Включить сканирование в фоне</string>
     <string name="permission_dialog_background_request_message">Для того чтобы находить Bluetooth-утройства в фоновом режиме, Android требует включить доступ к фоновому местоположению.\n\nПожалуйста разрешите постоянный доспуп к местоположению\n\nRuuvi не отслеживает ваше расположение. Вы в безопасности.</string>
     <string name="permission_dialog_request_message">Для того чтобы находить Bluetooth-утройства, Android требует включить доступ к местоположению.\n\nRuuvi не отслеживает ваше расположение. Вы в безопасности.</string>
+    <string name="permission_dialog_request_message_api31">Для сканирования ближайших Bluetooth-устройств предоставьте разрешение на их обнаружение и подключение. Это разрешение также необходимо для фонового сканирования, если эта функция включена в настройках приложения, даже когда приложение закрыто.\n\nRuuvi Station не использует эту информацию для определения вашего местоположения.</string>
     <string name="permission_dialog_title">Включить сканирование Bluetooth</string>
     <string name="permission_location_needed">Разрешите доступ к местоположению чтобы увидеть датчики</string>
     <string name="permission_location_needed_api31">Разрешите доступ к устройствам поблизости, чтобы увидеть датчики.</string>

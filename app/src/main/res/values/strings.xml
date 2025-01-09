@@ -262,7 +262,7 @@
     <string name="export_csv_header_format2_4">Date,Temperature (%1$s),Humidity (%2$s),Pressure (%3$s),RSSI(dBm)</string>
     <string name="export_csv_header_format3">Date,Temperature (%1$s),Humidity (%2$s),Pressure (%3$s),RSSI (dBm),Acceleration X (g),Acceleration Y (g),Acceleration Z (g),Voltage (V)</string>
     <string name="export_csv_header_format5">Date,Temperature (%1$s),Humidity (%2$s),Pressure (%3$s),RSSI (dBm),Acceleration X (g),Acceleration Y (g),Acceleration Z (g),Voltage (V),Movement counter (movements),Measurement sequence number,TX power (dBm)</string>
-    <string name="export_csv_header_formatE0">Date,AQI,Temperature (%1$s),Humidity (%2$s),Pressure (%3$s),Luminosity(lx),db Avg(dBA),db peak(dBA),CO2(ppm),VOC,NOX,PM1.0(µg/m³),PM2.5(µg/m³),PM4.0(µg/m³),PM10.0(µg/m³),RSSI (dBm),Acceleration X (g),Acceleration Y (g),Acceleration Z (g),Voltage (V),Movement counter (movements),Measurement sequence number,TX power (dBm)</string>
+    <string name="export_csv_header_formatE0">Date,AQI,Temperature (%1$s),Humidity (%2$s),Pressure (%3$s),Luminosity(lx),dB Avg(dBA),dB peak(dBA),CO2(ppm),VOC,NOX,PM1.0(µg/m³),PM2.5(µg/m³),PM4.0(µg/m³),PM10.0(µg/m³),RSSI (dBm),Acceleration X (g),Acceleration Y (g),Acceleration Z (g),Voltage (V),Movement counter (movements),Measurement sequence number,TX power (dBm)</string>
     <string name="export_history">Export history (csv)</string>
     <string name="export_history_xlsx">Export history (xlsx)</string>
     <string name="file_not_supported">File type not supported</string>
@@ -440,6 +440,7 @@
     <string name="permission_background_dialog_title">Enable background scanning</string>
     <string name="permission_dialog_background_request_message">In order to scan nearby Bluetooth devices in the background, Android requires background location access to be enabled. \n\nPlease click \'allow all the time\' if you\'d like to use the background scanning feature. \n\nRuuvi doesn\'t track your movements. You\'re safe.</string>
     <string name="permission_dialog_request_message">In order to scan nearby Bluetooth devices, Android requires location access to be enabled. \n\nRuuvi doesn\'t track your movements. You\'re safe.</string>
+    <string name="permission_dialog_request_message_api31">To scan nearby Bluetooth devices, please grant permission to find and connect to nearby devices. This permission is also required for background scanning if enabled in the app settings, even when the app is closed.\n\nRuuvi Station does not use this information to track your location.</string>
     <string name="permission_dialog_title">Enable Bluetooth scanning</string>
     <string name="permission_location_needed">Please enable location permission in settings to see sensors.</string>
     <string name="permission_location_needed_api31">Please allow to show nearby devices in settings to see sensors.</string>
