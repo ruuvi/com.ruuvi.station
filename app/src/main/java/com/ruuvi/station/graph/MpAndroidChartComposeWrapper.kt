@@ -309,13 +309,14 @@ private fun addDataToChart(
     set.setDrawCircles(graphDrawDots)
     set.setDrawValues(false)
     set.setDrawFilled(true)
+    set.maximumGapBetweenPoints = 3_600_000F
+    set.maximumGapBetweenPoints = 3_600_000F
     set.lineWidth = 1f
     set.circleRadius = 1.5f
     set.color = ContextCompat.getColor(context, R.color.chartLineColor)
     set.setCircleColor(ContextCompat.getColor(context, R.color.chartLineColor))
     set.setDrawCircleHole(false)
     set.fillColor = ContextCompat.getColor(context, R.color.chartFillColor)
-
     set.enableDashedHighlightLine(10f, 5f, 0f)
     set.setDrawHighlightIndicators(true)
     set.highLightColor = ContextCompat.getColor(context, R.color.chartLineColor)
