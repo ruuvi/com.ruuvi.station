@@ -692,6 +692,7 @@ fun DashboardItem(
                                         top.linkTo(title.bottom)
                                         start.linkTo(parent.start)
                                     }
+                                    .padding(top = RuuviStationTheme.dimensions.small)
                             )
                             ItemValues(
                                 sensor = sensor,
@@ -714,6 +715,7 @@ fun DashboardItem(
                                             top.linkTo(title.bottom)
                                             start.linkTo(parent.start)
                                         }
+                                        .padding(top = RuuviStationTheme.dimensions.small)
                                 )
                             }
                             ItemValuesWithoutTemperature(
