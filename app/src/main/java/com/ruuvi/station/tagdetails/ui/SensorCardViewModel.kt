@@ -448,7 +448,7 @@ class SensorCardViewModel(
 
     fun setViewPeriod(periodDays: Int) {
         appSettingsInteractor.setGraphViewPeriod(periodDays)
-        _chartViewPeriod.value = getGraphViewPeriod()
+        _chartViewPeriod.value = Period.getInstance(periodDays)
     }
 
     fun exportToCsv(sensorId: String): Uri? = csvExporter.toCsv(sensorId)
