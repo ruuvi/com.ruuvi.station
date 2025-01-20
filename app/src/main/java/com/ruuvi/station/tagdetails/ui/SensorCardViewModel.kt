@@ -95,6 +95,7 @@ class SensorCardViewModel(
                 val history = tagDetailsInteractor.getTagReadings(sensorId)
 
                 if (history.isEmpty()) {
+                    emit(mutableListOf<ChartContainer>())
                     delay(1000)
                     continue
                 }
