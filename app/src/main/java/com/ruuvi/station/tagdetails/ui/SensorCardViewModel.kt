@@ -14,7 +14,6 @@ import com.ruuvi.station.bluetooth.domain.BluetoothGattInteractor
 import com.ruuvi.station.bluetooth.model.SyncProgress
 import com.ruuvi.station.database.domain.AlarmRepository
 import com.ruuvi.station.database.domain.SensorHistoryRepository
-import com.ruuvi.station.database.tables.TagSensorReading
 import com.ruuvi.station.graph.model.ChartContainer
 import com.ruuvi.station.graph.model.ChartSensorType
 import com.ruuvi.station.network.domain.NetworkDataSyncInteractor
@@ -83,10 +82,6 @@ class SensorCardViewModel(
 
     private val _increasedChartSize = MutableStateFlow<Boolean>(preferencesRepository.isIncreasedChartSize())
     val increasedChartSize: StateFlow<Boolean> = _increasedChartSize
-
-    fun getSensorHistory(sensorId: String): List<TagSensorReading> {
-        return tagDetailsInteractor.getTagReadings(sensorId)
-    }
 
     fun historyUpdater(sensorId: String): Flow<MutableList<ChartContainer>> =
         flow<MutableList<ChartContainer>> {

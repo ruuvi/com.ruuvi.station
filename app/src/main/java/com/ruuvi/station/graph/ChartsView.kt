@@ -25,7 +25,6 @@ import com.ruuvi.station.app.ui.components.LoadingAnimation3dots
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.ruuviStationFonts
 import com.ruuvi.station.database.tables.Alarm
-import com.ruuvi.station.database.tables.TagSensorReading
 import com.ruuvi.station.graph.model.ChartContainer
 import com.ruuvi.station.graph.model.ChartSensorType
 import com.ruuvi.station.tag.domain.RuuviTag
@@ -54,14 +53,17 @@ fun ChartsView(
     size: Size,
     increasedChartSize: Boolean,
     historyUpdater: (String) -> Flow<MutableList<ChartContainer>>,
-    getHistory: (String) -> List<TagSensorReading>,
     getActiveAlarms: (String) -> List<Alarm>
 ) {
     Timber.d("ChartView - top ${sensor.id} $selected viewPeriod = ${viewPeriod.value}")
     val context = LocalContext.current
 
-    val chartContainers by remember {
-        mutableStateOf<MutableList<ChartContainer>>(mutableListOf())
+    val chartUIComponents = remember {
+        mutableMapOf<ChartSensorType, LineChart>()
+    }
+
+    var chartContainers by remember {
+        mutableStateOf(listOf<ChartContainer>())
     }
 
     var chartsInitialized by remember { mutableStateOf(false) }
@@ -85,19 +87,14 @@ fun ChartsView(
         historyUpdater(sensor.id).collectLatest { data ->
             Timber.d("ChartView - new data collected ${data.size}")
             for (newContainer in data) {
-                var container =
-                    chartContainers.firstOrNull { it.chartSensorType == newContainer.chartSensorType }
-
-                if (container == null) {
-                    container = ChartContainer(newContainer.chartSensorType, LineChart(context))
-                    chartContainers.add(container)
+                var uiComponent = chartUIComponents.get(newContainer.chartSensorType)
+                if (uiComponent == null) {
+                    uiComponent = LineChart(context)
+                    chartUIComponents.put(newContainer.chartSensorType, uiComponent)
                 }
-
-                container.data = newContainer.data
-                container.to = newContainer.to
-                container.from = newContainer.from
-                container.limits = newContainer.limits
+                newContainer.uiComponent = uiComponent
             }
+            chartContainers = data
 
             if (!chartsInitialized) {
                 Timber.d("ChartView - initial setup ${sensor.id}")

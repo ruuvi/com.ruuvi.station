@@ -124,7 +124,6 @@ class SensorCardActivity : NfcActivity(), KodeinAware {
                         syncInProgress = syncInProcess,
                         setShowCharts = viewModel::setShowCharts,
                         getActiveAlarms = viewModel::getActiveAlarms,
-                        getHistory = viewModel::getSensorHistory,
                         historyUpdater = viewModel::historyUpdater,
                         unitsConverter = unitsConverter,
                         viewPeriod = viewPeriod,
@@ -223,7 +222,6 @@ fun SensorsPager(
     graphDrawDots: Boolean,
     setShowCharts: (Boolean) -> Unit,
     getActiveAlarms: (String) -> List<Alarm>,
-    getHistory: (String) -> List<TagSensorReading>,
     historyUpdater: (String) -> Flow<MutableList<ChartContainer>>,
     unitsConverter: UnitsConverter,
     viewPeriod: Period,
@@ -372,7 +370,6 @@ fun SensorsPager(
                                         Timber.d("ChartsView size $size")
                                     },
                                 sensor = sensor,
-                                getHistory = getHistory,
                                 unitsConverter = unitsConverter,
                                 graphDrawDots = graphDrawDots,
                                 selected = pagerSensor?.id == sensor.id,

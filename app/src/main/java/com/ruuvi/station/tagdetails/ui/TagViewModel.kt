@@ -10,7 +10,6 @@ import com.ruuvi.station.bluetooth.domain.BluetoothGattInteractor
 import com.ruuvi.station.bluetooth.model.SyncProgress
 import com.ruuvi.station.database.domain.SensorHistoryRepository
 import com.ruuvi.station.database.domain.SensorSettingsRepository
-import com.ruuvi.station.database.tables.TagSensorReading
 import com.ruuvi.station.network.domain.NetworkDataSyncInteractor
 import com.ruuvi.station.network.domain.RuuviNetworkInteractor
 import com.ruuvi.station.settings.domain.AppSettingsInteractor
@@ -40,9 +39,6 @@ class TagViewModel(
 ) : ViewModel() {
     private val _tagEntry = MutableLiveData<RuuviTag?>(null)
     val tagEntry: LiveData<RuuviTag?> = _tagEntry
-
-    private val tagReadings = MutableLiveData<List<TagSensorReading>?>(null)
-    val tagReadingsObserve: LiveData<List<TagSensorReading>?> = tagReadings
 
     private val networkSyncInProgress = MutableLiveData<Boolean>(false)
 
@@ -201,20 +197,6 @@ class TagViewModel(
         ioScope.launch {
             Timber.d("getTagInfo $sensorId")
             getTagEntryData(sensorId)
-            if (showGraph && selected) getGraphData(sensorId)
-        }
-    }
-
-    private fun getGraphData(tagId: String) {
-        Timber.d("Get graph data for tagId = $tagId")
-        ioScope.launch {
-            tagDetailsInteractor
-                .getTagReadings(tagId)
-                ?.let {
-                    withContext(Dispatchers.Main) {
-                        tagReadings.value = it
-                    }
-                }
         }
     }
 
