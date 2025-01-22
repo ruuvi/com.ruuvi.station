@@ -310,7 +310,6 @@ private fun addDataToChart(
     set.setDrawValues(false)
     set.setDrawFilled(true)
     set.maximumGapBetweenPoints = 3_600_000F
-    set.maximumGapBetweenPoints = 3_600_000F
     set.lineWidth = 1f
     set.circleRadius = 1.5f
     set.color = ContextCompat.getColor(context, R.color.chartLineColor)
