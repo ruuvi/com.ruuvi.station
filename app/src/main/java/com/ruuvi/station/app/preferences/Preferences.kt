@@ -439,6 +439,12 @@ class Preferences (val context: Context) {
             sharedPreferences.edit().putBoolean(PREF_INCREASED_CHART_SIZE, value).apply()
         }
 
+    var bluetoothPermissionRequested: Boolean
+        get() = sharedPreferences.getBoolean(PREF_BLUETOOTH_PERMISSION_REQUESTED, false)
+        set(value) {
+            sharedPreferences.edit().putBoolean(PREF_BLUETOOTH_PERMISSION_REQUESTED, value).apply()
+        }
+
     fun getUserEmailLiveData() =
         SharedPreferenceStringLiveData(sharedPreferences, PREF_NETWORK_EMAIL, "")
 
@@ -506,6 +512,7 @@ class Preferences (val context: Context) {
         private const val PREF_DISABLE_TELEGRAM_NOTIFICATIONS = "pref_disable_telegram_notifications"
         private const val PREF_BANNER_DISABLED_FOR_VERSION = "pref_banner_disabled_for_version"
         private const val PREF_INCREASED_CHART_SIZE = "pref_increased_chart_size"
+        private const val PREF_BLUETOOTH_PERMISSION_REQUESTED = "pref_bluetooth_permission_requested"
 
         private const val DEFAULT_TEMPERATURE_UNIT = "C"
         private const val DEFAULT_DATA_FORWARDING_URL = ""

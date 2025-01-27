@@ -361,4 +361,11 @@ class PreferencesRepository(
     fun disableBanner() {
         preferences.bannerDisabledForVersion = BuildConfig.VERSION_NAME
     }
+
+    fun isBluetoothPermissionRequested(): Boolean =
+        preferences.bluetoothPermissionRequested
+
+    fun bluetoothPermissionRequested() {
+        preferences.bluetoothPermissionRequested = true
+    }
 }

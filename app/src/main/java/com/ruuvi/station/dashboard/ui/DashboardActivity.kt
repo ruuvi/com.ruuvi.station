@@ -59,6 +59,7 @@ import com.ruuvi.station.alarm.domain.AlarmSensorStatus
 import com.ruuvi.station.alarm.domain.AlarmType
 import com.ruuvi.station.app.permissions.BluetoothPermissions
 import com.ruuvi.station.app.permissions.NotificationPermission
+import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.app.ui.DashboardTopAppBar
 import com.ruuvi.station.app.ui.MainMenu
 import com.ruuvi.station.app.ui.MenuItem
@@ -96,6 +97,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
+import org.kodein.di.generic.instance
 import timber.log.Timber
 
 class DashboardActivity : NfcActivity(), KodeinAware {
@@ -103,6 +105,7 @@ class DashboardActivity : NfcActivity(), KodeinAware {
     override val kodein by closestKodein()
 
     private val dashboardViewModel: DashboardActivityViewModel by viewModel()
+    private val preferencesRepository: PreferencesRepository by instance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -160,7 +163,8 @@ class DashboardActivity : NfcActivity(), KodeinAware {
                     BluetoothPermissions(
                         scaffoldState = scaffoldState,
                         askToEnableBluetooth = dashboardViewModel.shouldAskToEnableBluetooth,
-                        askForBackgroundLocation = dashboardViewModel.shouldAskForBackgroundLocationPermission
+                        askForBackgroundLocation = dashboardViewModel.shouldAskForBackgroundLocationPermission,
+                        preferencesRepository = preferencesRepository
                     )
                 }
 
