@@ -8,6 +8,7 @@ import com.ruuvi.station.bluetooth.domain.LocationInteractor
 import com.ruuvi.station.database.tables.RuuviTagEntity
 import com.ruuvi.station.database.tables.SensorSettings
 import com.ruuvi.station.dataforwarding.data.ScanEvent
+import com.ruuvi.station.dataforwarding.data.ScanLocation
 import com.ruuvi.station.dataforwarding.data.SensorInfo
 import timber.log.Timber
 
@@ -23,7 +24,7 @@ class EventFactory (
     fun createEvent(tagEntity: RuuviTagEntity, sensorSettings: SensorSettings): ScanEvent {
         val deviceId = preferences.getDeviceId()
         val shouldIncludeLocation = preferences.getDataForwardingLocationEnabled()
-        val location = if (shouldIncludeLocation) locationInteractor.getLocation() else null
+        val location = if (shouldIncludeLocation) ScanLocation() else null
         val scanEvent = ScanEvent(deviceId, location, getBatteryLevel())
         scanEvent.tags.add(SensorInfo(tagEntity, sensorSettings))
         return scanEvent
