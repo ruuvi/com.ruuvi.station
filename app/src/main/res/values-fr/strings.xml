@@ -443,7 +443,6 @@
     <string name="owners_plan">Plan Ruuvi du propriétaire</string>
     <string name="permission_background_dialog_title">Activer le balayage en arrière plan</string>
     <string name="permission_dialog_background_request_message">Les appareils Android utilisent votre localisation pour balayer les appareils à proximité. \n\nAutorisez l\'utilisation de votre position pour utiliser le balayage en arrière plan. \n\nRuuvi ne partage jamais votre position, elle reste confidentielle.</string>
-    <string name="permission_dialog_request_message">Les appareils Android utilisent votre localisation pour balayer les appareils à proximité. \n\nRuuvi ne partage jamais votre position, elle reste confidentielle.</string>
     <string name="permission_dialog_request_message_api31">Pour scanner les appareils Bluetooth à proximité, veuillez autoriser l\'application à rechercher et à se connecter aux appareils proches. Cette autorisation est également requise pour la numérisation en arrière-plan si elle est activée dans les paramètres de l\'application, même lorsque l\'application est fermée.\n\nRuuvi Station n\'utilise pas ces informations pour suivre votre position.</string>
     <string name="permission_dialog_title">Activer le balayage Bluetooth</string>
     <string name="permission_location_needed">Autoriser la géolocalisation.</string>

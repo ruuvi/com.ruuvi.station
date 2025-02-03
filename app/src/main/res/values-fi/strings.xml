@@ -438,7 +438,6 @@
     <string name="owners_plan">Omistajan Ruuvi-tilaus</string>
     <string name="permission_background_dialog_title">Ota käyttöön taustaskannaus</string>
     <string name="permission_dialog_background_request_message">Android käyttöjärjestelmä käyttää sijaintitietoja lähellä olevien Bluetooth-laitteiden skannaamiseen. \n\nSalli käyttö, mikäli haluat käyttää taustaskannaus-toiminnallisuutta.\n\nRuuvi ei koskaan jaa käyttäjiensä sijaintitietoja. Käyttö on turvallista.</string>
-    <string name="permission_dialog_request_message">Android käyttöjärjestelmä käyttää sijaintitietoja lähellä olevien Bluetooth-laitteiden skannaamiseen. \n\nRuuvi ei koskaan jaa käyttäjiensä sijaintitietoja. Käyttö on turvallista.</string>
     <string name="permission_dialog_request_message_api31">Anna sovellukselle lupa etsiä ja yhdistää lähellä oleviin laitteisiin, jotta voit skannata lähistöllä olevia Bluetooth-laitteita. Tämä lupa tarvitaan myös taustaskannaukseen, jos se on aktivoitu sovelluksen asetuksissa, vaikka sovellus olisi suljettuna.\n\nRuuvi Station ei käytä näitä tietoja sijaintisi seuraamiseen.</string>
     <string name="permission_dialog_title">Ota Bluetooth-skannaus käyttöön</string>
     <string name="permission_location_needed">Salli sijaintitietojen käyttö ensin asetuksista.</string>

@@ -257,7 +257,6 @@
     <string name="owners_plan">Plan Ruuvi właściciela</string>
     <string name="permission_background_dialog_title">Włącz skanowanie w tle</string>
     <string name="permission_dialog_background_request_message">Android wymaga dostępu do lokalizacji w tle, aby skanować znajdujące się w pobliżu urządzenia Bluetooth. \n\nAby użytkować tę funkcję, należy wybrać „zezwalaj zawsze”. \n\nRuuvi nie śledzi ruchu użytkownika. Zapewniamy prywatność.</string>
-    <string name="permission_dialog_request_message">Android wymaga dostępu do lokalizacji, aby skanować znajdujące się w pobliżu urządzenia Bluetooth. \n\nRuuvi nie śledzi ruchu użytkownika. Zapewniamy prywatność.</string>
     <string name="permission_dialog_request_message_api31">Aby skanować pobliskie urządzenia Bluetooth, należy zezwolić aplikacji na wyszukiwanie i łączenie się z pobliskimi urządzeniami. To uprawnienie jest również wymagane do skanowania w tle, jeśli ta funkcja została włączona w ustawieniach aplikacji, nawet gdy aplikacja jest zamknięta.\n\nRuuvi Station nie wykorzystuje tych informacji do śledzenia Twojej lokalizacji.</string>
     <string name="permission_dialog_title">Włącz skanowanie Bluetooth</string>
     <string name="permission_location_needed">Prosimy włączyć uprawnienia do lokalizacji w ustawieniach, aby wyświetlić czujniki.</string>

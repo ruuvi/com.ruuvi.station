@@ -72,11 +72,18 @@ class PermissionsInteractor(private val activity: Activity) {
             val alertDialog = AlertDialog.Builder(activity, R.style.CustomAlertDialog).create()
             alertDialog.setTitle(activity.getString(R.string.permission_background_dialog_title))
             alertDialog.setMessage(activity.getString(R.string.permission_dialog_background_request_message))
-            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, activity.getString(R.string.ok)
-            ) { dialog, _ -> dialog.dismiss() }
-            alertDialog.setOnDismissListener {
+            alertDialog.setButton(
+                AlertDialog.BUTTON_POSITIVE, activity.getString(R.string.agree)
+            ) { dialog, _ ->
+                dialog.dismiss()
                 ActivityCompat.requestPermissions(activity, arrayOf(ACCESS_BACKGROUND_LOCATION), REQUEST_CODE_PERMISSIONS)
             }
+            alertDialog.setButton(
+                AlertDialog.BUTTON_NEGATIVE, activity.getString(R.string.decline)
+            ) { dialog, _ ->
+                dialog.dismiss()
+            }
+            alertDialog.setOnDismissListener { }
             alertDialog.show()
         }
     }
@@ -99,9 +106,17 @@ class PermissionsInteractor(private val activity: Activity) {
         alertDialog.setTitle(activity.getString(R.string.permission_dialog_title))
         alertDialog.setMessage(activity.getString(getPermissionRequestMessage()))
         alertDialog.setButton(
-            AlertDialog.BUTTON_NEUTRAL, activity.getString(R.string.ok)
-        ) { dialog, _ -> dialog.dismiss() }
-        alertDialog.setOnDismissListener { action.run() }
+            AlertDialog.BUTTON_POSITIVE, activity.getString(R.string.agree)
+        ) { dialog, _ ->
+            dialog.dismiss()
+            action.run()
+        }
+        alertDialog.setButton(
+            AlertDialog.BUTTON_NEGATIVE, activity.getString(R.string.decline)
+        ) { dialog, _ ->
+            dialog.dismiss()
+        }
+        alertDialog.setOnDismissListener { }
         alertDialog.show()
     }
 

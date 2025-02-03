@@ -438,7 +438,6 @@
     <string name="owners_plan">Ägarens Ruuvi-plan</string>
     <string name="permission_background_dialog_title">Aktivera bakgrundsskanning</string>
     <string name="permission_dialog_background_request_message">Android-operativsystemet kräver åtkomst av platsinformation för att skanna Bluetooth-enheter i närheten. \n\nTillåt om du vill använda bakgrundsskanning\n\n Ruuvi delar aldrig din platsinformation. Användningen är säker.</string>
-    <string name="permission_dialog_request_message">Android-operativsystemet kräver åtkomst av platsinformation för att skanna Bluetooth-enheter i närheten. \n\n Ruuvi delar aldrig din platsinformation. Användningen är säker.</string>
     <string name="permission_dialog_request_message_api31">För att söka efter närliggande Bluetooth-enheter, ge tillstånd att hitta och ansluta till närliggande enheter. Detta tillstånd krävs också för bakgrundsskanning om det är aktiverat i appens inställningar, även när appen är stängd.\n\nRuuvi Station använder inte denna information för att spåra din plats.</string>
     <string name="permission_dialog_title">Aktivera bluetooth skanning</string>
     <string name="permission_location_needed">Tillåt åtkomst av platsinfomration för att se sensorer.</string>

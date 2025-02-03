@@ -20,7 +20,7 @@ import androidx.compose.ui.res.stringResource
 import com.google.accompanist.permissions.*
 import com.ruuvi.station.R
 import com.ruuvi.station.app.preferences.PreferencesRepository
-import com.ruuvi.station.app.ui.components.RuuviMessageDialog
+import com.ruuvi.station.app.ui.components.RuuviPermissionDialog
 import com.ruuvi.station.util.extensions.locationEnabled
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -100,13 +100,16 @@ fun LocationBluetoothPermissions(
 
 
     if (showBluetoothPermissionDialog) {
-        RuuviMessageDialog(
+        RuuviPermissionDialog(
             title = stringResource(id = R.string.permission_dialog_title),
-            message = stringResource(id = R.string.permission_dialog_request_message)
-        ) {
-            showBluetoothPermissionDialog = false
-            bluetoothConnectPermissionState.launchMultiplePermissionRequest()
-        }
+            message = stringResource(id = R.string.permission_dialog_request_message),
+            onAccept = {
+                bluetoothConnectPermissionState.launchMultiplePermissionRequest()
+            },
+            onDismissRequest = {
+                showBluetoothPermissionDialog = false
+            }
+        )
     }
 
     LaunchedEffect(key1 = null) {
@@ -207,23 +210,27 @@ fun LocationBluetoothPermissionsAndroid11(
 
 
     if (showBluetoothPermissionDialog) {
-        RuuviMessageDialog(
+        RuuviPermissionDialog (
             title = stringResource(id = R.string.permission_dialog_title),
-            message = stringResource(id = R.string.permission_dialog_request_message)
-        ) {
-            showBluetoothPermissionDialog = false
-            bluetoothConnectPermissionState.launchMultiplePermissionRequest()
-        }
+            message = stringResource(id = R.string.permission_dialog_request_message),
+            onAccept = {
+                bluetoothConnectPermissionState.launchMultiplePermissionRequest() },
+            onDismissRequest = {
+                showBluetoothPermissionDialog = false
+            }
+        )
     }
 
     if (showBackgroundBluetoothPermissionDialog) {
-        RuuviMessageDialog(
+        RuuviPermissionDialog(
             title = stringResource(id = R.string.permission_background_dialog_title),
-            message = stringResource(id = R.string.permission_dialog_background_request_message)
-        ) {
-            showBackgroundBluetoothPermissionDialog = false
-            backgroundBluetoothPermissionState.launchPermissionRequest( )
-        }
+            message = stringResource(id = R.string.permission_dialog_background_request_message),
+            onAccept = {
+                backgroundBluetoothPermissionState.launchPermissionRequest( ) },
+            onDismissRequest = {
+                showBackgroundBluetoothPermissionDialog = false
+            }
+        )
     }
 
     LaunchedEffect(key1 = null) {
@@ -292,13 +299,16 @@ fun NearbyDevicesPermissions(
     }
 
     if (showBluetoothPermissionDialog) {
-        RuuviMessageDialog(
+        RuuviPermissionDialog(
             title = stringResource(id = R.string.permission_dialog_title),
-            message = stringResource(id = R.string.permission_dialog_request_message_api31)
-        ) {
-            showBluetoothPermissionDialog = false
-            bluetoothConnectPermissionState.launchMultiplePermissionRequest()
-        }
+            message = stringResource(id = R.string.permission_dialog_request_message_api31),
+            onAccept = {
+                bluetoothConnectPermissionState.launchMultiplePermissionRequest()
+            },
+            onDismissRequest = {
+                showBluetoothPermissionDialog = false
+            }
+        )
     }
 
     LaunchedEffect(key1 = null) {

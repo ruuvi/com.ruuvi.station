@@ -18,6 +18,7 @@
     <string name="add_tag_title">Ближайшие Сенсоры</string>
     <string name="advertisement">Вещания</string>
     <string name="ago">назад</string>
+    <string name="agree">Согласие</string>
     <string name="alarm_custom_description_title">Описание уведомления</string>
     <string name="alarm_custom_title_hint">Введите описание...</string>
     <string name="alarm_mute_for_hour">Отключить на час</string>
@@ -165,6 +166,7 @@
     <string name="day_8">8 дней</string>
     <string name="day_9">9 дней</string>
     <string name="days">Дней</string>
+    <string name="decline">Отказ</string>
     <string name="decrease_graph_size">Сделать графики меньше</string>
     <string name="details">Подробнее</string>
     <string name="dfu_low_battery_warning">Уровень заряда батареи датчика слишком низкий и обновление прошивки может завершиться неудачей. Мы рекомендуем заменить батарейку перед обновлением.</string>
@@ -298,7 +300,6 @@
     <string name="owner_none">Нет владельца</string>
     <string name="permission_background_dialog_title">Включить сканирование в фоне</string>
     <string name="permission_dialog_background_request_message">Для того чтобы находить Bluetooth-утройства в фоновом режиме, Android требует включить доступ к фоновому местоположению.\n\nПожалуйста разрешите постоянный доспуп к местоположению\n\nRuuvi не отслеживает ваше расположение. Вы в безопасности.</string>
-    <string name="permission_dialog_request_message">Для того чтобы находить Bluetooth-утройства, Android требует включить доступ к местоположению.\n\nRuuvi не отслеживает ваше расположение. Вы в безопасности.</string>
     <string name="permission_dialog_request_message_api31">Для сканирования ближайших Bluetooth-устройств предоставьте разрешение на их обнаружение и подключение. Это разрешение также необходимо для фонового сканирования, если эта функция включена в настройках приложения, даже когда приложение закрыто.\n\nRuuvi Station не использует эту информацию для определения вашего местоположения.</string>
     <string name="permission_dialog_title">Включить сканирование Bluetooth</string>
     <string name="permission_location_needed">Разрешите доступ к местоположению чтобы увидеть датчики</string>
