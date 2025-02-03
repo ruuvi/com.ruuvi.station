@@ -41,8 +41,6 @@ object BluetoothScannerInjectionModule {
 
         bind<FakeScanResultsSender>() with singleton { FakeScanResultsSender(instance()) }
 
-        bind<LocationInteractor>() with singleton { LocationInteractor(instance()) }
-
         bind<ScannerSettings>() with singleton {
             object : ScannerSettings {
                 var context = instance<Context>()
