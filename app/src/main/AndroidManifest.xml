@@ -44,6 +44,7 @@ xmlns:tools="http://schemas.android.com/tools">
     android:localeConfig="@xml/locales_config"
     android:supportsRtl="true"
     android:theme="@style/AppTheme"
+    android:networkSecurityConfig="@xml/network_security_config"
     tools:replace="android:allowBackup">
 
     <activity
