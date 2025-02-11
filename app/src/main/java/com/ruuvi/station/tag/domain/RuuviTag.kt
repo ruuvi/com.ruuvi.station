@@ -37,6 +37,7 @@ data class RuuviTag(
 }
 
 data class SensorMeasurements(
+    val aqi: EnvironmentValue?,
     val temperatureValue: EnvironmentValue?,
     val humidityValue: EnvironmentValue?,
     val pressureValue: EnvironmentValue?,

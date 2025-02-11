@@ -4,6 +4,7 @@ import android.content.Context
 import com.ruuvi.station.R
 import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.units.domain.TemperatureConverter.Companion.fahrenheitMultiplier
+import com.ruuvi.station.units.domain.aqi.AQI
 import com.ruuvi.station.units.model.*
 import com.ruuvi.station.util.extensions.equalsEpsilon
 import com.ruuvi.station.util.extensions.isInteger
@@ -12,6 +13,31 @@ class UnitsConverter (
         private val context: Context,
         private val preferences: PreferencesRepository
 ) {
+
+    // AQI
+    fun getAqiEnviromentValue(
+        value: AQI
+    ): EnvironmentValue {
+        if (value.score != null) {
+            return EnvironmentValue(
+                original = value.score.toDouble(),
+                value = value.score.toDouble(),
+                accuracy = Accuracy.Accuracy0,
+                valueWithUnit = "${value.score}/100 ${context.getString(R.string.air_quality)}",
+                valueWithoutUnit = "${value.score}/100",
+                unitString = context.getString(R.string.air_quality)
+            )
+        } else {
+            return EnvironmentValue(
+                original = 0.toDouble(),
+                value = 0.toDouble(),
+                accuracy = Accuracy.Accuracy0,
+                valueWithUnit = "$NO_VALUE_AVAILABLE/100 ${context.getString(R.string.air_quality)}",
+                valueWithoutUnit = "$NO_VALUE_AVAILABLE/100",
+                unitString = context.getString(R.string.air_quality)
+            )
+        }
+    }
 
     // Temperature
     fun getTemperatureEnvironmentValue(
