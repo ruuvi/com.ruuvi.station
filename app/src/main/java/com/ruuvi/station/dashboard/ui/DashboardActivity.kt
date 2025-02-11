@@ -839,6 +839,7 @@ fun DashboardItemSimple(
 
             ItemValues(
                 sensor = sensor,
+                showAqi = true,
                 modifier = Modifier
                     .padding(vertical = RuuviStationTheme.dimensions.small)
                     .constrainAs(values) {
@@ -937,6 +938,7 @@ fun ItemButtons(
 @Composable
 fun ItemValues(
     sensor: RuuviTag,
+    showAqi:Boolean = false,
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -949,6 +951,15 @@ fun ItemValues(
                 horizontalAlignment = Alignment.Start,
                 verticalArrangement = Arrangement.Bottom,
             ) {
+                sensor.latestMeasurement.aqi?.let {
+                    if (sensor.isAir() && showAqi) {
+                        ValueDisplay(
+                            value = it,
+                            false
+                        )
+                    }
+                }
+
                 sensor.latestMeasurement.temperatureValue?.let {
                     ValueDisplay(
                         value = it,
