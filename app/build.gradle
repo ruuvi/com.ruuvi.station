@@ -13,8 +13,8 @@ android {
         minSdkVersion 23
         targetSdkVersion 34
         compileSdk 34
-        versionCode 212008
-        versionName "2.12.8"
+        versionCode 213016
+        versionName "2.13.16"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
     }
@@ -83,8 +83,8 @@ dependencies {
     // https://mvnrepository.com/artifact/com.opencsv/opencsv
     implementation 'com.opencsv:opencsv:3.10'
 
-    implementation 'com.github.ruuvi:com.ruuvi.bluetooth:1.4.7'
-    implementation 'com.github.ruuvi:com.ruuvi.bluetooth.default:1.5.4'
+    implementation 'com.github.ruuvi:com.ruuvi.bluetooth:1.5.0'
+    implementation 'com.github.ruuvi:com.ruuvi.bluetooth.default:1.6.1'
 //    implementation project(':bluetooth_library')
 //    implementation project(':default_bluetooth_library')
     implementation 'no.nordicsemi.android:dfu:2.4.2'
@@ -128,7 +128,6 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-viewmodel-compose:$lifecycle_version"
     implementation "androidx.lifecycle:lifecycle-runtime-compose:$lifecycle_version"
 
-    implementation 'com.google.android.gms:play-services-location:18.0.0'
     implementation 'com.google.android.play:review-ktx:2.0.1'
 
     implementation 'com.koushikdutta.ion:ion:3.1.0'

@@ -54,6 +54,13 @@ constructor(
             ChartSensorType.RSSI -> unitsConverter.getSignalEnvironmentValue(e.y.toInt()).valueWithUnit
             ChartSensorType.ACCELERATION -> e.y.toDouble().toString()
             ChartSensorType.MOVEMENTS -> e.y.toInt().toString()
+            ChartSensorType.CO2 -> unitsConverter.getValue(e.y.toDouble(), Accuracy.Accuracy0, context.getString(R.string.unit_co2))
+            ChartSensorType.VOC -> unitsConverter.getValue(e.y.toDouble(), Accuracy.Accuracy0, context.getString(R.string.unit_voc))
+            ChartSensorType.NOX -> unitsConverter.getValue(e.y.toDouble(), Accuracy.Accuracy0, context.getString(R.string.unit_nox))
+            ChartSensorType.PM25 -> unitsConverter.getValue(e.y.toDouble(), Accuracy.Accuracy2, context.getString(R.string.unit_pm25))
+            ChartSensorType.LUMINOSITY -> unitsConverter.getValue(e.y.toDouble(), Accuracy.Accuracy0, context.getString(R.string.unit_luminosity))
+            ChartSensorType.SOUND -> unitsConverter.getValue(e.y.toDouble(), Accuracy.Accuracy2, context.getString(R.string.unit_sound))
+            ChartSensorType.AQI -> unitsConverter.getValue(e.y.toDouble(), Accuracy.Accuracy2, context.getString(R.string.aqi))
         }
 
         tvContent.text ="$valueText\n$timeText\n$dateText"

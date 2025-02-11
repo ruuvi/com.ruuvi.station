@@ -76,6 +76,26 @@ data class FavouriteSensorQuery(
     var measurementSequenceNumber: Int = 0,
     @Column
     var connectable: Boolean = false,
+    @Column
+    var pm1: Double? = null,
+    @Column
+    var pm25: Double? = null,
+    @Column
+    var pm4: Double? = null,
+    @Column
+    var pm10: Double? = null,
+    @Column
+    var co2: Int? = null,
+    @Column
+    var voc: Int? = null,
+    @Column
+    var nox: Int? = null,
+    @Column
+    var luminosity: Int? = null,
+    @Column
+    var dBaAvg: Double? = null,
+    @Column
+    var dBaPeak: Double? = null,
 ): BaseQueryModel() {
     companion object {
         val queryFields = arrayOf(
@@ -109,6 +129,16 @@ data class FavouriteSensorQuery(
             RuuviTagEntity_Table.updateAt.withTable(),
             RuuviTagEntity_Table.dataFormat.withTable(),
             RuuviTagEntity_Table.txPower.withTable(),
+            RuuviTagEntity_Table.pm1.withTable(),
+            RuuviTagEntity_Table.pm25.withTable(),
+            RuuviTagEntity_Table.pm4.withTable(),
+            RuuviTagEntity_Table.pm10.withTable(),
+            RuuviTagEntity_Table.co2.withTable(),
+            RuuviTagEntity_Table.voc.withTable(),
+            RuuviTagEntity_Table.nox.withTable(),
+            RuuviTagEntity_Table.luminosity.withTable(),
+            RuuviTagEntity_Table.dBaAvg.withTable(),
+            RuuviTagEntity_Table.dBaPeak.withTable(),
             RuuviTagEntity_Table.movementCounter.withTable(),
             RuuviTagEntity_Table.measurementSequenceNumber.withTable(),
             RuuviTagEntity_Table.connectable.withTable()

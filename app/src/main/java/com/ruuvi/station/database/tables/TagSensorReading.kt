@@ -48,7 +48,27 @@ data class TagSensorReading(
     @Column
     var movementCounter: Int? = null,
     @Column
-    var measurementSequenceNumber: Int? = null
+    var measurementSequenceNumber: Int? = null,
+    @Column
+    var pm1: Double? = null,
+    @Column
+    var pm25: Double? = null,
+    @Column
+    var pm4: Double? = null,
+    @Column
+    var pm10: Double? = null,
+    @Column
+    var co2: Int? = null,
+    @Column
+    var voc: Int? = null,
+    @Column
+    var nox: Int? = null,
+    @Column
+    var luminosity: Int? = null,
+    @Column
+    var dBaAvg: Double? = null,
+    @Column
+    var dBaPeak: Double? = null,
 ): BaseModel() {
     constructor(tag: RuuviTagEntity): this(
         ruuviTagId = tag.id!!,
@@ -65,6 +85,16 @@ data class TagSensorReading(
         voltage = tag.voltage,
         dataFormat = tag.dataFormat,
         txPower = tag.txPower,
+        pm1 = tag.pm1,
+        pm25 = tag.pm25,
+        pm4 = tag.pm4,
+        pm10 = tag.pm10,
+        co2 = tag.co2,
+        voc = tag.voc,
+        nox = tag.nox,
+        luminosity = tag.luminosity,
+        dBaAvg = tag.dBaAvg,
+        dBaPeak = tag.dBaPeak,
         movementCounter = tag.movementCounter,
         measurementSequenceNumber = tag.measurementSequenceNumber,
         createdAt = Date()
@@ -82,6 +112,16 @@ data class TagSensorReading(
         voltage = tag.voltage,
         dataFormat = tag.dataFormat ?: 0,
         txPower = tag.txPower,
+        pm1 = tag.pm1,
+        pm25 = tag.pm25,
+        pm4 = tag.pm4,
+        pm10 = tag.pm10,
+        co2 = tag.co2,
+        voc = tag.voc,
+        nox = tag.nox,
+        luminosity = tag.luminosity,
+        dBaAvg = tag.dBaAvg,
+        dBaPeak = tag.dBaPeak,
         movementCounter = tag.movementCounter,
         measurementSequenceNumber = tag.measurementSequenceNumber,
         createdAt = timestamp

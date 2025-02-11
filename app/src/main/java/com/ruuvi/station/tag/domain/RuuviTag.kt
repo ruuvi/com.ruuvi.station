@@ -48,6 +48,16 @@ data class SensorMeasurements(
     val accelerationZ: Double?,
     val measurementSequenceNumber: Int,
     val txPower: Double,
+    var pm1: EnvironmentValue?,
+    var pm25: EnvironmentValue?,
+    var pm4: EnvironmentValue?,
+    var pm10: EnvironmentValue?,
+    var co2: EnvironmentValue?,
+    var voc: EnvironmentValue?,
+    var nox: EnvironmentValue?,
+    var luminosity: EnvironmentValue?,
+    var dBaAvg: EnvironmentValue?,
+    var dBaPeak: EnvironmentValue?,
     val connectable: Boolean?,
     val dataFormat: Int,
     val updatedAt: Date,
@@ -71,6 +81,9 @@ fun RuuviTag.isLowBattery(): Boolean {
 fun RuuviTag.canUseCloudAlerts(): Boolean {
     return !this.subscriptionName.isNullOrEmpty() && this.subscriptionName != "Free" && this.subscriptionName != "Basic"
 }
+
+fun RuuviTag.isAir(): Boolean =
+    this.latestMeasurement?.dataFormat == 0xE0 || this.latestMeasurement?.dataFormat == 0xF0
 
 sealed class UpdateSource() {
     abstract fun getDescriptionResource(): Int

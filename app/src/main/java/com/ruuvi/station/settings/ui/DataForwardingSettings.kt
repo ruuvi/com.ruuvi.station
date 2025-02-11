@@ -48,13 +48,13 @@ fun DataForwardingSettings(
                 modifier = Modifier.fillMaxWidth()
             )
 
-            Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
-
-            SwitchIndicatorRuuvi(
-                text = stringResource(id = R.string.data_forwarding_location_enable),
-                checked = locationEnabled.value,
-                onCheckedChange = viewModel::setDataForwardingLocationEnabled
-            )
+//            Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
+//
+//            SwitchIndicatorRuuvi(
+//                text = stringResource(id = R.string.data_forwarding_location_enable),
+//                checked = locationEnabled.value,
+//                onCheckedChange = viewModel::setDataForwardingLocationEnabled
+//            )
 
             Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.medium))
 

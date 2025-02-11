@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.booleanResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextAlign
@@ -99,7 +100,7 @@ class OnboardingActivity : AppCompatActivity(), KodeinAware {
     }
 }
 
-@OptIn(ExperimentalPagerApi::class, ExperimentalGlideComposeApi::class)
+@OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun OnboardingBody(
     firstStart: Boolean,
@@ -208,17 +209,16 @@ fun OnboardingText(text: AnnotatedString) {
     )
 }
 
-@OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun Screenshot(imageRes: Int) {
     val isTablet = booleanResource(id = R.bool.isTablet)
-    val imageSizeFraction = if (isTablet) 0.5f else 0.8f
+    val imageSizeFraction = 0.8f
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .navigationBarsPadding(),
-        verticalArrangement = Arrangement.Center,
+        verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Card(
@@ -230,8 +230,8 @@ fun Screenshot(imageRes: Int) {
             backgroundColor = Color.Transparent,
             border = BorderStroke(1.dp, Color.Black)
         ) {
-            GlideImage(
-                model = rememberResourceUri(resourceId = imageRes),
+            Image(
+                painter = painterResource(id = imageRes),
                 contentDescription = "",
                 alignment = Alignment.TopCenter,
                 contentScale = ContentScale.FillWidth
@@ -240,7 +240,6 @@ fun Screenshot(imageRes: Int) {
     }
 }
 
-@OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun MeasureYourWorldPage() {
     Column(
@@ -379,7 +378,6 @@ fun SharingPage() {
     }
 }
 
-@OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun WidgetsPage() {
     val isTablet = booleanResource(id = R.bool.isTablet)

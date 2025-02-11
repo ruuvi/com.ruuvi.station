@@ -116,12 +116,13 @@ class SensorHistoryRepository {
             val minDate = readings.minOf { it.createdAt }
             val existingHistory = getHistory(sensorId, minDate)
 
-            val insertQuery = "insert into TagSensorReading (`ruuviTagId`, `createdAt`, `temperature`, `humidity`, `pressure`, `rssi`, `accelX`, `accelY`, `accelZ`, `voltage`, `dataFormat`, `txPower`, `movementCounter`, `measurementSequenceNumber`, `humidityOffset`, 'temperatureOffset', 'pressureOffset') values "
+            //todo rewrite to automatically list all fields
+            val insertQuery = "insert into TagSensorReading (`ruuviTagId`, `createdAt`, `temperature`, `humidity`, `pressure`, `rssi`, `accelX`, `accelY`, `accelZ`, `voltage`, `dataFormat`, `txPower`, `movementCounter`, `measurementSequenceNumber`, `humidityOffset`, 'temperatureOffset', 'pressureOffset', 'pm1', 'pm25', 'pm4', 'pm10', 'co2', 'voc', 'nox', 'luminosity', 'dBaAvg', 'dBaPeak') values "
             val queries: MutableList<String> = ArrayList()
             for (reading in readings) {
                 if (existingHistory.none { abs(reading.createdAt.time - it.createdAt.time) < TIMELINE_DISTANCE}) {
                     with(reading) {
-                        queries.add("(\"${ruuviTagId}\", ${createdAt.time}, $temperature, $humidity, $pressure, $rssi, $accelX, $accelY, $accelZ, $voltage, $dataFormat, $txPower, $movementCounter, $measurementSequenceNumber, $humidityOffset, $temperatureOffset, $pressureOffset),")
+                        queries.add("(\"${ruuviTagId}\", ${createdAt.time}, $temperature, $humidity, $pressure, $rssi, $accelX, $accelY, $accelZ, $voltage, $dataFormat, $txPower, $movementCounter, $measurementSequenceNumber, $humidityOffset, $temperatureOffset, $pressureOffset, $pm1, $pm25, $pm4, $pm10, $co2, $voc, $nox, $luminosity, $dBaAvg, $dBaPeak),")
                     }
                 }
             }

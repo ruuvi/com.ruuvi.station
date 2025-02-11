@@ -53,7 +53,27 @@ data class RuuviTagEntity(
     @Column
     var measurementSequenceNumber: Int = 0,
     @Column
-    var connectable: Boolean = false
+    var connectable: Boolean = false,
+    @Column
+    var pm1: Double? = null,
+    @Column
+    var pm25: Double? = null,
+    @Column
+    var pm4: Double? = null,
+    @Column
+    var pm10: Double? = null,
+    @Column
+    var co2: Int? = null,
+    @Column
+    var voc: Int? = null,
+    @Column
+    var nox: Int? = null,
+    @Column
+    var luminosity: Int? = null,
+    @Column
+    var dBaAvg: Double? = null,
+    @Column
+    var dBaPeak: Double? = null,
 ): BaseModel() {
 
     constructor(tag: FoundRuuviTag) :this(
@@ -70,7 +90,17 @@ data class RuuviTagEntity(
         txPower = tag.txPower ?: 0.0,
         movementCounter = tag.movementCounter,
         measurementSequenceNumber = tag.measurementSequenceNumber ?: 0,
-        connectable = tag.connectable ?: false
+        connectable = tag.connectable ?: false,
+        pm1 = tag.pm1,
+        pm25 = tag.pm25,
+        pm4 = tag.pm4,
+        pm10 = tag.pm10,
+        co2 = tag.co2,
+        voc = tag.voc,
+        nox = tag.nox,
+        luminosity = tag.luminosity,
+        dBaAvg = tag.dBaAvg,
+        dBaPeak = tag.dBaPeak,
     )
 
     constructor(reading: TagSensorReading):this(
@@ -85,12 +115,22 @@ data class RuuviTagEntity(
         voltage = reading.voltage ?: 0.0,
         dataFormat = reading.dataFormat,
         txPower = reading.txPower ?: 0.0,
+        pm1 = reading.pm1,
+        pm25 = reading.pm25,
+        pm4 = reading.pm4,
+        pm10 = reading.pm10,
+        co2 = reading.co2,
+        voc = reading.voc,
+        nox = reading.nox,
+        luminosity = reading.luminosity,
+        dBaAvg = reading.dBaAvg,
+        dBaPeak = reading.dBaPeak,
         movementCounter = reading.movementCounter,
         measurementSequenceNumber = reading.measurementSequenceNumber ?: 0,
         temperatureOffset = reading.temperatureOffset,
         humidityOffset = reading.humidityOffset,
         pressureOffset = reading.pressureOffset,
-        updateAt = reading.createdAt
+        updateAt = reading.createdAt,
     )
 
     fun displayName(): String = id?.let { MacAddressUtils.getDefaultName(it) } ?: ""
@@ -117,6 +157,16 @@ data class RuuviTagEntity(
         temperatureOffset = reading.temperatureOffset
         humidityOffset = reading.humidityOffset
         pressureOffset = reading.pressureOffset
+        pm1 = reading.pm1
+        pm25 = reading.pm25
+        pm4 = reading.pm4
+        pm10 = reading.pm10
+        co2 = reading.co2
+        voc = reading.voc
+        nox = reading.nox
+        luminosity = reading.luminosity
+        dBaAvg = reading.dBaAvg
+        dBaPeak = reading.dBaPeak
     }
 
     companion object {
@@ -137,6 +187,16 @@ data class RuuviTagEntity(
             RuuviTagEntity_Table.updateAt.withTable(),
             RuuviTagEntity_Table.dataFormat.withTable(),
             RuuviTagEntity_Table.txPower.withTable(),
+            RuuviTagEntity_Table.pm1.withTable(),
+            RuuviTagEntity_Table.pm25.withTable(),
+            RuuviTagEntity_Table.pm4.withTable(),
+            RuuviTagEntity_Table.pm10.withTable(),
+            RuuviTagEntity_Table.co2.withTable(),
+            RuuviTagEntity_Table.voc.withTable(),
+            RuuviTagEntity_Table.nox.withTable(),
+            RuuviTagEntity_Table.luminosity.withTable(),
+            RuuviTagEntity_Table.dBaAvg.withTable(),
+            RuuviTagEntity_Table.dBaPeak.withTable(),
             RuuviTagEntity_Table.movementCounter.withTable(),
             RuuviTagEntity_Table.measurementSequenceNumber.withTable(),
             RuuviTagEntity_Table.connectable.withTable()

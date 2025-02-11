@@ -56,6 +56,7 @@ class PermissionsInteractor(private val activity: Activity) {
 
     fun requestPermissions(needBackground: Boolean, askForBluetooth: Boolean) {
         val neededPermissions = getRequiredPermissions()
+        Timber.d("requestPermissions ${neededPermissions.joinToString(separator = ",") { it }}")
         if (neededPermissions.isNotEmpty()) {
             showLocationPermissionDialog {
                 shouldShowLocationDialog = false
@@ -71,11 +72,18 @@ class PermissionsInteractor(private val activity: Activity) {
             val alertDialog = AlertDialog.Builder(activity, R.style.CustomAlertDialog).create()
             alertDialog.setTitle(activity.getString(R.string.permission_background_dialog_title))
             alertDialog.setMessage(activity.getString(R.string.permission_dialog_background_request_message))
-            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, activity.getString(R.string.ok)
-            ) { dialog, _ -> dialog.dismiss() }
-            alertDialog.setOnDismissListener {
+            alertDialog.setButton(
+                AlertDialog.BUTTON_POSITIVE, activity.getString(R.string.agree)
+            ) { dialog, _ ->
+                dialog.dismiss()
                 ActivityCompat.requestPermissions(activity, arrayOf(ACCESS_BACKGROUND_LOCATION), REQUEST_CODE_PERMISSIONS)
             }
+            alertDialog.setButton(
+                AlertDialog.BUTTON_NEGATIVE, activity.getString(R.string.decline)
+            ) { dialog, _ ->
+                dialog.dismiss()
+            }
+            alertDialog.setOnDismissListener { }
             alertDialog.show()
         }
     }
@@ -94,18 +102,22 @@ class PermissionsInteractor(private val activity: Activity) {
     }
 
     private fun showLocationPermissionDialog(action: Runnable) {
-        if (isApi31Behaviour) {
+        val alertDialog = AlertDialog.Builder(activity, R.style.CustomAlertDialog).create()
+        alertDialog.setTitle(activity.getString(R.string.permission_dialog_title))
+        alertDialog.setMessage(activity.getString(getPermissionRequestMessage()))
+        alertDialog.setButton(
+            AlertDialog.BUTTON_POSITIVE, activity.getString(R.string.agree)
+        ) { dialog, _ ->
+            dialog.dismiss()
             action.run()
-        } else {
-            val alertDialog = AlertDialog.Builder(activity, R.style.CustomAlertDialog).create()
-            alertDialog.setTitle(activity.getString(R.string.permission_dialog_title))
-            alertDialog.setMessage(activity.getString(R.string.permission_dialog_request_message))
-            alertDialog.setButton(
-                AlertDialog.BUTTON_NEUTRAL, activity.getString(R.string.ok)
-            ) { dialog, _ -> dialog.dismiss() }
-            alertDialog.setOnDismissListener { action.run() }
-            alertDialog.show()
         }
+        alertDialog.setButton(
+            AlertDialog.BUTTON_NEGATIVE, activity.getString(R.string.decline)
+        ) { dialog, _ ->
+            dialog.dismiss()
+        }
+        alertDialog.setOnDismissListener { }
+        alertDialog.show()
     }
 
     private fun backgroundLocationNeeded() = Build.VERSION.SDK_INT == Build.VERSION_CODES.R
@@ -188,6 +200,14 @@ class PermissionsInteractor(private val activity: Activity) {
                 R.string.permission_location_needed
             } else {
                 R.string.permission_location_needed_api31
+            }
+        }
+
+        fun getPermissionRequestMessage(): Int {
+            return if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.R) {
+                R.string.permission_dialog_request_message
+            } else {
+                R.string.permission_dialog_request_message_api31
             }
         }
     }
