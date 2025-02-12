@@ -2,6 +2,7 @@ package com.ruuvi.station.tag.domain
 
 import com.ruuvi.station.R
 import com.ruuvi.station.alarm.domain.AlarmSensorStatus
+import com.ruuvi.station.units.domain.aqi.AQI
 import com.ruuvi.station.units.model.EnvironmentValue
 import com.ruuvi.station.util.MacAddressUtils
 import java.util.Date
@@ -61,8 +62,10 @@ data class SensorMeasurements(
     var dBaPeak: EnvironmentValue?,
     val connectable: Boolean?,
     val dataFormat: Int,
-    val updatedAt: Date,
-)
+    val updatedAt: Date
+) {
+    val aqiScore: AQI = AQI.getAQI(this)
+}
 
 fun SensorMeasurements.isLowBattery(): Boolean {
     val voltage = voltageValue.value

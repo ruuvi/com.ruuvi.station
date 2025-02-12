@@ -1338,16 +1338,10 @@ fun AQIDisplay(
                 )
             }
         }
-        val progressColor = when (value) {
-            is AQI.RedAQI -> Color.Red
-            is AQI.GreenAQI -> Color.Green
-            is AQI.YellowAQI -> Color.Yellow
-            else -> Color.Gray
-        }
         LinearProgressIndicator(
             modifier = Modifier.width(110.dp),
             progress = (value.score ?: 0) / 100F,
-            color = progressColor
+            color = value.color
         )
     }
 }

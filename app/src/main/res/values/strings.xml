@@ -88,6 +88,12 @@
     <string name="app_theme">App theme</string>
     <string name="appearance_settings_description">%1$s %2$s</string>
     <string name="aqi">AQI</string>
+    <string name="aqi_level_0">Undefined</string>
+    <string name="aqi_level_1">Unhealthy</string>
+    <string name="aqi_level_2">Poor</string>
+    <string name="aqi_level_3">Moderate</string>
+    <string name="aqi_level_4">Good</string>
+    <string name="aqi_level_5">Excellent</string>
     <string name="back">Back</string>
     <string name="background_image">Background image</string>
     <string name="background_interval">every %1$s min</string>
@@ -95,6 +101,7 @@
     <string name="background_notification_message">You can disable background scanning in settings</string>
     <string name="background_notification_scanning_every">Scanning every</string>
     <string name="background_scanning">Background scanning (Bluetooth)</string>
+    <string name="battery">Battery</string>
     <string name="battery_ok">Battery OK</string>
     <string name="battery_voltage">Battery voltage</string>
     <string name="benefits_sign_in">Read more about Ruuvi account benefits or sign in later</string>
@@ -337,6 +344,7 @@
     <string name="latest_available_fw">Latest available Ruuvi firmware version:</string>
     <string name="latest_measured_value">Latest measured value: %1$s</string>
     <string name="lets_do_it">Let\'s Sign In</string>
+    <string name="light">Light</string>
     <string name="light_theme">Light theme</string>
     <string name="logged_in">Signed in:</string>
     <string name="login_description">To enjoy all the features, create a free account or sign in to your existing Ruuvi account by entering your email address.</string>
@@ -609,6 +617,7 @@
     <string name="simple_view">Simple view</string>
     <string name="skip">SKIP</string>
     <string name="something_went_wrong">Something went wrong</string>
+    <string name="sound">Sound</string>
     <string name="sound_avg">Sound level (average)</string>
     <string name="sound_peak">Sound level (peak)</string>
     <string name="sound_with_unit">Sound (%1$s)</string>
