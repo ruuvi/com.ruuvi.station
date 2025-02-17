@@ -708,9 +708,9 @@ fun DashboardItem(
                                 }
                         )
                     } else {
-                        if (sensor.latestMeasurement.temperatureValue != null) {
+                        if (sensor.latestMeasurement.temperature != null) {
                             BigValueDisplay(
-                                value = sensor.latestMeasurement.temperatureValue,
+                                value = sensor.latestMeasurement.temperature,
                                 alertTriggered = sensor.alarmSensorStatus.triggered(AlarmType.TEMPERATURE),
                                 modifier = Modifier
                                     .constrainAs(bigTemperature) {
@@ -960,13 +960,13 @@ fun ItemValues(
                     }
                 }
 
-                sensor.latestMeasurement.temperatureValue?.let {
+                sensor.latestMeasurement.temperature?.let {
                     ValueDisplay(
                         value = it,
                         sensor.alarmSensorStatus.triggered(AlarmType.TEMPERATURE)
                     )
                 }
-                sensor.latestMeasurement.humidityValue?.let {
+                sensor.latestMeasurement.humidity?.let {
                     ValueDisplay(
                         value = it,
                         sensor.alarmSensorStatus.triggered(AlarmType.HUMIDITY)
@@ -991,14 +991,14 @@ fun ItemValues(
                 horizontalAlignment = Alignment.Start,
                 verticalArrangement = Arrangement.Bottom,
             ) {
-                sensor.latestMeasurement.pressureValue?.let {
+                sensor.latestMeasurement.pressure?.let {
                     ValueDisplay(
                         value = it,
                         sensor.alarmSensorStatus.triggered(AlarmType.PRESSURE)
                     )
                 }
 
-                sensor.latestMeasurement.movementValue?.let {
+                sensor.latestMeasurement.movement?.let {
                     ValueDisplay(
                         value = it,
                         sensor.alarmSensorStatus.triggered(AlarmType.MOVEMENT)
@@ -1049,13 +1049,13 @@ fun ItemValuesWithoutTemperature(
                 horizontalAlignment = Alignment.Start,
                 verticalArrangement = Arrangement.Top,
             ) {
-                sensor.latestMeasurement.humidityValue?.let {
+                sensor.latestMeasurement.humidity?.let {
                     ValueDisplay(
                         value = it,
                         sensor.alarmSensorStatus.triggered(AlarmType.HUMIDITY)
                     )
                 }
-                sensor.latestMeasurement.movementValue?.let {
+                sensor.latestMeasurement.movement?.let {
                     ValueDisplay(
                         value = it,
                         sensor.alarmSensorStatus.triggered(AlarmType.MOVEMENT)
@@ -1080,7 +1080,7 @@ fun ItemValuesWithoutTemperature(
                 horizontalAlignment = Alignment.Start,
                 verticalArrangement = Arrangement.Top,
             ) {
-                sensor.latestMeasurement.pressureValue?.let {
+                sensor.latestMeasurement.pressure?.let {
                     ValueDisplay(
                         value = it,
                         sensor.alarmSensorStatus.triggered(AlarmType.PRESSURE)

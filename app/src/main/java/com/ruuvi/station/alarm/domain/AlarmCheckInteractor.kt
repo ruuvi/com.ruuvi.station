@@ -195,33 +195,33 @@ class AlarmCheckInteractor(
         private fun compareWithAlarmRange() {
             when (alarm.type) {
                 Alarm.TEMPERATURE ->
-                    if (ruuviTag.latestMeasurement?.temperatureValue != null) {
+                    if (ruuviTag.latestMeasurement?.temperature != null) {
                         compareValues(
-                            ruuviTag.latestMeasurement.temperatureValue,
+                            ruuviTag.latestMeasurement.temperature,
                             R.string.alert_notification_temperature_low_threshold to
                                 R.string.alert_notification_temperature_high_threshold
                         )
                     }
                 Alarm.HUMIDITY ->
-                    if (ruuviTag.latestMeasurement?.humidityValue != null) {
+                    if (ruuviTag.latestMeasurement?.humidity != null) {
                         compareValues(
-                            ruuviTag.latestMeasurement.humidityValue,
+                            ruuviTag.latestMeasurement.humidity,
                             R.string.alert_notification_humidity_low_threshold to
                                 R.string.alert_notification_humidity_high_threshold
                         )
                     }
                 Alarm.PRESSURE ->
-                    if (ruuviTag.latestMeasurement?.pressureValue != null) {
+                    if (ruuviTag.latestMeasurement?.pressure != null) {
                         compareValues(
-                            ruuviTag.latestMeasurement.pressureValue,
+                            ruuviTag.latestMeasurement.pressure,
                             R.string.alert_notification_pressure_low_threshold to
                                 R.string.alert_notification_pressure_high_threshold
                         )
                     }
                 Alarm.RSSI ->
-                    if (ruuviTag.latestMeasurement?.rssiValue != null) {
+                    if (ruuviTag.latestMeasurement?.rssi != null) {
                         compareValues(
-                            ruuviTag.latestMeasurement.rssiValue,
+                            ruuviTag.latestMeasurement.rssi,
                             R.string.alert_notification_rssi_low_threshold to
                                     R.string.alert_notification_rssi_high_threshold
                         )

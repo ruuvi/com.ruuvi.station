@@ -40,21 +40,21 @@ class TagConverter(
                     nox = entity.nox,
                     voc = entity.voc)
                 ),
-                temperatureValue = temperature?.let { unitsConverter.getTemperatureEnvironmentValue(it) },
-                pressureValue = pressure?.let { unitsConverter.getPressureEnvironmentValue(it) },
-                humidityValue = humidity?.let {
+                temperature = temperature?.let { unitsConverter.getTemperatureEnvironmentValue(it) },
+                pressure = pressure?.let { unitsConverter.getPressureEnvironmentValue(it) },
+                humidity = humidity?.let {
                     unitsConverter.getHumidityEnvironmentValue(
                         it,
                         temperature
                     )
                 },
-                movementValue = entity.movementCounter?.let {
+                movement = entity.movementCounter?.let {
                     movementConverter.getMovementEnvironmentValue(
                         it
                     )
                 },
-                rssiValue = unitsConverter.getSignalEnvironmentValue(entity.rssi),
-                voltageValue = unitsConverter.getVoltageEnvironmentValue(entity.voltage),
+                rssi = unitsConverter.getSignalEnvironmentValue(entity.rssi),
+                voltage = unitsConverter.getVoltageEnvironmentValue(entity.voltage),
                 accelerationX = entity.accelX,
                 accelerationY = entity.accelY,
                 accelerationZ = entity.accelZ,
@@ -106,20 +106,20 @@ class TagConverter(
                         nox = entity.nox,
                         voc = entity.voc)
                     ),
-                    temperatureValue = temperature?.let {
+                    temperature = temperature?.let {
                         unitsConverter.getTemperatureEnvironmentValue(it)
                     },
-                    pressureValue = pressure?.let {
+                    pressure = pressure?.let {
                         unitsConverter.getPressureEnvironmentValue(it)
                     },
-                    humidityValue = humidity?.let {
+                    humidity = humidity?.let {
                         unitsConverter.getHumidityEnvironmentValue(it, temperature)
                     },
-                    movementValue = entity.movementCounter?.let {
+                    movement = entity.movementCounter?.let {
                         movementConverter.getMovementEnvironmentValue(it)
                     },
-                    voltageValue = unitsConverter.getVoltageEnvironmentValue(entity.voltage),
-                    rssiValue = unitsConverter.getSignalEnvironmentValue(entity.rssi),
+                    voltage = unitsConverter.getVoltageEnvironmentValue(entity.voltage),
+                    rssi = unitsConverter.getSignalEnvironmentValue(entity.rssi),
                     accelerationX = entity.accelX,
                     accelerationY = entity.accelY,
                     accelerationZ = entity.accelZ,

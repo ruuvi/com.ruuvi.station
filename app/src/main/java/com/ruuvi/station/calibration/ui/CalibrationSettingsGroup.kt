@@ -33,7 +33,7 @@ fun CalibrationSettingsGroup(
         },
         backgroundColor = RuuviStationTheme.colors.settingsTitle
     ) {
-        if (sensorState.latestMeasurement?.temperatureValue != null) {
+        if (sensorState.latestMeasurement?.temperature != null) {
             CalibrationItem(
                 title = stringResource(id = R.string.temperature),
                 value = getTemperatureOffsetString(sensorState.temperatureOffset ?: 0.0)
@@ -41,7 +41,7 @@ fun CalibrationSettingsGroup(
                 CalibrationActivity.start(context, sensorState.id, CalibrationType.TEMPERATURE)
             }
         }
-        if (sensorState.latestMeasurement?.humidityValue != null) {
+        if (sensorState.latestMeasurement?.humidity != null) {
             DividerRuuvi()
             CalibrationItem(
                 title = stringResource(id = R.string.humidity),
@@ -50,7 +50,7 @@ fun CalibrationSettingsGroup(
                 CalibrationActivity.start(context, sensorState.id, CalibrationType.HUMIDITY)
             }
         }
-        if (sensorState.latestMeasurement?.pressureValue != null) {
+        if (sensorState.latestMeasurement?.pressure != null) {
             DividerRuuvi()
             CalibrationItem(
                 title = stringResource(id = R.string.pressure),

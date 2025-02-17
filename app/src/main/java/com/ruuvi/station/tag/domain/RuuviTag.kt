@@ -39,12 +39,12 @@ data class RuuviTag(
 
 data class SensorMeasurements(
     val aqi: EnvironmentValue?,
-    val temperatureValue: EnvironmentValue?,
-    val humidityValue: EnvironmentValue?,
-    val pressureValue: EnvironmentValue?,
-    val movementValue: EnvironmentValue?,
-    val voltageValue: EnvironmentValue,
-    val rssiValue: EnvironmentValue,
+    val temperature: EnvironmentValue?,
+    val humidity: EnvironmentValue?,
+    val pressure: EnvironmentValue?,
+    val movement: EnvironmentValue?,
+    val voltage: EnvironmentValue,
+    val rssi: EnvironmentValue,
     val accelerationX: Double?,
     val accelerationY: Double?,
     val accelerationZ: Double?,
@@ -68,8 +68,8 @@ data class SensorMeasurements(
 }
 
 fun SensorMeasurements.isLowBattery(): Boolean {
-    val voltage = voltageValue.value
-    val temperature = temperatureValue?.value ?: return voltage < 2.5
+    val voltage = voltage.value
+    val temperature = temperature?.value ?: return voltage < 2.5
     return when {
         temperature <= -20 && voltage < 2 && voltage > 0 -> true
         temperature > -20 && temperature < 0 && voltage < 2.3 && voltage > 0 -> true

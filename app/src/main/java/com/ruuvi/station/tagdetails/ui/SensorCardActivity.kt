@@ -339,7 +339,7 @@ fun SensorsPager(
                         verticalArrangement = Arrangement.Top
                     ) {
                         if (showCharts) {
-                            val hideIncreaseChartSize = sensor.latestMeasurement?.humidityValue == null || sensor.latestMeasurement.pressureValue == null
+                            val hideIncreaseChartSize = sensor.latestMeasurement?.humidity == null || sensor.latestMeasurement.pressure == null
                             ChartControlElement2(
                                 sensorId = sensor.id,
                                 showChartStats = showChartStats,
@@ -534,7 +534,7 @@ fun SensorCard(
     ) {
         val (temperatureValue, temperatureUnit, otherValues, lowBattery, aqi) = createRefs()
 
-        if (sensor.latestMeasurement?.temperatureValue != null) {
+        if (sensor.latestMeasurement?.temperature != null) {
             if (sensor.isAir()) {
 
                 Column(
@@ -575,7 +575,7 @@ fun SensorCard(
                         .padding(top = 48.dp),
                     fontSize = 72.sp,
                     fontFamily = ruuviStationFonts.oswaldBold,
-                    text = sensor.latestMeasurement.temperatureValue.valueWithoutUnit,
+                    text = sensor.latestMeasurement.temperature.valueWithoutUnit,
                     lineHeight = 10.sp,
                     color = Color.White
                 )
@@ -592,7 +592,7 @@ fun SensorCard(
                         ),
                     fontSize = 36.sp,
                     fontFamily = ruuviStationFonts.oswaldRegular,
-                    text = sensor.latestMeasurement.temperatureValue.unitString,
+                    text = sensor.latestMeasurement.temperature.unitString,
                     color = Color.White
                 )
             }
@@ -638,12 +638,12 @@ fun SensorValues(
                 verticalArrangement = Arrangement.Bottom,
                 horizontalAlignment = Alignment.Start
             ) {
-                sensor.latestMeasurement?.temperatureValue?.let {
+                sensor.latestMeasurement?.temperature?.let {
                     SensorValueItem(R.drawable.icon_measure_small_temp, it.valueWithoutUnit, it.unitString, stringResource(R.string.temperature))
                     Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
                 }
 
-                sensor.latestMeasurement?.pressureValue?.let {
+                sensor.latestMeasurement?.pressure?.let {
                     SensorValueItem(R.drawable.icon_measure_pressure, it.valueWithoutUnit, it.unitString, stringResource(R.string.pressure))
                     Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
                 }
@@ -653,7 +653,7 @@ fun SensorValues(
                     Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
                 }
 
-                sensor.latestMeasurement?.voltageValue?.let {
+                sensor.latestMeasurement?.voltage?.let {
                     SensorValueItem(R.drawable.icon_measure_small_temp, it.valueWithoutUnit, it.unitString, stringResource(R.string.battery))
                     Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
                 }
@@ -666,7 +666,7 @@ fun SensorValues(
                 verticalArrangement = Arrangement.Bottom,
                 horizontalAlignment = Alignment.Start
             ) {
-                sensor.latestMeasurement?.humidityValue?.let {
+                sensor.latestMeasurement?.humidity?.let {
                     SensorValueItem(R.drawable.icon_measure_humidity, it.valueWithoutUnit, it.unitString, stringResource(R.string.humidity))
                     Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
                 }
@@ -700,17 +700,17 @@ fun SensorValues(
             verticalArrangement = Arrangement.Bottom,
             horizontalAlignment = Alignment.Start
         ) {
-            sensor.latestMeasurement?.humidityValue?.let {
+            sensor.latestMeasurement?.humidity?.let {
                 SensorValueItem(R.drawable.icon_measure_humidity, it.valueWithoutUnit, it.unitString, stringResource(R.string.humidity))
                 Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
             }
 
-            sensor.latestMeasurement?.pressureValue?.let {
+            sensor.latestMeasurement?.pressure?.let {
                 SensorValueItem(R.drawable.icon_measure_pressure, it.valueWithoutUnit, it.unitString, stringResource(R.string.pressure))
                 Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
             }
 
-            sensor.latestMeasurement?.movementValue?.let {
+            sensor.latestMeasurement?.movement?.let {
                 SensorValueItem(R.drawable.ic_icon_measure_movement, it.valueWithoutUnit, "", stringResource(R.string.movements))
                 Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
 
