@@ -21,7 +21,6 @@ import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Alignment.Companion.CenterEnd
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Alignment.Companion.Top
@@ -42,7 +41,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.unit.times
 import androidx.compose.ui.zIndex
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
@@ -55,17 +53,15 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.ruuvi.station.R
-import com.ruuvi.station.about.ui.AboutActivity
 import com.ruuvi.station.addtag.ui.AddTagActivity
 import com.ruuvi.station.alarm.domain.AlarmState
 import com.ruuvi.station.alarm.domain.AlarmType
+import com.ruuvi.station.alarm.ui.AlarmStateIndicator
 import com.ruuvi.station.app.permissions.BluetoothPermissions
 import com.ruuvi.station.app.permissions.NotificationPermission
 import com.ruuvi.station.app.preferences.PreferencesRepository
+import com.ruuvi.station.app.ui.DashboardMainMenu
 import com.ruuvi.station.app.ui.DashboardTopAppBar
-import com.ruuvi.station.app.ui.MainMenu
-import com.ruuvi.station.app.ui.MenuItem
-import com.ruuvi.station.app.ui.components.BlinkingEffect
 import com.ruuvi.station.app.ui.components.DashboardMenuItemText
 import com.ruuvi.station.app.ui.components.RuuviButton
 import com.ruuvi.station.app.ui.components.rememberResourceUri
@@ -75,12 +71,10 @@ import com.ruuvi.station.app.ui.theme.RuuviTheme
 import com.ruuvi.station.dashboard.DashboardTapAction
 import com.ruuvi.station.dashboard.DashboardType
 import com.ruuvi.station.network.data.NetworkSyncEvent
-import com.ruuvi.station.network.ui.MyAccountActivity
 import com.ruuvi.station.network.ui.ShareSensorActivity
 import com.ruuvi.station.network.ui.SignInActivity
 import com.ruuvi.station.network.ui.claim.ClaimSensorActivity
 import com.ruuvi.station.nfc.ui.NfcInteractor
-import com.ruuvi.station.settings.ui.SettingsActivity
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tag.domain.UpdateSource
 import com.ruuvi.station.tag.domain.isAir
@@ -201,59 +195,9 @@ class DashboardActivity : NfcActivity(), KodeinAware {
                             )
                         },
                         drawerContent = {
-                            MainMenu(
-                                items = listOf(
-                                    MenuItem(
-                                        R.string.menu_add_new_sensor,
-                                        stringResource(id = R.string.menu_add_new_sensor)
-                                    ),
-                                    MenuItem(
-                                        R.string.menu_app_settings,
-                                        stringResource(id = R.string.menu_app_settings)
-                                    ),
-                                    MenuItem(
-                                        R.string.menu_about_help,
-                                        stringResource(id = R.string.menu_about_help)
-                                    ),
-                                    MenuItem(
-                                        R.string.menu_send_feedback,
-                                        stringResource(id = R.string.menu_send_feedback)
-                                    ),
-                                    MenuItem(
-                                        R.string.menu_what_to_measure,
-                                        stringResource(id = R.string.menu_what_to_measure)
-                                    ),
-                                    MenuItem(
-                                        R.string.menu_buy_sensors,
-                                        stringResource(id = R.string.menu_buy_sensors)
-                                    ),
-                                    if (signedIn) {
-                                        MenuItem(
-                                            R.string.my_ruuvi_account,
-                                            stringResource(id = R.string.my_ruuvi_account)
-                                        )
-                                    } else {
-                                        MenuItem(
-                                            R.string.sign_in,
-                                            stringResource(id = R.string.sign_in)
-                                        )
-                                    }
-                                ),
-                                onItemClick = { item ->
-                                    when (item.id) {
-                                        R.string.menu_add_new_sensor -> AddTagActivity.start(context)
-                                        R.string.menu_app_settings -> SettingsActivity.start(context)
-                                        R.string.menu_about_help -> AboutActivity.start(context)
-                                        R.string.menu_send_feedback -> sendFeedback()
-                                        R.string.menu_what_to_measure -> openUrl(getString(R.string.what_to_measure_link))
-                                        R.string.menu_buy_sensors -> openUrl(getString(R.string.buy_sensors_menu_link))
-                                        R.string.my_ruuvi_account -> MyAccountActivity.start(context)
-                                        R.string.sign_in -> SignInActivity.start(context)
-                                    }
-                                    scope.launch {
-                                        scaffoldState.drawerState.close()
-                                    }
-                                }
+                            DashboardMainMenu(
+                                scaffoldState = scaffoldState,
+                                signedIn = signedIn
                             )
                         },
                         drawerBackgroundColor = RuuviStationTheme.colors.background
@@ -571,7 +515,7 @@ fun SignInBanner(
                     modifier = Modifier
                         .weight(1f),
                     style = RuuviStationTheme.typography.subtitle,
-                    fontSize = RuuviStationTheme.fontSizes.extended,
+                    fontSize = 18.limitedSp,
                     text = stringResource(id = R.string.dashboard_banner_signed_out),
                     textAlign = TextAlign.Center
                 )
@@ -1203,7 +1147,6 @@ fun ValueDisplay(
     value: EnvironmentValue,
     alarmState: AlarmState
 ) {
-    val iconSize = LocalDensity.current.fontScale.coerceAtMost(1.5f) * 14.dp
     Row(verticalAlignment = Alignment.CenterVertically) {
         Text(
             modifier = Modifier
@@ -1225,36 +1168,16 @@ fun ValueDisplay(
             color = colors.primary,
             maxLines = 1
         )
-        Spacer(modifier = Modifier.width(width = 4.dp))
+        Spacer(modifier = Modifier.width(width = RuuviStationTheme.dimensions.small))
 
-        when (alarmState) {
-            AlarmState.TRIGGERED -> {
-                Box (modifier = Modifier.size(iconSize)) {
-                    BlinkingEffect() {
-                        Image(
-                            painter = painterResource(id = R.drawable.alert_bell_triggered),
-                            contentDescription = null,
-                            modifier = Modifier
-                                .size(iconSize)
-                        )
-                    }
-                }
-            }
-
-            AlarmState.SET -> {
-                Image(
-                    painter = painterResource(id = R.drawable.alert_bell),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .size(iconSize)
-                )
-            }
-
-            AlarmState.NO_ALARM -> {}
+        if (alarmState != AlarmState.NO_ALARM) {
+            AlarmStateIndicator(
+                alarmState = alarmState
+            )
+            Spacer(modifier = Modifier
+                .width(RuuviStationTheme.dimensions.small)
+            )
         }
-        Spacer(modifier = Modifier
-            .width(RuuviStationTheme.dimensions.small)
-        )
     }
 }
 
@@ -1264,7 +1187,6 @@ fun BigValueDisplay(
     alarmState: AlarmState,
     modifier: Modifier = Modifier
 ) {
-    val iconSize = 14.dp * LocalDensity.current.fontScale.coerceAtMost(1.5f)
 
     Row(
         modifier = modifier
@@ -1293,35 +1215,10 @@ fun BigValueDisplay(
 
         Spacer(modifier = Modifier.width(width = 4.dp))
 
-        Box (modifier = Modifier
-            .size(iconSize)
-            .offset(y = 11.dp),
-            contentAlignment = Center
-        ) {
-            when (alarmState) {
-                AlarmState.TRIGGERED -> {
-                    BlinkingEffect() {
-                        Image(
-                            painter = painterResource(id = R.drawable.alert_bell_triggered),
-                            contentDescription = null,
-                            modifier = Modifier
-                                .size(iconSize)
-                        )
-                    }
-                }
-
-                AlarmState.SET -> {
-                    Image(
-                        painter = painterResource(id = R.drawable.alert_bell),
-                        contentDescription = null,
-                        modifier = Modifier
-                            .size(iconSize)
-                    )
-                }
-
-                AlarmState.NO_ALARM -> {}
-            }
-        }
+        AlarmStateIndicator(
+            modifier = Modifier.offset(y = 11.dp * LocalDensity.current.fontScale.coerceAtMost(1.5f)),
+            alarmState = alarmState
+        )
     }
 }
 @Composable
