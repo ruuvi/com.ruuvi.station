@@ -1172,7 +1172,8 @@ fun ValueDisplay(
 
         if (alarmState != AlarmState.NO_ALARM) {
             AlarmStateIndicator(
-                alarmState = alarmState
+                alarmState = alarmState,
+                useThemes = true
             )
             Spacer(modifier = Modifier
                 .width(RuuviStationTheme.dimensions.small)
@@ -1217,7 +1218,8 @@ fun BigValueDisplay(
 
         AlarmStateIndicator(
             modifier = Modifier.offset(y = 11.dp * LocalDensity.current.fontScale.coerceAtMost(1.5f)),
-            alarmState = alarmState
+            alarmState = alarmState,
+            useThemes = true
         )
     }
 }

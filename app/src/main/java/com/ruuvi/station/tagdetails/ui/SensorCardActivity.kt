@@ -49,6 +49,8 @@ import com.ruuvi.gateway.tester.nfc.model.SensorNfсScanInfo
 import com.ruuvi.station.R
 import com.ruuvi.station.alarm.domain.AlarmSensorStatus
 import com.ruuvi.station.alarm.domain.AlarmState
+import com.ruuvi.station.alarm.domain.AlarmType
+import com.ruuvi.station.alarm.ui.AlarmStateIndicator
 import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.app.ui.components.BlinkingEffect
 import com.ruuvi.station.app.ui.components.CircularGradientProgress
@@ -533,7 +535,7 @@ fun SensorCard(
         modifier = modifier
             .fillMaxSize()
     ) {
-        val (temperatureValue, temperatureUnit, otherValues, lowBattery, aqi) = createRefs()
+        val (temperatureValue, temperatureUnit, otherValues, lowBattery, aqi, alarmBell) = createRefs()
 
         if (sensor.latestMeasurement?.temperature != null) {
             if (sensor.isAir()) {
@@ -596,6 +598,19 @@ fun SensorCard(
                     text = sensor.latestMeasurement.temperature.unitString,
                     color = Color.White
                 )
+
+                AlarmStateIndicator(
+                    modifier = Modifier
+                        .constrainAs(alarmBell) {
+                        top.linkTo(temperatureValue.top)
+                        start.linkTo(temperatureUnit.end)}
+                        .padding(
+                            start = 4.dp,
+                            top = 48.dp + 26.dp * LocalDensity.current.fontScale
+                        ),
+                    alarmState = sensor.alarmSensorStatus.getState(AlarmType.TEMPERATURE),
+                    baseIconSize = 20.dp
+                )
             }
         }
 
@@ -640,22 +655,43 @@ fun SensorValues(
                 horizontalAlignment = Alignment.Start
             ) {
                 sensor.latestMeasurement?.temperature?.let {
-                    SensorValueItem(R.drawable.icon_measure_small_temp, it.valueWithoutUnit, it.unitString, stringResource(R.string.temperature))
+                    SensorValueItem(
+                        icon = R.drawable.icon_measure_small_temp,
+                        value = it.valueWithoutUnit,
+                        unit = it.unitString,
+                        name = stringResource(R.string.temperature),
+                        alarmState = sensor.alarmSensorStatus.getState(AlarmType.TEMPERATURE)
+                    )
                     Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
                 }
 
                 sensor.latestMeasurement?.pressure?.let {
-                    SensorValueItem(R.drawable.icon_measure_pressure, it.valueWithoutUnit, it.unitString, stringResource(R.string.pressure))
+                    SensorValueItem(
+                        icon = R.drawable.icon_measure_pressure,
+                        value = it.valueWithoutUnit,
+                        unit = it.unitString,
+                        name = stringResource(R.string.pressure),
+                        alarmState = sensor.alarmSensorStatus.getState(AlarmType.PRESSURE)
+                    )
                     Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
                 }
 
                 sensor.latestMeasurement?.co2?.let {
-                    SensorValueItem(R.drawable.icon_measure_small_temp, it.valueWithoutUnit, it.unitString, stringResource(R.string.co2))
+                    SensorValueItem(R.drawable.icon_measure_small_temp,
+                        value = it.valueWithoutUnit,
+                        unit = it.unitString,
+                        name = stringResource(R.string.co2),
+                        alarmState = sensor.alarmSensorStatus.getState(AlarmType.CO2)
+                    )
                     Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
                 }
 
                 sensor.latestMeasurement?.voltage?.let {
-                    SensorValueItem(R.drawable.icon_measure_small_temp, it.valueWithoutUnit, it.unitString, stringResource(R.string.battery))
+                    SensorValueItem(R.drawable.icon_measure_small_temp,
+                        value = it.valueWithoutUnit,
+                        unit = it.unitString,
+                        name = stringResource(R.string.battery),
+                    )
                     Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
                 }
             }
@@ -668,27 +704,57 @@ fun SensorValues(
                 horizontalAlignment = Alignment.Start
             ) {
                 sensor.latestMeasurement?.humidity?.let {
-                    SensorValueItem(R.drawable.icon_measure_humidity, it.valueWithoutUnit, it.unitString, stringResource(R.string.humidity))
+                    SensorValueItem(
+                        icon = R.drawable.icon_measure_humidity,
+                        value = it.valueWithoutUnit,
+                        unit = it.unitString,
+                        name = stringResource(R.string.humidity),
+                        alarmState = sensor.alarmSensorStatus.getState(AlarmType.HUMIDITY)
+                    )
                     Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
                 }
 
                 sensor.latestMeasurement?.pm25?.let {
-                    SensorValueItem(R.drawable.icon_measure_small_temp, it.valueWithoutUnit, it.unitString, stringResource(R.string.pm25))
+                    SensorValueItem(
+                        icon = R.drawable.icon_measure_small_temp,
+                        value = it.valueWithoutUnit,
+                        unit = it.unitString,
+                        name = stringResource(R.string.pm25),
+                        alarmState = sensor.alarmSensorStatus.getState(AlarmType.PM25)
+                    )
                     Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
                 }
 
                 sensor.latestMeasurement?.nox?.let {
-                    SensorValueItem(R.drawable.icon_measure_small_temp, it.valueWithoutUnit, "", stringResource(R.string.nox))
+                    SensorValueItem(
+                        icon = R.drawable.icon_measure_small_temp,
+                        value = it.valueWithoutUnit,
+                        unit = "",
+                        name = stringResource(R.string.nox),
+                        alarmState = sensor.alarmSensorStatus.getState(AlarmType.NOX)
+                    )
                     Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
                 }
 
                 sensor.latestMeasurement?.luminosity?.let {
-                    SensorValueItem(R.drawable.icon_measure_small_temp, it.valueWithoutUnit, it.unitString,stringResource(R.string.light))
+                    SensorValueItem(
+                        icon = R.drawable.icon_measure_small_temp,
+                        value = it.valueWithoutUnit,
+                        unit = it.unitString,
+                        name = stringResource(R.string.light),
+                        alarmState = sensor.alarmSensorStatus.getState(AlarmType.LUMINOSITY)
+                    )
                     Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
                 }
 
                 sensor.latestMeasurement?.dBaAvg?.let {
-                    SensorValueItem(R.drawable.icon_measure_small_temp, it.valueWithoutUnit, it.unitString, stringResource(R.string.sound))
+                    SensorValueItem(
+                        icon = R.drawable.icon_measure_small_temp,
+                        value = it.valueWithoutUnit,
+                        unit = it.unitString,
+                        name = stringResource(R.string.sound),
+                        alarmState = sensor.alarmSensorStatus.getState(AlarmType.SOUND)
+                    )
                     Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
                 }
             }
@@ -702,17 +768,35 @@ fun SensorValues(
             horizontalAlignment = Alignment.Start
         ) {
             sensor.latestMeasurement?.humidity?.let {
-                SensorValueItem(R.drawable.icon_measure_humidity, it.valueWithoutUnit, it.unitString, stringResource(R.string.humidity))
+                SensorValueItem(
+                    icon = R.drawable.icon_measure_humidity,
+                    value = it.valueWithoutUnit,
+                    unit = it.unitString,
+                    name = stringResource(R.string.humidity),
+                    alarmState = sensor.alarmSensorStatus.getState(AlarmType.HUMIDITY)
+                )
                 Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
             }
 
             sensor.latestMeasurement?.pressure?.let {
-                SensorValueItem(R.drawable.icon_measure_pressure, it.valueWithoutUnit, it.unitString, stringResource(R.string.pressure))
+                SensorValueItem(
+                    icon = R.drawable.icon_measure_pressure,
+                    value = it.valueWithoutUnit,
+                    unit = it.unitString,
+                    name = stringResource(R.string.pressure),
+                    alarmState = sensor.alarmSensorStatus.getState(AlarmType.PRESSURE)
+                )
                 Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
             }
 
             sensor.latestMeasurement?.movement?.let {
-                SensorValueItem(R.drawable.ic_icon_measure_movement, it.valueWithoutUnit, "", stringResource(R.string.movements))
+                SensorValueItem(
+                    icon = R.drawable.ic_icon_measure_movement,
+                    value = it.valueWithoutUnit,
+                    unit = "",
+                    name = stringResource(R.string.movements),
+                    alarmState = sensor.alarmSensorStatus.getState(AlarmType.MOVEMENT)
+                )
                 Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
 
             }
@@ -725,7 +809,8 @@ fun SensorValueItem(
     icon: Int,
     value: String,
     unit: String,
-    name: String = ""
+    name: String = "",
+    alarmState: AlarmState? = null
 ) {
     Row (
         verticalAlignment = Alignment.CenterVertically,
@@ -738,7 +823,7 @@ fun SensorValueItem(
             contentDescription = ""
         )
         Column {
-            Row() {
+            Row(verticalAlignment = Alignment.Bottom) {
                 Text(
                     modifier = Modifier
                         .alignByBaseline()
@@ -764,6 +849,15 @@ fun SensorValueItem(
                     fontSize = RuuviStationTheme.fontSizes.compact,
                     text = unit,
                 )
+
+                alarmState?.let {
+                    Spacer(modifier = Modifier.width(RuuviStationTheme.dimensions.small))
+                    AlarmStateIndicator(
+                        modifier = Modifier.alignBy { it.measuredHeight },
+                        alarmState = alarmState,
+                        baseIconSize = 14.dp
+                    )
+                }
             }
             Text(
                 modifier = Modifier

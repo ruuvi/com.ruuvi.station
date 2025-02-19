@@ -1,6 +1,7 @@
 package com.ruuvi.station.alarm.ui
 
 import android.content.Context
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -22,6 +23,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.unit.dp
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
@@ -437,11 +439,12 @@ private fun AlarmHeader(
         if (alarmState.isEnabled.value) {
             if (alarmState.triggered) {
                 BlinkingEffect() {
-                    Icon(
-                        modifier = Modifier.padding(horizontal = RuuviStationTheme.dimensions.mediumPlus),
-                        painter = painterResource(id = R.drawable.ic_notifications_active_24px),
+                    Image(
+                        modifier = Modifier
+                            .padding(horizontal = RuuviStationTheme.dimensions.mediumPlus)
+                            .size(22.dp),
+                        painter = painterResource(id = R.drawable.alert_bell_triggered),
                         contentDescription = null,
-                        tint = RuuviStationTheme.colors.activeAlert
                     )
                 }
             } else {
@@ -449,7 +452,7 @@ private fun AlarmHeader(
                     modifier = Modifier.padding(horizontal = RuuviStationTheme.dimensions.mediumPlus),
                     painter = painterResource(id = R.drawable.ic_notifications_on_24px),
                     contentDescription = null,
-                    tint = RuuviStationTheme.colors.accent
+                    tint = RuuviStationTheme.colors.setAlert
                 )
             }
         }
