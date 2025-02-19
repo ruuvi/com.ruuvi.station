@@ -13,7 +13,7 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
-import com.ruuvi.station.util.extensions.scaledSp
+import com.ruuvi.station.util.extensions.fixedSp
 
 
 @Composable
@@ -73,7 +73,7 @@ private fun CharView(
             .padding(top = 2.dp, start = 5.dp, end = 5.dp, bottom = 5.dp),
         text = char,
         style = RuuviStationTheme.typography.otpChar,
-        fontSize = 28.scaledSp,
+        fontSize = 28.fixedSp,
         textAlign = TextAlign.Center
     )
 }

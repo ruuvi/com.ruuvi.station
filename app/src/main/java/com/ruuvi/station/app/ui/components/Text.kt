@@ -5,6 +5,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
+import com.ruuvi.station.util.extensions.limitedSp
 
 @Composable
 fun Subtitle(text: String, modifier: Modifier = Modifier) {
@@ -50,6 +51,16 @@ fun Paragraph(text: String, modifier: Modifier = Modifier) {
     Text(
         style = RuuviStationTheme.typography.paragraph,
         text = text,
+        modifier = modifier
+    )
+}
+
+@Composable
+fun DashboardMenuItemText(text: String, modifier: Modifier = Modifier) {
+    Text(
+        style = RuuviStationTheme.typography.paragraph,
+        text = text,
+        fontSize = 16.limitedSp,
         modifier = modifier
     )
 }

@@ -21,6 +21,7 @@ import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Alignment.Companion.CenterEnd
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Alignment.Companion.Top
@@ -41,6 +42,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.unit.times
 import androidx.compose.ui.zIndex
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
@@ -55,7 +57,7 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.ruuvi.station.R
 import com.ruuvi.station.about.ui.AboutActivity
 import com.ruuvi.station.addtag.ui.AddTagActivity
-import com.ruuvi.station.alarm.domain.AlarmSensorStatus
+import com.ruuvi.station.alarm.domain.AlarmState
 import com.ruuvi.station.alarm.domain.AlarmType
 import com.ruuvi.station.app.permissions.BluetoothPermissions
 import com.ruuvi.station.app.permissions.NotificationPermission
@@ -64,7 +66,7 @@ import com.ruuvi.station.app.ui.DashboardTopAppBar
 import com.ruuvi.station.app.ui.MainMenu
 import com.ruuvi.station.app.ui.MenuItem
 import com.ruuvi.station.app.ui.components.BlinkingEffect
-import com.ruuvi.station.app.ui.components.Paragraph
+import com.ruuvi.station.app.ui.components.DashboardMenuItemText
 import com.ruuvi.station.app.ui.components.RuuviButton
 import com.ruuvi.station.app.ui.components.rememberResourceUri
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
@@ -449,7 +451,7 @@ fun DashboardItems(
     dragDropListState: ItemListDragAndDropState,
     refreshing: Boolean
 ) {
-    val itemHeight = 156.dp * LocalDensity.current.fontScale
+    val itemHeight = 156.dp * LocalDensity.current.fontScale.coerceAtMost(1.5f)
 
     val pullRefreshState = rememberPullRefreshState(
         refreshing = refreshing,
@@ -711,7 +713,7 @@ fun DashboardItem(
                         if (sensor.latestMeasurement.temperature != null) {
                             BigValueDisplay(
                                 value = sensor.latestMeasurement.temperature,
-                                alertTriggered = sensor.alarmSensorStatus.triggered(AlarmType.TEMPERATURE),
+                                alarmState = sensor.alarmSensorStatus.getState(AlarmType.TEMPERATURE),
                                 modifier = Modifier
                                     .constrainAs(bigTemperature) {
                                         top.linkTo(title.bottom)
@@ -872,7 +874,7 @@ fun ItemName(
         style = RuuviStationTheme.typography.title,
         text = sensor.displayName,
         lineHeight = RuuviStationTheme.fontSizes.extended,
-        fontSize = RuuviStationTheme.fontSizes.normal,
+        fontSize = 16.limitedSp,
         modifier = modifier,
         maxLines = 2
     )
@@ -898,38 +900,6 @@ fun ItemButtons(
         horizontalArrangement = Arrangement.End,
     ) {
         CompositionLocalProvider(LocalMinimumInteractiveComponentEnforcement provides false) {
-            if (sensor.alarmSensorStatus is AlarmSensorStatus.NotTriggered) {
-                IconButton(
-                    modifier = Modifier.size(RuuviStationTheme.dimensions.dashboardIconSize),
-                    onClick = {
-                        TagSettingsActivity.start(context, sensor.id)
-                    }
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_notifications_on_24px),
-                        contentDescription = null,
-                        tint = RuuviStationTheme.colors.accent
-                    )
-                }
-            } else if (sensor.alarmSensorStatus is AlarmSensorStatus.Triggered) {
-                BlinkingEffect() {
-                    IconButton(
-                        modifier = Modifier.size(RuuviStationTheme.dimensions.dashboardIconSize),
-                        onClick = {
-                            TagSettingsActivity.start(context, sensor.id)
-                        }
-                    ) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_notifications_active_24px),
-                            contentDescription = null,
-                            tint = RuuviStationTheme.colors.activeAlert
-                        )
-                    }
-                }
-            } else {
-                Spacer(modifier = Modifier.size(RuuviStationTheme.dimensions.dashboardIconSize))
-            }
-
             DashboardItemDropdownMenu(lazyGridState, itemIndex, sensor, userEmail, setName, moveItem)
         }
     }
@@ -955,7 +925,7 @@ fun ItemValues(
                     if (sensor.isAir() && showAqi) {
                         ValueDisplay(
                             value = it,
-                            false
+                            AlarmState.NO_ALARM
                         )
                     }
                 }
@@ -963,25 +933,25 @@ fun ItemValues(
                 sensor.latestMeasurement.temperature?.let {
                     ValueDisplay(
                         value = it,
-                        sensor.alarmSensorStatus.triggered(AlarmType.TEMPERATURE)
+                        sensor.alarmSensorStatus.getState(AlarmType.TEMPERATURE)
                     )
                 }
                 sensor.latestMeasurement.humidity?.let {
                     ValueDisplay(
                         value = it,
-                        sensor.alarmSensorStatus.triggered(AlarmType.HUMIDITY)
+                        sensor.alarmSensorStatus.getState(AlarmType.HUMIDITY)
                     )
                 }
                 sensor.latestMeasurement.luminosity?.let {
                     ValueDisplay(
                         value = it,
-                        sensor.alarmSensorStatus.triggered(AlarmType.LUMINOSITY)
+                        sensor.alarmSensorStatus.getState(AlarmType.LUMINOSITY)
                     )
                 }
                 sensor.latestMeasurement.dBaAvg?.let {
                     ValueDisplay(
                         value = it,
-                        sensor.alarmSensorStatus.triggered(AlarmType.SOUND)
+                        sensor.alarmSensorStatus.getState(AlarmType.SOUND)
                     )
                 }
             }
@@ -994,38 +964,38 @@ fun ItemValues(
                 sensor.latestMeasurement.pressure?.let {
                     ValueDisplay(
                         value = it,
-                        sensor.alarmSensorStatus.triggered(AlarmType.PRESSURE)
+                        sensor.alarmSensorStatus.getState(AlarmType.PRESSURE)
                     )
                 }
 
                 sensor.latestMeasurement.movement?.let {
                     ValueDisplay(
                         value = it,
-                        sensor.alarmSensorStatus.triggered(AlarmType.MOVEMENT)
+                        sensor.alarmSensorStatus.getState(AlarmType.MOVEMENT)
                     )
                 }
                 sensor.latestMeasurement.co2?.let {
                     ValueDisplay(
                         value = it,
-                        sensor.alarmSensorStatus.triggered(AlarmType.CO2)
+                        sensor.alarmSensorStatus.getState(AlarmType.CO2)
                     )
                 }
                 sensor.latestMeasurement.voc?.let {
                     ValueDisplay(
                         value = it,
-                        sensor.alarmSensorStatus.triggered(AlarmType.VOC)
+                        sensor.alarmSensorStatus.getState(AlarmType.VOC)
                     )
                 }
                 sensor.latestMeasurement.nox?.let {
                     ValueDisplay(
                         value = it,
-                        sensor.alarmSensorStatus.triggered(AlarmType.NOX)
+                        sensor.alarmSensorStatus.getState(AlarmType.NOX)
                     )
                 }
                 sensor.latestMeasurement.pm25?.let {
                     ValueDisplay(
                         value = it,
-                        sensor.alarmSensorStatus.triggered(AlarmType.PM25)
+                        sensor.alarmSensorStatus.getState(AlarmType.PM25)
                     )
                 }
             }
@@ -1052,25 +1022,25 @@ fun ItemValuesWithoutTemperature(
                 sensor.latestMeasurement.humidity?.let {
                     ValueDisplay(
                         value = it,
-                        sensor.alarmSensorStatus.triggered(AlarmType.HUMIDITY)
+                        sensor.alarmSensorStatus.getState(AlarmType.HUMIDITY)
                     )
                 }
                 sensor.latestMeasurement.movement?.let {
                     ValueDisplay(
                         value = it,
-                        sensor.alarmSensorStatus.triggered(AlarmType.MOVEMENT)
+                        sensor.alarmSensorStatus.getState(AlarmType.MOVEMENT)
                     )
                 }
                 sensor.latestMeasurement.luminosity?.let {
                     ValueDisplay(
                         value = it,
-                        false
+                        sensor.alarmSensorStatus.getState(AlarmType.LUMINOSITY)
                     )
                 }
                 sensor.latestMeasurement.dBaAvg?.let {
                     ValueDisplay(
                         value = it,
-                        false
+                        sensor.alarmSensorStatus.getState(AlarmType.SOUND)
                     )
                 }
             }
@@ -1083,31 +1053,31 @@ fun ItemValuesWithoutTemperature(
                 sensor.latestMeasurement.pressure?.let {
                     ValueDisplay(
                         value = it,
-                        sensor.alarmSensorStatus.triggered(AlarmType.PRESSURE)
+                        sensor.alarmSensorStatus.getState(AlarmType.PRESSURE)
                     )
                 }
                 sensor.latestMeasurement.co2?.let {
                     ValueDisplay(
                         value = it,
-                        false
+                        sensor.alarmSensorStatus.getState(AlarmType.CO2)
                     )
                 }
                 sensor.latestMeasurement.voc?.let {
                     ValueDisplay(
                         value = it,
-                        false
+                        sensor.alarmSensorStatus.getState(AlarmType.VOC)
                     )
                 }
                 sensor.latestMeasurement.nox?.let {
                     ValueDisplay(
                         value = it,
-                        false
+                        sensor.alarmSensorStatus.getState(AlarmType.NOX)
                     )
                 }
                 sensor.latestMeasurement.pm25?.let {
                     ValueDisplay(
                         value = it,
-                        false
+                        sensor.alarmSensorStatus.getState(AlarmType.PM25)
                     )
                 }
             }
@@ -1140,6 +1110,7 @@ fun ItemBottomNoData(
             modifier = Modifier.weight(1f),
             style = RuuviStationTheme.typography.dashboardSecondary,
             textAlign = TextAlign.Center,
+            fontSize = 11.limitedSp,
             text = stringResource(id = R.string.no_data_10_days),
         )
     }
@@ -1188,6 +1159,7 @@ fun ItemBottomUpdatedInfo(
             Text(
                 modifier = Modifier.weight(1f),
                 style = RuuviStationTheme.typography.dashboardSecondary,
+                fontSize = 11.limitedSp,
                 text = updatedText,
             )
 
@@ -1227,28 +1199,61 @@ fun DashboardImage(userBackground: Uri) {
 }
 
 @Composable
-fun ValueDisplay(value: EnvironmentValue, alertTriggered: Boolean) {
-    val textColor = if (alertTriggered) {
-        RuuviStationTheme.colors.activeAlert
-    } else {
-        RuuviStationTheme.colors.primary
-    }
-
-    Row(verticalAlignment = Alignment.Bottom) {
+fun ValueDisplay(
+    value: EnvironmentValue,
+    alarmState: AlarmState
+) {
+    val iconSize = LocalDensity.current.fontScale.coerceAtMost(1.5f) * 14.dp
+    Row(verticalAlignment = Alignment.CenterVertically) {
         Text(
-            modifier = Modifier.alignByBaseline(),
+            modifier = Modifier
+                .alignByBaseline(),
             text = value.valueWithoutUnit,
             style = RuuviStationTheme.typography.dashboardValue,
-            color = textColor,
+            fontSize = 14.limitedSp,
+            color = colors.primary,
             maxLines = 1
         )
         Spacer(modifier = Modifier.width(width = 4.dp))
         Text(
-            modifier = Modifier.alignByBaseline(),
+            modifier = Modifier
+                .weight(1f, false)
+                .alignByBaseline(),
             text = value.unitString,
             style = RuuviStationTheme.typography.dashboardUnit,
-            color = textColor,
+            fontSize = 11.limitedSp,
+            color = colors.primary,
             maxLines = 1
+        )
+        Spacer(modifier = Modifier.width(width = 4.dp))
+
+        when (alarmState) {
+            AlarmState.TRIGGERED -> {
+                Box (modifier = Modifier.size(iconSize)) {
+                    BlinkingEffect() {
+                        Image(
+                            painter = painterResource(id = R.drawable.alert_bell_triggered),
+                            contentDescription = null,
+                            modifier = Modifier
+                                .size(iconSize)
+                        )
+                    }
+                }
+            }
+
+            AlarmState.SET -> {
+                Image(
+                    painter = painterResource(id = R.drawable.alert_bell),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(iconSize)
+                )
+            }
+
+            AlarmState.NO_ALARM -> {}
+        }
+        Spacer(modifier = Modifier
+            .width(RuuviStationTheme.dimensions.small)
         )
     }
 }
@@ -1256,14 +1261,10 @@ fun ValueDisplay(value: EnvironmentValue, alertTriggered: Boolean) {
 @Composable
 fun BigValueDisplay(
     value: EnvironmentValue,
-    alertTriggered: Boolean,
+    alarmState: AlarmState,
     modifier: Modifier = Modifier
 ) {
-    val textColor = if (alertTriggered) {
-        RuuviStationTheme.colors.activeAlert
-    } else {
-        RuuviStationTheme.colors.settingsTitleText
-    }
+    val iconSize = 14.dp * LocalDensity.current.fontScale.coerceAtMost(1.5f)
 
     Row(
         modifier = modifier
@@ -1273,33 +1274,62 @@ fun BigValueDisplay(
         Text(
             style = RuuviStationTheme.typography.dashboardBigValue,
             text = value.valueWithoutUnit,
+            fontSize = 32.limitedSp,
             lineHeight = 10.sp,
-            color = textColor
+            color = colors.settingsTitleText
         )
         Text(
             modifier = Modifier
                 .padding(
-                    top = 6.dp * LocalDensity.current.fontScale,
+                    top = 6.dp,
                     start = 2.dp
                 ),
             style = RuuviStationTheme.typography.dashboardBigValueUnit,
+            lineHeight = 5.sp,
+            fontSize = 16.limitedSp,
             text = value.unitString,
-            color = textColor
+            color = colors.settingsTitleText,
         )
+
+        Spacer(modifier = Modifier.width(width = 4.dp))
+
+        Box (modifier = Modifier
+            .size(iconSize)
+            .offset(y = 11.dp),
+            contentAlignment = Center
+        ) {
+            when (alarmState) {
+                AlarmState.TRIGGERED -> {
+                    BlinkingEffect() {
+                        Image(
+                            painter = painterResource(id = R.drawable.alert_bell_triggered),
+                            contentDescription = null,
+                            modifier = Modifier
+                                .size(iconSize)
+                        )
+                    }
+                }
+
+                AlarmState.SET -> {
+                    Image(
+                        painter = painterResource(id = R.drawable.alert_bell),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(iconSize)
+                    )
+                }
+
+                AlarmState.NO_ALARM -> {}
+            }
+        }
     }
 }
-
 @Composable
 fun AQIDisplay(
     value: AQI,
     alertTriggered: Boolean,
     modifier: Modifier = Modifier
 ) {
-    val textColor = if (alertTriggered) {
-        RuuviStationTheme.colors.activeAlert
-    } else {
-        RuuviStationTheme.colors.settingsTitleText
-    }
 
     Column(
         modifier = modifier,
@@ -1314,7 +1344,8 @@ fun AQIDisplay(
                 style = RuuviStationTheme.typography.dashboardBigValue,
                 text = value.score.toString(),
                 lineHeight = 10.sp,
-                color = textColor
+                fontSize = 32.limitedSp,
+                color = colors.settingsTitleText
             )
             Column (
                 verticalArrangement = Arrangement.Top,
@@ -1323,17 +1354,21 @@ fun AQIDisplay(
                 Text(
                     modifier = Modifier
                         .padding(
-                            top = 6.dp * LocalDensity.current.fontScale,
+                            top = 6.dp,
                             start = 4.dp
                         ),
                     style = RuuviStationTheme.typography.dashboardBigValueUnit,
+                    lineHeight = 10.sp,
+                    fontSize = 16.limitedSp,
                     text = "/100",
-                    color = textColor
+                    color = colors.settingsTitleText
                 )
                 Text(
                     modifier = Modifier
                         .padding(start = 4.dp),
                     style = RuuviStationTheme.typography.dashboardSecondary,
+                    fontSize = 11.limitedSp,
+                    lineHeight = 6.sp,
                     text = stringResource(id = R.string.air_quality),
                 )
             }
@@ -1387,7 +1422,7 @@ fun DashboardItemDropdownMenu(
                 SensorCardActivity.start(context, sensor.id, SensorCardOpenType.CARD)
                 threeDotsMenuExpanded = false
             }) {
-                Paragraph(text = stringResource(
+                DashboardMenuItemText(text = stringResource(
                     id = R.string.full_image_view
                 ))
             }
@@ -1396,7 +1431,7 @@ fun DashboardItemDropdownMenu(
                 SensorCardActivity.start(context, sensor.id, SensorCardOpenType.HISTORY)
                 threeDotsMenuExpanded = false
             }) {
-                Paragraph(text = stringResource(
+                DashboardMenuItemText(text = stringResource(
                     id = R.string.history_view
                 ))
             }
@@ -1404,7 +1439,7 @@ fun DashboardItemDropdownMenu(
                 TagSettingsActivity.start(context, sensor.id)
                 threeDotsMenuExpanded = false
             }) {
-                Paragraph(text = stringResource(
+                DashboardMenuItemText(text = stringResource(
                     id = R.string.settings_and_alerts
                 ))
             }
@@ -1412,7 +1447,7 @@ fun DashboardItemDropdownMenu(
                 BackgroundActivity.start(context, sensor.id)
                 threeDotsMenuExpanded = false
             }) {
-                Paragraph(text = stringResource(
+                DashboardMenuItemText(text = stringResource(
                     id = R.string.change_background
                 ))
             }
@@ -1421,7 +1456,7 @@ fun DashboardItemDropdownMenu(
                 setNameDialog = true
                 threeDotsMenuExpanded = false
             }) {
-                Paragraph(text = stringResource(
+                DashboardMenuItemText(text = stringResource(
                     id = R.string.rename
                 ))
             }
@@ -1436,7 +1471,7 @@ fun DashboardItemDropdownMenu(
                         lazyGridState.centerViewportOnItem(newIndex)
                     }
                 }) {
-                    Paragraph(text = stringResource(id = R.string.move_up))
+                    DashboardMenuItemText(text = stringResource(id = R.string.move_up))
                 }
             }
 
@@ -1452,7 +1487,7 @@ fun DashboardItemDropdownMenu(
                         lazyGridState.centerViewportOnItem(newIndex)
                     }
                 }) {
-                    Paragraph(text = stringResource(id = R.string.move_down))
+                    DashboardMenuItemText(text = stringResource(id = R.string.move_down))
                 }
             }
 
@@ -1461,7 +1496,7 @@ fun DashboardItemDropdownMenu(
                     ClaimSensorActivity.start(context, sensor.id)
                     threeDotsMenuExpanded = false
                 }) {
-                    Paragraph(text = stringResource(
+                    DashboardMenuItemText(text = stringResource(
                         id = R.string.claim_sensor
                     ))
                 }
@@ -1470,7 +1505,7 @@ fun DashboardItemDropdownMenu(
                     ShareSensorActivity.start(context, sensor.id)
                     threeDotsMenuExpanded = false
                 }) {
-                    Paragraph(text = stringResource(
+                    DashboardMenuItemText(text = stringResource(
                         id = R.string.share
                     ))
                 }
@@ -1480,7 +1515,7 @@ fun DashboardItemDropdownMenu(
                 TagSettingsActivity.startToRemove(context, sensor.id)
                 threeDotsMenuExpanded = false
             }) {
-                Paragraph(text = stringResource(
+                DashboardMenuItemText(text = stringResource(
                     id = R.string.remove
                 ))
             }
@@ -1509,6 +1544,7 @@ fun LowBattery(modifier: Modifier = Modifier) {
     ) {
         Text(
             style = RuuviStationTheme.typography.dashboardSecondary,
+            fontSize = 11.limitedSp,
             text = stringResource(id = R.string.low_battery),
         )
         Spacer(modifier = Modifier.width(RuuviStationTheme.dimensions.medium))

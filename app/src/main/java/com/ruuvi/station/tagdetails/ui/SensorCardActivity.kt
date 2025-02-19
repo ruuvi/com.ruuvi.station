@@ -48,6 +48,7 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.ruuvi.gateway.tester.nfc.model.SensorNfсScanInfo
 import com.ruuvi.station.R
 import com.ruuvi.station.alarm.domain.AlarmSensorStatus
+import com.ruuvi.station.alarm.domain.AlarmState
 import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.app.ui.components.BlinkingEffect
 import com.ruuvi.station.app.ui.components.CircularGradientProgress
@@ -804,17 +805,17 @@ fun SensorCardTopAppBar(
         },
         actions = {
             IconButton(onClick = { alarmAction.invoke() }) {
-                when (alarmStatus) {
-                    AlarmSensorStatus.NoAlarms ->
+                when {
+                    alarmStatus is AlarmSensorStatus.NoAlarms ->
                         Icon(
                         painter = painterResource(id = R.drawable.ic_notifications_off_24px),
                         contentDescription = "")
-                    AlarmSensorStatus.NotTriggered ->
+                    alarmStatus is AlarmSensorStatus.AlarmsStatus && alarmStatus.combinedState == AlarmState.SET ->
                         Icon(
                             painter = painterResource(id = R.drawable.ic_notifications_on_24px),
                             tint = Color.White,
                             contentDescription = "")
-                    is AlarmSensorStatus.Triggered ->
+                    alarmStatus is AlarmSensorStatus.AlarmsStatus && alarmStatus.combinedState == AlarmState.TRIGGERED ->
                         BlinkingEffect() {
                             Icon(
                                 painter = painterResource(id = R.drawable.ic_notifications_active_24px),

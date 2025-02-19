@@ -29,6 +29,7 @@ import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.dashboard.DashboardTapAction
 import com.ruuvi.station.dashboard.DashboardType
 import com.ruuvi.station.util.extensions.clickableSingle
+import com.ruuvi.station.util.extensions.limitedSp
 
 @Composable
 fun RuuviTopAppBar(
@@ -118,6 +119,7 @@ fun DashboardTopAppBar(
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
                         style = RuuviStationTheme.typography.subtitle,
+                        fontSize = 16.limitedSp,
                         text = stringResource(id = R.string.view)
                     )
 

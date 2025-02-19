@@ -48,7 +48,7 @@ import com.ruuvi.station.app.ui.theme.RuuviTheme
 import com.ruuvi.station.onboarding.ui.*
 import com.ruuvi.station.startup.ui.StartupActivity
 import com.ruuvi.station.util.extensions.navigate
-import com.ruuvi.station.util.extensions.scaledSp
+import com.ruuvi.station.util.extensions.fixedSp
 import com.ruuvi.station.util.extensions.viewModel
 import kotlinx.coroutines.flow.SharedFlow
 import org.kodein.di.Kodein
@@ -215,8 +215,8 @@ fun EnterEmailPage(
             style = RuuviStationTheme.typography.onboardingText,
             textAlign = TextAlign.Center,
             text = stringResource(id = R.string.no_password_needed),
-            fontSize = 16.scaledSp,
-            lineHeight = 20.scaledSp
+            fontSize = 16.fixedSp,
+            lineHeight = 20.fixedSp
         )
         if (inProgress) {
             Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
@@ -235,8 +235,8 @@ fun EnterEmailPage(
                 textAlign = TextAlign.Center,
                 text = stringResource(id = R.string.use_without_account),
                 textDecoration = TextDecoration.Underline,
-                fontSize = 16.scaledSp,
-                lineHeight = 20.scaledSp
+                fontSize = 16.fixedSp,
+                lineHeight = 20.fixedSp
             )
             Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.big))
         }

@@ -39,7 +39,7 @@ import com.ruuvi.station.app.ui.theme.ruuviStationFontsSizes
 import com.ruuvi.station.network.ui.SignInActivity
 import com.ruuvi.station.onboarding.domain.OnboardingPages
 import com.ruuvi.station.startup.ui.StartupActivity
-import com.ruuvi.station.util.extensions.scaledSp
+import com.ruuvi.station.util.extensions.fixedSp
 import com.ruuvi.station.util.extensions.viewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -169,7 +169,7 @@ fun OnboardingTitle(text: String, modifier: Modifier = Modifier) {
         style = RuuviStationTheme.typography.onboardingTitle,
         textAlign = TextAlign.Center,
         text = text,
-        fontSize = 36.scaledSp
+        fontSize = 36.fixedSp
     )
 }
 
@@ -180,8 +180,8 @@ fun OnboardingSubTitle(text: String) {
         style = RuuviStationTheme.typography.onboardingSubtitle,
         textAlign = TextAlign.Center,
         text = text,
-        fontSize = 20.scaledSp,
-        lineHeight = 26.scaledSp
+        fontSize = 20.fixedSp,
+        lineHeight = 26.fixedSp
     )
 }
 
@@ -192,8 +192,8 @@ fun OnboardingText(text: String) {
         style = RuuviStationTheme.typography.onboardingText,
         textAlign = TextAlign.Center,
         text = text,
-        fontSize = 18.scaledSp,
-        lineHeight = 22.scaledSp
+        fontSize = 18.fixedSp,
+        lineHeight = 22.fixedSp
     )
 }
 
@@ -204,8 +204,8 @@ fun OnboardingText(text: AnnotatedString) {
         style = RuuviStationTheme.typography.onboardingText,
         textAlign = TextAlign.Center,
         text = text,
-        fontSize = 18.scaledSp,
-        lineHeight = 22.scaledSp
+        fontSize = 18.fixedSp,
+        lineHeight = 22.fixedSp
     )
 }
 
@@ -533,8 +533,8 @@ fun GatewayBanner() {
                 style = RuuviStationTheme.typography.onboardingSubtitle,
                 textAlign = TextAlign.Start,
                 text = stringResource(id = R.string.onboarding_gateway_required),
-                fontSize = 16.scaledSp,
-                lineHeight = 20.scaledSp
+                fontSize = 16.fixedSp,
+                lineHeight = 20.fixedSp
             )
         }
     }

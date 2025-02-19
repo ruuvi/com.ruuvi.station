@@ -28,33 +28,36 @@ class AlarmCheckInteractor(
     private val unitsConverter: UnitsConverter,
     private val alertNotificationInteractor: AlertNotificationInteractor
 ) {
-    fun getStatus(ruuviTag: RuuviTag): AlarmStatus {
+    fun getStatus(ruuviTag: RuuviTag): AlarmState {
         val alarms = getEnabledAlarms(ruuviTag)
-        if (alarms.isEmpty()) return AlarmStatus.NO_ALARM
+        if (alarms.isEmpty()) return AlarmState.NO_ALARM
         alarms
             .forEach { alarm ->
                 if (AlarmChecker(ruuviTag, alarm).triggered) {
-                    return AlarmStatus.TRIGGERED
+                    return AlarmState.TRIGGERED
                 }
             }
-        return AlarmStatus.NO_TRIGGERED
+        return AlarmState.SET
     }
 
     fun getAlarmStatus(ruuviTag: RuuviTag): AlarmSensorStatus {
         val alarms = getEnabledAlarms(ruuviTag)
         if (alarms.isEmpty()) return AlarmSensorStatus.NoAlarms
-        val triggeredTypes = mutableSetOf<AlarmType>()
+        val alarmStates = mutableMapOf<AlarmType, AlarmState>()
         alarms
             .forEach { alarm ->
                 if (AlarmChecker(ruuviTag, alarm).triggered) {
-                    triggeredTypes.add(alarm.alarmType)
+                    alarmStates[alarm.alarmType] = AlarmState.TRIGGERED
+                } else {
+                    alarmStates[alarm.alarmType] = AlarmState.SET
                 }
             }
-        if (triggeredTypes.isEmpty()) {
-            return AlarmSensorStatus.NotTriggered
+        val combinedState = if (alarmStates.values.any { it == AlarmState.TRIGGERED}) {
+            AlarmState.TRIGGERED
         } else {
-            return AlarmSensorStatus.Triggered(triggeredTypes)
+            AlarmState.SET
         }
+        return AlarmSensorStatus.AlarmsStatus(combinedState, alarmStates)
     }
 
     fun checkAlarm(sensor: RuuviTag, alarm: Alarm): Boolean {
@@ -359,22 +362,22 @@ class AlarmCheckInteractor(
     }
 }
 
-enum class AlarmStatus {
+enum class AlarmState {
     TRIGGERED,
-    NO_TRIGGERED,
+    SET,
     NO_ALARM
 }
 
 sealed class AlarmSensorStatus {
     object NoAlarms: AlarmSensorStatus()
-    object NotTriggered: AlarmSensorStatus()
-    class Triggered(val alarmTypes: Set<AlarmType>): AlarmSensorStatus()
+    class AlarmsStatus (
+        val combinedState: AlarmState,
+        val alarms: Map<AlarmType, AlarmState>
+    ): AlarmSensorStatus()
 
-    fun triggered(alarmType: AlarmType): Boolean {
-        return if (this is Triggered) {
-            alarmTypes.contains(alarmType)
-        } else {
-            false
-        }
+    fun getState(alarmType: AlarmType): AlarmState {
+        return if (this is AlarmsStatus) {
+            alarms[alarmType] ?: AlarmState.NO_ALARM
+        } else AlarmState.NO_ALARM
     }
 }
