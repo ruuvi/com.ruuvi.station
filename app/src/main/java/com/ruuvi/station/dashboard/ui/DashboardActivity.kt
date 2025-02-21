@@ -64,6 +64,7 @@ import com.ruuvi.station.app.ui.DashboardMainMenu
 import com.ruuvi.station.app.ui.DashboardTopAppBar
 import com.ruuvi.station.app.ui.components.DashboardMenuItemText
 import com.ruuvi.station.app.ui.components.RuuviButton
+import com.ruuvi.station.app.ui.components.limitedScale
 import com.ruuvi.station.app.ui.components.rememberResourceUri
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme.colors
@@ -395,7 +396,7 @@ fun DashboardItems(
     dragDropListState: ItemListDragAndDropState,
     refreshing: Boolean
 ) {
-    val itemHeight = 156.dp * LocalDensity.current.fontScale.coerceAtMost(1.5f)
+    val itemHeight = 156.dp.limitedScale()
 
     val pullRefreshState = rememberPullRefreshState(
         refreshing = refreshing,
@@ -1191,7 +1192,7 @@ fun BigValueDisplay(
 
     Row(
         modifier = modifier
-            .offset(y = (-8).dp * LocalDensity.current.fontScale),
+            .offset(y = (-8).dp.limitedScale()),
         verticalAlignment = Top
     ) {
         Text(
@@ -1217,7 +1218,7 @@ fun BigValueDisplay(
         Spacer(modifier = Modifier.width(width = 4.dp))
 
         AlarmStateIndicator(
-            modifier = Modifier.offset(y = 11.dp * LocalDensity.current.fontScale.coerceAtMost(1.5f)),
+            modifier = Modifier.offset(y = 11.dp.limitedScale()),
             alarmState = alarmState,
             useThemes = true
         )
@@ -1236,7 +1237,7 @@ fun AQIDisplay(
         verticalArrangement = Arrangement.Top
     ) {
         Row(
-            modifier = Modifier.offset(y = (-8).dp * LocalDensity.current.fontScale),
+            modifier = Modifier.offset(y = (-8).dp.limitedScale()),
             verticalAlignment = Top
         ) {
             Text(

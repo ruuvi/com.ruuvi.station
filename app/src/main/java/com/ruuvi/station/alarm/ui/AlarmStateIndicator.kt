@@ -8,13 +8,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.ruuvi.station.R
 import com.ruuvi.station.alarm.domain.AlarmState
 import com.ruuvi.station.app.ui.components.BlinkingEffect
+import com.ruuvi.station.app.ui.components.limitedScale
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 
 @Composable
@@ -24,7 +24,7 @@ fun AlarmStateIndicator(
     baseIconSize: Dp = 10.dp,
     useThemes: Boolean = false
 ) {
-    val iconSize = baseIconSize * LocalDensity.current.fontScale.coerceAtMost(1.5f)
+    val iconSize = baseIconSize.limitedScale()
 
     Box (
         modifier = modifier

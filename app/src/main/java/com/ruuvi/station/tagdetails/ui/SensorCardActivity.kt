@@ -54,6 +54,7 @@ import com.ruuvi.station.alarm.ui.AlarmStateIndicator
 import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.app.ui.components.BlinkingEffect
 import com.ruuvi.station.app.ui.components.CircularGradientProgress
+import com.ruuvi.station.app.ui.components.limitedScale
 import com.ruuvi.station.app.ui.theme.*
 import com.ruuvi.station.dashboard.DashboardTapAction
 import com.ruuvi.station.dashboard.ui.DashboardActivity
@@ -212,7 +213,6 @@ enum class SensorCardOpenType {
     HISTORY
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun SensorsPager(
     selectedSensor: String?,
@@ -495,7 +495,7 @@ fun SensorTitle(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                fontSize =  RuuviStationTheme.fontSizes.big,
+                fontSize =  20.limitedSp,
                 fontFamily = RuuviStationTheme.fonts.mulishExtraBold,
                 text = sensor.displayName,
                 textAlign = TextAlign.Center,
@@ -590,7 +590,7 @@ fun SensorCard(
                             start.linkTo(temperatureValue.end)
                         }
                         .padding(
-                            top = 48.dp + 18.dp * LocalDensity.current.fontScale,
+                            top = 48.dp + 18.dp,
                             start = 2.dp
                         ),
                     fontSize = 36.sp,
@@ -606,7 +606,7 @@ fun SensorCard(
                         start.linkTo(temperatureUnit.end)}
                         .padding(
                             start = 4.dp,
-                            top = 48.dp + 26.dp * LocalDensity.current.fontScale
+                            top = 48.dp + 26.dp
                         ),
                     alarmState = sensor.alarmSensorStatus.getState(AlarmType.TEMPERATURE),
                     baseIconSize = 20.dp
@@ -817,7 +817,7 @@ fun SensorValueItem(
         horizontalArrangement = Arrangement.Start
             ) {
         Icon(
-            modifier = Modifier.size(48.dp),
+            modifier = Modifier.size(40.dp.limitedScale()),
             painter = painterResource(id = icon),
             tint = Color.White,
             contentDescription = ""
@@ -830,8 +830,8 @@ fun SensorValueItem(
                         .padding(
                             start = RuuviStationTheme.dimensions.extended
                         ),
-                    fontSize = RuuviStationTheme.fontSizes.extended,
                     style = RuuviStationTheme.typography.dashboardBigValueUnit,
+                    fontSize = 18.limitedSp,
                     fontFamily = ruuviStationFonts.mulishBold,
                     fontWeight = FontWeight.Bold,
                     text = value,
@@ -841,13 +841,15 @@ fun SensorValueItem(
                 Text(
                     modifier = Modifier
                         .alignByBaseline()
+                        .weight(1f, false)
                         .padding(
                             start = RuuviStationTheme.dimensions.small
                         ),
                     style = RuuviStationTheme.typography.dashboardSecondary,
                     color = Color.White,
                     fontWeight = FontWeight.Bold,
-                    fontSize = RuuviStationTheme.fontSizes.compact,
+                    maxLines = 1,
+                    fontSize = 14.limitedSp,
                     text = unit,
                 )
 
@@ -858,6 +860,7 @@ fun SensorValueItem(
                         alarmState = alarmState,
                         baseIconSize = 14.dp
                     )
+                    Spacer(modifier = Modifier.width(RuuviStationTheme.dimensions.small))
                 }
             }
             Text(
@@ -867,7 +870,8 @@ fun SensorValueItem(
                     ),
                 style = RuuviStationTheme.typography.dashboardSecondary,
                 color = White80,
-                fontSize = RuuviStationTheme.fontSizes.compact,
+                maxLines = 1,
+                fontSize = 14.limitedSp,
                 text = name,
             )
         }
@@ -959,6 +963,7 @@ fun SensorCardLowBattery(modifier: Modifier = Modifier) {
             color = White50,
             style = RuuviStationTheme.typography.dashboardSecondary,
             textAlign = TextAlign.Right,
+            fontSize = 11.limitedSp,
             text = stringResource(id = R.string.low_battery),
         )
         Spacer(modifier = Modifier.width(RuuviStationTheme.dimensions.medium))
@@ -1017,8 +1022,6 @@ fun SensorCardBottom(
             mutableStateOf(sensor.latestMeasurement.updatedAt?.describingTimeSince(context) ?: "")
         }
 
-        var syncText by remember { mutableStateOf("") }
-
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = modifier
@@ -1026,22 +1029,13 @@ fun SensorCardBottom(
                 .fillMaxWidth()
         ) {
             val icon = sensor.getSource().getIconResource()
-            val fontScale = LocalContext.current.resources.configuration.fontScale
-
-            if (syncInProgress) {
-                Text(
-                    style = RuuviStationTheme.typography.dashboardSecondary,
-                    color = White50,
-                    textAlign = TextAlign.Left,
-                    text = syncText,
-                )
-            }
 
             Text(
                 modifier = Modifier.weight(1f),
                 style = RuuviStationTheme.typography.dashboardSecondary,
                 color = White50,
                 textAlign = TextAlign.Right,
+                fontSize = 11.limitedSp,
                 text = updatedText,
             )
 
@@ -1049,8 +1043,8 @@ fun SensorCardBottom(
 
             Icon(
                 modifier = Modifier
-                    .height(RuuviStationTheme.dimensions.mediumPlus * fontScale)
-                    .width((24 * fontScale).dp),
+                    .height(RuuviStationTheme.dimensions.mediumPlus.limitedScale())
+                    .width(24.dp.limitedScale()),
                 painter = painterResource(id = icon),
                 tint = White50,
                 contentDescription = null,
@@ -1066,23 +1060,6 @@ fun SensorCardBottom(
                 }
             }
         }
-
-        val baseSyncText = stringResource(id = R.string.synchronizing)
-        LaunchedEffect(key1 = syncInProgress) {
-            var dotsCount = 0
-            while (syncInProgress) {
-                var syncTextTemp = baseSyncText
-
-                for (j in 1..dotsCount) {
-                    syncTextTemp = syncTextTemp + "."
-                }
-
-                syncText = syncTextTemp
-                dotsCount++
-                if (dotsCount > 3) dotsCount = 0
-                delay(700)
-            }
-        }
     } else {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -1095,7 +1072,7 @@ fun SensorCardBottom(
                 modifier = Modifier.weight(1f),
                 style = RuuviStationTheme.typography.dashboardSecondary,
                 color = White50,
-                fontSize = RuuviStationTheme.fontSizes.compact,
+                fontSize = 14.limitedSp,
                 textAlign = TextAlign.Center,
                 text = stringResource(id = R.string.no_data_10_days),
             )
