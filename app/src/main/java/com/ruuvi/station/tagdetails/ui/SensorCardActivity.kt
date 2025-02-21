@@ -845,7 +845,8 @@ fun SensorValueItem(
                             start = RuuviStationTheme.dimensions.small
                         ),
                     style = RuuviStationTheme.typography.dashboardSecondary,
-                    color = White80,
+                    color = Color.White,
+                    fontWeight = FontWeight.Bold,
                     fontSize = RuuviStationTheme.fontSizes.compact,
                     text = unit,
                 )
