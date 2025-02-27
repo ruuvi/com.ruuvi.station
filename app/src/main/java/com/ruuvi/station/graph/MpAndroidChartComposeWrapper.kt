@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.graphics.ColorUtils
 import androidx.core.view.size
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.AxisBase
@@ -250,6 +251,8 @@ fun applyChartStyle(
     chart.viewPortHandler.setMaximumScaleX(5000f)
     chart.viewPortHandler.setMaximumScaleY(30f)
     chart.setTouchEnabled(true)
+    chart.xAxis.gridColor = ColorUtils.setAlphaComponent(chart.xAxis.gridColor, 100)
+    chart.axisLeft.gridColor = ColorUtils.setAlphaComponent(chart.xAxis.gridColor, 100)
     chart.isDoubleTapToZoomEnabled = false
     chart.isHighlightPerTapEnabled = true
 
