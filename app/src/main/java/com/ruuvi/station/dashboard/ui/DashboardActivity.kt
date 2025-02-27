@@ -53,16 +53,14 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.ruuvi.station.R
-import com.ruuvi.station.about.ui.AboutActivity
 import com.ruuvi.station.addtag.ui.AddTagActivity
 import com.ruuvi.station.alarm.domain.AlarmSensorStatus
 import com.ruuvi.station.alarm.domain.AlarmType
 import com.ruuvi.station.app.permissions.BluetoothPermissions
 import com.ruuvi.station.app.permissions.NotificationPermission
 import com.ruuvi.station.app.preferences.PreferencesRepository
+import com.ruuvi.station.app.ui.DashboardMainMenu
 import com.ruuvi.station.app.ui.DashboardTopAppBar
-import com.ruuvi.station.app.ui.MainMenu
-import com.ruuvi.station.app.ui.MenuItem
 import com.ruuvi.station.app.ui.components.BlinkingEffect
 import com.ruuvi.station.app.ui.components.Paragraph
 import com.ruuvi.station.app.ui.components.RuuviButton
@@ -73,12 +71,10 @@ import com.ruuvi.station.app.ui.theme.RuuviTheme
 import com.ruuvi.station.dashboard.DashboardTapAction
 import com.ruuvi.station.dashboard.DashboardType
 import com.ruuvi.station.network.data.NetworkSyncEvent
-import com.ruuvi.station.network.ui.MyAccountActivity
 import com.ruuvi.station.network.ui.ShareSensorActivity
 import com.ruuvi.station.network.ui.SignInActivity
 import com.ruuvi.station.network.ui.claim.ClaimSensorActivity
 import com.ruuvi.station.nfc.ui.NfcInteractor
-import com.ruuvi.station.settings.ui.SettingsActivity
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tag.domain.UpdateSource
 import com.ruuvi.station.tag.domain.isAir
@@ -199,59 +195,9 @@ class DashboardActivity : NfcActivity(), KodeinAware {
                             )
                         },
                         drawerContent = {
-                            MainMenu(
-                                items = listOf(
-                                    MenuItem(
-                                        R.string.menu_add_new_sensor,
-                                        stringResource(id = R.string.menu_add_new_sensor)
-                                    ),
-                                    MenuItem(
-                                        R.string.menu_app_settings,
-                                        stringResource(id = R.string.menu_app_settings)
-                                    ),
-                                    MenuItem(
-                                        R.string.menu_about_help,
-                                        stringResource(id = R.string.menu_about_help)
-                                    ),
-                                    MenuItem(
-                                        R.string.menu_send_feedback,
-                                        stringResource(id = R.string.menu_send_feedback)
-                                    ),
-                                    MenuItem(
-                                        R.string.menu_what_to_measure,
-                                        stringResource(id = R.string.menu_what_to_measure)
-                                    ),
-                                    MenuItem(
-                                        R.string.menu_buy_sensors,
-                                        stringResource(id = R.string.menu_buy_sensors)
-                                    ),
-                                    if (signedIn) {
-                                        MenuItem(
-                                            R.string.my_ruuvi_account,
-                                            stringResource(id = R.string.my_ruuvi_account)
-                                        )
-                                    } else {
-                                        MenuItem(
-                                            R.string.sign_in,
-                                            stringResource(id = R.string.sign_in)
-                                        )
-                                    }
-                                ),
-                                onItemClick = { item ->
-                                    when (item.id) {
-                                        R.string.menu_add_new_sensor -> AddTagActivity.start(context)
-                                        R.string.menu_app_settings -> SettingsActivity.start(context)
-                                        R.string.menu_about_help -> AboutActivity.start(context)
-                                        R.string.menu_send_feedback -> sendFeedback()
-                                        R.string.menu_what_to_measure -> openUrl(getString(R.string.what_to_measure_link))
-                                        R.string.menu_buy_sensors -> openUrl(getString(R.string.buy_sensors_menu_link))
-                                        R.string.my_ruuvi_account -> MyAccountActivity.start(context)
-                                        R.string.sign_in -> SignInActivity.start(context)
-                                    }
-                                    scope.launch {
-                                        scaffoldState.drawerState.close()
-                                    }
-                                }
+                            DashboardMainMenu(
+                                scaffoldState = scaffoldState,
+                                signedIn = signedIn
                             )
                         },
                         drawerBackgroundColor = RuuviStationTheme.colors.background
