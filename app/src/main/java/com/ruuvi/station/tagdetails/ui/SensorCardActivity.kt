@@ -553,14 +553,14 @@ fun SensorCard(
                     Text(
                         text = stringResource(sensor.latestMeasurement.aqiScore.descriptionRes),
                         style = RuuviStationTheme.typography.dashboardValue,
-                        fontSize = RuuviStationTheme.fontSizes.big,
+                        fontSize = 20.scaledSp,
                         color = Color.White
                     )
                     Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.medium))
                     Text(
                         text = stringResource(R.string.air_quality),
-                        style = RuuviStationTheme.typography.dashboardValue,
-                        fontSize = RuuviStationTheme.fontSizes.big,
+                        style = RuuviStationTheme.typography.dashboardUnit,
+                        fontSize = 18.scaledSp,
                         color = Color.White
                     )
                 }

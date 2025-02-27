@@ -24,8 +24,8 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.ruuvi.station.app.ui.theme.ruuviStationFonts
+import com.ruuvi.station.util.extensions.scaledSp
 import kotlin.math.cos
 import kotlin.math.sin
 
@@ -37,7 +37,7 @@ fun CircularGradientProgress(
 ) {
     Box(
         contentAlignment = Alignment.Center,
-        modifier = modifier.size(150.dp) // Adjust size as needed
+        modifier = modifier.size(120.dp) // Adjust size as needed
     ) {
 
         val infiniteTransition = rememberInfiniteTransition(label = "")
@@ -103,7 +103,7 @@ fun CircularGradientProgress(
         // Centered Label
         Text(
             text = progress.toInt().toString(),
-            fontSize = 72.sp,
+            fontSize = 60.scaledSp,
             fontFamily = ruuviStationFonts.oswaldBold,
             fontWeight = FontWeight.Bold,
             color = Color.White,
@@ -114,8 +114,8 @@ fun CircularGradientProgress(
         {
             Text(
                 text = "/100",
-                fontSize = 22.sp,
-                fontFamily = ruuviStationFonts.oswaldBold,
+                fontSize = 20.scaledSp,
+                fontFamily = ruuviStationFonts.oswaldRegular,
                 color = Color.White
             )
         }
