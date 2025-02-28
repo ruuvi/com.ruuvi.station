@@ -88,6 +88,7 @@ dependencies {
 //    implementation project(':default_bluetooth_library')
     implementation 'no.nordicsemi.android:dfu:2.4.2'
     implementation 'no.nordicsemi.android:ble-ktx:2.7.3'
+    implementation 'no.nordicsemi.android:mcumgr-ble:2.4.0'
 
     // Compose
     implementation "androidx.compose.ui:ui:$compose_version"
