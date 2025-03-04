@@ -51,6 +51,7 @@ import com.ruuvi.station.alarm.domain.AlarmSensorStatus
 import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.app.ui.components.BlinkingEffect
 import com.ruuvi.station.app.ui.components.CircularGradientProgress
+import com.ruuvi.station.app.ui.components.CircularIndicator
 import com.ruuvi.station.app.ui.theme.*
 import com.ruuvi.station.dashboard.DashboardTapAction
 import com.ruuvi.station.dashboard.ui.DashboardActivity
@@ -306,6 +307,7 @@ fun SensorsPager(
                     (context as Activity).onBackPressed()
                 },
                 chartsEnabled = showCharts,
+                syncInProgress = syncInProgress,
                 alarmStatus = pagerSensor?.alarmSensorStatus ?: AlarmSensorStatus.NoAlarms,
                 alarmAction = {
                     if (pagerSensor != null) {
@@ -783,74 +785,88 @@ fun SensorValueItem(
 fun SensorCardTopAppBar(
     navigationCallback: () -> Unit,
     chartsEnabled: Boolean,
+    syncInProgress: Boolean,
     alarmStatus: AlarmSensorStatus = AlarmSensorStatus.NoAlarms,
     alarmAction: () -> Unit,
     chartsAction: () -> Unit,
     settingsAction: () -> Unit
 ) {
-    TopAppBar(
-        title = {
-            Image(
-                modifier = Modifier.height(40.dp),
-                painter = painterResource(id = R.drawable.logo_2021),
-                contentDescription = "",
-                colorFilter = ColorFilter.tint(Color.White)
-            )
-        },
-        navigationIcon = {
-            IconButton(
-                onClick = { navigationCallback.invoke() }) {
-                Icon(Icons.Default.ArrowBack, stringResource(id = R.string.back))
-            }
-        },
-        actions = {
-            IconButton(onClick = { alarmAction.invoke() }) {
-                when (alarmStatus) {
-                    AlarmSensorStatus.NoAlarms ->
-                        Icon(
-                        painter = painterResource(id = R.drawable.ic_notifications_off_24px),
-                        contentDescription = "")
-                    AlarmSensorStatus.NotTriggered ->
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_notifications_on_24px),
-                            tint = Color.White,
-                            contentDescription = "")
-                    is AlarmSensorStatus.Triggered ->
-                        BlinkingEffect() {
+    Box {
+        TopAppBar(
+            modifier = Modifier.height(RuuviStationTheme.dimensions.topAppBarHeight),
+            title = {
+                Image(
+                    modifier = Modifier.height(40.dp),
+                    painter = painterResource(id = R.drawable.logo_2021),
+                    contentDescription = "",
+                    colorFilter = ColorFilter.tint(Color.White)
+                )
+            },
+            navigationIcon = {
+                IconButton(
+                    onClick = { navigationCallback.invoke() }) {
+                    Icon(Icons.Default.ArrowBack, stringResource(id = R.string.back))
+                }
+            },
+            actions = {
+                IconButton(onClick = { alarmAction.invoke() }) {
+                    when (alarmStatus) {
+                        AlarmSensorStatus.NoAlarms ->
                             Icon(
-                                painter = painterResource(id = R.drawable.ic_notifications_active_24px),
-                                contentDescription = null,
-                                tint = RuuviStationTheme.colors.activeAlert
-                            )
-                        }
+                                painter = painterResource(id = R.drawable.ic_notifications_off_24px),
+                                contentDescription = "")
+                        AlarmSensorStatus.NotTriggered ->
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_notifications_on_24px),
+                                tint = Color.White,
+                                contentDescription = "")
+                        is AlarmSensorStatus.Triggered ->
+                            BlinkingEffect() {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.ic_notifications_active_24px),
+                                    contentDescription = null,
+                                    tint = RuuviStationTheme.colors.activeAlert
+                                )
+                            }
+                    }
                 }
-            }
 
-            IconButton(onClick = { chartsAction.invoke() }) {
-                val chartIconRes = if (chartsEnabled) {
-                    R.drawable.icon_temperature
-                } else {
-                    R.drawable.ic_ruuvi_graphs_icon
+                IconButton(onClick = { chartsAction.invoke() }) {
+                    val chartIconRes = if (chartsEnabled) {
+                        R.drawable.icon_temperature
+                    } else {
+                        R.drawable.ic_ruuvi_graphs_icon
+                    }
+                    Icon(
+                        painter = painterResource(id = chartIconRes),
+                        tint = White,
+                        contentDescription = ""
+                    )
                 }
-                Icon(
-                    painter = painterResource(id = chartIconRes),
-                    tint = White,
-                    contentDescription = ""
-                )
-            }
-            IconButton(onClick = { settingsAction.invoke() }) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_settings_24px),
-                    tint = White,
-                    contentDescription = stringResource(id = R.string.sensor_settings)
-                )
-            }
+                IconButton(onClick = { settingsAction.invoke() }) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_settings_24px),
+                        tint = White,
+                        contentDescription = stringResource(id = R.string.sensor_settings)
+                    )
+                }
 
-        },
-        backgroundColor = Color.Transparent,
-        contentColor = RuuviStationTheme.colors.topBarText,
-        elevation = 0.dp
-    )
+            },
+            backgroundColor = Color.Transparent,
+            contentColor = RuuviStationTheme.colors.topBarText,
+            elevation = 0.dp
+        )
+        if (syncInProgress) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(RuuviStationTheme.dimensions.topAppBarHeight),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularIndicator(color = Color.White.copy(alpha = 0.5f))
+            }
+        }
+    }
 }
 
 @Composable
@@ -922,8 +938,6 @@ fun SensorCardBottom(
             mutableStateOf(sensor.latestMeasurement.updatedAt?.describingTimeSince(context) ?: "")
         }
 
-        var syncText by remember { mutableStateOf("") }
-
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = modifier
@@ -932,15 +946,6 @@ fun SensorCardBottom(
         ) {
             val icon = sensor.getSource().getIconResource()
             val fontScale = LocalContext.current.resources.configuration.fontScale
-
-            if (syncInProgress) {
-                Text(
-                    style = RuuviStationTheme.typography.dashboardSecondary,
-                    color = White50,
-                    textAlign = TextAlign.Left,
-                    text = syncText,
-                )
-            }
 
             Text(
                 modifier = Modifier.weight(1f),
@@ -972,22 +977,6 @@ fun SensorCardBottom(
             }
         }
 
-        val baseSyncText = stringResource(id = R.string.synchronizing)
-        LaunchedEffect(key1 = syncInProgress) {
-            var dotsCount = 0
-            while (syncInProgress) {
-                var syncTextTemp = baseSyncText
-
-                for (j in 1..dotsCount) {
-                    syncTextTemp = syncTextTemp + "."
-                }
-
-                syncText = syncTextTemp
-                dotsCount++
-                if (dotsCount > 3) dotsCount = 0
-                delay(700)
-            }
-        }
     } else {
         Row(
             verticalAlignment = Alignment.CenterVertically,
