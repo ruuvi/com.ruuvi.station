@@ -41,19 +41,19 @@ fun CircularGradientProgress(
         Canvas(modifier = Modifier.fillMaxSize().padding(8.dp)) {
             val strokeWidth = 20f
             val size = this.size.minDimension
-            val radius = size / 2 //- strokeWidth / 2
-
-            val startAngle = 135f  // Starting point for 270-degree arc
-            val sweepAngle = 270f * (progress / 100f)
+            val radius = size / 2
+            val startAngle = 135f
+            val endAngle = 270f
+            val sweepAngle = endAngle * (progress / 100f)
             val rect = Rect(Offset.Zero, Size(size, size))
-            val dotRadius = 20f / 2
+            val dotRadius = strokeWidth / 2
 
 
             // Draw background arc
             drawArc(
                 color = Color.Black.copy(alpha = 0.8f),
                 startAngle = startAngle,
-                sweepAngle = 270f,
+                sweepAngle = endAngle,
                 useCenter = false,
                 style = Stroke(width = strokeWidth, cap = StrokeCap.Square)
             )
@@ -67,7 +67,8 @@ fun CircularGradientProgress(
                 style = Stroke(width = strokeWidth, cap = StrokeCap.Square)
             )
 
-            val angleInRadians = Math.toRadians((startAngle + (270 * progress / 100f) + (if (progress == 0f) -2.5 else 2.5))).toFloat()
+            val angleInRadians = Math.toRadians((startAngle + (endAngle * progress / 100f) +
+                    (if (progress == 0f) -2.5 else 2.5))).toFloat()
             val dotX = rect.center.x + (radius ) * cos(angleInRadians)
             val dotY = rect.center.y + (radius ) * sin(angleInRadians)
 
@@ -75,16 +76,15 @@ fun CircularGradientProgress(
                 brush = Brush.radialGradient(
                     colors = listOf(
                         lineColor,
+                        lineColor,
                         lineColor.copy(alpha = 0.8f),
-
-                        lineColor.copy(alpha = 0.5f),
                         lineColor.copy(alpha = 0.3f),
                         Color.Transparent
                     ),
                 radius = dotRadius * 2.2f,
                 center = Offset(dotX, dotY)
                 ),
-                radius = dotRadius * 2.2f,
+                radius = dotRadius * 2.5f,
                 center = Offset(dotX, dotY)
             )
 
@@ -94,8 +94,6 @@ fun CircularGradientProgress(
                 radius = dotRadius,
                 center = Offset(dotX, dotY)
             )
-
-
         }
 
         // Centered Label
@@ -112,8 +110,7 @@ fun CircularGradientProgress(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .padding(bottom = 4.dp)
-        )
-        {
+        ) {
             Text(
                 text = "/100",
                 fontSize = 18.scaledSp,
