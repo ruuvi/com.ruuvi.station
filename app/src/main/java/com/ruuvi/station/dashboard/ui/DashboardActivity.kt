@@ -332,7 +332,7 @@ fun EmptyDashboard(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            if (!signedIn && signedInOnce) {
+            if (!signedIn) {
                 Text(
                     modifier = Modifier.padding(horizontal = RuuviStationTheme.dimensions.extended),
                     style = RuuviStationTheme.typography.onboardingSubtitle,
