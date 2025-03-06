@@ -49,7 +49,6 @@ fun ChartsView(
     showChartStats: Boolean,
     chartCleared: Flow<String>,
     viewPeriod: Period,
-    newChartsUI: Boolean,
     size: Size,
     increasedChartSize: Boolean,
     historyUpdater: (String) -> Flow<MutableList<ChartContainer>>,
@@ -104,8 +103,8 @@ fun ChartsView(
                         unitsConverter = unitsConverter,
                         context = context
                     )
+                    chartsInitialized = true
                 }
-                chartsInitialized = true
                 isLoading = false
             }
         }
