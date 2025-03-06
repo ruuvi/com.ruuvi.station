@@ -374,7 +374,6 @@ fun SensorsPager(
                                 graphDrawDots = graphDrawDots,
                                 selected = pagerSensor?.id == sensor.id,
                                 viewPeriod = viewPeriod,
-                                newChartsUI = newChartsUI,
                                 chartCleared = getChartClearedFlow(sensor.id),
                                 showChartStats = showChartStats,
                                 historyUpdater = historyUpdater,
