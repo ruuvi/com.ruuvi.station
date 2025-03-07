@@ -66,13 +66,13 @@ private fun CharView(
     Box {
         Text(
             modifier = Modifier
-                .width(40.dp)
+                .width(charBoxSize)
                 .border(
                     1.dp,
                     Color.LightGray,
                     RoundedCornerShape(8.dp)
                 )
-                .padding(top = 2.dp, start = 5.dp, end = 5.dp, bottom = 5.dp),
+                .padding(4.dp),
             text = char,
             style = RuuviStationTheme.typography.otpChar,
             fontSize = 28.scaledSp,
@@ -82,8 +82,8 @@ private fun CharView(
             BlinkingEffect {
                 Text(
                     modifier = Modifier
-                        .width(40.dp)
-                        .padding(top = 2.dp, start = 5.dp, end = 5.dp, bottom = 5.dp),
+                        .width(charBoxSize)
+                        .padding(4.dp),
                     text = "_",
                     style = RuuviStationTheme.typography.otpChar,
                     fontSize = 28.scaledSp,
@@ -94,12 +94,14 @@ private fun CharView(
     }
 }
 
+private val charBoxSize = 44.dp
+
 @Preview
 @Composable
 fun OtpTextFieldPreview(modifier: Modifier = Modifier) {
     RuuviTheme {
         OtpTextField(
-            otpText = "XXX",
+            otpText = "W7X",
             otpCount = 4,
             enabled = true,
             onOtpTextChange = { _,_ -> },

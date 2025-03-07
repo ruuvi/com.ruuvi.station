@@ -11,12 +11,9 @@ import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
@@ -28,7 +25,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
@@ -45,6 +41,7 @@ import com.ruuvi.station.app.ui.components.*
 import com.ruuvi.station.app.ui.theme.Orange2
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.RuuviTheme
+import com.ruuvi.station.network.ui.components.SignInEmailTextField
 import com.ruuvi.station.onboarding.ui.*
 import com.ruuvi.station.startup.ui.StartupActivity
 import com.ruuvi.station.util.extensions.navigate
@@ -176,7 +173,6 @@ class SignInActivity: AppCompatActivity(), KodeinAware {
     }
 }
 
-@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun EnterEmailPage(
     inProgress: Boolean,
@@ -361,39 +357,3 @@ fun BenefitsList() {
         OnboardingText(text = stringResource(id = R.string.cloud_stored_sharing))
     }
 }
-
-@Composable
-fun SignInEmailTextField(
-    modifier: Modifier = Modifier,
-    value: String,
-    label: String? = null,
-    hint: String? = null,
-    keyboardActions: KeyboardActions = KeyboardActions(),
-    onValueChange: (String) -> Unit,
-) {
-    val labelFun: @Composable (() -> Unit)? = if (label != null) { { Paragraph(text = label) } } else null
-    val hintFun:@Composable (() -> Unit)? = if (hint != null) { { Text(text = hint, style = RuuviStationTheme.typography.emailHintTextField) } } else null
-
-    TextField(
-        value = value,
-        onValueChange = onValueChange,
-        label = labelFun,
-        placeholder = hintFun,
-        textStyle = RuuviStationTheme.typography.emailTextField,
-        colors = OnboardingTextFieldColors(),
-        modifier = modifier,
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-        keyboardActions = keyboardActions,
-        singleLine = true
-    )
-}
-
-@Composable
-fun OnboardingTextFieldColors() = TextFieldDefaults.textFieldColors(
-    textColor = Color.White,
-    backgroundColor = Color.Transparent,
-    cursorColor = RuuviStationTheme.colors.accent,
-    trailingIconColor = RuuviStationTheme.colors.accent,
-    focusedIndicatorColor = RuuviStationTheme.colors.accent,
-    unfocusedIndicatorColor = RuuviStationTheme.colors.trackColor
-)
