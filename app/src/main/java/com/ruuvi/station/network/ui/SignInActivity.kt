@@ -292,7 +292,6 @@ fun CloudBenefitsPage(
     }
 }
 
-@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun EnterCodePage(
     inProgress: Boolean,
