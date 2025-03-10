@@ -1,13 +1,14 @@
 package com.ruuvi.station.graph.model
 
+import androidx.compose.runtime.mutableStateListOf
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.data.Entry
 
 data class ChartContainer (
     val chartSensorType: ChartSensorType,
-    val uiComponent: LineChart,
-    val data: MutableList<Entry>,
-    val limits: Pair<Double, Double>?,
-    val from: Long,
-    val to: Long
+    var uiComponent: LineChart?,
+    var data: MutableList<Entry>? = mutableStateListOf(),
+    var limits: Pair<Double, Double>? = null,
+    var from: Long? = null,
+    var to: Long? = null
 )

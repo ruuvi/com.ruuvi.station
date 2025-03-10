@@ -11,6 +11,6 @@ object DataForwardingInjectionModule {
     val module = Kodein.Module(DataForwardingInjectionModule.javaClass.name) {
         bind<DataForwardingSender>() with singleton { DataForwardingSender(instance(), instance(), instance()) }
 
-        bind<EventFactory>() with singleton { EventFactory(instance(), instance(), instance()) }
+        bind<EventFactory>() with singleton { EventFactory(instance(), instance()) }
     }
 }

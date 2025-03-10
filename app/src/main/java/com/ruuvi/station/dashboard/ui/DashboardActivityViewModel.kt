@@ -83,12 +83,13 @@ class DashboardActivityViewModel(
         _bannerDisabled.value = preferencesRepository.isBannerDisabled()
     }
 
-    fun moveItem(from: Int, to: Int) {
+    fun moveItem(from: Int, to: Int, save: Boolean = false) {
         val currentList = _sensorsList.value.toMutableList()
         val swapped = currentList.swap(from, to)
         sortingInteractor.newOrder(swapped.map { it.id })
         _sensorsList.value = swapped
 
+        if (save) networkApplicationSettings.updateSensorsOrder()
         val sortingOrder = preferencesRepository.getSortedSensors()
 
         for (sens in sortingOrder) {

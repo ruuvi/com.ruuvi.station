@@ -5,6 +5,7 @@ import com.ruuvi.station.database.tables.RuuviTagEntity
 import com.ruuvi.station.database.tables.SensorSettings
 import com.ruuvi.station.units.domain.MovementConverter
 import com.ruuvi.station.units.domain.UnitsConverter
+import com.ruuvi.station.units.domain.aqi.AQI
 
 class TagConverter(
     private val unitsConverter: UnitsConverter,
@@ -33,6 +34,12 @@ class TagConverter(
             firmware = sensorSettings.firmware,
             subscriptionName = sensorSettings.subscriptionName,
             latestMeasurement = SensorMeasurements(
+                aqi = unitsConverter.getAqiEnviromentValue(AQI.getAQI(
+                    pm25 = entity.pm25,
+                    co2 = entity.co2,
+                    nox = entity.nox,
+                    voc = entity.voc)
+                ),
                 temperatureValue = temperature?.let { unitsConverter.getTemperatureEnvironmentValue(it) },
                 pressureValue = pressure?.let { unitsConverter.getPressureEnvironmentValue(it) },
                 humidityValue = humidity?.let {
@@ -52,6 +59,16 @@ class TagConverter(
                 accelerationY = entity.accelY,
                 accelerationZ = entity.accelZ,
                 txPower = entity.txPower,
+                pm1 = entity.pm1?.let { unitsConverter.getPmEnvironmentValue(it) },
+                pm25 = entity.pm25?.let { unitsConverter.getPmEnvironmentValue(it) },
+                pm4 = entity.pm4?.let { unitsConverter.getPmEnvironmentValue(it) },
+                pm10 = entity.pm10?.let { unitsConverter.getPmEnvironmentValue(it) },
+                co2 = entity.co2?.let { unitsConverter.getCo2EnvironmentValue(it) },
+                nox = entity.nox?.let { unitsConverter.getNoxEnvironmentValue(it) },
+                voc = entity.voc?.let { unitsConverter.getVocEnvironmentValue(it) },
+                luminosity = entity.luminosity?.let { unitsConverter.getLuminosityEnvironmentValue(it) },
+                dBaAvg = entity.dBaAvg?.let { unitsConverter.getNoiseEnvironmentValue(it) },
+                dBaPeak = entity.dBaPeak?.let { unitsConverter.getNoiseEnvironmentValue(it) },
                 dataFormat = entity.dataFormat,
                 measurementSequenceNumber = entity.measurementSequenceNumber,
                 connectable = entity.connectable,
@@ -83,6 +100,12 @@ class TagConverter(
             firmware = entity.firmware,
             latestMeasurement = entity.latestId?.let {
                 SensorMeasurements(
+                    aqi = unitsConverter.getAqiEnviromentValue(AQI.getAQI(
+                        pm25 = entity.pm25,
+                        co2 = entity.co2,
+                        nox = entity.nox,
+                        voc = entity.voc)
+                    ),
                     temperatureValue = temperature?.let {
                         unitsConverter.getTemperatureEnvironmentValue(it)
                     },
@@ -101,6 +124,16 @@ class TagConverter(
                     accelerationY = entity.accelY,
                     accelerationZ = entity.accelZ,
                     txPower = entity.txPower,
+                    pm1 = entity.pm1?.let { unitsConverter.getPmEnvironmentValue(it) },
+                    pm25 = entity.pm25?.let { unitsConverter.getPmEnvironmentValue(it) },
+                    pm4 = entity.pm4?.let { unitsConverter.getPmEnvironmentValue(it) },
+                    pm10 = entity.pm10?.let { unitsConverter.getPmEnvironmentValue(it) },
+                    co2 = entity.co2?.let { unitsConverter.getCo2EnvironmentValue(it) },
+                    nox = entity.nox?.let { unitsConverter.getNoxEnvironmentValue(it) },
+                    voc = entity.voc?.let { unitsConverter.getVocEnvironmentValue(it) },
+                    luminosity = entity.luminosity?.let { unitsConverter.getLuminosityEnvironmentValue(it) },
+                    dBaAvg = entity.dBaAvg?.let { unitsConverter.getNoiseEnvironmentValue(it) },
+                    dBaPeak = entity.dBaPeak?.let { unitsConverter.getNoiseEnvironmentValue(it) },
                     dataFormat = entity.dataFormat,
                     measurementSequenceNumber = entity.measurementSequenceNumber,
                     connectable = entity.connectable,

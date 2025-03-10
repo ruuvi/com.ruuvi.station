@@ -10,6 +10,7 @@ import com.ruuvi.station.database.domain.SensorHistoryRepository
 import com.ruuvi.station.database.domain.SensorSettingsRepository
 import com.ruuvi.station.database.domain.TagRepository
 import com.ruuvi.station.units.domain.UnitsConverter
+import com.ruuvi.station.units.domain.aqi.AQI
 import com.ruuvi.station.util.extensions.prepareFilename
 import java.io.File
 import java.io.FileWriter
@@ -76,6 +77,13 @@ class CsvExporter(
                         unitsConverter.getHumidityUnitString(),
                         unitsConverter.getPressureUnitString()
                     ))
+                0xE0 -> fileWriter.append(
+                    context.getString(
+                        R.string.export_csv_header_formatE0,
+                        unitsConverter.getTemperatureUnitString(),
+                        unitsConverter.getHumidityUnitString(),
+                        unitsConverter.getPressureUnitString()
+                    ))
                 else -> fileWriter.append(
                     context.getString(
                         R.string.export_csv_header_format2_4,
@@ -90,14 +98,40 @@ class CsvExporter(
             readings.forEach { reading->
                 fileWriter.append(dateFormat.format(reading.createdAt))
                 fileWriter.append(',')
+                if (tag?.dataFormat == 0xE0) {
+                    fileWriter.append(AQI.getAQI(reading.pm25, reading.co2, reading.voc, reading.nox).score?.let { it.toString() } ?: nullValue)
+                    fileWriter.append(',')
+                }
                 fileWriter.append(reading.temperature?. let { unitsConverter.getTemperatureValue(it).toString() } ?: nullValue)
                 fileWriter.append(',')
                 fileWriter.append(reading.humidity?.let { unitsConverter.getHumidityValue(it, reading.temperature).toString() } ?: nullValue)
                 fileWriter.append(',')
                 fileWriter.append(reading.pressure?.let { unitsConverter.getPressureValue(it).toString() } ?: nullValue)
                 fileWriter.append(',')
+                if (tag?.dataFormat == 0xE0) {
+                    fileWriter.append(reading.luminosity?.toString() ?: nullValue)
+                    fileWriter.append(',')
+                    fileWriter.append(reading.dBaAvg?.toString() ?: nullValue)
+                    fileWriter.append(',')
+                    fileWriter.append(reading.dBaPeak?.toString() ?: nullValue)
+                    fileWriter.append(',')
+                    fileWriter.append(reading.co2?.toString() ?: nullValue)
+                    fileWriter.append(',')
+                    fileWriter.append(reading.voc?.toString() ?: nullValue)
+                    fileWriter.append(',')
+                    fileWriter.append(reading.nox?.toString() ?: nullValue)
+                    fileWriter.append(',')
+                    fileWriter.append(reading.pm1?.toString() ?: nullValue)
+                    fileWriter.append(',')
+                    fileWriter.append(reading.pm25?.toString() ?: nullValue)
+                    fileWriter.append(',')
+                    fileWriter.append(reading.pm4?.toString() ?: nullValue)
+                    fileWriter.append(',')
+                    fileWriter.append(reading.pm10?.toString() ?: nullValue)
+                    fileWriter.append(',')
+                }
                 fileWriter.append(reading.rssi?.toString() ?: nullValue)
-                if (tag?.dataFormat == 3 || tag?.dataFormat == 5) {
+                if (tag?.dataFormat == 3 || tag?.dataFormat == 5 || tag?.dataFormat == 0xE0) {
                     fileWriter.append(',')
                     fileWriter.append(reading.accelX?.let { reading.accelX.toString() } ?: nullValue)
                     fileWriter.append(',')
@@ -107,7 +141,7 @@ class CsvExporter(
                     fileWriter.append(',')
                     fileWriter.append(reading.voltage?.toString() ?: nullValue)
                 }
-                if (tag?.dataFormat == 5) {
+                if (tag?.dataFormat == 5 || tag?.dataFormat == 0xE0) {
                     fileWriter.append(',')
                     fileWriter.append(reading.movementCounter?.let { reading.movementCounter.toString() } ?: nullValue)
                     fileWriter.append(',')

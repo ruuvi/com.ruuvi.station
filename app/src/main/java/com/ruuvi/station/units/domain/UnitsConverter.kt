@@ -4,6 +4,7 @@ import android.content.Context
 import com.ruuvi.station.R
 import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.units.domain.TemperatureConverter.Companion.fahrenheitMultiplier
+import com.ruuvi.station.units.domain.aqi.AQI
 import com.ruuvi.station.units.model.*
 import com.ruuvi.station.util.extensions.equalsEpsilon
 import com.ruuvi.station.util.extensions.isInteger
@@ -12,6 +13,31 @@ class UnitsConverter (
         private val context: Context,
         private val preferences: PreferencesRepository
 ) {
+
+    // AQI
+    fun getAqiEnviromentValue(
+        value: AQI
+    ): EnvironmentValue {
+        if (value.score != null) {
+            return EnvironmentValue(
+                original = value.score.toDouble(),
+                value = value.score.toDouble(),
+                accuracy = Accuracy.Accuracy0,
+                valueWithUnit = "${value.score}/100 ${context.getString(R.string.air_quality)}",
+                valueWithoutUnit = "${value.score}/100",
+                unitString = context.getString(R.string.air_quality)
+            )
+        } else {
+            return EnvironmentValue(
+                original = 0.toDouble(),
+                value = 0.toDouble(),
+                accuracy = Accuracy.Accuracy0,
+                valueWithUnit = "$NO_VALUE_AVAILABLE/100 ${context.getString(R.string.air_quality)}",
+                valueWithoutUnit = "$NO_VALUE_AVAILABLE/100",
+                unitString = context.getString(R.string.air_quality)
+            )
+        }
+    }
 
     // Temperature
     fun getTemperatureEnvironmentValue(
@@ -291,6 +317,25 @@ class UnitsConverter (
         return value.round(0).toInt().toString()
     }
 
+    fun getValue(
+        value: Double?,
+        accuracy: Accuracy,
+        unit: String): String
+    {
+        if (value == null)
+            return NO_VALUE_AVAILABLE
+        return context.getString(accuracy.nameTemplateId, value, unit).trim()
+    }
+
+    fun getValueWithoutUnit(
+        value: Double?,
+        accuracy: Accuracy, ): String
+    {
+        if (value == null)
+            return NO_VALUE_AVAILABLE
+        return context.getString(accuracy.nameTemplateId, value, "").trim()
+    }
+
     fun getVoltageEnvironmentValue(
         voltage: Double
     ): EnvironmentValue =
@@ -314,6 +359,66 @@ class UnitsConverter (
             valueWithUnit = getSignalString(rssi),
             valueWithoutUnit = context.getString(R.string.signal_reading, rssi, "").trim(),
             unitString = getSignalUnit()
+        )
+
+    fun getPmEnvironmentValue(pm: Double): EnvironmentValue =
+        EnvironmentValue(
+            original = pm,
+            value = pm,
+            accuracy = Accuracy.Accuracy1,
+            valueWithUnit = context.getString(Accuracy.Accuracy1.nameTemplateId, pm, context.getString(R.string.unit_pm10)),
+            valueWithoutUnit = context.getString(Accuracy.Accuracy1.nameTemplateId, pm, "").trim(),
+            unitString = context.getString(R.string.unit_pm10)
+        )
+
+    fun getCo2EnvironmentValue(co2: Int) =
+        EnvironmentValue(
+            original = co2.toDouble(),
+            value = co2.toDouble(),
+            accuracy = Accuracy.Accuracy1,
+            valueWithUnit = context.getString(Accuracy.Accuracy0.nameTemplateId, co2.toDouble(), context.getString(R.string.unit_co2)),
+            valueWithoutUnit = context.getString(Accuracy.Accuracy0.nameTemplateId, co2.toDouble(), "").trim(),
+            unitString = context.getString(R.string.unit_co2)
+        )
+
+    fun getVocEnvironmentValue(voc: Int) =
+        EnvironmentValue(
+            original = voc.toDouble(),
+            value = voc.toDouble(),
+            accuracy = Accuracy.Accuracy1,
+            valueWithUnit = context.getString(Accuracy.Accuracy0.nameTemplateId, voc.toDouble(), context.getString(R.string.unit_voc)),
+            valueWithoutUnit = context.getString(Accuracy.Accuracy0.nameTemplateId, voc.toDouble(), "").trim(),
+            unitString = context.getString(R.string.unit_voc)
+        )
+
+    fun getNoxEnvironmentValue(nox: Int) =
+        EnvironmentValue(
+            original = nox.toDouble(),
+            value = nox.toDouble(),
+            accuracy = Accuracy.Accuracy1,
+            valueWithUnit = context.getString(Accuracy.Accuracy0.nameTemplateId, nox.toDouble(), context.getString(R.string.unit_nox)),
+            valueWithoutUnit = context.getString(Accuracy.Accuracy0.nameTemplateId, nox.toDouble(), "").trim(),
+            unitString = context.getString(R.string.unit_nox)
+        )
+
+    fun getLuminosityEnvironmentValue(luminosity: Int) =
+        EnvironmentValue(
+            original = luminosity.toDouble(),
+            value = luminosity.toDouble(),
+            accuracy = Accuracy.Accuracy1,
+            valueWithUnit = context.getString(Accuracy.Accuracy0.nameTemplateId, luminosity.toDouble(), context.getString(R.string.unit_luminosity)),
+            valueWithoutUnit = context.getString(Accuracy.Accuracy0.nameTemplateId, luminosity.toDouble(), "").trim(),
+            unitString = context.getString(R.string.unit_luminosity)
+        )
+
+    fun getNoiseEnvironmentValue(dba: Double) =
+        EnvironmentValue(
+            original = dba,
+            value = dba,
+            accuracy = Accuracy.Accuracy1,
+            valueWithUnit = context.getString(Accuracy.Accuracy1.nameTemplateId, dba, context.getString(R.string.unit_sound)),
+            valueWithoutUnit = context.getString(Accuracy.Accuracy1.nameTemplateId, dba, "").trim(),
+            unitString = context.getString(R.string.unit_sound)
         )
 
     companion object {

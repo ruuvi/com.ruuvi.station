@@ -13,8 +13,42 @@ import com.ruuvi.station.database.tables.*
 class LocalDatabase {
     companion object {
         const val NAME = "LocalDatabase"
-        const val VERSION = 34
+        const val VERSION = 35
     }
+    @Migration(version = 35, database = LocalDatabase::class)
+    class Migration35RuuviTagEntity(table: Class<RuuviTagEntity?>?) : AlterTableMigration<RuuviTagEntity?>(table) {
+        override fun onPreMigrate() {
+            super.onPreMigrate()
+            addColumn(SQLiteType.REAL, "pm1")
+            addColumn(SQLiteType.REAL, "pm25")
+            addColumn(SQLiteType.REAL, "pm4")
+            addColumn(SQLiteType.REAL, "pm10")
+            addColumn(SQLiteType.INTEGER, "co2")
+            addColumn(SQLiteType.INTEGER, "voc")
+            addColumn(SQLiteType.INTEGER, "nox")
+            addColumn(SQLiteType.INTEGER, "luminosity")
+            addColumn(SQLiteType.REAL, "dBaAvg")
+            addColumn(SQLiteType.REAL, "dBaPeak")
+        }
+    }
+
+    @Migration(version = 35, database = LocalDatabase::class)
+    class Migration35TagSensorReading(table: Class<TagSensorReading?>?) : AlterTableMigration<TagSensorReading?>(table) {
+        override fun onPreMigrate() {
+            super.onPreMigrate()
+            addColumn(SQLiteType.REAL, "pm1")
+            addColumn(SQLiteType.REAL, "pm25")
+            addColumn(SQLiteType.REAL, "pm4")
+            addColumn(SQLiteType.REAL, "pm10")
+            addColumn(SQLiteType.INTEGER, "co2")
+            addColumn(SQLiteType.INTEGER, "voc")
+            addColumn(SQLiteType.INTEGER, "nox")
+            addColumn(SQLiteType.INTEGER, "luminosity")
+            addColumn(SQLiteType.REAL, "dBaAvg")
+            addColumn(SQLiteType.REAL, "dBaPeak")
+        }
+    }
+
     @Migration(version = 34, database = LocalDatabase::class)
     class Migration34(table: Class<Alarm?>?) : AlterTableMigration<Alarm?>(table) {
         override fun onPreMigrate() {

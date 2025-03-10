@@ -104,6 +104,15 @@ class AlarmsInteractor(
             if (sensor.latestMeasurement?.pressureValue != null) alarmTypes.add(AlarmType.PRESSURE)
             if (sensor.latestMeasurement?.movementValue != null) alarmTypes.add(AlarmType.MOVEMENT)
             if (sensor.networkSensor && sensor.canUseCloudAlerts() ) alarmTypes.add(AlarmType.OFFLINE)
+            if (sensor.latestMeasurement?.co2 != null) alarmTypes.add(AlarmType.CO2)
+            if (sensor.latestMeasurement?.pm1 != null) alarmTypes.add(AlarmType.PM1)
+            if (sensor.latestMeasurement?.pm25 != null) alarmTypes.add(AlarmType.PM25)
+            if (sensor.latestMeasurement?.pm4 != null) alarmTypes.add(AlarmType.PM4)
+            if (sensor.latestMeasurement?.pm10 != null) alarmTypes.add(AlarmType.PM10)
+            if (sensor.latestMeasurement?.voc != null) alarmTypes.add(AlarmType.VOC)
+            if (sensor.latestMeasurement?.nox != null) alarmTypes.add(AlarmType.NOX)
+            if (sensor.latestMeasurement?.luminosity != null) alarmTypes.add(AlarmType.LUMINOSITY)
+            if (sensor.latestMeasurement?.dBaAvg != null) alarmTypes.add(AlarmType.SOUND)
             alarmTypes
         } else {
             emptySet()
@@ -137,6 +146,15 @@ class AlarmsInteractor(
             AlarmType.RSSI -> context.getString(R.string.signal_strength_dbm)
             AlarmType.MOVEMENT -> context.getString(R.string.alert_movement)
             AlarmType.OFFLINE -> context.getString(R.string.alert_cloud_connection_title)
+            AlarmType.CO2 -> context.getString(R.string.co2_with_unit, context.getString(R.string.unit_co2))
+            AlarmType.PM1 -> context.getString(R.string.pm1_with_unit, context.getString(R.string.unit_pm1))
+            AlarmType.PM25 -> context.getString(R.string.pm25_with_unit, context.getString(R.string.unit_pm25))
+            AlarmType.PM4 -> context.getString(R.string.pm4_with_unit, context.getString(R.string.unit_pm4))
+            AlarmType.PM10 -> context.getString(R.string.pm10_with_unit, context.getString(R.string.unit_pm10))
+            AlarmType.SOUND -> context.getString(R.string.sound_with_unit, context.getString(R.string.unit_sound))
+            AlarmType.LUMINOSITY -> context.getString(R.string.luminosity_with_unit, context.getString(R.string.unit_luminosity))
+            AlarmType.VOC -> context.getString(R.string.voc_with_unit, context.getString(R.string.unit_voc))
+            AlarmType.NOX -> context.getString(R.string.nox_with_unit, context.getString(R.string.unit_nox))
         }
     }
 
@@ -148,6 +166,15 @@ class AlarmsInteractor(
             AlarmType.RSSI -> context.getString(R.string.signal_unit)
             AlarmType.MOVEMENT -> context.getString(R.string.alert_movement)
             AlarmType.OFFLINE -> ""
+            AlarmType.CO2 -> context.getString(R.string.unit_co2)
+            AlarmType.PM1 -> context.getString(R.string.unit_pm1)
+            AlarmType.PM25 -> context.getString(R.string.unit_pm25)
+            AlarmType.PM4 -> context.getString(R.string.unit_pm4)
+            AlarmType.PM10 -> context.getString(R.string.unit_pm10)
+            AlarmType.SOUND -> context.getString(R.string.unit_sound)
+            AlarmType.LUMINOSITY -> context.getString(R.string.unit_luminosity)
+            AlarmType.VOC -> context.getString(R.string.unit_voc)
+            AlarmType.NOX -> context.getString(R.string.unit_nox)
         }
     }
 

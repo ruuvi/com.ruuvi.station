@@ -19,7 +19,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import com.google.accompanist.permissions.*
 import com.ruuvi.station.R
-import com.ruuvi.station.app.ui.components.RuuviMessageDialog
+import com.ruuvi.station.app.preferences.PreferencesRepository
+import com.ruuvi.station.app.ui.components.RuuviPermissionDialog
 import com.ruuvi.station.util.extensions.locationEnabled
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -30,16 +31,17 @@ import timber.log.Timber
 fun BluetoothPermissions(
     scaffoldState: ScaffoldState,
     askToEnableBluetooth: Boolean,
-    askForBackgroundLocation: Boolean
+    askForBackgroundLocation: Boolean,
+    preferencesRepository: PreferencesRepository
 ) {
     Timber.d("BluetoothPermissions current API = ${Build.VERSION.SDK_INT} askToEnableBluetooth = $askToEnableBluetooth askForBackgroundLocation = $askForBackgroundLocation")
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-        NearbyDevicesPermissions(scaffoldState, askToEnableBluetooth)
+        NearbyDevicesPermissions(scaffoldState, askToEnableBluetooth, preferencesRepository)
     } else {
         if (Build.VERSION.SDK_INT == Build.VERSION_CODES.R) {
-            LocationBluetoothPermissionsAndroid11(scaffoldState, askToEnableBluetooth, askForBackgroundLocation)
+            LocationBluetoothPermissionsAndroid11(scaffoldState, askToEnableBluetooth, askForBackgroundLocation, preferencesRepository)
         } else {
-            LocationBluetoothPermissions(scaffoldState, askToEnableBluetooth)
+            LocationBluetoothPermissions(scaffoldState, askToEnableBluetooth, preferencesRepository)
         }
     }
 }
@@ -48,7 +50,8 @@ fun BluetoothPermissions(
 @Composable
 fun LocationBluetoothPermissions(
     scaffoldState: ScaffoldState,
-    askToEnableBluetooth: Boolean
+    askToEnableBluetooth: Boolean,
+    preferencesRepository: PreferencesRepository
 ) {
     Timber.d("LocationBluetoothPermissions askToEnableBluetooth = $askToEnableBluetooth")
     val context = LocalContext.current
@@ -97,13 +100,16 @@ fun LocationBluetoothPermissions(
 
 
     if (showBluetoothPermissionDialog) {
-        RuuviMessageDialog(
+        RuuviPermissionDialog(
             title = stringResource(id = R.string.permission_dialog_title),
-            message = stringResource(id = R.string.permission_dialog_request_message)
-        ) {
-            showBluetoothPermissionDialog = false
-            bluetoothConnectPermissionState.launchMultiplePermissionRequest()
-        }
+            message = stringResource(id = R.string.permission_dialog_request_message),
+            onAccept = {
+                bluetoothConnectPermissionState.launchMultiplePermissionRequest()
+            },
+            onDismissRequest = {
+                showBluetoothPermissionDialog = false
+            }
+        )
     }
 
     LaunchedEffect(key1 = null) {
@@ -118,8 +124,9 @@ fun LocationBluetoothPermissions(
             }
         } else {
             Timber.d("LocationBluetoothPermissions requesting")
-            if (bluetoothConnectPermissionState.shouldShowRationale) {
+            if (bluetoothConnectPermissionState.shouldShowRationale || !preferencesRepository.isBluetoothPermissionRequested()) {
                 showBluetoothPermissionDialog = true
+                preferencesRepository.bluetoothPermissionRequested()
             } else {
                 bluetoothConnectPermissionState.launchMultiplePermissionRequest()
             }
@@ -132,7 +139,8 @@ fun LocationBluetoothPermissions(
 fun LocationBluetoothPermissionsAndroid11(
     scaffoldState: ScaffoldState,
     askToEnableBluetooth: Boolean,
-    askForBackgroundLocation: Boolean
+    askForBackgroundLocation: Boolean,
+    preferencesRepository: PreferencesRepository
 ) {
     Timber.d("LocationBluetoothPermissions askToEnableBluetooth = $askToEnableBluetooth askForBackgroundLocation = $askForBackgroundLocation")
     val context = LocalContext.current
@@ -202,23 +210,27 @@ fun LocationBluetoothPermissionsAndroid11(
 
 
     if (showBluetoothPermissionDialog) {
-        RuuviMessageDialog(
+        RuuviPermissionDialog (
             title = stringResource(id = R.string.permission_dialog_title),
-            message = stringResource(id = R.string.permission_dialog_request_message)
-        ) {
-            showBluetoothPermissionDialog = false
-            bluetoothConnectPermissionState.launchMultiplePermissionRequest()
-        }
+            message = stringResource(id = R.string.permission_dialog_request_message),
+            onAccept = {
+                bluetoothConnectPermissionState.launchMultiplePermissionRequest() },
+            onDismissRequest = {
+                showBluetoothPermissionDialog = false
+            }
+        )
     }
 
     if (showBackgroundBluetoothPermissionDialog) {
-        RuuviMessageDialog(
+        RuuviPermissionDialog(
             title = stringResource(id = R.string.permission_background_dialog_title),
-            message = stringResource(id = R.string.permission_dialog_background_request_message)
-        ) {
-            showBackgroundBluetoothPermissionDialog = false
-            backgroundBluetoothPermissionState.launchPermissionRequest( )
-        }
+            message = stringResource(id = R.string.permission_dialog_background_request_message),
+            onAccept = {
+                backgroundBluetoothPermissionState.launchPermissionRequest( ) },
+            onDismissRequest = {
+                showBackgroundBluetoothPermissionDialog = false
+            }
+        )
     }
 
     LaunchedEffect(key1 = null) {
@@ -242,8 +254,9 @@ fun LocationBluetoothPermissionsAndroid11(
             }
         } else {
             Timber.d("LocationBluetoothPermissions requesting")
-            if (bluetoothConnectPermissionState.shouldShowRationale) {
+            if (bluetoothConnectPermissionState.shouldShowRationale || !preferencesRepository.isBluetoothPermissionRequested()) {
                 showBluetoothPermissionDialog = true
+                preferencesRepository.bluetoothPermissionRequested()
             } else {
                 bluetoothConnectPermissionState.launchMultiplePermissionRequest()
             }
@@ -255,10 +268,15 @@ fun LocationBluetoothPermissionsAndroid11(
 @Composable
 fun NearbyDevicesPermissions(
     scaffoldState: ScaffoldState,
-    askToEnableBluetooth: Boolean
+    askToEnableBluetooth: Boolean,
+    preferencesRepository: PreferencesRepository
 ) {
     Timber.d("NearbyDevicesPermissions askToEnableBluetooth = $askToEnableBluetooth")
     val context = LocalContext.current
+
+    var showBluetoothPermissionDialog by remember {
+        mutableStateOf(false)
+    }
 
     val enableBluetoothLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -280,6 +298,19 @@ fun NearbyDevicesPermissions(
         }
     }
 
+    if (showBluetoothPermissionDialog) {
+        RuuviPermissionDialog(
+            title = stringResource(id = R.string.permission_dialog_title),
+            message = stringResource(id = R.string.permission_dialog_request_message_api31),
+            onAccept = {
+                bluetoothConnectPermissionState.launchMultiplePermissionRequest()
+            },
+            onDismissRequest = {
+                showBluetoothPermissionDialog = false
+            }
+        )
+    }
+
     LaunchedEffect(key1 = null) {
         Timber.d("Checking BT permissions")
         if (bluetoothConnectPermissionState.allPermissionsGranted) {
@@ -289,7 +320,12 @@ fun NearbyDevicesPermissions(
             }
         } else {
             Timber.d("NearbyDevicesPermissions requesting")
-            bluetoothConnectPermissionState.launchMultiplePermissionRequest()
+            if (bluetoothConnectPermissionState.shouldShowRationale || !preferencesRepository.isBluetoothPermissionRequested()) {
+                showBluetoothPermissionDialog = true
+                preferencesRepository.bluetoothPermissionRequested()
+            } else {
+                bluetoothConnectPermissionState.launchMultiplePermissionRequest()
+            }
         }
     }
 }
