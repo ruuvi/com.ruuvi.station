@@ -58,7 +58,7 @@ data class SensorInfo(
             return SensorInfo(
                 id = logReading.id,
                 name = sensorSettings.displayName,
-                temperature = logReading.temperature + (sensorSettings.temperatureOffset ?: 0.0),
+                temperature = logReading.temperature?.let { it + (sensorSettings.temperatureOffset ?: 0.0)},
                 temperatureOffset = sensorSettings.temperatureOffset ?: 0.0,
                 humidity = logReading.humidity?.let {it + (sensorSettings.humidityOffset ?: 0.0)},
                 humidityOffset = sensorSettings.humidityOffset ?: 0.0,

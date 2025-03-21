@@ -6,7 +6,7 @@ private const val HEX_CHARS = "0123456789ABCDEF"
 private val FORBIDDEN_CHARS = arrayOf('"', '*', '/', ':', '<', '>', '?', '\\', '|')
 
 fun String.hexStringToByteArray(): ByteArray {
-    val input = this.toUpperCase(Locale.getDefault())
+    val input = this.uppercase(Locale.getDefault())
 
     val result = ByteArray(length / 2)
 

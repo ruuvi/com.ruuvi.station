@@ -347,7 +347,7 @@ fun MoreInfoGroup(
                 value = stringResource(id = sensorState.getSource().getDescriptionResource())
             )
             BatteryInfoItem(
-                voltage = sensorState.latestMeasurement.voltageValue.value,
+                voltage = sensorState.latestMeasurement.voltage.value,
                 isLowBattery = isLowBattery
             )
             MoreInfoItem(
@@ -368,7 +368,7 @@ fun MoreInfoGroup(
             )
             MoreInfoItem(
                 title = stringResource(id = R.string.signal_strength_rssi),
-                value = sensorState.latestMeasurement.rssiValue.valueWithUnit
+                value = sensorState.latestMeasurement.rssi.valueWithUnit
             )
             MoreInfoItem(
                 title = stringResource(id = R.string.measurement_sequence_number),

@@ -271,13 +271,22 @@ fun AlertEditItem(
 
         if (sensorState.latestMeasurement != null) {
             val latestValue = when (alarmState.type) {
-                AlarmType.TEMPERATURE -> sensorState.latestMeasurement.temperatureValue?.valueWithUnit
+                AlarmType.TEMPERATURE -> sensorState.latestMeasurement.temperature?.valueWithUnit
                 AlarmType.HUMIDITY -> unitsConverter.getHumidityString(
-                    sensorState.latestMeasurement.humidityValue?.original,
-                    sensorState.latestMeasurement.temperatureValue?.original,
+                    sensorState.latestMeasurement.humidity?.original,
+                    sensorState.latestMeasurement.temperature?.original,
                     HumidityUnit.PERCENT
                 )
-                AlarmType.PRESSURE -> sensorState.latestMeasurement.pressureValue?.valueWithUnit
+                AlarmType.PRESSURE -> sensorState.latestMeasurement.pressure?.valueWithUnit
+                AlarmType.CO2 -> sensorState.latestMeasurement.co2?.valueWithUnit
+                AlarmType.PM1 -> sensorState.latestMeasurement.pm1?.valueWithUnit
+                AlarmType.PM25 -> sensorState.latestMeasurement.pm25?.valueWithUnit
+                AlarmType.PM4 -> sensorState.latestMeasurement.pm4?.valueWithUnit
+                AlarmType.PM10 -> sensorState.latestMeasurement.pm10?.valueWithUnit
+                AlarmType.SOUND -> sensorState.latestMeasurement.dBaAvg?.valueWithUnit
+                AlarmType.LUMINOSITY -> sensorState.latestMeasurement.luminosity?.valueWithUnit
+                AlarmType.VOC -> sensorState.latestMeasurement.voc?.valueWithUnit
+                AlarmType.NOX -> sensorState.latestMeasurement.nox?.valueWithUnit
                 else -> null
             }
             if (latestValue != null) {
@@ -381,7 +390,7 @@ fun RssiAlertEditItem(
             }
         )
         if (sensorState.latestMeasurement != null) {
-            val latestValue = sensorState.latestMeasurement.rssiValue.valueWithUnit
+            val latestValue = sensorState.latestMeasurement.rssi.valueWithUnit
             Paragraph(
                 modifier = Modifier.padding(all = RuuviStationTheme.dimensions.screenPadding),
                 text = stringResource(

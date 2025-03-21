@@ -161,38 +161,38 @@ class WidgetInteractor (
         if (lastMeasurement != null) {
             val temperatureValue = SensorValue(
                 type = WidgetType.TEMPERATURE,
-                sensorValue = lastMeasurement.temperatureValue?.valueWithoutUnit ?: UnitsConverter.NO_VALUE_AVAILABLE,
-                unit = lastMeasurement.temperatureValue?.unitString ?: context.getString(unitsConverter.getTemperatureUnit().unit)
+                sensorValue = lastMeasurement.temperature?.valueWithoutUnit ?: UnitsConverter.NO_VALUE_AVAILABLE,
+                unit = lastMeasurement.temperature?.unitString ?: context.getString(unitsConverter.getTemperatureUnit().unit)
             )
 
             val humidityValue = SensorValue(
                 type = WidgetType.HUMIDITY,
-                sensorValue = lastMeasurement.humidityValue?.valueWithoutUnit ?: UnitsConverter.NO_VALUE_AVAILABLE,
-                unit = lastMeasurement.humidityValue?.unitString ?: context.getString(unitsConverter.getHumidityUnit().unit)
+                sensorValue = lastMeasurement.humidity?.valueWithoutUnit ?: UnitsConverter.NO_VALUE_AVAILABLE,
+                unit = lastMeasurement.humidity?.unitString ?: context.getString(unitsConverter.getHumidityUnit().unit)
             )
 
             val pressureValue = SensorValue(
                 type = WidgetType.PRESSURE,
-                sensorValue = lastMeasurement.pressureValue?.valueWithoutUnit ?: UnitsConverter.NO_VALUE_AVAILABLE,
-                unit = lastMeasurement.pressureValue?.unitString ?: context.getString(unitsConverter.getPressureUnit().unit)
+                sensorValue = lastMeasurement.pressure?.valueWithoutUnit ?: UnitsConverter.NO_VALUE_AVAILABLE,
+                unit = lastMeasurement.pressure?.unitString ?: context.getString(unitsConverter.getPressureUnit().unit)
             )
 
             val movementsValue = SensorValue(
                 type = WidgetType.MOVEMENT,
-                sensorValue = lastMeasurement.movementValue?.valueWithoutUnit ?: UnitsConverter.NO_VALUE_AVAILABLE,
-                unit = lastMeasurement.movementValue?.unitString ?: context.getString(R.string.movements)
+                sensorValue = lastMeasurement.movement?.valueWithoutUnit ?: UnitsConverter.NO_VALUE_AVAILABLE,
+                unit = lastMeasurement.movement?.unitString ?: context.getString(R.string.movements)
             )
 
             val voltageValue = SensorValue(
                 type = WidgetType.VOLTAGE,
-                sensorValue = lastMeasurement.voltageValue.valueWithoutUnit,
-                unit = lastMeasurement.voltageValue.unitString
+                sensorValue = lastMeasurement.voltage.valueWithoutUnit,
+                unit = lastMeasurement.voltage.unitString
             )
 
             val signalStrengthValue = SensorValue(
                 type = WidgetType.SIGNAL_STRENGTH,
-                sensorValue = lastMeasurement.rssiValue.valueWithoutUnit ,
-                unit = lastMeasurement.rssiValue.unitString
+                sensorValue = lastMeasurement.rssi.valueWithoutUnit ,
+                unit = lastMeasurement.rssi.unitString
             )
 
             val accelerationXValue = SensorValue(
@@ -306,27 +306,27 @@ class WidgetInteractor (
             when (widgetType) {
                 WidgetType.TEMPERATURE -> {
                     unit = context.getString(unitsConverter.getTemperatureUnit().unit)
-                    sensorValue = tag.latestMeasurement.temperatureValue?.valueWithoutUnit ?: ""
+                    sensorValue = tag.latestMeasurement.temperature?.valueWithoutUnit ?: ""
                 }
                 WidgetType.HUMIDITY -> {
                     unit = context.getString(unitsConverter.getHumidityUnit().unit)
-                    sensorValue = tag.latestMeasurement.humidityValue?.valueWithoutUnit ?: ""
+                    sensorValue = tag.latestMeasurement.humidity?.valueWithoutUnit ?: ""
                 }
                 WidgetType.PRESSURE -> {
                     unit = context.getString(unitsConverter.getPressureUnit().unit)
-                    sensorValue = tag.latestMeasurement.pressureValue?.valueWithoutUnit ?: ""
+                    sensorValue = tag.latestMeasurement.pressure?.valueWithoutUnit ?: ""
                 }
                 WidgetType.MOVEMENT -> {
                     unit = context.getString(R.string.movements)
-                    sensorValue = tag.latestMeasurement.movementValue?.valueWithoutUnit ?: ""
+                    sensorValue = tag.latestMeasurement.movement?.valueWithoutUnit ?: ""
                 }
                 WidgetType.VOLTAGE -> {
                     unit = context.getString(R.string.voltage_unit)
-                    sensorValue = tag.latestMeasurement.voltageValue.valueWithoutUnit
+                    sensorValue = tag.latestMeasurement.voltage.valueWithoutUnit
                 }
                 WidgetType.SIGNAL_STRENGTH -> {
                     unit = context.getString(R.string.signal_unit)
-                    sensorValue = tag.latestMeasurement.rssiValue.valueWithoutUnit
+                    sensorValue = tag.latestMeasurement.rssi.valueWithoutUnit
                 }
                 WidgetType.ACCELERATION_X -> {
                     unit = accelerationConverter.getAccelerationUnit(AccelerationAxis.AXIS_X)

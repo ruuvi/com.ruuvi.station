@@ -98,12 +98,7 @@ class BluetoothGattInteractor (
         val tagReadingList = mutableListOf<TagSensorReading>()
         val sensorSettings = sensorSettingsRepository.getSensorSettings(sensorId)
         data.forEach { logReading ->
-            val reading = TagSensorReading()
-            reading.ruuviTagId = sensorId
-            reading.temperature = logReading.temperature
-            reading.humidity = logReading.humidity
-            reading.pressure = logReading.pressure
-            reading.createdAt = logReading.date
+            val reading = TagSensorReading(logReading)
             tagReadingList.add(reading)
         }
         sensorHistoryRepository.bulkInsert(sensorId, tagReadingList)

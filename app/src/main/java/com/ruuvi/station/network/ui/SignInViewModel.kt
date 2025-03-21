@@ -91,14 +91,19 @@ class SignInViewModel(
                                 }
                             }
                         }
-                }.invokeOnCompletion { Timber.d("viewModelScope collecting syncEvents Completed") }
+                }.invokeOnCompletion { Timber.d("viewModelScope collecting syncEvents Completed")
+                    viewModelScope.launch {
+                        _tokenProcessed.emit(true)
+                    }
+                }
             } else {
                 showError(UiText.DynamicString(response))
                 setProgress(false)
+                viewModelScope.launch {
+                    _tokenProcessed.emit(true)
+                }
             }
-            viewModelScope.launch {
-                _tokenProcessed.emit(true)
-            }
+
         }
     }
 

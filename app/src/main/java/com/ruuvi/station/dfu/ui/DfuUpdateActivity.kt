@@ -3,8 +3,11 @@ package com.ruuvi.station.dfu.ui
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.provider.OpenableColumns
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.*
@@ -20,7 +23,6 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
@@ -38,6 +40,7 @@ import com.ruuvi.station.app.ui.theme.RuuviTheme
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.permissions.PermissionsInteractor
 import com.ruuvi.station.app.ui.RuuviTopAppBar
+import timber.log.Timber
 
 class DfuUpdateActivity : AppCompatActivity() , KodeinAware {
 
@@ -47,13 +50,60 @@ class DfuUpdateActivity : AppCompatActivity() , KodeinAware {
 
     private lateinit var permissionsInteractor: PermissionsInteractor
 
+    val filePickerLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == RESULT_OK) {
+            val selectedFileUri: Uri? = result.data?.data
+            if (selectedFileUri != null) {
+                // Handle the selected file URI
+                Timber.d("File selected $selectedFileUri")
+                val fileName = getFileName(this, selectedFileUri)
+                Timber.d("File selected filename $fileName")
+                viewModel.upload(fileName!!, readBytesFromUri(this, selectedFileUri)!!)
+            }
+        }
+    }
+    fun selectFile() {
+        val intent = Intent(Intent.ACTION_GET_CONTENT).apply {
+            type = "application/octet-stream" // Allow all file types
+            addCategory(Intent.CATEGORY_OPENABLE)
+        }
+        filePickerLauncher.launch(intent) // Step 3: Launch the file picker
+    }
+
+    fun getFileName(context: Context, uri: Uri): String? {
+        var fileName: String? = null
+        if (uri.scheme == "content") {
+            context.contentResolver.query(uri, null, null, null, null)?.use { cursor ->
+                val nameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+                if (nameIndex != -1 && cursor.moveToFirst()) {
+                    fileName = cursor.getString(nameIndex)
+                }
+            }
+        }
+        if (fileName == null) {
+            fileName = uri.path?.substringAfterLast('/')
+        }
+        return fileName
+    }
+
+    fun readBytesFromUri(context: Context, uri: Uri): ByteArray? {
+        return try {
+            context.contentResolver.openInputStream(uri)?.use { inputStream ->
+                inputStream.readBytes()
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, true)
         val sensorId = intent.getStringExtra(SENSOR_ID)
         sensorId?.let {
             setContent {
-                DfuUpdateScreen(viewModel)
+                DfuUpdateScreen(viewModel, ::selectFile )
             }
         }
         permissionsInteractor = PermissionsInteractor(this)
@@ -82,7 +132,7 @@ class DfuUpdateActivity : AppCompatActivity() , KodeinAware {
 }
 
 @Composable
-fun DfuUpdateScreen(viewModel: DfuUpdateViewModel) {
+fun DfuUpdateScreen(viewModel: DfuUpdateViewModel, selectFile: ()-> Unit) {
     RuuviTheme {
         val stage: DfuUpdateStage by viewModel.stage.observeAsState(DfuUpdateStage.CHECKING_CURRENT_FW_VERSION)
         val activity = LocalContext.current as Activity
@@ -100,8 +150,28 @@ fun DfuUpdateScreen(viewModel: DfuUpdateViewModel) {
                 DfuUpdateStage.UPDATE_FINISHED -> UpdateSuccessfulScreen(viewModel)
                 DfuUpdateStage.UPDATING_FW -> UpdatingFwStageScreen(viewModel)
                 DfuUpdateStage.ERROR -> ErrorScreen(viewModel)
+                DfuUpdateStage.AIR_UPDATE -> AirUpdate(viewModel, selectFile)
             }
         }
+    }
+}
+
+@Composable
+fun AirUpdate(viewModel: DfuUpdateViewModel, selectFile: ()-> Unit) {
+    LaunchedEffect(key1 = viewModel.sensorId) {
+        selectFile()
+    }
+
+    val updatePercent by viewModel.updateFwProgress.observeAsState()
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        SubtitleWithPadding(text = stringResource(id = R.string.updating))
+        Progress(progress = (updatePercent?.toFloat() ?: 0f) / 100f)
+
+        ParagraphWithPadding(text = "$updatePercent %")
+        SubtitleWithPadding(text = stringResource(id = R.string.dfu_update_do_not_close_app))
     }
 }
 

@@ -2,6 +2,7 @@ package com.ruuvi.station.dfu.ui
 
 import androidx.lifecycle.*
 import com.ruuvi.station.R
+import com.ruuvi.station.bluetooth.AirFirmwareInteractor
 import com.ruuvi.station.bluetooth.domain.*
 import com.ruuvi.station.bluetooth.model.SensorFirmwareResult
 import com.ruuvi.station.database.domain.SensorSettingsRepository
@@ -11,6 +12,7 @@ import com.ruuvi.station.dfu.data.DownloadFileStatus
 import com.ruuvi.station.dfu.data.LatestReleaseResponse
 import com.ruuvi.station.dfu.data.ReleaseAssets
 import com.ruuvi.station.dfu.domain.LatestFwInteractor
+import com.ruuvi.station.tag.domain.isAir
 import com.ruuvi.station.util.MacAddressUtils.Companion.incrementMacAddress
 import com.ruuvi.station.util.extensions.diffGreaterThan
 import kotlinx.coroutines.Job
@@ -29,8 +31,9 @@ class DfuUpdateViewModel(
     private val bluetoothDevicesInteractor: BluetoothDevicesInteractor,
     private val dfuInteractor: DfuInteractor,
     private val tagRepository: TagRepository,
-    private val sensorSettingsRepository: SensorSettingsRepository
-    ): ViewModel() {
+    private val sensorSettingsRepository: SensorSettingsRepository,
+    private val airFirmwareInteractor: AirFirmwareInteractor
+): ViewModel() {
 
     private val _stage = MutableLiveData(DfuUpdateStage.CHECKING_CURRENT_FW_VERSION)
     val stage: LiveData<DfuUpdateStage> = _stage
@@ -71,12 +74,24 @@ class DfuUpdateViewModel(
 
     init {
         Timber.d("Init viewmodel for $sensorId ${sensorFwVersion.value}")
-        _stage.value = DfuUpdateStage.CHECKING_CURRENT_FW_VERSION
-        getLatestFw()
+
+        val ruuviTag = tagRepository.getFavoriteSensorById(sensorId)
+
+        if (ruuviTag?.isAir() == true) {
+            initAirInteractor()
+            _stage.value = DfuUpdateStage.AIR_UPDATE
+        } else {
+            _stage.value = DfuUpdateStage.CHECKING_CURRENT_FW_VERSION
+            getLatestFw()
+        }
 
         canStartUpdate.addSource(_sensorFwVersion) { canStartUpdate.value = updateAllowed() }
         canStartUpdate.addSource(_latestFwVersion) { canStartUpdate.value = updateAllowed() }
         canStartUpdate.addSource(_stage) { canStartUpdate.value = updateAllowed() }
+    }
+
+    fun initAirInteractor() {
+        airFirmwareInteractor.connect(sensorId)
     }
 
     fun permissionsChecked(permissionsGranted: Boolean) {
@@ -284,6 +299,19 @@ class DfuUpdateViewModel(
         }
     }
 
+    fun upload(fileName: String, readBytesFromUri: ByteArray) {
+        airFirmwareInteractor.upload(fileName, readBytesFromUri, { current, total ->
+            viewModelScope.launch {
+                _updateFwProgress.value = (current.toDouble() / total * 100).toInt()
+            }
+        },
+            {
+                viewModelScope.launch {
+                    updateFinished()
+                }
+            })
+    }
+
     companion object {
         const val PATTERN_2_TO_3 = "ruuvitag.*default.*_sdk12\\.3_to_15\\.3_dfu\\.zip"
         const val PATTERN_3x = "ruuvitag.*default.*dfu_app\\.zip"
@@ -297,5 +325,6 @@ enum class DfuUpdateStage{
     READY_FOR_UPDATE,
     UPDATING_FW,
     UPDATE_FINISHED,
-    ERROR
+    ERROR,
+    AIR_UPDATE
 }

@@ -53,16 +53,14 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.ruuvi.station.R
-import com.ruuvi.station.about.ui.AboutActivity
 import com.ruuvi.station.addtag.ui.AddTagActivity
 import com.ruuvi.station.alarm.domain.AlarmSensorStatus
 import com.ruuvi.station.alarm.domain.AlarmType
 import com.ruuvi.station.app.permissions.BluetoothPermissions
 import com.ruuvi.station.app.permissions.NotificationPermission
 import com.ruuvi.station.app.preferences.PreferencesRepository
+import com.ruuvi.station.app.ui.DashboardMainMenu
 import com.ruuvi.station.app.ui.DashboardTopAppBar
-import com.ruuvi.station.app.ui.MainMenu
-import com.ruuvi.station.app.ui.MenuItem
 import com.ruuvi.station.app.ui.components.BlinkingEffect
 import com.ruuvi.station.app.ui.components.Paragraph
 import com.ruuvi.station.app.ui.components.RuuviButton
@@ -73,12 +71,10 @@ import com.ruuvi.station.app.ui.theme.RuuviTheme
 import com.ruuvi.station.dashboard.DashboardTapAction
 import com.ruuvi.station.dashboard.DashboardType
 import com.ruuvi.station.network.data.NetworkSyncEvent
-import com.ruuvi.station.network.ui.MyAccountActivity
 import com.ruuvi.station.network.ui.ShareSensorActivity
 import com.ruuvi.station.network.ui.SignInActivity
 import com.ruuvi.station.network.ui.claim.ClaimSensorActivity
 import com.ruuvi.station.nfc.ui.NfcInteractor
-import com.ruuvi.station.settings.ui.SettingsActivity
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tag.domain.UpdateSource
 import com.ruuvi.station.tag.domain.isAir
@@ -199,59 +195,9 @@ class DashboardActivity : NfcActivity(), KodeinAware {
                             )
                         },
                         drawerContent = {
-                            MainMenu(
-                                items = listOf(
-                                    MenuItem(
-                                        R.string.menu_add_new_sensor,
-                                        stringResource(id = R.string.menu_add_new_sensor)
-                                    ),
-                                    MenuItem(
-                                        R.string.menu_app_settings,
-                                        stringResource(id = R.string.menu_app_settings)
-                                    ),
-                                    MenuItem(
-                                        R.string.menu_about_help,
-                                        stringResource(id = R.string.menu_about_help)
-                                    ),
-                                    MenuItem(
-                                        R.string.menu_send_feedback,
-                                        stringResource(id = R.string.menu_send_feedback)
-                                    ),
-                                    MenuItem(
-                                        R.string.menu_what_to_measure,
-                                        stringResource(id = R.string.menu_what_to_measure)
-                                    ),
-                                    MenuItem(
-                                        R.string.menu_buy_sensors,
-                                        stringResource(id = R.string.menu_buy_sensors)
-                                    ),
-                                    if (signedIn) {
-                                        MenuItem(
-                                            R.string.my_ruuvi_account,
-                                            stringResource(id = R.string.my_ruuvi_account)
-                                        )
-                                    } else {
-                                        MenuItem(
-                                            R.string.sign_in,
-                                            stringResource(id = R.string.sign_in)
-                                        )
-                                    }
-                                ),
-                                onItemClick = { item ->
-                                    when (item.id) {
-                                        R.string.menu_add_new_sensor -> AddTagActivity.start(context)
-                                        R.string.menu_app_settings -> SettingsActivity.start(context)
-                                        R.string.menu_about_help -> AboutActivity.start(context)
-                                        R.string.menu_send_feedback -> sendFeedback()
-                                        R.string.menu_what_to_measure -> openUrl(getString(R.string.what_to_measure_link))
-                                        R.string.menu_buy_sensors -> openUrl(getString(R.string.buy_sensors_menu_link))
-                                        R.string.my_ruuvi_account -> MyAccountActivity.start(context)
-                                        R.string.sign_in -> SignInActivity.start(context)
-                                    }
-                                    scope.launch {
-                                        scaffoldState.drawerState.close()
-                                    }
-                                }
+                            DashboardMainMenu(
+                                scaffoldState = scaffoldState,
+                                signedIn = signedIn
                             )
                         },
                         drawerBackgroundColor = RuuviStationTheme.colors.background
@@ -386,7 +332,7 @@ fun EmptyDashboard(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            if (!signedIn && signedInOnce) {
+            if (!signedIn) {
                 Text(
                     modifier = Modifier.padding(horizontal = RuuviStationTheme.dimensions.extended),
                     style = RuuviStationTheme.typography.onboardingSubtitle,
@@ -708,9 +654,9 @@ fun DashboardItem(
                                 }
                         )
                     } else {
-                        if (sensor.latestMeasurement.temperatureValue != null) {
+                        if (sensor.latestMeasurement.temperature != null) {
                             BigValueDisplay(
-                                value = sensor.latestMeasurement.temperatureValue,
+                                value = sensor.latestMeasurement.temperature,
                                 alertTriggered = sensor.alarmSensorStatus.triggered(AlarmType.TEMPERATURE),
                                 modifier = Modifier
                                     .constrainAs(bigTemperature) {
@@ -960,13 +906,13 @@ fun ItemValues(
                     }
                 }
 
-                sensor.latestMeasurement.temperatureValue?.let {
+                sensor.latestMeasurement.temperature?.let {
                     ValueDisplay(
                         value = it,
                         sensor.alarmSensorStatus.triggered(AlarmType.TEMPERATURE)
                     )
                 }
-                sensor.latestMeasurement.humidityValue?.let {
+                sensor.latestMeasurement.humidity?.let {
                     ValueDisplay(
                         value = it,
                         sensor.alarmSensorStatus.triggered(AlarmType.HUMIDITY)
@@ -991,14 +937,14 @@ fun ItemValues(
                 horizontalAlignment = Alignment.Start,
                 verticalArrangement = Arrangement.Bottom,
             ) {
-                sensor.latestMeasurement.pressureValue?.let {
+                sensor.latestMeasurement.pressure?.let {
                     ValueDisplay(
                         value = it,
                         sensor.alarmSensorStatus.triggered(AlarmType.PRESSURE)
                     )
                 }
 
-                sensor.latestMeasurement.movementValue?.let {
+                sensor.latestMeasurement.movement?.let {
                     ValueDisplay(
                         value = it,
                         sensor.alarmSensorStatus.triggered(AlarmType.MOVEMENT)
@@ -1049,13 +995,13 @@ fun ItemValuesWithoutTemperature(
                 horizontalAlignment = Alignment.Start,
                 verticalArrangement = Arrangement.Top,
             ) {
-                sensor.latestMeasurement.humidityValue?.let {
+                sensor.latestMeasurement.humidity?.let {
                     ValueDisplay(
                         value = it,
                         sensor.alarmSensorStatus.triggered(AlarmType.HUMIDITY)
                     )
                 }
-                sensor.latestMeasurement.movementValue?.let {
+                sensor.latestMeasurement.movement?.let {
                     ValueDisplay(
                         value = it,
                         sensor.alarmSensorStatus.triggered(AlarmType.MOVEMENT)
@@ -1080,7 +1026,7 @@ fun ItemValuesWithoutTemperature(
                 horizontalAlignment = Alignment.Start,
                 verticalArrangement = Arrangement.Top,
             ) {
-                sensor.latestMeasurement.pressureValue?.let {
+                sensor.latestMeasurement.pressure?.let {
                     ValueDisplay(
                         value = it,
                         sensor.alarmSensorStatus.triggered(AlarmType.PRESSURE)
@@ -1338,16 +1284,10 @@ fun AQIDisplay(
                 )
             }
         }
-        val progressColor = when (value) {
-            is AQI.RedAQI -> Color.Red
-            is AQI.GreenAQI -> Color.Green
-            is AQI.YellowAQI -> Color.Yellow
-            else -> Color.Gray
-        }
         LinearProgressIndicator(
             modifier = Modifier.width(110.dp),
             progress = (value.score ?: 0) / 100F,
-            color = progressColor
+            color = value.color
         )
     }
 }
