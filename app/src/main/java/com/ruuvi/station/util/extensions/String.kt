@@ -1,5 +1,8 @@
 package com.ruuvi.station.util.extensions
 
+import com.google.common.reflect.TypeToken
+import com.google.gson.Gson
+import com.google.gson.JsonSyntaxException
 import java.util.Locale
 
 private const val HEX_CHARS = "0123456789ABCDEF"
@@ -29,4 +32,17 @@ fun String.prepareFilename(replaceWith: String = ""): String {
     return this
         .map { ch -> if (FORBIDDEN_CHARS.any { ch == it } ) "_" else ch }
         .joinToString(separator = replaceWith)
+}
+
+fun String.loadList(): List<String> {
+    val listType = object : TypeToken<List<String>>() {}.type
+    return if (this.isEmpty() || this == "null") {
+        emptyList()
+    } else {
+        try {
+            Gson().fromJson(this, listType)
+        } catch (exception: JsonSyntaxException) {
+            emptyList()
+        }
+    }
 }

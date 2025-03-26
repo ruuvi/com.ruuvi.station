@@ -26,7 +26,7 @@ import com.ruuvi.station.tagsettings.domain.CsvExporter
 import com.ruuvi.station.tagsettings.domain.XlsxExporter
 import com.ruuvi.station.units.domain.UnitsConverter
 import com.ruuvi.station.units.domain.aqi.AQI
-import com.ruuvi.station.units.model.HumidityUnit
+import com.ruuvi.station.units.model.UnitType.*
 import com.ruuvi.station.util.Period
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -210,7 +210,7 @@ class SensorCardViewModel(
                     chartContainers.add(ChartContainer(
                         chartSensorType = ChartSensorType.HUMIDITY,
                         data = humidityDataTemp,
-                        limits = if (unitsConverter.getHumidityUnit() == HumidityUnit.PERCENT) {
+                        limits = if (unitsConverter.getHumidityUnit() == HumidityUnit.Relative) {
                             alarms.firstOrNull { it.alarmType == AlarmType.HUMIDITY }
                                 ?.let { it.min to it.max }
                         } else null,

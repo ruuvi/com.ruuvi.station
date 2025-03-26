@@ -119,9 +119,10 @@ fun TextEditWithCaptionButton(
 @Composable
 fun TextWithCaption(
     value: String? = null,
-    title: String
+    title: String,
+    modifier: Modifier = Modifier,
 ) {
-    Row(modifier = Modifier
+    Row(modifier = modifier
         .defaultMinSize(minHeight = RuuviStationTheme.dimensions.sensorSettingTitleHeight)
         .padding(vertical = RuuviStationTheme.dimensions.mediumPlus),
         verticalAlignment = Alignment.CenterVertically

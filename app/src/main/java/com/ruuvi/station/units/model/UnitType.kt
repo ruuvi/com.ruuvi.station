@@ -1,0 +1,581 @@
+package com.ruuvi.station.units.model
+
+import com.ruuvi.station.R
+import com.ruuvi.station.alarm.domain.AlarmType
+
+sealed class UnitType(
+    val unitCode: String,
+    val unitTitle: Int,
+    val unit: Int,
+    val measurementCode: String,
+    val measurementTitle: Int,
+    val iconRes: Int = R.drawable.icon_measure_small_temp,
+    val alarmType: AlarmType? = null,
+){
+
+    fun getCode(): String = "${measurementCode}_$unitCode"
+
+    sealed class TemperatureUnit(
+        code: String,
+        title: Int,
+        unit: Int
+    ): UnitType(
+        unitCode = code,
+        unitTitle = title,
+        unit = unit,
+        measurementCode = TEMPERATURE_MEASUREMENT_CODE,
+        measurementTitle = R.string.temperature,
+        iconRes = R.drawable.icon_measure_small_temp,
+        alarmType = AlarmType.TEMPERATURE
+    ) {
+        data object Celsius: TemperatureUnit(TEMPERATURE_CELSIUS_CODE, R.string.temperature_celsius_name, R.string.temperature_celsius_unit)
+        data object Fahrenheit: TemperatureUnit(TEMPERATURE_FAHRENHEIT_CODE, R.string.temperature_fahrenheit_name, R.string.temperature_fahrenheit_unit)
+        data object Kelvin: TemperatureUnit(TEMPERATURE_KELVIN_CODE, R.string.temperature_kelvin_name, R.string.temperature_kelvin_unit)
+
+        companion object {
+            val units = listOf(Celsius, Fahrenheit, Kelvin)
+
+            fun getByCode(code: String): TemperatureUnit {
+                return when (code) {
+                    TEMPERATURE_CELSIUS_CODE -> Celsius
+                    TEMPERATURE_FAHRENHEIT_CODE -> Fahrenheit
+                    TEMPERATURE_KELVIN_CODE -> Kelvin
+                    else -> Celsius
+                }
+            }
+        }
+    }
+
+
+    sealed class HumidityUnit(
+        code: String,
+        title: Int,
+        unit: Int
+    ): UnitType(
+        unitCode = code,
+        unitTitle = title,
+        unit = unit,
+        measurementCode = HUMIDITY_MEASUREMENT_CODE,
+        measurementTitle = R.string.humidity,
+        iconRes = R.drawable.icon_measure_humidity,
+        alarmType = AlarmType.HUMIDITY
+    ) {
+        data object Relative: HumidityUnit(HUMIDITY_RELATIVE_CODE, R.string.humidity_relative_name, R.string.humidity_relative_unit)
+        data object Absolute: HumidityUnit(HUMIDITY_ABSOLUTE_CODE, R.string.humidity_absolute_name, R.string.humidity_absolute_unit)
+        data object DewPoint: HumidityUnit(HUMIDITY_DEW_POINT_CODE, R.string.humidity_dew_point_name, R.string.humidity_dew_point_unit)
+
+        companion object {
+            val units = listOf(Relative, Absolute, DewPoint)
+
+            fun getByCode(code: String): HumidityUnit {
+                return when (code) {
+                    HUMIDITY_RELATIVE_CODE -> Relative
+                    HUMIDITY_ABSOLUTE_CODE -> Absolute
+                    HUMIDITY_DEW_POINT_CODE -> DewPoint
+                    else -> Relative
+                }
+            }
+        }
+    }
+
+    sealed class PressureUnit(
+        code: String,
+        title: Int,
+        unit: Int
+    ): UnitType(
+        unitCode = code,
+        unitTitle = title,
+        unit = unit,
+        measurementCode = PRESSURE_MEASUREMENT_CODE,
+        measurementTitle = R.string.pressure,
+        iconRes = R.drawable.icon_measure_pressure,
+        alarmType = AlarmType.PRESSURE
+    ) {
+        data object Pascal: PressureUnit(PRESSURE_PASCAL_CODE, R.string.pressure_pa_name, R.string.pressure_pa_unit)
+        data object HectoPascal: PressureUnit(PRESSURE_HECTO_PASCAL_CODE, R.string.pressure_hpa_name, R.string.pressure_hpa_unit)
+        data object MmHg: PressureUnit(PRESSURE_MM_HG_CODE, R.string.pressure_mmhg_name, R.string.pressure_mmhg_unit)
+        data object InchHg: PressureUnit(PRESSURE_INCH_HG_CODE, R.string.pressure_inhg_name, R.string.pressure_inhg_unit)
+
+        companion object {
+            val units = listOf(Pascal, HectoPascal, MmHg, InchHg)
+
+            fun getByCode(code: String): PressureUnit {
+                return when (code) {
+                    PRESSURE_PASCAL_CODE -> Pascal
+                    PRESSURE_HECTO_PASCAL_CODE -> HectoPascal
+                    PRESSURE_MM_HG_CODE -> MmHg
+                    PRESSURE_INCH_HG_CODE -> InchHg
+                    else -> HectoPascal
+                }
+            }
+        }
+    }
+
+    sealed class MovementUnit(
+        code: String,
+        title: Int,
+        unit: Int
+    ): UnitType(
+        unitCode = code,
+        unitTitle = title,
+        unit = unit,
+        measurementCode = MOVEMENT_MEASUREMENT_CODE,
+        measurementTitle = R.string.movement_counter,
+        iconRes = R.drawable.ic_icon_measure_movement,
+        alarmType = AlarmType.MOVEMENT
+    ) {
+        data object MovementsCount: MovementUnit(MOVEMENT_COUNT, R.string.movements, R.string.movements)
+
+        companion object {
+            fun getByCode(code: String): UnitType {
+                return when (code) {
+                    MOVEMENT_COUNT -> MovementsCount
+                    else -> MovementsCount
+                }
+            }
+        }
+    }
+
+    sealed class BatteryVoltageUnit(
+        code: String,
+        title: Int,
+        unit: Int
+    ): UnitType(
+        unitCode = code,
+        unitTitle = title,
+        unit = unit,
+        measurementCode = BATTERY_MEASUREMENT_CODE,
+        measurementTitle = R.string.battery_voltage
+    ) {
+        data object Volt: BatteryVoltageUnit(BATTERY_UNIT_VOLT, R.string.voltage_unit, R.string.voltage_unit)
+        companion object {
+            fun getByCode(code: String): UnitType {
+                return when (code) {
+                    BATTERY_UNIT_VOLT -> Volt
+                    else -> Volt
+                }
+            }
+        }
+    }
+
+    sealed class Acceleration(
+        code: String,
+        title: Int,
+        unit: Int,
+        measurementCode: String,
+        measurementTitle: Int
+    ): UnitType(
+        unitCode = code,
+        unitTitle = title,
+        unit = unit,
+        measurementCode = measurementCode,
+        measurementTitle = measurementTitle
+    ) {
+        data object GForceX: Acceleration(ACCELERATION_UNIT_GX, R.string.acceleration_unit, R.string.acceleration_unit_x, ACCELERATION_MEASUREMENT_CODE, R.string.acceleration_x)
+        data object GForceY: Acceleration(ACCELERATION_UNIT_GY, R.string.acceleration_unit, R.string.acceleration_unit_y, ACCELERATION_MEASUREMENT_CODE, R.string.acceleration_y)
+        data object GForceZ: Acceleration(ACCELERATION_UNIT_GZ, R.string.acceleration_unit, R.string.acceleration_unit_z, ACCELERATION_MEASUREMENT_CODE, R.string.acceleration_z)
+
+        companion object {
+            val units = listOf(GForceX, GForceY, GForceZ)
+
+            fun getByCode(code: String): Acceleration {
+                return when (code) {
+                    ACCELERATION_UNIT_GX -> GForceX
+                    ACCELERATION_UNIT_GY -> GForceY
+                    ACCELERATION_UNIT_GZ -> GForceZ
+                    else -> GForceX
+                }
+            }
+        }
+    }
+
+    sealed class SignalStrengthUnit(
+        code: String,
+        title: Int,
+        unit: Int
+    ): UnitType(
+        unitCode = code,
+        unitTitle = title,
+        unit = unit,
+        measurementCode = SIGNAL_STRENGTH_MEASUREMENT_CODE,
+        measurementTitle = R.string.signal_strength_rssi,
+        alarmType = AlarmType.RSSI
+    ) {
+        data object SignalDbm: SignalStrengthUnit(SIGNAL_STRENGTH_UNIT_DBM, R.string.signal_unit, R.string.signal_unit)
+
+        companion object {
+            fun getByCode(code: String): SignalStrengthUnit {
+                return when (code) {
+                    SIGNAL_STRENGTH_UNIT_DBM -> SignalDbm
+                    else -> SignalDbm
+                }
+            }
+        }
+    }
+
+    sealed class AirQuality(
+        code: String,
+        title: Int,
+        unit: Int
+    ): UnitType(
+        unitCode = code,
+        unitTitle = title,
+        unit = unit,
+        measurementCode = AQI_MEASUREMENT_CODE,
+        measurementTitle = R.string.air_quality
+    ) {
+        data object AqiIndex: AirQuality(AQI_INDEX, R.string.aqi, R.string.aqi)
+
+        companion object {
+            fun getByCode(code: String): AirQuality {
+                return when (code) {
+                    AQI_INDEX -> AqiIndex
+                    else -> AqiIndex
+                }
+            }
+        }
+    }
+
+    sealed class Luminosity(
+        code: String,
+        title: Int,
+        unit: Int
+    ): UnitType(
+        unitCode = code,
+        unitTitle = title,
+        unit = unit,
+        measurementCode = LUMINOSITY_MEASUREMENT_CODE,
+        measurementTitle = R.string.luminosity
+    ) {
+        data object Lux: Luminosity(LUMINOSITY_UNIT_LUX, R.string.unit_luminosity, R.string.unit_luminosity)
+
+        companion object {
+            fun getByCode(code: String): Luminosity {
+                return when (code) {
+                    LUMINOSITY_UNIT_LUX -> Lux
+                    else -> Lux
+                }
+            }
+        }
+    }
+
+    sealed class SoundAvg(
+        code: String,
+        title: Int,
+        unit: Int
+    ): UnitType(
+        unitCode = code,
+        unitTitle = title,
+        unit = unit,
+        measurementCode = AVG_NOISE_MEASUREMENT_CODE,
+        measurementTitle = R.string.sound_avg,
+        alarmType = AlarmType.SOUND
+    ) {
+        data object SoundDba: SoundAvg(NOISE_UNIT_DBA, R.string.unit_sound, R.string.unit_sound)
+
+        companion object {
+
+            fun getByCode(code: String): SoundAvg {
+                return when (code) {
+                    NOISE_UNIT_DBA -> SoundDba
+                    else -> SoundDba
+                }
+            }
+        }
+    }
+
+    sealed class SoundPeak(
+        code: String,
+        title: Int,
+        unit: Int
+    ): UnitType(
+        unitCode = code,
+        unitTitle = title,
+        unit = unit,
+        measurementCode = PEAK_NOISE_MEASUREMENT_CODE,
+        measurementTitle = R.string.sound_peak,
+    ) {
+        data object SoundDba: SoundPeak(NOISE_UNIT_DBA, R.string.unit_sound, R.string.unit_sound)
+
+        companion object {
+
+            fun getByCode(code: String): SoundPeak {
+                return when (code) {
+                    NOISE_UNIT_DBA -> SoundDba
+                    else -> SoundDba
+                }
+            }
+        }
+    }
+
+    sealed class CO2(
+        code: String,
+        title: Int,
+        unit: Int
+    ): UnitType(
+        unitCode = code,
+        unitTitle = title,
+        unit = unit,
+        measurementCode = CO2_MEASUREMENT_CODE,
+        measurementTitle = R.string.co2,
+        alarmType = AlarmType.CO2
+    ) {
+        data object Ppm: CO2(CO2_UNIT_PPM, R.string.unit_co2, R.string.unit_co2)
+
+        companion object {
+
+            fun getByCode(code: String): CO2 {
+                return when (code) {
+                    CO2_UNIT_PPM -> Ppm
+                    else -> Ppm
+                }
+            }
+        }
+    }
+
+    sealed class VOC(
+        code: String,
+        title: Int,
+        unit: Int
+    ): UnitType(
+        unitCode = code,
+        unitTitle = title,
+        unit = unit,
+        measurementCode = VOC_MEASUREMENT_CODE,
+        measurementTitle = R.string.voc,
+        alarmType = AlarmType.VOC
+    ) {
+        data object VocIndex: VOC(VOC_INDEX, R.string.unit_voc, R.string.unit_voc)
+
+        companion object {
+
+            fun getByCode(code: String): VOC {
+                return when (code) {
+                    VOC_INDEX -> VocIndex
+                    else -> VocIndex
+                }
+            }
+        }
+    }
+
+    sealed class NOX(
+        code: String,
+        title: Int,
+        unit: Int
+    ): UnitType(
+        unitCode = code,
+        unitTitle = title,
+        unit = unit,
+        measurementCode = NOX_MEASUREMENT_CODE,
+        measurementTitle = R.string.nox,
+        alarmType = AlarmType.NOX
+    ) {
+        data object NoxIndex: NOX(NOX_INDEX, R.string.unit_nox, R.string.unit_nox)
+
+        companion object {
+
+            fun getByCode(code: String): NOX {
+                return when (code) {
+                    NOX_INDEX -> NoxIndex
+                    else -> NoxIndex
+                }
+            }
+        }
+    }
+
+    sealed class PM1(
+        code: String,
+        title: Int,
+        unit: Int
+    ): UnitType(
+        unitCode = code,
+        unitTitle = title,
+        unit = unit,
+        measurementCode = PM1_MEASUREMENT_CODE,
+        measurementTitle = R.string.pm1,
+        alarmType = AlarmType.PM1
+    ) {
+        data object Mgm3: PM1(PM_UNIT_MGM3, R.string.unit_pm1, R.string.unit_pm1)
+
+        companion object {
+
+            fun getByCode(code: String): PM1 {
+                return when (code) {
+                    PM_UNIT_MGM3 -> Mgm3
+                    else -> Mgm3
+                }
+            }
+        }
+    }
+
+    sealed class PM25(
+        code: String,
+        title: Int,
+        unit: Int
+    ): UnitType(
+        unitCode = code,
+        unitTitle = title,
+        unit = unit,
+        measurementCode = PM25_MEASUREMENT_CODE,
+        measurementTitle = R.string.pm25,
+        alarmType = AlarmType.PM25
+    ) {
+        data object Mgm3: PM25(PM_UNIT_MGM3, R.string.unit_pm25, R.string.unit_pm25)
+
+        companion object {
+
+            fun getByCode(code: String): PM25 {
+                return when (code) {
+                    PM_UNIT_MGM3 -> Mgm3
+                    else -> Mgm3
+                }
+            }
+        }
+    }
+
+    sealed class PM4(
+        code: String,
+        title: Int,
+        unit: Int
+    ): UnitType(
+        unitCode = code,
+        unitTitle = title,
+        unit = unit,
+        measurementCode = PM4_MEASUREMENT_CODE,
+        measurementTitle = R.string.pm4,
+        alarmType = AlarmType.PM4
+    ) {
+        data object Mgm3: PM4(PM_UNIT_MGM3, R.string.unit_pm4, R.string.unit_pm4)
+
+        companion object {
+
+            fun getByCode(code: String): PM4 {
+                return when (code) {
+                    PM_UNIT_MGM3 -> Mgm3
+                    else -> Mgm3
+                }
+            }
+        }
+    }
+
+    sealed class PM10(
+        code: String,
+        title: Int,
+        unit: Int
+    ): UnitType(
+        unitCode = code,
+        unitTitle = title,
+        unit = unit,
+        measurementCode = PM10_MEASUREMENT_CODE,
+        measurementTitle = R.string.pm10,
+        alarmType = AlarmType.PM10
+    ) {
+        data object Mgm3: PM10(PM_UNIT_MGM3, R.string.unit_pm10, R.string.unit_pm10)
+
+        companion object {
+
+            fun getByCode(code: String): PM10 {
+                return when (code) {
+                    PM_UNIT_MGM3 -> Mgm3
+                    else -> Mgm3
+                }
+            }
+        }
+    }
+
+
+    companion object {
+        const val TEMPERATURE_MEASUREMENT_CODE = "TEMPERATURE"
+        const val TEMPERATURE_CELSIUS_CODE = "C"
+        const val TEMPERATURE_FAHRENHEIT_CODE = "F"
+        const val TEMPERATURE_KELVIN_CODE = "K"
+
+        const val HUMIDITY_MEASUREMENT_CODE = "HUMIDITY"
+        const val HUMIDITY_RELATIVE_CODE = "0"
+        const val HUMIDITY_ABSOLUTE_CODE = "1"
+        const val HUMIDITY_DEW_POINT_CODE = "2"
+
+        const val PRESSURE_MEASUREMENT_CODE = "PRESSURE"
+        const val PRESSURE_PASCAL_CODE = "0"
+        const val PRESSURE_HECTO_PASCAL_CODE = "1"
+        const val PRESSURE_MM_HG_CODE = "2"
+        const val PRESSURE_INCH_HG_CODE = "3"
+
+        const val MOVEMENT_MEASUREMENT_CODE = "MOVEMENT"
+        const val MOVEMENT_COUNT = "COUNT"
+
+        const val BATTERY_MEASUREMENT_CODE = "BATTERY"
+        const val BATTERY_UNIT_VOLT = "VOLT"
+
+        const val ACCELERATION_MEASUREMENT_CODE = "ACCELERATION"
+        const val ACCELERATION_UNIT_GX = "GX"
+        const val ACCELERATION_UNIT_GY = "GY"
+        const val ACCELERATION_UNIT_GZ = "GZ"
+
+        const val SIGNAL_STRENGTH_MEASUREMENT_CODE = "SIGNAL"
+        const val SIGNAL_STRENGTH_UNIT_DBM = "DBM"
+
+        const val AQI_MEASUREMENT_CODE = "AQI"
+        const val AQI_INDEX = "INDEX"
+
+        const val LUMINOSITY_MEASUREMENT_CODE = "LUMINOSITY"
+        const val LUMINOSITY_UNIT_LUX = "LX"
+
+        const val AVG_NOISE_MEASUREMENT_CODE = "SOUNDAVG"
+        const val PEAK_NOISE_MEASUREMENT_CODE = "SOUNDPEAK"
+        const val NOISE_UNIT_DBA = "DBA"
+
+        const val CO2_MEASUREMENT_CODE = "CO2"
+        const val CO2_UNIT_PPM = "PPM"
+
+        const val VOC_MEASUREMENT_CODE = "VOC"
+        const val VOC_INDEX = "INDEX"
+
+        const val NOX_MEASUREMENT_CODE = "NOX"
+        const val NOX_INDEX = "INDEX"
+
+        const val PM1_MEASUREMENT_CODE = "PM1"
+        const val PM25_MEASUREMENT_CODE = "PM25"
+        const val PM4_MEASUREMENT_CODE = "PM4"
+        const val PM10_MEASUREMENT_CODE = "PM10"
+        const val PM_UNIT_MGM3 = "MGM3"
+
+        fun getByCode(code: String): UnitType? {
+            val codeParts = code.split("_")
+            if (codeParts.size != 2) return null
+            val measurementType = codeParts[0]
+            val unitType = codeParts[1]
+            return when (measurementType) {
+                TEMPERATURE_MEASUREMENT_CODE -> TemperatureUnit.getByCode(unitType)
+                HUMIDITY_MEASUREMENT_CODE -> HumidityUnit.getByCode(unitType)
+                PRESSURE_MEASUREMENT_CODE -> PressureUnit.getByCode(unitType)
+                MOVEMENT_MEASUREMENT_CODE -> MovementUnit.getByCode(unitType)
+                BATTERY_MEASUREMENT_CODE -> BatteryVoltageUnit.getByCode(unitType)
+                ACCELERATION_MEASUREMENT_CODE -> Acceleration.getByCode(unitType)
+                SIGNAL_STRENGTH_MEASUREMENT_CODE -> SignalStrengthUnit.getByCode(unitType)
+                AQI_MEASUREMENT_CODE -> AirQuality.getByCode(unitType)
+                LUMINOSITY_MEASUREMENT_CODE -> Luminosity.getByCode(unitType)
+                AVG_NOISE_MEASUREMENT_CODE -> SoundAvg.getByCode(unitType)
+                PEAK_NOISE_MEASUREMENT_CODE -> SoundPeak.getByCode(unitType)
+                CO2_MEASUREMENT_CODE -> CO2.getByCode(unitType)
+                VOC_MEASUREMENT_CODE -> VOC.getByCode(unitType)
+                NOX_MEASUREMENT_CODE -> NOX.getByCode(unitType)
+                PM1_MEASUREMENT_CODE -> PM1.getByCode(unitType)
+                PM25_MEASUREMENT_CODE -> PM25.getByCode(unitType)
+                PM4_MEASUREMENT_CODE -> PM4.getByCode(unitType)
+                PM10_MEASUREMENT_CODE -> PM10.getByCode(unitType)
+                else -> null
+            }
+        }
+
+        fun getListOfUnits(codesList: List<String>): List<UnitType> {
+            val unitsList = mutableListOf<UnitType>()
+            for (code in codesList) {
+                getByCode(code)?.let { unitType ->
+                    unitsList.add(unitType)
+                }
+            }
+            return unitsList
+        }
+    }
+}

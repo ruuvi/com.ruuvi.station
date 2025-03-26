@@ -14,14 +14,14 @@ import com.ruuvi.station.app.ui.components.ParagraphWithPadding
 import com.ruuvi.station.app.ui.components.RadioButtonRuuvi
 import com.ruuvi.station.app.ui.components.SubtitleWithPadding
 import com.ruuvi.station.units.model.Accuracy
-import com.ruuvi.station.units.model.PressureUnit
+import com.ruuvi.station.units.model.UnitType.*
 
 @Composable
 fun PressureSettings(
     scaffoldState: ScaffoldState,
     viewModel: PressureSettingsViewModel
 ) {
-    val unit = viewModel.pressureyUnit.observeAsState(PressureUnit.HPA)
+    val unit = viewModel.pressureyUnit.observeAsState(PressureUnit.HectoPascal)
     val accuracy = viewModel.pressureAccuracy.observeAsState(Accuracy.Accuracy2)
 
     PageSurfaceWithPadding {
@@ -31,7 +31,7 @@ fun PressureSettings(
                 selectedUnit = unit,
                 onUnitSelected = viewModel::setPressureUnit
             )
-            if (unit.value != PressureUnit.PA) {
+            if (unit.value != PressureUnit.Pascal) {
                 PressureAccuracy(
                     accuracyList = viewModel.getAccuracyList(),
                     accuracy = accuracy,
@@ -45,7 +45,7 @@ fun PressureSettings(
 
 @Composable
 fun PressureUnit(
-    allUnits: Array<PressureUnit>,
+    allUnits: List<PressureUnit>,
     selectedUnit: State<PressureUnit>,
     onUnitSelected: (PressureUnit) -> Unit
 ) {
@@ -71,7 +71,7 @@ fun PressureUnitElement(
     onUnitSelected: (PressureUnit) -> Unit
 ) {
     RadioButtonRuuvi(
-        text = stringResource(id = unit.title),
+        text = stringResource(id = unit.unitTitle),
         isSelected = isSelected,
         onClick = { onUnitSelected.invoke(unit) }
     )

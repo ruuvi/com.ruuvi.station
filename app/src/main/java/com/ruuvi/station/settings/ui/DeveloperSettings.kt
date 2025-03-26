@@ -25,14 +25,14 @@ fun DeveloperSettings(
     viewModel: DeveloperSettingsViewModel
 ) {
     val devServerEnabled = viewModel.devServerEnabled.collectAsState()
-    val newChartsUi = viewModel.newChartsUiEnabled.collectAsState()
+    val visibleMeasurements = viewModel.visibleMeasurementsEnabled.collectAsState()
 
     PageSurfaceWithPadding {
         Column() {
             SwitchIndicatorRuuvi(
-                text = "Show additional charts",
-                checked = newChartsUi.value,
-                onCheckedChange = viewModel::setNewChartsUi
+                text = "Enable visible measurements",
+                checked = visibleMeasurements.value,
+                onCheckedChange = viewModel::setVisibleMeasurementsEnabled
             )
 
             SwitchIndicatorRuuvi(

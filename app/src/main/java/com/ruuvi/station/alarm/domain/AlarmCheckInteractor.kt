@@ -13,7 +13,7 @@ import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tag.domain.TagConverter
 import com.ruuvi.station.units.domain.UnitsConverter
 import com.ruuvi.station.units.model.EnvironmentValue
-import com.ruuvi.station.units.model.HumidityUnit
+import com.ruuvi.station.units.model.UnitType
 import com.ruuvi.station.util.extensions.diff
 import com.ruuvi.station.util.extensions.diffGreaterThan
 import timber.log.Timber
@@ -62,6 +62,7 @@ class AlarmCheckInteractor(
     }
 
     fun checkAlarmsForSensor(sensor: RuuviTagEntity, sensorSettings: SensorSettings) {
+        //TODO REWRITE
         val ruuviTag = tagConverter.fromDatabase(sensor, sensorSettings)
         getEnabledAlarms(ruuviTag)
             .forEach { alarm ->
@@ -125,7 +126,8 @@ class AlarmCheckInteractor(
                 return when (alarm.alarmType) {
                     AlarmType.HUMIDITY -> {
                         val displayThreshold = unitsConverter.getDisplayValue(thresholdValue.toFloat())
-                        context.getString(resource, "$displayThreshold ${unitsConverter.getHumidityUnitString(HumidityUnit.PERCENT)}")
+                        context.getString(resource, "$displayThreshold ${unitsConverter.getHumidityUnitString(
+                            UnitType.HumidityUnit.Relative)}")
                     }
                     AlarmType.PRESSURE -> {
                         val displayThreshold = unitsConverter.getDisplayValue(unitsConverter.getPressureValue(thresholdValue).toFloat())

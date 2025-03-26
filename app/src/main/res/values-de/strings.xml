@@ -652,7 +652,7 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="try_again">Erneut versuchen</string>
     <string name="tx_power">Sendeleistung</string>
     <string name="tx_power_reading">%1$,.0f dBm</string>
-    <string name="type_your_email">Geben Sie Ihre E-Mail ein..</string>
+    <string name="type_your_email">Geben Sie Ihre E-Mail ein...</string>
     <string name="unclaim">Anspruch aufheben</string>
     <string name="unclaim_sensor">Anspruch auf Eigentum zurückziehen</string>
     <string name="unclaim_sensor_description">Das Eigentum an diesem Sensor wurde Ihrem Ruuvi-Konto zugeordnet. Klicken Sie auf „Anspruch aufheben“, um die Einstellungen dieses Sensors und die zugehörigen Daten aus Ihrem Ruuvi-Konto zu entfernen.</string>

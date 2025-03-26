@@ -154,11 +154,6 @@ dependencies {
     implementation "org.kodein.di:kodein-di-conf-jvm:$kodein_version"
     implementation "org.kodein.di:kodein-di-framework-android-x:$kodein_version"
 
-    //Coroutines
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version"
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version"
-    testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutines_version"
-
     //Android KTX
     implementation "androidx.core:core-ktx:1.9.0"
 

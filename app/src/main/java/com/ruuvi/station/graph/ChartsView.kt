@@ -29,7 +29,7 @@ import com.ruuvi.station.graph.model.ChartContainer
 import com.ruuvi.station.graph.model.ChartSensorType
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.units.domain.UnitsConverter
-import com.ruuvi.station.units.model.PressureUnit
+import com.ruuvi.station.units.model.UnitType
 import com.ruuvi.station.util.Period
 import com.ruuvi.station.util.ui.pxToDp
 import com.ruuvi.station.util.ui.scrollbar
@@ -339,7 +339,7 @@ fun setupChart(
         chart.axisLeft.valueFormatter = AxisLeftValueFormatter("#.##")
         chart.axisLeft.granularity = 0.01f
     } else {
-        if (unitsConverter.getPressureUnit() == PressureUnit.PA) {
+        if (unitsConverter.getPressureUnit() == UnitType.PressureUnit.Pascal) {
             chart.axisLeft.valueFormatter = AxisLeftValueFormatter("#")
             chart.axisLeft.granularity = 1f
         } else {
