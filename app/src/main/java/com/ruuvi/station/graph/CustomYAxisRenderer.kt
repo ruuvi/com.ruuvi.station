@@ -5,6 +5,7 @@ import com.github.mikephil.charting.components.YAxis
 import com.github.mikephil.charting.renderer.YAxisRenderer
 import com.github.mikephil.charting.utils.Transformer
 import com.github.mikephil.charting.utils.ViewPortHandler
+import timber.log.Timber
 import kotlin.math.abs
 import kotlin.math.round
 
@@ -73,13 +74,14 @@ class CustomYAxisRenderer(
         }
 
 //      For debug
-//        Timber.d("min $min")
-//        Timber.d("max $max")
-//        Timber.d("firstPoint $firstPoint")
-//        Timber.d("lastPoint $firstPoint")
-//        Timber.d("interval $interval")
-//        Timber.d("labelCount $labelCount")
-//        Timber.d("numberOfPoints $numberOfPoints")
+        Timber.d("min $min")
+        Timber.d("max $max")
+        Timber.d("firstPoint $firstPoint")
+        Timber.d("lastPoint $lastPoint")
+        Timber.d("rawInterval $rawInterval")
+        Timber.d("interval $interval")
+        Timber.d("labelCount $labelCount")
+        Timber.d("numberOfPoints $numberOfPoints")
 
         mYAxis.mEntryCount = numberOfPoints
         mYAxis.mEntries = DoubleArray(numberOfPoints)

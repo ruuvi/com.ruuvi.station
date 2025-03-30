@@ -409,7 +409,7 @@ private fun setLabelCount(context: Context, chart: LineChart) {
     val labelCountY = chart.viewPortHandler.contentHeight() / (computeSize.height * 2)
     Timber.d("setLabelCount ${chart.size} VIEWPORT ${chart.viewPortHandler.contentWidth()} x ${chart.viewPortHandler.contentHeight()} x = $labelCount y = $labelCountY")
     chart.xAxis.setLabelCount(labelCount.toInt(), false)
-    chart.axisLeft.setLabelCount(min(labelCountY.toInt(), 8), false)
+    chart.axisLeft.setLabelCount(min(labelCountY.toInt(), 6), false)
     chart.notifyDataSetChanged()
     chart.invalidate()
 }
