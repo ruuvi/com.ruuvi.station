@@ -57,7 +57,7 @@ class CustomYAxisRenderer(
         }
 
         val rawInterval = range / labelCount
-        val interval = getClosestPredefinedInterval(rawInterval)
+        val interval = getClosestPredefinedInterval(range, labelCount)
 
         var firstPoint = round(min / interval) * interval
         var lastPoint = round(max / interval) * interval
@@ -95,6 +95,10 @@ class CustomYAxisRenderer(
 
     private fun getClosestPredefinedInterval (rawInterval: Double): Double {
         return intervals.sortedBy { abs(it - rawInterval) }.first()
+    }
+
+    private fun getClosestPredefinedInterval (range: Double, labelCount: Int): Double {
+        return intervals.sortedBy { abs(range/it - labelCount) }.first()
     }
 
     companion object {
