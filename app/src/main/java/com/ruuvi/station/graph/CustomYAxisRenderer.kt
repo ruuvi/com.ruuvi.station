@@ -5,7 +5,6 @@ import com.github.mikephil.charting.components.YAxis
 import com.github.mikephil.charting.renderer.YAxisRenderer
 import com.github.mikephil.charting.utils.Transformer
 import com.github.mikephil.charting.utils.ViewPortHandler
-import timber.log.Timber
 import kotlin.math.abs
 import kotlin.math.round
 
@@ -56,7 +55,6 @@ class CustomYAxisRenderer(
             mYAxis.mEntryCount = 0
         }
 
-        val rawInterval = range / labelCount
         val interval = getClosestPredefinedInterval(range, labelCount)
 
         var firstPoint = round(min / interval) * interval
@@ -73,15 +71,15 @@ class CustomYAxisRenderer(
             1
         }
 
-//      For debug
-        Timber.d("min $min")
-        Timber.d("max $max")
-        Timber.d("firstPoint $firstPoint")
-        Timber.d("lastPoint $lastPoint")
-        Timber.d("rawInterval $rawInterval")
-        Timber.d("interval $interval")
-        Timber.d("labelCount $labelCount")
-        Timber.d("numberOfPoints $numberOfPoints")
+////      For debug
+//        Timber.d("min $min")
+//        Timber.d("max $max")
+//        Timber.d("firstPoint $firstPoint")
+//        Timber.d("lastPoint $lastPoint")
+//        Timber.d("rawInterval $rawInterval")
+//        Timber.d("interval $interval")
+//        Timber.d("labelCount $labelCount")
+//        Timber.d("numberOfPoints $numberOfPoints")
 
         mYAxis.mEntryCount = numberOfPoints
         mYAxis.mEntries = DoubleArray(numberOfPoints)
@@ -91,10 +89,6 @@ class CustomYAxisRenderer(
             mYAxis.mEntries[index] = pointValue
             pointValue += interval
         }
-    }
-
-    private fun getClosestPredefinedInterval (rawInterval: Double): Double {
-        return intervals.sortedBy { abs(it - rawInterval) }.first()
     }
 
     private fun getClosestPredefinedInterval (range: Double, labelCount: Int): Double {
