@@ -55,8 +55,7 @@ class CustomYAxisRenderer(
             mYAxis.mEntryCount = 0
         }
 
-        val rawInterval = range / labelCount
-        val interval = getClosestPredefinedInterval(rawInterval)
+        val interval = getClosestPredefinedInterval(range, labelCount)
 
         var firstPoint = round(min / interval) * interval
         var lastPoint = round(max / interval) * interval
@@ -72,11 +71,12 @@ class CustomYAxisRenderer(
             1
         }
 
-//      For debug
+////      For debug
 //        Timber.d("min $min")
 //        Timber.d("max $max")
 //        Timber.d("firstPoint $firstPoint")
-//        Timber.d("lastPoint $firstPoint")
+//        Timber.d("lastPoint $lastPoint")
+//        Timber.d("rawInterval $rawInterval")
 //        Timber.d("interval $interval")
 //        Timber.d("labelCount $labelCount")
 //        Timber.d("numberOfPoints $numberOfPoints")
@@ -91,8 +91,8 @@ class CustomYAxisRenderer(
         }
     }
 
-    private fun getClosestPredefinedInterval (rawInterval: Double): Double {
-        return intervals.sortedBy { abs(it - rawInterval) }.first()
+    private fun getClosestPredefinedInterval (range: Double, labelCount: Int): Double {
+        return intervals.sortedBy { abs(range/it - labelCount) }.first()
     }
 
     companion object {
