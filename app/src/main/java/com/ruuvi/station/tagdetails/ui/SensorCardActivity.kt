@@ -10,6 +10,7 @@ import androidx.activity.compose.setContent
 import androidx.compose.animation.*
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
@@ -17,6 +18,7 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -36,6 +38,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.toSize
@@ -72,6 +75,7 @@ import com.ruuvi.station.util.base.NfcActivity
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
 import com.ruuvi.station.util.extensions.*
+import com.ruuvi.station.util.ui.pxToDp
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
@@ -623,6 +627,7 @@ fun SensorValues(
 ) {
     if (sensor.valuesToDisplay.size <= 1) return
     val valuesWithoutFirst = sensor.valuesToDisplay.subList(1, sensor.valuesToDisplay.size)
+    val itemHeight = 60.dp
 
     if (valuesWithoutFirst.size <= 3) {
         Column(
@@ -634,12 +639,12 @@ fun SensorValues(
         ) {
             for (value in valuesWithoutFirst) {
                 SensorValueItem(
-                    value.unitType?.iconRes,
-                    value.valueWithoutUnit,
-                    value.unitString,
-                    value.unitType?.measurementTitle?.let { stringResource(it) } ?: ""
+                    icon = value.unitType?.iconRes,
+                    value = value.valueWithoutUnit,
+                    unit = value.unitString,
+                    name = value.unitType?.measurementTitle?.let { stringResource(it) } ?: "",
+                    modifier = Modifier.height(itemHeight)
                 )
-                Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
             }
         }
     } else {
@@ -649,54 +654,101 @@ fun SensorValues(
         val oddValues = valuesWithoutFirst.filterIndexed { index, _ ->
             index % 2 != 0
         }
+        val scrollState = rememberScrollState()
 
-        val itemHeight = 60.dp
-
-        Row (
+        Box (
             modifier = modifier
                 .fillMaxWidth()
                 .height(itemHeight * 4)
-                .verticalScroll(rememberScrollState()),
-            verticalAlignment = Alignment.Top
         ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .weight(1f)
-                    .padding(start = RuuviStationTheme.dimensions.extended),
-                verticalArrangement = Arrangement.Top,
-                horizontalAlignment = Alignment.Start
+            Row(
+                modifier = modifier
+                    .fillMaxWidth()
+                    .height(itemHeight * 4)
+                    .verticalScroll(scrollState),
+                verticalAlignment = Alignment.Top
             ) {
-                for (value in evenValues) {
-                    SensorValueItem(
-                        value.unitType?.iconRes,
-                        value.valueWithoutUnit,
-                        value.unitString,
-                        value.unitType?.measurementTitle?.let { stringResource(it) } ?: "",
-                        modifier = Modifier.height(itemHeight)
-                    )
+                Column(
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .weight(1f)
+                        .padding(start = RuuviStationTheme.dimensions.extended),
+                    verticalArrangement = Arrangement.Top,
+                    horizontalAlignment = Alignment.Start
+                ) {
+                    for (value in evenValues) {
+                        SensorValueItem(
+                            icon = value.unitType?.iconRes,
+                            value = value.valueWithoutUnit,
+                            unit = value.unitString,
+                            name = value.unitType?.measurementTitle?.let { stringResource(it) }
+                                ?: "",
+                            modifier = Modifier.height(itemHeight)
+                        )
+                    }
+                }
+                Column(
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .weight(1f)
+                        .padding(start = RuuviStationTheme.dimensions.extended),
+                    verticalArrangement = Arrangement.Top,
+                    horizontalAlignment = Alignment.Start
+                ) {
+                    for (value in oddValues) {
+                        SensorValueItem(
+                            value.unitType?.iconRes,
+                            value.valueWithoutUnit,
+                            value.unitString,
+                            value.unitType?.measurementTitle?.let { stringResource(it) } ?: "",
+                            modifier = Modifier.height(itemHeight)
+                        )
+                    }
                 }
             }
-            Column(
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .weight(1f)
-                    .padding(start = RuuviStationTheme.dimensions.extended),
-                verticalArrangement = Arrangement.Top,
-                horizontalAlignment = Alignment.Start
-            ) {
-                for (value in oddValues) {
-                    SensorValueItem(
-                        value.unitType?.iconRes,
-                        value.valueWithoutUnit,
-                        value.unitString,
-                        value.unitType?.measurementTitle?.let { stringResource(it) } ?: "",
-                        modifier = Modifier.height(itemHeight)
-                    )
-                }
+
+            val showScrollBars = valuesWithoutFirst.size > 8
+            if (showScrollBars) {
+                VerticalScrollbarOverlay(
+                    scrollState,
+                    scrollbarProportion = 4f / evenValues.size,
+                    modifier = Modifier.align(Alignment.CenterEnd)
+                )
             }
         }
+    }
+}
 
+@Composable
+fun VerticalScrollbarOverlay(
+    scrollState: ScrollState,
+    scrollbarProportion: Float,
+    modifier: Modifier = Modifier
+) {
+
+    var boxHeightPx by remember { mutableStateOf(0) }
+    val scrollBarHeight = boxHeightPx.pxToDp() * scrollbarProportion
+    Box(
+        modifier = modifier
+            .fillMaxHeight()
+            .width(4.dp)
+            .background(Color.LightGray.copy(alpha = 0.3f))
+            .onGloballyPositioned { coordinates ->
+                boxHeightPx = coordinates.size.height
+            }
+
+    ) {
+        val proportion = scrollState.value.toFloat() / scrollState.maxValue.toFloat()
+
+        val offset = (boxHeightPx.pxToDp() - scrollBarHeight) * proportion
+
+        Box(
+            modifier = Modifier
+                .offset(y = offset)
+                .width(4.dp)
+                .height(scrollBarHeight)
+                .background(Color.White.copy(alpha = 0.75f), shape = RoundedCornerShape(2.dp))
+        )
     }
 }
 
