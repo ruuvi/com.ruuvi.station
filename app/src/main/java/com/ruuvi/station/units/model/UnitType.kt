@@ -33,7 +33,9 @@ sealed class UnitType(
         data object Kelvin: TemperatureUnit(TEMPERATURE_KELVIN_CODE, R.string.temperature_kelvin_name, R.string.temperature_kelvin_unit)
 
         companion object {
-            val units = listOf(Celsius, Fahrenheit, Kelvin)
+            fun getUnits(): List<TemperatureUnit> {
+                return listOf(Celsius, Fahrenheit, Kelvin)
+            }
 
             fun getByCode(code: String): TemperatureUnit {
                 return when (code) {
@@ -65,7 +67,9 @@ sealed class UnitType(
         data object DewPoint: HumidityUnit(HUMIDITY_DEW_POINT_CODE, R.string.humidity_dew_point_name, R.string.humidity_dew_point_unit)
 
         companion object {
-            val units = listOf(Relative, Absolute, DewPoint)
+            fun getUnits(): List<HumidityUnit> {
+                return listOf(Relative, Absolute, DewPoint)
+            }
 
             fun getByCode(code: String): HumidityUnit {
                 return when (code) {
@@ -97,7 +101,9 @@ sealed class UnitType(
         data object InchHg: PressureUnit(PRESSURE_INCH_HG_CODE, R.string.pressure_inhg_name, R.string.pressure_inhg_unit)
 
         companion object {
-            val units = listOf(Pascal, HectoPascal, MmHg, InchHg)
+            fun getUnits(): List<PressureUnit> {
+                return listOf(Pascal, HectoPascal, MmHg, InchHg)
+            }
 
             fun getByCode(code: String): PressureUnit {
                 return when (code) {

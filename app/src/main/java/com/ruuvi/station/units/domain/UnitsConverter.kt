@@ -65,7 +65,7 @@ class UnitsConverter (
 
     fun getTemperatureUnit(): TemperatureUnit = preferences.getTemperatureUnit()
 
-    fun getAllTemperatureUnits(): List<TemperatureUnit> = TemperatureUnit.units
+    fun getAllTemperatureUnits(): List<TemperatureUnit> = TemperatureUnit.getUnits()
 
     fun getTemperatureUnitString(unit: TemperatureUnit = getTemperatureUnit()): String =
         context.getString(unit.unit)
@@ -151,7 +151,7 @@ class UnitsConverter (
 
     fun getPressureUnit(): PressureUnit = preferences.getPressureUnit()
 
-    fun getAllPressureUnits(): List<PressureUnit> = PressureUnit.units
+    fun getAllPressureUnits(): List<PressureUnit> = PressureUnit.getUnits()
 
     fun getPressureUnitString(pressureUnit: PressureUnit = getPressureUnit()): String {
         return context.getString(pressureUnit.unit)
@@ -251,7 +251,7 @@ class UnitsConverter (
 
     fun getHumidityUnit(): HumidityUnit = preferences.getHumidityUnit()
 
-    fun getAllHumidityUnits(): List<HumidityUnit> = HumidityUnit.units
+    fun getAllHumidityUnits(): List<HumidityUnit> = HumidityUnit.getUnits()
 
     fun getHumidityUnitString(humidityUnit: HumidityUnit = getHumidityUnit()): String {
         return if (humidityUnit != HumidityUnit.DewPoint) {
