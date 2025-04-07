@@ -11,6 +11,7 @@ sealed class UnitType(
     val measurementTitle: Int,
     val iconRes: Int = R.drawable.icon_measure_small_temp,
     val alarmType: AlarmType? = null,
+    val defaultAccuracy: Accuracy
 ){
 
     fun getCode(): String = "${measurementCode}_$unitCode"
@@ -26,7 +27,8 @@ sealed class UnitType(
         measurementCode = TEMPERATURE_MEASUREMENT_CODE,
         measurementTitle = R.string.temperature,
         iconRes = R.drawable.icon_measure_small_temp,
-        alarmType = AlarmType.TEMPERATURE
+        alarmType = AlarmType.TEMPERATURE,
+        defaultAccuracy = Accuracy.Accuracy2
     ) {
         data object Celsius: TemperatureUnit(TEMPERATURE_CELSIUS_CODE, R.string.temperature_celsius_name, R.string.temperature_celsius_unit)
         data object Fahrenheit: TemperatureUnit(TEMPERATURE_FAHRENHEIT_CODE, R.string.temperature_fahrenheit_name, R.string.temperature_fahrenheit_unit)
@@ -60,7 +62,8 @@ sealed class UnitType(
         measurementCode = HUMIDITY_MEASUREMENT_CODE,
         measurementTitle = R.string.humidity,
         iconRes = R.drawable.icon_measure_humidity,
-        alarmType = AlarmType.HUMIDITY
+        alarmType = AlarmType.HUMIDITY,
+        defaultAccuracy = Accuracy.Accuracy2
     ) {
         data object Relative: HumidityUnit(HUMIDITY_RELATIVE_CODE, R.string.humidity_relative_name, R.string.humidity_relative_unit)
         data object Absolute: HumidityUnit(HUMIDITY_ABSOLUTE_CODE, R.string.humidity_absolute_name, R.string.humidity_absolute_unit)
@@ -85,7 +88,8 @@ sealed class UnitType(
     sealed class PressureUnit(
         code: String,
         title: Int,
-        unit: Int
+        unit: Int,
+        defaultAccuracy: Accuracy
     ): UnitType(
         unitCode = code,
         unitTitle = title,
@@ -93,12 +97,13 @@ sealed class UnitType(
         measurementCode = PRESSURE_MEASUREMENT_CODE,
         measurementTitle = R.string.pressure,
         iconRes = R.drawable.icon_measure_pressure,
-        alarmType = AlarmType.PRESSURE
+        alarmType = AlarmType.PRESSURE,
+        defaultAccuracy = defaultAccuracy
     ) {
-        data object Pascal: PressureUnit(PRESSURE_PASCAL_CODE, R.string.pressure_pa_name, R.string.pressure_pa_unit)
-        data object HectoPascal: PressureUnit(PRESSURE_HECTO_PASCAL_CODE, R.string.pressure_hpa_name, R.string.pressure_hpa_unit)
-        data object MmHg: PressureUnit(PRESSURE_MM_HG_CODE, R.string.pressure_mmhg_name, R.string.pressure_mmhg_unit)
-        data object InchHg: PressureUnit(PRESSURE_INCH_HG_CODE, R.string.pressure_inhg_name, R.string.pressure_inhg_unit)
+        data object Pascal: PressureUnit(PRESSURE_PASCAL_CODE, R.string.pressure_pa_name, R.string.pressure_pa_unit, defaultAccuracy = Accuracy.Accuracy0)
+        data object HectoPascal: PressureUnit(PRESSURE_HECTO_PASCAL_CODE, R.string.pressure_hpa_name, R.string.pressure_hpa_unit, defaultAccuracy = Accuracy.Accuracy2)
+        data object MmHg: PressureUnit(PRESSURE_MM_HG_CODE, R.string.pressure_mmhg_name, R.string.pressure_mmhg_unit, defaultAccuracy = Accuracy.Accuracy2)
+        data object InchHg: PressureUnit(PRESSURE_INCH_HG_CODE, R.string.pressure_inhg_name, R.string.pressure_inhg_unit, defaultAccuracy = Accuracy.Accuracy2)
 
         companion object {
             fun getUnits(): List<PressureUnit> {
@@ -128,7 +133,8 @@ sealed class UnitType(
         measurementCode = MOVEMENT_MEASUREMENT_CODE,
         measurementTitle = R.string.movement_counter,
         iconRes = R.drawable.ic_icon_measure_movement,
-        alarmType = AlarmType.MOVEMENT
+        alarmType = AlarmType.MOVEMENT,
+        defaultAccuracy = Accuracy.Accuracy0
     ) {
         data object MovementsCount: MovementUnit(MOVEMENT_COUNT, R.string.movements, R.string.movements)
 
@@ -151,7 +157,8 @@ sealed class UnitType(
         unitTitle = title,
         unit = unit,
         measurementCode = BATTERY_MEASUREMENT_CODE,
-        measurementTitle = R.string.battery_voltage
+        measurementTitle = R.string.battery_voltage,
+        defaultAccuracy = Accuracy.Accuracy2
     ) {
         data object Volt: BatteryVoltageUnit(BATTERY_UNIT_VOLT, R.string.voltage_unit, R.string.voltage_unit)
         companion object {
@@ -175,11 +182,30 @@ sealed class UnitType(
         unitTitle = title,
         unit = unit,
         measurementCode = measurementCode,
-        measurementTitle = measurementTitle
+        measurementTitle = measurementTitle,
+        defaultAccuracy = Accuracy.Accuracy2
     ) {
-        data object GForceX: Acceleration(ACCELERATION_UNIT_GX, R.string.acceleration_unit, R.string.acceleration_unit_x, ACCELERATION_MEASUREMENT_CODE, R.string.acceleration_x)
-        data object GForceY: Acceleration(ACCELERATION_UNIT_GY, R.string.acceleration_unit, R.string.acceleration_unit_y, ACCELERATION_MEASUREMENT_CODE, R.string.acceleration_y)
-        data object GForceZ: Acceleration(ACCELERATION_UNIT_GZ, R.string.acceleration_unit, R.string.acceleration_unit_z, ACCELERATION_MEASUREMENT_CODE, R.string.acceleration_z)
+        data object GForceX: Acceleration(
+            code = ACCELERATION_UNIT_GX,
+            title = R.string.acceleration_x,
+            unit = R.string.acceleration_unit_x,
+            measurementCode = ACCELERATION_MEASUREMENT_CODE,
+            measurementTitle = R.string.acceleration_x
+        )
+        data object GForceY: Acceleration(
+            code = ACCELERATION_UNIT_GY,
+            title = R.string.acceleration_y,
+            unit = R.string.acceleration_unit_y,
+            measurementCode = ACCELERATION_MEASUREMENT_CODE,
+            measurementTitle = R.string.acceleration_y
+        )
+        data object GForceZ: Acceleration(
+            code = ACCELERATION_UNIT_GZ,
+            title = R.string.acceleration_z,
+            unit = R.string.acceleration_unit_z,
+            measurementCode = ACCELERATION_MEASUREMENT_CODE,
+            measurementTitle = R.string.acceleration_z
+        )
 
         companion object {
             val units = listOf(GForceX, GForceY, GForceZ)
@@ -205,7 +231,8 @@ sealed class UnitType(
         unit = unit,
         measurementCode = SIGNAL_STRENGTH_MEASUREMENT_CODE,
         measurementTitle = R.string.signal_strength_rssi,
-        alarmType = AlarmType.RSSI
+        alarmType = AlarmType.RSSI,
+        defaultAccuracy = Accuracy.Accuracy0
     ) {
         data object SignalDbm: SignalStrengthUnit(SIGNAL_STRENGTH_UNIT_DBM, R.string.signal_unit, R.string.signal_unit)
 
@@ -228,7 +255,8 @@ sealed class UnitType(
         unitTitle = title,
         unit = unit,
         measurementCode = AQI_MEASUREMENT_CODE,
-        measurementTitle = R.string.air_quality
+        measurementTitle = R.string.air_quality,
+        defaultAccuracy = Accuracy.Accuracy0
     ) {
         data object AqiIndex: AirQuality(AQI_INDEX, R.string.aqi, R.string.aqi)
 
@@ -251,7 +279,8 @@ sealed class UnitType(
         unitTitle = title,
         unit = unit,
         measurementCode = LUMINOSITY_MEASUREMENT_CODE,
-        measurementTitle = R.string.luminosity
+        measurementTitle = R.string.luminosity,
+        defaultAccuracy = Accuracy.Accuracy0
     ) {
         data object Lux: Luminosity(LUMINOSITY_UNIT_LUX, R.string.unit_luminosity, R.string.unit_luminosity)
 
@@ -275,7 +304,8 @@ sealed class UnitType(
         unit = unit,
         measurementCode = AVG_NOISE_MEASUREMENT_CODE,
         measurementTitle = R.string.sound_avg,
-        alarmType = AlarmType.SOUND
+        alarmType = AlarmType.SOUND,
+        defaultAccuracy = Accuracy.Accuracy0
     ) {
         data object SoundDba: SoundAvg(NOISE_UNIT_DBA, R.string.unit_sound, R.string.unit_sound)
 
@@ -300,6 +330,7 @@ sealed class UnitType(
         unit = unit,
         measurementCode = PEAK_NOISE_MEASUREMENT_CODE,
         measurementTitle = R.string.sound_peak,
+        defaultAccuracy = Accuracy.Accuracy0
     ) {
         data object SoundDba: SoundPeak(NOISE_UNIT_DBA, R.string.unit_sound, R.string.unit_sound)
 
@@ -324,7 +355,8 @@ sealed class UnitType(
         unit = unit,
         measurementCode = CO2_MEASUREMENT_CODE,
         measurementTitle = R.string.co2,
-        alarmType = AlarmType.CO2
+        alarmType = AlarmType.CO2,
+        defaultAccuracy = Accuracy.Accuracy0
     ) {
         data object Ppm: CO2(CO2_UNIT_PPM, R.string.unit_co2, R.string.unit_co2)
 
@@ -349,7 +381,8 @@ sealed class UnitType(
         unit = unit,
         measurementCode = VOC_MEASUREMENT_CODE,
         measurementTitle = R.string.voc,
-        alarmType = AlarmType.VOC
+        alarmType = AlarmType.VOC,
+        defaultAccuracy = Accuracy.Accuracy0
     ) {
         data object VocIndex: VOC(VOC_INDEX, R.string.unit_voc, R.string.unit_voc)
 
@@ -374,7 +407,8 @@ sealed class UnitType(
         unit = unit,
         measurementCode = NOX_MEASUREMENT_CODE,
         measurementTitle = R.string.nox,
-        alarmType = AlarmType.NOX
+        alarmType = AlarmType.NOX,
+        defaultAccuracy = Accuracy.Accuracy0
     ) {
         data object NoxIndex: NOX(NOX_INDEX, R.string.unit_nox, R.string.unit_nox)
 
@@ -399,7 +433,8 @@ sealed class UnitType(
         unit = unit,
         measurementCode = PM1_MEASUREMENT_CODE,
         measurementTitle = R.string.pm1,
-        alarmType = AlarmType.PM1
+        alarmType = AlarmType.PM1,
+        defaultAccuracy = Accuracy.Accuracy0
     ) {
         data object Mgm3: PM1(PM_UNIT_MGM3, R.string.unit_pm1, R.string.unit_pm1)
 
@@ -424,7 +459,8 @@ sealed class UnitType(
         unit = unit,
         measurementCode = PM25_MEASUREMENT_CODE,
         measurementTitle = R.string.pm25,
-        alarmType = AlarmType.PM25
+        alarmType = AlarmType.PM25,
+        defaultAccuracy = Accuracy.Accuracy0
     ) {
         data object Mgm3: PM25(PM_UNIT_MGM3, R.string.unit_pm25, R.string.unit_pm25)
 
@@ -449,7 +485,8 @@ sealed class UnitType(
         unit = unit,
         measurementCode = PM4_MEASUREMENT_CODE,
         measurementTitle = R.string.pm4,
-        alarmType = AlarmType.PM4
+        alarmType = AlarmType.PM4,
+        defaultAccuracy = Accuracy.Accuracy0
     ) {
         data object Mgm3: PM4(PM_UNIT_MGM3, R.string.unit_pm4, R.string.unit_pm4)
 
@@ -474,7 +511,8 @@ sealed class UnitType(
         unit = unit,
         measurementCode = PM10_MEASUREMENT_CODE,
         measurementTitle = R.string.pm10,
-        alarmType = AlarmType.PM10
+        alarmType = AlarmType.PM10,
+        defaultAccuracy = Accuracy.Accuracy0
     ) {
         data object Mgm3: PM10(PM_UNIT_MGM3, R.string.unit_pm10, R.string.unit_pm10)
 

@@ -57,7 +57,6 @@ import com.ruuvi.station.app.ui.components.CircularIndicator
 import com.ruuvi.station.app.ui.theme.*
 import com.ruuvi.station.dashboard.DashboardTapAction
 import com.ruuvi.station.dashboard.ui.DashboardActivity
-import com.ruuvi.station.database.tables.Alarm
 import com.ruuvi.station.graph.ChartControlElement2
 import com.ruuvi.station.graph.ChartsView
 import com.ruuvi.station.graph.model.ChartContainer
@@ -112,7 +111,6 @@ class SensorCardActivity : NfcActivity(), KodeinAware {
                 val showCharts by viewModel.showCharts.collectAsStateWithLifecycle(false)
                 val syncInProcess by viewModel.syncInProgress.collectAsStateWithLifecycle()
                 val showChartStats by viewModel.showChartStats.collectAsStateWithLifecycle()
-                val newChartsUI by viewModel.newChartsUI.collectAsStateWithLifecycle()
                 val increasedChartSize by viewModel.increasedChartSize.collectAsStateWithLifecycle()
 
                 if (sensors.isNotEmpty()) {
@@ -124,11 +122,9 @@ class SensorCardActivity : NfcActivity(), KodeinAware {
                         graphDrawDots = viewModel.graphDrawDots,
                         syncInProgress = syncInProcess,
                         setShowCharts = viewModel::setShowCharts,
-                        getActiveAlarms = viewModel::getActiveAlarms,
                         historyUpdater = viewModel::historyUpdater,
                         unitsConverter = unitsConverter,
                         viewPeriod = viewPeriod,
-                        newChartsUI = newChartsUI,
                         getSyncStatusFlow = viewModel::getGattEvents,
                         getChartClearedFlow = viewModel::getChartCleared,
                         disconnectGattAction = viewModel::disconnectGatt,
@@ -212,7 +208,6 @@ enum class SensorCardOpenType {
     HISTORY
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun SensorsPager(
     selectedSensor: String?,
@@ -222,11 +217,9 @@ fun SensorsPager(
     syncInProgress: Boolean,
     graphDrawDots: Boolean,
     setShowCharts: (Boolean) -> Unit,
-    getActiveAlarms: (String) -> List<Alarm>,
     historyUpdater: (String) -> Flow<MutableList<ChartContainer>>,
     unitsConverter: UnitsConverter,
     viewPeriod: Period,
-    newChartsUI: Boolean,
     increasedChartSize: Boolean,
     getSyncStatusFlow: (String) -> Flow<SyncStatus>,
     getChartClearedFlow: (String) -> Flow<String>,
@@ -379,7 +372,6 @@ fun SensorsPager(
                                 chartCleared = getChartClearedFlow(sensor.id),
                                 showChartStats = showChartStats,
                                 historyUpdater = historyUpdater,
-                                getActiveAlarms = getActiveAlarms,
                                 increasedChartSize = increasedChartSize,
                                 size = size
                             )
