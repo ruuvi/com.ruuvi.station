@@ -1,15 +1,41 @@
 package com.ruuvi.station.util.extensions
 
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Configuration.UI_MODE_NIGHT_MASK
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
+import android.net.Uri
+import android.os.Build
 import android.util.TypedValue
 import androidx.annotation.AttrRes
 import androidx.annotation.ColorInt
 import androidx.appcompat.app.AppCompatDelegate.*
 import androidx.core.content.ContextCompat
+import com.ruuvi.station.BuildConfig
+import com.ruuvi.station.R
 import timber.log.Timber
+
+fun Context.sendFeedback(){
+    val intent = Intent(Intent.ACTION_SENDTO)
+    intent.data = Uri.parse("mailto:")
+    intent.putExtra(Intent.EXTRA_EMAIL, arrayOf( "contact@ruuvi.com" ))
+    intent.putExtra(Intent.EXTRA_SUBJECT, "Ruuvi Station Android Feedback")
+    val body = """
+                       
+Device: ${Build.MANUFACTURER} ${Build.MODEL}
+Android version: ${Build.VERSION.RELEASE}
+App: ${applicationInfo.loadLabel(packageManager)} ${BuildConfig.VERSION_NAME}"""
+    intent.putExtra(Intent.EXTRA_TEXT, body)
+
+    startActivity(Intent.createChooser(intent, getString(R.string.send_email)))
+}
+
+fun Context.openUrl(url: String){
+    val webIntent = Intent(Intent.ACTION_VIEW)
+    webIntent.data = Uri.parse(url)
+    startActivity(webIntent)
+}
 
 fun Context.isFirstInstall(): Boolean {
     try {

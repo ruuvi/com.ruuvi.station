@@ -3,6 +3,7 @@ package com.ruuvi.station.database.tables
 import com.raizlabs.android.dbflow.annotation.*
 import com.raizlabs.android.dbflow.structure.BaseModel
 import com.ruuvi.station.bluetooth.FoundRuuviTag
+import com.ruuvi.station.bluetooth.LogReading
 import com.ruuvi.station.database.domain.LocalDatabase
 import java.util.*
 
@@ -70,7 +71,7 @@ data class TagSensorReading(
     @Column
     var dBaPeak: Double? = null,
 ): BaseModel() {
-    constructor(tag: RuuviTagEntity): this(
+    constructor(tag: RuuviTagEntity) : this(
         ruuviTagId = tag.id!!,
         temperature = tag.temperature,
         temperatureOffset = tag.temperatureOffset,
@@ -100,7 +101,7 @@ data class TagSensorReading(
         createdAt = Date()
     )
 
-    constructor(tag: FoundRuuviTag, timestamp: Date): this(
+    constructor(tag: FoundRuuviTag, timestamp: Date) : this(
         ruuviTagId = tag.id,
         temperature = tag.temperature,
         humidity = tag.humidity,
@@ -125,5 +126,25 @@ data class TagSensorReading(
         movementCounter = tag.movementCounter,
         measurementSequenceNumber = tag.measurementSequenceNumber,
         createdAt = timestamp
+    )
+
+    constructor(log: LogReading) : this(
+        ruuviTagId = log.id,
+        createdAt = log.date,
+        temperature = log.temperature,
+        humidity = log.humidity,
+        pressure = log.pressure,
+        pm1 = log.pm1,
+        pm25 = log.pm25,
+        pm4 = log.pm4,
+        pm10 = log.pm10,
+        co2 = log.co2,
+        voc = log.voc,
+        nox = log.nox,
+        luminosity = log.luminosity,
+        dBaAvg = log.dBaAvg,
+        dBaPeak = log.dBaPeak,
+        voltage = log.voltage,
+        dataFormat = log.dataFormat ?: 0
     )
 }

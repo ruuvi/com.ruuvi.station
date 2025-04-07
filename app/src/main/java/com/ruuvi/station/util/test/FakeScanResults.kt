@@ -51,7 +51,7 @@ class FakeScanResultsSender(private val defaultOnTagFoundListener: DefaultOnTagF
             val n = Random.nextInt(255)
             mac += String.format(MAC_ADDRESS_FORMAT, n)
         }
-        return mac.toUpperCase(Locale.getDefault())
+        return mac.uppercase(Locale.getDefault())
     }
 
     companion object {

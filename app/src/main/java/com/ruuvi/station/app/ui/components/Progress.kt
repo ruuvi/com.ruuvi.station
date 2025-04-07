@@ -83,11 +83,12 @@ fun LoadingScreen(status: String) {
 
 @Composable
 fun CircularIndicator(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    color: Color = RuuviStationTheme.colors.indicatorColor
 ) {
     CircularProgressIndicator(
         modifier = modifier.width(22.dp).height(22.dp),
-        color = RuuviStationTheme.colors.indicatorColor,
+        color = color,
         backgroundColor = Color.Transparent,
         strokeWidth = 3.dp
     )

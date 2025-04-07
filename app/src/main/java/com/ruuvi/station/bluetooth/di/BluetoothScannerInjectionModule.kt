@@ -4,6 +4,7 @@ import android.app.PendingIntent
 import android.content.Context
 import com.ruuvi.station.R
 import com.ruuvi.station.app.preferences.Preferences
+import com.ruuvi.station.bluetooth.AirFirmwareInteractor
 import com.ruuvi.station.bluetooth.BluetoothInteractor
 import com.ruuvi.station.bluetooth.BluetoothLibrary
 import com.ruuvi.station.bluetooth.DefaultOnTagFoundListener
@@ -40,6 +41,8 @@ object BluetoothScannerInjectionModule {
         }
 
         bind<FakeScanResultsSender>() with singleton { FakeScanResultsSender(instance()) }
+
+        bind<AirFirmwareInteractor>() with singleton { AirFirmwareInteractor(instance()) }
 
         bind<ScannerSettings>() with singleton {
             object : ScannerSettings {

@@ -44,26 +44,25 @@ import androidx.lifecycle.*
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
-import com.github.mikephil.charting.charts.LineChart
-import com.github.mikephil.charting.data.Entry
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.ruuvi.gateway.tester.nfc.model.SensorNfсScanInfo
 import com.ruuvi.station.R
 import com.ruuvi.station.alarm.domain.AlarmSensorStatus
 import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.app.ui.components.BlinkingEffect
+import com.ruuvi.station.app.ui.components.CircularGradientProgress
+import com.ruuvi.station.app.ui.components.CircularIndicator
 import com.ruuvi.station.app.ui.theme.*
 import com.ruuvi.station.dashboard.DashboardTapAction
 import com.ruuvi.station.dashboard.ui.DashboardActivity
 import com.ruuvi.station.database.tables.Alarm
-import com.ruuvi.station.database.tables.TagSensorReading
 import com.ruuvi.station.graph.ChartControlElement2
 import com.ruuvi.station.graph.ChartsView
 import com.ruuvi.station.graph.model.ChartContainer
-import com.ruuvi.station.graph.model.ChartSensorType
 import com.ruuvi.station.nfc.domain.NfcScanResponse
 import com.ruuvi.station.nfc.ui.NfcInteractor
 import com.ruuvi.station.tag.domain.RuuviTag
+import com.ruuvi.station.tag.domain.isAir
 import com.ruuvi.station.tag.domain.isLowBattery
 import com.ruuvi.station.tagsettings.ui.TagSettingsActivity
 import com.ruuvi.station.units.domain.UnitsConverter
@@ -308,6 +307,7 @@ fun SensorsPager(
                     (context as Activity).onBackPressed()
                 },
                 chartsEnabled = showCharts,
+                syncInProgress = syncInProgress,
                 alarmStatus = pagerSensor?.alarmSensorStatus ?: AlarmSensorStatus.NoAlarms,
                 alarmAction = {
                     if (pagerSensor != null) {
@@ -341,7 +341,7 @@ fun SensorsPager(
                         verticalArrangement = Arrangement.Top
                     ) {
                         if (showCharts) {
-                            val hideIncreaseChartSize = sensor.latestMeasurement?.humidityValue == null || sensor.latestMeasurement.pressureValue == null
+                            val hideIncreaseChartSize = sensor.latestMeasurement?.humidity == null || sensor.latestMeasurement.pressure == null
                             ChartControlElement2(
                                 sensorId = sensor.id,
                                 showChartStats = showChartStats,
@@ -533,39 +533,70 @@ fun SensorCard(
         modifier = modifier
             .fillMaxSize()
     ) {
-        val (temperatureValue, temperatureUnit, otherValues, lowBattery) = createRefs()
+        val (temperatureValue, temperatureUnit, otherValues, lowBattery, aqi) = createRefs()
 
-        if (sensor.latestMeasurement?.temperatureValue != null) {
-            Text(
-                modifier = Modifier
-                    .constrainAs(temperatureValue) {
-                        top.linkTo(parent.top)
+        if (sensor.latestMeasurement?.temperature != null) {
+            if (sensor.isAir()) {
+
+                Column(
+                    modifier = Modifier.constrainAs(aqi) {
+                        top.linkTo(parent.top, margin = 48.dp)
                         start.linkTo(parent.start)
                         end.linkTo(parent.end)
-                    }
-                    .padding(top = 48.dp),
-                fontSize = 72.sp,
-                fontFamily = ruuviStationFonts.oswaldBold,
-                text = sensor.latestMeasurement.temperatureValue.valueWithoutUnit,
-                lineHeight = 10.sp,
-                color = Color.White
-            )
+                    },
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    CircularGradientProgress(
+                        progress = sensor.latestMeasurement.aqi?.value?.toFloat() ?: 0f,
+                        lineColor = sensor.latestMeasurement.aqiScore.color
+                    )
+                    Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.medium))
+                    Text(
+                        text = stringResource(sensor.latestMeasurement.aqiScore.descriptionRes),
+                        style = RuuviStationTheme.typography.dashboardValue,
+                        fontSize = 20.scaledSp,
+                        color = Color.White
+                    )
+                    Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.medium))
+                    Text(
+                        text = stringResource(R.string.air_quality),
+                        style = RuuviStationTheme.typography.dashboardUnit,
+                        fontSize = 18.scaledSp,
+                        color = Color.White
+                    )
+                }
+            } else {
+                Text(
+                    modifier = Modifier
+                        .constrainAs(temperatureValue) {
+                            top.linkTo(parent.top)
+                            start.linkTo(parent.start)
+                            end.linkTo(parent.end)
+                        }
+                        .padding(top = 48.dp),
+                    fontSize = 72.sp,
+                    fontFamily = ruuviStationFonts.oswaldBold,
+                    text = sensor.latestMeasurement.temperature.valueWithoutUnit,
+                    lineHeight = 10.sp,
+                    color = Color.White
+                )
 
-            Text(
-                modifier = Modifier
-                    .constrainAs(temperatureUnit) {
-                        top.linkTo(temperatureValue.top)
-                        start.linkTo(temperatureValue.end)
-                    }
-                    .padding(
-                        top = 48.dp + 18.dp * LocalDensity.current.fontScale,
-                        start = 2.dp
-                    ),
-                fontSize = 36.sp,
-                fontFamily = ruuviStationFonts.oswaldRegular,
-                text = sensor.latestMeasurement.temperatureValue.unitString,
-                color = Color.White
-            )
+                Text(
+                    modifier = Modifier
+                        .constrainAs(temperatureUnit) {
+                            top.linkTo(temperatureValue.top)
+                            start.linkTo(temperatureValue.end)
+                        }
+                        .padding(
+                            top = 48.dp + 18.dp * LocalDensity.current.fontScale,
+                            start = 2.dp
+                        ),
+                    fontSize = 36.sp,
+                    fontFamily = ruuviStationFonts.oswaldRegular,
+                    text = sensor.latestMeasurement.temperature.unitString,
+                    color = Color.White
+                )
+            }
         }
 
         SensorValues(
@@ -574,10 +605,7 @@ fun SensorCard(
                     start.linkTo(parent.start)
                     bottom.linkTo(parent.bottom)
                     top.linkTo(parent.top)
-                }
-                .padding(
-                    start = RuuviStationTheme.dimensions.extended
-                ),
+                },
             sensor = sensor
         )
 
@@ -598,25 +626,96 @@ fun SensorValues(
     modifier: Modifier,
     sensor: RuuviTag
 ) {
-    Column(
-        modifier = modifier.fillMaxHeight(),
-        verticalArrangement = Arrangement.Bottom,
-        horizontalAlignment = Alignment.Start
-    ) {
-        sensor.latestMeasurement?.humidityValue?.let {
-            SensorValueItem(R.drawable.icon_measure_humidity, it.valueWithoutUnit, it.unitString)
-            Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
+    if (sensor.isAir()) {
+        Row (
+            modifier = modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.Bottom
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .weight(1f)
+                    .padding(start = RuuviStationTheme.dimensions.extended),
+                verticalArrangement = Arrangement.Bottom,
+                horizontalAlignment = Alignment.Start
+            ) {
+                sensor.latestMeasurement?.temperature?.let {
+                    SensorValueItem(R.drawable.icon_measure_small_temp, it.valueWithoutUnit, it.unitString, stringResource(R.string.temperature))
+                    Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
+                }
+
+                sensor.latestMeasurement?.pressure?.let {
+                    SensorValueItem(R.drawable.icon_measure_pressure, it.valueWithoutUnit, it.unitString, stringResource(R.string.pressure))
+                    Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
+                }
+
+                sensor.latestMeasurement?.co2?.let {
+                    SensorValueItem(R.drawable.icon_measure_small_temp, it.valueWithoutUnit, it.unitString, stringResource(R.string.co2))
+                    Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
+                }
+
+                sensor.latestMeasurement?.voltage?.let {
+                    SensorValueItem(R.drawable.icon_measure_small_temp, it.valueWithoutUnit, it.unitString, stringResource(R.string.battery))
+                    Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
+                }
+            }
+            Column(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .weight(1f)
+                    .padding(start = RuuviStationTheme.dimensions.extended),
+                verticalArrangement = Arrangement.Bottom,
+                horizontalAlignment = Alignment.Start
+            ) {
+                sensor.latestMeasurement?.humidity?.let {
+                    SensorValueItem(R.drawable.icon_measure_humidity, it.valueWithoutUnit, it.unitString, stringResource(R.string.humidity))
+                    Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
+                }
+
+                sensor.latestMeasurement?.pm25?.let {
+                    SensorValueItem(R.drawable.icon_measure_small_temp, it.valueWithoutUnit, it.unitString, stringResource(R.string.pm25))
+                    Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
+                }
+
+                sensor.latestMeasurement?.nox?.let {
+                    SensorValueItem(R.drawable.icon_measure_small_temp, it.valueWithoutUnit, "", stringResource(R.string.nox))
+                    Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
+                }
+
+                sensor.latestMeasurement?.luminosity?.let {
+                    SensorValueItem(R.drawable.icon_measure_small_temp, it.valueWithoutUnit, it.unitString,stringResource(R.string.light))
+                    Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
+                }
+
+                sensor.latestMeasurement?.dBaAvg?.let {
+                    SensorValueItem(R.drawable.icon_measure_small_temp, it.valueWithoutUnit, it.unitString, stringResource(R.string.sound))
+                    Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
+                }
+            }
         }
+    } else {
+        Column(
+            modifier = modifier
+                .fillMaxHeight()
+                .padding(start = RuuviStationTheme.dimensions.extended),
+            verticalArrangement = Arrangement.Bottom,
+            horizontalAlignment = Alignment.Start
+        ) {
+            sensor.latestMeasurement?.humidity?.let {
+                SensorValueItem(R.drawable.icon_measure_humidity, it.valueWithoutUnit, it.unitString, stringResource(R.string.humidity))
+                Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
+            }
 
-        sensor.latestMeasurement?.pressureValue?.let {
-            SensorValueItem(R.drawable.icon_measure_pressure, it.valueWithoutUnit, it.unitString)
-            Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
-        }
+            sensor.latestMeasurement?.pressure?.let {
+                SensorValueItem(R.drawable.icon_measure_pressure, it.valueWithoutUnit, it.unitString, stringResource(R.string.pressure))
+                Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
+            }
 
-        sensor.latestMeasurement?.movementValue?.let {
-            SensorValueItem(R.drawable.ic_icon_measure_movement, it.valueWithoutUnit, it.unitString)
-            Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
+            sensor.latestMeasurement?.movement?.let {
+                SensorValueItem(R.drawable.ic_icon_measure_movement, it.valueWithoutUnit, "", stringResource(R.string.movements))
+                Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
 
+            }
         }
     }
 }
@@ -625,7 +724,8 @@ fun SensorValues(
 fun SensorValueItem(
     icon: Int,
     value: String,
-    unit: String
+    unit: String,
+    name: String = ""
 ) {
     Row (
         verticalAlignment = Alignment.CenterVertically,
@@ -637,31 +737,44 @@ fun SensorValueItem(
             tint = Color.White,
             contentDescription = ""
         )
-        Row() {
+        Column {
+            Row() {
+                Text(
+                    modifier = Modifier
+                        .alignByBaseline()
+                        .padding(
+                            start = RuuviStationTheme.dimensions.extended
+                        ),
+                    fontSize = RuuviStationTheme.fontSizes.extended,
+                    style = RuuviStationTheme.typography.dashboardBigValueUnit,
+                    fontFamily = ruuviStationFonts.mulishBold,
+                    fontWeight = FontWeight.Bold,
+                    text = value,
+                    color = Color.White
+                )
+
+                Text(
+                    modifier = Modifier
+                        .alignByBaseline()
+                        .padding(
+                            start = RuuviStationTheme.dimensions.small
+                        ),
+                    style = RuuviStationTheme.typography.dashboardSecondary,
+                    color = Color.White,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = RuuviStationTheme.fontSizes.compact,
+                    text = unit,
+                )
+            }
             Text(
                 modifier = Modifier
-                    .alignByBaseline()
                     .padding(
                         start = RuuviStationTheme.dimensions.extended
-                    ),
-                fontSize = RuuviStationTheme.fontSizes.extended,
-                style = RuuviStationTheme.typography.dashboardBigValueUnit,
-                fontFamily = ruuviStationFonts.mulishBold,
-                fontWeight = FontWeight.Bold,
-                text = value,
-                color = Color.White
-            )
-
-            Text(
-                modifier = Modifier
-                    .alignByBaseline()
-                    .padding(
-                        start = RuuviStationTheme.dimensions.small
                     ),
                 style = RuuviStationTheme.typography.dashboardSecondary,
                 color = White80,
                 fontSize = RuuviStationTheme.fontSizes.compact,
-                text = unit,
+                text = name,
             )
         }
     }
@@ -671,74 +784,88 @@ fun SensorValueItem(
 fun SensorCardTopAppBar(
     navigationCallback: () -> Unit,
     chartsEnabled: Boolean,
+    syncInProgress: Boolean,
     alarmStatus: AlarmSensorStatus = AlarmSensorStatus.NoAlarms,
     alarmAction: () -> Unit,
     chartsAction: () -> Unit,
     settingsAction: () -> Unit
 ) {
-    TopAppBar(
-        title = {
-            Image(
-                modifier = Modifier.height(40.dp),
-                painter = painterResource(id = R.drawable.logo_2021),
-                contentDescription = "",
-                colorFilter = ColorFilter.tint(Color.White)
-            )
-        },
-        navigationIcon = {
-            IconButton(
-                onClick = { navigationCallback.invoke() }) {
-                Icon(Icons.Default.ArrowBack, stringResource(id = R.string.back))
-            }
-        },
-        actions = {
-            IconButton(onClick = { alarmAction.invoke() }) {
-                when (alarmStatus) {
-                    AlarmSensorStatus.NoAlarms ->
-                        Icon(
-                        painter = painterResource(id = R.drawable.ic_notifications_off_24px),
-                        contentDescription = "")
-                    AlarmSensorStatus.NotTriggered ->
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_notifications_on_24px),
-                            tint = Color.White,
-                            contentDescription = "")
-                    is AlarmSensorStatus.Triggered ->
-                        BlinkingEffect() {
+    Box {
+        TopAppBar(
+            modifier = Modifier.height(RuuviStationTheme.dimensions.topAppBarHeight),
+            title = {
+                Image(
+                    modifier = Modifier.height(40.dp),
+                    painter = painterResource(id = R.drawable.logo_2021),
+                    contentDescription = "",
+                    colorFilter = ColorFilter.tint(Color.White)
+                )
+            },
+            navigationIcon = {
+                IconButton(
+                    onClick = { navigationCallback.invoke() }) {
+                    Icon(Icons.Default.ArrowBack, stringResource(id = R.string.back))
+                }
+            },
+            actions = {
+                IconButton(onClick = { alarmAction.invoke() }) {
+                    when (alarmStatus) {
+                        AlarmSensorStatus.NoAlarms ->
                             Icon(
-                                painter = painterResource(id = R.drawable.ic_notifications_active_24px),
-                                contentDescription = null,
-                                tint = RuuviStationTheme.colors.activeAlert
-                            )
-                        }
+                                painter = painterResource(id = R.drawable.ic_notifications_off_24px),
+                                contentDescription = "")
+                        AlarmSensorStatus.NotTriggered ->
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_notifications_on_24px),
+                                tint = Color.White,
+                                contentDescription = "")
+                        is AlarmSensorStatus.Triggered ->
+                            BlinkingEffect() {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.ic_notifications_active_24px),
+                                    contentDescription = null,
+                                    tint = RuuviStationTheme.colors.activeAlert
+                                )
+                            }
+                    }
                 }
-            }
 
-            IconButton(onClick = { chartsAction.invoke() }) {
-                val chartIconRes = if (chartsEnabled) {
-                    R.drawable.icon_temperature
-                } else {
-                    R.drawable.ic_ruuvi_graphs_icon
+                IconButton(onClick = { chartsAction.invoke() }) {
+                    val chartIconRes = if (chartsEnabled) {
+                        R.drawable.icon_temperature
+                    } else {
+                        R.drawable.ic_ruuvi_graphs_icon
+                    }
+                    Icon(
+                        painter = painterResource(id = chartIconRes),
+                        tint = White,
+                        contentDescription = ""
+                    )
                 }
-                Icon(
-                    painter = painterResource(id = chartIconRes),
-                    tint = White,
-                    contentDescription = ""
-                )
-            }
-            IconButton(onClick = { settingsAction.invoke() }) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_settings_24px),
-                    tint = White,
-                    contentDescription = stringResource(id = R.string.sensor_settings)
-                )
-            }
+                IconButton(onClick = { settingsAction.invoke() }) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_settings_24px),
+                        tint = White,
+                        contentDescription = stringResource(id = R.string.sensor_settings)
+                    )
+                }
 
-        },
-        backgroundColor = Color.Transparent,
-        contentColor = RuuviStationTheme.colors.topBarText,
-        elevation = 0.dp
-    )
+            },
+            backgroundColor = Color.Transparent,
+            contentColor = RuuviStationTheme.colors.topBarText,
+            elevation = 0.dp
+        )
+        if (syncInProgress) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(RuuviStationTheme.dimensions.topAppBarHeight),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularIndicator(color = Color.White.copy(alpha = 0.5f))
+            }
+        }
+    }
 }
 
 @Composable
@@ -810,8 +937,6 @@ fun SensorCardBottom(
             mutableStateOf(sensor.latestMeasurement.updatedAt?.describingTimeSince(context) ?: "")
         }
 
-        var syncText by remember { mutableStateOf("") }
-
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = modifier
@@ -820,15 +945,6 @@ fun SensorCardBottom(
         ) {
             val icon = sensor.getSource().getIconResource()
             val fontScale = LocalContext.current.resources.configuration.fontScale
-
-            if (syncInProgress) {
-                Text(
-                    style = RuuviStationTheme.typography.dashboardSecondary,
-                    color = White50,
-                    textAlign = TextAlign.Left,
-                    text = syncText,
-                )
-            }
 
             Text(
                 modifier = Modifier.weight(1f),
@@ -860,22 +976,6 @@ fun SensorCardBottom(
             }
         }
 
-        val baseSyncText = stringResource(id = R.string.synchronizing)
-        LaunchedEffect(key1 = syncInProgress) {
-            var dotsCount = 0
-            while (syncInProgress) {
-                var syncTextTemp = baseSyncText
-
-                for (j in 1..dotsCount) {
-                    syncTextTemp = syncTextTemp + "."
-                }
-
-                syncText = syncTextTemp
-                dotsCount++
-                if (dotsCount > 3) dotsCount = 0
-                delay(700)
-            }
-        }
     } else {
         Row(
             verticalAlignment = Alignment.CenterVertically,

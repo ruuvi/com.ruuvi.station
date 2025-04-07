@@ -1,5 +1,6 @@
 package com.ruuvi.station.app.ui.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -11,17 +12,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
+import com.ruuvi.station.app.ui.theme.RuuviTheme
 import com.ruuvi.station.util.extensions.scaledSp
 
 
 @Composable
 fun OtpTextField(
-    modifier: Modifier = Modifier,
     otpText: String,
     enabled: Boolean = true,
     otpCount: Int = 4,
+    modifier: Modifier = Modifier,
     onOtpTextChange: (String, Boolean) -> Unit
 ) {
     BasicTextField(
@@ -60,20 +63,49 @@ private fun CharView(
         index >= text.length -> ""
         else -> text[index].toString()
     }
-    Text(
-        modifier = Modifier
-            .width(40.dp)
-            .border(
-                1.dp, when {
-                    isFocused -> Color.Gray
-                    else -> Color.LightGray
-                },
-                RoundedCornerShape(8.dp)
-            )
-            .padding(top = 2.dp, start = 5.dp, end = 5.dp, bottom = 5.dp),
-        text = char,
-        style = RuuviStationTheme.typography.otpChar,
-        fontSize = 28.scaledSp,
-        textAlign = TextAlign.Center
-    )
+    Box {
+        Text(
+            modifier = Modifier
+                .width(charBoxSize)
+                .border(
+                    1.dp,
+                    Color.LightGray,
+                    RoundedCornerShape(8.dp)
+                )
+                .padding(4.dp),
+            text = char,
+            style = RuuviStationTheme.typography.otpChar,
+            fontSize = 28.scaledSp,
+            textAlign = TextAlign.Center
+        )
+        if (isFocused) {
+            BlinkingEffect {
+                Text(
+                    modifier = Modifier
+                        .width(charBoxSize)
+                        .padding(4.dp),
+                    text = "_",
+                    style = RuuviStationTheme.typography.otpChar,
+                    fontSize = 28.scaledSp,
+                    textAlign = TextAlign.Center
+                )
+            }
+        }
+    }
+}
+
+private val charBoxSize = 44.dp
+
+@Preview
+@Composable
+fun OtpTextFieldPreview(modifier: Modifier = Modifier) {
+    RuuviTheme {
+        OtpTextField(
+            otpText = "W7X",
+            otpCount = 4,
+            enabled = true,
+            onOtpTextChange = { _,_ -> },
+            modifier = Modifier.background(color = RuuviStationTheme.colors.systemBars)
+        )
+    }
 }

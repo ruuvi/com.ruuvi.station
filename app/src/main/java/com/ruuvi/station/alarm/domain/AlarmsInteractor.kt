@@ -98,11 +98,11 @@ class AlarmsInteractor(
     fun getAvailableAlarmTypesForSensor(sensor: RuuviTag?): Set<AlarmType> {
         return if (sensor != null) {
             val alarmTypes = mutableSetOf<AlarmType>()
-            if (sensor.latestMeasurement?.temperatureValue != null) alarmTypes.add(AlarmType.TEMPERATURE)
-            if (sensor.latestMeasurement?.rssiValue != null) alarmTypes.add(AlarmType.RSSI)
-            if (sensor.latestMeasurement?.humidityValue != null) alarmTypes.add(AlarmType.HUMIDITY)
-            if (sensor.latestMeasurement?.pressureValue != null) alarmTypes.add(AlarmType.PRESSURE)
-            if (sensor.latestMeasurement?.movementValue != null) alarmTypes.add(AlarmType.MOVEMENT)
+            if (sensor.latestMeasurement?.temperature != null) alarmTypes.add(AlarmType.TEMPERATURE)
+            if (sensor.latestMeasurement?.rssi != null) alarmTypes.add(AlarmType.RSSI)
+            if (sensor.latestMeasurement?.humidity != null) alarmTypes.add(AlarmType.HUMIDITY)
+            if (sensor.latestMeasurement?.pressure != null) alarmTypes.add(AlarmType.PRESSURE)
+            if (sensor.latestMeasurement?.movement != null) alarmTypes.add(AlarmType.MOVEMENT)
             if (sensor.networkSensor && sensor.canUseCloudAlerts() ) alarmTypes.add(AlarmType.OFFLINE)
             if (sensor.latestMeasurement?.co2 != null) alarmTypes.add(AlarmType.CO2)
             if (sensor.latestMeasurement?.pm1 != null) alarmTypes.add(AlarmType.PM1)
