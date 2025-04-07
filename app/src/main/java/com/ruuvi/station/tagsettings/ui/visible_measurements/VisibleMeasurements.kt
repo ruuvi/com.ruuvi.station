@@ -40,7 +40,9 @@ import com.ruuvi.station.app.ui.components.Subtitle
 import com.ruuvi.station.app.ui.components.SwitchIndicatorRuuvi
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.RuuviTheme
+import com.ruuvi.station.dashboard.DashboardType
 import com.ruuvi.station.dashboard.ui.DashboardItem
+import com.ruuvi.station.dashboard.ui.DashboardItemSimple
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tag.domain.ruuviTagPreview
 import com.ruuvi.station.tagsettings.ui.SensorSettingsTitle
@@ -66,6 +68,7 @@ fun VisibleMeasurements(
     modifier: Modifier = Modifier,
     sensorState: RuuviTag,
     useDefault: Boolean,
+    dashboardType: DashboardType,
     onAction: (VisibleMeasurementsActions) -> Unit,
     selected: List<ListOption>,
     allOptions: List<ListOption>
@@ -100,18 +103,32 @@ fun VisibleMeasurements(
             modifier = Modifier
                 .padding(RuuviStationTheme.dimensions.screenPadding)
         ){
-            DashboardItem(
-                lazyGridState = rememberLazyGridState(),
-                itemIndex = 0,
-                itemHeight = 156.dp * LocalDensity.current.fontScale,
-                sensor = sensorState,
-                userEmail = "",
-                displacementOffset = IntOffset.Zero,
-                itemIsDragged = false,
-                setName = {_,_ ->},
-                moveItem = {_,_,_ ->},
-                interactionEnabled = false
-            )
+            if (dashboardType == DashboardType.IMAGE_VIEW) {
+                DashboardItem(
+                    lazyGridState = rememberLazyGridState(),
+                    itemIndex = 0,
+                    itemHeight = 156.dp * LocalDensity.current.fontScale,
+                    sensor = sensorState,
+                    userEmail = "",
+                    displacementOffset = IntOffset.Zero,
+                    itemIsDragged = false,
+                    setName = {_,_ ->},
+                    moveItem = {_,_,_ ->},
+                    interactionEnabled = false
+                )
+            } else {
+                DashboardItemSimple(
+                    lazyGridState = rememberLazyGridState(),
+                    itemIndex = 0,
+                    sensor = sensorState,
+                    userEmail = "",
+                    displacementOffset = IntOffset.Zero,
+                    itemIsDragged = false,
+                    setName = {_,_ ->},
+                    moveItem = {_,_,_ ->},
+                    interactionEnabled = false
+                )
+            }
         }
 
         if (!useDefault) {
@@ -259,6 +276,7 @@ fun VisibleMeasurementsPreview(modifier: Modifier = Modifier) {
         VisibleMeasurements(
             useDefault = false,
             onAction = {},
+            dashboardType = DashboardType.IMAGE_VIEW,
             sensorState = ruuviTagPreview,
             selected = testSelected,
             allOptions = testAllOptions,

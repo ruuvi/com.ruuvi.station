@@ -169,6 +169,7 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
                             VisibleMeasurements(
                                 useDefault = useDefault,
                                 sensorState = sensorState,
+                                dashboardType = visibleMeasurementsViewModel.dashBoardType,
                                 onAction = visibleMeasurementsViewModel::onAction,
                                 selected = selected,
                                 allOptions = possibleOptions

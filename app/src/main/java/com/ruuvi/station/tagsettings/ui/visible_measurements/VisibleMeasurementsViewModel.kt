@@ -3,6 +3,7 @@ package com.ruuvi.station.tagsettings.ui.visible_measurements
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.gson.Gson
+import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.dashboard.ui.swap
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tagsettings.domain.TagSettingsInteractor
@@ -17,6 +18,7 @@ import kotlinx.coroutines.flow.update
 class VisibleMeasurementsViewModel(
     val sensorId: String,
     private val interactor: TagSettingsInteractor,
+    private val preferencesRepository: PreferencesRepository,
     private val unitsConverter: UnitsConverter
     ): ViewModel() {
 
@@ -68,6 +70,7 @@ class VisibleMeasurementsViewModel(
                 listOf()
             )
 
+    val dashBoardType = preferencesRepository.getDashboardType()
 
     fun onAction(action: VisibleMeasurementsActions) {
         when (action) {

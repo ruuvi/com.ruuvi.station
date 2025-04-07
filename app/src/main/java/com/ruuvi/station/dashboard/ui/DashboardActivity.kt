@@ -680,6 +680,7 @@ fun DashboardItemSimple(
     moveItem: (Int, Int, Boolean) -> Unit,
     displacementOffset: IntOffset?,
     itemIsDragged: Boolean,
+    interactionEnabled: Boolean = true
 ) {
     val context = LocalContext.current
     val modifier = if (itemIsDragged) {
@@ -699,7 +700,7 @@ fun DashboardItemSimple(
                 scaleY = if (itemIsDragged) 1.04f else 1f
                 alpha = if (itemIsDragged) 0.7f else 1f
             }
-            .clickableSingle {
+            .clickableSingle(interactionEnabled) {
                 SensorCardActivity.start(
                     context,
                     sensor.id,
@@ -726,7 +727,8 @@ fun DashboardItemSimple(
                 userEmail = userEmail,
                 modifier = Modifier.align(TopEnd),
                 setName = setName,
-                moveItem = moveItem
+                moveItem = moveItem,
+                interactionEnabled = false
             )
 
             Column ()
