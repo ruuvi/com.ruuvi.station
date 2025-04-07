@@ -76,7 +76,6 @@ import com.ruuvi.station.network.ui.claim.ClaimSensorActivity
 import com.ruuvi.station.nfc.ui.NfcInteractor
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tag.domain.UpdateSource
-import com.ruuvi.station.tag.domain.isAir
 import com.ruuvi.station.tag.domain.isLowBattery
 import com.ruuvi.station.tagdetails.ui.SensorCardActivity
 import com.ruuvi.station.tagdetails.ui.SensorCardOpenType
@@ -395,7 +394,7 @@ fun DashboardItems(
     dragDropListState: ItemGridDragAndDropState,
     refreshing: Boolean
 ) {
-    val itemHeight = 156.dp * LocalDensity.current.fontScale
+    val itemHeight = 160.dp * LocalDensity.current.fontScale
 
     val pullRefreshState = rememberPullRefreshState(
         refreshing = refreshing,
@@ -546,7 +545,6 @@ fun DashboardItem(
     modifier: Modifier = Modifier,
     interactionEnabled: Boolean = true
 ) {
-    val itemHeight = (itemHeight.value * if (sensor.isAir()) 1.4 else 1.0).dp
     val context = LocalContext.current
     val modifier = if (itemIsDragged) {
         modifier
@@ -578,8 +576,8 @@ fun DashboardItem(
         shape = RoundedCornerShape(10.dp),
         backgroundColor = colors.dashboardCardBackground
     ) {
-        Row(
-            Modifier.height(IntrinsicSize.Min)
+        Row (
+            Modifier.height(IntrinsicSize.Max)
         ) {
             Box(
                 Modifier
@@ -622,7 +620,8 @@ fun DashboardItem(
 
                 Column(
                     verticalArrangement = Arrangement.Top,
-                    horizontalAlignment = Alignment.Start
+                    horizontalAlignment = Alignment.Start,
+                    modifier = Modifier.fillMaxHeight()
                 ) {
                     ItemName(
                         sensor = sensor,
@@ -648,16 +647,19 @@ fun DashboardItem(
                                 )
                             }
                         }
-                        ItemValuesWithoutTemperature(
+                        ItemValues(
                             sensor = sensor,
+                            dropFirst = true,
                             modifier = Modifier
                                 .padding(vertical = RuuviStationTheme.dimensions.small)
                         )
+                        Spacer(modifier = Modifier.weight(1f))
                         ItemBottom(
                             sensor = sensor,
                             modifier = Modifier
                         )
                     } else {
+                        Spacer(modifier = Modifier.weight(1f))
                         ItemBottomNoData(
                             modifier = Modifier
                         )
@@ -761,7 +763,7 @@ fun ItemName(
         lineHeight = RuuviStationTheme.fontSizes.extended,
         fontSize = RuuviStationTheme.fontSizes.normal,
         modifier = modifier,
-        maxLines = 2
+        maxLines = 1
     )
 }
 
@@ -876,56 +878,6 @@ fun ItemValues(
                 modifier = Modifier.weight(1f),
                 horizontalAlignment = Alignment.Start,
                 verticalArrangement = Arrangement.Bottom,
-            ) {
-                for (valueDisplay in oddValues) {
-                    ValueDisplay(
-                        value = valueDisplay,
-                        alertTriggered = valueDisplay.unitType?.alarmType?.let {
-                            sensor.alarmSensorStatus.triggered(it)
-                        } ?: false
-                    )
-                }
-            }
-        }
-    }
-}
-
-@Composable
-fun ItemValuesWithoutTemperature(
-    sensor: RuuviTag,
-    modifier: Modifier = Modifier
-) {
-    if (sensor.valuesToDisplay.isNotEmpty()) {
-        Row(
-            verticalAlignment = Top,
-            modifier = modifier
-        ) {
-            val valuesWithoutFirst = sensor.valuesToDisplay.subList(1, sensor.valuesToDisplay.size)
-            val evenValues = valuesWithoutFirst.filterIndexed { index, _ ->
-                index % 2 == 0
-            }
-            val oddValues = valuesWithoutFirst.filterIndexed { index, _ ->
-                index % 2 != 0
-            }
-            Column(
-                modifier = Modifier.weight(1f),
-                horizontalAlignment = Alignment.Start,
-                verticalArrangement = Arrangement.Top,
-            ) {
-                for (valueDisplay in evenValues) {
-                    ValueDisplay(
-                        value = valueDisplay,
-                        alertTriggered = valueDisplay.unitType?.alarmType?.let {
-                            sensor.alarmSensorStatus.triggered(it)
-                        } ?: false
-                    )
-                }
-            }
-
-            Column(
-                modifier = Modifier.weight(1f),
-                horizontalAlignment = Alignment.Start,
-                verticalArrangement = Arrangement.Top,
             ) {
                 for (valueDisplay in oddValues) {
                     ValueDisplay(
