@@ -18,7 +18,7 @@ import com.ruuvi.station.tagsettings.domain.TagSettingsInteractor
 import com.ruuvi.station.units.domain.AccelerationConverter
 import com.ruuvi.station.units.domain.UnitsConverter
 import com.ruuvi.station.units.model.Accuracy
-import com.ruuvi.station.units.model.HumidityUnit
+import com.ruuvi.station.units.model.UnitType.*
 import com.ruuvi.station.util.extensions.processStatus
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
@@ -66,6 +66,8 @@ class TagSettingsViewModel(
     val sensorOwnedOrOffline: Flow<Boolean> = sensorState.mapNotNull {
         !it.networkSensor || it.owner.isNullOrEmpty() || it.owner.equals(networkInteractor.getEmail(), true)
     }
+
+    val visibleMeasurementsEnabled: StateFlow<Boolean> = MutableStateFlow(preferencesRepository.getVisibleMeasurements())
 
     private val _askToClaim =  MutableSharedFlow<Boolean>()
     val askToClaim: SharedFlow<Boolean> = _askToClaim
@@ -147,12 +149,6 @@ class TagSettingsViewModel(
     fun getTagById(tagId: String): RuuviTagEntity? =
         interactor.getTagById(tagId)
 
-    fun removeNotificationById(notificationId: Int) {
-        alarmCheckInteractor.removeNotificationById(notificationId)
-    }
-
-    fun statusProcessed() { operationStatus.value = "" }
-
     fun setName(name: String?) {
         Timber.d("setName")
         interactor.updateTagName(sensorId, name)
@@ -166,10 +162,10 @@ class TagSettingsViewModel(
     fun getTemperatureOffsetString(value: Double) = unitsConverter.getTemperatureOffsetString(value)
 
     fun getHumidityOffsetString(value: Double) =
-        unitsConverter.getHumidityString(value,0.0, HumidityUnit.PERCENT, Accuracy.Accuracy2)
+        unitsConverter.getHumidityString(value,0.0, HumidityUnit.Relative, Accuracy.Accuracy2)
 
     fun getPressureOffsetString(value: Double) =
-        unitsConverter.getPressureString(value, Accuracy.Accuracy2)
+        unitsConverter.getPressureString(value, accuracy = Accuracy.Accuracy2)
 
     fun getAccelerationString(value: Double?) =
         accelerationConverter.getAccelerationString(value, null)

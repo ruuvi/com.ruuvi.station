@@ -213,3 +213,6 @@ fun RuuviTagEntity.isLowBattery(): Boolean {
         else -> false
     }
 }
+
+fun RuuviTagEntity.isAir(): Boolean =
+    this.dataFormat == 0xE0 || this.dataFormat == 0xF0

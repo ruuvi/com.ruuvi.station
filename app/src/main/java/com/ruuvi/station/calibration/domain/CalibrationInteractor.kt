@@ -9,7 +9,7 @@ import com.ruuvi.station.database.tables.SensorSettings
 import com.ruuvi.station.network.domain.RuuviNetworkInteractor
 import com.ruuvi.station.units.domain.UnitsConverter
 import com.ruuvi.station.units.model.Accuracy
-import com.ruuvi.station.units.model.HumidityUnit
+import com.ruuvi.station.units.model.UnitType.*
 import com.ruuvi.station.util.extensions.round
 
 class CalibrationInteractor (
@@ -21,7 +21,11 @@ class CalibrationInteractor (
     ) {
     private fun getSensorEntity(sensorId: String): RuuviTagEntity? = tagRepository.getTagById(sensorId)
 
-    fun getTemperatureString(temperature: Double?): String = unitsConverter.getTemperatureString(temperature, Accuracy.Accuracy2)
+    fun getTemperatureString(temperature: Double?): String =
+        unitsConverter.getTemperatureString(
+            temperature = temperature,
+            accuracy = Accuracy.Accuracy2
+        )
 
     fun getSensorSettings(sensorId: String): SensorSettings? = sensorSettingsRepository.getSensorSettings(sensorId)
 
@@ -82,7 +86,10 @@ class CalibrationInteractor (
                 calibratedValue,
                 isPressureCalibrated,
                 currentPressureOffset,
-                currentOffsetString = unitsConverter.getPressureString(currentPressureOffset, Accuracy.Accuracy2)
+                currentOffsetString = unitsConverter.getPressureString(
+                    pressure = currentPressureOffset,
+                    accuracy = Accuracy.Accuracy2
+                )
             )
         }
         return null
@@ -102,7 +109,12 @@ class CalibrationInteractor (
                 calibratedValue,
                 isHumidityCalibrated,
                 currentHumidityOffset,
-                currentOffsetString = unitsConverter.getHumidityString(currentHumidityOffset, 0.0, HumidityUnit.PERCENT, Accuracy.Accuracy2)
+                currentOffsetString = unitsConverter.getHumidityString(
+                    humidity = currentHumidityOffset,
+                    temperature = 0.0,
+                    humidityUnit = HumidityUnit.Relative,
+                    accuracy = Accuracy.Accuracy2
+                )
             )
         }
         return null
@@ -110,7 +122,11 @@ class CalibrationInteractor (
 
     fun getPressureUnit(): String = unitsConverter.getPressureUnitString()
 
-    fun getPressureString(value: Double): String = unitsConverter.getPressureString(value, Accuracy.Accuracy2)
+    fun getPressureString(value: Double): String =
+        unitsConverter.getPressureString(
+            pressure = value,
+            accuracy = Accuracy.Accuracy2
+        )
 
     fun clearPressureCalibration(sensorId: String) {
         sensorSettingsRepository.clearPressureCalibration(sensorId)
@@ -127,9 +143,15 @@ class CalibrationInteractor (
         }
     }
 
-    fun getHumidityUnit(): String = unitsConverter.getHumidityUnitString(HumidityUnit.PERCENT)
+    fun getHumidityUnit(): String = unitsConverter.getHumidityUnitString(HumidityUnit.Relative)
 
-    fun getHumidityString(value: Double): String = unitsConverter.getHumidityString(value, 0.0, HumidityUnit.PERCENT, Accuracy.Accuracy2)
+    fun getHumidityString(value: Double): String =
+        unitsConverter.getHumidityString(
+            humidity = value,
+            temperature = 0.0,
+            humidityUnit = HumidityUnit.Relative,
+            accuracy = Accuracy.Accuracy2
+        )
 
     fun clearHumidityCalibration(sensorId: String) {
         sensorSettingsRepository.clearHumidityCalibration(sensorId)

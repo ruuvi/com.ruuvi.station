@@ -11,9 +11,7 @@ import com.ruuvi.station.dataforwarding.domain.DataForwardingSender
 import com.ruuvi.station.network.domain.NetworkApplicationSettings
 import com.ruuvi.station.units.domain.UnitsConverter
 import com.ruuvi.station.units.model.Accuracy
-import com.ruuvi.station.units.model.HumidityUnit
-import com.ruuvi.station.units.model.PressureUnit
-import com.ruuvi.station.units.model.TemperatureUnit
+import com.ruuvi.station.units.model.UnitType.*
 import com.ruuvi.station.util.BackgroundScanModes
 
 class AppSettingsInteractor(
@@ -170,7 +168,7 @@ class AppSettingsInteractor(
         callback: FutureCallback<Response<JsonObject>>
     ) = dataForwardingSender.test(gatewayUrl, deviceId, callback)
 
-    fun getAllPressureUnits(): Array<PressureUnit> = unitsConverter.getAllPressureUnits()
+    fun getAllPressureUnits(): List<PressureUnit> = unitsConverter.getAllPressureUnits()
 
     fun getPressureUnit(): PressureUnit = unitsConverter.getPressureUnit()
 
@@ -187,9 +185,9 @@ class AppSettingsInteractor(
         networkApplicationSettings.updatePressureAccuracy()
     }
 
-    fun getAllTemperatureUnits(): Array<TemperatureUnit> = unitsConverter.getAllTemperatureUnits()
+    fun getAllTemperatureUnits(): List<TemperatureUnit> = unitsConverter.getAllTemperatureUnits()
 
-    fun getAllHumidityUnits(): Array<HumidityUnit> = unitsConverter.getAllHumidityUnits()
+    fun getAllHumidityUnits(): List<HumidityUnit> = unitsConverter.getAllHumidityUnits()
 
     fun getAccuracyList(): Array<Accuracy> = Accuracy.values()
 

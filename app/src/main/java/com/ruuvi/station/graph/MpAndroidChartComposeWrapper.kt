@@ -39,8 +39,8 @@ import com.github.mikephil.charting.utils.Utils
 import com.ruuvi.station.R
 import com.ruuvi.station.app.ui.components.scaledToMax
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
-import com.ruuvi.station.graph.model.ChartSensorType
 import com.ruuvi.station.units.domain.UnitsConverter
+import com.ruuvi.station.units.model.UnitType
 import com.ruuvi.station.util.extensions.isStartOfTheDay
 import timber.log.Timber
 import java.text.DateFormat
@@ -56,7 +56,7 @@ fun ChartViewPrototype(
     modifier: Modifier,
     chartData: MutableList<Entry>,
     unitsConverter: UnitsConverter,
-    chartSensorType: ChartSensorType,
+    unitType: UnitType,
     graphDrawDots: Boolean,
     showChartStats: Boolean,
     limits: Pair<Double,Double>?,
@@ -67,21 +67,27 @@ fun ChartViewPrototype(
     val context = LocalContext.current
     Timber.d("ChartView - ChartViewPrototype")
 
-    val title = when (chartSensorType) {
-        ChartSensorType.TEMPERATURE -> stringResource(id = R.string.temperature_with_unit, unitsConverter.getTemperatureUnitString())
-        ChartSensorType.HUMIDITY -> stringResource(id = R.string.humidity_with_unit, unitsConverter.getHumidityUnitString())
-        ChartSensorType.PRESSURE -> stringResource(id = R.string.pressure_with_unit, unitsConverter.getPressureUnitString())
-        ChartSensorType.BATTERY -> stringResource(id = R.string.battery_voltage)
-        ChartSensorType.ACCELERATION -> stringResource(id = R.string.acceleration_x)
-        ChartSensorType.RSSI -> stringResource(id = R.string.signal_strength_rssi)
-        ChartSensorType.MOVEMENTS -> stringResource(id = R.string.movement_counter)
-        ChartSensorType.CO2 -> stringResource(id = R.string.co2_with_unit, stringResource(id = R.string.unit_co2))
-        ChartSensorType.VOC -> stringResource(id = R.string.voc_with_unit, stringResource(id = R.string.unit_voc))
-        ChartSensorType.NOX -> stringResource(id = R.string.nox_with_unit, stringResource(id = R.string.unit_nox))
-        ChartSensorType.PM25 -> stringResource(id = R.string.pm25_with_unit, stringResource(id = R.string.unit_pm25))
-        ChartSensorType.LUMINOSITY -> stringResource(id = R.string.luminosity_with_unit, stringResource(id = R.string.unit_luminosity))
-        ChartSensorType.SOUND -> stringResource(id = R.string.sound_with_unit, stringResource(id = R.string.unit_sound))
-        ChartSensorType.AQI -> stringResource(id = R.string.aqi)
+
+    val unitString = stringResource(unitType.unit)
+
+    val title = when (unitType) {
+        is UnitType.TemperatureUnit -> stringResource(id = R.string.temperature_with_unit, unitString)
+        is UnitType.HumidityUnit -> stringResource(id = R.string.humidity_with_unit, unitString)
+        is UnitType.PressureUnit -> stringResource(id = R.string.pressure_with_unit, unitString)
+        is UnitType.BatteryVoltageUnit -> stringResource(id = R.string.battery_voltage) + " ($unitString)"
+        is UnitType.Acceleration -> stringResource(unitType.measurementTitle) + " ($unitString)"
+        is UnitType.SignalStrengthUnit -> stringResource(id = R.string.signal_strength_rssi)
+        is UnitType.CO2 -> stringResource(id = R.string.co2_with_unit, unitString)
+        is UnitType.VOC -> stringResource(id = R.string.voc_with_unit, unitString)
+        is UnitType.NOX -> stringResource(id = R.string.nox_with_unit, unitString)
+        is UnitType.PM1 -> stringResource(id = R.string.pm1_with_unit, unitString)
+        is UnitType.PM25 -> stringResource(id = R.string.pm25_with_unit, unitString)
+        is UnitType.PM4 -> stringResource(id = R.string.pm4_with_unit, unitString)
+        is UnitType.PM10 -> stringResource(id = R.string.pm10_with_unit, unitString)
+        is UnitType.Luminosity -> stringResource(id = R.string.luminosity_with_unit, unitString)
+        is UnitType.SoundAvg -> stringResource(id = R.string.sound_with_unit, unitString)
+        is UnitType.AirQuality -> stringResource(id = R.string.aqi)
+        else -> ""
     }
 
     val offset = RuuviStationTheme.dimensions.extended
@@ -90,7 +96,7 @@ fun ChartViewPrototype(
         lineChart,
         chartData,
         unitsConverter,
-        chartSensorType
+        unitType
     )
 
     Column (
@@ -129,7 +135,7 @@ fun ChartViewPrototype(
             factory = { context ->
                 Timber.d("ChartView AndroidView - factory")
                 val chart = lineChart
-                setupMarker(context, chart, unitsConverter, chartSensorType, clearMarker = clearMarker, getFrom =  { from })
+                setupMarker(context, chart, unitsConverter, unitType, clearMarker = clearMarker, getFrom =  { from })
                 chart
             },
             update = { view ->
@@ -145,7 +151,7 @@ fun getPrototypeChartDescription(
     lineChart: LineChart,
     chartData: MutableList<Entry>,
     unitsConverter: UnitsConverter,
-    chartSensorType: ChartSensorType,
+    unitType: UnitType,
 ): String {
     Timber.d("ChartView - getPrototypeChartDescription")
 
@@ -153,21 +159,15 @@ fun getPrototypeChartDescription(
         return value.toInt().toString()
     }
 
-    val getRawValue = when (chartSensorType) {
-        ChartSensorType.TEMPERATURE -> unitsConverter::getTemperatureRawWithoutUnitString
-        ChartSensorType.HUMIDITY -> unitsConverter::getHumidityRawWithoutUnitString
-        ChartSensorType.PRESSURE -> unitsConverter::getPressureRawWithoutUnitString
-        ChartSensorType.BATTERY -> unitsConverter::getTemperatureRawWithoutUnitString
-        ChartSensorType.ACCELERATION -> unitsConverter::getTemperatureRawWithoutUnitString
-        ChartSensorType.RSSI -> unitsConverter::getTemperatureRawWithoutUnitString
-        ChartSensorType.MOVEMENTS -> unitsConverter::getTemperatureRawWithoutUnitString
-        ChartSensorType.CO2 -> ::getSimpleValue
-        ChartSensorType.VOC -> ::getSimpleValue
-        ChartSensorType.NOX -> ::getSimpleValue
-        ChartSensorType.PM25 -> ::getSimpleValue
-        ChartSensorType.LUMINOSITY -> ::getSimpleValue
-        ChartSensorType.SOUND -> ::getSimpleValue
-        ChartSensorType.AQI -> ::getSimpleValue
+    val getRawValue = when (unitType) {
+        is UnitType.TemperatureUnit -> unitsConverter::getTemperatureRawWithoutUnitString
+        is UnitType.HumidityUnit -> unitsConverter::getHumidityRawWithoutUnitString
+        is UnitType.PressureUnit -> unitsConverter::getPressureRawWithoutUnitString
+        is UnitType.BatteryVoltageUnit -> unitsConverter::getTemperatureRawWithoutUnitString
+        is UnitType.Acceleration -> unitsConverter::getTemperatureRawWithoutUnitString
+        is UnitType.SignalStrengthUnit -> unitsConverter::getTemperatureRawWithoutUnitString
+        is UnitType.MovementUnit -> unitsConverter::getTemperatureRawWithoutUnitString
+        else -> ::getSimpleValue
     }
 
     val latestPoint = chartData.lastOrNull()
@@ -215,7 +215,7 @@ fun getPrototypeChartDescription(
 fun chartsInitialSetup(
     context: Context,
     unitsConverter: UnitsConverter,
-    charts: List<Pair<ChartSensorType, LineChart>>
+    charts: List<Pair<UnitType, LineChart>>
 ) {
     for (chartPair in charts) {
         setupChart(chartPair.second, unitsConverter, chartPair.first)
@@ -280,7 +280,7 @@ fun setupMarker(
     context: Context,
     chart: LineChart,
     unitsConverter: UnitsConverter,
-    chartSensorType: ChartSensorType,
+    unitType: UnitType,
     getFrom: () -> Long,
     clearMarker: () -> Unit
 ) {
@@ -288,7 +288,7 @@ fun setupMarker(
     val markerView = ChartMarkerView(
         context = context,
         layoutResource = R.layout.custom_marker_view,
-        chartSensorType = chartSensorType,
+        unitType = unitType,
         unitsConverter = unitsConverter,
         getFrom = getFrom,
         clearMarker = clearMarker
@@ -415,7 +415,7 @@ private fun setLabelCount(context: Context, chart: LineChart) {
 }
 
 // Manually setting offsets to be sure that all of the charts have equal offsets. This is needed for synchronous zoom and dragging.
-fun normalizeOffsets(charts: List<Pair<ChartSensorType, LineChart>>) {
+fun normalizeOffsets(charts: List<Pair<UnitType, LineChart>>) {
     val computePaint = Paint(1)
     computePaint.typeface = charts.first().second.axisLeft.typeface
     computePaint.textSize = charts.first().second.axisLeft.textSize

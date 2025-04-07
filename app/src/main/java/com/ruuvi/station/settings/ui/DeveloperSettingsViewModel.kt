@@ -21,6 +21,9 @@ class DeveloperSettingsViewModel(
     private var _newChartsUiEnabled = MutableStateFlow(preferencesRepository.isNewChartsUI())
     val newChartsUiEnabled: StateFlow<Boolean> = _newChartsUiEnabled
 
+    private var _visibleMeasurementsEnabled = MutableStateFlow(preferencesRepository.getVisibleMeasurements())
+    val visibleMeasurementsEnabled: StateFlow<Boolean> = _visibleMeasurementsEnabled
+
     fun setDevServerEnabled(isEnabled: Boolean) {
         preferencesRepository.setDevServerEnabled(isEnabled)
         _devServerEnabled.value = preferencesRepository.isDevServerEnabled()
@@ -29,6 +32,11 @@ class DeveloperSettingsViewModel(
     fun setNewChartsUi(isEnabled: Boolean) {
         preferencesRepository.setNewChartsUI(isEnabled)
         _newChartsUiEnabled.value = preferencesRepository.isNewChartsUI()
+    }
+
+    fun setVisibleMeasurementsEnabled(isEnabled: Boolean) {
+        preferencesRepository.setVisibleMeasurement(isEnabled)
+        _visibleMeasurementsEnabled.value = preferencesRepository.getVisibleMeasurements()
     }
 
     fun getWebViewToken(): String? {

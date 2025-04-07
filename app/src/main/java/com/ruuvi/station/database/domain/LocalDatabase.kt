@@ -13,8 +13,27 @@ import com.ruuvi.station.database.tables.*
 class LocalDatabase {
     companion object {
         const val NAME = "LocalDatabase"
-        const val VERSION = 35
+        const val VERSION = 37
     }
+
+    @Migration(version = 37, database = LocalDatabase::class)
+    class Migration37Data : BaseMigration() {
+        override fun migrate(database: DatabaseWrapper) {
+            database.execSQL(
+                "UPDATE SensorSettings SET defaultDisplayOrder = 1"
+            )
+        }
+    }
+
+    @Migration(version = 36, database = LocalDatabase::class)
+    class Migration36(table: Class<SensorSettings?>?) : AlterTableMigration<SensorSettings?>(table) {
+        override fun onPreMigrate() {
+            super.onPreMigrate()
+            addColumn(SQLiteType.INTEGER, "defaultDisplayOrder")
+            addColumn(SQLiteType.TEXT, "displayOrder")
+        }
+    }
+
     @Migration(version = 35, database = LocalDatabase::class)
     class Migration35RuuviTagEntity(table: Class<RuuviTagEntity?>?) : AlterTableMigration<RuuviTagEntity?>(table) {
         override fun onPreMigrate() {

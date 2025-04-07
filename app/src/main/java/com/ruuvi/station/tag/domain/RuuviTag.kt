@@ -2,8 +2,11 @@ package com.ruuvi.station.tag.domain
 
 import com.ruuvi.station.R
 import com.ruuvi.station.alarm.domain.AlarmSensorStatus
+import com.ruuvi.station.tag.domain.RuuviTag.Companion.dataFormatIsAir
 import com.ruuvi.station.units.domain.aqi.AQI
+import com.ruuvi.station.units.model.Accuracy
 import com.ruuvi.station.units.model.EnvironmentValue
+import com.ruuvi.station.units.model.UnitType
 import com.ruuvi.station.util.MacAddressUtils
 import java.util.Date
 
@@ -24,15 +27,26 @@ data class RuuviTag(
     val owner: String?,
     val subscriptionName: String?,
     var firmware: String?,
+    var defaultDisplayOrder: Boolean,
+    var displayOrder: List<UnitType>,
+    var possibleDisplayOptions: List<UnitType>,
+    val valuesToDisplay: List<EnvironmentValue>,
     val latestMeasurement: SensorMeasurements?
 ) {
     fun getDefaultName(): String = MacAddressUtils.getDefaultName(id)
 
     fun getSource(): UpdateSource {
+
         return if (latestMeasurement?.updatedAt == networkLastSync) {
             UpdateSource.Cloud
         } else {
             UpdateSource.Advertisement
+        }
+    }
+
+    companion object {
+        fun dataFormatIsAir(dataFormat: Int?): Boolean {
+            return dataFormat == 0xE0 || dataFormat == 0xF0
         }
     }
 }
@@ -86,8 +100,7 @@ fun RuuviTag.canUseCloudAlerts(): Boolean {
     return !this.subscriptionName.isNullOrEmpty() && this.subscriptionName != "Free" && this.subscriptionName != "Basic"
 }
 
-fun RuuviTag.isAir(): Boolean =
-    this.latestMeasurement?.dataFormat == 0xE0 || this.latestMeasurement?.dataFormat == 0xF0
+fun RuuviTag.isAir(): Boolean = dataFormatIsAir(latestMeasurement?.dataFormat)
 
 sealed class UpdateSource() {
     abstract fun getDescriptionResource(): Int
@@ -113,3 +126,80 @@ sealed class UpdateSource() {
         }
     }
 }
+
+val sensorMeasurementsPreview =
+    SensorMeasurements(
+        aqi = null,
+        temperature = EnvironmentValue(
+            original = 22.75,
+            value = 22.75,
+            accuracy = Accuracy.Accuracy1,
+            valueWithUnit = "22.7 C",
+            valueWithoutUnit = "22.7",
+            unitString = "C",
+            unitType = UnitType.TemperatureUnit.Celsius
+        ),
+        humidity = null,
+        pressure = null,
+        movement = null,
+        voltage = EnvironmentValue(
+            original = 2.89,
+            value = 2.89,
+            accuracy = Accuracy.Accuracy2,
+            valueWithUnit = "2.89 V",
+            valueWithoutUnit = "2.29",
+            unitString = "V",
+            unitType = UnitType.BatteryVoltageUnit.Volt
+        ),
+        rssi = EnvironmentValue(
+            original = -44.0,
+            value = -44.0,
+            accuracy = Accuracy.Accuracy0,
+            valueWithUnit = "-44 dBm",
+            valueWithoutUnit = "-44",
+            unitString = "dBm",
+            unitType = UnitType.SignalStrengthUnit.SignalDbm
+        ),
+        accelerationX = null,
+        accelerationY = null,
+        accelerationZ = null,
+        measurementSequenceNumber = 2323,
+        txPower = -4.0,
+        pm1 = null,
+        pm25 = null,
+        pm4 = null,
+        pm10 = null,
+        co2 = null,
+        voc = null,
+        nox = null,
+        luminosity = null,
+        dBaAvg = null,
+        dBaPeak = null,
+        connectable = null,
+        dataFormat = 5,
+        updatedAt = Date()
+    )
+
+val ruuviTagPreview = RuuviTag(
+    id = "AA:BB:CC:DD:EE:FF",
+    name = "Ruuvi Tag Preview",
+    displayName = "Ruuvi Tag Preview",
+    temperatureOffset = 0.0,
+    humidityOffset = 0.0,
+    pressureOffset = 0.0,
+    defaultBackground = 0,
+    userBackground = "",
+    networkBackground = "",
+    alarmSensorStatus = AlarmSensorStatus.NotTriggered,
+    lastSync = Date(),
+    networkLastSync = Date(),
+    networkSensor = true,
+    owner = "",
+    subscriptionName = "",
+    firmware = "",
+    defaultDisplayOrder = true,
+    displayOrder = listOf(),
+    valuesToDisplay = listOf(),
+    possibleDisplayOptions = listOf(),
+    latestMeasurement = sensorMeasurementsPreview
+)

@@ -52,6 +52,10 @@ data class SensorSettings(
     var networkHistoryLastSync: Date? = null,
     @Column
     var canShare: Boolean? = null,
+    @Column
+    var defaultDisplayOrder: Boolean = true,
+    @Column
+    var displayOrder: String? = null,
 ): BaseModel() {
     val displayName get() = if (name.isNullOrEmpty()) id else name.toString()
 

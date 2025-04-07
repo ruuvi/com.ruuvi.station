@@ -14,14 +14,14 @@ import com.ruuvi.station.app.ui.components.ParagraphWithPadding
 import com.ruuvi.station.app.ui.components.RadioButtonRuuvi
 import com.ruuvi.station.app.ui.components.SubtitleWithPadding
 import com.ruuvi.station.units.model.Accuracy
-import com.ruuvi.station.units.model.HumidityUnit
+import com.ruuvi.station.units.model.UnitType.*
 
 @Composable
 fun HumiditySettings(
     scaffoldState: ScaffoldState,
     viewModel: HumiditySettingsViewModel
 ) {
-    val unit = viewModel.humidityUnit.observeAsState(HumidityUnit.PERCENT)
+    val unit = viewModel.humidityUnit.observeAsState(HumidityUnit.Relative)
     val accuracy = viewModel.humidityAccuracy.observeAsState(Accuracy.Accuracy2)
 
     PageSurfaceWithPadding {
@@ -43,7 +43,7 @@ fun HumiditySettings(
 
 @Composable
 fun HumidityUnit(
-    allUnits: Array<HumidityUnit>,
+    allUnits: List<HumidityUnit>,
     selectedUnit: State<HumidityUnit>,
     onUnitSelected: (HumidityUnit) -> Unit
 ) {
@@ -69,7 +69,7 @@ fun HumidityUnitElement(
     onUnitSelected: (HumidityUnit) -> Unit
 ) {
     RadioButtonRuuvi(
-        text = stringResource(id = unit.title),
+        text = stringResource(id = unit.unitTitle),
         isSelected = isSelected,
         onClick = { onUnitSelected.invoke(unit) }
     )

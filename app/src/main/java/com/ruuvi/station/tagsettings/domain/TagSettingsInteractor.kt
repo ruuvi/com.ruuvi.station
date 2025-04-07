@@ -11,7 +11,7 @@ import com.ruuvi.station.image.ImageInteractor
 import com.ruuvi.station.image.ImageSource
 import com.ruuvi.station.network.domain.RuuviNetworkInteractor
 import com.ruuvi.station.tag.domain.RuuviTag
-import com.ruuvi.station.units.model.TemperatureUnit
+import com.ruuvi.station.units.model.UnitType.*
 import com.ruuvi.station.util.MacAddressUtils
 import timber.log.Timber
 import java.io.File
@@ -162,5 +162,13 @@ class TagSettingsInteractor(
             sensorId = sensorId,
             userBackground = uri.toString()
         )
+    }
+
+    fun setUseDefaultSensorsOrder(sensorId: String, useDefault: Boolean) {
+        sensorSettingsRepository.updateUseDefaultSensorOrder(sensorId, useDefault)
+    }
+
+    fun newDisplayOrder(sensorId: String, displayOrder: String) {
+        sensorSettingsRepository.newDisplayOrder(sensorId, displayOrder)
     }
 }

@@ -61,6 +61,7 @@ fun SensorSettings(
     val sensorOwnedOrOffline by viewModel.sensorOwnedOrOffline.collectAsState(initial = false)
     val isLowBattery by viewModel.isLowBattery.collectAsState(initial = false)
     val firmware by viewModel.firmware.collectAsState(initial = null)
+    val visibleMeasurementsEnabled by viewModel.visibleMeasurementsEnabled.collectAsState()
     var showAskToClaimDialog by remember {
         mutableStateOf(false)
     }
@@ -78,6 +79,17 @@ fun SensorSettings(
             sensorIsShared = sensorIsShared,
             setName = viewModel::setName
         )
+        if (visibleMeasurementsEnabled) {
+            DividerRuuvi()
+            TextEditWithCaptionButton(
+                title = stringResource(R.string.visible_measurements),
+                value = "", //TODO ADD COUNTER
+                icon = painterResource(id = R.drawable.arrow_forward_16),
+                tint = RuuviStationTheme.colors.trackInactive
+            ) {
+                onNavigate.invoke(UiEvent.Navigate(SensorSettingsRoutes.VISIBLE_MEASUREMENTS))
+            }
+        }
         AlarmsGroup(
             scaffoldState,
             alarmsViewModel
