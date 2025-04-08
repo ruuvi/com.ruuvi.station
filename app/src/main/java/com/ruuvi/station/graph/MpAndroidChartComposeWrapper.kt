@@ -382,15 +382,9 @@ fun getLimitLine(
 }
 
 fun formatDoubleToString(value: Double): String {
-    return if (value % 1 == 0.0) {
-        val symbols = DecimalFormatSymbols.getInstance()
-        val decimalFormat = DecimalFormat("#,###", symbols)
-        decimalFormat.format(value)
-    } else {
-        val symbols = DecimalFormatSymbols.getInstance()
-        val decimalFormat = DecimalFormat("#.###", symbols)
-        decimalFormat.format(value)
-    }
+    val symbols = DecimalFormatSymbols.getInstance()
+    val decimalFormat = DecimalFormat("#,##0.##", symbols)
+    return decimalFormat.format(value)
 }
 
 private fun setLabelCount(context: Context, chart: LineChart) {
