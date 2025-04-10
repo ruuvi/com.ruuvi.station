@@ -12,8 +12,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Icon
@@ -105,7 +105,7 @@ fun VisibleMeasurements(
         ){
             if (dashboardType == DashboardType.IMAGE_VIEW) {
                 DashboardItem(
-                    lazyGridState = rememberLazyGridState(),
+                    lazyGridState = rememberLazyStaggeredGridState(),
                     itemIndex = 0,
                     itemHeight = 156.dp * LocalDensity.current.fontScale,
                     sensor = sensorState,
@@ -118,7 +118,7 @@ fun VisibleMeasurements(
                 )
             } else {
                 DashboardItemSimple(
-                    lazyGridState = rememberLazyGridState(),
+                    lazyGridState = rememberLazyStaggeredGridState(),
                     itemIndex = 0,
                     sensor = sensorState,
                     userEmail = "",

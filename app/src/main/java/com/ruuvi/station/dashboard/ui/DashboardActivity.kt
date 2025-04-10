@@ -8,11 +8,11 @@ import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.GridItemSpan
-import androidx.compose.foundation.lazy.grid.LazyGridState
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.itemsIndexed
+import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridState
+import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.lazy.staggeredgrid.itemsIndexed
+import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
@@ -114,7 +114,6 @@ class DashboardActivity : NfcActivity(), KodeinAware {
             }
 
             RuuviTheme {
-                val lifecycleOwner = LocalLifecycleOwner.current
                 val scaffoldState = rememberScaffoldState()
                 val systemUiController = rememberSystemUiController()
                 val systemBarsColor = colors.dashboardBackground
@@ -132,11 +131,10 @@ class DashboardActivity : NfcActivity(), KodeinAware {
                 val dashboardType by dashboardViewModel.dashboardType.collectAsState()
                 val dashboardTapAction by dashboardViewModel.dashboardTapAction.collectAsState()
                 val shouldAskNotificationPermission by dashboardViewModel.shouldAskNotificationPermission.collectAsState()
-                val dragDropListState = rememberDragDropGridState(
+                val dragDropListState = rememberDragDropStaggeredGridState(
                     onMove = dashboardViewModel::moveItem,
                     onDoneDragging = dashboardViewModel::onDoneDragging
                 )
-                val coroutineScope = rememberCoroutineScope()
                 val navigationColor = if (gestureNavigationEnabled()) {
                     Color.Transparent
                 } else {
@@ -391,7 +389,7 @@ fun DashboardItems(
     syncCloud: ()-> Unit,
     setName: (String, String?) -> Unit,
     onMove: (Int, Int, Boolean) -> Unit,
-    dragDropListState: ItemGridDragAndDropState,
+    dragDropListState: ItemStaggeredGridDragAndDropState,
     refreshing: Boolean
 ) {
     val itemHeight = 160.dp * LocalDensity.current.fontScale
@@ -413,21 +411,20 @@ fun DashboardItems(
     }
 
     Box(modifier = pullToRefreshModifier) {
-        LazyVerticalGrid(
+        LazyVerticalStaggeredGrid(
             modifier = Modifier
                 .dragGestureHandler(coroutineScope, dragDropListState, overscrollJob),
-            columns = GridCells.Adaptive(300.dp),
+            columns = StaggeredGridCells.Adaptive(300.dp),
             contentPadding = PaddingValues(
                 start = RuuviStationTheme.dimensions.medium,
                 end = RuuviStationTheme.dimensions.medium,
                 bottom = RuuviStationTheme.dimensions.medium,
                 top = 0.dp
             ),
-            verticalArrangement = Arrangement.spacedBy(RuuviStationTheme.dimensions.medium),
+            verticalItemSpacing = RuuviStationTheme.dimensions.medium,
             horizontalArrangement = Arrangement.spacedBy(RuuviStationTheme.dimensions.medium),
             state = dragDropListState.getLazyListState()
         ) {
-
 
             itemsIndexed(items) { index, sensor ->
                 val displacementOffset = if (index == dragDropListState.getCurrentIndexOfDraggedListItem()) {
@@ -464,7 +461,6 @@ fun DashboardItems(
                         )
                 }
             }
-            item(span = { GridItemSpan(maxLineSpan) }) { Box(modifier = Modifier.navigationBarsPadding()) }
         }
         PullRefreshIndicator(
             refreshing = refreshing,
@@ -533,7 +529,7 @@ fun SignInBanner(
 
 @Composable
 fun DashboardItem(
-    lazyGridState: LazyGridState,
+    lazyGridState: LazyStaggeredGridState,
     itemIndex: Int,
     itemHeight: Dp,
     sensor: RuuviTag,
@@ -672,7 +668,7 @@ fun DashboardItem(
 
 @Composable
 fun DashboardItemSimple(
-    lazyGridState: LazyGridState,
+    lazyGridState: LazyStaggeredGridState,
     itemIndex: Int,
     sensor: RuuviTag,
     userEmail: String?,
@@ -772,7 +768,7 @@ fun ItemName(
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun ItemButtons(
-    lazyGridState: LazyGridState,
+    lazyGridState: LazyStaggeredGridState,
     itemIndex: Int,
     sensor: RuuviTag,
     userEmail: String?,
@@ -1129,7 +1125,7 @@ fun AQIDisplay(
 
 @Composable
 fun DashboardItemDropdownMenu(
-    lazyGridState: LazyGridState,
+    lazyGridState: LazyStaggeredGridState,
     itemIndex: Int,
     sensor: RuuviTag,
     userEmail: String?,
@@ -1216,7 +1212,7 @@ fun DashboardItemDropdownMenu(
                     if (newIndex < 0) newIndex = 0
                     threeDotsMenuExpanded = false
                     coroutineScope.launch {
-                        lazyGridState.centerViewportOnItem(newIndex)
+                        lazyGridState.requestScrollToItem(newIndex)
                     }
                 }) {
                     Paragraph(text = stringResource(id = R.string.move_up))
@@ -1232,7 +1228,7 @@ fun DashboardItemDropdownMenu(
                     }
                     threeDotsMenuExpanded = false
                     coroutineScope.launch {
-                        lazyGridState.centerViewportOnItem(newIndex)
+                        lazyGridState.requestScrollToItem(newIndex)
                     }
                 }) {
                     Paragraph(text = stringResource(id = R.string.move_down))
