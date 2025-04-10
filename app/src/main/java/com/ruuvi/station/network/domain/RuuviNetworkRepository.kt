@@ -218,6 +218,7 @@ class RuuviNetworkRepository
             sharedToMe = request.sharedToMe,
             sharedToOthers = request.sharedToOthers,
             alerts = request.alerts,
+            settings = request.settings,
             measurements = request.measurements
         )
         val result: SensorDenseResponse?
@@ -305,8 +306,23 @@ class RuuviNetworkRepository
         return if (response.isSuccessful) {
             response.body()
         } else {
-            val type = object : TypeToken<ShareSensorResponse>() {}.type
+            val type = object : TypeToken<UpdateUserSettingResponse>() {}.type
             val errorResponse: UpdateUserSettingResponse? =
+                Gson().fromJson(response.errorBody()?.charStream(), type)
+            errorResponse
+        }
+    }
+
+    suspend fun updateSensorSettings(
+        request: UpdateSensorSettingRequest,
+        token: String
+    ): UpdateSensorSettingResponse? {
+        val response = retrofitService.updateSensorSettings(getAuth(token), request)
+        return if (response.isSuccessful) {
+            response.body()
+        } else {
+            val type = object : TypeToken<UpdateSensorSettingResponse>() {}.type
+            val errorResponse: UpdateSensorSettingResponse? =
                 Gson().fromJson(response.errorBody()?.charStream(), type)
             errorResponse
         }

@@ -22,6 +22,7 @@ import com.ruuvi.station.network.data.request.SortMode
 import com.ruuvi.station.network.data.response.*
 import com.ruuvi.station.tagsettings.domain.TagSettingsInteractor
 import com.ruuvi.station.util.extensions.diffGreaterThan
+import com.ruuvi.station.util.extensions.toBooleanExtra
 import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.channels.BufferOverflow
@@ -140,6 +141,7 @@ class NetworkDataSyncInteractor (
                     sensor = null,
                     measurements = true,
                     alerts = true,
+                    settings = true,
                     sharedToOthers = true,
                     sharedToMe = true
                 )
@@ -159,6 +161,7 @@ class NetworkDataSyncInteractor (
                 val benchUpdate1 = Date()
                 Timber.d("updateSensors")
                 updateSensors(sensorsInfo.data)
+                updateSensorSettings(sensorsInfo.data)
                 sendSyncEvent(NetworkSyncEvent.SensorsSynced)
                 firebaseInteractor.logSync(userEmail, sensorsInfo.data)
                 val benchUpdate2 = Date()
@@ -343,6 +346,19 @@ class NetworkDataSyncInteractor (
         for (sensor in sensors) {
             if (sensor.networkSensor && userInfoData.sensors.none { it.sensor == sensor.id }) {
                 tagRepository.deleteSensorAndRelatives(sensor.id)
+            }
+        }
+    }
+
+    private fun updateSensorSettings(userInfoData: SensorsDenseResponseBody) {
+        userInfoData.sensors.forEach { sensor ->
+            Timber.d("updateSensorSettings: $sensor displayOrder = ${sensor.settings?.displayOrder} defaultDisplayOrder = ${sensor.settings?.defaultDisplayOrder}")
+
+            sensor.settings?.displayOrder?.let { displayOrder ->
+                sensorSettingsRepository.newDisplayOrder(sensor.sensor, displayOrder)
+            }
+            sensor.settings?.defaultDisplayOrder?.let { defaultDisplayOrder ->
+                sensorSettingsRepository.updateUseDefaultSensorOrder(sensor.sensor, defaultDisplayOrder.toBooleanExtra())
             }
         }
     }
