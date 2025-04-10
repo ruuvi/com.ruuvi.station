@@ -6,7 +6,6 @@ import android.content.Context
 import android.content.IntentFilter
 import android.os.PowerManager
 import androidx.appcompat.app.AppCompatDelegate
-import com.facebook.stetho.Stetho
 import com.raizlabs.android.dbflow.config.FlowManager
 import com.ruuvi.station.BuildConfig
 import com.ruuvi.station.app.di.AppInjectionModules
@@ -74,13 +73,6 @@ class RuuviScannerApplication : Application(), KodeinAware {
         setupDependencyInjection()
 
         FlowManager.init(this)
-
-        if (BuildConfig.DEBUG) {
-            Stetho.initializeWithDefaults(this)
-            //turn on for debug if you don't have real ruuvi tag
-            //declare first: private val fakesSender: FakeScanResultsSender by instance()
-            //fakesSender.startSendFakes()
-        }
 
         imageMigrationInteractor.migrateDefaultImages()
 

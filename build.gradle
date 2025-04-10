@@ -8,7 +8,7 @@ buildscript {
         lifecycle_version = "2.8.7"
         retrofit_version = "2.9.0"
         navigation_version = '2.5.3'
-        compose_version = '1.5.14'
+        compose_version = '1.5.15'
         compose_compiler_version = '1.5.14'
         accomponist_version = '0.31.6-rc'
     }
