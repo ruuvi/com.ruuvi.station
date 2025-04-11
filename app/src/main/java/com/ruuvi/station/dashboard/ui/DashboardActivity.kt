@@ -570,6 +570,7 @@ fun DashboardItem(
                 )
             },
         shape = RoundedCornerShape(10.dp),
+        elevation = 2.dp,
         backgroundColor = colors.dashboardCardBackground
     ) {
         Row (
@@ -704,7 +705,7 @@ fun DashboardItemSimple(
                 )
             },
         shape = RoundedCornerShape(10.dp),
-        elevation = 0.dp,
+        elevation = 2.dp,
         backgroundColor = colors.dashboardCardBackground
     ) {
         Box (
