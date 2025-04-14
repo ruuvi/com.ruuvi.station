@@ -83,7 +83,7 @@ fun SensorSettings(
             DividerRuuvi()
             TextEditWithCaptionButton(
                 title = stringResource(R.string.visible_measurements),
-                value = "", //TODO ADD COUNTER
+                value = viewModel.getVisibleMeasurementsCount().asString(context),
                 icon = painterResource(id = R.drawable.arrow_forward_16),
                 tint = RuuviStationTheme.colors.trackInactive
             ) {

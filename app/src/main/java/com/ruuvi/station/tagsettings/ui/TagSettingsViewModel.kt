@@ -91,6 +91,16 @@ class TagSettingsViewModel(
         }
     }
 
+    fun getVisibleMeasurementsCount(): UiText {
+        return sensorState.value.let {
+            if (it.defaultDisplayOrder) {
+                UiText.StringResource(R.string.visible_measurements_use_default)
+            } else {
+                UiText.DynamicString("${it.displayOrder.size}/${it.displayOrder.size + it.possibleDisplayOptions.size}")
+            }
+        }
+    }
+
     private fun getFirmware(firmware: String?): UiText? {
         Timber.d("getFirmware")
         if (firmware.isNullOrEmpty() &&
