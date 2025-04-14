@@ -50,9 +50,9 @@ class DefaultOnTagFoundListener(
                 if (dbTag != null) {
                     dbTag.preserveData(ruuviTag)
                     val sensorSettings = sensorSettingsRepository.getSensorSettings(sensorId)
-                    if (shouldSkipForCloudMode(sensorSettings) == false) {
+                    if (!shouldSkipForCloudMode(sensorSettings)) {
                         repository.updateTag(ruuviTag)
-                        if (sensorSettings != null) {
+                        if (sensorSettings != null && ruuviTag.dataFormat != legacyAirDataformat) {
                             saveFavoriteReading(ruuviTag, sensorSettings)
                         }
                     }
@@ -114,5 +114,6 @@ class DefaultOnTagFoundListener(
 
     companion object {
         private const val DATA_LOG_INTERVAL = 0
+        const val legacyAirDataformat = 0xF0
     }
 }
