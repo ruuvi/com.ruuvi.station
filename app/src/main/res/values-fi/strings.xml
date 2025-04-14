@@ -308,6 +308,7 @@
     <string name="hour_12">12 tuntia</string>
     <string name="hour_2">2 tuntia</string>
     <string name="hour_3">3 tuntia</string>
+    <string name="hour_6">6 tuntia</string>
     <string name="hour_x">%1$s tuntia</string>
     <string name="hours">tuntia</string>
     <string name="humidity">Kosteus</string>

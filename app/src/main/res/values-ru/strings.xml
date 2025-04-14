@@ -226,6 +226,7 @@
     <string name="hour_12">12 часов</string>
     <string name="hour_2">2 часа</string>
     <string name="hour_3">3 часа</string>
+    <string name="hour_6">6 часов</string>
     <string name="hour_x">%1$s дней</string>
     <string name="hours">Часов</string>
     <string name="humidity">Влажность</string>

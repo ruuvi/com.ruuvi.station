@@ -185,6 +185,7 @@
     <string name="hour_12">12 godziny</string>
     <string name="hour_2">2 godziny</string>
     <string name="hour_3">3 godziny</string>
+    <string name="hour_6">6 godziny</string>
     <string name="hour_x">%1$s godziny</string>
     <string name="hours">Godziny</string>
     <string name="humidity">Wilgotność</string>

@@ -308,6 +308,7 @@
     <string name="hour_12">12 timmar</string>
     <string name="hour_2">2 timmar</string>
     <string name="hour_3">3 timmar</string>
+    <string name="hour_6">6 timmar</string>
     <string name="hour_x">%1$s timmar</string>
     <string name="hours">Timmar</string>
     <string name="humidity">Fuktighet</string>

@@ -313,6 +313,7 @@
     <string name="hour_12">12 heures</string>
     <string name="hour_2">2 heures</string>
     <string name="hour_3">3 heures</string>
+    <string name="hour_6">6 heures</string>
     <string name="hour_x">%1$s heures</string>
     <string name="hours">Heures</string>
     <string name="humidity">Humidité</string>

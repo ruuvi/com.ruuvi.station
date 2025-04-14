@@ -319,6 +319,7 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="hour_12">12 Stunden</string>
     <string name="hour_2">2 Stunden</string>
     <string name="hour_3">3 Stunden</string>
+    <string name="hour_6">6 Stunden</string>
     <string name="hour_x">%1$s tage</string>
     <string name="hours">Stunden</string>
     <string name="humidity">Feuchtigkeit</string>
