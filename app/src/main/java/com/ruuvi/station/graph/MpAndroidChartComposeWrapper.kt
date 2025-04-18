@@ -140,8 +140,12 @@ fun ChartViewPrototype(
             },
             update = { view ->
                 Timber.d("ChartView AndroidView - update $from pointsCount = ${chartData.size}")
-                addDataToChart(context, chartData, view, "", graphDrawDots, limits, from, to)
-                (view.marker as ChartMarkerView).getFrom = {from} }
+
+                if (view.data == null || view.highestVisibleX >= view.data.xMax) {
+                    addDataToChart(context, chartData, view, "", graphDrawDots, limits, from, to)
+                    (view.marker as ChartMarkerView).getFrom = { from }
+                }
+            }
         )
     }
 }
@@ -155,19 +159,15 @@ fun getPrototypeChartDescription(
 ): String {
     Timber.d("ChartView - getPrototypeChartDescription")
 
-    fun getSimpleValue (value: Double, x: Int?): String {
-        return value.toInt().toString()
+    fun getSimpleValueDefaultAccuracy (value: Double, x: Int?): String {
+        return unitsConverter.getValueWithoutUnit(value, unitType.defaultAccuracy)
     }
 
     val getRawValue = when (unitType) {
         is UnitType.TemperatureUnit -> unitsConverter::getTemperatureRawWithoutUnitString
         is UnitType.HumidityUnit -> unitsConverter::getHumidityRawWithoutUnitString
         is UnitType.PressureUnit -> unitsConverter::getPressureRawWithoutUnitString
-        is UnitType.BatteryVoltageUnit -> unitsConverter::getTemperatureRawWithoutUnitString
-        is UnitType.Acceleration -> unitsConverter::getTemperatureRawWithoutUnitString
-        is UnitType.SignalStrengthUnit -> unitsConverter::getTemperatureRawWithoutUnitString
-        is UnitType.MovementUnit -> unitsConverter::getTemperatureRawWithoutUnitString
-        else -> ::getSimpleValue
+        else -> ::getSimpleValueDefaultAccuracy
     }
 
     val latestPoint = chartData.lastOrNull()

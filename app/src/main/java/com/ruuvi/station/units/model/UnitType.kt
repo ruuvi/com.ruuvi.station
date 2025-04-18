@@ -434,7 +434,7 @@ sealed class UnitType(
         measurementCode = PM1_MEASUREMENT_CODE,
         measurementTitle = R.string.pm1,
         alarmType = AlarmType.PM1,
-        defaultAccuracy = Accuracy.Accuracy0
+        defaultAccuracy = Accuracy.Accuracy1
     ) {
         data object Mgm3: PM1(PM_UNIT_MGM3, R.string.unit_pm1, R.string.unit_pm1)
 
@@ -460,7 +460,7 @@ sealed class UnitType(
         measurementCode = PM25_MEASUREMENT_CODE,
         measurementTitle = R.string.pm25,
         alarmType = AlarmType.PM25,
-        defaultAccuracy = Accuracy.Accuracy0
+        defaultAccuracy = Accuracy.Accuracy1
     ) {
         data object Mgm3: PM25(PM_UNIT_MGM3, R.string.unit_pm25, R.string.unit_pm25)
 
@@ -486,7 +486,7 @@ sealed class UnitType(
         measurementCode = PM4_MEASUREMENT_CODE,
         measurementTitle = R.string.pm4,
         alarmType = AlarmType.PM4,
-        defaultAccuracy = Accuracy.Accuracy0
+        defaultAccuracy = Accuracy.Accuracy1
     ) {
         data object Mgm3: PM4(PM_UNIT_MGM3, R.string.unit_pm4, R.string.unit_pm4)
 
@@ -512,7 +512,7 @@ sealed class UnitType(
         measurementCode = PM10_MEASUREMENT_CODE,
         measurementTitle = R.string.pm10,
         alarmType = AlarmType.PM10,
-        defaultAccuracy = Accuracy.Accuracy0
+        defaultAccuracy = Accuracy.Accuracy1
     ) {
         data object Mgm3: PM10(PM_UNIT_MGM3, R.string.unit_pm10, R.string.unit_pm10)
 
