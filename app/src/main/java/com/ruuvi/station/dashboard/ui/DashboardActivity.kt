@@ -734,7 +734,7 @@ fun DashboardItemSimple(
                 modifier = Modifier.align(TopEnd),
                 setName = setName,
                 moveItem = moveItem,
-                interactionEnabled = false
+                interactionEnabled = interactionEnabled
             )
 
             Column ()
