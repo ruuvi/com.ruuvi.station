@@ -968,7 +968,8 @@ fun ItemBottomUpdatedInfo(
 
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            modifier = modifier.padding(top = 2.dp)
+            modifier = modifier
+                .height(RuuviStationTheme.dimensions.big)
         ) {
             val fontScale = min(LocalContext.current.resources.configuration.fontScale, 1.5f)
 
