@@ -29,6 +29,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewLightDark
@@ -178,7 +179,7 @@ fun DragAndDropListEdit(
         onDoneDragging = { }
     )
 
-    val itemHeight = 48.dp
+    val itemHeight = 48.dp * LocalDensity.current.fontScale
     val coroutineScope = rememberCoroutineScope()
     val overscrollJob = remember { mutableStateOf<Job?>(null) }
 
@@ -204,7 +205,7 @@ fun DragAndDropListEdit(
 
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceAround,
+                    horizontalArrangement = Arrangement.SpaceBetween,
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(itemHeight)
@@ -223,7 +224,13 @@ fun DragAndDropListEdit(
                             .weight(1f),
                         style = RuuviStationTheme.typography.subtitle,
                         textAlign = TextAlign.Start,
-                        text = listOption.title)
+                        text = listOption.title,
+                        maxLines = 2)
+                    Icon(
+                        painter = painterResource(id = R.drawable.up_down_drag),
+                        contentDescription = "drag",
+                        tint = RuuviStationTheme.colors.accent.copy(alpha = 0.6f),
+                    )
                     Icon(
                         imageVector = Icons.Default.Clear,
                         contentDescription = "remove",
@@ -250,7 +257,8 @@ fun DragAndDropListEdit(
                             .weight(1f),
                         style = RuuviStationTheme.typography.subtitle,
                         textAlign = TextAlign.Start,
-                        text = listOption.title)
+                        text = listOption.title,
+                        maxLines = 2)
                     Icon(
                         imageVector = Icons.Default.Add,
                         contentDescription = "add",
