@@ -605,7 +605,7 @@ fun DashboardItem(
                     .padding(
                         top = RuuviStationTheme.dimensions.mediumPlus,
                         start = RuuviStationTheme.dimensions.extended,
-                        bottom = RuuviStationTheme.dimensions.medium,
+                        bottom = RuuviStationTheme.dimensions.small,
                         end = RuuviStationTheme.dimensions.medium,
                     )
             ) {
@@ -656,7 +656,7 @@ fun DashboardItem(
                                     bottom = RuuviStationTheme.dimensions.small
                                 )
                         )
-                        Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.medium))
+                        Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.small))
                         ItemBottom(
                             sensor = sensor,
                             modifier = Modifier
@@ -719,7 +719,7 @@ fun DashboardItemSimple(
                 .padding(
                     top = RuuviStationTheme.dimensions.mediumPlus,
                     start = RuuviStationTheme.dimensions.mediumPlus,
-                    bottom = RuuviStationTheme.dimensions.medium,
+                    bottom = RuuviStationTheme.dimensions.small,
                     end = RuuviStationTheme.dimensions.medium,
                 )
         ){
