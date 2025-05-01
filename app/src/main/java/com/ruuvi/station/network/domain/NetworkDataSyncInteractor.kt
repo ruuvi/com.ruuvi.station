@@ -55,6 +55,7 @@ class NetworkDataSyncInteractor (
 ) {
     @Volatile
     private var syncJob: Job = Job().also { it.complete() }
+    private val tagJobs = mutableListOf<Job>()
 
     @Volatile
     private var autoRefreshJob: Job? = null
@@ -196,7 +197,6 @@ class NetworkDataSyncInteractor (
         }
 
         withContext(IO) {
-            val tagJobs = mutableListOf<Job>()
             for (tagInfo in userInfoData.sensors) {
 
                 if (tagInfo.subscription.maxHistoryDays > 0) {
@@ -213,6 +213,7 @@ class NetworkDataSyncInteractor (
             for (job in tagJobs) {
                 job.join()
             }
+            tagJobs.clear()
         }
 
         sendSyncEvent(NetworkSyncEvent.Success)
@@ -367,16 +368,18 @@ class NetworkDataSyncInteractor (
 
     private suspend fun updateBackgrounds(userInfoData: SensorsDenseResponseBody) {
         userInfoData.sensors.forEach { sensor ->
-            val sensorSettings = sensorSettingsRepository.getSensorSettingsOrCreate(sensor.sensor)
+            val sensorSettings = sensorSettingsRepository.getSensorSettings(sensor.sensor)
 
-            if (sensor.picture.isNullOrEmpty()) {
-                tagSettingsInteractor.setDefaultBackgroundImageByResource(
-                    sensorId = sensor.sensor,
-                    defaultBackground = imageInteractor.getDefaultBackgroundById(sensorSettings.defaultBackground),
-                    uploadNow = true
-                )
-            } else {
-                setSensorImage(sensor, sensorSettings)
+            if (sensorSettings != null) {
+                if (sensor.picture.isNullOrEmpty()) {
+                    tagSettingsInteractor.setDefaultBackgroundImageByResource(
+                        sensorId = sensor.sensor,
+                        defaultBackground = imageInteractor.getDefaultBackgroundById(sensorSettings.defaultBackground),
+                        uploadNow = true
+                    )
+                } else {
+                    setSensorImage(sensor, sensorSettings)
+                }
             }
         }
     }
@@ -441,6 +444,9 @@ class NetworkDataSyncInteractor (
         }
         if (syncJob.isActive) {
             syncJob.cancel()
+        }
+        for (job in tagJobs) {
+            job.cancel()
         }
     }
 }
