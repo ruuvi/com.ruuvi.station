@@ -108,7 +108,6 @@ fun VisibleMeasurements(
                 DashboardItem(
                     lazyGridState = rememberLazyStaggeredGridState(),
                     itemIndex = 0,
-                    itemHeight = 156.dp * LocalDensity.current.fontScale,
                     sensor = sensorState,
                     userEmail = "",
                     displacementOffset = IntOffset.Zero,

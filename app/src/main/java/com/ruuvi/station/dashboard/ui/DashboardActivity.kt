@@ -432,8 +432,7 @@ fun DashboardItems(
             horizontalArrangement = Arrangement.spacedBy(RuuviStationTheme.dimensions.medium),
             state = dragDropListState.getLazyListState()
         ) {
-
-            itemsIndexed(items) { index, sensor ->
+            itemsIndexed(items, key = { _, sensor -> sensor.id }) { index, sensor ->
                 val displacementOffset = if (index == dragDropListState.getCurrentIndexOfDraggedListItem()) {
                     Timber.d("dragGestureHandler - elementDisplacement ${dragDropListState.elementDisplacement}")
                     dragDropListState.elementDisplacement.takeIf { it != IntOffset.Zero }
@@ -458,7 +457,6 @@ fun DashboardItems(
                         DashboardItem(
                             lazyGridState = dragDropListState.getLazyListState(),
                             itemIndex = index,
-                            itemHeight = itemHeight,
                             sensor = sensor,
                             userEmail = userEmail,
                             displacementOffset = displacementOffset,
@@ -539,7 +537,6 @@ fun SignInBanner(
 fun DashboardItem(
     lazyGridState: LazyStaggeredGridState,
     itemIndex: Int,
-    itemHeight: Dp,
     sensor: RuuviTag,
     userEmail: String?,
     displacementOffset: IntOffset?,
@@ -1019,17 +1016,18 @@ fun ItemBottomUpdatedInfo(
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun DashboardImage(
-    userBackground: Uri
+    userBackground: Uri,
+    modifier: Modifier = Modifier
 ) {
     Timber.d("Image path $userBackground")
     GlideImage(
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier.fillMaxSize(),
         model = userBackground,
         contentDescription = null,
         contentScale = ContentScale.Crop
     )
     GlideImage(
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier.fillMaxSize(),
         model = rememberResourceUri(R.drawable.tag_bg_layer),
         contentDescription = null,
         alpha = RuuviStationTheme.colors.backgroundAlpha,
