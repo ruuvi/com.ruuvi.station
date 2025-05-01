@@ -70,6 +70,8 @@ class DashboardActivityViewModel(
         _dashBoardType.value = preferencesRepository.getDashboardType()
     }
 
+    fun showMeasurementTitle() = preferencesRepository.getVisibleMeasurements()
+
     fun refreshDashboardTapAction() {
         _dashBoardTapAction.value = preferencesRepository.getDashboardTapAction()
     }

@@ -65,6 +65,7 @@ fun BigValueDisplay(
 fun BigValueExtDisplay(
     value: EnvironmentValue,
     alertTriggered: Boolean,
+    showTitle: Boolean,
     modifier: Modifier = Modifier
 ) {
     val textColor = if (alertTriggered) {
@@ -101,15 +102,17 @@ fun BigValueExtDisplay(
                 }
         )
 
-        Text(
-            style = RuuviStationTheme.typography.dashboardSecondary,
-            fontSize = RuuviStationTheme.fontSizes.petite.limitScaleTo(1.2f),
-            text = stringResource(value.unitType.measurementTitle),
-            modifier = Modifier.constrainAs(subscript) {
-                start.linkTo(bigValue.end, 4.dp)
-                baseline.linkTo(bigValue.baseline)
-            }
-        )
+        if (showTitle) {
+            Text(
+                style = RuuviStationTheme.typography.dashboardSecondary,
+                fontSize = RuuviStationTheme.fontSizes.petite.limitScaleTo(1.2f),
+                text = stringResource(value.unitType.measurementTitle),
+                modifier = Modifier.constrainAs(subscript) {
+                    start.linkTo(bigValue.end, 4.dp)
+                    baseline.linkTo(bigValue.baseline)
+                }
+            )
+        }
     }
 }
 
@@ -212,6 +215,7 @@ private fun BigValueExtDisplayPreview() {
                 unitType = UnitType.HumidityUnit.Relative
             ),
             alertTriggered = false,
+            showTitle = true,
             modifier = Modifier
         )
     }

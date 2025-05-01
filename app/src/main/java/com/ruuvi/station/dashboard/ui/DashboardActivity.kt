@@ -236,6 +236,7 @@ class DashboardActivity : NfcActivity(), KodeinAware {
                                             syncCloud = dashboardViewModel::syncCloud,
                                             setName = dashboardViewModel::setName,
                                             onMove = dashboardViewModel::moveItem,
+                                            showMeasurementTitle = dashboardViewModel.showMeasurementTitle(),
                                             refreshing = refreshing,
                                             dragDropListState = dragDropListState
                                         )
@@ -393,6 +394,7 @@ fun DashboardItems(
     userEmail: String?,
     dashboardType: DashboardType,
     dashboardTapAction: DashboardTapAction,
+    showMeasurementTitle: Boolean,
     syncCloud: ()-> Unit,
     setName: (String, String?) -> Unit,
     onMove: (Int, Int, Boolean) -> Unit,
@@ -461,6 +463,7 @@ fun DashboardItems(
                             userEmail = userEmail,
                             displacementOffset = displacementOffset,
                             itemIsDragged = itemIsDragged,
+                            showMeasurementTitle = showMeasurementTitle,
                             setName = setName,
                             moveItem = onMove
                         )
@@ -541,6 +544,7 @@ fun DashboardItem(
     userEmail: String?,
     displacementOffset: IntOffset?,
     itemIsDragged: Boolean,
+    showMeasurementTitle: Boolean,
     setName: (String, String?) -> Unit,
     moveItem: (Int, Int, Boolean) -> Unit,
     modifier: Modifier = Modifier,
@@ -643,6 +647,7 @@ fun DashboardItem(
                                 BigValueExtDisplay(
                                     value = bigValue,
                                     alertTriggered = sensor.alarmSensorStatus.triggered(AlarmType.TEMPERATURE),
+                                    showTitle = showMeasurementTitle,
                                     modifier = Modifier
                                 )
                             }
