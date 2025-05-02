@@ -21,6 +21,7 @@
     <string name="add_your_first_sensor">Ajoutez votre premier capteur</string>
     <string name="advertisement">Messages des capteurs</string>
     <string name="ago">avant</string>
+    <string name="agree">Accepter</string>
     <string name="air_quality">Qualité de l\'air</string>
     <string name="alarm_custom_description_title">Description personnalisée de l\'alerte</string>
     <string name="alarm_custom_title_hint">Modifier la description...</string>
@@ -87,6 +88,12 @@
     <string name="app_theme">App theme</string>
     <string name="appearance_settings_description">%1$s %2$s</string>
     <string name="aqi">AQI</string>
+    <string name="aqi_level_0">Indéfini</string>
+    <string name="aqi_level_1">Malsain</string>
+    <string name="aqi_level_2">Mauvais</string>
+    <string name="aqi_level_3">Modéré</string>
+    <string name="aqi_level_4">Bon</string>
+    <string name="aqi_level_5">Excellent</string>
     <string name="back">Retour</string>
     <string name="background_image">Fond d\'écran</string>
     <string name="background_interval">toutes les %1$s min</string>
@@ -94,6 +101,7 @@
     <string name="background_notification_message">Désactiver le balayage en arrière-plan dans les réglages</string>
     <string name="background_notification_scanning_every">Balayage toutes les</string>
     <string name="background_scanning">Balayage en arrière plan (Bluetooth)</string>
+    <string name="battery">Batterie</string>
     <string name="battery_ok">Batterie OK</string>
     <string name="battery_voltage">Tension de la pile</string>
     <string name="benefits_sign_in">En savoir plus sur les avantages du compte Ruuvi ou connectez-vous plus tard</string>
@@ -198,6 +206,8 @@
     <string name="current_plan">Plan Ruuvi actuel</string>
     <string name="current_version">Version actuelle</string>
     <string name="current_version_fw">Version actuelle :</string>
+    <string name="customisation_settings">Paramètres de personnalisation</string>
+    <string name="customisation_settings_description">Faites glisser les mesures dans l’ordre souhaité.</string>
     <string name="dark_theme">Thème sombre</string>
     <string name="darktheme_disabled">Le thème sombre est désactivé.</string>
     <string name="darktheme_enabled">Le thème sombre est activé.</string>
@@ -233,6 +243,7 @@
     <string name="day_9">9 jours</string>
     <string name="day_x">%1$s jours</string>
     <string name="days">Jours</string>
+    <string name="decline">Refuser</string>
     <string name="decrease_graph_size">Réduire la taille des graphiques</string>
     <string name="delete_account">Supprimer le compte</string>
     <string name="details">Détails</string>
@@ -307,6 +318,7 @@
     <string name="help_seen_tags">Capteurs détectés : %1$,d</string>
     <string name="help_troubleshooting_text">Trouvez de l\'aide en utilisant les applications Ruuvi Station, les produits Ruuvi et le service Ruuvi Cloud depuis notre centre d\'assistance : ruuvi.com/support</string>
     <string name="help_troubleshooting_title">Dépannage technique</string>
+    <string name="hide_measurements">Mesures cachées</string>
     <string name="history_view">Vue de l\'histoire</string>
     <string name="hour">Heure</string>
     <string name="hour_1">1 heure</string>
@@ -340,6 +352,7 @@
     <string name="latest_available_fw">Dernière version du Ruuvi Firmware :</string>
     <string name="latest_measured_value">Dernière valeur mesurée : %1$s</string>
     <string name="lets_do_it">Connectez-vous</string>
+    <string name="light">Luminosité</string>
     <string name="light_theme">Thème de la lumière</string>
     <string name="logged_in">Connecté :</string>
     <string name="login_description">Profitez de tous les avantages de Ruuvi Station! Connectez-vous ou créez votre compte en entrant votre adresse mail.</string>
@@ -398,7 +411,6 @@
     <string name="no_password_needed">Un compte gratuit sera créé pour cet e-mail si vous n\'en avez pas déjà un. Seule l\'adresse e-mail est requise. Nous gardons vos informations en toute sécurité.</string>
     <string name="none">non connecté</string>
     <string name="note">Note!</string>
-    <string name="notification_permission_needed">Pour activer les alertes, veuillez autoriser les notifications dans les paramètres.</string>
     <string name="nox">NOx</string>
     <string name="nox_with_unit">NOx (%1$s)</string>
     <string name="off">Désactivé</string>
@@ -448,7 +460,6 @@
     <string name="permission_dialog_title">Activer le balayage Bluetooth</string>
     <string name="permission_location_needed">Autoriser la géolocalisation.</string>
     <string name="permission_location_needed_api31">Veuillez autoriser l\'affichage des appareils à proximité dans les paramètres pour voir les capteurs.</string>
-    <string name="permission_notification_needed">Pour activer les alertes, veuillez autoriser les notifications dans les paramètres.</string>
     <string name="plan_expiry_date">Date d\'expiration du plan Ruuvi</string>
     <string name="pm1">PM1.0</string>
     <string name="pm10">PM10.0</string>
@@ -479,6 +490,7 @@
     <string name="pressure_reading">%1$,.2f %2$s</string>
     <string name="pressure_reading_pa">%1$,.0f %2$s</string>
     <string name="pressure_with_unit">Pression de l\'air (%1$s)</string>
+    <string name="preview">Aperçu</string>
     <string name="reading_history">Analyse de l\'historique</string>
     <string name="reading_history_not_supported">Firmware non supporté</string>
     <string name="reading_history_x">Bluetooth sync: %1$s</string>
@@ -584,6 +596,7 @@
     <string name="share_sensor_title">Partager le capteur</string>
     <string name="share_sensor_unshare_confirm">Voulez-vous arrêter le partage du capteur avec %1$s ?</string>
     <string name="shared_to_x">Partagé %1$,d/%2$,d</string>
+    <string name="show_measurements">Mesures visibles</string>
     <string name="sign_in">Connexion</string>
     <string name="sign_in_benefits_description">Avantages :\n\n ● Les noms, fonds d\'écrans, les réglages de calibration, ainsi que les alertes sont enregistrés de façon sécurisée dans notre cloud\n\n ● Consultez les données à distance depuis n\'importe quel navigateur (routeur Ruuvi Gateway requis)\n\n ● Partager les capteurs avec votre famille ou des amis (routeur Ruuvi Gateway requis)\n\n ● consultez jusqu\'à deux ans d\'historique de vos données sur le site station.ruuvi.com (routeur Ruuvi Gateway requis)</string>
     <string name="sign_in_check_email">Nous avons envoyé un mot de passe à usage unique à votre adresse e-mail %1$s. Connectez-vous en le saisissant ici:</string>
@@ -611,6 +624,7 @@
     <string name="simple_view">Vue simple</string>
     <string name="skip">PASSER</string>
     <string name="something_went_wrong">Erreur</string>
+    <string name="sound">Son</string>
     <string name="sound_avg">Niveau sonore (moyenne)</string>
     <string name="sound_peak">Niveau sonore (crête)</string>
     <string name="sound_with_unit">Son (%1$s)</string>
@@ -671,6 +685,9 @@
     <string name="use_without_account">Non merci, ignorer</string>
     <string name="version">Version : %1$s</string>
     <string name="view">Voir</string>
+    <string name="visible_measurements">Mesures visibles</string>
+    <string name="visible_measurements_description">Ici, vous pouvez choisir quelles mesures afficher et dans quel ordre. Désactivez l’option « Utiliser par défaut » pour personnaliser les paramètres.</string>
+    <string name="visible_measurements_use_default">Utiliser par défaut</string>
     <string name="voc">VOC</string>
     <string name="voc_with_unit">VOC (%1$s)</string>
     <string name="voltage_reading">%1$,.2f %2$s</string>

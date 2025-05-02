@@ -43,7 +43,7 @@ fun AlertNotificationsSettings(
         } else {
             Timber.d("Not granted")
             CoroutineScope(Dispatchers.Main).launch {
-                scaffoldState.snackbarHostState.showSnackbar(context.getString(R.string.permission_notification_needed))
+                scaffoldState.snackbarHostState.showSnackbar(context.getString(R.string.notification_permission_needed))
             }
         }
     }

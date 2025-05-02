@@ -21,6 +21,7 @@
     <string name="add_your_first_sensor">Lisää ensimmäinen anturi</string>
     <string name="advertisement">Laiteilmoitus</string>
     <string name="ago">sitten</string>
+    <string name="agree">Hyväksy</string>
     <string name="air_quality">Ilmanlaatu</string>
     <string name="alarm_custom_description_title">Aseta hälytysviesti</string>
     <string name="alarm_custom_title_hint">Muokkaa kuvausta...</string>
@@ -87,6 +88,12 @@
     <string name="app_theme">Sovelluksen teema</string>
     <string name="appearance_settings_description">%1$s %2$s</string>
     <string name="aqi">AQI</string>
+    <string name="aqi_level_0">Määrittämätön</string>
+    <string name="aqi_level_1">Epäterveellinen</string>
+    <string name="aqi_level_2">Huono</string>
+    <string name="aqi_level_3">Kohtalainen</string>
+    <string name="aqi_level_4">Hyvä</string>
+    <string name="aqi_level_5">Erinomainen</string>
     <string name="back">Takaisin</string>
     <string name="background_image">Taustakuva</string>
     <string name="background_interval">joka %1$s min</string>
@@ -94,6 +101,7 @@
     <string name="background_notification_message">Poista taustaskannaus käytöstä muokkaamalla asetuksia</string>
     <string name="background_notification_scanning_every">Skannataan joka</string>
     <string name="background_scanning">Taustaskannaus (Bluetooth)</string>
+    <string name="battery">Paristo</string>
     <string name="battery_ok">Paristo OK</string>
     <string name="battery_voltage">Paristojännite</string>
     <string name="benefits_sign_in">Lue lisää Ruuvi-tilin hyödyistä tai kirjaudu sisään myöhemmin</string>
@@ -198,6 +206,8 @@
     <string name="current_plan">Nykyinen tilaus</string>
     <string name="current_version">Nykyinen versio</string>
     <string name="current_version_fw">Nykyinen versio:</string>
+    <string name="customisation_settings">Mukautusasetukset</string>
+    <string name="customisation_settings_description">Raahaa ja pudota mittaukset haluamaasi järjestykseen.</string>
     <string name="dark_theme">Tumma teema</string>
     <string name="darktheme_disabled">Tumma teema ei käytössä.</string>
     <string name="darktheme_enabled">Tumma teema käytössä.</string>
@@ -233,6 +243,7 @@
     <string name="day_9">9 päivää</string>
     <string name="day_x">%1$s päivää</string>
     <string name="days">päivää</string>
+    <string name="decline">Hylkää</string>
     <string name="decrease_graph_size">Pienennä kaavioiden kokoa</string>
     <string name="delete_account">Poista tili</string>
     <string name="details">Tiedot</string>
@@ -302,6 +313,7 @@
     <string name="help_seen_tags">Havaitut anturit: %1$,d</string>
     <string name="help_troubleshooting_text">Löydä apua Ruuvi Station -sovellusten, Ruuvi-tuotteiden ja Ruuvi Cloud -palvelun käyttöön tukikeskuksestamme: ruuvi.com/fi/tuki</string>
     <string name="help_troubleshooting_title">Vianetsintä</string>
+    <string name="hide_measurements">Piilotetut mittaukset</string>
     <string name="history_view">Historianäkymä</string>
     <string name="hour">tunti</string>
     <string name="hour_1">1 tunti</string>
@@ -335,6 +347,7 @@
     <string name="latest_available_fw">Uusin saatavilla oleva Ruuvi-laiteohjelmisto:</string>
     <string name="latest_measured_value">Viimeisin mitattu arvo: %1$s</string>
     <string name="lets_do_it">Siirry kirjautumaan</string>
+    <string name="light">Valoisuus</string>
     <string name="light_theme">Vaalea teema</string>
     <string name="logged_in">Kirjautunut:</string>
     <string name="login_description">Hyödyntääksesi kaikkia sovelluksen ominaisuuksia, kirjaudu sisään tai luo uusi ilmainen Ruuvi-käyttäjätili antamalla sähköpostiosoitteesi.</string>
@@ -393,7 +406,6 @@
     <string name="no_password_needed">Tälle osoitteelle luodaan ilmainen tili, jos sinulla ei vielä ole tiliä. Tarvitset kirjautumiseen ainoastaan sähköpostiosoitteen. Pidämme tietosi turvassa.</string>
     <string name="none">ei kirjautunut</string>
     <string name="note">Huomaa!</string>
-    <string name="notification_permission_needed">Ota hälytykset käyttöön ottamalla ensin ilmoitukset käyttöön asetuksista</string>
     <string name="nox">NOx</string>
     <string name="nox_with_unit">NOx (%1$s)</string>
     <string name="off">Pois</string>
@@ -443,7 +455,6 @@
     <string name="permission_dialog_title">Ota Bluetooth-skannaus käyttöön</string>
     <string name="permission_location_needed">Salli sijaintitietojen käyttö ensin asetuksista.</string>
     <string name="permission_location_needed_api31">Salli lähellä olevien laitteiden näyttäminen asetuksista</string>
-    <string name="permission_notification_needed">Hälytysten näyttäminen vaatii ilmoitusten sallimisen asetuksista.</string>
     <string name="plan_expiry_date">Ruuvi-tilauksen päättymispäivä</string>
     <string name="pm1">PM1.0</string>
     <string name="pm10">PM10.0</string>
@@ -474,6 +485,7 @@
     <string name="pressure_reading">%1$,.2f %2$s</string>
     <string name="pressure_reading_pa">%1$,.0f %2$s</string>
     <string name="pressure_with_unit">Ilmanpaine (%1$s)</string>
+    <string name="preview">Esikatselu</string>
     <string name="reading_history">Historiatietoja luetaan</string>
     <string name="reading_history_not_supported">Laiteohjelmistoa ei tueta</string>
     <string name="reading_history_x">Bluetooth-lataus: %1$s</string>
@@ -579,6 +591,7 @@
     <string name="share_sensor_title">Jaa anturi</string>
     <string name="share_sensor_unshare_confirm">Haluatko lopettaa anturin jakamisen käyttäjälle %1$s?</string>
     <string name="shared_to_x">Jaettu %1$,d/%2$,d</string>
+    <string name="show_measurements">Näytettävät mittaukset</string>
     <string name="sign_in">Kirjaudu sisään</string>
     <string name="sign_in_benefits_description">Hyödyt:\n\n ● Anturien nimet, taustakuvat sekä kalibrointi- ja hälytysasetukset tallentuvat turvallisesti tilillesi pilvipalveluun\n\n ● Lue anturitiedot etänä verkossa (vaatii Ruuvi Gateway -reitittimen)\n\n ● Jaa antureita ystävien ja perheen kesken (vaatii Ruuvi Gateway -reitittimen)\n\n ● Selaa jopa 2 vuoden historiatietoja osoitteessa station.ruuvi.com (vaatii Ruuvi Gateway -reitittimen)</string>
     <string name="sign_in_check_email">Olemme lähettäneet sähköpostiisi kertakäyttöisen salasanan %1$s. Kirjaudu syöttämällä se tähän:</string>
@@ -606,6 +619,7 @@
     <string name="simple_view">Piilota kuvat</string>
     <string name="skip">OHITA</string>
     <string name="something_went_wrong">Tapahtui virhe</string>
+    <string name="sound">Ääni</string>
     <string name="sound_avg">Äänitaso (keskiarvo)</string>
     <string name="sound_peak">Äänitaso (huippu)</string>
     <string name="sound_with_unit">Ääni (%1$s)</string>
@@ -666,6 +680,9 @@
     <string name="use_without_account">Ei kiitos, ohita</string>
     <string name="version">Versio: %1$s</string>
     <string name="view">Näkymä</string>
+    <string name="visible_measurements">Näytettävät mittaukset</string>
+    <string name="visible_measurements_description">Tällä sivulla voit valita, mitkä mittaukset haluat nähdä ja missä järjestyksessä. Poista "Käytä oletusta" -valinta muokataksesi asetuksia.</string>
+    <string name="visible_measurements_use_default">Käytä oletusta</string>
     <string name="voc">VOC</string>
     <string name="voc_with_unit">VOC (%1$s)</string>
     <string name="voltage_reading">%1$,.2f %2$s</string>

@@ -14,7 +14,7 @@ class PermissionLogicInteractor(
     private val alarmsExists
         get() = alarmRepository.getActiveAlarms().any()
 
-    fun shouldAskNotificationPermission(): Boolean = alarmsExists
+    fun shouldAskNotificationPermission(): Boolean = alarmsExists || backGroundScanningEnabled
 
     fun shouldAskForBackgroundLocationPermission(): Boolean = backGroundScanningEnabled
 }

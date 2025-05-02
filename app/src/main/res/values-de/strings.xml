@@ -21,6 +21,7 @@
     <string name="add_your_first_sensor">Fügen Sie Ihren ersten Sensor hinzu</string>
     <string name="advertisement">Advertisement</string>
     <string name="ago">vor</string>
+    <string name="agree">Zustimmen</string>
     <string name="air_quality">Luftqualität</string>
     <string name="alarm_custom_description_title">Benutzerdefinierte Beschreibung des Alarms</string>
     <string name="alarm_custom_title_hint">Benutzerdefinierte Beschreibung festlegen...</string>
@@ -87,6 +88,12 @@
     <string name="app_theme">App thema</string>
     <string name="appearance_settings_description">%1$s %2$s</string>
     <string name="aqi">AQI</string>
+    <string name="aqi_level_0">Undefiniert</string>
+    <string name="aqi_level_1">Ungesund</string>
+    <string name="aqi_level_2">Schlecht</string>
+    <string name="aqi_level_3">Mäßig</string>
+    <string name="aqi_level_4">Gut</string>
+    <string name="aqi_level_5">Ausgezeichnet</string>
     <string name="back">Zurück</string>
     <string name="background_image">Hintergrundbild</string>
     <string name="background_interval">alle %1$s min</string>
@@ -94,6 +101,7 @@
     <string name="background_notification_message">Sie können das Scannen im Hintergrund in den Einstellungen deaktivieren</string>
     <string name="background_notification_scanning_every">Alles Scannen</string>
     <string name="background_scanning">Hintergrundsuche (Bluetooth)</string>
+    <string name="battery">Batterie</string>
     <string name="battery_ok">Batterie OK</string>
     <string name="battery_voltage">Batteriespannung</string>
     <string name="benefits_sign_in">Lesen Sie mehr über die Vorteile des Ruuvi-Kontos oder melden Sie sich später an</string>
@@ -198,6 +206,8 @@
     <string name="current_plan">Aktueller Ruuvi-Plan</string>
     <string name="current_version">Aktuelle Version</string>
     <string name="current_version_fw">Aktuelle Version:</string>
+    <string name="customisation_settings">Anpassungseinstellungen</string>
+    <string name="customisation_settings_description">Ziehe die Messwerte per Drag \u0026 Drop in die gewünschte Reihenfolge.</string>
     <string name="dark_theme">Dunkles Thema</string>
     <string name="darktheme_disabled">Das dunkle Thema ist deaktiviert.</string>
     <string name="darktheme_enabled">Das dunkle Thema ist aktiviert.</string>
@@ -233,6 +243,7 @@
     <string name="day_9">9 Tage</string>
     <string name="day_x">%1$s tage</string>
     <string name="days">Tage</string>
+    <string name="decline">Ablehnen</string>
     <string name="decrease_graph_size">Verkleinern Sie die Größe der Diagramme</string>
     <string name="delete_account">Konto löschen</string>
     <string name="details">Einzelheiten</string>
@@ -313,6 +324,7 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="help_seen_tags">Gesehene Sensoren: %1$,d</string>
     <string name="help_troubleshooting_text">Hilfe bei der Verwendung der Ruuvi Station-Apps, Ruuvi-Produkte und des Ruuvi Cloud-Dienstes finden Sie in unserem Support-Center: ruuvi.com/support</string>
     <string name="help_troubleshooting_title">Fehlerbehebung</string>
+    <string name="hide_measurements">Versteckte Messwerte</string>
     <string name="history_view">Ansicht Verlauf</string>
     <string name="hour">Stunde</string>
     <string name="hour_1">1 Stunde</string>
@@ -346,6 +358,7 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="latest_available_fw">Neueste verfügbare Ruuvi Firmware-Version:</string>
     <string name="latest_measured_value">Letzter Messwert: %1$s</string>
     <string name="lets_do_it">Gehen Sie zum Anmelden</string>
+    <string name="light">Helligkeit</string>
     <string name="light_theme">Thema Licht</string>
     <string name="logged_in">Eingeloggt:</string>
     <string name="login_description">Um alle Funktionen nutzen zu können, erstellen Sie ein kostenloses Konto oder melden Sie sich bei Ihrem bestehenden Ruuvi-Konto an, indem Sie Ihre E-Mail-Adresse eingeben.</string>
@@ -404,7 +417,6 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="no_password_needed">Für diese E-Mail wird ein kostenloses Konto erstellt, falls Sie noch keines haben. Es ist nur eine E-Mail-Adresse erforderlich. Wir bewahren Ihre Informationen sicher auf.</string>
     <string name="none">keiner</string>
     <string name="note">Notiz!</string>
-    <string name="notification_permission_needed">Um Benachrichtigungen zu aktivieren, erlauben Sie bitte Benachrichtigungen in den Einstellungen</string>
     <string name="nox">NOx</string>
     <string name="nox_with_unit">NOx (%1$s)</string>
     <string name="off">Aus</string>
@@ -454,7 +466,6 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="permission_dialog_title">Bluetooth-Scan aktivieren</string>
     <string name="permission_location_needed">Bitte aktivieren Sie die Standortberechtigung in den Einstellungen, um Sensoren anzuzeigen.</string>
     <string name="permission_location_needed_api31">Bitte erlauben Sie die Anzeige von Geräten in der Nähe in den Einstellungen, um Sensoren zu sehen.</string>
-    <string name="permission_notification_needed">Um Benachrichtigungen zu aktivieren, erlauben Sie bitte Benachrichtigungen in den Einstellungen.</string>
     <string name="plan_expiry_date">Verfallsdatum des Ruuvi-Plans</string>
     <string name="pm1">PM1.0</string>
     <string name="pm10">PM10.0</string>
@@ -485,6 +496,7 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="pressure_reading">%1$,.2f %2$s</string>
     <string name="pressure_reading_pa">%1$,.0f %2$s</string>
     <string name="pressure_with_unit">Luftdruck (%1$s)</string>
+    <string name="preview">Vorschau</string>
     <string name="reading_history">History wird gelesen</string>
     <string name="reading_history_not_supported">Firmware nicht unterstützt</string>
     <string name="reading_history_x">Bluetooth-Sync: %1$s</string>
@@ -590,6 +602,7 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="share_sensor_title">Sensor teilen</string>
     <string name="share_sensor_unshare_confirm">Möchten Sie die Freigabe des Sensors für %1$s aufheben?</string>
     <string name="shared_to_x">Freigegebene %1$,d/%2$,d</string>
+    <string name="show_measurements">Sichtbare Messwerte</string>
     <string name="sign_in">Einloggen</string>
     <string name="sign_in_benefits_description">Vorteile:\n\n ● Sensornamen, Hintergrundbilder, Offsets und Alarmeinstellungen werden sicher in der Cloud gespeichert\n\n ● Fernzugriff auf Sensoren über das Internet (erfordert ein Ruuvi Gateway)\n\n ● Teilen Sie Sensoren mit Freunden und Familie (erfordert ein Ruuvi Gateway)\n\n ● Sehen Sie bis zu 2 Jahre Geschichtsdaten auf station.ruuvi.com (erfordert ein Ruuvi-Gateway)</string>
     <string name="sign_in_check_email">Wir haben ein Einmalpasswort an Ihre E-Mail gesendet %1$s. Melden Sie sich an, indem Sie es hier eingeben:</string>
@@ -617,6 +630,7 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="simple_view">Einfache Ansicht</string>
     <string name="skip">ÜBERSPRINGEN</string>
     <string name="something_went_wrong">Something went wrong</string>
+    <string name="sound">Ton</string>
     <string name="sound_avg">Schalldruckpegel (Durchschnitt)</string>
     <string name="sound_peak">Schalldruckpegel (Spitze)</string>
     <string name="sound_with_unit">Ton (%1$s)</string>
@@ -677,6 +691,9 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="use_without_account">Nein danke, überspringen</string>
     <string name="version">Version: %1$s</string>
     <string name="view">Ansicht</string>
+    <string name="visible_measurements">Sichtbare Messwerte</string>
+    <string name="visible_measurements_description">Hier kannst du auswählen, welche Messwerte du sehen möchtest und in welcher Reihenfolge. Deaktiviere den Schalter „Standard verwenden“, um die Einstellungen anzupassen.</string>
+    <string name="visible_measurements_use_default">Standard verwenden</string>
     <string name="voc">VOC</string>
     <string name="voc_with_unit">VOC (%1$s)</string>
     <string name="voltage_reading">%1$,.2f %2$s</string>

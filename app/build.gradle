@@ -13,7 +13,7 @@ android {
         applicationId "com.ruuvi.station"
         minSdkVersion 23
         targetSdkVersion 34
-        compileSdk 34
+        compileSdk 35
         versionCode 215006
         versionName "2.15.6"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -91,15 +91,15 @@ dependencies {
     implementation 'no.nordicsemi.android:mcumgr-ble:2.4.0'
 
     // Compose
-    implementation "androidx.compose.ui:ui:$compose_version"
-    implementation "androidx.compose.material:material:1.7.8"
+    implementation "androidx.compose.ui:ui:1.8.0"
+    implementation "androidx.compose.material:material:1.8.0"
     implementation "androidx.compose.ui:ui-tooling:$compose_version"
     implementation "androidx.compose.ui:ui-tooling-preview:$compose_version"
-    implementation "androidx.activity:activity-compose:1.9.2"
+    implementation "androidx.activity:activity-compose:1.10.1"
     implementation("androidx.compose.material:material-icons-core:1.7.8")
     implementation "org.jetbrains.kotlin:kotlin-compose-compiler-plugin-embeddable:$kotlin_version"
     implementation "androidx.constraintlayout:constraintlayout-compose:1.1.1"
-    implementation "androidx.compose.runtime:runtime-livedata:$compose_version"
+    implementation "androidx.compose.runtime:runtime-livedata:1.8.0"
     implementation "com.google.accompanist:accompanist-systemuicontroller:$accomponist_version"
     implementation "com.google.accompanist:accompanist-permissions:$accomponist_version"
     implementation "com.google.accompanist:accompanist-pager:$accomponist_version"
