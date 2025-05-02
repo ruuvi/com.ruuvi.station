@@ -436,17 +436,17 @@ class NetworkDataSyncInteractor (
         return networkInteractor.getSensorData(request)
     }
 
-    fun stopSync() {
+    fun stopSync(): Job {
         Timber.d("stopSync")
         syncInProgress.value = false
-        CoroutineScope(IO).launch() {
+        return CoroutineScope(IO).launch() {
             sendSyncEvent(NetworkSyncEvent.Idle)
-        }
-        if (syncJob.isActive) {
-            syncJob.cancel()
-        }
-        for (job in tagJobs) {
-            job.cancel()
+            if (syncJob.isActive) {
+                syncJob.cancelAndJoin()
+            }
+            for (job in tagJobs) {
+                job.cancelAndJoin()
+            }
         }
     }
 }

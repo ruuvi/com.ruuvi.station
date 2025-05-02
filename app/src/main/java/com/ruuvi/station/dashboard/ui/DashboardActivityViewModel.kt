@@ -110,7 +110,6 @@ class DashboardActivityViewModel(
     }
 
     fun signOut() {
-        networkDataSyncInteractor.stopSync()
         networkSignInInteractor.signOut { }
     }
 
