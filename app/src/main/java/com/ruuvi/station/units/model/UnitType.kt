@@ -9,7 +9,7 @@ sealed class UnitType(
     val unit: Int,
     val measurementCode: String,
     val measurementTitle: Int,
-    val iconRes: Int = R.drawable.icon_measure_small_temp,
+    val iconRes: Int = R.drawable.icon_air_quality,
     val alarmType: AlarmType? = null,
     val defaultAccuracy: Accuracy
 ){
@@ -26,7 +26,7 @@ sealed class UnitType(
         unit = unit,
         measurementCode = TEMPERATURE_MEASUREMENT_CODE,
         measurementTitle = R.string.temperature,
-        iconRes = R.drawable.icon_measure_small_temp,
+        iconRes = R.drawable.icon_temperature,
         alarmType = AlarmType.TEMPERATURE,
         defaultAccuracy = Accuracy.Accuracy2
     ) {
@@ -61,7 +61,7 @@ sealed class UnitType(
         unit = unit,
         measurementCode = HUMIDITY_MEASUREMENT_CODE,
         measurementTitle = R.string.humidity,
-        iconRes = R.drawable.icon_measure_humidity,
+        iconRes = R.drawable.icon_humidity,
         alarmType = AlarmType.HUMIDITY,
         defaultAccuracy = Accuracy.Accuracy2
     ) {
@@ -96,7 +96,7 @@ sealed class UnitType(
         unit = unit,
         measurementCode = PRESSURE_MEASUREMENT_CODE,
         measurementTitle = R.string.pressure,
-        iconRes = R.drawable.icon_measure_pressure,
+        iconRes = R.drawable.icon_pressure,
         alarmType = AlarmType.PRESSURE,
         defaultAccuracy = defaultAccuracy
     ) {
@@ -132,7 +132,7 @@ sealed class UnitType(
         unit = unit,
         measurementCode = MOVEMENT_MEASUREMENT_CODE,
         measurementTitle = R.string.movement_counter,
-        iconRes = R.drawable.ic_icon_measure_movement,
+        iconRes = R.drawable.icon_movements,
         alarmType = AlarmType.MOVEMENT,
         defaultAccuracy = Accuracy.Accuracy0
     ) {
@@ -156,6 +156,7 @@ sealed class UnitType(
         unitCode = code,
         unitTitle = title,
         unit = unit,
+        iconRes = R.drawable.icon_battery,
         measurementCode = BATTERY_MEASUREMENT_CODE,
         measurementTitle = R.string.battery_voltage,
         defaultAccuracy = Accuracy.Accuracy2
@@ -255,6 +256,7 @@ sealed class UnitType(
         unitTitle = title,
         unit = unit,
         measurementCode = AQI_MEASUREMENT_CODE,
+        iconRes = R.drawable.icon_air_quality,
         measurementTitle = R.string.air_quality,
         defaultAccuracy = Accuracy.Accuracy0
     ) {
@@ -278,6 +280,7 @@ sealed class UnitType(
         unitCode = code,
         unitTitle = title,
         unit = unit,
+        iconRes = R.drawable.icon_luminosity,
         measurementCode = LUMINOSITY_MEASUREMENT_CODE,
         measurementTitle = R.string.luminosity,
         defaultAccuracy = Accuracy.Accuracy0
@@ -302,6 +305,7 @@ sealed class UnitType(
         unitCode = code,
         unitTitle = title,
         unit = unit,
+        iconRes = R.drawable.icon_sound,
         measurementCode = AVG_NOISE_MEASUREMENT_CODE,
         measurementTitle = R.string.sound_avg,
         alarmType = AlarmType.SOUND,
@@ -328,6 +332,7 @@ sealed class UnitType(
         unitCode = code,
         unitTitle = title,
         unit = unit,
+        iconRes = R.drawable.icon_sound,
         measurementCode = PEAK_NOISE_MEASUREMENT_CODE,
         measurementTitle = R.string.sound_peak,
         defaultAccuracy = Accuracy.Accuracy0
@@ -353,6 +358,7 @@ sealed class UnitType(
         unitCode = code,
         unitTitle = title,
         unit = unit,
+        iconRes = R.drawable.icon_co2,
         measurementCode = CO2_MEASUREMENT_CODE,
         measurementTitle = R.string.co2,
         alarmType = AlarmType.CO2,
@@ -379,6 +385,7 @@ sealed class UnitType(
         unitCode = code,
         unitTitle = title,
         unit = unit,
+        iconRes = R.drawable.icon_voc,
         measurementCode = VOC_MEASUREMENT_CODE,
         measurementTitle = R.string.voc,
         alarmType = AlarmType.VOC,
@@ -405,6 +412,7 @@ sealed class UnitType(
         unitCode = code,
         unitTitle = title,
         unit = unit,
+        iconRes = R.drawable.icon_nox,
         measurementCode = NOX_MEASUREMENT_CODE,
         measurementTitle = R.string.nox,
         alarmType = AlarmType.NOX,
@@ -431,6 +439,7 @@ sealed class UnitType(
         unitCode = code,
         unitTitle = title,
         unit = unit,
+        iconRes = R.drawable.icon_pm10,
         measurementCode = PM1_MEASUREMENT_CODE,
         measurementTitle = R.string.pm1,
         alarmType = AlarmType.PM1,
@@ -457,6 +466,7 @@ sealed class UnitType(
         unitCode = code,
         unitTitle = title,
         unit = unit,
+        iconRes = R.drawable.icon_pm25,
         measurementCode = PM25_MEASUREMENT_CODE,
         measurementTitle = R.string.pm25,
         alarmType = AlarmType.PM25,
@@ -483,6 +493,7 @@ sealed class UnitType(
         unitCode = code,
         unitTitle = title,
         unit = unit,
+        iconRes = R.drawable.icon_pm10,
         measurementCode = PM4_MEASUREMENT_CODE,
         measurementTitle = R.string.pm4,
         alarmType = AlarmType.PM4,
@@ -509,6 +520,7 @@ sealed class UnitType(
         unitCode = code,
         unitTitle = title,
         unit = unit,
+        iconRes = R.drawable.icon_pm10,
         measurementCode = PM10_MEASUREMENT_CODE,
         measurementTitle = R.string.pm10,
         alarmType = AlarmType.PM10,
