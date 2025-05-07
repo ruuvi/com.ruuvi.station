@@ -39,7 +39,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
@@ -180,6 +179,20 @@ class DashboardActivity : NfcActivity(), KodeinAware {
                 ) {
                     Scaffold(
                         scaffoldState = scaffoldState,
+                        snackbarHost = {
+                            SnackbarHost(
+                                hostState = it,
+                                snackbar = { snackbarData ->
+                                    Box(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .navigationBarsPadding()
+                                    ) {
+                                        Snackbar(snackbarData)
+                                    }
+                                }
+                            )
+                        },
                         modifier = Modifier.fillMaxSize(),
                         backgroundColor = RuuviStationTheme.colors.dashboardBackground,
                         topBar = {
