@@ -43,7 +43,7 @@ fun BigValueDisplay(
                 modifier = Modifier
                     .offset(y = 14.dp)
                     .padding(start = 4.dp),
-                fontSize = 36.sp.limitScaleTo(1.5f),
+                fontSize = 36.sp.limitScaleTo(1.2f),
                 fontFamily = ruuviStationFonts.oswaldRegular,
                 text = value.unitString,
                 color = Color.Transparent
@@ -53,7 +53,6 @@ fun BigValueDisplay(
                 fontSize = 72.sp.limitScaleTo(1.5f),
                 fontFamily = ruuviStationFonts.oswaldBold,
                 text = value.valueWithoutUnit,
-                lineHeight = 10.sp,
                 color = Color.White
             )
 
@@ -61,7 +60,7 @@ fun BigValueDisplay(
                 modifier = Modifier
                     .offset(y = 14.dp)
                     .padding(start = 4.dp),
-                fontSize = 36.sp.limitScaleTo(1.5f),
+                fontSize = 36.sp.limitScaleTo(1.2f),
                 fontFamily = ruuviStationFonts.oswaldRegular,
                 text = value.unitString,
                 color = Color.White

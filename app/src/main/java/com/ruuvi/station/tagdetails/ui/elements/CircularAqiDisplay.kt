@@ -38,7 +38,7 @@ fun CircularAQIDisplay(
             fontSize = 20.scaledSp,
             color = Color.White
         )
-        Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.medium))
+        Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
 
         SensorValueName(
             icon = R.drawable.icon_air_quality,

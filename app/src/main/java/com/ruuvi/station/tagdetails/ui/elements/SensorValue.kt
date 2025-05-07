@@ -51,7 +51,7 @@ fun SensorValueItem(
         Icon(
             modifier = Modifier
                 .height(24.dp.scaleUpTo(1.5f))
-                .padding(start = RuuviStationTheme.dimensions.medium),
+                .padding(horizontal = RuuviStationTheme.dimensions.medium),
             painter = painterResource(id = icon),
             tint = Color(0xff5ebdb2),
             contentDescription = ""
@@ -59,8 +59,7 @@ fun SensorValueItem(
 
         Column (
             modifier = Modifier.padding(
-                horizontal = RuuviStationTheme.dimensions.medium,
-                vertical = RuuviStationTheme.dimensions.small
+                end = RuuviStationTheme.dimensions.extended
             )
         ) {
             Row() {
@@ -93,9 +92,9 @@ fun SensorValueItem(
                 Text(
                     style = RuuviStationTheme.typography.dashboardSecondary,
                     color = White80,
-                    fontSize = RuuviStationTheme.fontSizes.compact.limitScaleTo(1.5f),
+                    fontSize = RuuviStationTheme.fontSizes.miniature.limitScaleTo(1.5f),
                     text = name,
-                    maxLines = 1
+                    maxLines = 1,
                 )
             }
         }
@@ -123,16 +122,16 @@ fun SensorValueName(
         Icon(
             modifier = Modifier
                 .height(24.dp)
-                .padding(start = RuuviStationTheme.dimensions.medium),
+                .padding(horizontal = RuuviStationTheme.dimensions.medium),
             painter = painterResource(id = icon),
             tint = Color(0xff5ebdb2),
             contentDescription = ""
         )
         Text(
             modifier = Modifier
-                .padding(horizontal = RuuviStationTheme.dimensions.medium),
-            fontSize = RuuviStationTheme.fontSizes.extended.limitScaleTo(1.5f),
-            style = RuuviStationTheme.typography.dashboardBigValueUnit,
+                .padding(end = RuuviStationTheme.dimensions.extended),
+            fontSize = RuuviStationTheme.fontSizes.compact.limitScaleTo(1.5f),
+            style = RuuviStationTheme.typography.dashboardSecondary,
             fontFamily = ruuviStationFonts.mulishBold,
             fontWeight = FontWeight.Bold,
             text = name,
