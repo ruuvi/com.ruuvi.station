@@ -64,12 +64,11 @@ class RuuviScannerApplication : Application(), KodeinAware {
     override fun onCreate() {
         super.onCreate()
 
-        if (BuildConfig.DEBUG) {
-            Timber.plant(Timber.DebugTree())
-        } else if (BuildConfig.FILE_LOGS_ENABLED) {
+        if (BuildConfig.FILE_LOGS_ENABLED) {
             Timber.plant(ReleaseTree())
+        } else if (BuildConfig.DEBUG) {
+            Timber.plant(Timber.DebugTree())
         }
-
         setupDependencyInjection()
 
         FlowManager.init(this)
