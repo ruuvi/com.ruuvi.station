@@ -613,7 +613,7 @@ fun SensorValues(
         Column(
             modifier = modifier
                 .fillMaxHeight()
-                .fillMaxWidth(0.5f)
+                .widthIn(max = 180.dp)
                 .padding(start = RuuviStationTheme.dimensions.screenPadding),
             verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.Bottom),
             horizontalAlignment = Alignment.Start
@@ -647,7 +647,7 @@ fun SensorValues(
         ) {
             Column(
                 modifier = Modifier
-                    .weight(1f),
+                    .widthIn(max = 180.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.Top),
                 horizontalAlignment = Alignment.Start
             ) {
@@ -664,7 +664,7 @@ fun SensorValues(
             }
             Column(
                 modifier = Modifier
-                    .weight(1f),
+                    .widthIn(max = 180.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.Top),
                 horizontalAlignment = Alignment.Start
             ) {

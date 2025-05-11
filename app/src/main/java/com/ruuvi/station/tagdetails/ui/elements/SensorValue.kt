@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
@@ -40,8 +41,7 @@ fun SensorValueItem(
     val internalModifier = Modifier
         .height(itemHeight)
         .clip(RoundedCornerShape(itemHeight / 2))
-        .background(Color.White.copy(alpha = 0.2f))
-
+        .background(Color.White.copy(alpha = 0.1f))
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Start,
@@ -111,7 +111,7 @@ fun SensorValueName(
     val internalModifier = Modifier
         .height(itemHeight)
         .clip(RoundedCornerShape(itemHeight / 2))
-        .background(Color.White.copy(alpha = 0.2f))
+        .background(Color.White.copy(alpha = 0.1f))
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
