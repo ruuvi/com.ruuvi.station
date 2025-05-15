@@ -16,6 +16,8 @@ import androidx.compose.ui.viewinterop.AndroidView
 import com.ruuvi.station.R
 import com.ruuvi.station.app.ui.UiEvent
 import com.ruuvi.station.app.ui.components.*
+import com.ruuvi.station.feature.data.Feature
+import com.ruuvi.station.feature.data.FeatureFlag
 import timber.log.Timber
 
 @Composable
@@ -25,14 +27,19 @@ fun DeveloperSettings(
     viewModel: DeveloperSettingsViewModel
 ) {
     val devServerEnabled = viewModel.devServerEnabled.collectAsState()
-    val visibleMeasurements = viewModel.visibleMeasurementsEnabled.collectAsState()
 
     PageSurfaceWithPadding {
         Column() {
-            SwitchIndicatorRuuvi(
-                text = "Enable visible measurements",
-                checked = visibleMeasurements.value,
-                onCheckedChange = viewModel::setVisibleMeasurementsEnabled
+            FeatureSwitch(
+                feature = FeatureFlag.VISIBLE_MEASUREMENTS,
+                checked = viewModel::getFeatureState,
+                onCheckedChange = viewModel::setFeatureValue
+            )
+
+            FeatureSwitch(
+                feature = FeatureFlag.NEW_SENSOR_CARD,
+                checked = viewModel::getFeatureState,
+                onCheckedChange = viewModel::setFeatureValue
             )
 
             SwitchIndicatorRuuvi(
@@ -40,6 +47,7 @@ fun DeveloperSettings(
                 checked = devServerEnabled.value,
                 onCheckedChange = viewModel::setDevServerEnabled
             )
+
             Paragraph(text = stringResource(id = R.string.use_dev_server_description))
             SettingsElement(
                 name = "Web sharing",
@@ -48,6 +56,28 @@ fun DeveloperSettings(
         }
     }
 }
+
+@Composable
+fun FeatureSwitch(
+    feature: Feature,
+    checked: (Feature) -> Boolean,
+    onCheckedChange: ((Feature, Boolean) -> Unit),
+    modifier: Modifier = Modifier
+) {
+    var enabled = remember { mutableStateOf(checked.invoke(feature)) }
+
+    SwitchIndicatorRuuvi(
+        text = feature.title,
+        checked = enabled.value,
+        onCheckedChange = { check ->
+            onCheckedChange.invoke(feature, check)
+            enabled.value = checked.invoke(feature)
+                          },
+        modifier = modifier
+    )
+}
+
+
 
 @Composable
 fun SharingWebView(

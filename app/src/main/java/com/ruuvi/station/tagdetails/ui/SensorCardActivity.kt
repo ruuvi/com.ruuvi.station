@@ -59,6 +59,8 @@ import com.ruuvi.station.app.ui.components.scaleUpTo
 import com.ruuvi.station.app.ui.theme.*
 import com.ruuvi.station.dashboard.DashboardTapAction
 import com.ruuvi.station.dashboard.ui.DashboardActivity
+import com.ruuvi.station.feature.data.FeatureFlag
+import com.ruuvi.station.feature.domain.RuntimeBehavior
 import com.ruuvi.station.graph.ChartControlElement2
 import com.ruuvi.station.graph.ChartsView
 import com.ruuvi.station.graph.model.ChartContainer
@@ -69,6 +71,7 @@ import com.ruuvi.station.tag.domain.UpdateSource
 import com.ruuvi.station.tag.domain.isLowBattery
 import com.ruuvi.station.tagdetails.ui.elements.BigValueDisplay
 import com.ruuvi.station.tagdetails.ui.elements.CircularAQIDisplay
+import com.ruuvi.station.tagdetails.ui.elements.SensorCardLegacy
 import com.ruuvi.station.tagdetails.ui.elements.SensorValueItem
 import com.ruuvi.station.tagsettings.ui.TagSettingsActivity
 import com.ruuvi.station.units.domain.UnitsConverter
@@ -91,6 +94,7 @@ class SensorCardActivity : NfcActivity(), KodeinAware {
     override val kodein by closestKodein()
 
     private val unitsConverter: UnitsConverter by instance()
+    private val runtimeBehavior: RuntimeBehavior by instance()
 
     private val viewModel: SensorCardViewModel by viewModel {
         val preferences: PreferencesRepository by kodein.instance()
@@ -109,6 +113,8 @@ class SensorCardActivity : NfcActivity(), KodeinAware {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
+
+        val newSensorCard = runtimeBehavior.isFeatureEnabled(FeatureFlag.NEW_SENSOR_CARD)
 
         setContent {
             RuuviTheme {
@@ -132,6 +138,7 @@ class SensorCardActivity : NfcActivity(), KodeinAware {
                         historyUpdater = viewModel::historyUpdater,
                         unitsConverter = unitsConverter,
                         viewPeriod = viewPeriod,
+                        newSensorCard = newSensorCard,
                         getSyncStatusFlow = viewModel::getGattEvents,
                         getChartClearedFlow = viewModel::getChartCleared,
                         disconnectGattAction = viewModel::disconnectGatt,
@@ -228,6 +235,7 @@ fun SensorsPager(
     unitsConverter: UnitsConverter,
     viewPeriod: Period,
     increasedChartSize: Boolean,
+    newSensorCard: Boolean,
     getSyncStatusFlow: (String) -> Flow<SyncStatus>,
     getChartClearedFlow: (String) -> Flow<String>,
     disconnectGattAction: (String) -> Unit,
@@ -383,10 +391,17 @@ fun SensorsPager(
                                 size = size
                             )
                         } else {
-                            SensorCard(
-                                sensor = sensor,
-                                modifier = Modifier.weight(1f)
-                            )
+                            if (newSensorCard) {
+                                SensorCard(
+                                    sensor = sensor,
+                                    modifier = Modifier.weight(1f)
+                                )
+                            } else {
+                                SensorCardLegacy(
+                                    sensor = sensor,
+                                    modifier = Modifier.weight(1f)
+                                )
+                            }
                         }
 
                         SensorCardBottom(
@@ -568,7 +583,10 @@ fun SensorCard(
                             CircularAQIDisplay(sensor.latestMeasurement.aqiScore)
                         }
                     } else {
-                        BigValueDisplay(firstValue)
+                        BigValueDisplay(
+                            value = firstValue,
+                            showName = true
+                        )
                     }
                 }
             }

@@ -736,7 +736,7 @@ fun DashboardItemSimple(
             modifier = Modifier
                 .padding(
                     top = RuuviStationTheme.dimensions.mediumPlus,
-                    start = RuuviStationTheme.dimensions.mediumPlus,
+                    start = RuuviStationTheme.dimensions.extended,
                     bottom = RuuviStationTheme.dimensions.small,
                     end = RuuviStationTheme.dimensions.medium,
                 )
@@ -804,7 +804,7 @@ fun ItemName(
             maxLines = maxLines
         )
 
-        Box (modifier = Modifier.width(50.dp).height(size.height.pxToDp()))
+        Box (modifier = Modifier.width(75.dp).height(size.height.pxToDp()))
     }
 }
 

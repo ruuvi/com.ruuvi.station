@@ -14,7 +14,7 @@ object DashboardActivityInjectionModule {
 
         bind<DashboardActivityViewModel>() with provider {
             DashboardActivityViewModel(instance(), instance(), instance(), instance(), instance(),
-                instance(), instance(), instance(), instance())
+                instance(), instance(), instance(), instance(), instance())
         }
 
         bind<SensorsSortingInteractor>() with singleton {

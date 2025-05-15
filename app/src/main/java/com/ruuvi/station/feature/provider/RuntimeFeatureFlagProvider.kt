@@ -3,16 +3,14 @@ package com.ruuvi.station.feature.provider
 import android.content.Context
 import android.content.SharedPreferences
 import com.ruuvi.station.feature.data.Feature
+import androidx.core.content.edit
 
-class RuntimeFeatureFlagProvider : FeatureFlagProvider {
+class RuntimeFeatureFlagProvider(applicationContext: Context) : FeatureFlagProvider {
 
-    private val preferences: SharedPreferences
+    private val preferences: SharedPreferences =
+        applicationContext.getSharedPreferences("runtime.featureflags", Context.MODE_PRIVATE)
 
     override val priority = MAX_PRIORITY
-
-    constructor(applicationContext: Context) {
-        preferences = applicationContext.getSharedPreferences("runtime.featureflags", Context.MODE_PRIVATE)
-    }
 
     override fun isFeatureEnabled(feature: Feature): Boolean =
         preferences.getBoolean(feature.key, feature.defaultValue)
@@ -21,5 +19,5 @@ class RuntimeFeatureFlagProvider : FeatureFlagProvider {
         preferences.contains(feature.key)
 
     fun setFeatureEnabled(feature: Feature, enabled: Boolean) =
-        preferences.edit().putBoolean(feature.key, enabled).apply()
+        preferences.edit (commit = true) { putBoolean(feature.key, enabled) }
 }

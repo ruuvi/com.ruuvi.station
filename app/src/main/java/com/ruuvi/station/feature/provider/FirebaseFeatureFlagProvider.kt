@@ -30,7 +30,8 @@ class FirebaseFeatureFlagProvider() : FeatureFlagProvider, RemoteFeatureFlagProv
     override fun hasFeature(feature: Feature): Boolean {
         Timber.d("remoteConfig.hasFeature")
         return when (feature) {
-            FeatureFlag.RUUVI_NETWORK -> true
+            FeatureFlag.NEW_SENSOR_CARD -> true
+            FeatureFlag.VISIBLE_MEASUREMENTS -> true
             else -> false
         }
     }

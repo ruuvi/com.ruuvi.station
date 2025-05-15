@@ -29,6 +29,7 @@ import com.ruuvi.station.units.model.UnitType
 @Composable
 fun BigValueDisplay(
     value: EnvironmentValue,
+    showName: Boolean,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -66,14 +67,16 @@ fun BigValueDisplay(
                 color = Color.White
             )
         }
-        Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.medium))
+        if (showName) {
+            Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.medium))
 
-        SensorValueName(
-            icon = value.unitType.iconRes,
-            name = stringResource(value.unitType.measurementTitle),
-            itemHeight = RuuviStationTheme.dimensions.sensorCardValueItemHeight,
-            modifier = Modifier.padding(horizontal = RuuviStationTheme.dimensions.extended)
-        )
+            SensorValueName(
+                icon = value.unitType.iconRes,
+                name = stringResource(value.unitType.measurementTitle),
+                itemHeight = RuuviStationTheme.dimensions.sensorCardValueItemHeight,
+                modifier = Modifier.padding(horizontal = RuuviStationTheme.dimensions.extended)
+            )
+        }
     }
 }
 
@@ -91,6 +94,7 @@ private fun BigValueDisplayPreview() {
                 unitString = "%",
                 unitType = UnitType.HumidityUnit.Relative
             ),
+            showName = true,
             modifier = Modifier
         )
     }

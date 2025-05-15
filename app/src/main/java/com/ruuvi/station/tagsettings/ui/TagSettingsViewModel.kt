@@ -11,6 +11,8 @@ import com.ruuvi.station.bluetooth.domain.SensorInfoInteractor
 import com.ruuvi.station.database.domain.AlarmRepository
 import com.ruuvi.station.database.domain.SensorShareListRepository
 import com.ruuvi.station.database.tables.RuuviTagEntity
+import com.ruuvi.station.feature.data.FeatureFlag
+import com.ruuvi.station.feature.domain.RuntimeBehavior
 import com.ruuvi.station.network.domain.RuuviNetworkInteractor
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tag.domain.isLowBattery
@@ -35,7 +37,8 @@ class TagSettingsViewModel(
     private val unitsConverter: UnitsConverter,
     private val accelerationConverter: AccelerationConverter,
     private val shareListRepository: SensorShareListRepository,
-    private val preferencesRepository: PreferencesRepository
+    private val preferencesRepository: PreferencesRepository,
+    private val runtimeBehavior: RuntimeBehavior
 ) : ViewModel() {
     var file: Uri? = null
 
@@ -67,7 +70,7 @@ class TagSettingsViewModel(
         !it.networkSensor || it.owner.isNullOrEmpty() || it.owner.equals(networkInteractor.getEmail(), true)
     }
 
-    val visibleMeasurementsEnabled: StateFlow<Boolean> = MutableStateFlow(preferencesRepository.getVisibleMeasurements())
+    val visibleMeasurementsEnabled: StateFlow<Boolean> = MutableStateFlow(runtimeBehavior.isFeatureEnabled(FeatureFlag.VISIBLE_MEASUREMENTS))
 
     private val _askToClaim =  MutableSharedFlow<Boolean>()
     val askToClaim: SharedFlow<Boolean> = _askToClaim

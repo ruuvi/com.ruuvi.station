@@ -6,5 +6,6 @@ enum class FeatureFlag (
     override val description: String,
     override val defaultValue: Boolean
 ) : Feature {
-    RUUVI_NETWORK("android_network", "Ruuvi Network", "Enable access to Ruuvi Network (beta)", false)
+    VISIBLE_MEASUREMENTS("android_visible_measurements", "Visible Measurements", "Enable visible measurements", false),
+    NEW_SENSOR_CARD("android_new_sensor_card", "New sensor card UI", "Enable new sensor card UI", false)
 }

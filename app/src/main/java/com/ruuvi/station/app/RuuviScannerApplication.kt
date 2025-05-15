@@ -80,8 +80,6 @@ class RuuviScannerApplication : Application(), KodeinAware {
         defaultOnTagFoundListener.isForeground = isInForeground
         foreground.addListener(listener)
 
-        setupExperimentalFeatures()
-
         applyDarkModeSettings()
     }
 
@@ -95,12 +93,6 @@ class RuuviScannerApplication : Application(), KodeinAware {
                     this@RuuviScannerApplication.getSystemService(Context.POWER_SERVICE) as PowerManager
                 }
             })
-        }
-    }
-
-    private fun setupExperimentalFeatures() {
-        if (networkInteractor.signedIn) {
-            runtimeFeatureFlagProvider.setFeatureEnabled(FeatureFlag.RUUVI_NETWORK, true)
         }
     }
 
