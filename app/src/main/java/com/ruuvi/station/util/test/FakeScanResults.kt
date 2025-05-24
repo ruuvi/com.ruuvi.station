@@ -2,7 +2,7 @@ package com.ruuvi.station.util.test
 
 import android.os.Handler
 import com.ruuvi.station.bluetooth.DefaultOnTagFoundListener
-import com.ruuvi.station.bluetooth.FoundRuuviTag
+import com.ruuvi.station.bluetooth.contract.FoundRuuviTag
 import timber.log.Timber
 import java.util.Locale
 import kotlin.random.Random
