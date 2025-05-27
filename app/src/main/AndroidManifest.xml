@@ -236,6 +236,11 @@ xmlns:tools="http://schemas.android.com/tools">
         android:permission="android.permission.BIND_JOB_SERVICE" />
 
     <service
+        android:name="androidx.work.impl.foreground.SystemForegroundService"
+        android:exported="false"
+        android:foregroundServiceType="connectedDevice" />
+
+    <service
         android:name="com.ruuvi.station.widgets.ui.complexWidget.ComplexWidgetService"
         android:exported="true"
         android:permission="android.permission.BIND_REMOTEVIEWS" />
