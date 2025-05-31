@@ -142,8 +142,8 @@ class ItemStaggeredGridDragAndDropState(
                 val delta = startOffset - hoveredElement.offset
 
                 when {
-                    delta.y > 0 -> (endOffset.y > item.offset.y)
-                    else -> (startOffset.y < item.offset.y)
+                    delta.y > 0 -> endOffset.y > item.offset.y + item.size.height
+                    else -> startOffset.y < item.offset.y
                 }
             }
 
