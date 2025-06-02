@@ -17,11 +17,11 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
-import com.ruuvi.station.tagsettings.ui.offsetEnd
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import kotlin.math.abs
 
 fun Modifier.dragGestureHandler(
     scope: CoroutineScope,
@@ -141,7 +141,13 @@ class ItemStaggeredGridDragAndDropState(
             val targetItem = validItems.firstOrNull { item ->
                 val delta = startOffset - hoveredElement.offset
 
-                when {
+                val multiColumnCheck = if (hoveredElement.offset.x != item.offset.x) {
+                    abs(item.offset.x - startOffset.x) < item.size.width * 0.2f
+                } else {
+                    true
+                }
+
+                multiColumnCheck && when {
                     delta.y > 0 -> endOffset.y > item.offset.y + item.size.height
                     else -> startOffset.y < item.offset.y
                 }
