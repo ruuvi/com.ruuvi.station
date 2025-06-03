@@ -8,7 +8,7 @@ import com.ruuvi.station.bluetooth.AirFirmwareInteractor
 import com.ruuvi.station.bluetooth.BluetoothInteractor
 import com.ruuvi.station.bluetooth.BluetoothLibrary
 import com.ruuvi.station.bluetooth.DefaultOnTagFoundListener
-import com.ruuvi.station.bluetooth.IRuuviTagScanner
+import com.ruuvi.station.bluetooth.contract.IRuuviTagScanner
 import com.ruuvi.station.bluetooth.domain.*
 import com.ruuvi.station.bluetooth.util.ScannerSettings
 import com.ruuvi.station.startup.ui.StartupActivity

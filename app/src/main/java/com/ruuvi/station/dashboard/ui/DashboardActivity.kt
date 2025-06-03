@@ -447,7 +447,8 @@ fun DashboardItems(
             horizontalArrangement = Arrangement.spacedBy(RuuviStationTheme.dimensions.medium),
             state = dragDropListState.getLazyListState()
         ) {
-            itemsIndexed(items, key = { _, sensor -> sensor.id }) { index, sensor ->
+            //key = { _, sensor -> sensor.id }
+            itemsIndexed(items) { index, sensor ->
                 val displacementOffset = if (index == dragDropListState.getCurrentIndexOfDraggedListItem()) {
                     Timber.d("dragGestureHandler - elementDisplacement ${dragDropListState.elementDisplacement}")
                     dragDropListState.elementDisplacement.takeIf { it != IntOffset.Zero }

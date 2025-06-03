@@ -15,9 +15,9 @@ class SensorsSortingInteractor (
         val sortingOrder = getListOfSortedSensors()
 
         for (sens in sortingOrder) {
-            Timber.d("dragGestureHandler - sortedResult $sens")
+            Timber.d("sortedResult $sens")
         }
-        Timber.d("dragGestureHandler - sortedResult =========================")
+        Timber.d("sortedResult =========================")
 
 
         if (sortingOrder.isEmpty()) return sensors

@@ -1,6 +1,6 @@
 package com.ruuvi.station.dataforwarding.data
 
-import com.ruuvi.station.bluetooth.LogReading
+import com.ruuvi.station.bluetooth.contract.LogReading
 import com.ruuvi.station.database.tables.RuuviTagEntity
 import com.ruuvi.station.database.tables.SensorSettings
 import java.util.*
