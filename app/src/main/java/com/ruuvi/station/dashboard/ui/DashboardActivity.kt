@@ -8,11 +8,11 @@ import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.GridItemSpan
-import androidx.compose.foundation.lazy.grid.LazyGridState
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.itemsIndexed
+import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridState
+import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
+import androidx.compose.foundation.lazy.staggeredgrid.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
@@ -24,10 +24,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterEnd
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Alignment.Companion.Top
+import androidx.compose.ui.Alignment.Companion.TopEnd
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
@@ -37,13 +39,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
-import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.constraintlayout.compose.Dimension
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -64,12 +63,17 @@ import com.ruuvi.station.app.ui.DashboardTopAppBar
 import com.ruuvi.station.app.ui.components.BlinkingEffect
 import com.ruuvi.station.app.ui.components.Paragraph
 import com.ruuvi.station.app.ui.components.RuuviButton
+import com.ruuvi.station.app.ui.components.limitScaleTo
 import com.ruuvi.station.app.ui.components.rememberResourceUri
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme.colors
 import com.ruuvi.station.app.ui.theme.RuuviTheme
+import com.ruuvi.station.app.ui.theme.ruuviStationFontsSizes
 import com.ruuvi.station.dashboard.DashboardTapAction
 import com.ruuvi.station.dashboard.DashboardType
+import com.ruuvi.station.dashboard.ui.dashboard_elements.AQIDisplay
+import com.ruuvi.station.dashboard.ui.dashboard_elements.BigValueExtDisplay
+import com.ruuvi.station.dashboard.ui.dashboard_elements.ValueDisplay
 import com.ruuvi.station.network.data.NetworkSyncEvent
 import com.ruuvi.station.network.ui.ShareSensorActivity
 import com.ruuvi.station.network.ui.SignInActivity
@@ -77,7 +81,6 @@ import com.ruuvi.station.network.ui.claim.ClaimSensorActivity
 import com.ruuvi.station.nfc.ui.NfcInteractor
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tag.domain.UpdateSource
-import com.ruuvi.station.tag.domain.isAir
 import com.ruuvi.station.tag.domain.isLowBattery
 import com.ruuvi.station.tagdetails.ui.SensorCardActivity
 import com.ruuvi.station.tagdetails.ui.SensorCardOpenType
@@ -85,9 +88,10 @@ import com.ruuvi.station.tagsettings.ui.BackgroundActivity
 import com.ruuvi.station.tagsettings.ui.SetSensorName
 import com.ruuvi.station.tagsettings.ui.TagSettingsActivity
 import com.ruuvi.station.units.domain.aqi.AQI
-import com.ruuvi.station.units.model.EnvironmentValue
+import com.ruuvi.station.units.model.UnitType
 import com.ruuvi.station.util.base.NfcActivity
 import com.ruuvi.station.util.extensions.*
+import com.ruuvi.station.util.ui.pxToDp
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -95,6 +99,7 @@ import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
 import org.kodein.di.generic.instance
 import timber.log.Timber
+import kotlin.math.min
 
 class DashboardActivity : NfcActivity(), KodeinAware {
 
@@ -115,7 +120,6 @@ class DashboardActivity : NfcActivity(), KodeinAware {
             }
 
             RuuviTheme {
-                val lifecycleOwner = LocalLifecycleOwner.current
                 val scaffoldState = rememberScaffoldState()
                 val systemUiController = rememberSystemUiController()
                 val systemBarsColor = colors.dashboardBackground
@@ -133,11 +137,10 @@ class DashboardActivity : NfcActivity(), KodeinAware {
                 val dashboardType by dashboardViewModel.dashboardType.collectAsState()
                 val dashboardTapAction by dashboardViewModel.dashboardTapAction.collectAsState()
                 val shouldAskNotificationPermission by dashboardViewModel.shouldAskNotificationPermission.collectAsState()
-                val dragDropListState = rememberDragDropListState(
+                val dragDropListState = rememberDragDropStaggeredGridState(
                     onMove = dashboardViewModel::moveItem,
                     onDoneDragging = dashboardViewModel::onDoneDragging
                 )
-                val coroutineScope = rememberCoroutineScope()
                 val navigationColor = if (gestureNavigationEnabled()) {
                     Color.Transparent
                 } else {
@@ -176,6 +179,20 @@ class DashboardActivity : NfcActivity(), KodeinAware {
                 ) {
                     Scaffold(
                         scaffoldState = scaffoldState,
+                        snackbarHost = {
+                            SnackbarHost(
+                                hostState = it,
+                                snackbar = { snackbarData ->
+                                    Box(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .navigationBarsPadding()
+                                    ) {
+                                        Snackbar(snackbarData)
+                                    }
+                                }
+                            )
+                        },
                         modifier = Modifier.fillMaxSize(),
                         backgroundColor = RuuviStationTheme.colors.dashboardBackground,
                         topBar = {
@@ -232,6 +249,7 @@ class DashboardActivity : NfcActivity(), KodeinAware {
                                             syncCloud = dashboardViewModel::syncCloud,
                                             setName = dashboardViewModel::setName,
                                             onMove = dashboardViewModel::moveItem,
+                                            showMeasurementTitle = dashboardViewModel.showMeasurementTitle(),
                                             refreshing = refreshing,
                                             dragDropListState = dragDropListState
                                         )
@@ -389,13 +407,14 @@ fun DashboardItems(
     userEmail: String?,
     dashboardType: DashboardType,
     dashboardTapAction: DashboardTapAction,
+    showMeasurementTitle: Boolean,
     syncCloud: ()-> Unit,
     setName: (String, String?) -> Unit,
     onMove: (Int, Int, Boolean) -> Unit,
-    dragDropListState: ItemListDragAndDropState,
+    dragDropListState: ItemStaggeredGridDragAndDropState,
     refreshing: Boolean
 ) {
-    val itemHeight = 156.dp * LocalDensity.current.fontScale
+    val itemHeight = 160.dp * LocalDensity.current.fontScale
 
     val pullRefreshState = rememberPullRefreshState(
         refreshing = refreshing,
@@ -414,22 +433,21 @@ fun DashboardItems(
     }
 
     Box(modifier = pullToRefreshModifier) {
-        LazyVerticalGrid(
+        LazyVerticalStaggeredGrid(
             modifier = Modifier
                 .dragGestureHandler(coroutineScope, dragDropListState, overscrollJob),
-            columns = GridCells.Adaptive(300.dp),
+            columns = StaggeredGridCells.Adaptive(300.dp),
             contentPadding = PaddingValues(
                 start = RuuviStationTheme.dimensions.medium,
                 end = RuuviStationTheme.dimensions.medium,
                 bottom = RuuviStationTheme.dimensions.medium,
                 top = 0.dp
             ),
-            verticalArrangement = Arrangement.spacedBy(RuuviStationTheme.dimensions.medium),
+            verticalItemSpacing = RuuviStationTheme.dimensions.medium,
             horizontalArrangement = Arrangement.spacedBy(RuuviStationTheme.dimensions.medium),
             state = dragDropListState.getLazyListState()
         ) {
-
-
+            //key = { _, sensor -> sensor.id }
             itemsIndexed(items) { index, sensor ->
                 val displacementOffset = if (index == dragDropListState.getCurrentIndexOfDraggedListItem()) {
                     Timber.d("dragGestureHandler - elementDisplacement ${dragDropListState.elementDisplacement}")
@@ -455,17 +473,17 @@ fun DashboardItems(
                         DashboardItem(
                             lazyGridState = dragDropListState.getLazyListState(),
                             itemIndex = index,
-                            itemHeight = itemHeight,
                             sensor = sensor,
                             userEmail = userEmail,
                             displacementOffset = displacementOffset,
                             itemIsDragged = itemIsDragged,
+                            showMeasurementTitle = showMeasurementTitle,
                             setName = setName,
                             moveItem = onMove
                         )
                 }
             }
-            item(span = { GridItemSpan(maxLineSpan) }) { Box(modifier = Modifier.navigationBarsPadding()) }
+            item(span = StaggeredGridItemSpan.FullLine) { Box(modifier = Modifier.navigationBarsPadding()) }
         }
         PullRefreshIndicator(
             refreshing = refreshing,
@@ -534,30 +552,31 @@ fun SignInBanner(
 
 @Composable
 fun DashboardItem(
-    lazyGridState: LazyGridState,
+    lazyGridState: LazyStaggeredGridState,
     itemIndex: Int,
-    itemHeight: Dp,
     sensor: RuuviTag,
     userEmail: String?,
     displacementOffset: IntOffset?,
     itemIsDragged: Boolean,
+    showMeasurementTitle: Boolean,
     setName: (String, String?) -> Unit,
-    moveItem: (Int, Int, Boolean) -> Unit
+    moveItem: (Int, Int, Boolean) -> Unit,
+    modifier: Modifier = Modifier,
+    interactionEnabled: Boolean = true
 ) {
-    val itemHeight = (itemHeight.value * if (sensor.isAir()) 1.4 else 1.0).dp
     val context = LocalContext.current
     val modifier = if (itemIsDragged) {
-        Modifier
+        modifier
             .zIndex(2f)
     } else {
-        Modifier
+        modifier
             .zIndex(1f)
     }
 
     Card(
         modifier = modifier
-            .height(itemHeight)
             .fillMaxWidth()
+            .wrapContentHeight()
             .graphicsLayer {
                 Timber.d("dragGestureHandler - graphicsLayer $displacementOffset")
                 translationY = displacementOffset?.y?.toFloat() ?: 0f
@@ -566,7 +585,7 @@ fun DashboardItem(
                 scaleY = if (itemIsDragged) 1.04f else 1f
                 alpha = if (itemIsDragged) 0.7f else 1f
             }
-            .clickableSingle {
+            .clickableSingle(enabled = interactionEnabled) {
                 SensorCardActivity.start(
                     context,
                     sensor.id,
@@ -574,9 +593,12 @@ fun DashboardItem(
                 )
             },
         shape = RoundedCornerShape(10.dp),
+        elevation = 2.dp,
         backgroundColor = colors.dashboardCardBackground
     ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
+        Row (
+            Modifier.height(IntrinsicSize.Max)
+        ) {
             Box(
                 Modifier
                     .fillMaxWidth(fraction = 0.25f)
@@ -594,113 +616,76 @@ fun DashboardItem(
                 }
             }
 
-            ConstraintLayout(
-                modifier = Modifier
-                    .fillMaxSize()
+            Box(
+                Modifier
+                    //.weight(1f)
+                    .fillMaxWidth()
                     .padding(
                         top = RuuviStationTheme.dimensions.mediumPlus,
-                        start = RuuviStationTheme.dimensions.mediumPlus,
-                        bottom = RuuviStationTheme.dimensions.medium,
+                        start = RuuviStationTheme.dimensions.extended,
+                        bottom = RuuviStationTheme.dimensions.small,
                         end = RuuviStationTheme.dimensions.medium,
                     )
             ) {
-                val (title, bigTemperature, buttons, values, updated) = createRefs()
-
-                ItemName(
-                    sensor = sensor,
-                    modifier = Modifier.constrainAs(title) {
-                        top.linkTo(parent.top)
-                        start.linkTo(parent.start)
-                        end.linkTo(buttons.start)
-                        width = Dimension.fillToConstraints
-                    }
-                )
-
                 ItemButtons(
                     lazyGridState = lazyGridState,
                     itemIndex = itemIndex,
                     sensor = sensor,
                     userEmail = userEmail,
-                    modifier = Modifier
-                        .constrainAs(buttons) {
-                            top.linkTo(parent.top)
-                            end.linkTo(parent.end)
-                        },
+                    modifier = Modifier.align(TopEnd),
                     setName = setName,
-                    moveItem = moveItem
+                    moveItem = moveItem,
+                    interactionEnabled = interactionEnabled
                 )
 
-                if (sensor.latestMeasurement != null) {
-                    if (sensor.isAir()) {
-                        AQIDisplay(
-                            value = AQI.getAQI(sensor.latestMeasurement),
-                            alertTriggered = false,
-                            modifier = Modifier
-                                .constrainAs(bigTemperature) {
-                                    top.linkTo(title.bottom)
-                                    start.linkTo(parent.start)
-                                }
-                                .padding(top = RuuviStationTheme.dimensions.small)
-                        )
+                Column(
+                    verticalArrangement = Arrangement.Top,
+                    horizontalAlignment = Alignment.Start,
+                    modifier = Modifier.fillMaxHeight()
+                ) {
+                    ItemName(
+                        sensor = sensor,
+                        maxLines = 2,
+                    )
+
+                    if (sensor.latestMeasurement != null) {
+                        val bigValue = sensor.valuesToDisplay.firstOrNull()
+                        if (bigValue != null) {
+                            if (bigValue.unitType is UnitType.AirQuality) {
+                                AQIDisplay(
+                                    value = AQI.getAQI(sensor.latestMeasurement),
+                                    alertTriggered = false
+                                )
+                                Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.medium))
+                            } else {
+                                BigValueExtDisplay(
+                                    value = bigValue,
+                                    alertTriggered = sensor.alarmSensorStatus.triggered(AlarmType.TEMPERATURE),
+                                    showTitle = showMeasurementTitle,
+                                    modifier = Modifier
+                                )
+                            }
+                        }
                         ItemValues(
                             sensor = sensor,
+                            dropFirst = true,
                             modifier = Modifier
-                                .padding(vertical = RuuviStationTheme.dimensions.small)
-                                .constrainAs(values) {
-                                    bottom.linkTo(updated.top)
-                                    start.linkTo(parent.start)
-                                    end.linkTo(parent.end)
-                                    width = Dimension.fillToConstraints
-                                }
+                                .padding(
+                                    top = RuuviStationTheme.dimensions.medium,
+                                    bottom = RuuviStationTheme.dimensions.small
+                                )
                         )
-                    } else {
-                        if (sensor.latestMeasurement.temperature != null) {
-                            BigValueDisplay(
-                                value = sensor.latestMeasurement.temperature,
-                                alertTriggered = sensor.alarmSensorStatus.triggered(AlarmType.TEMPERATURE),
-                                modifier = Modifier
-                                    .constrainAs(bigTemperature) {
-                                        top.linkTo(title.bottom)
-                                        start.linkTo(parent.start)
-                                    }
-                                    .padding(top = RuuviStationTheme.dimensions.small)
-                            )
-                        }
-                        ItemValuesWithoutTemperature(
+                        Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.small))
+                        ItemBottom(
                             sensor = sensor,
                             modifier = Modifier
-                                .padding(vertical = RuuviStationTheme.dimensions.small)
-                                .constrainAs(values) {
-                                    bottom.linkTo(updated.top)
-                                    start.linkTo(parent.start)
-                                    end.linkTo(parent.end)
-                                    width = Dimension.fillToConstraints
-                                }
+                        )
+                    } else {
+                        Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.huge))
+                        ItemBottomNoData(
+                            modifier = Modifier
                         )
                     }
-
-                    ItemBottom(
-                        sensor = sensor,
-                        modifier = Modifier
-                            .constrainAs(updated) {
-                                start.linkTo(parent.start)
-                                end.linkTo(parent.end)
-                                bottom.linkTo(parent.bottom)
-                                width = Dimension.fillToConstraints
-                            }
-                    )
-                } else {
-                    ItemBottomNoData(
-                        modifier = Modifier
-                            .constrainAs(updated) {
-                                start.linkTo(parent.start)
-                                end.linkTo(parent.end)
-                                top.linkTo(title.bottom)
-                                bottom.linkTo(parent.bottom)
-                                width = Dimension.fillToConstraints
-                                height = Dimension.fillToConstraints
-                            }
-                    )
                 }
             }
         }
@@ -709,7 +694,7 @@ fun DashboardItem(
 
 @Composable
 fun DashboardItemSimple(
-    lazyGridState: LazyGridState,
+    lazyGridState: LazyStaggeredGridState,
     itemIndex: Int,
     sensor: RuuviTag,
     userEmail: String?,
@@ -717,6 +702,7 @@ fun DashboardItemSimple(
     moveItem: (Int, Int, Boolean) -> Unit,
     displacementOffset: IntOffset?,
     itemIsDragged: Boolean,
+    interactionEnabled: Boolean = true
 ) {
     val context = LocalContext.current
     val modifier = if (itemIsDragged) {
@@ -736,7 +722,7 @@ fun DashboardItemSimple(
                 scaleY = if (itemIsDragged) 1.04f else 1f
                 alpha = if (itemIsDragged) 0.7f else 1f
             }
-            .clickableSingle {
+            .clickableSingle(interactionEnabled) {
                 SensorCardActivity.start(
                     context,
                     sensor.id,
@@ -744,67 +730,48 @@ fun DashboardItemSimple(
                 )
             },
         shape = RoundedCornerShape(10.dp),
-        elevation = 0.dp,
+        elevation = 2.dp,
         backgroundColor = colors.dashboardCardBackground
     ) {
-        ConstraintLayout(
+        Box (
             modifier = Modifier
-                .fillMaxSize()
                 .padding(
                     top = RuuviStationTheme.dimensions.mediumPlus,
-                    start = RuuviStationTheme.dimensions.mediumPlus,
-                    bottom = RuuviStationTheme.dimensions.medium,
+                    start = RuuviStationTheme.dimensions.extended,
+                    bottom = RuuviStationTheme.dimensions.small,
                     end = RuuviStationTheme.dimensions.medium,
                 )
-        ) {
-            val (title, buttons, updated, values) = createRefs()
-
-            ItemName(
-                sensor = sensor,
-                modifier = Modifier.constrainAs(title) {
-                    top.linkTo(parent.top)
-                    start.linkTo(parent.start)
-                    end.linkTo(buttons.start)
-                    width = Dimension.fillToConstraints
-                }
-            )
-
+        ){
             ItemButtons(
                 lazyGridState = lazyGridState,
                 itemIndex = itemIndex,
                 sensor = sensor,
                 userEmail = userEmail,
-                modifier = Modifier
-                    .constrainAs(buttons) {
-                        top.linkTo(parent.top)
-                        end.linkTo(parent.end)
-                    },
+                modifier = Modifier.align(TopEnd),
                 setName = setName,
-                moveItem = moveItem
+                moveItem = moveItem,
+                interactionEnabled = interactionEnabled
             )
 
-            ItemValues(
-                sensor = sensor,
-                showAqi = true,
-                modifier = Modifier
-                    .padding(vertical = RuuviStationTheme.dimensions.small)
-                    .constrainAs(values) {
-                        top.linkTo(title.bottom)
-                        start.linkTo(parent.start)
-                        end.linkTo(parent.end)
-                        width = Dimension.fillToConstraints
-                    }
-            )
+            Column ()
+            {
+                ItemName(
+                    sensor = sensor,
+                    modifier = Modifier.padding(end = 50.dp)
+                )
 
-            ItemBottom(
-                sensor = sensor,
-                modifier = Modifier.constrainAs(updated) {
-                    start.linkTo(parent.start)
-                    end.linkTo(parent.end)
-                    top.linkTo(values.bottom)
-                    width = Dimension.fillToConstraints
-                }
-            )
+                ItemValues(
+                    sensor = sensor,
+                    dropFirst = false,
+                    modifier = Modifier
+                        .padding(vertical = RuuviStationTheme.dimensions.small)
+                )
+
+                ItemBottom(
+                    sensor = sensor,
+                    modifier = Modifier
+                )
+            }
         }
     }
 }
@@ -812,28 +779,47 @@ fun DashboardItemSimple(
 @Composable
 fun ItemName(
     sensor: RuuviTag,
+    maxLines: Int = 2,
     modifier: Modifier = Modifier
 ) {
-    Text(
-        style = RuuviStationTheme.typography.title,
-        text = sensor.displayName,
-        lineHeight = RuuviStationTheme.fontSizes.extended,
-        fontSize = RuuviStationTheme.fontSizes.normal,
-        modifier = modifier,
-        maxLines = 2
-    )
+    // all this needed to overcome glitch of height miscalculation when we have 2-lines of sensor name
+    var size by remember { mutableStateOf(IntSize.Zero)}
+
+    Row (
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(
+                bottom = RuuviStationTheme.dimensions.small
+            ),
+        horizontalArrangement = Arrangement.SpaceAround
+    ) {
+        Text(
+            style = RuuviStationTheme.typography.title,
+            text = sensor.displayName,
+            fontSize = RuuviStationTheme.fontSizes.normal.limitScaleTo(1.5f),
+            modifier = modifier
+                .weight(1f)
+                .onGloballyPositioned { layoutCoordinates ->
+                    size =  layoutCoordinates.size
+                },
+            maxLines = maxLines
+        )
+
+        Box (modifier = Modifier.width(75.dp).height(size.height.pxToDp()))
+    }
 }
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun ItemButtons(
-    lazyGridState: LazyGridState,
+    lazyGridState: LazyStaggeredGridState,
     itemIndex: Int,
     sensor: RuuviTag,
     userEmail: String?,
     setName: (String, String?) -> Unit,
     moveItem: (Int, Int, Boolean) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    interactionEnabled: Boolean = true
 ) {
     val context = LocalContext.current
 
@@ -847,6 +833,7 @@ fun ItemButtons(
             if (sensor.alarmSensorStatus is AlarmSensorStatus.NotTriggered) {
                 IconButton(
                     modifier = Modifier.size(RuuviStationTheme.dimensions.dashboardIconSize),
+                    enabled = interactionEnabled,
                     onClick = {
                         TagSettingsActivity.start(context, sensor.id)
                     }
@@ -861,6 +848,7 @@ fun ItemButtons(
                 BlinkingEffect() {
                     IconButton(
                         modifier = Modifier.size(RuuviStationTheme.dimensions.dashboardIconSize),
+                        enabled = interactionEnabled,
                         onClick = {
                             TagSettingsActivity.start(context, sensor.id)
                         }
@@ -876,7 +864,15 @@ fun ItemButtons(
                 Spacer(modifier = Modifier.size(RuuviStationTheme.dimensions.dashboardIconSize))
             }
 
-            DashboardItemDropdownMenu(lazyGridState, itemIndex, sensor, userEmail, setName, moveItem)
+            DashboardItemDropdownMenu(
+                lazyGridState,
+                itemIndex,
+                sensor,
+                userEmail,
+                setName,
+                moveItem,
+                interactionEnabled
+            )
         }
     }
 }
@@ -884,107 +880,23 @@ fun ItemButtons(
 @Composable
 fun ItemValues(
     sensor: RuuviTag,
-    showAqi:Boolean = false,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    dropFirst:Boolean = false
 ) {
-    Row(
-        verticalAlignment = Top,
-        modifier = modifier
-    ) {
-        if (sensor.latestMeasurement != null) {
-            Column(
-                modifier = Modifier.weight(1f),
-                horizontalAlignment = Alignment.Start,
-                verticalArrangement = Arrangement.Bottom,
-            ) {
-                sensor.latestMeasurement.aqi?.let {
-                    if (sensor.isAir() && showAqi) {
-                        ValueDisplay(
-                            value = it,
-                            false
-                        )
-                    }
-                }
-
-                sensor.latestMeasurement.temperature?.let {
-                    ValueDisplay(
-                        value = it,
-                        sensor.alarmSensorStatus.triggered(AlarmType.TEMPERATURE)
-                    )
-                }
-                sensor.latestMeasurement.humidity?.let {
-                    ValueDisplay(
-                        value = it,
-                        sensor.alarmSensorStatus.triggered(AlarmType.HUMIDITY)
-                    )
-                }
-                sensor.latestMeasurement.luminosity?.let {
-                    ValueDisplay(
-                        value = it,
-                        sensor.alarmSensorStatus.triggered(AlarmType.LUMINOSITY)
-                    )
-                }
-                sensor.latestMeasurement.dBaAvg?.let {
-                    ValueDisplay(
-                        value = it,
-                        sensor.alarmSensorStatus.triggered(AlarmType.SOUND)
-                    )
-                }
-            }
-
-            Column(
-                modifier = Modifier.weight(1f),
-                horizontalAlignment = Alignment.Start,
-                verticalArrangement = Arrangement.Bottom,
-            ) {
-                sensor.latestMeasurement.pressure?.let {
-                    ValueDisplay(
-                        value = it,
-                        sensor.alarmSensorStatus.triggered(AlarmType.PRESSURE)
-                    )
-                }
-
-                sensor.latestMeasurement.movement?.let {
-                    ValueDisplay(
-                        value = it,
-                        sensor.alarmSensorStatus.triggered(AlarmType.MOVEMENT)
-                    )
-                }
-                sensor.latestMeasurement.co2?.let {
-                    ValueDisplay(
-                        value = it,
-                        sensor.alarmSensorStatus.triggered(AlarmType.CO2)
-                    )
-                }
-                sensor.latestMeasurement.voc?.let {
-                    ValueDisplay(
-                        value = it,
-                        sensor.alarmSensorStatus.triggered(AlarmType.VOC)
-                    )
-                }
-                sensor.latestMeasurement.nox?.let {
-                    ValueDisplay(
-                        value = it,
-                        sensor.alarmSensorStatus.triggered(AlarmType.NOX)
-                    )
-                }
-                sensor.latestMeasurement.pm25?.let {
-                    ValueDisplay(
-                        value = it,
-                        sensor.alarmSensorStatus.triggered(AlarmType.PM25)
-                    )
-                }
-            }
+    val valuesToDisplay =
+        if (dropFirst) {
+            sensor.valuesToDisplay.subList(1, sensor.valuesToDisplay.size)
+        } else {
+            sensor.valuesToDisplay
         }
+    val evenValues = valuesToDisplay.filterIndexed { index, _ ->
+        index % 2 == 0
     }
-}
+    val oddValues = valuesToDisplay.filterIndexed { index, _ ->
+        index % 2 != 0
+    }
 
-@Composable
-fun ItemValuesWithoutTemperature(
-    sensor: RuuviTag,
-    modifier: Modifier = Modifier
-) {
-    if (sensor.latestMeasurement != null) {
+    if (evenValues.isNotEmpty() || oddValues.isNotEmpty()) {
         Row(
             verticalAlignment = Top,
             modifier = modifier
@@ -993,30 +905,15 @@ fun ItemValuesWithoutTemperature(
             Column(
                 modifier = Modifier.weight(1f),
                 horizontalAlignment = Alignment.Start,
-                verticalArrangement = Arrangement.Top,
+                verticalArrangement = Arrangement.Bottom,
             ) {
-                sensor.latestMeasurement.humidity?.let {
+                for (valueDisplay in evenValues) {
                     ValueDisplay(
-                        value = it,
-                        sensor.alarmSensorStatus.triggered(AlarmType.HUMIDITY)
-                    )
-                }
-                sensor.latestMeasurement.movement?.let {
-                    ValueDisplay(
-                        value = it,
-                        sensor.alarmSensorStatus.triggered(AlarmType.MOVEMENT)
-                    )
-                }
-                sensor.latestMeasurement.luminosity?.let {
-                    ValueDisplay(
-                        value = it,
-                        false
-                    )
-                }
-                sensor.latestMeasurement.dBaAvg?.let {
-                    ValueDisplay(
-                        value = it,
-                        false
+                        value = valueDisplay,
+                        alertTriggered = valueDisplay.unitType?.alarmType?.let {
+                            sensor.alarmSensorStatus.triggered(it)
+                        } ?: false,
+                        modifier = Modifier.padding(top = 2.dp)
                     )
                 }
             }
@@ -1024,36 +921,15 @@ fun ItemValuesWithoutTemperature(
             Column(
                 modifier = Modifier.weight(1f),
                 horizontalAlignment = Alignment.Start,
-                verticalArrangement = Arrangement.Top,
+                verticalArrangement = Arrangement.Bottom,
             ) {
-                sensor.latestMeasurement.pressure?.let {
+                for (valueDisplay in oddValues) {
                     ValueDisplay(
-                        value = it,
-                        sensor.alarmSensorStatus.triggered(AlarmType.PRESSURE)
-                    )
-                }
-                sensor.latestMeasurement.co2?.let {
-                    ValueDisplay(
-                        value = it,
-                        false
-                    )
-                }
-                sensor.latestMeasurement.voc?.let {
-                    ValueDisplay(
-                        value = it,
-                        false
-                    )
-                }
-                sensor.latestMeasurement.nox?.let {
-                    ValueDisplay(
-                        value = it,
-                        false
-                    )
-                }
-                sensor.latestMeasurement.pm25?.let {
-                    ValueDisplay(
-                        value = it,
-                        false
+                        value = valueDisplay,
+                        alertTriggered = valueDisplay.unitType?.alarmType?.let {
+                            sensor.alarmSensorStatus.triggered(it)
+                        } ?: false,
+                        modifier = Modifier.padding(top = 2.dp)
                     )
                 }
             }
@@ -1085,6 +961,7 @@ fun ItemBottomNoData(
         Text(
             modifier = Modifier.weight(1f),
             style = RuuviStationTheme.typography.dashboardSecondary,
+            fontSize = ruuviStationFontsSizes.petite.limitScaleTo(1.5f),
             textAlign = TextAlign.Center,
             text = stringResource(id = R.string.no_data_10_days),
         )
@@ -1107,9 +984,10 @@ fun ItemBottomUpdatedInfo(
 
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            modifier = modifier.padding(top = 2.dp)
+            modifier = modifier
+                .height(RuuviStationTheme.dimensions.big)
         ) {
-            val fontScale = LocalContext.current.resources.configuration.fontScale
+            val fontScale = min(LocalContext.current.resources.configuration.fontScale, 1.5f)
 
             // Do not simplify this - glitches are possible due to gateway and bluetooth icon differences
             val icon = sensor.getSource().getIconResource()
@@ -1134,6 +1012,7 @@ fun ItemBottomUpdatedInfo(
             Text(
                 modifier = Modifier.weight(1f),
                 style = RuuviStationTheme.typography.dashboardSecondary,
+                fontSize = ruuviStationFontsSizes.petite.limitScaleTo(1.5f),
                 text = updatedText,
             )
 
@@ -1155,16 +1034,19 @@ fun ItemBottomUpdatedInfo(
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun DashboardImage(userBackground: Uri) {
+fun DashboardImage(
+    userBackground: Uri,
+    modifier: Modifier = Modifier
+) {
     Timber.d("Image path $userBackground")
     GlideImage(
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier.fillMaxSize(),
         model = userBackground,
         contentDescription = null,
         contentScale = ContentScale.Crop
     )
     GlideImage(
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier.fillMaxSize(),
         model = rememberResourceUri(R.drawable.tag_bg_layer),
         contentDescription = null,
         alpha = RuuviStationTheme.colors.backgroundAlpha,
@@ -1172,134 +1054,17 @@ fun DashboardImage(userBackground: Uri) {
     )
 }
 
-@Composable
-fun ValueDisplay(value: EnvironmentValue, alertTriggered: Boolean) {
-    val textColor = if (alertTriggered) {
-        RuuviStationTheme.colors.activeAlert
-    } else {
-        RuuviStationTheme.colors.primary
-    }
 
-    Row(verticalAlignment = Alignment.Bottom) {
-        Text(
-            modifier = Modifier.alignByBaseline(),
-            text = value.valueWithoutUnit,
-            style = RuuviStationTheme.typography.dashboardValue,
-            color = textColor,
-            maxLines = 1
-        )
-        Spacer(modifier = Modifier.width(width = 4.dp))
-        Text(
-            modifier = Modifier.alignByBaseline(),
-            text = value.unitString,
-            style = RuuviStationTheme.typography.dashboardUnit,
-            color = textColor,
-            maxLines = 1
-        )
-    }
-}
-
-@Composable
-fun BigValueDisplay(
-    value: EnvironmentValue,
-    alertTriggered: Boolean,
-    modifier: Modifier = Modifier
-) {
-    val textColor = if (alertTriggered) {
-        RuuviStationTheme.colors.activeAlert
-    } else {
-        RuuviStationTheme.colors.settingsTitleText
-    }
-
-    Row(
-        modifier = modifier
-            .offset(y = (-8).dp * LocalDensity.current.fontScale),
-        verticalAlignment = Top
-    ) {
-        Text(
-            style = RuuviStationTheme.typography.dashboardBigValue,
-            text = value.valueWithoutUnit,
-            lineHeight = 10.sp,
-            color = textColor
-        )
-        Text(
-            modifier = Modifier
-                .padding(
-                    top = 6.dp * LocalDensity.current.fontScale,
-                    start = 2.dp
-                ),
-            style = RuuviStationTheme.typography.dashboardBigValueUnit,
-            text = value.unitString,
-            color = textColor
-        )
-    }
-}
-
-@Composable
-fun AQIDisplay(
-    value: AQI,
-    alertTriggered: Boolean,
-    modifier: Modifier = Modifier
-) {
-    val textColor = if (alertTriggered) {
-        RuuviStationTheme.colors.activeAlert
-    } else {
-        RuuviStationTheme.colors.settingsTitleText
-    }
-
-    Column(
-        modifier = modifier,
-        horizontalAlignment = Alignment.Start,
-        verticalArrangement = Arrangement.Top
-    ) {
-        Row(
-            modifier = Modifier.offset(y = (-8).dp * LocalDensity.current.fontScale),
-            verticalAlignment = Top
-        ) {
-            Text(
-                style = RuuviStationTheme.typography.dashboardBigValue,
-                text = value.score.toString(),
-                lineHeight = 10.sp,
-                color = textColor
-            )
-            Column (
-                verticalArrangement = Arrangement.Top,
-                horizontalAlignment = Alignment.Start
-            ){
-                Text(
-                    modifier = Modifier
-                        .padding(
-                            top = 6.dp * LocalDensity.current.fontScale,
-                            start = 4.dp
-                        ),
-                    style = RuuviStationTheme.typography.dashboardBigValueUnit,
-                    text = "/100",
-                    color = textColor
-                )
-                Text(
-                    modifier = Modifier
-                        .padding(start = 4.dp),
-                    style = RuuviStationTheme.typography.dashboardSecondary,
-                    text = stringResource(id = R.string.air_quality),
-                )
-            }
-        }
-        LinearProgressIndicator(
-            modifier = Modifier.width(110.dp),
-            progress = (value.score ?: 0) / 100F,
-            color = value.color
-        )
-    }
-}
 
 @Composable
 fun DashboardItemDropdownMenu(
-    lazyGridState: LazyGridState,
+    lazyGridState: LazyStaggeredGridState,
     itemIndex: Int,
     sensor: RuuviTag,
     userEmail: String?,
     setName: (String, String?) -> Unit,
-    moveItem: (Int, Int, Boolean) -> Unit
+    moveItem: (Int, Int, Boolean) -> Unit,
+    interactionEnabled: Boolean = true
 ) {
     val context = LocalContext.current
     var threeDotsMenuExpanded by remember {
@@ -1315,6 +1080,7 @@ fun DashboardItemDropdownMenu(
     Box() {
         IconButton(
             modifier = Modifier.size(RuuviStationTheme.dimensions.dashboardIconSize),
+            enabled = interactionEnabled,
             onClick = { threeDotsMenuExpanded = !threeDotsMenuExpanded }
         ) {
             Icon(
@@ -1379,7 +1145,7 @@ fun DashboardItemDropdownMenu(
                     if (newIndex < 0) newIndex = 0
                     threeDotsMenuExpanded = false
                     coroutineScope.launch {
-                        lazyGridState.centerViewportOnItem(newIndex)
+                        lazyGridState.requestScrollToItem(newIndex)
                     }
                 }) {
                     Paragraph(text = stringResource(id = R.string.move_up))
@@ -1395,7 +1161,7 @@ fun DashboardItemDropdownMenu(
                     }
                     threeDotsMenuExpanded = false
                     coroutineScope.launch {
-                        lazyGridState.centerViewportOnItem(newIndex)
+                        lazyGridState.requestScrollToItem(newIndex)
                     }
                 }) {
                     Paragraph(text = stringResource(id = R.string.move_down))
@@ -1455,6 +1221,7 @@ fun LowBattery(modifier: Modifier = Modifier) {
     ) {
         Text(
             style = RuuviStationTheme.typography.dashboardSecondary,
+            fontSize = ruuviStationFontsSizes.petite.limitScaleTo(1.5f),
             text = stringResource(id = R.string.low_battery),
         )
         Spacer(modifier = Modifier.width(RuuviStationTheme.dimensions.medium))

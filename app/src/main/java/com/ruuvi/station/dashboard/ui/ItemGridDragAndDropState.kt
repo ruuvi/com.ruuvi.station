@@ -25,21 +25,21 @@ import timber.log.Timber
 
 fun Modifier.dragGestureHandler(
     scope: CoroutineScope,
-    itemListDragAndDropState: ItemListDragAndDropState,
+    itemGridDragAndDropState: ItemGridDragAndDropState,
     overscrollJob: MutableState<Job?>
 ): Modifier = this.pointerInput(Unit) {
     detectDragGesturesAfterLongPress(
         onDrag = { change, offset ->
             Timber.d("dragGestureHandler - onDrag")
             change.consume()
-            itemListDragAndDropState.onDrag(offset)
-            handleOverscrollJob(overscrollJob, scope, itemListDragAndDropState)
+            itemGridDragAndDropState.onDrag(offset)
+            handleOverscrollJob(overscrollJob, scope, itemGridDragAndDropState)
         },
-        onDragStart = { offset -> itemListDragAndDropState.onDragStart(offset)
+        onDragStart = { offset -> itemGridDragAndDropState.onDragStart(offset)
             Timber.d("dragGestureHandler - onDragStart $offset") },
-        onDragEnd = { itemListDragAndDropState.onDragInterrupted(false)
+        onDragEnd = { itemGridDragAndDropState.onDragInterrupted(false)
             Timber.d("dragGestureHandler - onDragEnd") },
-        onDragCancel = { itemListDragAndDropState.onDragInterrupted(true)
+        onDragCancel = { itemGridDragAndDropState.onDragInterrupted(true)
             Timber.d("dragGestureHandler - onDragCancel") }
     )
 }
@@ -47,13 +47,13 @@ fun Modifier.dragGestureHandler(
 private fun handleOverscrollJob(
     overscrollJob: MutableState<Job?>,
     scope: CoroutineScope,
-    itemListDragAndDropState: ItemListDragAndDropState
+    itemGridDragAndDropState: ItemGridDragAndDropState
 ) {
     if (overscrollJob.value?.isActive == true) return
-    val overscrollOffset = itemListDragAndDropState.checkForOverScroll()
+    val overscrollOffset = itemGridDragAndDropState.checkForOverScroll()
     if (overscrollOffset != 0f) {
         overscrollJob.value = scope.launch {
-            itemListDragAndDropState.getLazyListState().scrollBy(overscrollOffset)
+            itemGridDragAndDropState.getLazyListState().scrollBy(overscrollOffset)
         }
     } else {
         overscrollJob.value?.cancel()
@@ -61,13 +61,13 @@ private fun handleOverscrollJob(
 }
 
 @Composable
-fun rememberDragDropListState(
+fun rememberDragDropGridState(
     lazyListState: LazyGridState = rememberLazyGridState(),
     onMove: (Int, Int) -> Unit,
-    onDoneDragging: () -> Unit): ItemListDragAndDropState {
-    return remember { ItemListDragAndDropState(lazyListState, onMove, onDoneDragging) }
+    onDoneDragging: () -> Unit): ItemGridDragAndDropState {
+    return remember { ItemGridDragAndDropState(lazyListState, onMove, onDoneDragging) }
 }
-class ItemListDragAndDropState(
+class ItemGridDragAndDropState(
     private val lazyListState: LazyGridState,
     private val onMove: (Int, Int) -> Unit,
     private val onDoneDragging: () -> Unit

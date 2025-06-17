@@ -8,9 +8,8 @@ import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.highlight.Highlight
 import com.github.mikephil.charting.utils.MPPointF
 import com.ruuvi.station.R
-import com.ruuvi.station.graph.model.ChartSensorType
 import com.ruuvi.station.units.domain.UnitsConverter
-import com.ruuvi.station.units.model.Accuracy
+import com.ruuvi.station.units.model.UnitType
 import java.text.DateFormat
 import java.util.*
 
@@ -18,7 +17,7 @@ class ChartMarkerView @JvmOverloads
 constructor(
     context: Context,
     layoutResource: Int,
-    val chartSensorType: ChartSensorType,
+    val unitType: UnitType,
     val unitsConverter: UnitsConverter,
     var getFrom: () -> Long,
     var clearMarker: () -> Unit
@@ -46,22 +45,7 @@ constructor(
             DateUtils.FORMAT_SHOW_DATE or DateUtils.FORMAT_NO_YEAR or DateUtils.FORMAT_NUMERIC_DATE
         )
 
-        val valueText = when (chartSensorType) {
-            ChartSensorType.TEMPERATURE -> unitsConverter.getTemperatureRawString(e.y.toDouble(), Accuracy.Accuracy2)
-            ChartSensorType.HUMIDITY -> unitsConverter.getHumidityRawString(e.y.toDouble(), Accuracy.Accuracy2)
-            ChartSensorType.PRESSURE -> unitsConverter.getPressureRawString(e.y.toDouble(), Accuracy.Accuracy2)
-            ChartSensorType.BATTERY -> unitsConverter.getVoltageEnvironmentValue(e.y.toDouble()).valueWithUnit
-            ChartSensorType.RSSI -> unitsConverter.getSignalEnvironmentValue(e.y.toInt()).valueWithUnit
-            ChartSensorType.ACCELERATION -> e.y.toDouble().toString()
-            ChartSensorType.MOVEMENTS -> e.y.toInt().toString()
-            ChartSensorType.CO2 -> unitsConverter.getValue(e.y.toDouble(), Accuracy.Accuracy0, context.getString(R.string.unit_co2))
-            ChartSensorType.VOC -> unitsConverter.getValue(e.y.toDouble(), Accuracy.Accuracy0, context.getString(R.string.unit_voc))
-            ChartSensorType.NOX -> unitsConverter.getValue(e.y.toDouble(), Accuracy.Accuracy0, context.getString(R.string.unit_nox))
-            ChartSensorType.PM25 -> unitsConverter.getValue(e.y.toDouble(), Accuracy.Accuracy2, context.getString(R.string.unit_pm25))
-            ChartSensorType.LUMINOSITY -> unitsConverter.getValue(e.y.toDouble(), Accuracy.Accuracy0, context.getString(R.string.unit_luminosity))
-            ChartSensorType.SOUND -> unitsConverter.getValue(e.y.toDouble(), Accuracy.Accuracy2, context.getString(R.string.unit_sound))
-            ChartSensorType.AQI -> unitsConverter.getValue(e.y.toDouble(), Accuracy.Accuracy2, context.getString(R.string.aqi))
-        }
+        val valueText = unitsConverter.getValue(e.y.toDouble(), unitType.defaultAccuracy, context.getString(unitType.unit))
 
         tvContent.text ="$valueText\n$timeText\n$dateText"
 

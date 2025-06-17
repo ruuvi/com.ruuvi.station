@@ -5,12 +5,12 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.ruuvi.station.settings.domain.AppSettingsInteractor
 import com.ruuvi.station.units.model.Accuracy
-import com.ruuvi.station.units.model.HumidityUnit
+import com.ruuvi.station.units.model.UnitType.*
 
 class HumiditySettingsViewModel (
     private val appSettingsInteractor: AppSettingsInteractor
 ): ViewModel() {
-    fun getAllHumidityUnits():Array<HumidityUnit> = appSettingsInteractor.getAllHumidityUnits()
+    fun getAllHumidityUnits(): List<HumidityUnit> = appSettingsInteractor.getAllHumidityUnits()
 
     private val _humidityUnit = MutableLiveData<HumidityUnit> (appSettingsInteractor.getHumidityUnit())
     val humidityUnit: LiveData<HumidityUnit> = _humidityUnit

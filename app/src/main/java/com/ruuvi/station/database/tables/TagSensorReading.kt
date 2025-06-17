@@ -2,8 +2,8 @@ package com.ruuvi.station.database.tables
 
 import com.raizlabs.android.dbflow.annotation.*
 import com.raizlabs.android.dbflow.structure.BaseModel
-import com.ruuvi.station.bluetooth.FoundRuuviTag
-import com.ruuvi.station.bluetooth.LogReading
+import com.ruuvi.station.bluetooth.contract.FoundRuuviTag
+import com.ruuvi.station.bluetooth.contract.LogReading
 import com.ruuvi.station.database.domain.LocalDatabase
 import java.util.*
 

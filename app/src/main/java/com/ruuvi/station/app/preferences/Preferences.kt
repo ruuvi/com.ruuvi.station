@@ -8,9 +8,7 @@ import com.ruuvi.station.app.ui.DarkModeState
 import com.ruuvi.station.dashboard.DashboardTapAction
 import com.ruuvi.station.dashboard.DashboardType
 import com.ruuvi.station.units.model.Accuracy
-import com.ruuvi.station.units.model.HumidityUnit
-import com.ruuvi.station.units.model.PressureUnit
-import com.ruuvi.station.units.model.TemperatureUnit
+import com.ruuvi.station.units.model.UnitType.*
 import com.ruuvi.station.util.BackgroundScanModes
 import java.util.*
 
@@ -58,41 +56,41 @@ class Preferences (val context: Context) {
                 PREF_TEMPERATURE_UNIT,
                 DEFAULT_TEMPERATURE_UNIT
             )) {
-                "C" -> TemperatureUnit.CELSIUS
-                "F" -> TemperatureUnit.FAHRENHEIT
-                "K" -> TemperatureUnit.KELVIN
-                else -> TemperatureUnit.CELSIUS
+                "C" -> TemperatureUnit.Celsius
+                "F" -> TemperatureUnit.Fahrenheit
+                "K" -> TemperatureUnit.Kelvin
+                else -> TemperatureUnit.Celsius
             }
         }
         set(unit) {
-            sharedPreferences.edit().putString(PREF_TEMPERATURE_UNIT, unit.code).apply()
+            sharedPreferences.edit().putString(PREF_TEMPERATURE_UNIT, unit.unitCode).apply()
         }
 
     var humidityUnit: HumidityUnit
         get() {
             return when (sharedPreferences.getInt(PREF_HUMIDITY_UNIT, 0)) {
-                0 -> HumidityUnit.PERCENT
-                1 -> HumidityUnit.GM3
-                2 -> HumidityUnit.DEW
-                else -> HumidityUnit.PERCENT
+                0 -> HumidityUnit.Relative
+                1 -> HumidityUnit.Absolute
+                2 -> HumidityUnit.DewPoint
+                else -> HumidityUnit.Relative
             }
         }
         set(value) {
-            sharedPreferences.edit().putInt(PREF_HUMIDITY_UNIT, value.code).apply()
+            sharedPreferences.edit().putInt(PREF_HUMIDITY_UNIT, value.unitCode.toInt()).apply()
         }
 
     var pressureUnit: PressureUnit
         get() {
             return when (sharedPreferences.getInt(PREF_PRESSURE_UNIT, 1)) {
-                0 -> PressureUnit.PA
-                1 -> PressureUnit.HPA
-                2 -> PressureUnit.MMHG
-                3 -> PressureUnit.INHG
-                else -> PressureUnit.HPA
+                0 -> PressureUnit.Pascal
+                1 -> PressureUnit.HectoPascal
+                2 -> PressureUnit.MmHg
+                3 -> PressureUnit.InchHg
+                else -> PressureUnit.HectoPascal
             }
         }
         set(value) {
-            sharedPreferences.edit().putInt(PREF_PRESSURE_UNIT, value.code).apply()
+            sharedPreferences.edit().putInt(PREF_PRESSURE_UNIT, value.unitCode.toInt()).apply()
         }
 
     var temperatureAccuracy: Accuracy
@@ -404,6 +402,12 @@ class Preferences (val context: Context) {
             sharedPreferences.edit().putBoolean(PREF_FIREBASE_CONSENT, value).apply()
         }
 
+    var visibleMeasurements: Boolean
+        get() = sharedPreferences.getBoolean(PREF_SHOW_VISIBLE_MEASUREMENTS, false)
+        set(value) {
+            sharedPreferences.edit().putBoolean(PREF_SHOW_VISIBLE_MEASUREMENTS, value).apply()
+        }
+
     var sortedSensors: String
         get() = sharedPreferences.getString(PREF_DASHBOARD_SORTED_SENSORS, "") ?: ""
         set(sortedSensors) {
@@ -513,6 +517,7 @@ class Preferences (val context: Context) {
         private const val PREF_BANNER_DISABLED_FOR_VERSION = "pref_banner_disabled_for_version"
         private const val PREF_INCREASED_CHART_SIZE = "pref_increased_chart_size"
         private const val PREF_BLUETOOTH_PERMISSION_REQUESTED = "pref_bluetooth_permission_requested"
+        private const val PREF_SHOW_VISIBLE_MEASUREMENTS = "pref_show_visible_measurements"
 
         private const val DEFAULT_TEMPERATURE_UNIT = "C"
         private const val DEFAULT_DATA_FORWARDING_URL = ""

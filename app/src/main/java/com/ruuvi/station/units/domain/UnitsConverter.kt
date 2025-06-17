@@ -6,6 +6,7 @@ import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.units.domain.TemperatureConverter.Companion.fahrenheitMultiplier
 import com.ruuvi.station.units.domain.aqi.AQI
 import com.ruuvi.station.units.model.*
+import com.ruuvi.station.units.model.UnitType.*
 import com.ruuvi.station.util.extensions.equalsEpsilon
 import com.ruuvi.station.util.extensions.isInteger
 import com.ruuvi.station.util.extensions.round
@@ -13,6 +14,11 @@ class UnitsConverter (
         private val context: Context,
         private val preferences: PreferencesRepository
 ) {
+    fun getTitleForUnitType(unitType: UnitType): String {
+        val measurementTitle = context.getString(unitType.measurementTitle)
+        val unitTitle = context.getString(unitType.unitTitle)
+        return "$measurementTitle: $unitTitle"
+    }
 
     // AQI
     fun getAqiEnviromentValue(
@@ -23,9 +29,10 @@ class UnitsConverter (
                 original = value.score.toDouble(),
                 value = value.score.toDouble(),
                 accuracy = Accuracy.Accuracy0,
-                valueWithUnit = "${value.score}/100 ${context.getString(R.string.air_quality)}",
+                valueWithUnit = "${value.score}/100 ${context.getString(AirQuality.AqiIndex.unit)}",
                 valueWithoutUnit = "${value.score}/100",
-                unitString = context.getString(R.string.air_quality)
+                unitString = context.getString(AirQuality.AqiIndex.unit),
+                unitType = AirQuality.AqiIndex
             )
         } else {
             return EnvironmentValue(
@@ -34,7 +41,8 @@ class UnitsConverter (
                 accuracy = Accuracy.Accuracy0,
                 valueWithUnit = "$NO_VALUE_AVAILABLE/100 ${context.getString(R.string.air_quality)}",
                 valueWithoutUnit = "$NO_VALUE_AVAILABLE/100",
-                unitString = context.getString(R.string.air_quality)
+                unitString = context.getString(R.string.air_quality),
+                unitType = AirQuality.AqiIndex
             )
         }
     }
@@ -42,53 +50,62 @@ class UnitsConverter (
     // Temperature
     fun getTemperatureEnvironmentValue(
         temperatureCelsius: Double,
+        temperatureUnit: TemperatureUnit = getTemperatureUnit(),
         accuracy: Accuracy = getTemperatureAccuracy()
     ): EnvironmentValue =
         EnvironmentValue (
             original = temperatureCelsius,
-            value = getTemperatureValue(temperatureCelsius),
+            value = getTemperatureValue(temperatureCelsius, temperatureUnit),
             accuracy = accuracy,
-            valueWithUnit = getTemperatureString(temperatureCelsius, accuracy),
-            valueWithoutUnit = getTemperatureStringWithoutUnit(temperatureCelsius),
-            unitString = getTemperatureUnitString()
+            valueWithUnit = getTemperatureString(temperatureCelsius, temperatureUnit, accuracy),
+            valueWithoutUnit = getTemperatureStringWithoutUnit(temperatureCelsius, temperatureUnit),
+            unitString = getTemperatureUnitString(temperatureUnit),
+            unitType = temperatureUnit
         )
 
     fun getTemperatureUnit(): TemperatureUnit = preferences.getTemperatureUnit()
 
-    fun getAllTemperatureUnits(): Array<TemperatureUnit> = TemperatureUnit.values()
+    fun getAllTemperatureUnits(): List<TemperatureUnit> = TemperatureUnit.getUnits()
 
     fun getTemperatureUnitString(unit: TemperatureUnit = getTemperatureUnit()): String =
         context.getString(unit.unit)
 
-    fun getTemperatureValue(temperatureCelsius: Double): Double {
-        return when (getTemperatureUnit()) {
-            TemperatureUnit.CELSIUS -> temperatureCelsius.round(2)
-            TemperatureUnit.KELVIN-> TemperatureConverter.celsiusToKelvin(temperatureCelsius)
-            TemperatureUnit.FAHRENHEIT -> TemperatureConverter.celsiusToFahrenheit(temperatureCelsius)
+    fun getTemperatureValue(
+        temperatureCelsius: Double,
+        temperatureUnit: TemperatureUnit = getTemperatureUnit()
+    ): Double {
+        return when (temperatureUnit) {
+            TemperatureUnit.Celsius -> temperatureCelsius.round(2)
+            TemperatureUnit.Kelvin-> TemperatureConverter.celsiusToKelvin(temperatureCelsius)
+            TemperatureUnit.Fahrenheit -> TemperatureConverter.celsiusToFahrenheit(temperatureCelsius)
         }
     }
 
     fun getTemperatureCelsiusValue(temperature: Double): Double {
         return when (getTemperatureUnit()) {
-            TemperatureUnit.CELSIUS -> temperature
-            TemperatureUnit.KELVIN-> TemperatureConverter.kelvinToCelsius(temperature)
-            TemperatureUnit.FAHRENHEIT -> TemperatureConverter.fahrenheitToCelsius(temperature)
+            TemperatureUnit.Celsius -> temperature
+            TemperatureUnit.Kelvin-> TemperatureConverter.kelvinToCelsius(temperature)
+            TemperatureUnit.Fahrenheit -> TemperatureConverter.fahrenheitToCelsius(temperature)
         }
     }
 
     fun getTemperatureOffsetValue(temperature: Double): Double {
         return when (getTemperatureUnit()) {
-            TemperatureUnit.CELSIUS -> temperature
-            TemperatureUnit.KELVIN-> temperature
-            TemperatureUnit.FAHRENHEIT -> (temperature * fahrenheitMultiplier).round(2)
+            TemperatureUnit.Celsius -> temperature
+            TemperatureUnit.Kelvin-> temperature
+            TemperatureUnit.Fahrenheit -> (temperature * fahrenheitMultiplier).round(2)
         }
     }
 
-    fun getTemperatureString(temperature: Double?, accuracy: Accuracy = getTemperatureAccuracy()): String =
+    fun getTemperatureString(
+        temperature: Double?,
+        temperatureUnit: TemperatureUnit = getTemperatureUnit(),
+        accuracy: Accuracy = getTemperatureAccuracy()
+    ): String =
         if (temperature == null) {
             NO_VALUE_AVAILABLE
         } else {
-            getTemperatureRawString(getTemperatureValue(temperature), accuracy)
+            getTemperatureRawString(getTemperatureValue(temperature, temperatureUnit), accuracy)
         }
 
     fun getTemperatureRawString(temperature: Double, accuracy: Accuracy = getTemperatureAccuracy()): String {
@@ -102,11 +119,15 @@ class UnitsConverter (
 
     fun getTemperatureAccuracy() = preferences.getTemperatureAccuracy()
 
-    fun getTemperatureStringWithoutUnit(temperature: Double?, accuracy: Accuracy = getTemperatureAccuracy()): String =
+    fun getTemperatureStringWithoutUnit(
+        temperature: Double?,
+        temperatureUnit: TemperatureUnit = getTemperatureUnit(),
+        accuracy: Accuracy = getTemperatureAccuracy()
+    ): String =
         if (temperature == null) {
             NO_VALUE_AVAILABLE
         } else {
-            context.getString(accuracy.nameTemplateId, getTemperatureValue(temperature), "").trim()
+            context.getString(accuracy.nameTemplateId, getTemperatureValue(temperature, temperatureUnit), "").trim()
         }
 
     fun getTemperatureOffsetString(offset: Double): String =
@@ -115,77 +136,94 @@ class UnitsConverter (
     // Pressure
     fun getPressureEnvironmentValue(
         pressurePascal: Double,
+        pressureUnit: PressureUnit = getPressureUnit(),
         accuracy: Accuracy = getPressureAccuracy()
     ): EnvironmentValue =
         EnvironmentValue (
             original = pressurePascal,
-            value = getPressureValue(pressurePascal),
+            value = getPressureValue(pressurePascal, pressureUnit),
             accuracy = accuracy,
-            valueWithUnit = getPressureString(pressurePascal, accuracy),
-            valueWithoutUnit = getPressureStringWithoutUnit(pressurePascal),
-            unitString = getPressureUnitString()
+            valueWithUnit = getPressureString(pressurePascal, pressureUnit, accuracy),
+            valueWithoutUnit = getPressureStringWithoutUnit(pressurePascal, pressureUnit),
+            unitString = getPressureUnitString(pressureUnit),
+            unitType = pressureUnit
         )
 
     fun getPressureUnit(): PressureUnit = preferences.getPressureUnit()
 
-    fun getAllPressureUnits(): Array<PressureUnit> = PressureUnit.values()
+    fun getAllPressureUnits(): List<PressureUnit> = PressureUnit.getUnits()
 
     fun getPressureUnitString(pressureUnit: PressureUnit = getPressureUnit()): String {
         return context.getString(pressureUnit.unit)
     }
 
-    fun getPressureValue(pressurePascal: Double): Double {
-        return when (getPressureUnit()) {
-            PressureUnit.PA -> pressurePascal
-            PressureUnit.HPA-> PressureConverter.pascalToHectopascal(pressurePascal)
-            PressureUnit.MMHG -> PressureConverter.pascalToMmMercury(pressurePascal)
-            PressureUnit.INHG -> PressureConverter.pascalToInchMercury(pressurePascal)
+    fun getPressureValue(
+        pressurePascal: Double,
+        pressureUnit: PressureUnit = getPressureUnit()
+    ): Double {
+        return when (pressureUnit) {
+            PressureUnit.Pascal -> pressurePascal
+            PressureUnit.HectoPascal-> PressureConverter.pascalToHectopascal(pressurePascal)
+            PressureUnit.MmHg -> PressureConverter.pascalToMmMercury(pressurePascal)
+            PressureUnit.InchHg -> PressureConverter.pascalToInchMercury(pressurePascal)
         }
     }
 
     fun getPressurePascalValue(pressure: Double): Double {
         return when (getPressureUnit()) {
-            PressureUnit.PA -> pressure
-            PressureUnit.HPA-> PressureConverter.hectopascalToPascal(pressure)
-            PressureUnit.INHG -> PressureConverter.inchMercuryToPascal(pressure)
-            PressureUnit.MMHG -> PressureConverter.mmMercuryToPascal(pressure)
+            PressureUnit.Pascal -> pressure
+            PressureUnit.HectoPascal-> PressureConverter.hectopascalToPascal(pressure)
+            PressureUnit.InchHg -> PressureConverter.inchMercuryToPascal(pressure)
+            PressureUnit.MmHg -> PressureConverter.mmMercuryToPascal(pressure)
         }
     }
 
-    fun getPressureString(pressure: Double?, accuracy: Accuracy? = null): String {
+    fun getPressureString(
+        pressure: Double?,
+        pressureUnit: PressureUnit = getPressureUnit(),
+        accuracy: Accuracy? = null
+    ): String {
         return if (pressure == null) {
             NO_VALUE_AVAILABLE
         } else {
-            getPressureRawString(getPressureValue(pressure), accuracy)
+            getPressureRawString(getPressureValue(pressure, pressureUnit), pressureUnit, accuracy)
         }
     }
 
-    fun getPressureRawString(pressure: Double, accuracy: Accuracy? = null): String {
-        return if (getPressureUnit() == PressureUnit.PA) {
-            context.getString(R.string.pressure_reading_pa, pressure, getPressureUnitString())
+    fun getPressureRawString(
+        pressure: Double,
+        pressureUnit: PressureUnit = getPressureUnit(),
+        accuracy: Accuracy? = null
+    ): String {
+        return if (pressureUnit == PressureUnit.Pascal) {
+            context.getString(R.string.pressure_reading_pa, pressure, getPressureUnitString(pressureUnit))
         } else {
             val displayAccuracy = accuracy ?: getPressureAccuracy()
-            return context.getString(displayAccuracy.nameTemplateId, pressure, getPressureUnitString())
+            return context.getString(displayAccuracy.nameTemplateId, pressure, getPressureUnitString(pressureUnit))
         }
     }
 
     fun getPressureRawWithoutUnitString(pressure: Double, accuracy: Accuracy? = getPressureAccuracy()): String {
         val pressureAccuracy = accuracy ?: getPressureAccuracy()
-        return if (getPressureUnit() == PressureUnit.PA) {
+        return if (getPressureUnit() == PressureUnit.Pascal) {
             context.getString(R.string.pressure_reading_pa, pressure, "").trim()
         } else {
             return context.getString(pressureAccuracy.nameTemplateId, pressure, "").trim()
         }
     }
 
-    fun getPressureStringWithoutUnit(pressure: Double?, accuracy: Accuracy = getPressureAccuracy()): String =
+    fun getPressureStringWithoutUnit(
+        pressure: Double?,
+        pressureUnit: PressureUnit = getPressureUnit(),
+        accuracy: Accuracy = getPressureAccuracy()
+    ): String =
         if (pressure == null) {
             NO_VALUE_AVAILABLE
         } else {
-            if (getPressureUnit() == PressureUnit.PA) {
-                context.getString(R.string.pressure_reading_pa, getPressureValue(pressure), "").trim()
+            if (pressureUnit == PressureUnit.Pascal) {
+                context.getString(R.string.pressure_reading_pa, getPressureValue(pressure, pressureUnit), "").trim()
             } else {
-                context.getString(accuracy.nameTemplateId, getPressureValue(pressure), "").trim()
+                context.getString(accuracy.nameTemplateId, getPressureValue(pressure, pressureUnit), "").trim()
             }
         }
 
@@ -195,55 +233,65 @@ class UnitsConverter (
     fun getHumidityEnvironmentValue(
         humidity: Double,
         temperature: Double?,
+        humidityUnit: HumidityUnit = getHumidityUnit(),
         accuracy: Accuracy = getHumidityAccuracy()
     ): EnvironmentValue? =
-        getHumidityValue(humidity, temperature)?.let {
+        getHumidityValue(humidity, temperature, humidityUnit)?.let {
             EnvironmentValue (
                 original = humidity,
                 value = it,
                 accuracy = accuracy,
-                valueWithUnit = getHumidityString(humidity, temperature),
-                valueWithoutUnit = getHumidityStringWithoutUnit(humidity, temperature),
-                unitString = getHumidityUnitString()
+                valueWithUnit = getHumidityString(humidity, temperature, humidityUnit),
+                valueWithoutUnit = getHumidityStringWithoutUnit(humidity, temperature, humidityUnit),
+                unitString = getHumidityUnitString(humidityUnit),
+                unitType = humidityUnit
             )
         }
 
 
     fun getHumidityUnit(): HumidityUnit = preferences.getHumidityUnit()
 
-    fun getAllHumidityUnits(): Array<HumidityUnit> = HumidityUnit.values()
+    fun getAllHumidityUnits(): List<HumidityUnit> = HumidityUnit.getUnits()
 
     fun getHumidityUnitString(humidityUnit: HumidityUnit = getHumidityUnit()): String {
-        return if (humidityUnit != HumidityUnit.DEW) {
+        return if (humidityUnit != HumidityUnit.DewPoint) {
             context.getString(humidityUnit.unit)
         } else {
             getTemperatureUnitString()
         }
     }
 
-    fun getHumidityValue(humidity: Double, temperature: Double?, humidityUnit: HumidityUnit = getHumidityUnit()): Double? {
+    fun getHumidityValue(
+        humidity: Double,
+        temperature: Double?,
+        humidityUnit: HumidityUnit = getHumidityUnit()
+    ): Double? {
         val converter = temperature?.let { HumidityConverter(temperature, humidity/100) }
 
         return when (humidityUnit) {
-            HumidityUnit.PERCENT -> humidity.round(2)
-            HumidityUnit.GM3-> converter?.let { it.absoluteHumidity.round(2) }
-            HumidityUnit.DEW -> {
+            HumidityUnit.Relative -> humidity.round(2)
+            HumidityUnit.Absolute-> converter?.let { it.absoluteHumidity.round(2) }
+            HumidityUnit.DewPoint -> {
                 converter?.let {
                     when (getTemperatureUnit()) {
-                        TemperatureUnit.CELSIUS -> (converter.toDewCelsius ?: 0.0).round(2)
-                        TemperatureUnit.KELVIN -> (converter.toDewKelvin ?: 0.0).round(2)
-                        TemperatureUnit.FAHRENHEIT -> (converter.toDewFahrenheit ?: 0.0).round(2)
+                        TemperatureUnit.Celsius -> (converter.toDewCelsius ?: 0.0).round(2)
+                        TemperatureUnit.Kelvin -> (converter.toDewKelvin ?: 0.0).round(2)
+                        TemperatureUnit.Fahrenheit -> (converter.toDewFahrenheit ?: 0.0).round(2)
                     }
                 }
             }
         }
     }
 
-    fun getHumidityStringWithoutUnit(humidity: Double?, temperature: Double?): String =
+    fun getHumidityStringWithoutUnit(
+        humidity: Double?,
+        temperature: Double?,
+        humidityUnit: HumidityUnit = getHumidityUnit()
+    ): String =
         if (humidity == null) {
             NO_VALUE_AVAILABLE
         } else {
-            val humidityValue = getHumidityValue(humidity, temperature)
+            val humidityValue = getHumidityValue(humidity, temperature, humidityUnit)
             if (humidityValue == null) {
                 NO_VALUE_AVAILABLE
             } else {
@@ -345,7 +393,22 @@ class UnitsConverter (
             accuracy = Accuracy.Accuracy2,
             valueWithUnit = context.getString(R.string.voltage_reading, voltage, context.getString(R.string.voltage_unit)),
             valueWithoutUnit = context.getString(R.string.voltage_reading, voltage, "").trim(),
-            unitString = context.getString(R.string.voltage_unit)
+            unitString = context.getString(R.string.voltage_unit),
+            unitType = BatteryVoltageUnit.Volt
+        )
+
+    fun getAccelerationValue(
+        value: Double,
+        unit: Acceleration
+    ): EnvironmentValue =
+        EnvironmentValue (
+            original = value,
+            value = value,
+            accuracy = Accuracy.Accuracy2,
+            valueWithUnit = context.getString(R.string.acceleration_reading, value, context.getString(unit.unit)),
+            valueWithoutUnit = context.getString(R.string.acceleration_reading, value, "").trim(),
+            unitString = context.getString(unit.unit),
+            unitType = unit
         )
 
 
@@ -358,17 +421,19 @@ class UnitsConverter (
             accuracy = Accuracy.Accuracy0,
             valueWithUnit = getSignalString(rssi),
             valueWithoutUnit = context.getString(R.string.signal_reading, rssi, "").trim(),
-            unitString = getSignalUnit()
+            unitString = getSignalUnit(),
+            unitType = SignalStrengthUnit.SignalDbm
         )
 
-    fun getPmEnvironmentValue(pm: Double): EnvironmentValue =
+    fun getPmEnvironmentValue(pm: Double, unitType: UnitType): EnvironmentValue =
         EnvironmentValue(
             original = pm,
             value = pm,
             accuracy = Accuracy.Accuracy1,
-            valueWithUnit = context.getString(Accuracy.Accuracy1.nameTemplateId, pm, context.getString(R.string.unit_pm10)),
+            valueWithUnit = context.getString(Accuracy.Accuracy1.nameTemplateId, pm, context.getString(unitType.unit)),
             valueWithoutUnit = context.getString(Accuracy.Accuracy1.nameTemplateId, pm, "").trim(),
-            unitString = context.getString(R.string.unit_pm10)
+            unitString = context.getString(unitType.unit),
+            unitType = unitType
         )
 
     fun getCo2EnvironmentValue(co2: Int) =
@@ -376,9 +441,10 @@ class UnitsConverter (
             original = co2.toDouble(),
             value = co2.toDouble(),
             accuracy = Accuracy.Accuracy1,
-            valueWithUnit = context.getString(Accuracy.Accuracy0.nameTemplateId, co2.toDouble(), context.getString(R.string.unit_co2)),
+            valueWithUnit = context.getString(Accuracy.Accuracy0.nameTemplateId, co2.toDouble(), context.getString(CO2.Ppm.unit)),
             valueWithoutUnit = context.getString(Accuracy.Accuracy0.nameTemplateId, co2.toDouble(), "").trim(),
-            unitString = context.getString(R.string.unit_co2)
+            unitString = context.getString(CO2.Ppm.unit),
+            unitType = CO2.Ppm
         )
 
     fun getVocEnvironmentValue(voc: Int) =
@@ -386,9 +452,10 @@ class UnitsConverter (
             original = voc.toDouble(),
             value = voc.toDouble(),
             accuracy = Accuracy.Accuracy1,
-            valueWithUnit = context.getString(Accuracy.Accuracy0.nameTemplateId, voc.toDouble(), context.getString(R.string.unit_voc)),
+            valueWithUnit = context.getString(Accuracy.Accuracy0.nameTemplateId, voc.toDouble(), context.getString(VOC.VocIndex.unit)),
             valueWithoutUnit = context.getString(Accuracy.Accuracy0.nameTemplateId, voc.toDouble(), "").trim(),
-            unitString = context.getString(R.string.unit_voc)
+            unitString = context.getString(VOC.VocIndex.unit),
+            unitType = VOC.VocIndex
         )
 
     fun getNoxEnvironmentValue(nox: Int) =
@@ -396,9 +463,10 @@ class UnitsConverter (
             original = nox.toDouble(),
             value = nox.toDouble(),
             accuracy = Accuracy.Accuracy1,
-            valueWithUnit = context.getString(Accuracy.Accuracy0.nameTemplateId, nox.toDouble(), context.getString(R.string.unit_nox)),
+            valueWithUnit = context.getString(Accuracy.Accuracy0.nameTemplateId, nox.toDouble(), context.getString(NOX.NoxIndex.unit)),
             valueWithoutUnit = context.getString(Accuracy.Accuracy0.nameTemplateId, nox.toDouble(), "").trim(),
-            unitString = context.getString(R.string.unit_nox)
+            unitString = context.getString(NOX.NoxIndex.unit),
+            unitType = NOX.NoxIndex
         )
 
     fun getLuminosityEnvironmentValue(luminosity: Int) =
@@ -406,19 +474,21 @@ class UnitsConverter (
             original = luminosity.toDouble(),
             value = luminosity.toDouble(),
             accuracy = Accuracy.Accuracy1,
-            valueWithUnit = context.getString(Accuracy.Accuracy0.nameTemplateId, luminosity.toDouble(), context.getString(R.string.unit_luminosity)),
+            valueWithUnit = context.getString(Accuracy.Accuracy0.nameTemplateId, luminosity.toDouble(), context.getString(Luminosity.Lux.unit)),
             valueWithoutUnit = context.getString(Accuracy.Accuracy0.nameTemplateId, luminosity.toDouble(), "").trim(),
-            unitString = context.getString(R.string.unit_luminosity)
+            unitString = context.getString(Luminosity.Lux.unit),
+            unitType = Luminosity.Lux
         )
 
-    fun getNoiseEnvironmentValue(dba: Double) =
+    fun getSoundEnvironmentValue(dba: Double, unitType: UnitType) =
         EnvironmentValue(
             original = dba,
             value = dba,
             accuracy = Accuracy.Accuracy1,
-            valueWithUnit = context.getString(Accuracy.Accuracy1.nameTemplateId, dba, context.getString(R.string.unit_sound)),
+            valueWithUnit = context.getString(Accuracy.Accuracy1.nameTemplateId, dba, context.getString(unitType.unit)),
             valueWithoutUnit = context.getString(Accuracy.Accuracy1.nameTemplateId, dba, "").trim(),
-            unitString = context.getString(R.string.unit_sound)
+            unitString = context.getString(unitType.unit),
+            unitType = unitType
         )
 
     companion object {

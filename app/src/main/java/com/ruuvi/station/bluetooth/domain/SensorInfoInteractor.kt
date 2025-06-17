@@ -1,8 +1,8 @@
 package com.ruuvi.station.bluetooth.domain
 
 import com.ruuvi.station.bluetooth.BluetoothInteractor
-import com.ruuvi.station.bluetooth.IRuuviGattListener
-import com.ruuvi.station.bluetooth.LogReading
+import com.ruuvi.station.bluetooth.contract.IRuuviGattListener
+import com.ruuvi.station.bluetooth.contract.LogReading
 import com.ruuvi.station.bluetooth.model.SensorFirmwareResult
 import kotlinx.coroutines.delay
 import timber.log.Timber

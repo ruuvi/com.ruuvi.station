@@ -5,12 +5,12 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.ruuvi.station.settings.domain.AppSettingsInteractor
 import com.ruuvi.station.units.model.Accuracy
-import com.ruuvi.station.units.model.TemperatureUnit
+import com.ruuvi.station.units.model.UnitType.*
 
 class TemperatureSettingsViewModel (
     private val appSettingsInteractor: AppSettingsInteractor
 ): ViewModel() {
-    fun getAllTemperatureUnits():Array<TemperatureUnit> = appSettingsInteractor.getAllTemperatureUnits()
+    fun getAllTemperatureUnits(): List<TemperatureUnit> = appSettingsInteractor.getAllTemperatureUnits()
 
     private val _temperatureUnit = MutableLiveData<TemperatureUnit> (appSettingsInteractor.getTemperatureUnit())
     val temperatureUnit: LiveData<TemperatureUnit> = _temperatureUnit

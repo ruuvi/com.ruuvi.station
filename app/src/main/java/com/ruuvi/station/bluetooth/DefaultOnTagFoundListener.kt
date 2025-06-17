@@ -3,6 +3,8 @@ package com.ruuvi.station.bluetooth
 import com.ruuvi.station.alarm.domain.AlarmCheckInteractor
 import com.ruuvi.station.app.preferences.GlobalSettings
 import com.ruuvi.station.app.preferences.PreferencesRepository
+import com.ruuvi.station.bluetooth.contract.FoundRuuviTag
+import com.ruuvi.station.bluetooth.contract.IRuuviTagScanner
 import com.ruuvi.station.database.domain.SensorHistoryRepository
 import com.ruuvi.station.database.domain.SensorSettingsRepository
 import com.ruuvi.station.database.domain.TagRepository
@@ -50,9 +52,9 @@ class DefaultOnTagFoundListener(
                 if (dbTag != null) {
                     dbTag.preserveData(ruuviTag)
                     val sensorSettings = sensorSettingsRepository.getSensorSettings(sensorId)
-                    if (shouldSkipForCloudMode(sensorSettings) == false) {
+                    if (!shouldSkipForCloudMode(sensorSettings)) {
                         repository.updateTag(ruuviTag)
-                        if (sensorSettings != null) {
+                        if (sensorSettings != null && ruuviTag.dataFormat != legacyAirDataformat) {
                             saveFavoriteReading(ruuviTag, sensorSettings)
                         }
                     }
@@ -114,5 +116,6 @@ class DefaultOnTagFoundListener(
 
     companion object {
         private const val DATA_LOG_INTERVAL = 0
+        const val legacyAirDataformat = 0xF0
     }
 }

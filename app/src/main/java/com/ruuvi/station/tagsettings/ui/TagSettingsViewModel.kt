@@ -11,6 +11,8 @@ import com.ruuvi.station.bluetooth.domain.SensorInfoInteractor
 import com.ruuvi.station.database.domain.AlarmRepository
 import com.ruuvi.station.database.domain.SensorShareListRepository
 import com.ruuvi.station.database.tables.RuuviTagEntity
+import com.ruuvi.station.feature.data.FeatureFlag
+import com.ruuvi.station.feature.domain.RuntimeBehavior
 import com.ruuvi.station.network.domain.RuuviNetworkInteractor
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tag.domain.isLowBattery
@@ -18,7 +20,7 @@ import com.ruuvi.station.tagsettings.domain.TagSettingsInteractor
 import com.ruuvi.station.units.domain.AccelerationConverter
 import com.ruuvi.station.units.domain.UnitsConverter
 import com.ruuvi.station.units.model.Accuracy
-import com.ruuvi.station.units.model.HumidityUnit
+import com.ruuvi.station.units.model.UnitType.*
 import com.ruuvi.station.util.extensions.processStatus
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
@@ -35,7 +37,8 @@ class TagSettingsViewModel(
     private val unitsConverter: UnitsConverter,
     private val accelerationConverter: AccelerationConverter,
     private val shareListRepository: SensorShareListRepository,
-    private val preferencesRepository: PreferencesRepository
+    private val preferencesRepository: PreferencesRepository,
+    private val runtimeBehavior: RuntimeBehavior
 ) : ViewModel() {
     var file: Uri? = null
 
@@ -67,6 +70,8 @@ class TagSettingsViewModel(
         !it.networkSensor || it.owner.isNullOrEmpty() || it.owner.equals(networkInteractor.getEmail(), true)
     }
 
+    val visibleMeasurementsEnabled: StateFlow<Boolean> = MutableStateFlow(runtimeBehavior.isFeatureEnabled(FeatureFlag.VISIBLE_MEASUREMENTS))
+
     private val _askToClaim =  MutableSharedFlow<Boolean>()
     val askToClaim: SharedFlow<Boolean> = _askToClaim
 
@@ -85,6 +90,16 @@ class TagSettingsViewModel(
                         }
                     }
                 }
+            }
+        }
+    }
+
+    fun getVisibleMeasurementsCount(): UiText {
+        return sensorState.value.let {
+            if (it.defaultDisplayOrder) {
+                UiText.StringResource(R.string.visible_measurements_use_default)
+            } else {
+                UiText.DynamicString("${it.displayOrder.size}/${it.displayOrder.size + it.possibleDisplayOptions.size}")
             }
         }
     }
@@ -147,12 +162,6 @@ class TagSettingsViewModel(
     fun getTagById(tagId: String): RuuviTagEntity? =
         interactor.getTagById(tagId)
 
-    fun removeNotificationById(notificationId: Int) {
-        alarmCheckInteractor.removeNotificationById(notificationId)
-    }
-
-    fun statusProcessed() { operationStatus.value = "" }
-
     fun setName(name: String?) {
         Timber.d("setName")
         interactor.updateTagName(sensorId, name)
@@ -166,10 +175,10 @@ class TagSettingsViewModel(
     fun getTemperatureOffsetString(value: Double) = unitsConverter.getTemperatureOffsetString(value)
 
     fun getHumidityOffsetString(value: Double) =
-        unitsConverter.getHumidityString(value,0.0, HumidityUnit.PERCENT, Accuracy.Accuracy2)
+        unitsConverter.getHumidityString(value,0.0, HumidityUnit.Relative, Accuracy.Accuracy2)
 
     fun getPressureOffsetString(value: Double) =
-        unitsConverter.getPressureString(value, Accuracy.Accuracy2)
+        unitsConverter.getPressureString(value, accuracy = Accuracy.Accuracy2)
 
     fun getAccelerationString(value: Double?) =
         accelerationConverter.getAccelerationString(value, null)

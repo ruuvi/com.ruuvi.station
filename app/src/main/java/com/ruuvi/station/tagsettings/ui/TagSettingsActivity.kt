@@ -17,6 +17,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.app.TaskStackBuilder
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -30,6 +31,8 @@ import com.ruuvi.station.dashboard.ui.DashboardActivity
 import com.ruuvi.station.tagdetails.ui.SensorCardActivity
 import com.ruuvi.station.tagsettings.di.RemoveSensorViewModelArgs
 import com.ruuvi.station.tagsettings.di.TagSettingsViewModelArgs
+import com.ruuvi.station.tagsettings.ui.visible_measurements.VisibleMeasurements
+import com.ruuvi.station.tagsettings.ui.visible_measurements.VisibleMeasurementsViewModel
 import com.ruuvi.station.util.extensions.navigate
 import com.ruuvi.station.util.extensions.viewModel
 import org.kodein.di.Kodein
@@ -146,6 +149,30 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
                                 scaffoldState = scaffoldState,
                                 viewModel = removeSensorViewModel,
                                 onNavigate = navController::navigate
+                            )
+                        }
+
+                        composable(
+                            route = SensorSettingsRoutes.VISIBLE_MEASUREMENTS,
+                            enterTransition = enterTransition,
+                            exitTransition = exitTransition
+                        ) {
+                            val visibleMeasurementsViewModel: VisibleMeasurementsViewModel by viewModel()  {
+                                intent.getStringExtra(TAG_ID)?.let {
+                                    it
+                                }
+                            }
+                            val useDefault by visibleMeasurementsViewModel.useDefaultOrder.collectAsStateWithLifecycle()
+                            val sensorState by visibleMeasurementsViewModel.sensorState.collectAsStateWithLifecycle()
+                            val selected by visibleMeasurementsViewModel.selected.collectAsStateWithLifecycle()
+                            val possibleOptions by visibleMeasurementsViewModel.possibleOptions.collectAsStateWithLifecycle()
+                            VisibleMeasurements(
+                                useDefault = useDefault,
+                                sensorState = sensorState,
+                                dashboardType = visibleMeasurementsViewModel.dashBoardType,
+                                onAction = visibleMeasurementsViewModel::onAction,
+                                selected = selected,
+                                allOptions = possibleOptions
                             )
                         }
                     }

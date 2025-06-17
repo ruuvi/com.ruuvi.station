@@ -95,6 +95,13 @@ interface RuuviNetworkApi{
     ): Response<UpdateUserSettingResponse>
 
     @Headers("Content-Type: application/json")
+    @POST("sensor-settings")
+    suspend fun updateSensorSettings(
+        @Header("Authorization")auth: String,
+        @Body request: UpdateSensorSettingRequest
+    ): Response<UpdateSensorSettingResponse>
+
+    @Headers("Content-Type: application/json")
     @GET("settings")
     suspend fun getUserSettings(
         @Header("Authorization")auth: String
@@ -136,7 +143,8 @@ interface RuuviNetworkApi{
         @Query("sharedToOthers") sharedToOthers: Boolean = false,
         @Query("sharedToMe") sharedToMe: Boolean = false,
         @Query("measurements") measurements: Boolean = false,
-        @Query("alerts") alerts: Boolean = false
+        @Query("alerts") alerts: Boolean = false,
+        @Query("settings") settings: Boolean = false
     ): Response<SensorDenseResponse>
 
     @Headers("Content-Type: application/json")

@@ -8,9 +8,7 @@ import com.ruuvi.station.database.domain.AlarmRepository
 import com.ruuvi.station.database.tables.Alarm
 import com.ruuvi.station.firebase.data.AlertMessage
 import com.ruuvi.station.units.domain.UnitsConverter
-import com.ruuvi.station.units.model.HumidityUnit
-import com.ruuvi.station.units.model.PressureUnit
-import com.ruuvi.station.units.model.TemperatureUnit
+import com.ruuvi.station.units.model.UnitType.*
 import timber.log.Timber
 import java.util.Date
 
@@ -89,11 +87,12 @@ class PushAlertInteractor(
         }
 
         val displayThreshold = unitsConverter.getDisplayValue(message.thresholdValue.toFloat())
-        return context.getString(resource, "$displayThreshold ${unitsConverter.getHumidityUnitString(HumidityUnit.PERCENT)}")
+        return context.getString(resource, "$displayThreshold ${unitsConverter.getHumidityUnitString(
+            HumidityUnit.Relative)}")
     }
 
     fun getPressureMessage(message: AlertMessage, context: Context): String {
-        val unit = PressureUnit.getByCode(message.alertUnit.toInt()) ?: PressureUnit.HPA
+        val unit = PressureUnit.getByCode(message.alertUnit) ?: PressureUnit.HectoPascal
 
         val resource = if (message.currentValue < message.thresholdValue) {
             R.string.alert_notification_pressure_low_threshold
@@ -106,7 +105,7 @@ class PushAlertInteractor(
     }
 
     fun getTemperatureMessage(message: AlertMessage, context: Context): String {
-        val unit = TemperatureUnit.getByCode(message.alertUnit) ?: TemperatureUnit.CELSIUS
+        val unit = TemperatureUnit.getByCode(message.alertUnit) ?: TemperatureUnit.Celsius
 
         val resource = if (message.currentValue < message.thresholdValue) {
             R.string.alert_notification_temperature_low_threshold

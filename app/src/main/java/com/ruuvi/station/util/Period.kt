@@ -7,6 +7,7 @@ sealed class Period(val value: Int, val stringResourceId: Int, val shouldPassVal
     data object Hour1: Period(1, R.string.hour_1)
     data object Hour2: Period(2, R.string.hour_2)
     data object Hour3: Period(3, R.string.hour_3)
+    data object Hour6: Period(6, R.string.hour_6)
     data object Hour12: Period(12, R.string.hour_12)
     data object Day1: Period(1 * 24, R.string.day_1)
     data object Day2: Period(2 * 24, R.string.day_2)
@@ -27,6 +28,7 @@ sealed class Period(val value: Int, val stringResourceId: Int, val shouldPassVal
                 1 -> Hour1
                 2 -> Hour2
                 3 -> Hour3
+                6 -> Hour6
                 12 -> Hour12
                 1 * 24 -> Day1
                 2 * 24 -> Day2

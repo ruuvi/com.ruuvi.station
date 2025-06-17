@@ -21,6 +21,7 @@
     <string name="add_your_first_sensor">Lägg till din första sensor.</string>
     <string name="advertisement">Advertisement</string>
     <string name="ago">sedan</string>
+    <string name="agree">Godkänn</string>
     <string name="air_quality">Luftkvalitet</string>
     <string name="alarm_custom_description_title">Ställ in ett alarm-meddelande</string>
     <string name="alarm_custom_title_hint">Redigera beskrivningen...</string>
@@ -87,6 +88,12 @@
     <string name="app_theme">App tema</string>
     <string name="appearance_settings_description">%1$s %2$s</string>
     <string name="aqi">AQI</string>
+    <string name="aqi_level_0">Odefinierad</string>
+    <string name="aqi_level_1">Ohälsosamt</string>
+    <string name="aqi_level_2">Dålig</string>
+    <string name="aqi_level_3">Måttlig</string>
+    <string name="aqi_level_4">Bra</string>
+    <string name="aqi_level_5">Utmärkt</string>
     <string name="back">Tillbaka</string>
     <string name="background_image">Bakgrundsbild</string>
     <string name="background_interval">varje %1$s min</string>
@@ -94,6 +101,7 @@
     <string name="background_notification_message">Avaktivera bakgrundsskanning i inställningar</string>
     <string name="background_notification_scanning_every">Skanna varje</string>
     <string name="background_scanning">Bakgrundsskanning (Bluetooth)</string>
+    <string name="battery">Batteri</string>
     <string name="battery_ok">Batteri OK</string>
     <string name="battery_voltage">Batterispänning</string>
     <string name="benefits_sign_in">Läs mer om Ruuvi-kontoförmåner eller logga in senare</string>
@@ -198,6 +206,8 @@
     <string name="current_plan">Nuvarande plan</string>
     <string name="current_version">Nuvarande version</string>
     <string name="current_version_fw">Nuvarande version:</string>
+    <string name="customisation_settings">Anpassningsinställningar</string>
+    <string name="customisation_settings_description">Dra och släpp mätvärdena i önskad ordning.</string>
     <string name="dark_theme">Mörkt tema</string>
     <string name="darktheme_disabled">Mörkt tema är inaktiverat.</string>
     <string name="darktheme_enabled">Mörkt tema är aktiverat.</string>
@@ -233,6 +243,7 @@
     <string name="day_9">9 dagar</string>
     <string name="day_x">%1$s dagar</string>
     <string name="days">Dagar</string>
+    <string name="decline">Avböj</string>
     <string name="decrease_graph_size">Minska diagrammens storlek</string>
     <string name="delete_account">Radera konto</string>
     <string name="details">Info</string>
@@ -302,12 +313,14 @@
     <string name="help_seen_tags">Upptäckta sensorer: %1$,d</string>
     <string name="help_troubleshooting_text">Hitta hjälp med att använda Ruuvi Station-appar, Ruuvi-produkter och Ruuvi Cloud-tjänst från vårt supportcenter: ruuvi.com/support</string>
     <string name="help_troubleshooting_title">Felsökning</string>
+    <string name="hide_measurements">Dolda mätvärden</string>
     <string name="history_view">Historikvy</string>
     <string name="hour">Timme</string>
     <string name="hour_1">1 timme</string>
     <string name="hour_12">12 timmar</string>
     <string name="hour_2">2 timmar</string>
     <string name="hour_3">3 timmar</string>
+    <string name="hour_6">6 timmar</string>
     <string name="hour_x">%1$s timmar</string>
     <string name="hours">Timmar</string>
     <string name="humidity">Fuktighet</string>
@@ -334,6 +347,7 @@
     <string name="latest_available_fw">Senast tillgängliga Ruuvi firmwareversion:</string>
     <string name="latest_measured_value">Senaste uppmätta värde: %1$s</string>
     <string name="lets_do_it">Gå till inloggning</string>
+    <string name="light">Ljusstyrka</string>
     <string name="light_theme">Ljust tema</string>
     <string name="logged_in">Inloggad:</string>
     <string name="login_description">Dra full nytta av Ruuvi Station! Logga in eller skapa ett nytt Ruuvi-konto genom att ange din e-postadress.</string>
@@ -392,7 +406,6 @@
     <string name="no_password_needed">Ett gratiskonto kommer att skapas för denna e-post om du inte redan har ett. Endast e-postadress krävs. Vi håller din information säker.</string>
     <string name="none">ingen</string>
     <string name="note">Obs!</string>
-    <string name="notification_permission_needed">För att aktivera alarm, vänligen tillåt Notifikationer i inställningar.</string>
     <string name="nox">NOx</string>
     <string name="nox_with_unit">NOx (%1$s)</string>
     <string name="off">Av</string>
@@ -442,7 +455,6 @@
     <string name="permission_dialog_title">Aktivera bluetooth skanning</string>
     <string name="permission_location_needed">Tillåt åtkomst av platsinfomration för att se sensorer.</string>
     <string name="permission_location_needed_api31">Tillåt att enheter i närheten visas i Inställningar.</string>
-    <string name="permission_notification_needed">För att visa alarm krävs att aviseringar tillåts i inställningar.</string>
     <string name="plan_expiry_date">Ruuvi-prenumerationens utgångsdatum</string>
     <string name="pm1">PM1.0</string>
     <string name="pm10">PM10.0</string>
@@ -473,6 +485,7 @@
     <string name="pressure_reading">%1$,.2f %2$s</string>
     <string name="pressure_reading_pa">%1$,.0f %2$s</string>
     <string name="pressure_with_unit">Lufttryck (%1$s)</string>
+    <string name="preview">Förhandsvisning</string>
     <string name="reading_history">Läser historik</string>
     <string name="reading_history_not_supported">Firmware versionen stöds inte</string>
     <string name="reading_history_x">Läser Bluetooth: %1$s</string>
@@ -578,6 +591,7 @@
     <string name="share_sensor_title">Dela sensor</string>
     <string name="share_sensor_unshare_confirm">Vill du sluta dela sensorn med %1$s?</string>
     <string name="shared_to_x">Delad %1$,d/%2$,d</string>
+    <string name="show_measurements">Synliga mätvärden</string>
     <string name="sign_in">Logga in</string>
     <string name="sign_in_benefits_description">Fördelar:\n\n ● Sensornamn, bakgrundsbilder, kalibrering och larminformation från en säker molntjänst\n\n ● Läs sensorinformation på distans online ( kräver Ruuvi Gateway-router)\n\n ● Dela sensorer med vänner och familj (kräver Ruuvi Gateway)\n\n ● Upp till 2 års historik från station.ruuvi.com (kräver Ruuvi Gateway)</string>
     <string name="sign_in_check_email">Vi har skickat ett engångslösenord till din e-post %1$s. Logga in genom att ange den här:</string>
@@ -605,6 +619,7 @@
     <string name="simple_view">Enkel vy</string>
     <string name="skip">SKIPPA</string>
     <string name="something_went_wrong">Något gick fel</string>
+    <string name="sound">Ljud</string>
     <string name="sound_avg">Ljudnivå (genomsnitt)</string>
     <string name="sound_peak">Ljudnivå (topp)</string>
     <string name="sound_with_unit">Ljud (%1$s)</string>
@@ -665,6 +680,9 @@
     <string name="use_without_account">Nej tack, hoppa över</string>
     <string name="version">Version: %1$s</string>
     <string name="view">Vy</string>
+    <string name="visible_measurements">Synliga mätvärden</string>
+    <string name="visible_measurements_description">Här kan du välja vilka mätvärden du vill se och i vilken ordning. Stäng av "Använd standard" för att anpassa inställningarna.</string>
+    <string name="visible_measurements_use_default">Använd standard</string>
     <string name="voc">VOC</string>
     <string name="voc_with_unit">VOC (%1$s)</string>
     <string name="voltage_reading">%1$,.2f %2$s</string>

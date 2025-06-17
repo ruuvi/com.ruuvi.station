@@ -7,7 +7,8 @@ enum class NetworkRequestType(val code: Int) {
     SETTINGS(4),
     UNSHARE(5),
     RESET_IMAGE(6),
-    SET_ALERT(7);
+    SET_ALERT(7),
+    SENSOR_SETTINGS(8);
 
     companion object {
         fun getById(code: Int) =
@@ -19,6 +20,7 @@ enum class NetworkRequestType(val code: Int) {
                 5 -> UNSHARE
                 6 -> RESET_IMAGE
                 7 -> SET_ALERT
+                8 -> SENSOR_SETTINGS
                 else -> throw IllegalArgumentException("Unknown NetworkRequestType code: $code")
             }
     }

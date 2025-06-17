@@ -8,7 +8,7 @@ import com.koushikdutta.async.future.FutureCallback
 import com.koushikdutta.ion.Ion
 import com.koushikdutta.ion.Response
 import com.ruuvi.station.app.preferences.PreferencesRepository
-import com.ruuvi.station.bluetooth.LogReading
+import com.ruuvi.station.bluetooth.contract.LogReading
 import com.ruuvi.station.database.tables.RuuviTagEntity
 import com.ruuvi.station.database.tables.SensorSettings
 import timber.log.Timber

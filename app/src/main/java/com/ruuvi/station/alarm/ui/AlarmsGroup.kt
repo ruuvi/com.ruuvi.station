@@ -33,7 +33,7 @@ import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tagsettings.ui.SensorSettingsTitle
 import com.ruuvi.station.units.domain.UnitsConverter
-import com.ruuvi.station.units.model.HumidityUnit
+import com.ruuvi.station.units.model.UnitType
 import kotlinx.coroutines.delay
 import timber.log.Timber
 import java.text.DateFormat
@@ -275,7 +275,7 @@ fun AlertEditItem(
                 AlarmType.HUMIDITY -> unitsConverter.getHumidityString(
                     sensorState.latestMeasurement.humidity?.original,
                     sensorState.latestMeasurement.temperature?.original,
-                    HumidityUnit.PERCENT
+                    UnitType.HumidityUnit.Relative
                 )
                 AlarmType.PRESSURE -> sensorState.latestMeasurement.pressure?.valueWithUnit
                 AlarmType.CO2 -> sensorState.latestMeasurement.co2?.valueWithUnit

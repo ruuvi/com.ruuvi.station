@@ -5,9 +5,7 @@ import com.ruuvi.station.app.ui.DarkModeState
 import com.ruuvi.station.dashboard.DashboardTapAction
 import com.ruuvi.station.dashboard.DashboardType
 import com.ruuvi.station.units.model.Accuracy
-import com.ruuvi.station.units.model.HumidityUnit
-import com.ruuvi.station.units.model.PressureUnit
-import com.ruuvi.station.units.model.TemperatureUnit
+import com.ruuvi.station.units.model.UnitType.*
 import com.ruuvi.station.util.BackgroundScanModes
 import com.ruuvi.station.util.DeviceIdGenerator
 import java.util.*
@@ -122,6 +120,13 @@ class PreferencesRepository(
 
     fun setIsShowAllGraphPoint(isShow: Boolean) {
         preferences.graphShowAllPoint = isShow
+    }
+
+    fun getVisibleMeasurements(): Boolean =
+        preferences.visibleMeasurements
+
+    fun setVisibleMeasurement(visibleMeasurements: Boolean) {
+        preferences.visibleMeasurements = visibleMeasurements
     }
 
     fun graphDrawDots(): Boolean = preferences.graphDrawDots

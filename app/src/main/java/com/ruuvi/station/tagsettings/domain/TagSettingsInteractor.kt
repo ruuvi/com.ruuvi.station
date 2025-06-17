@@ -9,9 +9,11 @@ import com.ruuvi.station.database.tables.RuuviTagEntity
 import com.ruuvi.station.database.tables.SensorSettings
 import com.ruuvi.station.image.ImageInteractor
 import com.ruuvi.station.image.ImageSource
+import com.ruuvi.station.network.data.response.SensorSettings_defaultDisplayOrder
+import com.ruuvi.station.network.data.response.SensorSettings_displayOrder
 import com.ruuvi.station.network.domain.RuuviNetworkInteractor
 import com.ruuvi.station.tag.domain.RuuviTag
-import com.ruuvi.station.units.model.TemperatureUnit
+import com.ruuvi.station.units.model.UnitType.*
 import com.ruuvi.station.util.MacAddressUtils
 import timber.log.Timber
 import java.io.File
@@ -162,5 +164,29 @@ class TagSettingsInteractor(
             sensorId = sensorId,
             userBackground = uri.toString()
         )
+    }
+
+    fun setUseDefaultSensorsOrder(sensorId: String, useDefault: Boolean) {
+        val sensorSettings = getSensorSettings(sensorId)
+        sensorSettingsRepository.updateUseDefaultSensorOrder(sensorId, useDefault)
+        if (sensorSettings?.networkSensor == true) {
+            networkInteractor.updateSensorSetting(
+                sensorId = sensorId,
+                name = SensorSettings_defaultDisplayOrder,
+                value = useDefault.toString()
+            )
+        }
+    }
+
+    fun newDisplayOrder(sensorId: String, displayOrder: String) {
+        val sensorSettings = getSensorSettings(sensorId)
+        sensorSettingsRepository.newDisplayOrder(sensorId, displayOrder)
+        if (sensorSettings?.networkSensor == true) {
+            networkInteractor.updateSensorSetting(
+                sensorId = sensorId,
+                name = SensorSettings_displayOrder,
+                value = displayOrder
+            )
+        }
     }
 }

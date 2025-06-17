@@ -7,6 +7,8 @@ import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.dashboard.DashboardTapAction
 import com.ruuvi.station.dashboard.DashboardType
 import com.ruuvi.station.dashboard.domain.SensorsSortingInteractor
+import com.ruuvi.station.feature.data.FeatureFlag
+import com.ruuvi.station.feature.domain.RuntimeBehavior
 import com.ruuvi.station.network.domain.NetworkApplicationSettings
 import com.ruuvi.station.network.domain.NetworkDataSyncInteractor
 import com.ruuvi.station.network.domain.NetworkSignInInteractor
@@ -27,7 +29,8 @@ class DashboardActivityViewModel(
     private val networkApplicationSettings: NetworkApplicationSettings,
     private val networkSignInInteractor: NetworkSignInInteractor,
     private val nfcResultInteractor: NfcResultInteractor,
-    private val sortingInteractor: SensorsSortingInteractor
+    private val sortingInteractor: SensorsSortingInteractor,
+    private val runtimeBehavior: RuntimeBehavior
 ) : ViewModel() {
 
     private val _sensorsList = MutableStateFlow(tagInteractor.getTags())
@@ -70,6 +73,8 @@ class DashboardActivityViewModel(
         _dashBoardType.value = preferencesRepository.getDashboardType()
     }
 
+    fun showMeasurementTitle() = runtimeBehavior.isFeatureEnabled(FeatureFlag.VISIBLE_MEASUREMENTS)
+
     fun refreshDashboardTapAction() {
         _dashBoardTapAction.value = preferencesRepository.getDashboardTapAction()
     }
@@ -108,7 +113,6 @@ class DashboardActivityViewModel(
     }
 
     fun signOut() {
-        networkDataSyncInteractor.stopSync()
         networkSignInInteractor.signOut { }
     }
 

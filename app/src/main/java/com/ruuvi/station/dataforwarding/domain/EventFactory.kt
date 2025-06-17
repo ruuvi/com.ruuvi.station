@@ -3,7 +3,7 @@ package com.ruuvi.station.dataforwarding.domain
 import android.content.Context
 import android.os.BatteryManager
 import com.ruuvi.station.app.preferences.PreferencesRepository
-import com.ruuvi.station.bluetooth.LogReading
+import com.ruuvi.station.bluetooth.contract.LogReading
 import com.ruuvi.station.database.tables.RuuviTagEntity
 import com.ruuvi.station.database.tables.SensorSettings
 import com.ruuvi.station.dataforwarding.data.ScanEvent

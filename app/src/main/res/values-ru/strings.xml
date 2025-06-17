@@ -53,6 +53,12 @@
     <string name="app_theme">Тема приложения</string>
     <string name="appearance_settings_description">%1$s %2$s</string>
     <string name="aqi">AQI</string>
+    <string name="aqi_level_0">Неопределено</string>
+    <string name="aqi_level_1">Вредно</string>
+    <string name="aqi_level_2">Плохо</string>
+    <string name="aqi_level_3">Умеренно</string>
+    <string name="aqi_level_4">Хорошо</string>
+    <string name="aqi_level_5">Отлично</string>
     <string name="back">Назад</string>
     <string name="background_image">Фоновое изображение</string>
     <string name="background_interval">каждые %1$s мин</string>
@@ -60,6 +66,7 @@
     <string name="background_notification_message">Вы можете отключить фоновое сканирование в настройках</string>
     <string name="background_notification_scanning_every">Сканирование каждые</string>
     <string name="background_scanning">Фоновое сканирование (Bluetooth)</string>
+    <string name="battery">Батарея</string>
     <string name="battery_ok">Батарея OK</string>
     <string name="battery_voltage">Напряжение Батареи</string>
     <string name="beta">бета</string>
@@ -138,6 +145,8 @@
     <string name="connecting">Соединение...</string>
     <string name="current_version">Текущая версия</string>
     <string name="current_version_fw">Текущая версия:</string>
+    <string name="customisation_settings">Настройки кастомизации</string>
+    <string name="customisation_settings_description">Перетащите измерения в нужном порядке.</string>
     <string name="dark_theme">Темная тема</string>
     <string name="dashboard">Панель датчиков</string>
     <string name="dashboard_banner_signed_out">Вы не вошли в аккаунт.</string>
@@ -221,11 +230,13 @@
     <string name="help_seen_tags">Датчиков обнаружено: %1$,d</string>
     <string name="help_troubleshooting_text">Получите помощь по использованию приложений Ruuvi Station, продуктов Ruuvi и облачной службы Ruuvi в нашем центре поддержки: ruuvi.com/support</string>
     <string name="help_troubleshooting_title">Решение проблем</string>
+    <string name="hide_measurements">Скрытые измерения</string>
     <string name="hour">час</string>
     <string name="hour_1">1 час</string>
     <string name="hour_12">12 часов</string>
     <string name="hour_2">2 часа</string>
     <string name="hour_3">3 часа</string>
+    <string name="hour_6">6 часов</string>
     <string name="hour_x">%1$s дней</string>
     <string name="hours">Часов</string>
     <string name="humidity">Влажность</string>
@@ -247,6 +258,7 @@
     <string name="language_swedish">Svenska</string>
     <string name="latest_available_fw">Доступная версия прошивки Ruuvi:</string>
     <string name="latest_measured_value">Последнее измерение: %1$s</string>
+    <string name="light">Яркость</string>
     <string name="light_theme">Светлая тема</string>
     <string name="logged_in">Пользователь:</string>
     <string name="login_description">Чтобы воспользоваться всеми функциями, создайте аккаунт или войдите в существующий. Пожалуйста, введите ваш email.</string>
@@ -325,6 +337,7 @@
     <string name="pressure_reading">%1$,.2f %2$s</string>
     <string name="pressure_reading_pa">%1$,.0f %2$s</string>
     <string name="pressure_with_unit">Атмосферное Давление (%1$s)</string>
+    <string name="preview">Предпросмотр</string>
     <string name="reading_history">Чтение истории</string>
     <string name="reading_history_not_supported">Прошивка не поддерживается</string>
     <string name="reading_history_x">Bluetooth sync: %1$s</string>
@@ -403,6 +416,7 @@
     <string name="share_sensor_send_button">Отправить</string>
     <string name="share_sensor_title">Поделиться датчиком Ruuvi</string>
     <string name="share_sensor_unshare_confirm">Хотите перестать делиться показаниями датчика с %1$s?</string>
+    <string name="show_measurements">Отображаемые измерения</string>
     <string name="sign_in">Войти</string>
     <string name="sign_in_benefits_description">Преимущества:\n\n ● Название датчика, изображение фона, данные калибровки и настройки тревог будут безопасно храниться в облаке\n\n ● Получите доступ к датчикам через интернет (требуестся Ruuvi Gateway)\n\n ● Поделитесь данными датчиков с друзьями и членами семьи (требуется Ruuvi Gateway)\n\n ● Просматривайте до 2-х лет истории на сайте station.ruuvi.com (требуется a Ruuvi Gateway)</string>
     <string name="sign_in_check_email">Мы отправили одноразовый пароль на вашу электронную почту %1$s. Войдите, введя его здесь:</string>
@@ -426,6 +440,7 @@
     <string name="signing_in_is_optional">(Авторизация не обязательна)</string>
     <string name="skip">ПРОПУСТИТЬ</string>
     <string name="something_went_wrong">Что-то пошло не так</string>
+    <string name="sound">Звук</string>
     <string name="start_update_process">Начать процесс обновления</string>
     <string name="successfully_claimed">Владение датчиком зарегистрировано</string>
     <string name="successfully_shared">Успешно поделились данными датчика</string>
@@ -471,6 +486,9 @@
     <string name="use_dev_server_description">Чтобы применить изменения, просто синхронизируйте данные с панели управления или дождитесь следующей синхронизации.</string>
     <string name="version">Версия: %1$s</string>
     <string name="view">Вид</string>
+    <string name="visible_measurements">Отображаемые измерения</string>
+    <string name="visible_measurements_description">Здесь вы можете выбрать, какие измерения отображать и в каком порядке. Отключите переключатель «Использовать по умолчанию», чтобы настроить параметры.</string>
+    <string name="visible_measurements_use_default">Использовать по умолчанию</string>
     <string name="voc">VOC</string>
     <string name="voc_with_unit">VOC (%1$s)</string>
     <string name="voltage_reading">%1$,.2f %2$s</string>

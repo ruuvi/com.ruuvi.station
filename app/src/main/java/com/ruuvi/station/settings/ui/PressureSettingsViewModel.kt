@@ -5,12 +5,12 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.ruuvi.station.settings.domain.AppSettingsInteractor
 import com.ruuvi.station.units.model.Accuracy
-import com.ruuvi.station.units.model.PressureUnit
+import com.ruuvi.station.units.model.UnitType.*
 
 class PressureSettingsViewModel (
     private val appSettingsInteractor: AppSettingsInteractor
 ): ViewModel() {
-    fun getAllPressureUnits():Array<PressureUnit> = appSettingsInteractor.getAllPressureUnits()
+    fun getAllPressureUnits(): List<PressureUnit> = appSettingsInteractor.getAllPressureUnits()
 
     private val _pressureyUnit = MutableLiveData<PressureUnit> (appSettingsInteractor.getPressureUnit())
     val pressureyUnit: LiveData<PressureUnit> = _pressureyUnit

@@ -2,11 +2,11 @@ package com.ruuvi.station.settings.ui
 
 import androidx.lifecycle.ViewModel
 import com.ruuvi.station.settings.domain.AppSettingsInteractor
-import com.ruuvi.station.units.model.TemperatureUnit
+import com.ruuvi.station.units.model.UnitType.*
 
 class AppSettingsTemperatureUnitViewModel (private val appSettingsInteractor: AppSettingsInteractor) : ViewModel() {
 
-    fun getAllTemperatureUnits():Array<TemperatureUnit> = appSettingsInteractor.getAllTemperatureUnits()
+    fun getAllTemperatureUnits(): List<TemperatureUnit> = appSettingsInteractor.getAllTemperatureUnits()
 
     fun getTemperatureUnit(): TemperatureUnit = appSettingsInteractor.getTemperatureUnit()
 

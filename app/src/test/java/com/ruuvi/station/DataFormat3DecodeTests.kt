@@ -12,57 +12,57 @@ class DataFormat3DecodeTests {
     @Test
     fun testDecode3PlusTemp() {
         val result = dataFormat3.decode(getTestDataPlusTemperature(), 7)
-        Assert.assertNotNull(result.temperature)
-        Assert.assertTrue(result.temperature!! > 0f)
+        Assert.assertNotNull(result?.temperature)
+        Assert.assertTrue(result?.temperature!! > 0f)
     }
 
     @Test
     fun testDecode3MinusTemp() {
         val result = dataFormat3.decode(getTestDataMinusTemperature(), 7)
-        Assert.assertNotNull(result.temperature)
-        Assert.assertTrue(result.temperature!! < 0f)
+        Assert.assertNotNull(result?.temperature)
+        Assert.assertTrue(result?.temperature!! < 0f)
     }
 
     @Test
     fun testDecode3ValidData(){
         val inputData = "03291A1ECE1EFC18F94202CA0B53".hexStringToByteArray()
         val result = dataFormat3.decode(inputData, 0)
-        Assert.assertEquals(3, result.dataFormat)
-        Assert.assertEquals(26.3, result.temperature)
-        Assert.assertEquals(102766.0, result.pressure)
-        Assert.assertEquals(20.5, result.humidity)
-        Assert.assertEquals(-1.0, result.accelX)
-        Assert.assertEquals(-1.726, result.accelY)
-        Assert.assertEquals(0.714, result.accelZ)
-        Assert.assertEquals(2.899, result.voltage)
+        Assert.assertEquals(3, result?.dataFormat)
+        Assert.assertEquals(26.3, result?.temperature)
+        Assert.assertEquals(102766.0, result?.pressure)
+        Assert.assertEquals(20.5, result?.humidity)
+        Assert.assertEquals(-1.0, result?.accelX)
+        Assert.assertEquals(-1.726, result?.accelY)
+        Assert.assertEquals(0.714, result?.accelZ)
+        Assert.assertEquals(2.899, result?.voltage)
     }
 
     @Test
     fun testDecode3MaximumValues(){
         val inputData = "03FF7F63FFFF7FFF7FFF7FFFFFFF".hexStringToByteArray()
         val result = dataFormat3.decode(inputData, 0)
-        Assert.assertEquals(3, result.dataFormat)
-        Assert.assertEquals(127.99, result.temperature)
-        Assert.assertEquals(115535.0, result.pressure)
-        Assert.assertEquals(127.5, result.humidity)
-        Assert.assertEquals(32.767, result.accelX)
-        Assert.assertEquals(32.767, result.accelY)
-        Assert.assertEquals(32.767, result.accelZ)
-        Assert.assertEquals(65.535, result.voltage)
+        Assert.assertEquals(3, result?.dataFormat)
+        Assert.assertEquals(127.99, result?.temperature)
+        Assert.assertEquals(115535.0, result?.pressure)
+        Assert.assertEquals(127.5, result?.humidity)
+        Assert.assertEquals(32.767, result?.accelX)
+        Assert.assertEquals(32.767, result?.accelY)
+        Assert.assertEquals(32.767, result?.accelZ)
+        Assert.assertEquals(65.535, result?.voltage)
     }
 
     @Test
     fun testDecode3MinimumValues(){
         val inputData = "0300FF6300008001800180010000".hexStringToByteArray()
         val result = dataFormat3.decode(inputData, 0)
-        Assert.assertEquals(3, result.dataFormat)
-        Assert.assertEquals(-127.99, result.temperature)
-        Assert.assertEquals(50000.0, result.pressure)
-        Assert.assertEquals(0.0, result.humidity)
-        Assert.assertEquals(-32.767, result.accelX)
-        Assert.assertEquals(-32.767, result.accelY)
-        Assert.assertEquals(-32.767, result.accelZ)
-        Assert.assertEquals(0.0, result.voltage)
+        Assert.assertEquals(3, result?.dataFormat)
+        Assert.assertEquals(-127.99, result?.temperature)
+        Assert.assertEquals(50000.0, result?.pressure)
+        Assert.assertEquals(0.0, result?.humidity)
+        Assert.assertEquals(-32.767, result?.accelX)
+        Assert.assertEquals(-32.767, result?.accelY)
+        Assert.assertEquals(-32.767, result?.accelZ)
+        Assert.assertEquals(0.0, result?.voltage)
    }
 
     fun getTestDataMinusTemperature(): ByteArray {
