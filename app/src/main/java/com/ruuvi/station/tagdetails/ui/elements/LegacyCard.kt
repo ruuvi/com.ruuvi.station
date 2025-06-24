@@ -3,6 +3,7 @@ package com.ruuvi.station.tagdetails.ui.elements
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -11,100 +12,71 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import com.ruuvi.station.R
-import com.ruuvi.station.app.ui.components.modifier.fadingEdge
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.White80
 import com.ruuvi.station.app.ui.theme.ruuviStationFonts
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tag.domain.isAir
 import com.ruuvi.station.units.model.UnitType
-import com.ruuvi.station.util.ui.pxToDp
 
 @Composable
 fun SensorCardLegacy(
     modifier: Modifier = Modifier,
     sensor: RuuviTag
 ) {
-    var size by remember { mutableStateOf(IntSize.Zero) }
-    val halfSize = (size.height / 2).pxToDp()
-    val scrollState = rememberScrollState()
+
     val valuesWithoutFirst = if (sensor.valuesToDisplay.isNotEmpty()) {
         sensor.valuesToDisplay.subList(1, sensor.valuesToDisplay.size)
     } else {
         listOf()
     }
 
-    val columnModifier = if (valuesWithoutFirst.size > 3) {
-        modifier.fadingEdge(scrollState)
-    } else {
-        modifier
-    }
-
-    Column(
-        modifier = columnModifier
-            .fillMaxSize()
-            .onGloballyPositioned { layoutCoordinates ->
-                size = layoutCoordinates.size
-            }
-            .verticalScroll(scrollState),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Top
+    Box(
+        modifier = modifier
+            //.height(halfSize)
+            .fillMaxSize(),
+        contentAlignment = Alignment.TopCenter
     ) {
-
-        if (size.height > 0) {
-            Box(
-                modifier = Modifier
-                    .height(halfSize)
-                    .padding(48.dp)
-            ) {
-                val firstValue = sensor.valuesToDisplay.firstOrNull()
-                if (firstValue != null) {
-                    if (firstValue.unitType is UnitType.AirQuality) {
-                        if (sensor.latestMeasurement != null) {
-                            CircularAQIDisplay(sensor.latestMeasurement.aqiScore)
-                        }
-                    } else {
-                        BigValueDisplay(
-                            value = firstValue,
-                            showName = false
-                        )
-                    }
+        val firstValue = sensor.valuesToDisplay.firstOrNull()
+        if (firstValue != null) {
+            if (firstValue.unitType is UnitType.AirQuality) {
+                if (sensor.latestMeasurement != null) {
+                    CircularAQIDisplay(sensor.latestMeasurement.aqiScore)
                 }
-            }
-
-
-            Column(
-                verticalArrangement = Arrangement.Bottom,
-                modifier = Modifier
-                    .height((size.height / 2).pxToDp())
-                    .fillMaxWidth()
-            ) {
-                SensorValuesLegacy(
-                    modifier = Modifier,
-                    sensor = sensor,
+            } else {
+                BigValueDisplay(
+                    modifier = Modifier.padding(48.dp),
+                    value = firstValue,
+                    showName = false
                 )
             }
         }
+
+        Column(
+            modifier = modifier
+                .fillMaxSize(),
+            horizontalAlignment = Alignment.Start,
+            verticalArrangement = Arrangement.Bottom
+        ) {
+            SensorValuesLegacy(
+                modifier = Modifier,
+                sensor = sensor,
+            )
+
+        }
     }
+
 }
 
 @Composable
