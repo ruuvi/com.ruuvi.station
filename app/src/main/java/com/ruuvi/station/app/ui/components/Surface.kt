@@ -1,5 +1,7 @@
 package com.ruuvi.station.app.ui.components
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -44,3 +46,16 @@ fun DividerRuuvi() {
 fun DividerSurfaceColor() {
     Divider(color = RuuviStationTheme.colors.background)
 }
+
+
+@Composable
+fun StatusBarFill(content: @Composable () -> Unit) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(RuuviStationTheme.colors.topBar)
+    ) {
+        content.invoke()
+    }
+}
+

@@ -79,18 +79,19 @@ xmlns:tools="http://schemas.android.com/tools">
         android:configChanges="orientation|screenSize|locale"
         android:exported="false"
         android:label="@string/sensor_settings"
+        android:theme="@style/AppTheme.NoActionBar"
         android:windowSoftInputMode="adjustResize" />
 
     <activity
         android:name=".about.ui.AboutActivity"
         android:exported="false"
         android:label="@string/help_about_title"
-        android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar" />
+        android:theme="@style/AppTheme.NoActionBar" />
     <activity
         android:name=".addtag.ui.AddTagActivity"
         android:exported="false"
         android:label="@string/menu_add_new_sensor"
-        android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar" />
+        android:theme="@style/AppTheme.NoActionBar" />
     <activity
         android:name="com.ruuvi.station.settings.ui.SettingsActivity"
         android:exported="false"
@@ -120,7 +121,7 @@ xmlns:tools="http://schemas.android.com/tools">
     <activity
         android:name="com.ruuvi.station.calibration.ui.CalibrationActivity"
         android:exported="false"
-        android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar" />
+        android:theme="@style/AppTheme.NoActionBar" />
 
     <activity
         android:name="com.ruuvi.station.network.ui.claim.ClaimSensorActivity"

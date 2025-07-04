@@ -51,7 +51,9 @@ class ClaimSensorActivity : NfcActivity(), KodeinAware {
 
         setContent {
             RuuviTheme {
-                Body()
+                StatusBarFill{
+                    Body()
+                }
             }
         }
 
@@ -94,7 +96,9 @@ class ClaimSensorActivity : NfcActivity(), KodeinAware {
         }
 
         Scaffold(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .systemBarsPadding()
+                .fillMaxSize(),
             backgroundColor = RuuviStationTheme.colors.background,
             topBar = { RuuviTopAppBar(title = title) },
             scaffoldState = scaffoldState

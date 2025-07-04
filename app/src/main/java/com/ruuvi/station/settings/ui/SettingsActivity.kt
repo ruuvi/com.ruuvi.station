@@ -1,6 +1,5 @@
 package com.ruuvi.station.settings.ui
 
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
@@ -8,7 +7,11 @@ import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.compose.animation.*
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -28,7 +31,6 @@ import com.ruuvi.station.util.extensions.viewModel
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
 
-@OptIn(ExperimentalAnimationApi::class)
 class SettingsActivity : AppCompatActivity(), KodeinAware {
 
     override val kodein by closestKodein()
@@ -44,150 +46,179 @@ class SettingsActivity : AppCompatActivity(), KodeinAware {
                 val navController = rememberNavController()
                 val scaffoldState = rememberScaffoldState()
                 val systemUiController = rememberSystemUiController()
-                val activity = LocalContext.current as Activity
+                val context = LocalContext.current
                 var title: String by rememberSaveable { mutableStateOf("") }
 
                 LaunchedEffect(navController) {
                     navController.currentBackStackEntryFlow.collect { backStackEntry ->
                         title = SettingsRoutes.getTitleByRoute(
-                            activity,
+                            context,
                             backStackEntry.destination.route ?: ""
                         )
                     }
                 }
 
-                Scaffold(
-                    modifier = Modifier.fillMaxSize(),
-                    backgroundColor = RuuviStationTheme.colors.background,
-                    topBar = { RuuviTopAppBar(title = title) },
-                    scaffoldState = scaffoldState
-                ) { padding ->
-                    NavHost(
-                        navController = navController,
-                        startDestination = SettingsRoutes.LIST
-                    ) {
-                        composable(SettingsRoutes.LIST,
-                            enterTransition = { slideIntoContainer(towards = AnimatedContentTransitionScope.SlideDirection.Right, animationSpec = tween(600)) },
-                            exitTransition = { slideOutOfContainer(towards = AnimatedContentTransitionScope.SlideDirection.Left, animationSpec = tween(600)) },
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(RuuviStationTheme.colors.topBar)
+                ) {
+                    Scaffold(
+                        modifier = Modifier
+                            .systemBarsPadding()
+                            .fillMaxSize(),
+                        backgroundColor = RuuviStationTheme.colors.background,
+                        topBar = { RuuviTopAppBar(title = title) },
+                        scaffoldState = scaffoldState
+                    ) { padding ->
+                        NavHost(
+                            modifier = Modifier.padding(padding),
+                            navController = navController,
+                            startDestination = SettingsRoutes.LIST
                         ) {
-                            SettingsList(
-                                scaffoldState = scaffoldState,
-                                onNavigate = navController::navigate,
-                                viewModel = appSettingsListViewModel
-                            )
-                        }
-                        composable(
-                            route = SettingsRoutes.APPEARANCE,
-                            enterTransition = enterTransition,
-                            exitTransition = exitTransition
-                        ) {
-                            val appearanceSettingsViewModel: AppearanceSettingsViewModel by viewModel()
-                            AppearanceSettings(
-                                scaffoldState = scaffoldState,
-                                viewModel = appearanceSettingsViewModel
-                            )
-                        }
-                        composable(
-                            route = SettingsRoutes.ALERT_NOTIFICATIONS,
-                            enterTransition = enterTransition,
-                            exitTransition = exitTransition
-                        ) {
-                            val alertNotificationsSettingsViewModel: AlertNotificationsSettingsViewModel by viewModel()
-                            AlertNotificationsSettings(
-                                scaffoldState = scaffoldState,
-                                viewModel = alertNotificationsSettingsViewModel
-                            )
-                        }
-                        composable(SettingsRoutes.BACKGROUNDSCAN,
-                            enterTransition = enterTransition,
-                            exitTransition = exitTransition
-                        ) {
-                            val backgroundScanSettingsViewModel: BackgroundScanSettingsViewModel by viewModel()
-                            BackgroundScanSettings(
-                                scaffoldState = scaffoldState,
-                                viewModel = backgroundScanSettingsViewModel
-                            )
-                        }
-                        composable(SettingsRoutes.TEMPERATURE,
-                            enterTransition = enterTransition,
-                            exitTransition = exitTransition
-                        ) {
-                            val temperatureSettingsViewModel: TemperatureSettingsViewModel by viewModel()
-                            TemperatureSettings(
-                                scaffoldState = scaffoldState,
-                                viewModel = temperatureSettingsViewModel
-                            )
-                        }
-                        composable(SettingsRoutes.HUMIDITY,
-                            enterTransition = enterTransition,
-                            exitTransition = exitTransition
-                        ) {
-                            val humiditySettingsViewModel: HumiditySettingsViewModel by viewModel()
-                            HumiditySettings(
-                                scaffoldState = scaffoldState,
-                                viewModel = humiditySettingsViewModel
-                            )
-                        }
-                        composable(SettingsRoutes.PRESSURE,
-                            enterTransition = enterTransition,
-                            exitTransition = exitTransition
-                        ) {
-                            val pressureSettingsViewModel: PressureSettingsViewModel by viewModel()
-                            PressureSettings(
-                                scaffoldState = scaffoldState,
-                                viewModel = pressureSettingsViewModel
-                            )
-                        }
-                        composable(SettingsRoutes.CLOUD,
-                            enterTransition = enterTransition,
-                            exitTransition = exitTransition
-                        ) {
-                            val cloudSettingsViewModel: CloudSettingsViewModel by viewModel()
-                            CloudSettings(
-                                scaffoldState = scaffoldState,
-                                viewModel = cloudSettingsViewModel
-                            )
-                        }
-                        composable(SettingsRoutes.CHARTS,
-                            enterTransition = enterTransition,
-                            exitTransition = exitTransition
-                        ) {
-                            val chartSettingsViewModel: ChartSettingsViewModel by viewModel()
-                            ChartSettings(
-                                scaffoldState = scaffoldState,
-                                viewModel = chartSettingsViewModel
-                            )
-                        }
-                        composable(SettingsRoutes.DATAFORWARDING,
-                            enterTransition = enterTransition,
-                            exitTransition = exitTransition
-                        ) {
-                            val dataForwardingSettingsViewModel: DataForwardingSettingsViewModel by viewModel()
-                            DataForwardingSettings(
-                                scaffoldState = scaffoldState,
-                                viewModel = dataForwardingSettingsViewModel
-                            )
-                        }
-                        composable(SettingsRoutes.DEVELOPER,
-                            enterTransition = enterTransition,
-                            exitTransition = exitTransition
-                        ) {
-                            val developerSettingsViewModel: DeveloperSettingsViewModel by viewModel()
-                            DeveloperSettings(
-                                scaffoldState = scaffoldState,
-                                onNavigate = navController::navigate,
-                                viewModel = developerSettingsViewModel
-                            )
-                        }
-                        composable(SettingsRoutes.SHARINGWEB,
-                            enterTransition = enterTransition,
-                            exitTransition = exitTransition
-                        ) {
-                            val developerSettingsViewModel: DeveloperSettingsViewModel by viewModel()
-                            SharingWebView(
-                                scaffoldState = scaffoldState,
-                                viewModel = developerSettingsViewModel
-                            )
+                            composable(
+                                SettingsRoutes.LIST,
+                                enterTransition = {
+                                    slideIntoContainer(
+                                        towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                                        animationSpec = tween(600)
+                                    )
+                                },
+                                exitTransition = {
+                                    slideOutOfContainer(
+                                        towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                                        animationSpec = tween(600)
+                                    )
+                                },
+                            ) {
+                                SettingsList(
+                                    scaffoldState = scaffoldState,
+                                    onNavigate = navController::navigate,
+                                    viewModel = appSettingsListViewModel
+                                )
+                            }
+                            composable(
+                                route = SettingsRoutes.APPEARANCE,
+                                enterTransition = enterTransition,
+                                exitTransition = exitTransition
+                            ) {
+                                val appearanceSettingsViewModel: AppearanceSettingsViewModel by viewModel()
+                                AppearanceSettings(
+                                    scaffoldState = scaffoldState,
+                                    viewModel = appearanceSettingsViewModel
+                                )
+                            }
+                            composable(
+                                route = SettingsRoutes.ALERT_NOTIFICATIONS,
+                                enterTransition = enterTransition,
+                                exitTransition = exitTransition
+                            ) {
+                                val alertNotificationsSettingsViewModel: AlertNotificationsSettingsViewModel by viewModel()
+                                AlertNotificationsSettings(
+                                    scaffoldState = scaffoldState,
+                                    viewModel = alertNotificationsSettingsViewModel
+                                )
+                            }
+                            composable(
+                                SettingsRoutes.BACKGROUNDSCAN,
+                                enterTransition = enterTransition,
+                                exitTransition = exitTransition
+                            ) {
+                                val backgroundScanSettingsViewModel: BackgroundScanSettingsViewModel by viewModel()
+                                BackgroundScanSettings(
+                                    scaffoldState = scaffoldState,
+                                    viewModel = backgroundScanSettingsViewModel
+                                )
+                            }
+                            composable(
+                                SettingsRoutes.TEMPERATURE,
+                                enterTransition = enterTransition,
+                                exitTransition = exitTransition
+                            ) {
+                                val temperatureSettingsViewModel: TemperatureSettingsViewModel by viewModel()
+                                TemperatureSettings(
+                                    scaffoldState = scaffoldState,
+                                    viewModel = temperatureSettingsViewModel
+                                )
+                            }
+                            composable(
+                                SettingsRoutes.HUMIDITY,
+                                enterTransition = enterTransition,
+                                exitTransition = exitTransition
+                            ) {
+                                val humiditySettingsViewModel: HumiditySettingsViewModel by viewModel()
+                                HumiditySettings(
+                                    scaffoldState = scaffoldState,
+                                    viewModel = humiditySettingsViewModel
+                                )
+                            }
+                            composable(
+                                SettingsRoutes.PRESSURE,
+                                enterTransition = enterTransition,
+                                exitTransition = exitTransition
+                            ) {
+                                val pressureSettingsViewModel: PressureSettingsViewModel by viewModel()
+                                PressureSettings(
+                                    scaffoldState = scaffoldState,
+                                    viewModel = pressureSettingsViewModel
+                                )
+                            }
+                            composable(
+                                SettingsRoutes.CLOUD,
+                                enterTransition = enterTransition,
+                                exitTransition = exitTransition
+                            ) {
+                                val cloudSettingsViewModel: CloudSettingsViewModel by viewModel()
+                                CloudSettings(
+                                    scaffoldState = scaffoldState,
+                                    viewModel = cloudSettingsViewModel
+                                )
+                            }
+                            composable(
+                                SettingsRoutes.CHARTS,
+                                enterTransition = enterTransition,
+                                exitTransition = exitTransition
+                            ) {
+                                val chartSettingsViewModel: ChartSettingsViewModel by viewModel()
+                                ChartSettings(
+                                    scaffoldState = scaffoldState,
+                                    viewModel = chartSettingsViewModel
+                                )
+                            }
+                            composable(
+                                SettingsRoutes.DATAFORWARDING,
+                                enterTransition = enterTransition,
+                                exitTransition = exitTransition
+                            ) {
+                                val dataForwardingSettingsViewModel: DataForwardingSettingsViewModel by viewModel()
+                                DataForwardingSettings(
+                                    scaffoldState = scaffoldState,
+                                    viewModel = dataForwardingSettingsViewModel
+                                )
+                            }
+                            composable(
+                                SettingsRoutes.DEVELOPER,
+                                enterTransition = enterTransition,
+                                exitTransition = exitTransition
+                            ) {
+                                val developerSettingsViewModel: DeveloperSettingsViewModel by viewModel()
+                                DeveloperSettings(
+                                    scaffoldState = scaffoldState,
+                                    onNavigate = navController::navigate,
+                                    viewModel = developerSettingsViewModel
+                                )
+                            }
+                            composable(
+                                SettingsRoutes.SHARINGWEB,
+                                enterTransition = enterTransition,
+                                exitTransition = exitTransition
+                            ) {
+                                val developerSettingsViewModel: DeveloperSettingsViewModel by viewModel()
+                                SharingWebView(
+                                    scaffoldState = scaffoldState,
+                                    viewModel = developerSettingsViewModel
+                                )
+                            }
                         }
                     }
                 }

@@ -61,24 +61,26 @@ class BackgroundActivity : AppCompatActivity(), KodeinAware {
                 val scaffoldState = rememberScaffoldState()
                 val context = LocalContext.current
 
-                Body(
-                    scaffoldState = scaffoldState,
-                    defaultImages = viewModel.getDefaultImages(),
-                    setDefaultImage = { image ->
-                        viewModel.setDefaultImage(image)
-                        finish()
-                    },
-                    setImageFromGallery = { uri ->
-                        if (viewModel.setImageFromGallery(uri)) {
+                StatusBarFill {
+                    Body(
+                        scaffoldState = scaffoldState,
+                        defaultImages = viewModel.getDefaultImages(),
+                        setDefaultImage = { image ->
+                            viewModel.setDefaultImage(image)
+                            finish()
+                        },
+                        setImageFromGallery = { uri ->
+                            if (viewModel.setImageFromGallery(uri)) {
+                                finish()
+                            }
+                        },
+                        getImageFileForCamera = viewModel::getImageFileForCamera,
+                        setImageFromCamera = {
+                            viewModel.setImageFromCamera()
                             finish()
                         }
-                    },
-                    getImageFileForCamera = viewModel::getImageFileForCamera,
-                    setImageFromCamera = {
-                        viewModel.setImageFromCamera()
-                        finish()
-                    }
-                )
+                    )
+                }
 
                 LaunchedEffect(null) {
                     viewModel.uiEvent.collect { uiEvent ->
@@ -111,14 +113,17 @@ class BackgroundActivity : AppCompatActivity(), KodeinAware {
         val systemBarsColor = RuuviStationTheme.colors.systemBars
 
         Scaffold(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize()
+                .systemBarsPadding(),
             backgroundColor = RuuviStationTheme.colors.background,
             topBar = { RuuviTopAppBar(title = stringResource(id = R.string.change_background)) },
             scaffoldState = scaffoldState
         ) { paddingValues ->
 
             LazyVerticalGrid(
-                columns = GridCells.Fixed(3)
+                columns = GridCells.Fixed(3),
+                modifier = Modifier.padding(paddingValues)
             ) {
                 item(span = { GridItemSpan(3) }) {
                     PageHeader(

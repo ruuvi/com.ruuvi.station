@@ -17,6 +17,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.app.TaskStackBuilder
+import androidx.core.view.WindowCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.compose.NavHost
@@ -25,6 +26,7 @@ import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.ruuvi.station.alarm.ui.AlarmItemsViewModel
 import com.ruuvi.station.app.ui.RuuviTopAppBar
+import com.ruuvi.station.app.ui.components.StatusBarFill
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.RuuviTheme
 import com.ruuvi.station.dashboard.ui.DashboardActivity
@@ -74,6 +76,8 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        WindowCompat.setDecorFitsSystemWindows(window, true)
+
         val openRemove = intent.getBooleanExtra(OPEN_REMOVE, false)
         setContent {
             RuuviTheme {
@@ -94,90 +98,95 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
                     }
                 }
 
-                Scaffold(
-                    modifier = Modifier.fillMaxSize(),
-                    backgroundColor = RuuviStationTheme.colors.background,
-                    topBar = {
-                        RuuviTopAppBar(
-                            title = title
-                        )
-                    },
-                    scaffoldState = scaffoldState
-                ) { paddingValues ->
-
-                    NavHost(
-                        startDestination = if (openRemove) {
-                            SensorSettingsRoutes.SENSOR_REMOVE
-                        } else {
-                            SensorSettingsRoutes.SENSOR_SETTINGS_ROOT
+                StatusBarFill {
+                    Scaffold(
+                        modifier = Modifier
+                            .systemBarsPadding()
+                            .fillMaxSize(),
+                        backgroundColor = RuuviStationTheme.colors.background,
+                        topBar = {
+                            RuuviTopAppBar(
+                                title = title
+                            )
                         },
-                        navController = navController
-                    ) {
-                        composable(
-                            SensorSettingsRoutes.SENSOR_SETTINGS_ROOT,
-                            enterTransition = {
-                                slideIntoContainer(
-                                    towards = AnimatedContentTransitionScope.SlideDirection.Right,
-                                    animationSpec = tween(600)
-                                )
+                        scaffoldState = scaffoldState
+                    ) { paddingValues ->
+
+                        NavHost(
+                            modifier = Modifier.padding(paddingValues),
+                            startDestination = if (openRemove) {
+                                SensorSettingsRoutes.SENSOR_REMOVE
+                            } else {
+                                SensorSettingsRoutes.SENSOR_SETTINGS_ROOT
                             },
-                            exitTransition = {
-                                slideOutOfContainer(
-                                    towards = AnimatedContentTransitionScope.SlideDirection.Left,
-                                    animationSpec = tween(600)
+                            navController = navController
+                        ) {
+                            composable(
+                                SensorSettingsRoutes.SENSOR_SETTINGS_ROOT,
+                                enterTransition = {
+                                    slideIntoContainer(
+                                        towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                                        animationSpec = tween(600)
+                                    )
+                                },
+                                exitTransition = {
+                                    slideOutOfContainer(
+                                        towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                                        animationSpec = tween(600)
+                                    )
+                                },
+                            ) {
+                                SensorSettings(
+                                    scaffoldState = scaffoldState,
+                                    viewModel = viewModel,
+                                    onNavigate = navController::navigate,
+                                    alarmsViewModel = alarmsViewModel
                                 )
-                            },
-                        ) {
-                            SensorSettings(
-                                scaffoldState = scaffoldState,
-                                viewModel = viewModel,
-                                onNavigate = navController::navigate,
-                                alarmsViewModel = alarmsViewModel
-                            )
-                        }
-                        composable(
-                            route = SensorSettingsRoutes.SENSOR_REMOVE,
-                            enterTransition = enterTransition,
-                            exitTransition = exitTransition
-                        ) {
-                            val removeSensorViewModel: RemoveSensorViewModel by viewModel() {
-                                intent.getStringExtra(TAG_ID)?.let {
-                                    RemoveSensorViewModelArgs(it)
-                                }
                             }
-                            RemoveSensor(
-                                scaffoldState = scaffoldState,
-                                viewModel = removeSensorViewModel,
-                                onNavigate = navController::navigate
-                            )
+                            composable(
+                                route = SensorSettingsRoutes.SENSOR_REMOVE,
+                                enterTransition = enterTransition,
+                                exitTransition = exitTransition
+                            ) {
+                                val removeSensorViewModel: RemoveSensorViewModel by viewModel() {
+                                    intent.getStringExtra(TAG_ID)?.let {
+                                        RemoveSensorViewModelArgs(it)
+                                    }
+                                }
+                                RemoveSensor(
+                                    scaffoldState = scaffoldState,
+                                    viewModel = removeSensorViewModel,
+                                    onNavigate = navController::navigate
+                                )
+                            }
+
+                            composable(
+                                route = SensorSettingsRoutes.VISIBLE_MEASUREMENTS,
+                                enterTransition = enterTransition,
+                                exitTransition = exitTransition
+                            ) {
+                                val visibleMeasurementsViewModel: VisibleMeasurementsViewModel by viewModel() {
+                                    intent.getStringExtra(TAG_ID)?.let {
+                                        it
+                                    }
+                                }
+                                val useDefault by visibleMeasurementsViewModel.useDefaultOrder.collectAsStateWithLifecycle()
+                                val sensorState by visibleMeasurementsViewModel.sensorState.collectAsStateWithLifecycle()
+                                val selected by visibleMeasurementsViewModel.selected.collectAsStateWithLifecycle()
+                                val possibleOptions by visibleMeasurementsViewModel.possibleOptions.collectAsStateWithLifecycle()
+                                VisibleMeasurements(
+                                    useDefault = useDefault,
+                                    sensorState = sensorState,
+                                    dashboardType = visibleMeasurementsViewModel.dashBoardType,
+                                    onAction = visibleMeasurementsViewModel::onAction,
+                                    selected = selected,
+                                    allOptions = possibleOptions
+                                )
+                            }
                         }
 
-                        composable(
-                            route = SensorSettingsRoutes.VISIBLE_MEASUREMENTS,
-                            enterTransition = enterTransition,
-                            exitTransition = exitTransition
-                        ) {
-                            val visibleMeasurementsViewModel: VisibleMeasurementsViewModel by viewModel()  {
-                                intent.getStringExtra(TAG_ID)?.let {
-                                    it
-                                }
-                            }
-                            val useDefault by visibleMeasurementsViewModel.useDefaultOrder.collectAsStateWithLifecycle()
-                            val sensorState by visibleMeasurementsViewModel.sensorState.collectAsStateWithLifecycle()
-                            val selected by visibleMeasurementsViewModel.selected.collectAsStateWithLifecycle()
-                            val possibleOptions by visibleMeasurementsViewModel.possibleOptions.collectAsStateWithLifecycle()
-                            VisibleMeasurements(
-                                useDefault = useDefault,
-                                sensorState = sensorState,
-                                dashboardType = visibleMeasurementsViewModel.dashBoardType,
-                                onAction = visibleMeasurementsViewModel::onAction,
-                                selected = selected,
-                                allOptions = possibleOptions
-                            )
-                        }
+
                     }
-
-
                 }
 
                 SideEffect {

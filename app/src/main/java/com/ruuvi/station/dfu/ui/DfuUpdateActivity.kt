@@ -103,7 +103,11 @@ class DfuUpdateActivity : AppCompatActivity() , KodeinAware {
         val sensorId = intent.getStringExtra(SENSOR_ID)
         sensorId?.let {
             setContent {
-                DfuUpdateScreen(viewModel, ::selectFile )
+                RuuviTheme {
+                    StatusBarFill {
+                        DfuUpdateScreen(viewModel, ::selectFile)
+                    }
+                }
             }
         }
         permissionsInteractor = PermissionsInteractor(this)
@@ -133,25 +137,26 @@ class DfuUpdateActivity : AppCompatActivity() , KodeinAware {
 
 @Composable
 fun DfuUpdateScreen(viewModel: DfuUpdateViewModel, selectFile: ()-> Unit) {
-    RuuviTheme {
-        val stage: DfuUpdateStage by viewModel.stage.observeAsState(DfuUpdateStage.CHECKING_CURRENT_FW_VERSION)
-        val activity = LocalContext.current as Activity
 
-        Body(activity.title.toString()) {
-            when (stage) {
-                DfuUpdateStage.CHECKING_CURRENT_FW_VERSION -> CheckingCurrentFwStageScreen(
-                    viewModel
-                )
-                DfuUpdateStage.DOWNLOADING_FW -> DownloadingFwStageScreen(viewModel)
-                DfuUpdateStage.ALREADY_LATEST_VERSION -> AlreadyLatestVersionScreen(
-                    viewModel
-                )
-                DfuUpdateStage.READY_FOR_UPDATE -> ReadyForUpdateScreen(viewModel)
-                DfuUpdateStage.UPDATE_FINISHED -> UpdateSuccessfulScreen(viewModel)
-                DfuUpdateStage.UPDATING_FW -> UpdatingFwStageScreen(viewModel)
-                DfuUpdateStage.ERROR -> ErrorScreen(viewModel)
-                DfuUpdateStage.AIR_UPDATE -> AirUpdate(viewModel, selectFile)
-            }
+    val stage: DfuUpdateStage by viewModel.stage.observeAsState(DfuUpdateStage.CHECKING_CURRENT_FW_VERSION)
+    val activity = LocalContext.current as Activity
+
+    Body(activity.title.toString()) {
+        when (stage) {
+            DfuUpdateStage.CHECKING_CURRENT_FW_VERSION -> CheckingCurrentFwStageScreen(
+                viewModel
+            )
+
+            DfuUpdateStage.DOWNLOADING_FW -> DownloadingFwStageScreen(viewModel)
+            DfuUpdateStage.ALREADY_LATEST_VERSION -> AlreadyLatestVersionScreen(
+                viewModel
+            )
+
+            DfuUpdateStage.READY_FOR_UPDATE -> ReadyForUpdateScreen(viewModel)
+            DfuUpdateStage.UPDATE_FINISHED -> UpdateSuccessfulScreen(viewModel)
+            DfuUpdateStage.UPDATING_FW -> UpdatingFwStageScreen(viewModel)
+            DfuUpdateStage.ERROR -> ErrorScreen(viewModel)
+            DfuUpdateStage.AIR_UPDATE -> AirUpdate(viewModel, selectFile)
         }
     }
 }
@@ -185,6 +190,7 @@ fun Body(
     Surface(
         color = RuuviStationTheme.colors.background,
         modifier = Modifier
+            .systemBarsPadding()
             .fillMaxSize()
     ) {
         Column() {
