@@ -48,8 +48,8 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.whenStarted
-import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
-import com.bumptech.glide.integration.compose.GlideImage
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.ruuvi.station.R
 import com.ruuvi.station.addtag.ui.AddTagActivity
@@ -64,7 +64,6 @@ import com.ruuvi.station.app.ui.components.BlinkingEffect
 import com.ruuvi.station.app.ui.components.Paragraph
 import com.ruuvi.station.app.ui.components.RuuviButton
 import com.ruuvi.station.app.ui.components.limitScaleTo
-import com.ruuvi.station.app.ui.components.rememberResourceUri
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme.colors
 import com.ruuvi.station.app.ui.theme.RuuviTheme
@@ -1032,29 +1031,32 @@ fun ItemBottomUpdatedInfo(
     }
 }
 
-@OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun DashboardImage(
     userBackground: Uri,
     modifier: Modifier = Modifier
 ) {
-    Timber.d("Image path $userBackground")
-    GlideImage(
-        modifier = modifier.fillMaxSize(),
-        model = userBackground,
-        contentDescription = null,
-        contentScale = ContentScale.Crop
-    )
-    GlideImage(
-        modifier = modifier.fillMaxSize(),
-        model = rememberResourceUri(R.drawable.tag_bg_layer),
-        contentDescription = null,
-        alpha = RuuviStationTheme.colors.backgroundAlpha,
-        contentScale = ContentScale.Crop
-    )
+    val context = LocalContext.current
+
+    Box(modifier = modifier) {
+        AsyncImage(
+            modifier = modifier.fillMaxSize(),
+            model = ImageRequest.Builder(context)
+                .data(userBackground)
+                .crossfade(true)
+                .build(),
+            contentDescription = null,
+            contentScale = ContentScale.Crop
+        )
+        Image(
+            modifier = modifier.matchParentSize(),
+            painter = painterResource(R.drawable.tag_bg_layer),
+            contentDescription = null,
+            alpha = RuuviStationTheme.colors.backgroundAlpha,
+            contentScale = ContentScale.Crop
+        )
+    }
 }
-
-
 
 @Composable
 fun DashboardItemDropdownMenu(
