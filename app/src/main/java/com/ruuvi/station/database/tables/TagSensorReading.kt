@@ -65,7 +65,7 @@ data class TagSensorReading(
     @Column
     var nox: Int? = null,
     @Column
-    var luminosity: Int? = null,
+    var luminosity: Double? = null,
     @Column
     var dBaAvg: Double? = null,
     @Column
