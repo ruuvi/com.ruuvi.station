@@ -406,6 +406,7 @@
     <string name="no_password_needed">Tälle osoitteelle luodaan ilmainen tili, jos sinulla ei vielä ole tiliä. Tarvitset kirjautumiseen ainoastaan sähköpostiosoitteen. Pidämme tietosi turvassa.</string>
     <string name="none">ei kirjautunut</string>
     <string name="note">Huomaa!</string>
+    <string name="notification_permission_needed">Salli hälytysilmoitukset ja taustaskannaus antamalla sovellukselle lupa näyttää ilmoituksia</string>
     <string name="nox">NOx</string>
     <string name="nox_with_unit">NOx (%1$s)</string>
     <string name="off">Pois</string>

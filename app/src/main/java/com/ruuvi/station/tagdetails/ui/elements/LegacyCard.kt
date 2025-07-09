@@ -52,7 +52,10 @@ fun SensorCardLegacy(
         if (firstValue != null) {
             if (firstValue.unitType is UnitType.AirQuality) {
                 if (sensor.latestMeasurement != null) {
-                    CircularAQIDisplay(sensor.latestMeasurement.aqiScore)
+                    CircularAQIDisplay(
+                        value = firstValue,
+                        aqi = sensor.latestMeasurement.aqiScore
+                    )
                 }
             } else {
                 BigValueDisplay(

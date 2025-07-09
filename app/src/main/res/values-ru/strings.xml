@@ -298,6 +298,7 @@
     <string name="no_data">Нет данных</string>
     <string name="no_new_data_points">Нет новых измерений</string>
     <string name="none">нет</string>
+    <string name="notification_permission_needed">Чтобы включить оповещения и фоновое сканирование, разрешите уведомления в настройках</string>
     <string name="nox">NOx</string>
     <string name="nox_with_unit">NOx (%1$s)</string>
     <string name="off">Выкл</string>

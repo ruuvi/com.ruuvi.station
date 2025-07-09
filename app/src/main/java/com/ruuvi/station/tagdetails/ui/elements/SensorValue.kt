@@ -1,12 +1,12 @@
 package com.ruuvi.station.tagdetails.ui.elements
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
@@ -36,7 +36,8 @@ fun SensorValueItem(
     unit: String,
     name: String,
     itemHeight: Dp,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    clickAction: () -> Unit
 ) {
     val internalModifier = Modifier
         .height(itemHeight)
@@ -47,6 +48,7 @@ fun SensorValueItem(
         horizontalArrangement = Arrangement.Start,
         modifier = modifier
             .then(internalModifier)
+            .clickable { clickAction.invoke() }
     ) {
         Icon(
             modifier = Modifier
@@ -106,7 +108,8 @@ fun SensorValueName(
     icon: Int,
     name: String,
     itemHeight: Dp,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    clickAction: () -> Unit
 ) {
     val internalModifier = Modifier
         .height(itemHeight)
@@ -118,6 +121,7 @@ fun SensorValueName(
         horizontalArrangement = Arrangement.Start,
         modifier = internalModifier
             .then(modifier)
+            .clickable { clickAction.invoke() }
     ) {
         Icon(
             modifier = Modifier
@@ -152,7 +156,7 @@ private fun SensorValueItemPreview() {
             name = stringResource(unitType.measurementTitle),
             itemHeight = RuuviStationTheme.dimensions.sensorCardValueItemHeight,
             modifier = Modifier,
-        )
+        ) {}
     }
 }
 
@@ -166,6 +170,6 @@ private fun SensorValueNamePreview() {
             name = stringResource(unitType.measurementTitle),
             itemHeight = RuuviStationTheme.dimensions.sensorCardValueItemHeight,
             modifier = Modifier,
-        )
+        ) {}
     }
 }

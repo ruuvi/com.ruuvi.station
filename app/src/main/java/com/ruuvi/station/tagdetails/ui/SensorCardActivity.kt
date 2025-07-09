@@ -22,6 +22,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -73,8 +74,10 @@ import com.ruuvi.station.tagdetails.ui.elements.BigValueDisplay
 import com.ruuvi.station.tagdetails.ui.elements.CircularAQIDisplay
 import com.ruuvi.station.tagdetails.ui.elements.SensorCardLegacy
 import com.ruuvi.station.tagdetails.ui.elements.SensorValueItem
+import com.ruuvi.station.tagdetails.ui.elements.ValueBottomSheet
 import com.ruuvi.station.tagsettings.ui.TagSettingsActivity
 import com.ruuvi.station.units.domain.UnitsConverter
+import com.ruuvi.station.units.model.EnvironmentValue
 import com.ruuvi.station.units.model.UnitType
 import com.ruuvi.station.util.Period
 import com.ruuvi.station.util.base.NfcActivity
@@ -573,14 +576,17 @@ fun SensorCard(
         if (size.height > 0) {
             Box(
                 modifier = Modifier
-                        .height(halfSize)
-                        .padding(48.dp)
+                    .height(halfSize)
+                    .padding(48.dp)
             ) {
                 val firstValue = sensor.valuesToDisplay.firstOrNull()
                 if (firstValue != null) {
                     if (firstValue.unitType is UnitType.AirQuality) {
                         if (sensor.latestMeasurement != null) {
-                            CircularAQIDisplay(sensor.latestMeasurement.aqiScore)
+                            CircularAQIDisplay(
+                                value = firstValue,
+                                aqi = sensor.latestMeasurement.aqiScore
+                            )
                         }
                     } else {
                         BigValueDisplay(
@@ -618,6 +624,7 @@ fun SensorCard(
 
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SensorValues(
     modifier: Modifier,
@@ -626,6 +633,8 @@ fun SensorValues(
 ) {
     if (sensor.valuesToDisplay.size <= 1) return
     val valuesWithoutFirst = sensor.valuesToDisplay.subList(1, sensor.valuesToDisplay.size)
+    var showBottomSheet by remember { mutableStateOf(false) }
+    var sheetValue by remember { mutableStateOf<EnvironmentValue?> (null) }
 
     if (valuesWithoutFirst.size <= 3) {
         Column(
@@ -644,7 +653,10 @@ fun SensorValues(
                     itemHeight = itemHeight,
                     modifier = Modifier.fillMaxWidth(),
                     name = value.unitType.measurementTitle.let { stringResource(it) }
-                )
+                ) {
+                    sheetValue = value
+                    showBottomSheet = true
+                }
             }
         }
     } else {
@@ -678,6 +690,10 @@ fun SensorValues(
                         modifier = Modifier.fillMaxWidth(),
                         name = value.unitType.measurementTitle.let { stringResource(it) }
                     )
+                    {
+                        sheetValue = value
+                        showBottomSheet = true
+                    }
                 }
             }
             Column(
@@ -694,8 +710,23 @@ fun SensorValues(
                         itemHeight = itemHeight,
                         modifier = Modifier.fillMaxWidth(),
                         name = value.unitType.measurementTitle.let { stringResource(it) }
-                    )
+                    ) {
+                        sheetValue = value
+                        showBottomSheet = true
+                    }
                 }
+            }
+        }
+    }
+
+    if (showBottomSheet) {
+        sheetValue?.let { value ->
+
+            ValueBottomSheet(
+                sheetValue = value,
+                modifier = Modifier
+            ) {
+                showBottomSheet = false
             }
         }
     }
@@ -896,7 +927,8 @@ fun SensorCardBottom(
             modifier = modifier
                 .padding(
                     horizontal = RuuviStationTheme.dimensions.screenPadding,
-                    vertical = RuuviStationTheme.dimensions.mediumPlus)
+                    vertical = RuuviStationTheme.dimensions.mediumPlus
+                )
                 .fillMaxWidth()
         ) {
             val icon = sensor.getSource().getIconResource()

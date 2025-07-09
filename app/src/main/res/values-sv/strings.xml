@@ -406,6 +406,7 @@
     <string name="no_password_needed">Ett gratiskonto kommer att skapas för denna e-post om du inte redan har ett. Endast e-postadress krävs. Vi håller din information säker.</string>
     <string name="none">ingen</string>
     <string name="note">Obs!</string>
+    <string name="notification_permission_needed">För att aktivera aviseringar och bakgrundsskanning, tillåt aviseringar i inställningarna</string>
     <string name="nox">NOx</string>
     <string name="nox_with_unit">NOx (%1$s)</string>
     <string name="off">Av</string>

@@ -411,6 +411,7 @@
     <string name="no_password_needed">Un compte gratuit sera créé pour cet e-mail si vous n\'en avez pas déjà un. Seule l\'adresse e-mail est requise. Nous gardons vos informations en toute sécurité.</string>
     <string name="none">non connecté</string>
     <string name="note">Note!</string>
+    <string name="notification_permission_needed">Pour activer les alertes et la numérisation en arrière-plan, autorisez les notifications dans les paramètres</string>
     <string name="nox">NOx</string>
     <string name="nox_with_unit">NOx (%1$s)</string>
     <string name="off">Désactivé</string>

@@ -417,6 +417,7 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="no_password_needed">Für diese E-Mail wird ein kostenloses Konto erstellt, falls Sie noch keines haben. Es ist nur eine E-Mail-Adresse erforderlich. Wir bewahren Ihre Informationen sicher auf.</string>
     <string name="none">keiner</string>
     <string name="note">Notiz!</string>
+    <string name="notification_permission_needed">Um Warnmeldungen und das Scannen im Hintergrund zu aktivieren, erlauben Sie Benachrichtigungen in den Einstellungen</string>
     <string name="nox">NOx</string>
     <string name="nox_with_unit">NOx (%1$s)</string>
     <string name="off">Aus</string>
