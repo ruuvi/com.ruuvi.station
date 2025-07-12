@@ -54,6 +54,7 @@ fun CircularAQIDisplay(
             icon = R.drawable.icon_air_quality,
             name = stringResource(R.string.air_quality),
             itemHeight = RuuviStationTheme.dimensions.sensorCardValueItemHeight,
+            alertActive = false,
             modifier = Modifier.padding(horizontal = RuuviStationTheme.dimensions.extended)
         ) {
             showBottomSheet = true

@@ -1,6 +1,7 @@
 package com.ruuvi.station.tagdetails.ui.elements
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -11,6 +12,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -108,9 +113,41 @@ fun SensorValueName(
     icon: Int,
     name: String,
     itemHeight: Dp,
+    alertActive: Boolean,
     modifier: Modifier = Modifier,
     clickAction: () -> Unit
 ) {
+    val frameTime = remember { mutableStateOf(0L) }
+
+    // Force recomposition at frame intervals for smooth blinking
+    LaunchedEffect(alertActive) {
+        if (alertActive) {
+            while (true) {
+                withFrameNanos {
+                        time -> frameTime.value = time
+                }
+            }
+        }
+    }
+
+    val blinkingAlpha = remember(frameTime.value) {
+        if (!alertActive) 1f else {
+            val periodNs = 1_000_000_000L // 1s period
+            val phase = (frameTime.value % periodNs).toFloat() / periodNs
+            // triangle wave from 0.3 to 1.0
+             + 0.7f * (1f - kotlin.math.abs(phase * 2f - 1f))
+        }
+    }
+
+
+    val borderModifier = if (alertActive) {
+        Modifier.border(
+            width = 1.dp,
+            color = RuuviStationTheme.colors.activeAlert.copy(alpha = blinkingAlpha),
+            shape = RoundedCornerShape(itemHeight / 2)
+        )
+    } else Modifier
+
     val internalModifier = Modifier
         .height(itemHeight)
         .clip(RoundedCornerShape(itemHeight / 2))
@@ -120,6 +157,7 @@ fun SensorValueName(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Start,
         modifier = internalModifier
+            .then(borderModifier)
             .then(modifier)
             .clickable { clickAction.invoke() }
     ) {
@@ -169,6 +207,7 @@ private fun SensorValueNamePreview() {
             icon = unitType.iconRes,
             name = stringResource(unitType.measurementTitle),
             itemHeight = RuuviStationTheme.dimensions.sensorCardValueItemHeight,
+            alertActive = false,
             modifier = Modifier,
         ) {}
     }

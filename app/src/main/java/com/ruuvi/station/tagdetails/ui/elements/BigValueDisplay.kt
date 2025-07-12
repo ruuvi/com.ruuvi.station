@@ -82,6 +82,7 @@ fun BigValueDisplay(
                 icon = value.unitType.iconRes,
                 name = stringResource(value.unitType.measurementTitle),
                 itemHeight = RuuviStationTheme.dimensions.sensorCardValueItemHeight,
+                alertActive = true,
                 modifier = Modifier.padding(horizontal = RuuviStationTheme.dimensions.extended)
             ) {
                 showBottomSheet = true
