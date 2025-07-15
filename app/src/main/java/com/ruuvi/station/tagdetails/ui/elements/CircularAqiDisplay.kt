@@ -29,6 +29,7 @@ import com.ruuvi.station.util.extensions.scaledSp
 fun CircularAQIDisplay(
     value: EnvironmentValue,
     aqi: AQI,
+    alertActive: Boolean,
     modifier: Modifier = Modifier
 ) {
     var showBottomSheet by remember { mutableStateOf(false) }
@@ -54,7 +55,7 @@ fun CircularAQIDisplay(
             icon = R.drawable.icon_air_quality,
             name = stringResource(R.string.air_quality),
             itemHeight = RuuviStationTheme.dimensions.sensorCardValueItemHeight,
-            alertActive = false,
+            alertActive = alertActive,
             modifier = Modifier.padding(horizontal = RuuviStationTheme.dimensions.extended)
         ) {
             showBottomSheet = true
@@ -94,7 +95,8 @@ private fun CircularAQIDisplayPreviewNull() {
                 co2 = null,
                 nox = null,
                 voc = null
-            )
+            ),
+            alertActive = false
         )
     }
 }
@@ -110,7 +112,8 @@ private fun CircularAQIDisplayPreviewUnhealthy() {
                 co2 = 11,
                 nox = 10,
                 voc = 10
-            )
+            ),
+            alertActive = false
         )
     }
 }
@@ -126,7 +129,8 @@ private fun CircularAQIDisplayPreviewAverage() {
                 co2 = 12,
                 nox = 15,
                 voc = 15
-            )
+            ),
+            alertActive = false
         )
     }
 }
@@ -142,7 +146,8 @@ private fun CircularAQIDisplayPreviewGood() {
                 co2 = 11,
                 nox = 1,
                 voc = 1
-            )
+            ),
+            alertActive = false
         )
     }
 }
@@ -159,7 +164,8 @@ private fun CircularAQIDisplayPreview() {
                 co2 = 11,
                 nox = 1,
                 voc = 1
-            )
+            ),
+            alertActive = false
         )
     }
 }

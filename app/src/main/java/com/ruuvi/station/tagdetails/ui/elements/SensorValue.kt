@@ -12,10 +12,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -26,6 +22,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.ruuvi.station.app.ui.components.blinkingAlpha
 import com.ruuvi.station.app.ui.components.limitScaleTo
 import com.ruuvi.station.app.ui.components.scaleUpTo
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
@@ -41,9 +38,20 @@ fun SensorValueItem(
     unit: String,
     name: String,
     itemHeight: Dp,
+    alertActive: Boolean,
     modifier: Modifier = Modifier,
     clickAction: () -> Unit
 ) {
+    val shape = RoundedCornerShape(itemHeight / 2)
+
+    val borderModifier = if (alertActive) {
+        Modifier.border(
+            width = 1.5.dp,
+            color = RuuviStationTheme.colors.activeAlert.copy(alpha = blinkingAlpha()),
+            shape = shape
+        )
+    } else Modifier
+
     val internalModifier = Modifier
         .height(itemHeight)
         .clip(RoundedCornerShape(itemHeight / 2))
@@ -53,6 +61,7 @@ fun SensorValueItem(
         horizontalArrangement = Arrangement.Start,
         modifier = modifier
             .then(internalModifier)
+            .then(borderModifier)
             .clickable { clickAction.invoke() }
     ) {
         Icon(
@@ -117,40 +126,19 @@ fun SensorValueName(
     modifier: Modifier = Modifier,
     clickAction: () -> Unit
 ) {
-    val frameTime = remember { mutableStateOf(0L) }
-
-    // Force recomposition at frame intervals for smooth blinking
-    LaunchedEffect(alertActive) {
-        if (alertActive) {
-            while (true) {
-                withFrameNanos {
-                        time -> frameTime.value = time
-                }
-            }
-        }
-    }
-
-    val blinkingAlpha = remember(frameTime.value) {
-        if (!alertActive) 1f else {
-            val periodNs = 1_000_000_000L // 1s period
-            val phase = (frameTime.value % periodNs).toFloat() / periodNs
-            // triangle wave from 0.3 to 1.0
-             + 0.7f * (1f - kotlin.math.abs(phase * 2f - 1f))
-        }
-    }
-
+    val shape = RoundedCornerShape(itemHeight / 2)
 
     val borderModifier = if (alertActive) {
         Modifier.border(
-            width = 1.dp,
-            color = RuuviStationTheme.colors.activeAlert.copy(alpha = blinkingAlpha),
-            shape = RoundedCornerShape(itemHeight / 2)
+            width = 1.5.dp,
+            color = RuuviStationTheme.colors.activeAlert.copy(alpha = blinkingAlpha()),
+            shape = shape
         )
     } else Modifier
 
     val internalModifier = Modifier
         .height(itemHeight)
-        .clip(RoundedCornerShape(itemHeight / 2))
+        .clip(shape)
         .background(Color.White.copy(alpha = 0.1f))
 
     Row(
@@ -193,6 +181,7 @@ private fun SensorValueItemPreview() {
             unit = stringResource(unitType.unit),
             name = stringResource(unitType.measurementTitle),
             itemHeight = RuuviStationTheme.dimensions.sensorCardValueItemHeight,
+            alertActive = false,
             modifier = Modifier,
         ) {}
     }

@@ -54,14 +54,20 @@ fun SensorCardLegacy(
                 if (sensor.latestMeasurement != null) {
                     CircularAQIDisplay(
                         value = firstValue,
-                        aqi = sensor.latestMeasurement.aqiScore
+                        aqi = sensor.latestMeasurement.aqiScore,
+                        alertActive = firstValue.unitType.alarmType?.let {
+                            sensor.alarmSensorStatus.triggered(it)
+                        } ?: false
                     )
                 }
             } else {
                 BigValueDisplay(
                     modifier = Modifier.padding(48.dp),
                     value = firstValue,
-                    showName = false
+                    showName = false,
+                    alertActive = firstValue.unitType.alarmType?.let {
+                        sensor.alarmSensorStatus.triggered(it)
+                    } ?: false
                 )
             }
         }
