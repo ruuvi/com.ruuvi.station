@@ -273,7 +273,7 @@
     <string name="description_text_pressure">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</string>
     <string name="description_text_signal_strength">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</string>
     <string name="description_text_sound_level">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</string>
-    <string name="description_text_temperature">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</string>
+    <string name="description_text_temperature">\u0026lt;title\u0026gt;About temperature\u0026lt;/title\u0026gt;\n\nLorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n\n\u0026lt;title\u0026gt;How to use\u0026lt;/title\u0026gt;\n\nSome how to use text</string>
     <string name="description_text_voc">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</string>
     <string name="details">Details</string>
     <string name="dfu_low_battery_warning">Sensor\'s battery voltage seems to be low and the firmware update process may fail. We recommend to replace the battery before updating.</string>

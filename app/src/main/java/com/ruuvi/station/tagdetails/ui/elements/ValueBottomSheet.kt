@@ -1,5 +1,6 @@
 package com.ruuvi.station.tagdetails.ui.elements
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -21,27 +22,34 @@ import androidx.compose.material3.SheetState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.ruuvi.station.app.ui.components.Paragraph
+import androidx.compose.ui.unit.sp
 import com.ruuvi.station.app.ui.components.limitScaleTo
 import com.ruuvi.station.app.ui.components.scaleUpTo
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.RuuviTheme
+import com.ruuvi.station.app.ui.theme.White80
 import com.ruuvi.station.app.ui.theme.ruuviStationFonts
+import com.ruuvi.station.app.ui.theme.ruuviStationFontsSizes
 import com.ruuvi.station.units.model.Accuracy
 import com.ruuvi.station.units.model.EnvironmentValue
 import com.ruuvi.station.units.model.UnitType
 import com.ruuvi.station.units.model.getDescriptionBodyResId
-import com.ruuvi.station.units.model.getDescriptionHeaderResId
+import org.apache.commons.lang3.StringEscapeUtils
+import timber.log.Timber
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -97,11 +105,12 @@ fun ValueSheetDescription(
     sheetValue: EnvironmentValue,
     modifier: Modifier = Modifier
 ) {
-    Column {
-        ValueSheetHeaderText(stringResource(sheetValue.unitType.getDescriptionHeaderResId()))
-        Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
-        Paragraph(text = stringResource(sheetValue.unitType.getDescriptionBodyResId()))
-    }
+    MarkupText(sheetValue.unitType.getDescriptionBodyResId())
+//    Column {
+//        ValueSheetHeaderText(stringResource(sheetValue.unitType.getDescriptionHeaderResId()))
+//        Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
+//        Paragraph(text = stringResource(sheetValue.unitType.getDescriptionBodyResId()))
+//    }
 }
 
 @Composable
@@ -182,6 +191,99 @@ fun ValueSheetUnitText(
         maxLines = 1
     )
 }
+
+@Composable
+fun MarkupText(@StringRes textRes: Int) {
+    val rawEscaped = stringResource(id = textRes)
+    val raw = StringEscapeUtils.unescapeHtml4(rawEscaped)
+    Timber.d("raw $raw")
+    
+    val annotatedString = remember(raw) {
+        parseInlineStyledText(
+            input = raw,
+            tagStyles = mapOf(
+                "title" to SpanStyle(
+                    fontSize = 16.sp,
+                    fontFamily = ruuviStationFonts.montserratBold,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White
+                )
+            ),
+            defaultStyle = SpanStyle(
+                color = White80,
+                fontFamily = ruuviStationFonts.mulishRegular,
+                fontSize = ruuviStationFontsSizes.normal
+            )
+        )
+    }
+
+    Text(text = annotatedString)
+}
+
+fun parseInlineStyledText(
+    input: String,
+    tagStyles: Map<String, SpanStyle>,
+    newlineAfterTags: Set<String> = setOf(),// = setOf("title", "subtitle"),
+    defaultStyle: SpanStyle? = null
+): AnnotatedString {
+    val builder = AnnotatedString.Builder()
+    val tagRegex = Regex("""<(\/?)(\w+)>""")
+    val tagStack = mutableListOf<Pair<String, Int>>()
+
+    var currentIndex = 0
+    var lastIndex = 0
+
+    val matches = tagRegex.findAll(input)
+
+    for (match in matches) {
+        val start = match.range.first
+        val end = match.range.last + 1
+        val isClosing = match.groupValues[1] == "/"
+        val tag = match.groupValues[2]
+
+        // Text before tag
+        if (start > lastIndex) {
+            val text = input.substring(lastIndex, start)
+            builder.append(text)
+            if (tagStack.isEmpty() && defaultStyle != null) {
+                builder.addStyle(defaultStyle, currentIndex, currentIndex + text.length)
+            }
+            currentIndex += text.length
+        }
+
+        if (!isClosing) {
+            tagStack.add(tag to currentIndex)
+        } else {
+            val openIndex = tagStack.indexOfLast { it.first == tag }
+            if (openIndex != -1) {
+                val (openTag, startOffset) = tagStack.removeAt(openIndex)
+                tagStyles[openTag]?.let { style ->
+                    builder.addStyle(style, startOffset, currentIndex)
+                }
+
+                if (tag in newlineAfterTags) {
+                    builder.append("\n")
+                    currentIndex += 1
+                }
+            }
+        }
+
+        lastIndex = end
+    }
+
+    // Remaining text after last tag
+    if (lastIndex < input.length) {
+        val text = input.substring(lastIndex)
+        builder.append(text)
+        if (tagStack.isEmpty() && defaultStyle != null) {
+            builder.addStyle(defaultStyle, currentIndex, currentIndex + text.length)
+        }
+    }
+
+    return builder.toAnnotatedString()
+}
+
+
 
 @Preview
 @Composable
