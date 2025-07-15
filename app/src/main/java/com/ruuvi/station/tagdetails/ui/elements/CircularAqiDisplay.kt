@@ -16,6 +16,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.max
 import com.ruuvi.station.R
 import com.ruuvi.station.app.ui.components.CircularGradientProgress
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
@@ -29,9 +32,20 @@ import com.ruuvi.station.util.extensions.scaledSp
 fun CircularAQIDisplay(
     value: EnvironmentValue,
     aqi: AQI,
+    alertActive: Boolean,
+    fitTo: Dp? = null,
     modifier: Modifier = Modifier
 ) {
     var showBottomSheet by remember { mutableStateOf(false) }
+
+    var progressSize = 130.dp
+
+    fitTo?.let { limit ->
+        val half = limit / 2
+        if (half < progressSize) {
+            progressSize = max(half, 85.dp)
+        }
+    }
 
     Column(
         modifier = modifier,
@@ -39,7 +53,8 @@ fun CircularAQIDisplay(
     ) {
         CircularGradientProgress(
             progress = aqi.score?.toFloat() ?: 0f,
-            lineColor = aqi.color
+            lineColor = aqi.color,
+            size = progressSize
         )
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.medium))
         Text(
@@ -54,6 +69,7 @@ fun CircularAQIDisplay(
             icon = R.drawable.icon_air_quality,
             name = stringResource(R.string.air_quality),
             itemHeight = RuuviStationTheme.dimensions.sensorCardValueItemHeight,
+            alertActive = alertActive,
             modifier = Modifier.padding(horizontal = RuuviStationTheme.dimensions.extended)
         ) {
             showBottomSheet = true
@@ -93,7 +109,8 @@ private fun CircularAQIDisplayPreviewNull() {
                 co2 = null,
                 nox = null,
                 voc = null
-            )
+            ),
+            alertActive = false
         )
     }
 }
@@ -109,7 +126,8 @@ private fun CircularAQIDisplayPreviewUnhealthy() {
                 co2 = 11,
                 nox = 10,
                 voc = 10
-            )
+            ),
+            alertActive = false
         )
     }
 }
@@ -125,7 +143,8 @@ private fun CircularAQIDisplayPreviewAverage() {
                 co2 = 12,
                 nox = 15,
                 voc = 15
-            )
+            ),
+            alertActive = false
         )
     }
 }
@@ -141,7 +160,8 @@ private fun CircularAQIDisplayPreviewGood() {
                 co2 = 11,
                 nox = 1,
                 voc = 1
-            )
+            ),
+            alertActive = false
         )
     }
 }
@@ -158,7 +178,8 @@ private fun CircularAQIDisplayPreview() {
                 co2 = 11,
                 nox = 1,
                 voc = 1
-            )
+            ),
+            alertActive = false
         )
     }
 }

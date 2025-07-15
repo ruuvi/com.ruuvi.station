@@ -91,6 +91,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
 import org.kodein.di.generic.instance
 import timber.log.Timber
+import kotlin.math.ceil
 
 class SensorCardActivity : NfcActivity(), KodeinAware {
 
@@ -576,8 +577,8 @@ fun SensorCard(
         if (size.height > 0) {
             Box(
                 modifier = Modifier
-                    .height(halfSize)
-                    .padding(48.dp)
+                    .defaultMinSize(minHeight = halfSize)
+                    .padding(if (halfSize < 200.dp) 8.dp else 48.dp)
             ) {
                 val firstValue = sensor.valuesToDisplay.firstOrNull()
                 if (firstValue != null) {
@@ -585,20 +586,27 @@ fun SensorCard(
                         if (sensor.latestMeasurement != null) {
                             CircularAQIDisplay(
                                 value = firstValue,
-                                aqi = sensor.latestMeasurement.aqiScore
+                                aqi = sensor.latestMeasurement.aqiScore,
+                                alertActive = firstValue.unitType.alarmType?.let {
+                                    sensor.alarmSensorStatus.triggered(it)
+                                } ?: false,
+                                fitTo = halfSize
                             )
                         }
                     } else {
                         BigValueDisplay(
                             value = firstValue,
-                            showName = true
+                            showName = true,
+                            alertActive = firstValue.unitType.alarmType?.let {
+                                sensor.alarmSensorStatus.triggered(it)
+                            } ?: false
                         )
                     }
                 }
             }
 
 
-            if ((valuesWithoutFirst.size / 2) * itemHeight <= halfSize) {
+            if (ceil(valuesWithoutFirst.size / 2.0) * (itemHeight + 8.dp) <= (size.height / 2).pxToDp()) {
                 Column(
                     verticalArrangement = Arrangement.Bottom,
                     modifier = Modifier
@@ -634,86 +642,72 @@ fun SensorValues(
     if (sensor.valuesToDisplay.size <= 1) return
     val valuesWithoutFirst = sensor.valuesToDisplay.subList(1, sensor.valuesToDisplay.size)
     var showBottomSheet by remember { mutableStateOf(false) }
-    var sheetValue by remember { mutableStateOf<EnvironmentValue?> (null) }
+    var sheetValue by remember { mutableStateOf<EnvironmentValue?>(null) }
 
-    if (valuesWithoutFirst.size <= 3) {
+    val evenValues = valuesWithoutFirst.filterIndexed { index, _ ->
+        index % 2 == 0
+    }
+    val oddValues = valuesWithoutFirst.filterIndexed { index, _ ->
+        index % 2 != 0
+    }
+
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = RuuviStationTheme.dimensions.screenPadding),
+        verticalAlignment = Alignment.Top,
+        horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally)
+    ) {
         Column(
-            modifier = modifier
-                .fillMaxHeight()
-                .widthIn(max = 180.dp)
-                .padding(start = RuuviStationTheme.dimensions.screenPadding),
-            verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.Bottom),
+            modifier = Modifier
+                .widthIn(max = 180.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.Top),
             horizontalAlignment = Alignment.Start
         ) {
-            for (value in valuesWithoutFirst) {
+            if (evenValues.isEmpty()) {
+                Box(modifier = Modifier.fillMaxWidth()) {}
+            }
+            for (value in evenValues) {
                 SensorValueItem(
                     icon = value.unitType.iconRes,
                     value = value.valueWithoutUnit,
                     unit = value.unitString,
                     itemHeight = itemHeight,
                     modifier = Modifier.fillMaxWidth(),
+                    alertActive = value.unitType.alarmType?.let {
+                        sensor.alarmSensorStatus.triggered(it)
+                    } ?: false,
                     name = value.unitType.measurementTitle.let { stringResource(it) }
-                ) {
+                )
+                {
                     sheetValue = value
                     showBottomSheet = true
                 }
             }
         }
-    } else {
-        val evenValues = valuesWithoutFirst.filterIndexed { index, _ ->
-            index % 2 == 0
-        }
-        val oddValues = valuesWithoutFirst.filterIndexed { index, _ ->
-            index % 2 != 0
-        }
-
-
-        Row(
-            modifier = modifier
-                .fillMaxWidth()
-                .padding(horizontal = RuuviStationTheme.dimensions.screenPadding),
-            verticalAlignment = Alignment.Top,
-            horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally)
+        Column(
+            modifier = Modifier
+                .widthIn(max = 180.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.Top),
+            horizontalAlignment = Alignment.Start
         ) {
-            Column(
-                modifier = Modifier
-                    .widthIn(max = 180.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.Top),
-                horizontalAlignment = Alignment.Start
-            ) {
-                for (value in evenValues) {
-                    SensorValueItem(
-                        icon = value.unitType.iconRes,
-                        value = value.valueWithoutUnit,
-                        unit = value.unitString,
-                        itemHeight = itemHeight,
-                        modifier = Modifier.fillMaxWidth(),
-                        name = value.unitType.measurementTitle.let { stringResource(it) }
-                    )
-                    {
-                        sheetValue = value
-                        showBottomSheet = true
-                    }
-                }
+            if (oddValues.isEmpty()) {
+                Box(modifier = Modifier.fillMaxWidth()) {}
             }
-            Column(
-                modifier = Modifier
-                    .widthIn(max = 180.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.Top),
-                horizontalAlignment = Alignment.Start
-            ) {
-                for (value in oddValues) {
-                    SensorValueItem(
-                        icon = value.unitType.iconRes,
-                        value = value.valueWithoutUnit,
-                        unit = value.unitString,
-                        itemHeight = itemHeight,
-                        modifier = Modifier.fillMaxWidth(),
-                        name = value.unitType.measurementTitle.let { stringResource(it) }
-                    ) {
-                        sheetValue = value
-                        showBottomSheet = true
-                    }
+            for (value in oddValues) {
+                SensorValueItem(
+                    icon = value.unitType.iconRes,
+                    value = value.valueWithoutUnit,
+                    unit = value.unitString,
+                    itemHeight = itemHeight,
+                    modifier = Modifier.fillMaxWidth(),
+                    alertActive = value.unitType.alarmType?.let {
+                        sensor.alarmSensorStatus.triggered(it)
+                    } ?: false,
+                    name = value.unitType.measurementTitle.let { stringResource(it) }
+                ) {
+                    sheetValue = value
+                    showBottomSheet = true
                 }
             }
         }

@@ -33,7 +33,6 @@ import com.ruuvi.station.app.ui.UiEvent
 import com.ruuvi.station.app.ui.components.*
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.RuuviTheme
-import com.ruuvi.station.util.extensions.navigate
 import com.ruuvi.station.util.extensions.viewModel
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware

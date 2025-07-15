@@ -1,6 +1,7 @@
 package com.ruuvi.station.tagdetails.ui.elements
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -21,6 +22,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.ruuvi.station.app.ui.components.blinkingAlpha
 import com.ruuvi.station.app.ui.components.limitScaleTo
 import com.ruuvi.station.app.ui.components.scaleUpTo
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
@@ -36,9 +38,20 @@ fun SensorValueItem(
     unit: String,
     name: String,
     itemHeight: Dp,
+    alertActive: Boolean,
     modifier: Modifier = Modifier,
     clickAction: () -> Unit
 ) {
+    val shape = RoundedCornerShape(itemHeight / 2)
+
+    val borderModifier = if (alertActive) {
+        Modifier.border(
+            width = 1.5.dp,
+            color = RuuviStationTheme.colors.activeAlert.copy(alpha = blinkingAlpha()),
+            shape = shape
+        )
+    } else Modifier
+
     val internalModifier = Modifier
         .height(itemHeight)
         .clip(RoundedCornerShape(itemHeight / 2))
@@ -48,6 +61,7 @@ fun SensorValueItem(
         horizontalArrangement = Arrangement.Start,
         modifier = modifier
             .then(internalModifier)
+            .then(borderModifier)
             .clickable { clickAction.invoke() }
     ) {
         Icon(
@@ -108,18 +122,30 @@ fun SensorValueName(
     icon: Int,
     name: String,
     itemHeight: Dp,
+    alertActive: Boolean,
     modifier: Modifier = Modifier,
     clickAction: () -> Unit
 ) {
+    val shape = RoundedCornerShape(itemHeight / 2)
+
+    val borderModifier = if (alertActive) {
+        Modifier.border(
+            width = 1.5.dp,
+            color = RuuviStationTheme.colors.activeAlert.copy(alpha = blinkingAlpha()),
+            shape = shape
+        )
+    } else Modifier
+
     val internalModifier = Modifier
         .height(itemHeight)
-        .clip(RoundedCornerShape(itemHeight / 2))
+        .clip(shape)
         .background(Color.White.copy(alpha = 0.1f))
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Start,
         modifier = internalModifier
+            .then(borderModifier)
             .then(modifier)
             .clickable { clickAction.invoke() }
     ) {
@@ -155,6 +181,7 @@ private fun SensorValueItemPreview() {
             unit = stringResource(unitType.unit),
             name = stringResource(unitType.measurementTitle),
             itemHeight = RuuviStationTheme.dimensions.sensorCardValueItemHeight,
+            alertActive = false,
             modifier = Modifier,
         ) {}
     }
@@ -169,6 +196,7 @@ private fun SensorValueNamePreview() {
             icon = unitType.iconRes,
             name = stringResource(unitType.measurementTitle),
             itemHeight = RuuviStationTheme.dimensions.sensorCardValueItemHeight,
+            alertActive = false,
             modifier = Modifier,
         ) {}
     }

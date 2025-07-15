@@ -36,6 +36,7 @@ import com.ruuvi.station.units.model.UnitType
 fun BigValueDisplay(
     value: EnvironmentValue,
     showName: Boolean,
+    alertActive: Boolean,
     modifier: Modifier = Modifier
 ) {
     var showBottomSheet by remember { mutableStateOf(false) }
@@ -82,6 +83,7 @@ fun BigValueDisplay(
                 icon = value.unitType.iconRes,
                 name = stringResource(value.unitType.measurementTitle),
                 itemHeight = RuuviStationTheme.dimensions.sensorCardValueItemHeight,
+                alertActive = alertActive,
                 modifier = Modifier.padding(horizontal = RuuviStationTheme.dimensions.extended)
             ) {
                 showBottomSheet = true
@@ -114,6 +116,7 @@ private fun BigValueDisplayPreview() {
                 unitType = UnitType.HumidityUnit.Relative
             ),
             showName = true,
+            alertActive = false,
             modifier = Modifier
         )
     }
