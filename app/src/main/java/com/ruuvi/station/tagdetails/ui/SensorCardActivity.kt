@@ -577,8 +577,8 @@ fun SensorCard(
         if (size.height > 0) {
             Box(
                 modifier = Modifier
-                    .height(halfSize)
-                    .padding(48.dp)
+                    .defaultMinSize(minHeight = halfSize)
+                    .padding(if (halfSize < 200.dp) 8.dp else 48.dp)
             ) {
                 val firstValue = sensor.valuesToDisplay.firstOrNull()
                 if (firstValue != null) {
@@ -590,6 +590,7 @@ fun SensorCard(
                                 alertActive = firstValue.unitType.alarmType?.let {
                                     sensor.alarmSensorStatus.triggered(it)
                                 } ?: false,
+                                fitTo = halfSize
                             )
                         }
                     } else {

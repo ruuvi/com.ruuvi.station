@@ -32,3 +32,13 @@ fun Dp.scaleUpTo(maxScale: Float): Dp {
     val appliedScale = min(systemFontScale, maxScale)
     return this * appliedScale
 }
+
+@Composable
+fun Dp.toSp(): TextUnit {
+    val density = LocalDensity.current
+    return with(density) {
+        val px = this@toSp.toPx()
+        val scaledDensity = density.density * fontScale
+        (px / scaledDensity).sp
+    }
+}

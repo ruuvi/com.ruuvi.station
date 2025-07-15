@@ -133,9 +133,15 @@ fun AQIDisplay(
     ){
         val (bigValue, subscript, superscript, progress) = createRefs()
 
+        val score = if (value.score == null) {
+            "-"
+        } else {
+            value.score.toString()
+        }
+
         Text(
             style = RuuviStationTheme.typography.dashboardBigValue,
-            text = value.score.toString(),
+            text = score,
             fontSize = RuuviStationTheme.fontSizes.huge.limitScaleTo(1.5f),
             color = textColor,
             modifier = Modifier.constrainAs(bigValue) {
