@@ -19,13 +19,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.max
+import androidx.compose.ui.unit.sp
 import com.ruuvi.station.R
 import com.ruuvi.station.app.ui.components.CircularGradientProgress
+import com.ruuvi.station.app.ui.components.scaleUpTo
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.RuuviTheme
 import com.ruuvi.station.units.domain.aqi.AQI
 import com.ruuvi.station.units.model.EnvironmentValue
-import com.ruuvi.station.util.extensions.scaledSp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -60,7 +61,7 @@ fun CircularAQIDisplay(
         Text(
             text = stringResource(aqi.descriptionRes),
             style = RuuviStationTheme.typography.dashboardValue,
-            fontSize = 20.scaledSp,
+            fontSize = 18.sp,
             color = Color.White
         )
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
@@ -68,7 +69,7 @@ fun CircularAQIDisplay(
         SensorValueName(
             icon = R.drawable.icon_air_quality,
             name = stringResource(R.string.air_quality),
-            itemHeight = RuuviStationTheme.dimensions.sensorCardValueItemHeight,
+            itemHeight = RuuviStationTheme.dimensions.sensorCardValueItemHeight.scaleUpTo(1.5f),
             alertActive = alertActive,
             modifier = Modifier.padding(horizontal = RuuviStationTheme.dimensions.extended)
         ) {

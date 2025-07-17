@@ -24,6 +24,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ruuvi.station.app.ui.components.limitScaleTo
+import com.ruuvi.station.app.ui.components.scaleUpTo
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.RuuviTheme
 import com.ruuvi.station.app.ui.theme.ruuviStationFonts
@@ -82,7 +83,7 @@ fun BigValueDisplay(
             SensorValueName(
                 icon = value.unitType.iconRes,
                 name = stringResource(value.unitType.measurementTitle),
-                itemHeight = RuuviStationTheme.dimensions.sensorCardValueItemHeight,
+                itemHeight = RuuviStationTheme.dimensions.sensorCardValueItemHeight.scaleUpTo(1.5f),
                 alertActive = alertActive,
                 modifier = Modifier.padding(horizontal = RuuviStationTheme.dimensions.extended)
             ) {
