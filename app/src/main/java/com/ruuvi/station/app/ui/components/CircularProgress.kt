@@ -40,7 +40,7 @@ fun CircularGradientProgress(
         modifier = modifier.size(size)
     ) {
         Canvas(modifier = Modifier.fillMaxSize().padding(8.dp)) {
-            val strokeWidth = with(density) { 6.dp.toPx() }
+            val strokeWidth = with(density) { 8.dp.toPx() }
             val size = this.size.minDimension
             val radius = size / 2
             val startAngle = 135f
