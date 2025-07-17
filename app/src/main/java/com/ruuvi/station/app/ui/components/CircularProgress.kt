@@ -29,6 +29,7 @@ import kotlin.math.sin
 @Composable
 fun CircularGradientProgress(
     progress: Float,
+    progressText: String,
     lineColor: Color,
     size: Dp = 130.dp,
     modifier: Modifier = Modifier
@@ -99,7 +100,7 @@ fun CircularGradientProgress(
 
         // Centered Label
         Text(
-            text = progress.toInt().toString(),
+            text = progressText,
             fontSize = (size / 2.4f).toSp(),
             fontFamily = ruuviStationFonts.oswaldBold,
             fontWeight = FontWeight.Bold,
@@ -131,6 +132,7 @@ fun CircularGradientProgressPreview0(
 ) {
     CircularGradientProgress(
         progress = 0f,
+        progressText = "0",
         lineColor = Color.Red,
         modifier = modifier
     )
@@ -143,6 +145,7 @@ fun CircularGradientProgressPreview25(
 ) {
     CircularGradientProgress(
         progress = 25f,
+        progressText = "25",
         lineColor = Color.Red,
         modifier = modifier
     )
@@ -155,6 +158,7 @@ fun CircularGradientProgressPreview(
 ) {
     CircularGradientProgress(
         progress = 50f,
+        progressText = "50",
         lineColor = Color.Yellow,
         modifier = modifier
     )
@@ -167,6 +171,7 @@ fun CircularGradientProgressPreview75(
 ) {
     CircularGradientProgress(
         progress = 75f,
+        progressText = "75",
         lineColor = Color.Green,
         modifier = modifier
     )
@@ -179,6 +184,7 @@ fun CircularGradientProgressPreview100(
 ) {
     CircularGradientProgress(
         progress = 100f,
+        progressText = "1000",
         lineColor = Color.Green,
         modifier = modifier
     )

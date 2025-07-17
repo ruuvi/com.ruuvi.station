@@ -7,18 +7,21 @@ import com.ruuvi.station.tag.domain.SensorMeasurements
 import kotlin.math.max
 import kotlin.math.sqrt
 
-sealed class AQI (val score: Int?) {
+sealed class AQI (val score: Double?) {
     abstract val color: Color
     abstract val descriptionRes: Int
+    abstract val scoreString: String
 
-    class CalculatedAQI (score: Int): AQI(score) {
+    class CalculatedAQI (score: Double): AQI(score) {
         override val color = getColorByScore(score)
         override val descriptionRes = getDescriptionByScore(score)
+        override val scoreString: String = score.roundHalfUp(0).toInt().toString()
     }
 
     data object UndefinedAQI: AQI(null) {
         override val color = Color.Gray
         override val descriptionRes = R.string.aqi_level_0
+        override val scoreString: String = "-"
     }
 
     companion object {
@@ -29,13 +32,13 @@ sealed class AQI (val score: Int?) {
         ): AQI {
             val distances = mutableListOf<Double>()
             pm25?.let { distances.add(scorePpm(it)) }
-            voc?.let { distances.add(scoreVoc(it)) }
-            nox?.let { distances.add(scoreNox(it)) }
+//            voc?.let { distances.add(scoreVoc(it)) }
+//            nox?.let { distances.add(scoreNox(it)) }
             co2?.let { distances.add(scoreCO2(it)) }
             if (distances.size > 0) {
-                val index = max(0, 100 - sqrt(distances.fold(0.0) { acc, value -> acc + value * value} / distances.size).roundHalfUp(0).toInt())
+                val index = max(0.0, 100f - sqrt(distances.fold(0.0) { acc, value -> acc + value * value} / distances.size).roundHalfUp(1))
                 return when (index) {
-                    in 0..100 -> CalculatedAQI(index)
+                    in 0.0..100.0 -> CalculatedAQI(index)
                     else -> UndefinedAQI
                 }
 
@@ -68,17 +71,17 @@ sealed class AQI (val score: Int?) {
             return max(0.0, (co2 - 600.0) / 10.0)
         }
 
-        private fun getColorByScore(score: Int): Color{
-            return when (score) {
-                in 0..33 -> Color.Red
-                in 34 .. 66 -> Color.Yellow
-                in 67 .. 100 -> Color.Green
+        private fun getColorByScore(score: Double): Color{
+            return when (score.roundHalfUp(0).toInt()) {
+                in 0..32 -> Color.Red
+                in 33 .. 65 -> Color.Yellow
+                in 66 .. 100 -> Color.Green
                 else -> Color.Gray
             }
         }
 
-        private fun getDescriptionByScore(score: Int): Int{
-            return when (score) {
+        private fun getDescriptionByScore(score: Double): Int{
+            return when (score.roundHalfUp(0).toInt()) {
                 in 0..20 -> R.string.aqi_level_1
                 in 21 .. 40 -> R.string.aqi_level_2
                 in 41 .. 60 -> R.string.aqi_level_3

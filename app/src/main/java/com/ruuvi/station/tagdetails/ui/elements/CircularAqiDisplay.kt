@@ -44,6 +44,7 @@ fun CircularAQIDisplay(
     ) {
         CircularGradientProgress(
             progress = aqi.score?.toFloat() ?: 0f,
+            progressText = aqi.scoreString,
             lineColor = aqi.color,
             size = progressSize
         )

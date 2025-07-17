@@ -133,15 +133,9 @@ fun AQIDisplay(
     ){
         val (bigValue, subscript, superscript, progress) = createRefs()
 
-        val score = if (value.score == null) {
-            "-"
-        } else {
-            value.score.toString()
-        }
-
         Text(
             style = RuuviStationTheme.typography.dashboardBigValue,
-            text = score,
+            text = value.scoreString,
             fontSize = RuuviStationTheme.fontSizes.huge.limitScaleTo(1.5f),
             color = textColor,
             modifier = Modifier.constrainAs(bigValue) {
@@ -173,7 +167,7 @@ fun AQIDisplay(
         )
 
         LinearProgressIndicator(
-            progress = (value.score ?: 0) / 100F,
+            progress = (value.score?.toFloat() ?: 0f) / 100F,
             color = value.color,
             modifier = Modifier
                 .constrainAs(progress) {
