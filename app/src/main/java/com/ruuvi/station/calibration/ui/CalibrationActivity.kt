@@ -5,6 +5,8 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MenuItem
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 import com.ruuvi.station.R
 import com.ruuvi.station.calibration.model.CalibrationType
@@ -19,12 +21,19 @@ class CalibrationActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         binding = ActivityCalibrationBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
+
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { view, insets ->
+            val systemBarsInsets = insets.getInsets(WindowInsetsCompat.Type.navigationBars())
+            view.setPadding(0, systemBarsInsets.top, 0, systemBarsInsets.bottom)
+            insets
+        }
 
         sensorId = intent.getStringExtra(SENSOR_ID) ?: ""
         calibrationType = intent.getSerializableExtra(CALIBRATION_TYPE) as CalibrationType
