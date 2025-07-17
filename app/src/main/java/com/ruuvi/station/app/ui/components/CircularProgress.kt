@@ -17,6 +17,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -32,13 +33,14 @@ fun CircularGradientProgress(
     size: Dp = 130.dp,
     modifier: Modifier = Modifier
 ) {
+    val density = LocalDensity.current
+
     Box(
         contentAlignment = Alignment.Center,
         modifier = modifier.size(size)
     ) {
-
         Canvas(modifier = Modifier.fillMaxSize().padding(8.dp)) {
-            val strokeWidth = 20f
+            val strokeWidth = with(density) { 6.dp.toPx() }
             val size = this.size.minDimension
             val radius = size / 2
             val startAngle = 135f

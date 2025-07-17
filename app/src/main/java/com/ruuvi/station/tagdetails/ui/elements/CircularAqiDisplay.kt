@@ -16,9 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.max
 import androidx.compose.ui.unit.sp
 import com.ruuvi.station.R
 import com.ruuvi.station.app.ui.components.CircularGradientProgress
@@ -34,19 +32,11 @@ fun CircularAQIDisplay(
     value: EnvironmentValue,
     aqi: AQI,
     alertActive: Boolean,
-    fitTo: Dp? = null,
     modifier: Modifier = Modifier
 ) {
     var showBottomSheet by remember { mutableStateOf(false) }
 
     var progressSize = 130.dp
-
-    fitTo?.let { limit ->
-        val half = limit / 2
-        if (half < progressSize) {
-            progressSize = max(half, 85.dp)
-        }
-    }
 
     Column(
         modifier = modifier,

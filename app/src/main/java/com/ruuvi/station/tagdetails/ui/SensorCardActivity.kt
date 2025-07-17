@@ -32,6 +32,7 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -589,8 +590,7 @@ fun SensorCard(
                                 aqi = sensor.latestMeasurement.aqiScore,
                                 alertActive = firstValue.unitType.alarmType?.let {
                                     sensor.alarmSensorStatus.triggered(it)
-                                } ?: false,
-                                fitTo = halfSize
+                                } ?: false
                             )
                         }
                     } else {
