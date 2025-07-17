@@ -56,7 +56,7 @@ fun CircularAQIDisplay(
         )
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
 
-        SensorValueName(
+        SensorUnitName(
             icon = R.drawable.icon_air_quality,
             name = stringResource(R.string.air_quality),
             itemHeight = RuuviStationTheme.dimensions.sensorCardValueItemHeight.scaleUpTo(1.5f),

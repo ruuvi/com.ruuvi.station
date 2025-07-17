@@ -118,7 +118,7 @@ fun SensorValueItem(
 }
 
 @Composable
-fun SensorValueName(
+fun SensorUnitName(
     icon: Int,
     name: String,
     itemHeight: Dp,
@@ -192,7 +192,7 @@ private fun SensorValueItemPreview() {
 private fun SensorValueNamePreview() {
     RuuviTheme {
         val unitType = UnitType.HumidityUnit.Relative
-        SensorValueName(
+        SensorUnitName(
             icon = unitType.iconRes,
             name = stringResource(unitType.measurementTitle),
             itemHeight = RuuviStationTheme.dimensions.sensorCardValueItemHeight,

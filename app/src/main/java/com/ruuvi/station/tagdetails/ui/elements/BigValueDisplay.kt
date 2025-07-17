@@ -80,7 +80,7 @@ fun BigValueDisplay(
         if (showName) {
             Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.medium))
 
-            SensorValueName(
+            SensorUnitName(
                 icon = value.unitType.iconRes,
                 name = stringResource(value.unitType.measurementTitle),
                 itemHeight = RuuviStationTheme.dimensions.sensorCardValueItemHeight.scaleUpTo(1.5f),
