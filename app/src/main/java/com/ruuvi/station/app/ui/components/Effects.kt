@@ -5,7 +5,6 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.runtime.*
-import androidx.compose.ui.Modifier
 import kotlinx.coroutines.delay
 
 @Composable
@@ -32,25 +31,39 @@ fun BlinkingEffect(
 }
 
 @Composable
-fun blinkingAlpha(): Float {
+fun blinkingAlpha(
+    blinkingEffect: (Long) -> Float = ::fadeBlinking
+): Float {
     var blinkingAlpha by remember { mutableStateOf(1f) }
 
     LaunchedEffect(true) {
         while (true) {
             val time = System.currentTimeMillis()
-            blinkingAlpha = mapValueToUnitRange((time % 1000).toInt())
-            delay(75)
+            blinkingAlpha = blinkingEffect(time)
+            delay(50)
         }
     }
     return blinkingAlpha
 }
 
-fun mapValueToUnitRange(value: Int): Float {
+fun onOffBlinking(time: Long): Float {
+    val value = time % 1000
     return when {
         value <= 0 -> 0f
         value in 0..350 -> value / 350f
         value in 351..650 -> 1f
-        value in 651..1000 -> 1f - ((value - 650) / 350f)
+        value in 651..999 -> 1f - ((value - 650) / 350f)
         else -> 0f
+    }
+}
+
+fun fadeBlinking(time: Long): Float {
+    return when (val value = time % 2000) {
+        in 0..100 -> 0.3f
+        in 101..700 -> 0.3f + (value - 100) / 600f * 0.7f
+        in 701..1300 -> 1f
+        in 1301..1900 -> 1f - (value - 1300) / 600f * 0.7f
+        in 1901..2000 -> 0.3f
+        else -> 0.3f
     }
 }
