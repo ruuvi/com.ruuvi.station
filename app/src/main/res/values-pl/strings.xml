@@ -21,6 +21,8 @@
     <string name="alert_cloud_connection_title">Połączenie z chmurą</string>
     <string name="alert_movement">Przesunięcia</string>
     <string name="alert_movement_description">Alarm ruchu jest wyzwalany w przypadku zmiany wartości wewnętrznego licznika ruchu czujnika. Alarm ten można wykorzystać na przykład do wykrycia ruchu drzwi lub wibracji w pobliżu czujnika.</string>
+    <string name="alert_notification_aqi_high_threshold">AQI przekracza %1$s</string>
+    <string name="alert_notification_aqi_low_threshold">AQI jest poniżej %1$s</string>
     <string name="alert_notification_co2_high_threshold">CO2 przekracza %1$s</string>
     <string name="alert_notification_co2_low_threshold">CO2 jest poniżej %1$s</string>
     <string name="alert_notification_humidity_high">Zbyt wysoka wilgotność powietrza!</string>
@@ -57,6 +59,7 @@
     <string name="android_8_required">Ta funkcja jest dostępna na urządzeniach z Androidem 8 i nowszymi. Użyj opcji eksportu do pliku CSV zamiast tego.</string>
     <string name="app_name">Ruuvi Station</string>
     <string name="aqi">AQI</string>
+    <string name="aqi_with_unit">AQI (%1$s)</string>
     <string name="background_notification_message">Możesz wyłączyć skanowanie w tle w ustawieniach</string>
     <string name="background_notification_scanning_every">Skanuj wszystko</string>
     <string name="battery_voltage">Napięcie baterii</string>
@@ -382,6 +385,7 @@
     <string name="signal_unit">dBm</string>
     <string name="skip">POMIŃ</string>
     <string name="something_went_wrong">Coś poszło nie tak</string>
+    <string name="sound">Dźwięk</string>
     <string name="sound_avg">Poziom dźwięku (średnia)</string>
     <string name="sound_peak">Poziom dźwięku (szczyt)</string>
     <string name="sound_with_unit">Dźwięk (%1$s)</string>

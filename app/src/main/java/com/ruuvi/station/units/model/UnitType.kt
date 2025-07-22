@@ -636,33 +636,14 @@ sealed class UnitType(
     }
 }
 
-fun UnitType.getDescriptionHeaderResId(): Int {
-    return when (this) {
-        is UnitType.TemperatureUnit -> R.string.description_header_temperature
-        is UnitType.HumidityUnit -> R.string.description_header_humidity
-        is UnitType.PressureUnit -> R.string.description_header_pressure
-        is UnitType.MovementUnit -> R.string.description_header_movement
-        is UnitType.BatteryVoltageUnit -> R.string.description_header_battery_voltage
-        is UnitType.Acceleration -> R.string.description_header_acceleration
-        is UnitType.SignalStrengthUnit -> R.string.description_header_signal_strength
-        is UnitType.AirQuality -> R.string.description_header_air_quality
-        is UnitType.Luminosity -> R.string.description_header_luminosity
-        is UnitType.SoundAvg -> R.string.description_header_sound_level
-        is UnitType.SoundPeak -> R.string.description_header_sound_level
-        is UnitType.CO2 -> R.string.description_header_co2
-        is UnitType.VOC -> R.string.description_header_voc
-        is UnitType.NOX -> R.string.description_header_nox
-        is UnitType.PM1 -> R.string.description_header_pm
-        is UnitType.PM25 -> R.string.description_header_pm
-        is UnitType.PM4 -> R.string.description_header_pm
-        is UnitType.PM10 -> R.string.description_header_pm
-    }
-}
-
 fun UnitType.getDescriptionBodyResId(): Int {
     return when (this) {
-        is UnitType.TemperatureUnit -> R.string.description_text_temperature
-        is UnitType.HumidityUnit -> R.string.description_text_humidity
+        is UnitType.TemperatureUnit.Celsius -> R.string.description_text_temperature_celsius
+        is UnitType.TemperatureUnit.Fahrenheit -> R.string.description_text_temperature_fahrenheit
+        is UnitType.TemperatureUnit.Kelvin -> R.string.description_text_temperature_kelvin
+        is UnitType.HumidityUnit.Relative -> R.string.description_text_humidity_relative
+        is UnitType.HumidityUnit.Absolute -> R.string.description_text_humidity_absolute
+        is UnitType.HumidityUnit.DewPoint -> R.string.description_text_humidity_dewpoint
         is UnitType.PressureUnit -> R.string.description_text_pressure
         is UnitType.MovementUnit -> R.string.description_text_movement
         is UnitType.BatteryVoltageUnit -> R.string.description_text_battery_voltage

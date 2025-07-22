@@ -40,6 +40,8 @@
     <string name="alert_dialog_title_temperature">Set temperature alert</string>
     <string name="alert_movement">Movement</string>
     <string name="alert_movement_description">Movement alert is triggered if the value of the sensor\'s internal motion counter changes. This alert can be used, for example, to detect door movement or vibration in the vicinity of the sensor.</string>
+    <string name="alert_notification_aqi_high_threshold">AQI is above %1$s</string>
+    <string name="alert_notification_aqi_low_threshold">AQI is below %1$s</string>
     <string name="alert_notification_co2_high_threshold">CO2 is above %1$s</string>
     <string name="alert_notification_co2_low_threshold">CO2 is below %1$s</string>
     <string name="alert_notification_humidity_high">Humidity too high!</string>
@@ -68,8 +70,14 @@
     <string name="alert_notification_rssi_high_threshold">Signal strength is above %1$s</string>
     <string name="alert_notification_rssi_low">Signal strength too low!</string>
     <string name="alert_notification_rssi_low_threshold">Signal strength is below %1$s</string>
+    <string name="alert_notification_sound_average_high_threshold">Sound Average is above %1$s</string>
+    <string name="alert_notification_sound_average_low_threshold">Sound Average is below %1$s</string>
     <string name="alert_notification_sound_high_threshold">Sound is above %1$s</string>
+    <string name="alert_notification_sound_instant_high_threshold">Current sound level is above %1$s</string>
+    <string name="alert_notification_sound_instant_low_threshold">Current sound level is below %1$s</string>
     <string name="alert_notification_sound_low_threshold">Sound is below %1$s</string>
+    <string name="alert_notification_sound_peak_high_threshold">Sound Peak is above %1$s</string>
+    <string name="alert_notification_sound_peak_low_threshold">Sound Peak is below %1$s</string>
     <string name="alert_notification_temperature_high">Temperature too high!</string>
     <string name="alert_notification_temperature_high_threshold">Temperature is above %1$s</string>
     <string name="alert_notification_temperature_low">Temperature too low!</string>
@@ -94,6 +102,7 @@
     <string name="aqi_level_3">Moderate</string>
     <string name="aqi_level_4">Good</string>
     <string name="aqi_level_5">Excellent</string>
+    <string name="aqi_with_unit">AQI (%1$s)</string>
     <string name="back">Back</string>
     <string name="background_image">Background image</string>
     <string name="background_interval">every %1$s min</string>
@@ -247,25 +256,13 @@
     <string name="decline">Decline</string>
     <string name="decrease_graph_size">Decrease graph size</string>
     <string name="delete_account">Delete account</string>
-    <string name="description_header_acceleration">About acceleration</string>
-    <string name="description_header_air_quality">About Air Quality</string>
-    <string name="description_header_battery_voltage">About battery voltage</string>
-    <string name="description_header_co2">About CO2</string>
-    <string name="description_header_humidity">About humidity</string>
-    <string name="description_header_luminosity">About luminosity</string>
-    <string name="description_header_movement">About movement</string>
-    <string name="description_header_nox">About NOX</string>
-    <string name="description_header_pm">About particulate matter</string>
-    <string name="description_header_pressure">About air pressure</string>
-    <string name="description_header_signal_strength">About signal strength</string>
-    <string name="description_header_sound_level">About sound level</string>
-    <string name="description_header_temperature">About temperature</string>
-    <string name="description_header_voc">About VOC</string>
     <string name="description_text_acceleration">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</string>
     <string name="description_text_air_quality">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</string>
     <string name="description_text_battery_voltage">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</string>
     <string name="description_text_co2">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</string>
-    <string name="description_text_humidity">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</string>
+    <string name="description_text_humidity_absolute">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</string>
+    <string name="description_text_humidity_dewpoint">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</string>
+    <string name="description_text_humidity_relative">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</string>
     <string name="description_text_luminosity">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</string>
     <string name="description_text_movement">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</string>
     <string name="description_text_nox">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</string>
@@ -273,7 +270,9 @@
     <string name="description_text_pressure">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</string>
     <string name="description_text_signal_strength">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</string>
     <string name="description_text_sound_level">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</string>
-    <string name="description_text_temperature">\u0026lt;title\u0026gt;About temperature\u0026lt;/title\u0026gt;\n\nLorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n\n\u0026lt;title\u0026gt;How to use\u0026lt;/title\u0026gt;\n\nSome how to use text</string>
+    <string name="description_text_temperature_celsius">\u0026lt;title\u0026gt;About temperature\u0026lt;/title\u0026gt;\n\nLorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n\n\u0026lt;title\u0026gt;How to use\u0026lt;/title\u0026gt;\n\nSome how to use text. Read more \u0026lt;link url=\"https://ruuvi.com/ideas/\"\u0026gt;here\u0026lt;/link\u0026gt;</string>
+    <string name="description_text_temperature_fahrenheit">\u0026lt;title\u0026gt;About temperature\u0026lt;/title\u0026gt;\n\nLorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n\n\u0026lt;title\u0026gt;How to use\u0026lt;/title\u0026gt;\n\nSome how to use text. Read more \u0026lt;link url=\"https://ruuvi.com/ideas/\"\u0026gt;here\u0026lt;/link\u0026gt;</string>
+    <string name="description_text_temperature_kelvin">\u0026lt;title\u0026gt;About temperature\u0026lt;/title\u0026gt;\n\nLorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n\n\u0026lt;title\u0026gt;How to use\u0026lt;/title\u0026gt;\n\nSome how to use text. Read more \u0026lt;link url=\"https://ruuvi.com/ideas/\"\u0026gt;here\u0026lt;/link\u0026gt;</string>
     <string name="description_text_voc">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</string>
     <string name="details">Details</string>
     <string name="dfu_low_battery_warning">Sensor\'s battery voltage seems to be low and the firmware update process may fail. We recommend to replace the battery before updating.</string>

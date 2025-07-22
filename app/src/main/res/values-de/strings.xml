@@ -40,6 +40,8 @@
     <string name="alert_dialog_title_temperature">Temperaturalarm einstellen</string>
     <string name="alert_movement">Bewegung</string>
     <string name="alert_movement_description">Ändert sich der Wert des sensorinternen Bewegungszählers, wird ein Bewegungsalarm ausgelöst. Mit diesem Alarm können beispielsweise Türbewegungen oder Vibrationen in der Nähe des Sensors erkannt werden.</string>
+    <string name="alert_notification_aqi_high_threshold">AQI liegt über %1$s</string>
+    <string name="alert_notification_aqi_low_threshold">AQI liegt unter %1$s</string>
     <string name="alert_notification_co2_high_threshold">CO2 liegt über %1$s</string>
     <string name="alert_notification_co2_low_threshold">CO2 liegt unter %1$s</string>
     <string name="alert_notification_humidity_high">Luftfeuchtigkeit zu hoch!</string>
@@ -94,6 +96,7 @@
     <string name="aqi_level_3">Mäßig</string>
     <string name="aqi_level_4">Gut</string>
     <string name="aqi_level_5">Ausgezeichnet</string>
+    <string name="aqi_with_unit">AQI (%1$s)</string>
     <string name="back">Zurück</string>
     <string name="background_image">Hintergrundbild</string>
     <string name="background_interval">alle %1$s min</string>

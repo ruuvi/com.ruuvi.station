@@ -59,6 +59,7 @@
     <string name="aqi_level_3">Умеренно</string>
     <string name="aqi_level_4">Хорошо</string>
     <string name="aqi_level_5">Отлично</string>
+    <string name="aqi_with_unit">AQI (%1$s)</string>
     <string name="back">Назад</string>
     <string name="background_image">Фоновое изображение</string>
     <string name="background_interval">каждые %1$s мин</string>

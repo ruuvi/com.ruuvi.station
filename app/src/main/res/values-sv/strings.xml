@@ -40,6 +40,8 @@
     <string name="alert_dialog_title_temperature">Ställ in temperaturalarm</string>
     <string name="alert_movement">Rörelse</string>
     <string name="alert_movement_description">Ett rörelselarm utlöses om värdet på sensorns interna rörelseräknare ändras. Detta larm kan till exempel användas för att detektera dörrrörelser eller vibrationer i närheten av sensorn.</string>
+    <string name="alert_notification_aqi_high_threshold">AQI är över %1$s</string>
+    <string name="alert_notification_aqi_low_threshold">AQI är under %1$s</string>
     <string name="alert_notification_co2_high_threshold">CO2 är över %1$s</string>
     <string name="alert_notification_co2_low_threshold">CO2 är under %1$s</string>
     <string name="alert_notification_humidity_high">För hög Luftfuktighet!</string>
@@ -94,6 +96,7 @@
     <string name="aqi_level_3">Måttlig</string>
     <string name="aqi_level_4">Bra</string>
     <string name="aqi_level_5">Utmärkt</string>
+    <string name="aqi_with_unit">AQI (%1$s)</string>
     <string name="back">Tillbaka</string>
     <string name="background_image">Bakgrundsbild</string>
     <string name="background_interval">varje %1$s min</string>

@@ -40,6 +40,8 @@
     <string name="alert_dialog_title_temperature">Aseta lämpötilahälytys</string>
     <string name="alert_movement">Liike</string>
     <string name="alert_movement_description">Liikehälytys laukeaa, jos anturin sisäisen liikelaskurin arvo muuttuu. Tätä hälytystä voi käyttää esimerkiksi havaitsemaan oven liikkeen tai tärinän anturin läheisyydessä.</string>
+    <string name="alert_notification_aqi_high_threshold">AQI on yli %1$s</string>
+    <string name="alert_notification_aqi_low_threshold">AQI on alle %1$s</string>
     <string name="alert_notification_co2_high_threshold">CO2 on yli %1$s</string>
     <string name="alert_notification_co2_low_threshold">CO2 on alle %1$s</string>
     <string name="alert_notification_humidity_high">Ilmankosteus liian korkea!</string>
@@ -94,6 +96,7 @@
     <string name="aqi_level_3">Kohtalainen</string>
     <string name="aqi_level_4">Hyvä</string>
     <string name="aqi_level_5">Erinomainen</string>
+    <string name="aqi_with_unit">AQI (%1$s)</string>
     <string name="back">Takaisin</string>
     <string name="background_image">Taustakuva</string>
     <string name="background_interval">joka %1$s min</string>
