@@ -167,6 +167,10 @@ class AlarmCheckInteractor(
                         val displayThreshold = unitsConverter.getDisplayValue(thresholdValue.toFloat())
                         context.getString(resource, "$displayThreshold ${context.getString(R.string.unit_pm25)}")
                     }
+                    AlarmType.AQI -> {
+                        val displayThreshold = unitsConverter.getDisplayValue(thresholdValue.toFloat())
+                        context.getString(resource, "$displayThreshold")
+                    }
                     AlarmType.MOVEMENT -> context.getString(resource)
                     else -> null
                 }
@@ -188,6 +192,7 @@ class AlarmCheckInteractor(
                 AlarmType.SOUND,
                 AlarmType.LUMINOSITY,
                 AlarmType.VOC,
+                AlarmType.AQI,
                 AlarmType.NOX -> compareWithAlarmRange()
                 AlarmType.MOVEMENT -> checkMovementData()
                 AlarmType.OFFLINE -> checkOfflineData()
@@ -299,6 +304,14 @@ class AlarmCheckInteractor(
                             it,
                             R.string.alert_notification_pm10_low_threshold to
                                     R.string.alert_notification_pm10_high_threshold
+                        )
+                    }
+                AlarmType.AQI.value ->
+                    ruuviTag.latestMeasurement?.aqi?.let {
+                        compareValues(
+                            it,
+                            R.string.alert_notification_aqi_low_threshold to
+                                    R.string.alert_notification_aqi_high_threshold
                         )
                     }
             }

@@ -98,6 +98,7 @@ class AlarmsInteractor(
     fun getAvailableAlarmTypesForSensor(sensor: RuuviTag?): Set<AlarmType> {
         return if (sensor != null) {
             val alarmTypes = mutableSetOf<AlarmType>()
+            if (sensor.latestMeasurement?.aqi != null) alarmTypes.add(AlarmType.AQI)
             if (sensor.latestMeasurement?.temperature != null) alarmTypes.add(AlarmType.TEMPERATURE)
             if (sensor.latestMeasurement?.rssi != null) alarmTypes.add(AlarmType.RSSI)
             if (sensor.latestMeasurement?.humidity != null) alarmTypes.add(AlarmType.HUMIDITY)
@@ -155,6 +156,7 @@ class AlarmsInteractor(
             AlarmType.LUMINOSITY -> context.getString(R.string.luminosity_with_unit, context.getString(R.string.unit_luminosity))
             AlarmType.VOC -> context.getString(R.string.voc_with_unit, context.getString(R.string.unit_voc))
             AlarmType.NOX -> context.getString(R.string.nox_with_unit, context.getString(R.string.unit_nox))
+            AlarmType.AQI -> context.getString(R.string.aqi)
         }
     }
 
@@ -175,6 +177,7 @@ class AlarmsInteractor(
             AlarmType.LUMINOSITY -> context.getString(R.string.unit_luminosity)
             AlarmType.VOC -> context.getString(R.string.unit_voc)
             AlarmType.NOX -> context.getString(R.string.unit_nox)
+            AlarmType.AQI -> ""
         }
     }
 
