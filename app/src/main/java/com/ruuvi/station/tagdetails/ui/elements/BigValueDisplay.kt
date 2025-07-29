@@ -38,7 +38,8 @@ fun BigValueDisplay(
     value: EnvironmentValue,
     showName: Boolean,
     alertActive: Boolean,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    clickAction: () -> Unit = {}
 ) {
     var showBottomSheet by remember { mutableStateOf(false) }
 
@@ -95,6 +96,7 @@ fun BigValueDisplay(
     if (showBottomSheet) {
         ValueBottomSheet(
             sheetValue = value,
+            chartHistory = null,
             modifier = Modifier
         ) {
             showBottomSheet = false

@@ -71,6 +71,7 @@ fun CircularAQIDisplay(
     if (showBottomSheet) {
         ValueBottomSheet(
             sheetValue = value,
+            chartHistory = null,
             modifier = Modifier
         ) {
             showBottomSheet = false

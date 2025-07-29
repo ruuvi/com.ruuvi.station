@@ -35,6 +35,8 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.util.*
 
+typealias ChartHistory = Pair<List<Long>, List<Double>>
+
 class SensorCardViewModel(
     private val arguments: SensorCardViewModelArguments,
     private val tagInteractor: TagInteractor,
@@ -82,6 +84,56 @@ class SensorCardViewModel(
 
     private val _increasedChartSize = MutableStateFlow<Boolean>(preferencesRepository.isIncreasedChartSize())
     val increasedChartSize: StateFlow<Boolean> = _increasedChartSize
+
+
+    fun getChartHistory(sensorId: String, unitType: UnitType, hours: Int): Flow<ChartHistory> =
+        flow<ChartHistory> {
+            val history = tagDetailsInteractor.getTagReadings(sensorId, 48)
+            val values = mutableListOf<Double>()
+            val times = mutableListOf<Long>()
+
+            history.forEach { item ->
+
+
+                val entryValue = when (unitType) {
+                    is TemperatureUnit -> item.temperature?.let { temperature ->
+                        unitsConverter.getTemperatureValue(temperature, unitType)
+                    }
+
+                    is HumidityUnit -> item.humidity?.let { humidity ->
+                        unitsConverter.getHumidityValue(humidity, item.temperature, unitType)
+                    }
+
+                    is PressureUnit -> item.pressure?.let { pressure ->
+                        unitsConverter.getPressureValue(pressure, unitType)
+                    }
+                    is BatteryVoltageUnit -> item.voltage
+                    is Acceleration.GForceX -> item.accelX
+                    is Acceleration.GForceY -> item.accelY
+                    is Acceleration.GForceZ -> item.accelZ
+                    is SignalStrengthUnit -> item.rssi
+                    is AirQuality -> AQI.getAQI(item.pm25, item.co2, item.voc, item.nox).score
+                    is CO2 -> item.co2
+                    is VOC -> item.voc
+                    is NOX -> item.nox
+                    is PM1 -> item.pm1
+                    is PM25 -> item.pm25
+                    is PM4 -> item.pm4
+                    is PM10 -> item.pm10
+                    is Luminosity -> item.luminosity
+                    is SoundAvg -> item.dBaAvg
+                    is SoundPeak -> item.dBaPeak
+                    else -> null
+                }
+
+                if (entryValue != null) {
+                    values.add(entryValue.toDouble())
+                    times.add(item.createdAt.time)
+                }
+            }
+
+            emit(times to values)
+        }.flowOn(Dispatchers.IO)
 
     fun historyUpdater(sensorId: String): Flow<MutableList<ChartContainer>> =
         flow<MutableList<ChartContainer>> {

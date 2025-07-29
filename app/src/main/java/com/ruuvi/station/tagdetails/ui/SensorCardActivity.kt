@@ -85,7 +85,6 @@ import com.ruuvi.station.util.base.NfcActivity
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
 import com.ruuvi.station.util.extensions.*
-import com.ruuvi.station.util.ui.dpToPx
 import com.ruuvi.station.util.ui.pxToDp
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
@@ -94,7 +93,6 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import org.kodein.di.generic.instance
 import timber.log.Timber
 import kotlin.math.ceil
-import kotlin.math.max
 
 class SensorCardActivity : NfcActivity(), KodeinAware {
 
@@ -163,7 +161,8 @@ class SensorCardActivity : NfcActivity(), KodeinAware {
                         addSensor = viewModel::addSensor,
                         changeShowStats = viewModel::changeShowChartStats,
                         saveSelected = viewModel::saveSelected,
-                        getIndex = viewModel::getIndex
+                        getIndex = viewModel::getIndex,
+                        getChartHistory = viewModel::getChartHistory
                     )
                 }
             }
@@ -259,7 +258,8 @@ fun SensorsPager(
     changeShowStats: () -> Unit,
     changeIncreasedChartSize: () -> Unit,
     saveSelected: (String) -> Unit,
-    getIndex: (String) -> Int
+    getIndex: (String) -> Int,
+    getChartHistory: (String, UnitType, Int) -> Flow<ChartHistory>
 ) {
     Timber.d("SensorsPager selected $selectedSensor sensors count ${sensors.size}")
     val systemUiController = rememberSystemUiController()
@@ -401,7 +401,8 @@ fun SensorsPager(
                             if (newSensorCard) {
                                 SensorCard(
                                     sensor = sensor,
-                                    modifier = Modifier.weight(1f)
+                                    modifier = Modifier.weight(1f),
+                                    getChartHistory = getChartHistory
                                 )
                             } else {
                                 SensorCardLegacy(
@@ -548,7 +549,8 @@ fun SensorTitle(
 @Composable
 fun SensorCard(
     modifier: Modifier = Modifier,
-    sensor: RuuviTag
+    sensor: RuuviTag,
+    getChartHistory: (String, UnitType, Int) -> Flow<ChartHistory>,
 ) {
     val itemHeight = RuuviStationTheme.dimensions.sensorCardValueItemHeight.scaleUpTo(1.5f)
     var size by remember { mutableStateOf(IntSize.Zero) }
@@ -629,14 +631,16 @@ fun SensorCard(
                     SensorValues(
                         modifier = Modifier,
                         sensor = sensor,
-                        itemHeight = itemHeight
+                        itemHeight = itemHeight,
+                        getChartHistory = getChartHistory
                     )
                 }
             } else {
                 SensorValues(
                     modifier = Modifier,
                     sensor = sensor,
-                    itemHeight = itemHeight
+                    itemHeight = itemHeight,
+                    getChartHistory = getChartHistory
                 )
             }
         }
@@ -662,7 +666,8 @@ fun <T> distributeRoundRobin(list: List<T>, n: Int): List<List<T>> {
 fun SensorValues(
     modifier: Modifier,
     sensor: RuuviTag,
-    itemHeight: Dp
+    itemHeight: Dp,
+    getChartHistory: (String, UnitType, Int) -> Flow<ChartHistory>
 ) {
     if (sensor.valuesToDisplay.size <= 1) return
     val valuesWithoutFirst = sensor.valuesToDisplay.subList(1, sensor.valuesToDisplay.size)
@@ -721,8 +726,11 @@ fun SensorValues(
     if (showBottomSheet) {
         sheetValue?.let { value ->
 
+            val chartHistory = getChartHistory(sensor.id, value.unitType, 48).collectAsState(null)
+
             ValueBottomSheet(
                 sheetValue = value,
+                chartHistory = chartHistory.value,
                 modifier = Modifier
             ) {
                 showBottomSheet = false

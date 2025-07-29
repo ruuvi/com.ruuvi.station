@@ -66,7 +66,8 @@ data class RuuviStationColors(
     val navigationTransparent: Color,
     val bannerBackground: Color,
     val indicatorColor: Color,
-    val sensorValueBottomSheetBackground: Color
+    val sensorValueBottomSheetBackground: Color,
+    val chartLine: Color
 )
 
 val lightPalette = RuuviStationColors(
@@ -101,7 +102,8 @@ val lightPalette = RuuviStationColors(
     navigationTransparent = White50,
     bannerBackground = RuuviNew,
     indicatorColor = Titan50,
-    sensorValueBottomSheetBackground = Titan
+    sensorValueBottomSheetBackground = Titan,
+    chartLine = Keppel
 )
 
 val darkPalette = RuuviStationColors(
@@ -136,5 +138,6 @@ val darkPalette = RuuviStationColors(
     navigationTransparent = Titan50,
     bannerBackground = Keppel50,
     indicatorColor = Keppel50,
-    sensorValueBottomSheetBackground = Titan
+    sensorValueBottomSheetBackground = Titan,
+    chartLine = Keppel
 )

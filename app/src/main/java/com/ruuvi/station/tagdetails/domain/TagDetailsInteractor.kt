@@ -23,9 +23,13 @@ class TagDetailsInteractor(
         sensorSettingsRepository.clearLastSync(sensorId)
 
     fun getTagReadings(sensorId: String): List<TagSensorReading> {
-        val sensorSettings = sensorSettingsRepository.getSensorSettings(sensorId)
         var viewPeriod = preferences.getGraphViewPeriodHours()
-        if (viewPeriod == 0) viewPeriod = 24 * 10
+        return getTagReadings(sensorId, viewPeriod)
+    }
+
+    fun getTagReadings(sensorId: String, hours: Int): List<TagSensorReading> {
+        val sensorSettings = sensorSettingsRepository.getSensorSettings(sensorId)
+        val viewPeriod = if (hours == 0) 24 * 10 else hours
         val history =  if (preferences.isShowAllGraphPoint()) {
             sensorHistoryRepository.getHistory(sensorId, viewPeriod)
         } else {
