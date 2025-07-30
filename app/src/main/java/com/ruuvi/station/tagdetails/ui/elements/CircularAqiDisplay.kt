@@ -5,12 +5,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Text
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -26,16 +21,14 @@ import com.ruuvi.station.app.ui.theme.RuuviTheme
 import com.ruuvi.station.units.domain.aqi.AQI
 import com.ruuvi.station.units.model.EnvironmentValue
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CircularAQIDisplay(
     value: EnvironmentValue,
     aqi: AQI,
     alertActive: Boolean,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    clickAction: () -> Unit = {}
 ) {
-    var showBottomSheet by remember { mutableStateOf(false) }
-
     var progressSize = 130.dp
 
     Column(
@@ -64,17 +57,7 @@ fun CircularAQIDisplay(
             alertActive = alertActive,
             modifier = Modifier.padding(horizontal = RuuviStationTheme.dimensions.extended)
         ) {
-            showBottomSheet = true
-        }
-    }
-
-    if (showBottomSheet) {
-        ValueBottomSheet(
-            sheetValue = value,
-            chartHistory = null,
-            modifier = Modifier
-        ) {
-            showBottomSheet = false
+            clickAction.invoke()
         }
     }
 }

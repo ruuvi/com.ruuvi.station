@@ -28,6 +28,7 @@ import com.ruuvi.station.units.domain.aqi.AQI
 import com.ruuvi.station.units.model.UnitType
 import com.ruuvi.station.units.model.UnitType.*
 import com.ruuvi.station.util.Period
+import com.ruuvi.station.vico.model.ChartData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
@@ -35,7 +36,6 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.util.*
 
-typealias ChartHistory = Pair<List<Long>, List<Double>>
 
 class SensorCardViewModel(
     private val arguments: SensorCardViewModelArguments,
@@ -86,11 +86,11 @@ class SensorCardViewModel(
     val increasedChartSize: StateFlow<Boolean> = _increasedChartSize
 
 
-    fun getChartHistory(sensorId: String, unitType: UnitType, hours: Int): Flow<ChartHistory> =
-        flow<ChartHistory> {
+    fun getChartData(sensorId: String, unitType: UnitType, hours: Int): Flow<ChartData> =
+        flow<ChartData> {
             val history = tagDetailsInteractor.getTagReadings(sensorId, 48)
             val values = mutableListOf<Double>()
-            val times = mutableListOf<Long>()
+            val timestamps = mutableListOf<Long>()
 
             history.forEach { item ->
 
@@ -123,16 +123,17 @@ class SensorCardViewModel(
                     is Luminosity -> item.luminosity
                     is SoundAvg -> item.dBaAvg
                     is SoundPeak -> item.dBaPeak
+                    is MovementUnit -> item.movementCounter
                     else -> null
                 }
 
                 if (entryValue != null) {
                     values.add(entryValue.toDouble())
-                    times.add(item.createdAt.time)
+                    timestamps.add(item.createdAt.time)
                 }
             }
 
-            emit(times to values)
+            emit(ChartData(timestamps = timestamps, values = values))
         }.flowOn(Dispatchers.IO)
 
     fun historyUpdater(sensorId: String): Flow<MutableList<ChartContainer>> =

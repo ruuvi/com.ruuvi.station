@@ -86,6 +86,7 @@ import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
 import com.ruuvi.station.util.extensions.*
 import com.ruuvi.station.util.ui.pxToDp
+import com.ruuvi.station.vico.model.ChartData
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
@@ -162,7 +163,7 @@ class SensorCardActivity : NfcActivity(), KodeinAware {
                         changeShowStats = viewModel::changeShowChartStats,
                         saveSelected = viewModel::saveSelected,
                         getIndex = viewModel::getIndex,
-                        getChartHistory = viewModel::getChartHistory
+                        getChartData = viewModel::getChartData
                     )
                 }
             }
@@ -259,7 +260,7 @@ fun SensorsPager(
     changeIncreasedChartSize: () -> Unit,
     saveSelected: (String) -> Unit,
     getIndex: (String) -> Int,
-    getChartHistory: (String, UnitType, Int) -> Flow<ChartHistory>
+    getChartData: (String, UnitType, Int) -> Flow<ChartData>
 ) {
     Timber.d("SensorsPager selected $selectedSensor sensors count ${sensors.size}")
     val systemUiController = rememberSystemUiController()
@@ -402,7 +403,7 @@ fun SensorsPager(
                                 SensorCard(
                                     sensor = sensor,
                                     modifier = Modifier.weight(1f),
-                                    getChartHistory = getChartHistory
+                                    getChartData = getChartData
                                 )
                             } else {
                                 SensorCardLegacy(
@@ -546,12 +547,15 @@ fun SensorTitle(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SensorCard(
     modifier: Modifier = Modifier,
     sensor: RuuviTag,
-    getChartHistory: (String, UnitType, Int) -> Flow<ChartHistory>,
+    getChartData: (String, UnitType, Int) -> Flow<ChartData>,
 ) {
+    var showBottomSheet by remember { mutableStateOf(false) }
+    var sheetValue by remember { mutableStateOf<EnvironmentValue?>(null) }
     val itemHeight = RuuviStationTheme.dimensions.sensorCardValueItemHeight.scaleUpTo(1.5f)
     var size by remember { mutableStateOf(IntSize.Zero) }
     var topSize by remember { mutableStateOf(IntSize.Zero) }
@@ -596,7 +600,10 @@ fun SensorCard(
                                 alertActive = firstValue.unitType.alarmType?.let {
                                     sensor.alarmSensorStatus.triggered(it)
                                 } ?: false
-                            )
+                            ) {
+                                showBottomSheet = true
+                                sheetValue = firstValue
+                            }
                         }
                     } else {
                         BigValueDisplay(
@@ -605,7 +612,10 @@ fun SensorCard(
                             alertActive = firstValue.unitType.alarmType?.let {
                                 sensor.alarmSensorStatus.triggered(it)
                             } ?: false
-                        )
+                        ) {
+                            showBottomSheet = true
+                            sheetValue = firstValue
+                        }
                     }
                 }
             }
@@ -631,17 +641,36 @@ fun SensorCard(
                     SensorValues(
                         modifier = Modifier,
                         sensor = sensor,
-                        itemHeight = itemHeight,
-                        getChartHistory = getChartHistory
-                    )
+                        itemHeight = itemHeight
+                    ) {
+                        showBottomSheet = true
+                        sheetValue = it
+                    }
                 }
             } else {
                 SensorValues(
                     modifier = Modifier,
                     sensor = sensor,
                     itemHeight = itemHeight,
-                    getChartHistory = getChartHistory
-                )
+                ) {
+                    showBottomSheet = true
+                    sheetValue = it
+                }
+            }
+        }
+    }
+
+    if (showBottomSheet) {
+        sheetValue?.let { value ->
+
+            val chartHistory = getChartData(sensor.id, value.unitType, 48).collectAsState(null)
+
+            ValueBottomSheet(
+                sheetValue = value,
+                chartHistory = chartHistory.value,
+                modifier = Modifier
+            ) {
+                showBottomSheet = false
             }
         }
     }
@@ -661,19 +690,15 @@ fun <T> distributeRoundRobin(list: List<T>, n: Int): List<List<T>> {
     return result
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SensorValues(
     modifier: Modifier,
     sensor: RuuviTag,
     itemHeight: Dp,
-    getChartHistory: (String, UnitType, Int) -> Flow<ChartHistory>
+    onValueClick: (EnvironmentValue) -> Unit
 ) {
     if (sensor.valuesToDisplay.size <= 1) return
     val valuesWithoutFirst = sensor.valuesToDisplay.subList(1, sensor.valuesToDisplay.size)
-    var showBottomSheet by remember { mutableStateOf(false) }
-    var sheetValue by remember { mutableStateOf<EnvironmentValue?>(null) }
-
 
     val configuration = LocalConfiguration.current
     val columnCount = if (configuration.screenWidthDp > 650) {
@@ -715,25 +740,9 @@ fun SensorValues(
                         name = value.unitType.measurementTitle.let { stringResource(it) }
                     )
                     {
-                        sheetValue = value
-                        showBottomSheet = true
+                        onValueClick.invoke(value)
                     }
                 }
-            }
-        }
-    }
-
-    if (showBottomSheet) {
-        sheetValue?.let { value ->
-
-            val chartHistory = getChartHistory(sensor.id, value.unitType, 48).collectAsState(null)
-
-            ValueBottomSheet(
-                sheetValue = value,
-                chartHistory = chartHistory.value,
-                modifier = Modifier
-            ) {
-                showBottomSheet = false
             }
         }
     }

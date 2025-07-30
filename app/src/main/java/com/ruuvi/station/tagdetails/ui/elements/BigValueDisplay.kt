@@ -9,12 +9,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.Text
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.Top
 import androidx.compose.ui.Modifier
@@ -32,7 +27,6 @@ import com.ruuvi.station.units.model.Accuracy
 import com.ruuvi.station.units.model.EnvironmentValue
 import com.ruuvi.station.units.model.UnitType
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BigValueDisplay(
     value: EnvironmentValue,
@@ -41,8 +35,6 @@ fun BigValueDisplay(
     modifier: Modifier = Modifier,
     clickAction: () -> Unit = {}
 ) {
-    var showBottomSheet by remember { mutableStateOf(false) }
-
     Column(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
@@ -88,18 +80,8 @@ fun BigValueDisplay(
                 alertActive = alertActive,
                 modifier = Modifier.padding(horizontal = RuuviStationTheme.dimensions.extended)
             ) {
-                showBottomSheet = true
+                clickAction.invoke()
             }
-        }
-    }
-
-    if (showBottomSheet) {
-        ValueBottomSheet(
-            sheetValue = value,
-            chartHistory = null,
-            modifier = Modifier
-        ) {
-            showBottomSheet = false
         }
     }
 }
