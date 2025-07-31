@@ -78,7 +78,7 @@ fun AlarmsGroup(
 
     Column {
         if (alarms.isNotEmpty()) SensorSettingsTitle(title = stringResource(id = R.string.alerts))
-        for (itemState in alarms.sortedBy { it.type.value }) {
+        for (itemState in alarms) {
             Timber.d("AlarmItem $itemState")
             val title = viewModel.getTitle(itemState.type)
             when (itemState.type) {

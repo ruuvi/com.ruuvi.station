@@ -8,6 +8,7 @@ import com.ruuvi.station.network.domain.OperationStatus
 import com.ruuvi.station.network.domain.RuuviNetworkInteractor
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tag.domain.canUseCloudAlerts
+import com.ruuvi.station.tag.domain.isAir
 import com.ruuvi.station.units.domain.UnitsConverter
 import com.ruuvi.station.util.extensions.equalsEpsilon
 import com.ruuvi.station.util.extensions.isInteger
@@ -98,13 +99,10 @@ class AlarmsInteractor(
     fun getAvailableAlarmTypesForSensor(sensor: RuuviTag?): Set<AlarmType> {
         return if (sensor != null) {
             val alarmTypes = mutableSetOf<AlarmType>()
-            if (sensor.latestMeasurement?.aqi != null) alarmTypes.add(AlarmType.AQI)
+            if (sensor.isAir() && sensor.latestMeasurement?.aqi != null) alarmTypes.add(AlarmType.AQI)
             if (sensor.latestMeasurement?.temperature != null) alarmTypes.add(AlarmType.TEMPERATURE)
-            if (sensor.latestMeasurement?.rssi != null) alarmTypes.add(AlarmType.RSSI)
             if (sensor.latestMeasurement?.humidity != null) alarmTypes.add(AlarmType.HUMIDITY)
             if (sensor.latestMeasurement?.pressure != null) alarmTypes.add(AlarmType.PRESSURE)
-            if (sensor.latestMeasurement?.movement != null) alarmTypes.add(AlarmType.MOVEMENT)
-            if (sensor.networkSensor && sensor.canUseCloudAlerts() ) alarmTypes.add(AlarmType.OFFLINE)
             if (sensor.latestMeasurement?.co2 != null) alarmTypes.add(AlarmType.CO2)
             if (sensor.latestMeasurement?.pm1 != null) alarmTypes.add(AlarmType.PM1)
             if (sensor.latestMeasurement?.pm25 != null) alarmTypes.add(AlarmType.PM25)
@@ -114,6 +112,9 @@ class AlarmsInteractor(
             if (sensor.latestMeasurement?.nox != null) alarmTypes.add(AlarmType.NOX)
             if (sensor.latestMeasurement?.luminosity != null) alarmTypes.add(AlarmType.LUMINOSITY)
             if (sensor.latestMeasurement?.dBaAvg != null) alarmTypes.add(AlarmType.SOUND)
+            if (sensor.latestMeasurement?.movement != null) alarmTypes.add(AlarmType.MOVEMENT)
+            if (sensor.networkSensor && sensor.canUseCloudAlerts() ) alarmTypes.add(AlarmType.OFFLINE)
+            if (sensor.latestMeasurement?.rssi != null) alarmTypes.add(AlarmType.RSSI)
             alarmTypes
         } else {
             emptySet()
