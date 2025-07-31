@@ -94,6 +94,7 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import org.kodein.di.generic.instance
 import timber.log.Timber
 import kotlin.math.ceil
+import kotlin.math.floor
 
 class SensorCardActivity : NfcActivity(), KodeinAware {
 
@@ -567,6 +568,9 @@ fun SensorCard(
         listOf()
     }
     val padding = if (halfSize < 200.dp) 8.dp else 48.dp
+    val itemSeparator = 8.dp
+    val bottomSize = (size.height - topSize.height).pxToDp() - padding - itemSeparator
+    val columnMaxWidth = 200.dp
 
     val columnModifier = modifier.fadingEdge(scrollState)
 
@@ -585,63 +589,45 @@ fun SensorCard(
             Box(
                 modifier = Modifier
                     .defaultMinSize(minHeight = halfSize)
-                    .padding(padding)
+                    .padding(top = padding, bottom = itemSeparator)
                     .onGloballyPositioned { layoutCoordinates ->
                         topSize = layoutCoordinates.size
                     }
             ) {
                 val firstValue = sensor.valuesToDisplay.firstOrNull()
                 if (firstValue != null) {
-                    if (firstValue.unitType is UnitType.AirQuality) {
-                        if (sensor.latestMeasurement != null) {
-                            CircularAQIDisplay(
-                                value = firstValue,
-                                aqi = sensor.latestMeasurement.aqiScore,
-                                alertActive = firstValue.unitType.alarmType?.let {
-                                    sensor.alarmSensorStatus.triggered(it)
-                                } ?: false
-                            ) {
-                                showBottomSheet = true
-                                sheetValue = firstValue
-                            }
-                        }
-                    } else {
-                        BigValueDisplay(
-                            value = firstValue,
-                            showName = true,
-                            alertActive = firstValue.unitType.alarmType?.let {
-                                sensor.alarmSensorStatus.triggered(it)
-                            } ?: false
-                        ) {
-                            showBottomSheet = true
-                            sheetValue = firstValue
-                        }
+                    TopMeasurement(
+                        sensor = sensor,
+                        value = firstValue,
+                    ) {
+                        showBottomSheet = true
+                        sheetValue = firstValue
                     }
                 }
             }
 
             val configuration = LocalConfiguration.current
             val columnCount = if (configuration.screenWidthDp > 650) {
-                3
+                floor(configuration.screenWidthDp / columnMaxWidth.value).toInt()
             } else {
                 2
             }
+            val rowCount = ceil(valuesWithoutFirst.size / columnCount.toFloat())
 
-            if (ceil(valuesWithoutFirst.size / columnCount.toFloat()) * (itemHeight + 8.dp) - 8.dp <= (size.height / 2).pxToDp()) {
-                Timber.d("Measure ${size.height} - ${topSize.height}")
-
+            if (rowCount * (itemHeight + itemSeparator) <= bottomSize) {
                 Column(
                     verticalArrangement = Arrangement.Bottom,
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier
-                        .height(halfSize)
-                        //.height((size.height - max(halfSize.dpToPx(),topSize.height + padding.dpToPx())).pxToDp())
+                        .height(bottomSize)
                         .fillMaxWidth()
                 ) {
                     SensorValues(
                         modifier = Modifier,
                         sensor = sensor,
-                        itemHeight = itemHeight
+                        itemHeight = itemHeight,
+                        columnCount = columnCount,
+                        columnMaxWidth = columnMaxWidth
                     ) {
                         showBottomSheet = true
                         sheetValue = it
@@ -652,6 +638,8 @@ fun SensorCard(
                     modifier = Modifier,
                     sensor = sensor,
                     itemHeight = itemHeight,
+                    columnCount = columnCount,
+                    columnMaxWidth = columnMaxWidth
                 ) {
                     showBottomSheet = true
                     sheetValue = it
@@ -676,6 +664,34 @@ fun SensorCard(
     }
 }
 
+@Composable
+fun TopMeasurement(
+    sensor: RuuviTag,
+    value: EnvironmentValue,
+    modifier: Modifier = Modifier,
+    clickAction: () -> Unit = {}
+) {
+    if (value.unitType is UnitType.AirQuality) {
+        if (sensor.latestMeasurement != null) {
+            CircularAQIDisplay(
+                value = value,
+                aqi = sensor.latestMeasurement.aqiScore,
+                alertActive = value.unitType.alarmType?.let {
+                    sensor.alarmSensorStatus.triggered(it)
+                } ?: false
+            ) { clickAction.invoke() }
+        }
+    } else {
+        BigValueDisplay(
+            value = value,
+            showName = true,
+            alertActive = value.unitType.alarmType?.let {
+                sensor.alarmSensorStatus.triggered(it)
+            } ?: false
+        ) { clickAction.invoke() }
+    }
+}
+
 fun <T> distributeRoundRobin(list: List<T>, n: Int): List<List<T>> {
     require(n > 0) { "Number of groups must be > 0" }
 
@@ -694,21 +710,15 @@ fun <T> distributeRoundRobin(list: List<T>, n: Int): List<List<T>> {
 fun SensorValues(
     modifier: Modifier,
     sensor: RuuviTag,
+    columnCount: Int,
     itemHeight: Dp,
+    columnMaxWidth: Dp,
     onValueClick: (EnvironmentValue) -> Unit
 ) {
     if (sensor.valuesToDisplay.size <= 1) return
     val valuesWithoutFirst = sensor.valuesToDisplay.subList(1, sensor.valuesToDisplay.size)
 
-    val configuration = LocalConfiguration.current
-    val columnCount = if (configuration.screenWidthDp > 650) {
-        3
-    } else {
-        2
-    }
-
     val valuesDistributed = distributeRoundRobin(valuesWithoutFirst, columnCount)
-    val columnMaxWidth = 200.dp
 
     Row(
         modifier = modifier
