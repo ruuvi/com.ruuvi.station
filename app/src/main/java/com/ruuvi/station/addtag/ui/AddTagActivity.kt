@@ -3,10 +3,13 @@ package com.ruuvi.station.addtag.ui
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
 import android.view.MenuItem
 import android.widget.AdapterView
 import android.widget.Toast
+import androidx.core.view.WindowCompat
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.snackbar.BaseTransientBottomBar.LENGTH_LONG
@@ -43,10 +46,18 @@ class AddTagActivity : NfcActivity(R.layout.activity_add_tag), KodeinAware {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+
         binding = ActivityAddTagBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setSupportActionBar(binding.toolbar)
         permissionsInteractor = PermissionsInteractor(this)
+
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+            window.statusBarColor = Color.parseColor("#01000000")
+        } else {
+            window.statusBarColor = Color.TRANSPARENT
+        }
 
         requestPermission()
         setupViewmodel()

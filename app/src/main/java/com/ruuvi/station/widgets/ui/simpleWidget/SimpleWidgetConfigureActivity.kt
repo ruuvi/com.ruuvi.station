@@ -11,6 +11,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
@@ -18,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.core.view.WindowCompat
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.ruuvi.station.R
 import com.ruuvi.station.app.ui.components.Paragraph
 import com.ruuvi.station.app.ui.components.ruuviRadioButtonColors
@@ -42,7 +44,7 @@ class SimpleWidgetConfigureActivity : AppCompatActivity(), KodeinAware {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        WindowCompat.setDecorFitsSystemWindows(window, true)
+        WindowCompat.setDecorFitsSystemWindows(window, false)
 
         appWidgetId = intent?.extras?.getInt(
             AppWidgetManager.EXTRA_APPWIDGET_ID,
@@ -58,9 +60,19 @@ class SimpleWidgetConfigureActivity : AppCompatActivity(), KodeinAware {
 
         setContent {
             RuuviTheme {
-                Column() {
+                val systemUiController = rememberSystemUiController()
+
+                Column(modifier = Modifier.systemBarsPadding()) {
                     WidgetConfigTopAppBar(viewModel, title = stringResource(id = R.string.select_sensor))
                     WidgetSetupScreen(viewModel)
+                }
+
+                val systemBarsColor = RuuviStationTheme.colors.systemBars
+                SideEffect {
+                    systemUiController.setSystemBarsColor(
+                        color = systemBarsColor,
+                        darkIcons = false
+                    )
                 }
             }
         }
