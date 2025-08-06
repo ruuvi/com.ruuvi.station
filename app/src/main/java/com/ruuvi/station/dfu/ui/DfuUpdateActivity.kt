@@ -26,6 +26,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
@@ -48,6 +51,8 @@ class DfuUpdateActivity : AppCompatActivity() , KodeinAware {
 
     private val viewModel: DfuUpdateViewModel by viewModel { TagSettingsViewModelArgs(intent.getStringExtra(SENSOR_ID) ?:"") }
 
+    private val viewModelAir: DfuAirUpdateViewModel by viewModel { intent.getStringExtra(SENSOR_ID) }
+
     private lateinit var permissionsInteractor: PermissionsInteractor
 
     val filePickerLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -58,7 +63,7 @@ class DfuUpdateActivity : AppCompatActivity() , KodeinAware {
                 Timber.d("File selected $selectedFileUri")
                 val fileName = getFileName(this, selectedFileUri)
                 Timber.d("File selected filename $fileName")
-                viewModel.upload(fileName!!, readBytesFromUri(this, selectedFileUri)!!)
+                //viewModel.upload(fileName!!, readBytesFromUri(this, selectedFileUri)!!)
             }
         }
     }
@@ -99,18 +104,60 @@ class DfuUpdateActivity : AppCompatActivity() , KodeinAware {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        WindowCompat.setDecorFitsSystemWindows(window, true)
+        WindowCompat.setDecorFitsSystemWindows(window, false)
         val sensorId = intent.getStringExtra(SENSOR_ID)
-        sensorId?.let {
-            setContent {
-                RuuviTheme {
-                    StatusBarFill {
+        permissionsInteractor = PermissionsInteractor(this)
+
+        setContent {
+            val deviceType by viewModel.deviceType.collectAsState()
+
+            RuuviTheme {
+                val navController = rememberNavController()
+                val scaffoldState = rememberScaffoldState()
+                val systemUiController = rememberSystemUiController()
+
+                val systemBarsColor = RuuviStationTheme.colors.systemBars
+
+                SideEffect {
+                    systemUiController.setSystemBarsColor(
+                        color = systemBarsColor,
+                        darkIcons = false
+                    )
+                }
+
+                StatusBarFill {
+                    if (deviceType == DeviceType.AIR) {
+                        Scaffold(
+                            modifier = Modifier
+                                .systemBarsPadding()
+                                .fillMaxSize(),
+                            backgroundColor = RuuviStationTheme.colors.background,
+                            topBar = { RuuviTopAppBar(title = "Update FW") },
+                            scaffoldState = scaffoldState
+                        ) { padding ->
+                            NavHost(
+                                modifier = Modifier.padding(padding),
+                                navController = navController,
+                                startDestination = if (deviceType == DeviceType.AIR) UpdateAir else UpdateTag
+                            ) {
+                                UpdateAir(
+                                    scaffoldState = scaffoldState,
+                                    navController = navController,
+                                    viewModel = viewModelAir
+                                )
+
+                                composable<UpdateTag> {
+                                    DfuUpdateScreen(viewModel, ::selectFile)
+                                }
+                            }
+                        }
+                    } else {
                         DfuUpdateScreen(viewModel, ::selectFile)
                     }
                 }
             }
         }
-        permissionsInteractor = PermissionsInteractor(this)
+
     }
 
     override fun onResume() {
@@ -294,13 +341,7 @@ fun ReadyForUpdateScreen(viewModel: DfuUpdateViewModel) {
         )
     }
 
-    SubtitleWithPadding(text = stringResource(id = R.string.prepare_your_sensor))
-    ParagraphWithPadding(text = stringResource(id = R.string.prepare_your_sensor_instructions_1))
-    ParagraphWithPadding(text = stringResource(id = R.string.prepare_your_sensor_instructions_2))
-    ParagraphWithPadding(text = stringResource(id = R.string.prepare_your_sensor_instructions_3))
-    ParagraphWithPadding(text = stringResource(id = R.string.prepare_your_sensor_instructions_4))
-    ParagraphWithPadding(text = stringResource(id = R.string.prepare_your_sensor_instructions_5))
-    ParagraphWithPadding(text = stringResource(id = R.string.prepare_your_sensor_instructions_6))
+    MarkupText(R.string.prepare_your_sensor_instructions)
 
     val buttonCaption = if (deviceDiscovered == true) {
         stringResource(id = R.string.start_the_update)

@@ -469,6 +469,7 @@
     <string name="pm4">PM4.0</string>
     <string name="pm4_with_unit">PM4.0 (%1$s)</string>
     <string name="prepare_your_sensor">Förbered din sensor</string>
+    <string name="prepare_your_sensor_instructions">\u0026lt;title\u0026gt;Förbered din sensor\u0026lt;/title\u0026gt;\n\n1. Öppna locket på din Ruuvi sensor\n\n2. Leta reda på små runda svarta knappar på det vita kretskortet; äldre Ruuvi-sensorer har 2 knappar märkta “R“ och “B“ medan nyare har bara en knapp utan etikett.\n\n3. Lägg sensorn i uppdateringsläge\n\n3.1. Om din sensor har två knappar: håll knappen “B” intryckt medan du trycker en gång på “R”. Släpp knapp “B”.\n\n3.2. Om din sensor har en knapp, håll knappen intryckt i 10 sekunder.\n\n4. Uppgraderingsläget lyckades om den röda lysdioden på kretskortet lyser och knappens text i appen har bytts till “Starta uppdatering“.</string>
     <string name="prepare_your_sensor_instructions_1">1. Öppna locket på din Ruuvi sensor</string>
     <string name="prepare_your_sensor_instructions_2">2. Leta reda på små runda svarta knappar på det vita kretskortet; äldre Ruuvi-sensorer har 2 knappar märkta “R“ och “B“ medan nyare har bara en knapp utan etikett.</string>
     <string name="prepare_your_sensor_instructions_3">3. Lägg sensorn i uppdateringsläge</string>

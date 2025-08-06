@@ -474,6 +474,7 @@
     <string name="pm4">PM4.0</string>
     <string name="pm4_with_unit">PM4.0 (%1$s)</string>
     <string name="prepare_your_sensor">Préparez votre capteur</string>
+    <string name="prepare_your_sensor_instructions">\u0026lt;title\u0026gt;Préparez votre capteur\u0026lt;/title\u0026gt;\n\n1. Ouvrez le couvercle de votre capteur Ruuvi\n\n2. Localisez les petits boutons ronds noirs sur la carte de circuit imprimé blanche ; les anciens capteurs Ruuvi ont 2 boutons étiquetés "R" et "B" tandis que les plus récents n\'ont qu\'un seul bouton sans étiquette.\n\n3. Mettez le capteur en mode de mise à jour :\n\n3.1. Si votre capteur est équipé de 2 boutons : maintenez le bouton "B" enfoncé tout en appuyant momentanément sur le bouton "R". Relâchez le bouton "B".\n\n3.2. Si votre capteur possède un seul bouton : maintenez le bouton enfoncé pendant 10 secondes.\n\n4. Si le réglage est réussi, vous verrez une lumière rouge fixe s\'allumer sur la carte de circuit imprimé et le bouton de l\'application passera à "Démarrer la mise à jour".</string>
     <string name="prepare_your_sensor_instructions_1">1. Ouvrez le couvercle de votre capteur Ruuvi</string>
     <string name="prepare_your_sensor_instructions_2">2. Localisez les petits boutons ronds noirs sur la carte de circuit imprimé blanche ; les anciens capteurs Ruuvi ont 2 boutons étiquetés \"R\" et \"B\" tandis que les plus récents n\'ont qu\'un seul bouton sans étiquette.</string>
     <string name="prepare_your_sensor_instructions_3">3. Mettez le capteur en mode de mise à jour :</string>

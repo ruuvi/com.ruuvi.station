@@ -273,6 +273,7 @@
     <string name="pm4">PM4.0</string>
     <string name="pm4_with_unit">PM4.0 (%1$s)</string>
     <string name="prepare_your_sensor">Przygotuj swój czujnik</string>
+    <string name="prepare_your_sensor_instructions">\u0026lt;title\u0026gt;Przygotuj swój czujnik\u0026lt;/title\u0026gt;\n\n1. Otwórz osłonę swojego czujnika Ruuvi.</string>
     <string name="prepare_your_sensor_instructions_1">1. Otwórz osłonę swojego czujnika Ruuvi.</string>
     <string name="press_to_add">Brak dodanych czujników.\nAby dodać czujniki, należy nacisnąć tu.</string>
     <string name="pressure">Ciśnienie</string>

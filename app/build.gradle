@@ -179,6 +179,8 @@ dependencies {
 
     implementation("io.coil-kt:coil:2.2.2")
     implementation("io.coil-kt:coil-compose:2.2.2")
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2" // or latest stable
+
 
     implementation("com.patrykandpatrick.vico:compose:2.1.3")
 

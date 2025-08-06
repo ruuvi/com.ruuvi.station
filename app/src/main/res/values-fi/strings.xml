@@ -469,6 +469,7 @@
     <string name="pm4">PM4.0</string>
     <string name="pm4_with_unit">PM4.0 (%1$s)</string>
     <string name="prepare_your_sensor">Laitteen asettaminen päivitystilaan</string>
+    <string name="prepare_your_sensor_instructions">\u0026lt;title\u0026gt;Laitteen asettaminen päivitystilaan\u0026lt;/title\u0026gt;\n\n1. Avaa Ruuvi-anturin suojakotelo\n\n2. Paikanna valkoisella piirilevyllä olevat pienet pyöreät mustat painikkeet; vanhemmissa Ruuvi-antureissa on 2 painiketta “R” ja “B”, kun taas uudemmissa on vain yksi nimeämätön painike.\n\n3. Aseta anturi päivitystilaan:\n\n3.1. Anturissasi on kaksi painiketta: pidä painike “B” alaspainettuna ja napauta samalla painiketta “R”. Vapauta painike “B”.\n\n3.2. Anturissasi on yksi painike: pidä painiketta alaspainettuna 10 sekunnin ajan.\n\n4. Päivitystilaan siirtyminen onnistui, mikäli piirilevyllä oleva punainen LED-valo on nyt aktiivinen ja sovelluksen painikkeen nimeksi on vaihtunut “Aloita päivitys”.</string>
     <string name="prepare_your_sensor_instructions_1">1. Avaa Ruuvi-anturin suojakotelo</string>
     <string name="prepare_your_sensor_instructions_2">2. Paikanna valkoisella piirilevyllä olevat pienet pyöreät mustat painikkeet; vanhemmissa Ruuvi-antureissa on 2 painiketta “R” ja “B”, kun taas uudemmissa on vain yksi nimeämätön painike.</string>
     <string name="prepare_your_sensor_instructions_3">3. Aseta anturi päivitystilaan:</string>
