@@ -26,7 +26,6 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.ruuvi.station.app.ui.RuuviTopAppBar
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.RuuviTheme
-import com.ruuvi.station.util.extensions.navigate
 import com.ruuvi.station.util.extensions.viewModel
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein

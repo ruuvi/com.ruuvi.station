@@ -44,7 +44,6 @@ import com.ruuvi.station.app.ui.theme.RuuviTheme
 import com.ruuvi.station.network.ui.components.SignInEmailTextField
 import com.ruuvi.station.onboarding.ui.*
 import com.ruuvi.station.startup.ui.StartupActivity
-import com.ruuvi.station.util.extensions.navigate
 import com.ruuvi.station.util.extensions.scaledSp
 import com.ruuvi.station.util.extensions.viewModel
 import kotlinx.coroutines.flow.SharedFlow
@@ -141,7 +140,13 @@ class SignInActivity: AppCompatActivity(), KodeinAware {
                         Timber.d("uiEvent $uiEvent")
                         when (uiEvent) {
                             is UiEvent.Navigate -> {
-                                navController.navigate(uiEvent)
+                                if (uiEvent.popBackStack) {
+                                    navController.navigate(uiEvent.route) {
+                                        popUpToRoute
+                                    }
+                                } else {
+                                    navController.navigate(uiEvent.route)
+                                }
                             }
                             is UiEvent.ShowSnackbar -> {
                                 scaffoldState.snackbarHostState.showSnackbar(

@@ -23,7 +23,7 @@ import timber.log.Timber
 @Composable
 fun DeveloperSettings(
     scaffoldState: ScaffoldState,
-    onNavigate: (UiEvent.Navigate) -> Unit,
+    onNavigate: (String) -> Unit,
     viewModel: DeveloperSettingsViewModel
 ) {
     val devServerEnabled = viewModel.devServerEnabled.collectAsState()
@@ -51,7 +51,7 @@ fun DeveloperSettings(
             Paragraph(text = stringResource(id = R.string.use_dev_server_description))
             SettingsElement(
                 name = "Web sharing",
-                onClick = { onNavigate.invoke(UiEvent.Navigate(SettingsRoutes.SHARINGWEB)) }
+                onClick = { onNavigate.invoke(SettingsRoutes.SHARINGWEB) }
             )
         }
     }
