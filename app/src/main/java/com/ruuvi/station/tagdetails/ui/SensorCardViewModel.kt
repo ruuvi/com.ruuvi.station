@@ -112,7 +112,7 @@ class SensorCardViewModel(
                     is Acceleration.GForceY -> item.accelY
                     is Acceleration.GForceZ -> item.accelZ
                     is SignalStrengthUnit -> item.rssi
-                    is AirQuality -> AQI.getAQI(item.pm25, item.co2, item.voc, item.nox).score
+                    is AirQuality -> AQI.getAQI(item.pm25, item.co2).score
                     is CO2 -> item.co2
                     is VOC -> item.voc
                     is NOX -> item.nox
@@ -192,7 +192,7 @@ class SensorCardViewModel(
                                 is Acceleration.GForceY -> item.accelY
                                 is Acceleration.GForceZ -> item.accelZ
                                 is SignalStrengthUnit -> item.rssi
-                                is AirQuality -> AQI.getAQI(item.pm25, item.co2, item.voc, item.nox).score
+                                is AirQuality -> AQI.getAQI(item.pm25, item.co2).score
                                 is CO2 -> item.co2
                                 is VOC -> item.voc
                                 is NOX -> item.nox

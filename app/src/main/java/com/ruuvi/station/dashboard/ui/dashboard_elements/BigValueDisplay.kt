@@ -228,9 +228,7 @@ private fun AQIDisplayDisplay() {
         AQIDisplay(
             value = AQI.getAQI(
                 pm25 = 12.0,
-                co2 = 11,
-                nox = 1,
-                voc = 1
+                co2 = 11
             ),
             alertTriggered = false,
             modifier = Modifier

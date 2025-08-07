@@ -10,6 +10,8 @@ import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.units.domain.AccelerationAxis
 import com.ruuvi.station.units.domain.AccelerationConverter
 import com.ruuvi.station.units.domain.UnitsConverter
+import com.ruuvi.station.units.domain.aqi.AQI
+import com.ruuvi.station.units.model.UnitType
 import com.ruuvi.station.util.extensions.*
 import com.ruuvi.station.widgets.data.*
 import kotlinx.coroutines.sync.Mutex
@@ -120,6 +122,75 @@ class WidgetInteractor (
                     unit = accelerationConverter.getAccelerationUnit(AccelerationAxis.AXIS_Z)
                 )
 
+                val aqiValue = SensorValue(
+                    type = WidgetType.AIR_QUALITY,
+                    sensorValue = if (lastMeasurement.co2 != null && lastMeasurement.pm25 != null) AQI.getAQI(pm25 = lastMeasurement.pm25, co2 = lastMeasurement.co2).scoreString else UNDEFINED_VALUE,
+                    unit = context.getString(UnitType.AirQuality.AqiIndex.unit)
+                )
+
+                val luminosityValue = SensorValue(
+                    type = WidgetType.LUMINOSITY,
+                    sensorValue = lastMeasurement.luminosity?.let { context.getString(UnitType.Luminosity.Lux.defaultAccuracy.nameTemplateId, it, "") } ?: UNDEFINED_VALUE,
+                    unit = context.getString(UnitType.Luminosity.Lux.unit)
+                )
+
+                val pm10Value = SensorValue(
+                    type = WidgetType.PM10,
+                    sensorValue = lastMeasurement.pm1?.let {
+                        context.getString(UnitType.PM1.Mgm3.defaultAccuracy.nameTemplateId, it, "")
+                    } ?: UNDEFINED_VALUE,
+                    unit = context.getString(UnitType.PM1.Mgm3.unit)
+                )
+
+                val pm25Value = SensorValue(
+                    type = WidgetType.PM25,
+                    sensorValue = lastMeasurement.pm25?.let {
+                        context.getString(UnitType.PM25.Mgm3.defaultAccuracy.nameTemplateId, it, "")
+                    } ?: UNDEFINED_VALUE,
+                    unit = context.getString(UnitType.PM25.Mgm3.unit)
+                )
+
+                val pm40Value = SensorValue(
+                    type = WidgetType.PM40,
+                    sensorValue = lastMeasurement.pm4?.let {
+                        context.getString(UnitType.PM4.Mgm3.defaultAccuracy.nameTemplateId, it, "")
+                    } ?: UNDEFINED_VALUE,
+                    unit = context.getString(UnitType.PM4.Mgm3.unit)
+                )
+
+                val pm100Value = SensorValue(
+                    type = WidgetType.PM100,
+                    sensorValue = lastMeasurement.pm10?.let {
+                        context.getString(UnitType.PM10.Mgm3.defaultAccuracy.nameTemplateId, it, "")
+                    } ?: UNDEFINED_VALUE,
+                    unit = context.getString(UnitType.PM10.Mgm3.unit)
+                )
+
+                val co2Value = SensorValue(
+                    type = WidgetType.CO2,
+                    sensorValue = lastMeasurement.co2?.let {
+                        context.getString(UnitType.CO2.Ppm.defaultAccuracy.nameTemplateId, it, "")
+                    } ?: UNDEFINED_VALUE,
+                    unit = context.getString(UnitType.CO2.Ppm.unit)
+                )
+
+                val vocValue = SensorValue(
+                    type = WidgetType.VOC,
+                    sensorValue = lastMeasurement.voc?.let {
+                        context.getString(UnitType.VOC.VocIndex.defaultAccuracy.nameTemplateId, it, "")
+                    } ?: UNDEFINED_VALUE,
+                    unit = context.getString(UnitType.VOC.VocIndex.unit)
+                )
+
+                val noxValue = SensorValue(
+                    type = WidgetType.NOX,
+                    sensorValue = lastMeasurement.nox?.let {
+                        context.getString(UnitType.NOX.NoxIndex.defaultAccuracy.nameTemplateId, it, "")
+                    } ?: UNDEFINED_VALUE,
+                    unit = context.getString(UnitType.NOX.NoxIndex.unit)
+                )
+
+
                 result.updated = if (lastMeasurement.updatedAt.diffGreaterThan(hours24)) {
                     lastMeasurement.updatedAt.localizedDate(context)
                 } else {
@@ -127,6 +198,7 @@ class WidgetInteractor (
                 }
 
                 val sensorValues: MutableList<SensorValue> = mutableListOf()
+                if (settings?.checkedAQI == true) sensorValues.add(aqiValue)
                 if (settings?.checkedTemperature == true) sensorValues.add(temperatureValue)
                 if (settings?.checkedHumidity == true) sensorValues.add(humidityValue)
                 if (settings?.checkedPressure == true) sensorValues.add(pressureValue)
@@ -136,6 +208,14 @@ class WidgetInteractor (
                 if (settings?.checkedAccelerationX == true) sensorValues.add(accelerationXValue)
                 if (settings?.checkedAccelerationY == true) sensorValues.add(accelerationYValue)
                 if (settings?.checkedAccelerationZ == true) sensorValues.add(accelerationZValue)
+                if (settings?.checkedLuminosity == true) sensorValues.add(luminosityValue)
+                if (settings?.checkedPM10 == true) sensorValues.add(pm10Value)
+                if (settings?.checkedPM25 == true) sensorValues.add(pm25Value)
+                if (settings?.checkedPM40 == true) sensorValues.add(pm40Value)
+                if (settings?.checkedPM100 == true) sensorValues.add(pm100Value)
+                if (settings?.checkedCO2 == true) sensorValues.add(co2Value)
+                if (settings?.checkedVOC == true) sensorValues.add(vocValue)
+                if (settings?.checkedNOX == true) sensorValues.add(noxValue)
                 result.sensorValues = sensorValues
             }
             return result
@@ -213,6 +293,74 @@ class WidgetInteractor (
                 unit = accelerationConverter.getAccelerationUnit(AccelerationAxis.AXIS_Z)
             )
 
+            val aqiValue = SensorValue(
+                type = WidgetType.AIR_QUALITY,
+                sensorValue = if (lastMeasurement.aqi != null)  lastMeasurement.aqi.valueWithoutUnit else UNDEFINED_VALUE,
+                unit = context.getString(UnitType.AirQuality.AqiIndex.unit)
+            )
+
+            val luminosityValue = SensorValue(
+                type = WidgetType.LUMINOSITY,
+                sensorValue = lastMeasurement.luminosity?.let { context.getString(UnitType.Luminosity.Lux.defaultAccuracy.nameTemplateId, it.value, "") } ?: UNDEFINED_VALUE,
+                unit = context.getString(UnitType.Luminosity.Lux.unit)
+            )
+
+            val pm10Value = SensorValue(
+                type = WidgetType.PM10,
+                sensorValue = lastMeasurement.pm1?.let {
+                    context.getString(UnitType.PM1.Mgm3.defaultAccuracy.nameTemplateId, it.value, "")
+                } ?: UNDEFINED_VALUE,
+                unit = context.getString(UnitType.PM1.Mgm3.unit)
+            )
+
+            val pm25Value = SensorValue(
+                type = WidgetType.PM25,
+                sensorValue = lastMeasurement.pm25?.let {
+                    context.getString(UnitType.PM25.Mgm3.defaultAccuracy.nameTemplateId, it.value, "")
+                } ?: UNDEFINED_VALUE,
+                unit = context.getString(UnitType.PM25.Mgm3.unit)
+            )
+
+            val pm40Value = SensorValue(
+                type = WidgetType.PM40,
+                sensorValue = lastMeasurement.pm4?.let {
+                    context.getString(UnitType.PM4.Mgm3.defaultAccuracy.nameTemplateId, it.value, "")
+                } ?: UNDEFINED_VALUE,
+                unit = context.getString(UnitType.PM4.Mgm3.unit)
+            )
+
+            val pm100Value = SensorValue(
+                type = WidgetType.PM100,
+                sensorValue = lastMeasurement.pm10?.let {
+                    context.getString(UnitType.PM10.Mgm3.defaultAccuracy.nameTemplateId, it.value, "")
+                } ?: UNDEFINED_VALUE,
+                unit = context.getString(UnitType.PM10.Mgm3.unit)
+            )
+
+            val co2Value = SensorValue(
+                type = WidgetType.CO2,
+                sensorValue = lastMeasurement.co2?.let {
+                    context.getString(UnitType.CO2.Ppm.defaultAccuracy.nameTemplateId, it.value, "")
+                } ?: UNDEFINED_VALUE,
+                unit = context.getString(UnitType.CO2.Ppm.unit)
+            )
+
+            val vocValue = SensorValue(
+                type = WidgetType.VOC,
+                sensorValue = lastMeasurement.voc?.let {
+                    context.getString(UnitType.VOC.VocIndex.defaultAccuracy.nameTemplateId, it.value, "")
+                } ?: UNDEFINED_VALUE,
+                unit = context.getString(UnitType.VOC.VocIndex.unit)
+            )
+
+            val noxValue = SensorValue(
+                type = WidgetType.NOX,
+                sensorValue = lastMeasurement.nox?.let {
+                    context.getString(UnitType.NOX.NoxIndex.defaultAccuracy.nameTemplateId, it.value, "")
+                } ?: UNDEFINED_VALUE,
+                unit = context.getString(UnitType.NOX.NoxIndex.unit)
+            )
+
             result.updated = if (lastMeasurement.updatedAt.diffGreaterThan(hours24)) {
                 lastMeasurement.updatedAt.localizedDate(context)
             } else {
@@ -220,6 +368,7 @@ class WidgetInteractor (
             }
 
             val sensorValues: MutableList<SensorValue> = mutableListOf()
+            if (settings?.checkedAQI == true) sensorValues.add(aqiValue)
             if (settings?.checkedTemperature == true) sensorValues.add(temperatureValue)
             if (settings?.checkedHumidity == true) sensorValues.add(humidityValue)
             if (settings?.checkedPressure == true) sensorValues.add(pressureValue)
@@ -229,6 +378,14 @@ class WidgetInteractor (
             if (settings?.checkedAccelerationX == true) sensorValues.add(accelerationXValue)
             if (settings?.checkedAccelerationY == true) sensorValues.add(accelerationYValue)
             if (settings?.checkedAccelerationZ == true) sensorValues.add(accelerationZValue)
+            if (settings?.checkedLuminosity == true) sensorValues.add(luminosityValue)
+            if (settings?.checkedPM10 == true) sensorValues.add(pm10Value)
+            if (settings?.checkedPM25 == true) sensorValues.add(pm25Value)
+            if (settings?.checkedPM40 == true) sensorValues.add(pm40Value)
+            if (settings?.checkedPM100 == true) sensorValues.add(pm100Value)
+            if (settings?.checkedCO2 == true) sensorValues.add(co2Value)
+            if (settings?.checkedVOC == true) sensorValues.add(vocValue)
+            if (settings?.checkedNOX == true) sensorValues.add(noxValue)
             result.sensorValues = sensorValues
         }
         return result
@@ -340,6 +497,42 @@ class WidgetInteractor (
                     unit = accelerationConverter.getAccelerationUnit(AccelerationAxis.AXIS_Z)
                     sensorValue = accelerationConverter.getAccelerationStringWithoutUnit(tag.latestMeasurement.accelerationZ)
                 }
+                WidgetType.AIR_QUALITY -> {
+                    unit = tag.latestMeasurement.aqi?.unitString ?: ""
+                    sensorValue = tag.latestMeasurement.aqi?.valueWithoutUnit ?: UNDEFINED_VALUE
+                }
+                WidgetType.LUMINOSITY -> {
+                    unit = tag.latestMeasurement.luminosity?.unitString ?: ""
+                    sensorValue = tag.latestMeasurement.luminosity?.valueWithoutUnit ?: UNDEFINED_VALUE
+                }
+                WidgetType.CO2 -> {
+                    unit = tag.latestMeasurement.co2?.unitString ?: ""
+                    sensorValue = tag.latestMeasurement.co2?.valueWithoutUnit ?: UNDEFINED_VALUE
+                }
+                WidgetType.VOC -> {
+                    unit = tag.latestMeasurement.voc?.unitString ?: ""
+                    sensorValue = tag.latestMeasurement.voc?.valueWithoutUnit ?: UNDEFINED_VALUE
+                }
+                WidgetType.NOX -> {
+                    unit = tag.latestMeasurement.nox?.unitString ?: ""
+                    sensorValue = tag.latestMeasurement.nox?.valueWithoutUnit ?: UNDEFINED_VALUE
+                }
+                WidgetType.PM10 -> {
+                    unit = tag.latestMeasurement.pm1?.unitString ?: ""
+                    sensorValue = tag.latestMeasurement.pm1?.valueWithoutUnit ?: UNDEFINED_VALUE
+                }
+                WidgetType.PM25 -> {
+                    unit = tag.latestMeasurement.pm25?.unitString ?: ""
+                    sensorValue = tag.latestMeasurement.pm25?.valueWithoutUnit ?: UNDEFINED_VALUE
+                }
+                WidgetType.PM40 -> {
+                    unit = tag.latestMeasurement.pm4?.unitString ?: ""
+                    sensorValue = tag.latestMeasurement.pm4?.valueWithoutUnit ?: UNDEFINED_VALUE
+                }
+                WidgetType.PM100 -> {
+                    unit = tag.latestMeasurement.pm10?.unitString ?: ""
+                    sensorValue = tag.latestMeasurement.pm10?.valueWithoutUnit ?: UNDEFINED_VALUE
+                }
             }
             val updatedDate = tag.latestMeasurement.updatedAt
             val updated = if (updatedDate.diffGreaterThan(hours24)) {
@@ -409,7 +602,7 @@ class WidgetInteractor (
                     WidgetType.VOLTAGE -> {
                         unit = context.getString(R.string.voltage_unit)
                         sensorValue =
-                            context.getString(R.string.voltage_reading, decoded.voltage.toString(), "")
+                            context.getString(R.string.voltage_reading, decoded.voltage, "")
                                 .trim()
                     }
                     WidgetType.SIGNAL_STRENGTH -> {
@@ -427,6 +620,42 @@ class WidgetInteractor (
                     WidgetType.ACCELERATION_Z -> {
                         unit = accelerationConverter.getAccelerationUnit(AccelerationAxis.AXIS_Z)
                         sensorValue = accelerationConverter.getAccelerationStringWithoutUnit(decoded.accelZ)
+                    }
+                    WidgetType.AIR_QUALITY -> {
+                        unit = context.getString(UnitType.AirQuality.AqiIndex.unit)
+                        sensorValue = AQI.getAQI(pm25 = decoded.pm25, co2 = decoded.co2).scoreString
+                    }
+                    WidgetType.LUMINOSITY -> {
+                        unit = context.getString(UnitType.Luminosity.Lux.unit)
+                        sensorValue = context.getString(UnitType.Luminosity.Lux.defaultAccuracy.nameTemplateId, decoded.luminosity, "");
+                    }
+                    WidgetType.CO2 -> {
+                        unit = context.getString(UnitType.CO2.Ppm.unit)
+                        sensorValue = context.getString(UnitType.CO2.Ppm.defaultAccuracy.nameTemplateId, decoded.co2, "");
+                    }
+                    WidgetType.VOC -> {
+                        unit = context.getString(UnitType.VOC.VocIndex.unit)
+                        sensorValue = context.getString(UnitType.VOC.VocIndex.defaultAccuracy.nameTemplateId, decoded.voc, "");
+                    }
+                    WidgetType.NOX -> {
+                        unit = context.getString(UnitType.NOX.NoxIndex.unit)
+                        sensorValue = context.getString(UnitType.NOX.NoxIndex.defaultAccuracy.nameTemplateId, decoded.nox, "");
+                    }
+                    WidgetType.PM10 -> {
+                        unit = context.getString(UnitType.PM1.Mgm3.unit)
+                        sensorValue = context.getString(UnitType.PM1.Mgm3.defaultAccuracy.nameTemplateId, decoded.pm1, "");
+                    }
+                    WidgetType.PM25 -> {
+                        unit = context.getString(UnitType.PM25.Mgm3.unit)
+                        sensorValue = context.getString(UnitType.PM25.Mgm3.defaultAccuracy.nameTemplateId, decoded.pm25, "");
+                    }
+                    WidgetType.PM40 -> {
+                        unit = context.getString(UnitType.PM4.Mgm3.unit)
+                        sensorValue = context.getString(UnitType.PM4.Mgm3.defaultAccuracy.nameTemplateId, decoded.pm4, "");
+                    }
+                    WidgetType.PM100 -> {
+                        unit = context.getString(UnitType.PM10.Mgm3.unit)
+                        sensorValue = context.getString(UnitType.PM10.Mgm3.defaultAccuracy.nameTemplateId, decoded.pm10, "");
                     }
                 }
 
@@ -460,4 +689,8 @@ class WidgetInteractor (
     fun emptyComplexResult(sensorId: String): ComplexWidgetData = ComplexWidgetData(sensorId, Date(0), context.getString(R.string.no_data), emptyList(), null)
 
     private fun isCloudSensor(sensor: RuuviTag) = sensor.networkLastSync != null
+
+    companion object {
+        const val UNDEFINED_VALUE = "-"
+    }
 }

@@ -46,7 +46,7 @@ data class RuuviTag(
 
     companion object {
         fun dataFormatIsAir(dataFormat: Int?): Boolean {
-            return dataFormat == 0xE0 || dataFormat == 0xF0
+            return dataFormat == 0xE0 || dataFormat == 0xF0 || dataFormat == 0xE1 || dataFormat == 0x06
         }
     }
 }

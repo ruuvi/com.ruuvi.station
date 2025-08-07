@@ -26,9 +26,7 @@ sealed class AQI (val score: Double?) {
 
     companion object {
         fun getAQI(pm25: Double?,
-                   co2: Int?,
-                   voc: Int?,
-                   nox: Int?
+                   co2: Int?
         ): AQI {
             val distances = mutableListOf<Double>()
             pm25?.let { distances.add(scorePpm(it)) }
@@ -51,8 +49,6 @@ sealed class AQI (val score: Double?) {
             getAQI(
                 measurements.pm25?.value,
                 measurements.co2?.value?.toInt(),
-                measurements.voc?.value?.toInt(),
-                measurements.nox?.value?.toInt()
             )
 
         private fun scorePpm(pm: Double): Double {

@@ -99,7 +99,7 @@ class CsvExporter(
                 fileWriter.append(dateFormat.format(reading.createdAt))
                 fileWriter.append(',')
                 if (tag?.dataFormat == 0xE0) {
-                    fileWriter.append(AQI.getAQI(reading.pm25, reading.co2, reading.voc, reading.nox).score?.let { it.toString() } ?: nullValue)
+                    fileWriter.append(AQI.getAQI(reading.pm25, reading.co2).score?.let { it.toString() } ?: nullValue)
                     fileWriter.append(',')
                 }
                 fileWriter.append(reading.temperature?. let { unitsConverter.getTemperatureValue(it).toString() } ?: nullValue)

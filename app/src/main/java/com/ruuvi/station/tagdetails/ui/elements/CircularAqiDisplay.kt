@@ -82,9 +82,7 @@ private fun CircularAQIDisplayPreviewNull() {
             environmentValue,
             AQI.getAQI(
                 pm25 = null,
-                co2 = null,
-                nox = null,
-                voc = null
+                co2 = null
             ),
             alertActive = false
         )
@@ -99,9 +97,7 @@ private fun CircularAQIDisplayPreviewUnhealthy() {
             environmentValue,
             AQI.getAQI(
                 pm25 = 95.0,
-                co2 = 11,
-                nox = 10,
-                voc = 10
+                co2 = 11
             ),
             alertActive = false
         )
@@ -116,9 +112,7 @@ private fun CircularAQIDisplayPreviewAverage() {
             environmentValue,
             AQI.getAQI(
                 pm25 = 77.0,
-                co2 = 12,
-                nox = 15,
-                voc = 15
+                co2 = 12
             ),
             alertActive = false
         )
@@ -133,9 +127,7 @@ private fun CircularAQIDisplayPreviewGood() {
             environmentValue,
             AQI.getAQI(
                 pm25 = 50.0,
-                co2 = 11,
-                nox = 1,
-                voc = 1
+                co2 = 11
             ),
             alertActive = false
         )
@@ -151,9 +143,7 @@ private fun CircularAQIDisplayPreview() {
             environmentValue,
             AQI.getAQI(
                 pm25 = 12.0,
-                co2 = 11,
-                nox = 1,
-                voc = 1
+                co2 = 11
             ),
             alertActive = false
         )

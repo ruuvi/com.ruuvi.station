@@ -47,9 +47,7 @@ class TagConverter(
             latestMeasurement = SensorMeasurements(
                 aqi = unitsConverter.getAqiEnviromentValue(AQI.getAQI(
                     pm25 = entity.pm25,
-                    co2 = entity.co2,
-                    nox = entity.nox,
-                    voc = entity.voc)
+                    co2 = entity.co2)
                 ),
                 temperature = temperature?.let { unitsConverter.getTemperatureEnvironmentValue(it) },
                 pressure = pressure?.let { unitsConverter.getPressureEnvironmentValue(it) },
@@ -175,9 +173,7 @@ class TagConverter(
                     valuesToDisplay.add(
                         unitsConverter.getAqiEnviromentValue(AQI.getAQI(
                             pm25 = entity.pm25,
-                            co2 = entity.co2,
-                            nox = entity.nox,
-                            voc = entity.voc)
+                            co2 = entity.co2)
                         )
                     )
                 }
@@ -259,9 +255,7 @@ class TagConverter(
                 SensorMeasurements(
                     aqi = unitsConverter.getAqiEnviromentValue(AQI.getAQI(
                         pm25 = entity.pm25,
-                        co2 = entity.co2,
-                        nox = entity.nox,
-                        voc = entity.voc)
+                        co2 = entity.co2)
                     ),
                     temperature = temperature?.let {
                         unitsConverter.getTemperatureEnvironmentValue(it)

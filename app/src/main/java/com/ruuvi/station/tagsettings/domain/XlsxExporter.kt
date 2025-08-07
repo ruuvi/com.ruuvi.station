@@ -150,7 +150,7 @@ class XlsxExporter (
             dateFormat.format(reading.createdAt)
         )
         if (dataFormat == 0xE0) {
-            dataRow.add(AQI.getAQI(reading.pm25, reading.co2, reading.voc, reading.nox).score)
+            dataRow.add(AQI.getAQI(reading.pm25, reading.co2).score)
         }
         dataRow.add(reading.temperature?.let { unitsConverter.getTemperatureValue(it) })
         dataRow.add(reading.humidity?.let { unitsConverter.getHumidityValue(it, reading.temperature) })

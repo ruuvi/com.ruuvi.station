@@ -1,20 +1,19 @@
 package com.ruuvi.station.widgets.ui
 
-import android.app.Activity
+import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.LiveData
@@ -29,7 +28,7 @@ fun WidgetConfigTopAppBar(
     viewModel: ICloudWidgetViewModel,
     title: String
 ) {
-    val context = LocalContext.current as Activity
+    val activity = LocalActivity.current
     val readyToBeSaved by viewModel.canBeSaved.observeAsState()
     val systemUiController = rememberSystemUiController()
 
@@ -39,9 +38,9 @@ fun WidgetConfigTopAppBar(
         },
         navigationIcon = {
             IconButton(onClick = {
-                context.onBackPressed()
+                activity?.finish()
             }) {
-                Icon(Icons.Default.ArrowBack, stringResource(id = R.string.back))
+                Icon(Icons.AutoMirrored.Filled.ArrowBack, stringResource(id = R.string.back))
             }
         },
         backgroundColor = RuuviStationTheme.colors.topBar,
@@ -62,25 +61,11 @@ fun WidgetConfigTopAppBar(
         }
     )
 
-    val systemBarsColor = RuuviStationTheme.colors.systemBars
+    val systemBarsColor = RuuviStationTheme.colors.topBar
     SideEffect {
         systemUiController.setSystemBarsColor(
             color = systemBarsColor,
             darkIcons = false
-        )
-    }
-}
-
-@Composable
-fun LogInFirstScreen() {
-    Column() {
-        Paragraph(
-            text = stringResource(id = R.string.widgets_sign_in_first),
-            modifier = Modifier.padding(RuuviStationTheme.dimensions.screenPadding)
-        )
-        Paragraph(
-            text = stringResource(id = R.string.widgets_gateway_only),
-            modifier = Modifier.padding(RuuviStationTheme.dimensions.screenPadding)
         )
     }
 }

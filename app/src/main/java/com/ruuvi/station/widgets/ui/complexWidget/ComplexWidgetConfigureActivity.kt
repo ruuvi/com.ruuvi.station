@@ -9,19 +9,17 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.AnnotatedString
 import androidx.core.view.WindowCompat
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.ruuvi.station.R
 import com.ruuvi.station.app.ui.components.Paragraph
 import com.ruuvi.station.app.ui.components.ruuviCheckboxColors
@@ -32,6 +30,7 @@ import com.ruuvi.station.widgets.complexWidget.ComplexWidgetConfigureViewModel
 import com.ruuvi.station.widgets.complexWidget.ComplexWidgetConfigureViewModelArgs
 import com.ruuvi.station.widgets.complexWidget.ComplexWidgetSensorItem
 import com.ruuvi.station.widgets.data.WidgetType
+import com.ruuvi.station.widgets.data.WidgetType.Companion.filterWidgetTypes
 import com.ruuvi.station.widgets.ui.*
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
@@ -70,22 +69,12 @@ class ComplexWidgetConfigureActivity : AppCompatActivity(), KodeinAware {
 
         setContent {
             RuuviTheme {
-                val systemUiController = rememberSystemUiController()
-
                 Column(modifier = Modifier
                     .fillMaxSize()
                     .systemBarsPadding()
                 ) {
                     WidgetConfigTopAppBar(viewModel, title = stringResource(id = R.string.select_sensor))
                     WidgetSetupScreen(viewModel)
-                }
-
-                val systemBarsColor = RuuviStationTheme.colors.systemBars
-                SideEffect {
-                    systemUiController.setSystemBarsColor(
-                        color = systemBarsColor,
-                        darkIcons = false
-                    )
                 }
             }
         }
@@ -181,14 +170,12 @@ fun SensorSettingsCard(viewModel: ComplexWidgetConfigureViewModel, item: Complex
                     onCheckedChange = { checked -> viewModel.selectSensor(item, checked)},
                 )
 
-                ClickableText(
+                Text(
                     modifier = Modifier
-                        .fillMaxWidth(),
-                    text = AnnotatedString(item.sensorName),
-                    style = RuuviStationTheme.typography.paragraph,
-                    onClick = {
-                        viewModel.selectSensor(item, !item.checked)
-                    })
+                        .fillMaxWidth()
+                        .clickable { viewModel.selectSensor(item, !item.checked) },
+                    text = item.sensor.displayName,
+                    style = RuuviStationTheme.typography.paragraph)
             }
 
         }
@@ -209,7 +196,7 @@ fun WidgetTypeList(viewModel: ComplexWidgetConfigureViewModel, item: ComplexWidg
             )
         }
 
-        for (widgetType in WidgetType.values()) {
+        for (widgetType in filterWidgetTypes(item.sensor)) {
             WidgetTypeItem(viewModel, item, widgetType)
         }
     }
@@ -227,12 +214,12 @@ fun WidgetTypeItem (viewModel: ComplexWidgetConfigureViewModel, item: ComplexWid
                 colors = ruuviCheckboxColors(),
                 onCheckedChange = { checked -> viewModel.selectWidgetType(item, widgetType, checked) })
 
-            ClickableText(
+            Text(
                 modifier = Modifier
-                    .fillMaxWidth(),
-                text = AnnotatedString(stringResource(id = widgetType.titleResId)),
-                style = RuuviStationTheme.typography.paragraph,
-                onClick = { viewModel.selectWidgetType(item, widgetType, item.getStateForType(widgetType)) }
+                    .fillMaxWidth()
+                    .clickable { viewModel.selectWidgetType(item, widgetType, item.getStateForType(widgetType)) },
+                text = stringResource(id = widgetType.titleResId),
+                style = RuuviStationTheme.typography.paragraph
             )
         }
 }
