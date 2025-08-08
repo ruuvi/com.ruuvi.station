@@ -1049,7 +1049,7 @@ fun DashboardImage(
         modifier = modifier.fillMaxSize(),
         model = rememberResourceUri(R.drawable.tag_bg_layer),
         contentDescription = null,
-        alpha = RuuviStationTheme.colors.backgroundAlpha,
+        alpha = 0.75f,
         contentScale = ContentScale.Crop
     )
 }
