@@ -7,14 +7,17 @@ import android.webkit.WebSettings.LOAD_DEFAULT
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.material.ScaffoldState
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.ruuvi.station.R
-import com.ruuvi.station.app.ui.UiEvent
 import com.ruuvi.station.app.ui.components.*
 import com.ruuvi.station.feature.data.Feature
 import com.ruuvi.station.feature.data.FeatureFlag
@@ -47,12 +50,12 @@ fun DeveloperSettings(
                 checked = devServerEnabled.value,
                 onCheckedChange = viewModel::setDevServerEnabled
             )
-
             Paragraph(text = stringResource(id = R.string.use_dev_server_description))
-            SettingsElement(
-                name = "Web sharing",
-                onClick = { onNavigate.invoke(SettingsRoutes.SHARINGWEB) }
-            )
+
+            Spacer(modifier = Modifier.height(48.dp))
+            Subtitle("Debug info")
+            val scale = LocalDensity.current.fontScale
+            Paragraph(text = "Font scaling ${scale * 100}%")
         }
     }
 }

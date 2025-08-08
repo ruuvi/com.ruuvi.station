@@ -569,7 +569,7 @@ fun SensorCard(
     }
     val padding = if (halfSize < 200.dp) 8.dp else 48.dp
     val itemSeparator = 8.dp
-    val bottomSize = (size.height - topSize.height).pxToDp() - padding - itemSeparator
+    val bottomSize = floor(((size.height - topSize.height).pxToDp() - padding - itemSeparator).value).dp
     val columnMaxWidth = 200.dp
 
     val columnModifier = modifier.fadingEdge(scrollState)
