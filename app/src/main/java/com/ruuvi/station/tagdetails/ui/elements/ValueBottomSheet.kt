@@ -155,8 +155,7 @@ fun ValueSheetHeaderText(
     Text(
         modifier = modifier,
         fontSize = RuuviStationTheme.fontSizes.normal.limitScaleTo(1.5f),
-        fontFamily = ruuviStationFonts.montserratBold,
-        fontWeight = FontWeight.Bold,
+        fontFamily = ruuviStationFonts.mulishBold,
         text = text,
         color = Color.White
     )

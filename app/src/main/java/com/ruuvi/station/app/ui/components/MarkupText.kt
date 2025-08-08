@@ -13,7 +13,7 @@ import androidx.compose.ui.text.TextLinkStyles
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withLink
-import androidx.compose.ui.unit.sp
+import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.White80
 import com.ruuvi.station.app.ui.theme.ruuviStationFonts
 import com.ruuvi.station.app.ui.theme.ruuviStationFontsSizes
@@ -26,27 +26,29 @@ fun MarkupText(@StringRes textRes: Int) {
     val raw = StringEscapeUtils.unescapeHtml4(rawEscaped)
     Timber.d("raw $raw")
 
+    val linkColor = RuuviStationTheme.colors.accent
+
     val parsed = remember(raw) {
         parseModernMarkup(
             input = raw,
             tagStyles = mapOf(
                 "title" to SpanStyle(
-                    fontSize = 16.sp,
-                    fontFamily = ruuviStationFonts.montserratBold,
+                    fontSize = ruuviStationFontsSizes.normal,
+                    fontFamily = ruuviStationFonts.mulishBold,
                     fontWeight = FontWeight.Bold,
                     color = Color.White
                 ),
                 "link" to SpanStyle(
-                    color = White80,
+                    color = linkColor,
                     fontFamily = ruuviStationFonts.mulishRegular,
-                    fontSize = ruuviStationFontsSizes.normal,
+                    fontSize = ruuviStationFontsSizes.compact,
                     textDecoration = TextDecoration.Underline
                 )
             ),
             defaultStyle = SpanStyle(
                 color = White80,
                 fontFamily = ruuviStationFonts.mulishRegular,
-                fontSize = ruuviStationFontsSizes.normal
+                fontSize = ruuviStationFontsSizes.compact
             ),
 
         )

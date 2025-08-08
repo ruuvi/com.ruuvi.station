@@ -41,12 +41,12 @@ fun provideTypography(colors: RuuviStationColors): RuuviStationTypography {
         paragraph = TextStyle(
             color = colors.primary,
             fontFamily = ruuviStationFonts.mulishRegular,
-            fontSize = ruuviStationFontsSizes.normal,
+            fontSize = ruuviStationFontsSizes.compact,
         ),
         paragraphOnboarding = TextStyle(
             color = colors.onboardingTextColor,
             fontFamily = ruuviStationFonts.mulishRegular,
-            fontSize = ruuviStationFontsSizes.normal,
+            fontSize = ruuviStationFontsSizes.compact,
         ),
         paragraphSmall = TextStyle(
             color = colors.primary,
@@ -82,12 +82,12 @@ fun provideTypography(colors: RuuviStationColors): RuuviStationTypography {
         success = TextStyle(
             color = colors.successText,
             fontFamily = ruuviStationFonts.mulishRegular,
-            fontSize = ruuviStationFontsSizes.normal,
+            fontSize = ruuviStationFontsSizes.compact,
         ),
         syncStatusText = TextStyle(
             color = White80,
             fontFamily = ruuviStationFonts.mulishRegular,
-            fontSize = ruuviStationFontsSizes.normal,
+            fontSize = ruuviStationFontsSizes.compact,
         ),
         menuItem = TextStyle(
             color = colors.settingsTitleText,
@@ -96,13 +96,13 @@ fun provideTypography(colors: RuuviStationColors): RuuviStationTypography {
         ),
         dashboardValue = TextStyle(
             color = colors.primary,
-            fontFamily = ruuviStationFonts.montserratBold,
+            fontFamily = ruuviStationFonts.mulishBold,
             fontSize = ruuviStationFontsSizes.compact,
             textAlign = TextAlign.Left
         ),
         dashboardUnit = TextStyle(
             color = colors.settingsTitleText,
-            fontFamily = ruuviStationFonts.montserratRegular,
+            fontFamily = ruuviStationFonts.mulishRegular,
             fontSize = ruuviStationFontsSizes.petite,
             textAlign = TextAlign.Left
         ),
@@ -125,7 +125,7 @@ fun provideTypography(colors: RuuviStationColors): RuuviStationTypography {
         ),
         onboardingTitle = TextStyle(
             color = colors.onboardingTextColor,
-            fontFamily = ruuviStationFonts.montserratExtraBold,
+            fontFamily = ruuviStationFonts.mulishExtraBold,
             fontSize = 36.sp
         ),
         onboardingSubtitle = TextStyle(
@@ -142,7 +142,7 @@ fun provideTypography(colors: RuuviStationColors): RuuviStationTypography {
         ),
         otpChar = TextStyle(
             color = colors.onboardingTextColor,
-            fontFamily = ruuviStationFonts.montserratExtraBold,
+            fontFamily = ruuviStationFonts.mulishExtraBold,
             fontSize = 30.sp
         ),
         emailTextField = TextStyle(
