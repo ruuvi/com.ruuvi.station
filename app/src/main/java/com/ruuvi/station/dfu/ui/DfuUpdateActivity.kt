@@ -132,7 +132,7 @@ class DfuUpdateActivity : AppCompatActivity() , KodeinAware {
                                 .systemBarsPadding()
                                 .fillMaxSize(),
                             backgroundColor = RuuviStationTheme.colors.background,
-                            topBar = { RuuviTopAppBar(title = "Update FW") },
+                            topBar = { RuuviTopAppBar(title = stringResource(R.string.title_activity_dfu_update)) },
                             scaffoldState = scaffoldState
                         ) { padding ->
                             NavHost(
