@@ -233,7 +233,8 @@ sealed class UnitType(
         measurementCode = SIGNAL_STRENGTH_MEASUREMENT_CODE,
         measurementTitle = R.string.signal_strength_rssi,
         alarmType = AlarmType.RSSI,
-        defaultAccuracy = Accuracy.Accuracy0
+        defaultAccuracy = Accuracy.Accuracy0,
+        iconRes = R.drawable.icon_rssi
     ) {
         data object SignalDbm: SignalStrengthUnit(SIGNAL_STRENGTH_UNIT_DBM, R.string.signal_unit, R.string.signal_unit)
 
