@@ -636,7 +636,6 @@
     <string name="sound">Ääni</string>
     <string name="sound_avg">Äänitaso (keskiarvo)</string>
     <string name="sound_peak">Äänitaso (huippu)</string>
-    <string name="sound_with_unit">Ääni (%1$s)</string>
     <string name="start_the_update">Aloita päivitys</string>
     <string name="start_update_process">Siirry päivittämään</string>
     <string name="subscription_disclaimer">Tämä on täysin ilmainen sovellus, joka ei tue kuukausitilausten ostoja tai muita sovelluksen sisäisiä ostoja. Mikäli olet Ruuvi Gateway -reitittimen käyttäjä ja etsit tarkempia Ruuvi-tilisi tietoja, siirry kotisivuillemme ja kirjaudu sisään.</string>

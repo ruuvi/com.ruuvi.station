@@ -398,7 +398,6 @@
     <string name="sound">Dźwięk</string>
     <string name="sound_avg">Poziom dźwięku (średnia)</string>
     <string name="sound_peak">Poziom dźwięku (szczyt)</string>
-    <string name="sound_with_unit">Dźwięk (%1$s)</string>
     <string name="start_the_update">Rozpocznij aktualizację</string>
     <string name="start_update_process">Rozpocznij aktualizacje</string>
     <string name="successfully_claimed">Potwierdzono prawa własności czujnika</string>

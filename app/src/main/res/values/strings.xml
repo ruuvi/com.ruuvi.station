@@ -652,9 +652,11 @@
     <string name="skip">SKIP</string>
     <string name="something_went_wrong">Something went wrong</string>
     <string name="sound">Sound</string>
+    <string name="sound_average_with_unit">Sound Average (%1$s)</string>
     <string name="sound_avg">Sound level (average)</string>
+    <string name="sound_instant_with_unit">Sound Instant (%1$s)</string>
     <string name="sound_peak">Sound level (peak)</string>
-    <string name="sound_with_unit">Sound (%1$s)</string>
+    <string name="sound_peak_with_unit">Sound Peak (%1$s)</string>
     <string name="start_the_update">Start the update</string>
     <string name="start_update_process">Start update process</string>
     <string name="subscription_disclaimer">This is a completely free app that does not support monthly subscription purchases or other in-app purchases. If you are a user of the Ruuvi Gateway router and you are looking for more detailed information about your Ruuvi account, go to our website and sign in.</string>

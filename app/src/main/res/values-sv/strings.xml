@@ -636,7 +636,6 @@
     <string name="sound">Ljud</string>
     <string name="sound_avg">Ljudnivå (genomsnitt)</string>
     <string name="sound_peak">Ljudnivå (topp)</string>
-    <string name="sound_with_unit">Ljud (%1$s)</string>
     <string name="start_the_update">Starta uppdatering</string>
     <string name="start_update_process">Starta uppdateringsprocessen</string>
     <string name="subscription_disclaimer">Detta är en helt gratis app som inte stöder månadsvisa prenumerationsköp eller andra in-app-köp. Om du är användare av Ruuvi Gateway-routern och du söker mer detaljerad information om ditt Ruuvi-konto, gå till vår hemsida och logga in.</string>

@@ -85,7 +85,8 @@ fun ChartViewPrototype(
         is UnitType.PM4 -> stringResource(id = R.string.pm4_with_unit, unitString)
         is UnitType.PM10 -> stringResource(id = R.string.pm10_with_unit, unitString)
         is UnitType.Luminosity -> stringResource(id = R.string.luminosity_with_unit, unitString)
-        is UnitType.SoundAvg -> stringResource(id = R.string.sound_with_unit, unitString)
+        is UnitType.SoundAvg -> stringResource(id = R.string.sound_average_with_unit, unitString)
+        is UnitType.SoundPeak -> stringResource(id = R.string.sound_peak_with_unit, unitString)
         is UnitType.AirQuality -> stringResource(id = R.string.aqi)
         else -> ""
     }

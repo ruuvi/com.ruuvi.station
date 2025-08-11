@@ -641,7 +641,6 @@
     <string name="sound">Son</string>
     <string name="sound_avg">Niveau sonore (moyenne)</string>
     <string name="sound_peak">Niveau sonore (crête)</string>
-    <string name="sound_with_unit">Son (%1$s)</string>
     <string name="start_the_update">Lancer la mise à jour</string>
     <string name="start_update_process">Début de la mise à jour</string>
     <string name="subscription_disclaimer">Il s\'agit d\'une application entièrement gratuite qui ne prend pas en charge les achats d\'abonnements mensuels ou autres achats in-app. Si vous êtes un utilisateur du routeur Ruuvi Gateway et que vous recherchez des informations plus détaillées sur votre compte Ruuvi, rendez-vous sur notre site Web et connectez-vous.</string>
