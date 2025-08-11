@@ -30,8 +30,6 @@ sealed class AQI (val score: Double?) {
         ): AQI {
             val distances = mutableListOf<Double>()
             pm25?.let { distances.add(scorePpm(it)) }
-//            voc?.let { distances.add(scoreVoc(it)) }
-//            nox?.let { distances.add(scoreNox(it)) }
             co2?.let { distances.add(scoreCO2(it)) }
             if (distances.size > 0) {
                 val index = max(0.0, 100f - sqrt(distances.fold(0.0) { acc, value -> acc + value * value} / distances.size).roundHalfUp(1))
@@ -69,22 +67,31 @@ sealed class AQI (val score: Double?) {
 
         private fun getColorByScore(score: Double): Color{
             return when (score.roundHalfUp(0).toInt()) {
-                in 0..32 -> Color.Red
-                in 33 .. 65 -> Color.Yellow
-                in 66 .. 100 -> Color.Green
-                else -> Color.Gray
+                in 0..10 -> UnhealthyColor
+                in 11 .. 30 -> PoorColor
+                in 31 .. 70 -> ModerateColor
+                in 71 .. 90 -> GoodColor
+                in 91 .. 100 -> ExcellentColor
+                else -> UnspecifiedColor
             }
         }
 
         private fun getDescriptionByScore(score: Double): Int{
             return when (score.roundHalfUp(0).toInt()) {
-                in 0..20 -> R.string.aqi_level_1
-                in 21 .. 40 -> R.string.aqi_level_2
-                in 41 .. 60 -> R.string.aqi_level_3
-                in 61 .. 80 -> R.string.aqi_level_4
-                in 80 .. 100 -> R.string.aqi_level_5
+                in 0..10 -> R.string.aqi_level_1
+                in 11 .. 30 -> R.string.aqi_level_2
+                in 31 .. 70 -> R.string.aqi_level_3
+                in 71 .. 90 -> R.string.aqi_level_4
+                in 91 .. 100 -> R.string.aqi_level_5
                 else -> R.string.aqi_level_0
             }
         }
+
+        val UnspecifiedColor = Color.Gray
+        val UnhealthyColor = Color(0xFFED5021)
+        val PoorColor = Color(0xFFF79C21)
+        val ModerateColor = Color(0xFFF7E13E)
+        val GoodColor = Color(0xFF96CC48)
+        val ExcellentColor = Color(0xFF4BC8B9)
     }
 }
