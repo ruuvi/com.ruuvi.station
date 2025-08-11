@@ -656,6 +656,7 @@ fun SensorCard(
             ValueBottomSheet(
                 sheetValue = value,
                 chartHistory = chartHistory.value,
+                maxHeight = size.height,
                 modifier = Modifier
             ) {
                 showBottomSheet = false

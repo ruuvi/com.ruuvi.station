@@ -25,7 +25,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -41,6 +40,7 @@ import com.ruuvi.station.units.model.Accuracy
 import com.ruuvi.station.units.model.EnvironmentValue
 import com.ruuvi.station.units.model.UnitType
 import com.ruuvi.station.units.model.getDescriptionBodyResId
+import com.ruuvi.station.util.ui.pxToDp
 import com.ruuvi.station.vico.VicoChartNoInteraction
 import com.ruuvi.station.vico.model.ChartData
 
@@ -50,6 +50,7 @@ fun ValueBottomSheet (
     sheetValue: EnvironmentValue,
     modifier: Modifier = Modifier,
     chartHistory: ChartData?,
+    maxHeight: Int,
     sheetState: SheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
     onDismiss: () -> Unit
 ) {
@@ -70,21 +71,24 @@ fun ValueBottomSheet (
         sheetState = sheetState,
         modifier = modifier
     ) {
-        ValueSheetContent(sheetValue, chartHistory)
+        ValueSheetContent(
+            sheetValue = sheetValue,
+            maxHeight = maxHeight,
+            chartHistory = chartHistory
+        )
     }
 }
 
 @Composable
 fun ValueSheetContent(
     sheetValue: EnvironmentValue,
+    maxHeight: Int,
     chartHistory: ChartData?
 ) {
-    val screenHeight = LocalConfiguration.current.screenHeightDp.dp
-    val maxHeight = screenHeight * 0.75f
 
     Column (
         modifier = Modifier
-            .heightIn(max = maxHeight)
+            .heightIn(max = maxHeight.pxToDp())
             .verticalScroll(rememberScrollState())
             .padding(horizontal = RuuviStationTheme.dimensions.screenPadding)
     ) {
@@ -192,7 +196,11 @@ private fun ValueBottomSheet() {
 
     RuuviTheme {
         Surface(color = RuuviStationTheme.colors.sensorValueBottomSheetBackground) {
-            ValueSheetContent(sheetValue = value, null)
+            ValueSheetContent(
+                sheetValue = value,
+                maxHeight = 700,
+                chartHistory = null
+            )
         }
     }
 }
