@@ -6,6 +6,7 @@ import android.graphics.Matrix
 import android.graphics.Paint
 import android.text.format.DateUtils
 import android.view.MotionEvent
+import android.util.TypedValue
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -269,14 +270,15 @@ fun applyChartStyle(
         Timber.e(e)
     }
 
-    var textSize = context.resources.getDimension(R.dimen.graph_description_size)
-    val density = context.resources.displayMetrics.density
-    if (density < 2) textSize *= 2
-    textSize = min(textSize, 20f)
-    Timber.d("graph_description_sizegraph_description_size $textSize $density")
-    chart.description.textSize = textSize
-    chart.axisLeft.textSize = textSize
-    chart.xAxis.textSize = textSize
+    val sizeInPx = TypedValue.applyDimension(
+        TypedValue.COMPLEX_UNIT_SP,
+        if (context.resources.getBoolean(R.bool.isTablet)) 6.5f else 3.8f,
+        context.resources.displayMetrics
+    )
+
+    chart.description.textSize = sizeInPx
+    chart.axisLeft.textSize = sizeInPx
+    chart.xAxis.textSize = sizeInPx
     chart.legend.isEnabled = false
 }
 
