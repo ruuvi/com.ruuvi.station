@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
@@ -27,15 +28,18 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.ruuvi.station.R
 import com.ruuvi.station.app.ui.components.MarkupText
 import com.ruuvi.station.app.ui.components.limitScaleTo
 import com.ruuvi.station.app.ui.components.scaleUpTo
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.RuuviTheme
+import com.ruuvi.station.app.ui.theme.White50
 import com.ruuvi.station.app.ui.theme.ruuviStationFonts
+import com.ruuvi.station.app.ui.theme.ruuviStationFontsSizes
 import com.ruuvi.station.units.model.Accuracy
 import com.ruuvi.station.units.model.EnvironmentValue
 import com.ruuvi.station.units.model.UnitType
@@ -96,10 +100,39 @@ fun ValueSheetContent(
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
         if (chartHistory != null && chartHistory.timestamps.isNotEmpty()) {
             VicoChartNoInteraction(chartHistory)
-            Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
+        } else {
+            NoHistoryData()
         }
+        Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.small))
+        Text(
+            modifier = Modifier.fillMaxWidth(),
+            style = RuuviStationTheme.typography.dashboardSecondary,
+            color = White50,
+            fontSize = ruuviStationFontsSizes.petite.limitScaleTo(1.5f),
+            textAlign = TextAlign.Right,
+            text = stringResource(R.string.day_2),
+        )
+        Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
+
         MarkupText(sheetValue.unitType.getDescriptionBodyResId())
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
+    }
+}
+
+@Composable
+fun NoHistoryData() {
+    Box(modifier = Modifier
+        .fillMaxWidth()
+        .height(150.dp)
+        , contentAlignment =  Alignment.Center
+    ) {
+        Text(
+            style = RuuviStationTheme.typography.dashboardSecondary,
+            color = White50,
+            fontSize = ruuviStationFontsSizes.petite.limitScaleTo(1.5f),
+            textAlign = TextAlign.Center,
+            text = stringResource(R.string.no_data),
+        )
     }
 }
 
@@ -172,9 +205,8 @@ fun ValueSheetUnitText(
 ) {
     Text(
         modifier = modifier,
-        style = RuuviStationTheme.typography.dashboardSecondary,
+        fontFamily = ruuviStationFonts.mulishBold,
         color = Color.White,
-        fontWeight = FontWeight.Bold,
         fontSize = RuuviStationTheme.fontSizes.miniature.limitScaleTo(1.5f),
         text = text,
         maxLines = 1
@@ -183,7 +215,29 @@ fun ValueSheetUnitText(
 
 @Preview
 @Composable
-private fun ValueBottomSheet() {
+private fun HeaderPreview() {
+    val value = EnvironmentValue(
+        original = 22.50,
+        value = 22.50,
+        accuracy = Accuracy.Accuracy1,
+        valueWithUnit = "22.5 %",
+        valueWithoutUnit = "22.5",
+        unitString = "%",
+        unitType = UnitType.HumidityUnit.Relative
+    )
+
+    RuuviTheme {
+        Surface(color = RuuviStationTheme.colors.sensorValueBottomSheetBackground) {
+            ValueSheetHeader(
+                sheetValue = value
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun ValueBottomSheetPreview() {
     val value = EnvironmentValue(
         original = 22.50,
         value = 22.50,
