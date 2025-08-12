@@ -37,8 +37,11 @@ import com.github.mikephil.charting.listener.OnChartGestureListener
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener
 import com.github.mikephil.charting.utils.Utils
 import com.ruuvi.station.R
+import com.ruuvi.station.app.ui.components.limitScaleTo
 import com.ruuvi.station.app.ui.components.scaledToMax
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
+import com.ruuvi.station.app.ui.theme.ruuviStationFonts
+import com.ruuvi.station.app.ui.theme.ruuviStationFontsSizes
 import com.ruuvi.station.units.domain.UnitsConverter
 import com.ruuvi.station.units.model.UnitType
 import com.ruuvi.station.util.extensions.isStartOfTheDay
@@ -117,10 +120,10 @@ fun ChartViewPrototype(
                     bottom = RuuviStationTheme.dimensions.small,
                     end = RuuviStationTheme.dimensions.medium
                 ),
-                style = RuuviStationTheme.typography.paragraphSmall,
+                color = RuuviStationTheme.colors.secondaryTextColor,
+                fontFamily = ruuviStationFonts.mulishRegular,
+                fontSize = ruuviStationFontsSizes.petite.limitScaleTo(1.5f),
                 text = description,
-                fontSize = RuuviStationTheme.fontSizes.miniature.scaledToMax(max = 20.sp),
-                color = RuuviStationTheme.colors.buttonText
             )
         }
 
