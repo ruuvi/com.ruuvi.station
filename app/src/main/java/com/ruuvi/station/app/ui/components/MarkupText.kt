@@ -40,7 +40,7 @@ fun MarkupText(@StringRes textRes: Int) {
                 ),
                 "link" to SpanStyle(
                     color = linkColor,
-                    fontFamily = ruuviStationFonts.mulishRegular,
+                    fontFamily = ruuviStationFonts.mulishBold,
                     fontSize = ruuviStationFontsSizes.compact,
                     textDecoration = TextDecoration.Underline
                 )
