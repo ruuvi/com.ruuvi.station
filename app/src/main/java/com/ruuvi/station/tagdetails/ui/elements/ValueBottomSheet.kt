@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import com.ruuvi.station.R
 import com.ruuvi.station.app.ui.components.MarkupText
 import com.ruuvi.station.app.ui.components.limitScaleTo
+import com.ruuvi.station.app.ui.components.modifier.fadingEdge
 import com.ruuvi.station.app.ui.components.scaleUpTo
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.RuuviTheme
@@ -89,12 +90,13 @@ fun ValueSheetContent(
     maxHeight: Int,
     chartHistory: ChartData?
 ) {
-
+    val scrollState = rememberScrollState()
+    val columnModifier = Modifier.fadingEdge(scrollState)
     Column (
-        modifier = Modifier
+        modifier = columnModifier
             .heightIn(max = maxHeight.pxToDp())
-            .verticalScroll(rememberScrollState())
             .padding(horizontal = RuuviStationTheme.dimensions.screenPadding)
+            .verticalScroll(scrollState)
     ) {
         ValueSheetHeader(sheetValue)
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
