@@ -22,6 +22,7 @@ import com.github.mikephil.charting.components.AxisBase
 import com.github.mikephil.charting.formatter.IAxisValueFormatter
 import com.ruuvi.station.R
 import com.ruuvi.station.app.ui.components.LoadingAnimation3dots
+import com.ruuvi.station.app.ui.components.modifier.fadingEdge
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.ruuviStationFonts
 import com.ruuvi.station.graph.model.ChartContainer
@@ -209,7 +210,7 @@ fun VerticalChartsPrototype(
 
             LazyColumn(
                 state = listState,
-                modifier = columnModifier
+                modifier = columnModifier.fadingEdge(listState)
             ) {
                 for (chartContainer in chartContainers) {
                     val data = chartContainer.data

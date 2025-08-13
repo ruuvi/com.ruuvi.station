@@ -1,6 +1,7 @@
 package com.ruuvi.station.app.ui.components.modifier
 
 import androidx.compose.foundation.ScrollState
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.BlendMode
@@ -40,6 +41,33 @@ fun Modifier.fadingEdge(scrollState: ScrollState) = this
             scrollState.value == 0 -> bottomFade
             else -> topBottomFade
         }
+        fadeBrush?.let {
+            drawRect(brush = fadeBrush, blendMode = BlendMode.DstIn)
+        }
+    }
+
+fun Modifier.fadingEdge(lazyListState: LazyListState) = this
+    .graphicsLayer(compositingStrategy = CompositingStrategy.Offscreen)
+    .drawWithContent {
+        drawContent()
+
+        val totalItems = lazyListState.layoutInfo.totalItemsCount
+        val visibleItems = lazyListState.layoutInfo.visibleItemsInfo
+
+        val isAtTop = lazyListState.firstVisibleItemIndex == 0 &&
+                lazyListState.firstVisibleItemScrollOffset == 0
+
+        val isAtBottom = visibleItems.isNotEmpty() &&
+                visibleItems.last().index == totalItems - 1 &&
+                visibleItems.last().offset + visibleItems.last().size <= size.height.toInt()
+
+        val fadeBrush = when {
+            totalItems <= visibleItems.size -> null
+            isAtTop -> bottomFade
+            isAtBottom -> topFade
+            else -> topBottomFade
+        }
+
         fadeBrush?.let {
             drawRect(brush = fadeBrush, blendMode = BlendMode.DstIn)
         }
