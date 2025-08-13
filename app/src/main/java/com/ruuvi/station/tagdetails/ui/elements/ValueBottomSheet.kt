@@ -117,7 +117,7 @@ fun ValueSheetContent(
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
 
         MarkupText(sheetValue.unitType.getDescriptionBodyResId())
-        Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
+        Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extraBig))
     }
 }
 

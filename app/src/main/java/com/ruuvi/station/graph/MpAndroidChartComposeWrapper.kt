@@ -109,8 +109,8 @@ fun ChartViewPrototype(
     ){
         Text(
             modifier = Modifier.padding(start = offset, top = RuuviStationTheme.dimensions.medium),
-            style = RuuviStationTheme.typography.subtitle,
-            fontSize = RuuviStationTheme.fontSizes.miniature.scaledToMax(max = 20.sp),
+            fontFamily = ruuviStationFonts.mulishBold,
+            fontSize = RuuviStationTheme.fontSizes.small.scaledToMax(max = 20.sp),
             text = title,
             color = RuuviStationTheme.colors.buttonText
         )
@@ -118,6 +118,7 @@ fun ChartViewPrototype(
             Text(
                 modifier = Modifier.padding(
                     start = offset,
+                    top = RuuviStationTheme.dimensions.small,
                     bottom = RuuviStationTheme.dimensions.small,
                     end = RuuviStationTheme.dimensions.medium
                 ),

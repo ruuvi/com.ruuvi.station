@@ -14,6 +14,7 @@ import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
 import com.patrykandpatrick.vico.compose.cartesian.VicoZoomState
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberAxisGuidelineComponent
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberAxisLabelComponent
+import com.patrykandpatrick.vico.compose.cartesian.axis.rememberAxisLineComponent
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottom
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberStart
 import com.patrykandpatrick.vico.compose.cartesian.layer.continuous
@@ -57,6 +58,17 @@ fun VicoChartNoInteraction(
         textSize = fontSize
     )
 
+    val axisGuideLine = rememberAxisGuidelineComponent(
+        fill = fill(Color.White.copy(alpha = 0.3f)),
+        shape = Shape.Rectangle,
+        thickness = 0.3.dp
+    )
+
+    val axisLine = rememberAxisLineComponent(
+        fill = fill(Color.White.copy(alpha = 0.3f)),
+        thickness = 0.8.dp
+    )
+
     CartesianChartHost(
         chart =
             rememberCartesianChart(
@@ -71,15 +83,17 @@ fun VicoChartNoInteraction(
                     rangeProvider = CartesianLayerRangeProvider.fixed(minY = minY -1, maxY = maxY + 1)
                 ),
                 startAxis = VerticalAxis.rememberStart(
+                    line = axisLine,
                     label = label,
                     itemPlacer = rememberItemPlacerVertical(),
-                    guideline = rememberAxisGuidelineComponent(shape = Shape.Rectangle, thickness = 0.5.dp)
+                    guideline = axisGuideLine
                 ),
                 bottomAxis = HorizontalAxis.rememberBottom(
+                    line = axisLine,
                     label = label,
                     valueFormatter = rememberDateFormatter(),
                     itemPlacer = rememberItemPlacerHorizontal(),
-                    guideline = rememberAxisGuidelineComponent(shape = Shape.Rectangle, thickness = 0.5.dp)
+                    guideline = axisGuideLine
                 ),
             ),
         modelProducer = modelProducer,

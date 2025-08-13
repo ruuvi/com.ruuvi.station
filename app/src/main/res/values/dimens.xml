@@ -3,7 +3,7 @@
 
     <dimen name="textTitleSize">18sp</dimen>
     <dimen name="textSubtitleSize">16sp</dimen>
-    <dimen name="textParagraphSize">14sp</dimen>
+    <dimen name="textParagraphSize">15sp</dimen>
     <dimen name="textStatusSize">16sp</dimen>
     <dimen name="textParagraphSmallSize">12sp</dimen>
     <dimen name="textChart">10sp</dimen>
