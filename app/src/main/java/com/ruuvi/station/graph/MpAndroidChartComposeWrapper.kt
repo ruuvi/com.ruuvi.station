@@ -118,7 +118,7 @@ fun ChartViewPrototype(
             Text(
                 modifier = Modifier.padding(
                     start = offset,
-                    top = RuuviStationTheme.dimensions.small,
+                    top = RuuviStationTheme.dimensions.tiny,
                     bottom = RuuviStationTheme.dimensions.small,
                     end = RuuviStationTheme.dimensions.medium
                 ),

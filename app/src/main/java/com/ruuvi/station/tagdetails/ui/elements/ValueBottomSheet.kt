@@ -1,6 +1,7 @@
 package com.ruuvi.station.tagdetails.ui.elements
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -57,6 +58,7 @@ fun ValueBottomSheet (
     chartHistory: ChartData?,
     maxHeight: Int,
     sheetState: SheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
+    scrollToChart: (UnitType) -> Unit,
     onDismiss: () -> Unit
 ) {
     ModalBottomSheet(
@@ -79,7 +81,8 @@ fun ValueBottomSheet (
         ValueSheetContent(
             sheetValue = sheetValue,
             maxHeight = maxHeight,
-            chartHistory = chartHistory
+            chartHistory = chartHistory,
+            scrollToChart = scrollToChart
         )
     }
 }
@@ -88,7 +91,8 @@ fun ValueBottomSheet (
 fun ValueSheetContent(
     sheetValue: EnvironmentValue,
     maxHeight: Int,
-    chartHistory: ChartData?
+    chartHistory: ChartData?,
+    scrollToChart: (UnitType) -> Unit
 ) {
     val scrollState = rememberScrollState()
     val columnModifier = Modifier.fadingEdge(scrollState)
@@ -101,7 +105,14 @@ fun ValueSheetContent(
         ValueSheetHeader(sheetValue)
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
         if (chartHistory != null && chartHistory.timestamps.isNotEmpty()) {
-            VicoChartNoInteraction(chartHistory)
+            VicoChartNoInteraction(
+                chartHistory = chartHistory,
+                modifier = Modifier.clickable {
+                    if (sheetValue.unitType != UnitType.MovementUnit.MovementsCount) {
+                        scrollToChart(sheetValue.unitType)
+                    }
+                }
+            )
         } else {
             NoHistoryData()
         }
@@ -255,6 +266,7 @@ private fun ValueBottomSheetPreview() {
             ValueSheetContent(
                 sheetValue = value,
                 maxHeight = 700,
+                scrollToChart = {},
                 chartHistory = null
             )
         }

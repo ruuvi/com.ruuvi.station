@@ -30,6 +30,7 @@ import com.ruuvi.station.units.model.UnitType.*
 import com.ruuvi.station.util.Period
 import com.ruuvi.station.vico.model.ChartData
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -84,6 +85,9 @@ class SensorCardViewModel(
 
     private val _increasedChartSize = MutableStateFlow<Boolean>(preferencesRepository.isIncreasedChartSize())
     val increasedChartSize: StateFlow<Boolean> = _increasedChartSize
+
+    private val _scrollToChartEvent = Channel<UnitType>(Channel.BUFFERED)
+    val scrollToChartEvent = _scrollToChartEvent.receiveAsFlow()
 
 
     fun getChartData(sensorId: String, unitType: UnitType, hours: Int): Flow<ChartData> =
@@ -275,6 +279,13 @@ class SensorCardViewModel(
     fun changeShowChartStats() {
         preferencesRepository.setShowChartStats(!preferencesRepository.getShowChartStats())
         _showChartStats.value = preferencesRepository.getShowChartStats()
+    }
+
+    fun scrollToChart(type: UnitType) {
+        _showCharts.value = true
+        viewModelScope.launch {
+            _scrollToChartEvent.send(type)
+        }
     }
 
     fun changeIncreaseChartSize() {

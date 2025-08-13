@@ -164,6 +164,8 @@ class SensorCardActivity : NfcActivity(), KodeinAware {
                         changeShowStats = viewModel::changeShowChartStats,
                         saveSelected = viewModel::saveSelected,
                         getIndex = viewModel::getIndex,
+                        scrollToChart = viewModel::scrollToChart,
+                        scrollToChartEvent = viewModel.scrollToChartEvent,
                         getChartData = viewModel::getChartData
                     )
                 }
@@ -261,6 +263,8 @@ fun SensorsPager(
     changeIncreasedChartSize: () -> Unit,
     saveSelected: (String) -> Unit,
     getIndex: (String) -> Int,
+    scrollToChart: (UnitType) -> Unit,
+    scrollToChartEvent: Flow<UnitType>,
     getChartData: (String, UnitType, Int) -> Flow<ChartData>
 ) {
     Timber.d("SensorsPager selected $selectedSensor sensors count ${sensors.size}")
@@ -397,6 +401,7 @@ fun SensorsPager(
                                 showChartStats = showChartStats,
                                 historyUpdater = historyUpdater,
                                 increasedChartSize = increasedChartSize,
+                                scrollToChartEvent = scrollToChartEvent,
                                 size = size
                             )
                         } else {
@@ -404,7 +409,8 @@ fun SensorsPager(
                                 SensorCard(
                                     sensor = sensor,
                                     modifier = Modifier.weight(1f),
-                                    getChartData = getChartData
+                                    getChartData = getChartData,
+                                    scrollToChart = scrollToChart
                                 )
                             } else {
                                 SensorCardLegacy(
@@ -554,6 +560,7 @@ fun SensorCard(
     modifier: Modifier = Modifier,
     sensor: RuuviTag,
     getChartData: (String, UnitType, Int) -> Flow<ChartData>,
+    scrollToChart: (UnitType) -> Unit
 ) {
     var showBottomSheet by remember { mutableStateOf(false) }
     var sheetValue by remember { mutableStateOf<EnvironmentValue?>(null) }
@@ -657,7 +664,8 @@ fun SensorCard(
                 sheetValue = value,
                 chartHistory = chartHistory.value,
                 maxHeight = size.height,
-                modifier = Modifier
+                modifier = Modifier,
+                scrollToChart = scrollToChart
             ) {
                 showBottomSheet = false
             }
