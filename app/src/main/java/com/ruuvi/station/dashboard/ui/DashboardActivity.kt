@@ -1047,9 +1047,8 @@ fun DashboardImage(
     )
     GlideImage(
         modifier = modifier.fillMaxSize(),
-        model = rememberResourceUri(R.drawable.tag_bg_layer),
+        model = rememberResourceUri(R.drawable.tag_bg_layer_dashboard),
         contentDescription = null,
-        alpha = 0.75f,
         contentScale = ContentScale.Crop
     )
 }
