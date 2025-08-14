@@ -747,10 +747,15 @@ fun SensorValues(
                     Box(modifier = Modifier.fillMaxWidth()) {}
                 }
                 for (value in columnValues) {
+                    val unit = if (value.unitType == UnitType.MovementUnit.MovementsCount) {
+                        ""
+                    } else {
+                        value.unitString
+                    }
                     SensorValueItem(
                         icon = value.unitType.iconRes,
                         value = value.valueWithoutUnit,
-                        unit = value.unitString,
+                        unit = unit,
                         itemHeight = itemHeight,
                         modifier = Modifier.fillMaxWidth(),
                         alertActive = value.unitType.alarmType?.let {

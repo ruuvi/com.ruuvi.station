@@ -104,28 +104,30 @@ fun ValueSheetContent(
     ) {
         ValueSheetHeader(sheetValue)
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
-        if (chartHistory != null && chartHistory.timestamps.isNotEmpty()) {
-            VicoChartNoInteraction(
-                chartHistory = chartHistory,
-                modifier = Modifier.clickable {
-                    if (sheetValue.unitType != UnitType.MovementUnit.MovementsCount) {
-                        scrollToChart(sheetValue.unitType)
+        if (sheetValue.unitType != UnitType.MovementUnit.MovementsCount) {
+            if (chartHistory != null && chartHistory.timestamps.isNotEmpty()) {
+                VicoChartNoInteraction(
+                    chartHistory = chartHistory,
+                    modifier = Modifier.clickable {
+                        if (sheetValue.unitType != UnitType.MovementUnit.MovementsCount) {
+                            scrollToChart(sheetValue.unitType)
+                        }
                     }
-                }
+                )
+            } else {
+                NoHistoryData()
+            }
+            Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.small))
+            Text(
+                modifier = Modifier.fillMaxWidth(),
+                style = RuuviStationTheme.typography.dashboardSecondary,
+                color = White50,
+                fontSize = ruuviStationFontsSizes.petite.limitScaleTo(1.5f),
+                textAlign = TextAlign.Right,
+                text = stringResource(R.string.day_2),
             )
-        } else {
-            NoHistoryData()
+            Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
         }
-        Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.small))
-        Text(
-            modifier = Modifier.fillMaxWidth(),
-            style = RuuviStationTheme.typography.dashboardSecondary,
-            color = White50,
-            fontSize = ruuviStationFontsSizes.petite.limitScaleTo(1.5f),
-            textAlign = TextAlign.Right,
-            text = stringResource(R.string.day_2),
-        )
-        Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
 
         MarkupText(sheetValue.unitType.getDescriptionBodyResId())
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extraBig))
