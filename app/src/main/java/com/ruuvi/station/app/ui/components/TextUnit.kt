@@ -2,6 +2,7 @@ package com.ruuvi.station.app.ui.components
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.sp
@@ -40,5 +41,16 @@ fun Dp.toSp(): TextUnit {
         val px = this@toSp.toPx()
         val scaledDensity = density.density * fontScale
         (px / scaledDensity).sp
+    }
+}
+
+@Composable
+fun TextUnit.fixedSp(): TextUnit {
+    val density = LocalDensity.current
+    val px = with(Density(density = density.density, fontScale = 1f)) {
+        this@fixedSp.toPx()
+    }
+    return with(Density(density.density, fontScale = density.fontScale)) {
+        px.toSp() // This produces a TextUnit that is already in px terms
     }
 }

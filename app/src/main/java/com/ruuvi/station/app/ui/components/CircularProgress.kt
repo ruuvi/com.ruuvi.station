@@ -18,10 +18,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.ruuviStationFonts
 import kotlin.math.cos
 import kotlin.math.sin
@@ -31,7 +31,7 @@ fun CircularGradientProgress(
     progress: Float,
     progressText: String,
     lineColor: Color,
-    size: Dp = 130.dp,
+    size: Dp = 140.dp,
     modifier: Modifier = Modifier
 ) {
     val density = LocalDensity.current
@@ -40,8 +40,12 @@ fun CircularGradientProgress(
         contentAlignment = Alignment.Center,
         modifier = modifier.size(size)
     ) {
-        Canvas(modifier = Modifier.fillMaxSize().padding(8.dp)) {
-            val strokeWidth = with(density) { 8.dp.toPx() }
+        Canvas(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(8.dp)
+        ) {
+            val strokeWidth = with(density) { 6.dp.toPx() }
             val size = this.size.minDimension
             val radius = size / 2
             val startAngle = 135f
@@ -101,9 +105,8 @@ fun CircularGradientProgress(
         // Centered Label
         Text(
             text = progressText,
-            fontSize = (size / 2.4f).toSp(),
+            fontSize = RuuviStationTheme.fontSizes.bigValue.fixedSp(),
             fontFamily = ruuviStationFonts.oswaldBold,
-            fontWeight = FontWeight.Bold,
             color = Color.White,
             modifier = Modifier.padding(bottom = 8.dp)
         )
@@ -115,7 +118,7 @@ fun CircularGradientProgress(
         ) {
             Text(
                 text = "/100",
-                fontSize = (size / 7.2f).toSp(),
+                fontSize = RuuviStationTheme.fontSizes.big.fixedSp(),
                 fontFamily = ruuviStationFonts.oswaldRegular,
                 color = Color.White,
                 modifier = Modifier
@@ -184,7 +187,7 @@ fun CircularGradientProgressPreview100(
 ) {
     CircularGradientProgress(
         progress = 100f,
-        progressText = "1000",
+        progressText = "100",
         lineColor = Color.Green,
         modifier = modifier
     )

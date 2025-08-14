@@ -44,7 +44,6 @@ fun SensorCardLegacy(
 
     Box(
         modifier = modifier
-            //.height(halfSize)
             .fillMaxSize(),
         contentAlignment = Alignment.TopCenter
     ) {
@@ -62,7 +61,7 @@ fun SensorCardLegacy(
                 }
             } else {
                 BigValueDisplay(
-                    modifier = Modifier.padding(48.dp),
+                    modifier = Modifier.padding(24.dp),
                     value = firstValue,
                     showName = false,
                     alertActive = firstValue.unitType.alarmType?.let {

@@ -574,7 +574,7 @@ fun SensorCard(
     } else {
         listOf()
     }
-    val padding = if (halfSize < 200.dp) 8.dp else 48.dp
+    val padding = if (halfSize < 200.dp) 8.dp else 32.dp
     val itemSeparator = 8.dp
     val bottomSize = floor(((size.height - topSize.height).pxToDp() - padding - itemSeparator).value).dp
     val columnMaxWidth = 200.dp

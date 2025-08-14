@@ -1,5 +1,6 @@
 package com.ruuvi.station.tagdetails.ui.elements
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
@@ -11,7 +12,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ruuvi.station.R
 import com.ruuvi.station.app.ui.components.CircularGradientProgress
@@ -29,17 +29,16 @@ fun CircularAQIDisplay(
     modifier: Modifier = Modifier,
     clickAction: () -> Unit = {}
 ) {
-    var progressSize = 130.dp
 
     Column(
         modifier = modifier,
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Top
     ) {
         CircularGradientProgress(
             progress = aqi.score?.toFloat() ?: 0f,
             progressText = aqi.scoreString,
-            lineColor = aqi.color,
-            size = progressSize
+            lineColor = aqi.color
         )
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.medium))
         Text(
