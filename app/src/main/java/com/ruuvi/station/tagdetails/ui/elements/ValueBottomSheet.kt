@@ -39,7 +39,6 @@ import com.ruuvi.station.app.ui.components.modifier.fadingEdge
 import com.ruuvi.station.app.ui.components.scaleUpTo
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.RuuviTheme
-import com.ruuvi.station.app.ui.theme.White50
 import com.ruuvi.station.app.ui.theme.ruuviStationFonts
 import com.ruuvi.station.app.ui.theme.ruuviStationFontsSizes
 import com.ruuvi.station.units.model.Accuracy
@@ -62,7 +61,7 @@ fun ValueBottomSheet (
     onDismiss: () -> Unit
 ) {
     ModalBottomSheet(
-        containerColor = RuuviStationTheme.colors.sensorValueBottomSheetBackground,
+        containerColor = RuuviStationTheme.colors.popupBackground,
         contentColor = Color.White,
         dragHandle = {
             Box(
@@ -71,7 +70,7 @@ fun ValueBottomSheet (
                     .width(48.dp)
                     .height(4.dp)
                     .clip(RoundedCornerShape(2.dp))
-                    .background(Color.White.copy(alpha = 0.7f))
+                    .background(RuuviStationTheme.colors.popupDragHandle)
             )
         },
         onDismissRequest = onDismiss,
@@ -121,7 +120,6 @@ fun ValueSheetContent(
             Text(
                 modifier = Modifier.fillMaxWidth(),
                 style = RuuviStationTheme.typography.dashboardSecondary,
-                color = White50,
                 fontSize = ruuviStationFontsSizes.petite.limitScaleTo(1.5f),
                 textAlign = TextAlign.Right,
                 text = stringResource(R.string.day_2),
@@ -143,7 +141,6 @@ fun NoHistoryData() {
     ) {
         Text(
             style = RuuviStationTheme.typography.dashboardSecondary,
-            color = White50,
             fontSize = ruuviStationFontsSizes.petite.limitScaleTo(1.5f),
             textAlign = TextAlign.Center,
             text = stringResource(R.string.no_data),
@@ -209,7 +206,7 @@ fun ValueSheetHeaderText(
         fontSize = RuuviStationTheme.fontSizes.normal.limitScaleTo(1.5f),
         fontFamily = ruuviStationFonts.mulishBold,
         text = text,
-        color = Color.White
+        color = RuuviStationTheme.colors.popupHeaderText
     )
 }
 
@@ -221,7 +218,7 @@ fun ValueSheetUnitText(
     Text(
         modifier = modifier,
         fontFamily = ruuviStationFonts.mulishBold,
-        color = Color.White,
+        color = RuuviStationTheme.colors.popupHeaderText,
         fontSize = RuuviStationTheme.fontSizes.miniature.limitScaleTo(1.5f),
         text = text,
         maxLines = 1
@@ -242,7 +239,7 @@ private fun HeaderPreview() {
     )
 
     RuuviTheme {
-        Surface(color = RuuviStationTheme.colors.sensorValueBottomSheetBackground) {
+        Surface(color = RuuviStationTheme.colors.popupBackground) {
             ValueSheetHeader(
                 sheetValue = value
             )
@@ -264,7 +261,7 @@ private fun ValueBottomSheetPreview() {
     )
 
     RuuviTheme {
-        Surface(color = RuuviStationTheme.colors.sensorValueBottomSheetBackground) {
+        Surface(color = RuuviStationTheme.colors.popupBackground) {
             ValueSheetContent(
                 sheetValue = value,
                 maxHeight = 700,

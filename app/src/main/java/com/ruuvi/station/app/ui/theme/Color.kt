@@ -5,6 +5,10 @@ import androidx.compose.ui.graphics.Color
 val White = Color.White
 val White80 = Color(0xCCFFFFFF)
 val White50 = Color(0x80FFFFFF)
+val White30 = Color(0x4DFFFFFF)
+val Gray80 = Color.Gray.copy(alpha = 0.8f)
+val Gray50 = Color.Gray.copy(alpha = 0.5f)
+val Gray30 = Color.Gray.copy(alpha = 0.3f)
 val Black = Color.Black
 val Titan = Color(0xFF083C3D)
 val Titan50 = Color(0x80083C3D)
@@ -67,7 +71,13 @@ data class RuuviStationColors(
     val bannerBackground: Color,
     val indicatorColor: Color,
     val sensorValueBottomSheetBackground: Color,
-    val chartLine: Color
+    val chartLine: Color,
+    val popupBackground: Color,
+    val popupHeaderText: Color,
+    val popupDragHandle: Color,
+    val chartLabel: Color,
+    val chartAxisLine: Color,
+    val chartGuideline: Color
 )
 
 val lightPalette = RuuviStationColors(
@@ -103,7 +113,13 @@ val lightPalette = RuuviStationColors(
     bannerBackground = RuuviNew,
     indicatorColor = Titan50,
     sensorValueBottomSheetBackground = Titan,
-    chartLine = Keppel
+    chartLine = Keppel,
+    popupBackground = Milky2,
+    popupHeaderText = Titan,
+    popupDragHandle = Gray80,
+    chartLabel = Titan,
+    chartAxisLine = Gray30,
+    chartGuideline = Gray30
 )
 
 val darkPalette = RuuviStationColors(
@@ -139,5 +155,11 @@ val darkPalette = RuuviStationColors(
     bannerBackground = Keppel50,
     indicatorColor = Keppel50,
     sensorValueBottomSheetBackground = Titan,
-    chartLine = Keppel
+    chartLine = Keppel,
+    popupBackground = Titan,
+    popupHeaderText = White,
+    popupDragHandle = White50,
+    chartLabel = White,
+    chartAxisLine = White30,
+    chartGuideline = White30
 )

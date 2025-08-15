@@ -41,6 +41,7 @@ import com.ruuvi.station.R
 import com.ruuvi.station.app.ui.components.limitScaleTo
 import com.ruuvi.station.app.ui.components.scaledToMax
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
+import com.ruuvi.station.app.ui.theme.White50
 import com.ruuvi.station.app.ui.theme.ruuviStationFonts
 import com.ruuvi.station.app.ui.theme.ruuviStationFontsSizes
 import com.ruuvi.station.units.domain.UnitsConverter
@@ -52,7 +53,6 @@ import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
 import java.util.*
 import kotlin.math.max
-import kotlin.math.min
 
 @Composable
 fun ChartViewPrototype(
@@ -122,7 +122,7 @@ fun ChartViewPrototype(
                     bottom = RuuviStationTheme.dimensions.small,
                     end = RuuviStationTheme.dimensions.medium
                 ),
-                color = RuuviStationTheme.colors.secondaryTextColor,
+                color = White50,
                 fontFamily = ruuviStationFonts.mulishRegular,
                 fontSize = ruuviStationFontsSizes.petite.limitScaleTo(1.5f),
                 text = description,

@@ -4,7 +4,6 @@ import androidx.annotation.StringRes
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.LinkAnnotation
@@ -14,7 +13,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withLink
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
-import com.ruuvi.station.app.ui.theme.White80
 import com.ruuvi.station.app.ui.theme.ruuviStationFonts
 import com.ruuvi.station.app.ui.theme.ruuviStationFontsSizes
 import org.apache.commons.lang3.StringEscapeUtils
@@ -27,6 +25,8 @@ fun MarkupText(@StringRes textRes: Int) {
     Timber.d("raw $raw")
 
     val linkColor = RuuviStationTheme.colors.accent
+    val headerColor = RuuviStationTheme.colors.popupHeaderText
+    val textColor = RuuviStationTheme.colors.primary
 
     val parsed = remember(raw) {
         parseModernMarkup(
@@ -36,7 +36,7 @@ fun MarkupText(@StringRes textRes: Int) {
                     fontSize = ruuviStationFontsSizes.normal,
                     fontFamily = ruuviStationFonts.mulishBold,
                     fontWeight = FontWeight.Bold,
-                    color = Color.White
+                    color = headerColor
                 ),
                 "link" to SpanStyle(
                     color = linkColor,
@@ -46,7 +46,7 @@ fun MarkupText(@StringRes textRes: Int) {
                 )
             ),
             defaultStyle = SpanStyle(
-                color = White80,
+                color = textColor,
                 fontFamily = ruuviStationFonts.mulishRegular,
                 fontSize = ruuviStationFontsSizes.compact
             ),

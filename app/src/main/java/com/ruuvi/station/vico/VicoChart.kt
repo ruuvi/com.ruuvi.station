@@ -53,19 +53,19 @@ fun VicoChartNoInteraction(
 
     val fontSize = if (booleanResource(R.bool.isTablet)) 14.sp else 10.sp
     val label = rememberAxisLabelComponent(
-        color = Color.White,
+        color = RuuviStationTheme.colors.chartLabel,
         typeface = ResourcesCompat.getFont(context, R.font.mulish_regular)!!,
         textSize = fontSize
     )
 
     val axisGuideLine = rememberAxisGuidelineComponent(
-        fill = fill(Color.White.copy(alpha = 0.3f)),
+        fill = fill(RuuviStationTheme.colors.chartGuideline),
         shape = Shape.Rectangle,
         thickness = 0.3.dp
     )
 
     val axisLine = rememberAxisLineComponent(
-        fill = fill(Color.White.copy(alpha = 0.3f)),
+        fill = fill(RuuviStationTheme.colors.chartAxisLine),
         thickness = 0.8.dp
     )
 
