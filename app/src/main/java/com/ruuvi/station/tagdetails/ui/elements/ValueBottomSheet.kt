@@ -62,7 +62,6 @@ fun ValueBottomSheet (
 ) {
     ModalBottomSheet(
         containerColor = RuuviStationTheme.colors.popupBackground,
-        contentColor = Color.White,
         dragHandle = {
             Box(
                 modifier = Modifier

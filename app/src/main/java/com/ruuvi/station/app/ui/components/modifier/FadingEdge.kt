@@ -51,21 +51,14 @@ fun Modifier.fadingEdge(lazyListState: LazyListState) = this
     .drawWithContent {
         drawContent()
 
-        val totalItems = lazyListState.layoutInfo.totalItemsCount
-        val visibleItems = lazyListState.layoutInfo.visibleItemsInfo
-
-        val isAtTop = lazyListState.firstVisibleItemIndex == 0 &&
-                lazyListState.firstVisibleItemScrollOffset == 0
-
-        val isAtBottom = visibleItems.isNotEmpty() &&
-                visibleItems.last().index == totalItems - 1 &&
-                visibleItems.last().offset + visibleItems.last().size <= size.height.toInt()
+        val notTop = lazyListState.canScrollBackward
+        val notBottom = lazyListState.canScrollForward
 
         val fadeBrush = when {
-            totalItems <= visibleItems.size -> null
-            isAtTop -> bottomFade
-            isAtBottom -> topFade
-            else -> topBottomFade
+            notTop && notBottom -> topBottomFade
+            notTop -> topFade
+            notBottom -> bottomFade
+            else -> null
         }
 
         fadeBrush?.let {
