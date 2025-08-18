@@ -287,6 +287,7 @@ fun AlertEditItem(
                 AlarmType.LUMINOSITY -> sensorState.latestMeasurement.luminosity?.valueWithUnit
                 AlarmType.VOC -> sensorState.latestMeasurement.voc?.valueWithUnit
                 AlarmType.NOX -> sensorState.latestMeasurement.nox?.valueWithUnit
+                AlarmType.AQI -> sensorState.latestMeasurement.aqi?.valueWithUnit
                 else -> null
             }
             if (latestValue != null) {

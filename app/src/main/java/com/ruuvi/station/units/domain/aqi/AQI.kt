@@ -28,19 +28,17 @@ sealed class AQI (val score: Double?) {
         fun getAQI(pm25: Double?,
                    co2: Int?
         ): AQI {
-            val distances = mutableListOf<Double>()
-            pm25?.let { distances.add(scorePpm(it)) }
-            co2?.let { distances.add(scoreCO2(it)) }
-            if (distances.size > 0) {
-                val index = max(0.0, 100f - sqrt(distances.fold(0.0) { acc, value -> acc + value * value} / distances.size).roundHalfUp(1))
-                return when (index) {
-                    in 0.0..100.0 -> CalculatedAQI(index)
-                    else -> UndefinedAQI
-                }
+            if (pm25 == null || co2 == null ) return UndefinedAQI
 
-            } else {
-                return UndefinedAQI
-            }
+            val pm25Clamped = pm25.coerceIn(PM25_MIN, PM25_MAX)
+            val co2Clamped = co2.coerceIn(CO2_MIN, CO2_MAX)
+
+            val dx = (pm25Clamped - PM25_MIN) * PM25_SCALE
+            val dy = (co2Clamped - CO2_MIN) * CO2_SCALE
+
+            val r = kotlin.math.hypot(dx, dy)
+
+            return CalculatedAQI((AQI_MAX - r).coerceIn(0.0, AQI_MAX).roundHalfUp(2))
         }
 
         fun getAQI(measurements: SensorMeasurements) =
@@ -51,14 +49,6 @@ sealed class AQI (val score: Double?) {
 
         private fun scorePpm(pm: Double): Double {
             return max(0.0, (pm - 12) * 2)
-        }
-
-        private fun scoreVoc(voc: Int): Double {
-            return max(0.0, voc - 200.0)
-        }
-
-        private fun scoreNox(nox: Int): Double {
-            return max(0.0, nox - 200.0)
         }
 
         private fun scoreCO2(co2: Int): Double {
@@ -93,5 +83,14 @@ sealed class AQI (val score: Double?) {
         val ModerateColor = Color(0xFFF7E13E)
         val GoodColor = Color(0xFF96CC48)
         val ExcellentColor = Color(0xFF4BC8B9)
+
+        const val AQI_MAX = 100.0
+        const val PM25_MAX = 60.0
+        const val PM25_MIN = 0.0
+        const val PM25_SCALE = AQI_MAX / (PM25_MAX - PM25_MIN)
+
+        const val CO2_MAX = 2300
+        const val CO2_MIN = 420
+        const val CO2_SCALE  = AQI_MAX / (CO2_MAX - CO2_MIN)
     }
 }

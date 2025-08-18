@@ -9,6 +9,7 @@ import com.github.mikephil.charting.highlight.Highlight
 import com.github.mikephil.charting.utils.MPPointF
 import com.ruuvi.station.R
 import com.ruuvi.station.units.domain.UnitsConverter
+import com.ruuvi.station.units.model.Accuracy
 import com.ruuvi.station.units.model.UnitType
 import java.text.DateFormat
 import java.util.*
@@ -45,7 +46,12 @@ constructor(
             DateUtils.FORMAT_SHOW_DATE or DateUtils.FORMAT_NO_YEAR or DateUtils.FORMAT_NUMERIC_DATE
         )
 
-        val valueText = unitsConverter.getValue(e.y.toDouble(), unitType.defaultAccuracy, context.getString(unitType.unit))
+        val accuracy = if (unitType == UnitType.AirQuality.AqiIndex) {
+            Accuracy.Accuracy1
+        } else {
+            unitType.defaultAccuracy
+        }
+        val valueText = unitsConverter.getValue(e.y.toDouble(), accuracy, context.getString(unitType.unit))
 
         tvContent.text ="$valueText\n$timeText\n$dateText"
 

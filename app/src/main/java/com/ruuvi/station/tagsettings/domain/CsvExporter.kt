@@ -6,9 +6,11 @@ import android.widget.Toast
 import androidx.core.content.FileProvider
 import com.ruuvi.station.R
 import com.ruuvi.station.app.preferences.GlobalSettings
+import com.ruuvi.station.bluetooth.util.extensions.roundHalfUp
 import com.ruuvi.station.database.domain.SensorHistoryRepository
 import com.ruuvi.station.database.domain.SensorSettingsRepository
 import com.ruuvi.station.database.domain.TagRepository
+import com.ruuvi.station.database.tables.isAir
 import com.ruuvi.station.units.domain.UnitsConverter
 import com.ruuvi.station.units.domain.aqi.AQI
 import com.ruuvi.station.util.extensions.prepareFilename
@@ -98,8 +100,8 @@ class CsvExporter(
             readings.forEach { reading->
                 fileWriter.append(dateFormat.format(reading.createdAt))
                 fileWriter.append(',')
-                if (tag?.dataFormat == 0xE0) {
-                    fileWriter.append(AQI.getAQI(reading.pm25, reading.co2).score?.let { it.toString() } ?: nullValue)
+                if (tag?.isAir() == true) {
+                    fileWriter.append(AQI.getAQI(reading.pm25, reading.co2).score?.let { it.roundHalfUp(1).toString() } ?: nullValue)
                     fileWriter.append(',')
                 }
                 fileWriter.append(reading.temperature?. let { unitsConverter.getTemperatureValue(it).toString() } ?: nullValue)
@@ -108,7 +110,7 @@ class CsvExporter(
                 fileWriter.append(',')
                 fileWriter.append(reading.pressure?.let { unitsConverter.getPressureValue(it).toString() } ?: nullValue)
                 fileWriter.append(',')
-                if (tag?.dataFormat == 0xE0) {
+                if (tag?.isAir() == true) {
                     fileWriter.append(reading.luminosity?.toString() ?: nullValue)
                     fileWriter.append(',')
                     fileWriter.append(reading.dBaAvg?.toString() ?: nullValue)
@@ -131,7 +133,7 @@ class CsvExporter(
                     fileWriter.append(',')
                 }
                 fileWriter.append(reading.rssi?.toString() ?: nullValue)
-                if (tag?.dataFormat == 3 || tag?.dataFormat == 5 || tag?.dataFormat == 0xE0) {
+                if (tag?.dataFormat == 3 || tag?.dataFormat == 5 || tag?.isAir() == true) {
                     fileWriter.append(',')
                     fileWriter.append(reading.accelX?.let { reading.accelX.toString() } ?: nullValue)
                     fileWriter.append(',')
@@ -141,7 +143,7 @@ class CsvExporter(
                     fileWriter.append(',')
                     fileWriter.append(reading.voltage?.toString() ?: nullValue)
                 }
-                if (tag?.dataFormat == 5 || tag?.dataFormat == 0xE0) {
+                if (tag?.dataFormat == 5 || tag?.isAir() == true) {
                     fileWriter.append(',')
                     fileWriter.append(reading.movementCounter?.let { reading.movementCounter.toString() } ?: nullValue)
                     fileWriter.append(',')

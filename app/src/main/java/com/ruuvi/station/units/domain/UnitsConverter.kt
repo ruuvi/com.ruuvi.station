@@ -25,12 +25,13 @@ class UnitsConverter (
         value: AQI
     ): EnvironmentValue {
         if (value.score != null) {
+            val aqi = getValueWithoutUnit(value.score.toDouble(), Accuracy.Accuracy0)
             return EnvironmentValue(
                 original = value.score.toDouble(),
                 value = value.score.toDouble(),
                 accuracy = Accuracy.Accuracy0,
-                valueWithUnit = "${value.score}/100 ${context.getString(AirQuality.AqiIndex.unit)}",
-                valueWithoutUnit = "${value.score}/100",
+                valueWithUnit = "$aqi/100 ${context.getString(AirQuality.AqiIndex.unit)}",
+                valueWithoutUnit = aqi,
                 unitString = context.getString(AirQuality.AqiIndex.unit),
                 unitType = AirQuality.AqiIndex
             )
