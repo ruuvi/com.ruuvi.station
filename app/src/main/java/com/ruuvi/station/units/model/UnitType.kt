@@ -591,10 +591,10 @@ sealed class UnitType(
         const val NOX_MEASUREMENT_CODE = "NOX"
         const val NOX_INDEX = "INDEX"
 
-        const val PM1_MEASUREMENT_CODE = "PM1"
+        const val PM1_MEASUREMENT_CODE = "PM10"
         const val PM25_MEASUREMENT_CODE = "PM25"
-        const val PM4_MEASUREMENT_CODE = "PM4"
-        const val PM10_MEASUREMENT_CODE = "PM10"
+        const val PM4_MEASUREMENT_CODE = "PM40"
+        const val PM10_MEASUREMENT_CODE = "PM100"
         const val PM_UNIT_MGM3 = "MGM3"
 
         fun getByCode(code: String): UnitType? {
