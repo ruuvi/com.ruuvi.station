@@ -68,10 +68,10 @@ class TagConverter(
                 accelerationY = entity.accelY,
                 accelerationZ = entity.accelZ,
                 txPower = entity.txPower,
-                pm1 = entity.pm1?.let { unitsConverter.getPmEnvironmentValue(it, PM1.Mgm3) },
+                pm10 = entity.pm1?.let { unitsConverter.getPmEnvironmentValue(it, PM10.Mgm3) },
                 pm25 = entity.pm25?.let { unitsConverter.getPmEnvironmentValue(it, PM25.Mgm3) },
-                pm4 = entity.pm4?.let { unitsConverter.getPmEnvironmentValue(it, PM4.Mgm3) },
-                pm10 = entity.pm10?.let { unitsConverter.getPmEnvironmentValue(it, PM10.Mgm3) },
+                pm40 = entity.pm4?.let { unitsConverter.getPmEnvironmentValue(it, PM40.Mgm3) },
+                pm100 = entity.pm10?.let { unitsConverter.getPmEnvironmentValue(it, PM100.Mgm3) },
                 co2 = entity.co2?.let { unitsConverter.getCo2EnvironmentValue(it) },
                 nox = entity.nox?.let { unitsConverter.getNoxEnvironmentValue(it) },
                 voc = entity.voc?.let { unitsConverter.getVocEnvironmentValue(it) },
@@ -207,9 +207,9 @@ class TagConverter(
                         valuesToDisplay.add(unitsConverter.getNoxEnvironmentValue(it))
                     }
                 }
-                PM1.Mgm3 -> {
+                PM10.Mgm3 -> {
                     entity.pm1?.let {
-                        valuesToDisplay.add(unitsConverter.getPmEnvironmentValue(it, PM1.Mgm3))
+                        valuesToDisplay.add(unitsConverter.getPmEnvironmentValue(it, PM10.Mgm3))
                     }
                 }
                 PM25.Mgm3 -> {
@@ -217,14 +217,14 @@ class TagConverter(
                         valuesToDisplay.add(unitsConverter.getPmEnvironmentValue(it, PM25.Mgm3))
                     }
                 }
-                PM4.Mgm3 -> {
+                PM40.Mgm3 -> {
                     entity.pm4?.let {
-                        valuesToDisplay.add(unitsConverter.getPmEnvironmentValue(it, PM4.Mgm3))
+                        valuesToDisplay.add(unitsConverter.getPmEnvironmentValue(it, PM40.Mgm3))
                     }
                 }
-                PM10.Mgm3 -> {
+                PM100.Mgm3 -> {
                     entity.pm10?.let {
-                        valuesToDisplay.add(unitsConverter.getPmEnvironmentValue(it, PM10.Mgm3))
+                        valuesToDisplay.add(unitsConverter.getPmEnvironmentValue(it, PM100.Mgm3))
                     }
                 }
                 else -> {}
@@ -275,10 +275,10 @@ class TagConverter(
                     accelerationY = entity.accelY,
                     accelerationZ = entity.accelZ,
                     txPower = entity.txPower,
-                    pm1 = entity.pm1?.let { unitsConverter.getPmEnvironmentValue(it, PM1.Mgm3) },
+                    pm10 = entity.pm1?.let { unitsConverter.getPmEnvironmentValue(it, PM10.Mgm3) },
                     pm25 = entity.pm25?.let { unitsConverter.getPmEnvironmentValue(it, PM25.Mgm3) },
-                    pm4 = entity.pm4?.let { unitsConverter.getPmEnvironmentValue(it, PM4.Mgm3) },
-                    pm10 = entity.pm10?.let { unitsConverter.getPmEnvironmentValue(it, PM10.Mgm3) },
+                    pm40 = entity.pm4?.let { unitsConverter.getPmEnvironmentValue(it, PM40.Mgm3) },
+                    pm100 = entity.pm10?.let { unitsConverter.getPmEnvironmentValue(it, PM100.Mgm3) },
                     co2 = entity.co2?.let { unitsConverter.getCo2EnvironmentValue(it) },
                     nox = entity.nox?.let { unitsConverter.getNoxEnvironmentValue(it) },
                     voc = entity.voc?.let { unitsConverter.getVocEnvironmentValue(it) },
@@ -357,10 +357,10 @@ class TagConverter(
             displayOptions.add(CO2.Ppm)
             displayOptions.add(VOC.VocIndex)
             displayOptions.add(NOX.NoxIndex)
-            displayOptions.add(PM1.Mgm3)
-            displayOptions.add(PM25.Mgm3)
-            displayOptions.add(PM4.Mgm3)
             displayOptions.add(PM10.Mgm3)
+            displayOptions.add(PM25.Mgm3)
+            displayOptions.add(PM40.Mgm3)
+            displayOptions.add(PM100.Mgm3)
         } else {
             displayOptions.add(TemperatureUnit.Celsius)
             displayOptions.add(TemperatureUnit.Fahrenheit)

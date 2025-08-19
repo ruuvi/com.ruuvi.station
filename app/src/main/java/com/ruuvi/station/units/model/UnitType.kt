@@ -11,7 +11,8 @@ sealed class UnitType(
     val measurementTitle: Int,
     val iconRes: Int = R.drawable.icon_air_quality,
     val alarmType: AlarmType? = null,
-    val defaultAccuracy: Accuracy
+    val defaultAccuracy: Accuracy,
+    val extraUnit: Int? = null,
 ){
 
     fun getCode(): String = "${measurementCode}_$unitCode"
@@ -54,7 +55,8 @@ sealed class UnitType(
     sealed class HumidityUnit(
         code: String,
         title: Int,
-        unit: Int
+        unit: Int,
+        extraUnit: Int? = null
     ): UnitType(
         unitCode = code,
         unitTitle = title,
@@ -67,7 +69,12 @@ sealed class UnitType(
     ) {
         data object Relative: HumidityUnit(HUMIDITY_RELATIVE_CODE, R.string.humidity_relative_name, R.string.humidity_relative_unit)
         data object Absolute: HumidityUnit(HUMIDITY_ABSOLUTE_CODE, R.string.humidity_absolute_name, R.string.humidity_absolute_unit)
-        data object DewPoint: HumidityUnit(HUMIDITY_DEW_POINT_CODE, R.string.humidity_dew_point_name, R.string.humidity_dew_point_unit)
+        data object DewPoint: HumidityUnit(
+            code = HUMIDITY_DEW_POINT_CODE,
+            title = R.string.humidity_dew_point_name,
+            unit = R.string.humidity_dew_point_unit,
+            extraUnit = R.string.dewpoint
+        )
 
         companion object {
             fun getUnits(): List<HumidityUnit> {
@@ -310,7 +317,8 @@ sealed class UnitType(
         measurementCode = AVG_NOISE_MEASUREMENT_CODE,
         measurementTitle = R.string.sound_avg,
         alarmType = AlarmType.SOUND,
-        defaultAccuracy = Accuracy.Accuracy0
+        defaultAccuracy = Accuracy.Accuracy0,
+        extraUnit = R.string.average
     ) {
         data object SoundDba: SoundAvg(NOISE_UNIT_DBA, R.string.unit_sound, R.string.unit_sound)
 
@@ -336,7 +344,8 @@ sealed class UnitType(
         iconRes = R.drawable.icon_sound,
         measurementCode = PEAK_NOISE_MEASUREMENT_CODE,
         measurementTitle = R.string.sound_peak,
-        defaultAccuracy = Accuracy.Accuracy0
+        defaultAccuracy = Accuracy.Accuracy0,
+        extraUnit = R.string.peak
     ) {
         data object SoundDba: SoundPeak(NOISE_UNIT_DBA, R.string.unit_sound, R.string.unit_sound)
 
@@ -432,7 +441,7 @@ sealed class UnitType(
         }
     }
 
-    sealed class PM1(
+    sealed class PM10(
         code: String,
         title: Int,
         unit: Int
@@ -441,16 +450,17 @@ sealed class UnitType(
         unitTitle = title,
         unit = unit,
         iconRes = R.drawable.icon_pm10,
-        measurementCode = PM1_MEASUREMENT_CODE,
-        measurementTitle = R.string.pm1,
-        alarmType = AlarmType.PM1,
-        defaultAccuracy = Accuracy.Accuracy1
+        measurementCode = PM10_MEASUREMENT_CODE,
+        measurementTitle = R.string.pm10,
+        alarmType = AlarmType.PM10,
+        defaultAccuracy = Accuracy.Accuracy1,
+        extraUnit = R.string.pm10
     ) {
-        data object Mgm3: PM1(PM_UNIT_MGM3, R.string.unit_pm1, R.string.unit_pm1)
+        data object Mgm3: PM10(PM_UNIT_MGM3, R.string.unit_pm10, R.string.unit_pm10)
 
         companion object {
 
-            fun getByCode(code: String): PM1 {
+            fun getByCode(code: String): PM10 {
                 return when (code) {
                     PM_UNIT_MGM3 -> Mgm3
                     else -> Mgm3
@@ -471,7 +481,8 @@ sealed class UnitType(
         measurementCode = PM25_MEASUREMENT_CODE,
         measurementTitle = R.string.pm25,
         alarmType = AlarmType.PM25,
-        defaultAccuracy = Accuracy.Accuracy1
+        defaultAccuracy = Accuracy.Accuracy1,
+        extraUnit = R.string.pm25
     ) {
         data object Mgm3: PM25(PM_UNIT_MGM3, R.string.unit_pm25, R.string.unit_pm25)
 
@@ -486,7 +497,7 @@ sealed class UnitType(
         }
     }
 
-    sealed class PM4(
+    sealed class PM40(
         code: String,
         title: Int,
         unit: Int
@@ -495,16 +506,17 @@ sealed class UnitType(
         unitTitle = title,
         unit = unit,
         iconRes = R.drawable.icon_pm10,
-        measurementCode = PM4_MEASUREMENT_CODE,
-        measurementTitle = R.string.pm4,
-        alarmType = AlarmType.PM4,
-        defaultAccuracy = Accuracy.Accuracy1
+        measurementCode = PM40_MEASUREMENT_CODE,
+        measurementTitle = R.string.pm40,
+        alarmType = AlarmType.PM40,
+        defaultAccuracy = Accuracy.Accuracy1,
+        extraUnit = R.string.pm40
     ) {
-        data object Mgm3: PM4(PM_UNIT_MGM3, R.string.unit_pm4, R.string.unit_pm4)
+        data object Mgm3: PM40(PM_UNIT_MGM3, R.string.unit_pm40, R.string.unit_pm40)
 
         companion object {
 
-            fun getByCode(code: String): PM4 {
+            fun getByCode(code: String): PM40 {
                 return when (code) {
                     PM_UNIT_MGM3 -> Mgm3
                     else -> Mgm3
@@ -513,7 +525,7 @@ sealed class UnitType(
         }
     }
 
-    sealed class PM10(
+    sealed class PM100(
         code: String,
         title: Int,
         unit: Int
@@ -522,16 +534,17 @@ sealed class UnitType(
         unitTitle = title,
         unit = unit,
         iconRes = R.drawable.icon_pm10,
-        measurementCode = PM10_MEASUREMENT_CODE,
-        measurementTitle = R.string.pm10,
-        alarmType = AlarmType.PM10,
-        defaultAccuracy = Accuracy.Accuracy1
+        measurementCode = PM100_MEASUREMENT_CODE,
+        measurementTitle = R.string.pm100,
+        alarmType = AlarmType.PM100,
+        defaultAccuracy = Accuracy.Accuracy1,
+        extraUnit = R.string.pm100
     ) {
-        data object Mgm3: PM10(PM_UNIT_MGM3, R.string.unit_pm10, R.string.unit_pm10)
+        data object Mgm3: PM100(PM_UNIT_MGM3, R.string.unit_pm100, R.string.unit_pm100)
 
         companion object {
 
-            fun getByCode(code: String): PM10 {
+            fun getByCode(code: String): PM100 {
                 return when (code) {
                     PM_UNIT_MGM3 -> Mgm3
                     else -> Mgm3
@@ -591,10 +604,10 @@ sealed class UnitType(
         const val NOX_MEASUREMENT_CODE = "NOX"
         const val NOX_INDEX = "INDEX"
 
-        const val PM1_MEASUREMENT_CODE = "PM10"
+        const val PM10_MEASUREMENT_CODE = "PM10"
         const val PM25_MEASUREMENT_CODE = "PM25"
-        const val PM4_MEASUREMENT_CODE = "PM40"
-        const val PM10_MEASUREMENT_CODE = "PM100"
+        const val PM40_MEASUREMENT_CODE = "PM40"
+        const val PM100_MEASUREMENT_CODE = "PM100"
         const val PM_UNIT_MGM3 = "MGM3"
 
         fun getByCode(code: String): UnitType? {
@@ -617,10 +630,10 @@ sealed class UnitType(
                 CO2_MEASUREMENT_CODE -> CO2.getByCode(unitType)
                 VOC_MEASUREMENT_CODE -> VOC.getByCode(unitType)
                 NOX_MEASUREMENT_CODE -> NOX.getByCode(unitType)
-                PM1_MEASUREMENT_CODE -> PM1.getByCode(unitType)
-                PM25_MEASUREMENT_CODE -> PM25.getByCode(unitType)
-                PM4_MEASUREMENT_CODE -> PM4.getByCode(unitType)
                 PM10_MEASUREMENT_CODE -> PM10.getByCode(unitType)
+                PM25_MEASUREMENT_CODE -> PM25.getByCode(unitType)
+                PM40_MEASUREMENT_CODE -> PM40.getByCode(unitType)
+                PM100_MEASUREMENT_CODE -> PM100.getByCode(unitType)
                 else -> null
             }
         }
@@ -657,9 +670,9 @@ fun UnitType.getDescriptionBodyResId(): Int {
         is UnitType.CO2 -> R.string.description_text_co2
         is UnitType.VOC -> R.string.description_text_voc
         is UnitType.NOX -> R.string.description_text_nox
-        is UnitType.PM1 -> R.string.description_text_pm
-        is UnitType.PM25 -> R.string.description_text_pm
-        is UnitType.PM4 -> R.string.description_text_pm
         is UnitType.PM10 -> R.string.description_text_pm
+        is UnitType.PM25 -> R.string.description_text_pm
+        is UnitType.PM40 -> R.string.description_text_pm
+        is UnitType.PM100 -> R.string.description_text_pm
     }
 }

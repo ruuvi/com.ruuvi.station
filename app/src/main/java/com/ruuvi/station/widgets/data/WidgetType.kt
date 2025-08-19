@@ -19,10 +19,10 @@ enum class WidgetType(val code: Int, val titleResId: Int, val unitType: UnitType
     CO2(23, R.string.co2, UnitType.CO2.Ppm),
     VOC(23, R.string.voc, UnitType.VOC.VocIndex),
     NOX(24, R.string.nox, UnitType.NOX.NoxIndex),
-    PM10(25, R.string.pm1, UnitType.PM1.Mgm3),
+    PM10(25, R.string.pm10, UnitType.PM10.Mgm3),
     PM25(26, R.string.pm25, UnitType.PM25.Mgm3),
-    PM40(27, R.string.pm4, UnitType.PM4.Mgm3),
-    PM100(28, R.string.pm10, UnitType.PM10.Mgm3);
+    PM40(27, R.string.pm40, UnitType.PM40.Mgm3),
+    PM100(28, R.string.pm100, UnitType.PM100.Mgm3);
 
 
     companion object {

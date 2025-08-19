@@ -118,10 +118,10 @@ class XlsxExporter (
                 ColumnDefinition(context.getString(R.string.co2), null, null),
                 ColumnDefinition(context.getString(R.string.voc), null, null),
                 ColumnDefinition(context.getString(R.string.nox), null, null),
-                ColumnDefinition(context.getString(R.string.pm1), null, null),
-                ColumnDefinition(context.getString(R.string.pm25), null, null),
-                ColumnDefinition(context.getString(R.string.pm4), null, null),
                 ColumnDefinition(context.getString(R.string.pm10), null, null),
+                ColumnDefinition(context.getString(R.string.pm25), null, null),
+                ColumnDefinition(context.getString(R.string.pm40), null, null),
+                ColumnDefinition(context.getString(R.string.pm100), null, null),
             ))
         }
 
