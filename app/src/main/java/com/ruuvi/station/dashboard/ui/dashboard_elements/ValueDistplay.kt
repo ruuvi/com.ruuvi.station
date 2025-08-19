@@ -7,6 +7,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.ruuvi.station.app.ui.components.limitScaleTo
@@ -29,6 +30,13 @@ fun ValueDisplay(
         RuuviStationTheme.colors.primary
     }
 
+    val unit = if (value.unitType.extraUnit != null) {
+        val extraUnit = stringResource(value.unitType.extraUnit)
+        "$extraUnit, ${value.unitString}"
+    } else {
+        value.unitString
+    }
+
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.Bottom
@@ -44,7 +52,7 @@ fun ValueDisplay(
         Spacer(modifier = Modifier.width(width = 4.dp))
         Text(
             modifier = Modifier.alignByBaseline(),
-            text = value.unitString,
+            text = unit,
             style = RuuviStationTheme.typography.dashboardUnit,
             fontSize = ruuviStationFontsSizes.petite.limitScaleTo(1.5f),
             color = textColor,
