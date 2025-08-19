@@ -303,16 +303,18 @@ class TagConverter(
 
         if (isAir) {
             displayOrder.add(AirQuality.AqiIndex)
+            displayOrder.add(CO2.Ppm)
+            displayOrder.add(PM25.Mgm3)
+            displayOrder.add(VOC.VocIndex)
+            displayOrder.add(NOX.NoxIndex)
             displayOrder.add(preferencesRepository.getTemperatureUnit())
             if (humidityExist) {
                 displayOrder.add(preferencesRepository.getHumidityUnit())
             }
+            if (pressureExist) {
+                displayOrder.add(preferencesRepository.getPressureUnit())
+            }
             displayOrder.add(Luminosity.Lux)
-            displayOrder.add(SoundAvg.SoundDba)
-            displayOrder.add(CO2.Ppm)
-            displayOrder.add(VOC.VocIndex)
-            displayOrder.add(NOX.NoxIndex)
-            displayOrder.add(PM25.Mgm3)
         } else {
             displayOrder.add(preferencesRepository.getTemperatureUnit())
             if (humidityExist) {
