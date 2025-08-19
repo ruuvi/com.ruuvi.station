@@ -167,8 +167,7 @@ fun ValueSheetHeader(
         )
 
         ValueSheetHeaderText(
-            modifier = Modifier
-                .alignByBaseline(),
+            modifier = Modifier,
             text = stringResource(sheetValue.unitType.measurementTitle)
         )
 
