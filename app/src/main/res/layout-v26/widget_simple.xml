@@ -60,6 +60,10 @@
             tools:text="2 lines of name to fit in here"
             android:textColor="?attr/colorOnSecondary"
             android:textSize="20dp"
+            android:autoSizeTextType="uniform"
+            android:autoSizeMinTextSize="10dp"
+            android:autoSizeMaxTextSize="20dp"
+            android:autoSizeStepGranularity="1dp"
             android:includeFontPadding="false"
             android:lineSpacingExtra="0sp"
             />
