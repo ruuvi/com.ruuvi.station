@@ -2,7 +2,8 @@ package com.ruuvi.station.dashboard
 
 enum class DashboardType(val code: String) {
     IMAGE_VIEW("image"),
-    SIMPLE_VIEW("simple");
+    SIMPLE_VIEW("simple"),
+    IMAGE_EXT_VIEW("image_ext");
 
     companion object {
         fun getByCode(code: String): DashboardType =
@@ -11,6 +12,6 @@ enum class DashboardType(val code: String) {
         fun isValidCode(code: String): Boolean =
             values().any { it.code == code }
 
-        val defaultDashboardType = IMAGE_VIEW
+        val defaultDashboardType = IMAGE_EXT_VIEW
     }
 }

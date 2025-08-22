@@ -286,7 +286,7 @@
     <string name="export_csv_header_format2_4">Date,Température (%1$s),Humidité (%2$s),Pression (%3$s),Puissance d\'émission(dBm)</string>
     <string name="export_csv_header_format3">Date,Température (%1$s),Humidité (%2$s),Pression (%3$s),Puissance d\'émission (dBm),Accélération en X (g),Accélération en Y (g),Accélération en Z (g),Tension (V)</string>
     <string name="export_csv_header_format5">Date,Température (%1$s),Humidité (%2$s),Pression (%3$s),Puissance d\'émission (dBm),Accélération en X (g), Accélération en Y (g), Accélération en Z (g),Tension (V),Compteur de mouvements (mouvements),Numéro de séquence,Puissance d\'émission (dBm)</string>
-    <string name="export_csv_header_formatE0">Date,AQI,Température (%1$s),Humidité (%2$s),Pression (%3$s),Luminosité (lx),Moyenne dB (dBA),Pic dB (dBA),CO2(ppm),VOC,NOX,PM1.0(µg/m³),PM2.5(µg/m³),PM4.0(µg/m³),PM10.0(µg/m³),Puissance d\'émission (dBm),Accélération en X (g), Accélération en Y (g), Accélération en Z (g),Tension (V),Compteur de mouvements (mouvements),Numéro de séquence,Puissance d\'émission (dBm)</string>
+    <string name="export_csv_header_formatE0">Date,AQI,Température (%1$s),Humidité (%2$s),Pression (%3$s),Éclairement (lx),Son moyen(dBA),Son pic(dBA),CO2(ppm),COV,NOX,PM1(µg/m³),PM2.5(µg/m³),PM4(µg/m³),PM10(µg/m³),RSSI (dBm),Accélération X (g),Accélération Y (g),Accélération Z (g),Tension (V),Compteur de mouvements,Numéro de mesure,Puissance TX (dBm)</string>
     <string name="export_history">Exportation de l\'historique (csv)</string>
     <string name="export_history_xlsx">Exportation de l\'historique (xlsx)</string>
     <string name="file_not_supported">Format non supporté</string>
@@ -392,7 +392,7 @@
     <string name="more_info">Plus d\'infos</string>
     <string name="move_down">Descendre</string>
     <string name="move_up">Monter</string>
-    <string name="movement_counter">Compteur de mouvements</string>
+    <string name="movement_counter">Mouvement</string>
     <string name="movements">mouvements</string>
     <string name="muted_till">Muet jusqu\'à %1$s</string>
     <string name="my_account_change_email">Contactez support@ruuvi.com si vous souhaitez modifier l\'adresse e-mail associée à ce compte utilisateur.</string>

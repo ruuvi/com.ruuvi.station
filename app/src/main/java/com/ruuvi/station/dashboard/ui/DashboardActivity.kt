@@ -469,7 +469,7 @@ fun DashboardItems(
                             itemIsDragged = itemIsDragged,
                             moveItem = onMove
                             )
-                    DashboardType.IMAGE_VIEW ->
+                    DashboardType.IMAGE_VIEW, DashboardType.IMAGE_EXT_VIEW ->
                         DashboardItem(
                             lazyGridState = dragDropListState.getLazyListState(),
                             itemIndex = index,
@@ -479,7 +479,8 @@ fun DashboardItems(
                             itemIsDragged = itemIsDragged,
                             showMeasurementTitle = showMeasurementTitle,
                             setName = setName,
-                            moveItem = onMove
+                            moveItem = onMove,
+                            extended = dashboardType == DashboardType.IMAGE_EXT_VIEW
                         )
                 }
             }
@@ -562,7 +563,8 @@ fun DashboardItem(
     setName: (String, String?) -> Unit,
     moveItem: (Int, Int, Boolean) -> Unit,
     modifier: Modifier = Modifier,
-    interactionEnabled: Boolean = true
+    interactionEnabled: Boolean = true,
+    extended: Boolean
 ) {
     val context = LocalContext.current
     val modifier = if (itemIsDragged) {
@@ -671,9 +673,10 @@ fun DashboardItem(
                             dropFirst = true,
                             modifier = Modifier
                                 .padding(
-                                    top = RuuviStationTheme.dimensions.medium,
+                                    top = 6.dp,
                                     bottom = RuuviStationTheme.dimensions.small
-                                )
+                                ),
+                            extended = extended
                         )
                         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.small))
                         ItemBottom(
@@ -764,7 +767,8 @@ fun DashboardItemSimple(
                     sensor = sensor,
                     dropFirst = false,
                     modifier = Modifier
-                        .padding(vertical = RuuviStationTheme.dimensions.small)
+                        .padding(vertical = RuuviStationTheme.dimensions.small),
+                    extended = false
                 )
 
                 ItemBottom(
@@ -881,7 +885,8 @@ fun ItemButtons(
 fun ItemValues(
     sensor: RuuviTag,
     modifier: Modifier = Modifier,
-    dropFirst:Boolean = false
+    dropFirst:Boolean = false,
+    extended: Boolean
 ) {
     val valuesToDisplay =
         if (dropFirst) {
@@ -908,12 +913,14 @@ fun ItemValues(
                 verticalArrangement = Arrangement.Bottom,
             ) {
                 for (valueDisplay in evenValues) {
+                    if (extended) Spacer(modifier = Modifier.height(4.dp))
                     ValueDisplay(
                         value = valueDisplay,
                         alertTriggered = valueDisplay.unitType?.alarmType?.let {
                             sensor.alarmSensorStatus.triggered(it)
                         } ?: false,
-                        modifier = Modifier.padding(top = 2.dp)
+                        modifier = Modifier.padding(top = 2.dp),
+                        extended = extended
                     )
                 }
             }
@@ -924,12 +931,14 @@ fun ItemValues(
                 verticalArrangement = Arrangement.Bottom,
             ) {
                 for (valueDisplay in oddValues) {
+                    if (extended) Spacer(modifier = Modifier.height(4.dp))
                     ValueDisplay(
                         value = valueDisplay,
                         alertTriggered = valueDisplay.unitType?.alarmType?.let {
                             sensor.alarmSensorStatus.triggered(it)
                         } ?: false,
-                        modifier = Modifier.padding(top = 2.dp)
+                        modifier = Modifier.padding(top = 2.dp),
+                        extended = extended
                     )
                 }
             }
