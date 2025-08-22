@@ -5,5 +5,6 @@ data class SensorDenseRequest(
     val sharedToOthers: Boolean = false,
     val sharedToMe: Boolean = false,
     val measurements: Boolean = false,
-    val alerts: Boolean = false
+    val alerts: Boolean = false,
+    val settings: Boolean = false
 )

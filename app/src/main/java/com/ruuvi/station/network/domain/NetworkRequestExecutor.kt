@@ -145,6 +145,7 @@ class NetworkRequestExecutor (
                 NetworkRequestType.UNSHARE -> parseJson<UnshareSensorRequest>(requestData)
                 NetworkRequestType.RESET_IMAGE -> parseJson<UploadImageRequest>(requestData)
                 NetworkRequestType.SET_ALERT -> parseJson<SetAlertRequest>(requestData)
+                NetworkRequestType.SENSOR_SETTINGS -> parseJson<UpdateSensorSettingRequest>(requestData)
             }
         }
     }
@@ -171,6 +172,10 @@ class NetworkRequestExecutor (
                 NetworkRequestType.SETTINGS -> updateUserSettings(
                     token,
                     request as UpdateUserSettingRequest
+                )
+                NetworkRequestType.SENSOR_SETTINGS -> updateSensorSettings(
+                    token,
+                    request as UpdateSensorSettingRequest
                 )
                 NetworkRequestType.UNSHARE -> unshareSensor(token, request as UnshareSensorRequest)
                 NetworkRequestType.RESET_IMAGE -> resetImage(token, request as UploadImageRequest)
@@ -221,6 +226,11 @@ class NetworkRequestExecutor (
     private suspend fun updateUserSettings(token: String, request: UpdateUserSettingRequest): UpdateUserSettingResponse? {
         Timber.d("updateUserSettings $request")
         return networkRepository.updateUserSettings(request, token)
+    }
+
+    private suspend fun updateSensorSettings(token: String, request: UpdateSensorSettingRequest): UpdateSensorSettingResponse? {
+        Timber.d("updateSensorSettings $request")
+        return networkRepository.updateSensorSettings(request, token)
     }
 
     private inline fun <reified T>parseJson(jsonString: String): T? {

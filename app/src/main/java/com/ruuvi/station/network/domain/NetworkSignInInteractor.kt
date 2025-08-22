@@ -34,8 +34,10 @@ class NetworkSignInInteractor (
     }
 
     fun signOut(finished: ()->Unit) {
-        networkDataSyncInteractor.stopSync()
         CoroutineScope(Dispatchers.IO).launch {
+            val stopJob = networkDataSyncInteractor.stopSync()
+            stopJob.join()
+
             networkTokenRepository.clearTokenInfo()
             pushRegisterInteractor.checkAndRegisterDeviceToken()
 

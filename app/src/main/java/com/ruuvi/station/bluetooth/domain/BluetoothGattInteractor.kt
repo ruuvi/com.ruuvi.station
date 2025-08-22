@@ -2,8 +2,8 @@ package com.ruuvi.station.bluetooth.domain
 
 import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.bluetooth.BluetoothInteractor
-import com.ruuvi.station.bluetooth.IRuuviGattListener
-import com.ruuvi.station.bluetooth.LogReading
+import com.ruuvi.station.bluetooth.contract.IRuuviGattListener
+import com.ruuvi.station.bluetooth.contract.LogReading
 import com.ruuvi.station.bluetooth.model.GattSyncStatus
 import com.ruuvi.station.bluetooth.model.SyncProgress
 import com.ruuvi.station.database.domain.SensorHistoryRepository

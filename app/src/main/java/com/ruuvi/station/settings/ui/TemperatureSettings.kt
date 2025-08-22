@@ -11,14 +11,14 @@ import androidx.compose.ui.res.stringResource
 import com.ruuvi.station.R
 import com.ruuvi.station.app.ui.components.*
 import com.ruuvi.station.units.model.Accuracy
-import com.ruuvi.station.units.model.TemperatureUnit
+import com.ruuvi.station.units.model.UnitType.*
 
 @Composable
 fun TemperatureSettings(
     scaffoldState: ScaffoldState,
     viewModel: TemperatureSettingsViewModel
 ) {
-    val unit = viewModel.temperatureUnit.observeAsState(TemperatureUnit.CELSIUS)
+    val unit = viewModel.temperatureUnit.observeAsState(TemperatureUnit.Celsius)
     val accuracy = viewModel.temperatureAccuracy.observeAsState(Accuracy.Accuracy2)
     PageSurfaceWithPadding {
         Column() {
@@ -39,7 +39,7 @@ fun TemperatureSettings(
 
 @Composable
 fun TemperatureUnit(
-    allUnits: Array<TemperatureUnit>,
+    allUnits: List<TemperatureUnit>,
     selectedUnit: State<TemperatureUnit>,
     onUnitSelected: (TemperatureUnit) -> Unit
 ) {
@@ -65,7 +65,7 @@ fun TemperatureUnitElement(
     onUnitSelected: (TemperatureUnit) -> Unit
 ) {
     RadioButtonRuuvi(
-        text = stringResource(id = unit.title),
+        text = stringResource(id = unit.unitTitle),
         isSelected = isSelected,
         onClick = { onUnitSelected.invoke(unit) }
     )

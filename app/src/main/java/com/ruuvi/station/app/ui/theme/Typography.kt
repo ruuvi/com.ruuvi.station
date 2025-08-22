@@ -115,7 +115,7 @@ fun provideTypography(colors: RuuviStationColors): RuuviStationTypography {
         dashboardBigValueUnit = TextStyle(
             color = colors.settingsTitleText,
             fontFamily = ruuviStationFonts.oswaldRegular,
-            fontSize = ruuviStationFontsSizes.normal,
+            fontSize = ruuviStationFontsSizes.compact,
             textAlign = TextAlign.Left
         ),
         dashboardSecondary = TextStyle(

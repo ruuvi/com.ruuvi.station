@@ -45,15 +45,15 @@ class FirebaseInteractor(
                 )
                 firebaseAnalytics.setUserProperty(
                     TEMPERATURE_UNIT,
-                    preferences.getTemperatureUnit().code
+                    preferences.getTemperatureUnit().unitCode
                 )
                 firebaseAnalytics.setUserProperty(
                     HUMIDITY_UNIT,
-                    preferences.getHumidityUnit().code.toString()
+                    preferences.getHumidityUnit().unitCode
                 )
                 firebaseAnalytics.setUserProperty(
                     PRESSURE_UNIT,
-                    preferences.getPressureUnit().code.toString()
+                    preferences.getPressureUnit().unitCode
                 )
                 firebaseAnalytics.setUserProperty(
                     DASHBOARD_ENABLED,

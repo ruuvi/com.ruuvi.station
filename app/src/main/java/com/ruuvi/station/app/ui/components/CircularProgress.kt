@@ -21,8 +21,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.ruuvi.station.app.ui.theme.ruuviStationFonts
-import com.ruuvi.station.util.extensions.scaledSp
 import kotlin.math.cos
 import kotlin.math.sin
 
@@ -99,7 +99,7 @@ fun CircularGradientProgress(
         // Centered Label
         Text(
             text = progress.toInt().toString(),
-            fontSize = 54.scaledSp,
+            fontSize = 54.sp,
             fontFamily = ruuviStationFonts.oswaldBold,
             fontWeight = FontWeight.Bold,
             color = Color.White,
@@ -113,7 +113,7 @@ fun CircularGradientProgress(
         ) {
             Text(
                 text = "/100",
-                fontSize = 18.scaledSp,
+                fontSize = 18.sp,
                 fontFamily = ruuviStationFonts.oswaldRegular,
                 color = Color.White
             )

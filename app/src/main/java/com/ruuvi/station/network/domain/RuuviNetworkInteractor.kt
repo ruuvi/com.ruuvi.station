@@ -326,7 +326,7 @@ class RuuviNetworkInteractor (
                 measurements = true,
                 alerts = false,
                 sharedToOthers = false,
-                sharedToMe = true
+                sharedToMe = true,
             )
     ): SensorDenseResponse? = withContext(Dispatchers.IO) {
         val token = getToken()?.token
@@ -343,6 +343,16 @@ class RuuviNetworkInteractor (
             UpdateUserSettingRequest(name, value)
         )
         Timber.d("updateUserSetting $networkRequest")
+        networkRequestExecutor.registerRequest(networkRequest, true)
+    }
+
+    fun updateSensorSetting(sensorId: String, name: String, value: String) {
+        val networkRequest = NetworkRequest(
+            NetworkRequestType.SENSOR_SETTINGS,
+            sensorId + name,
+            UpdateSensorSettingRequest(sensorId, listOf(name), listOf(value))
+        )
+        Timber.d("updateSensorSetting $networkRequest")
         networkRequestExecutor.registerRequest(networkRequest, true)
     }
 

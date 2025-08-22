@@ -153,4 +153,18 @@ class SensorSettingsRepository {
             it.update()
         }
     }
+
+    fun updateUseDefaultSensorOrder(sensorId: String, enabled: Boolean) {
+        getSensorSettings(sensorId)?.let { settings ->
+            settings.defaultDisplayOrder = enabled
+            settings.update()
+        }
+    }
+
+    fun newDisplayOrder(sensorId: String, displayOrder: String) {
+        getSensorSettings(sensorId)?.let { settings ->
+            settings.displayOrder = displayOrder
+            settings.update()
+        }
+    }
 }

@@ -1,6 +1,6 @@
 package com.ruuvi.station.widgets.data
 
-import com.ruuvi.station.bluetooth.FoundRuuviTag
+import com.ruuvi.station.bluetooth.contract.FoundRuuviTag
 import java.util.*
 
 data class DecodedSensorData(

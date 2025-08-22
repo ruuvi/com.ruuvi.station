@@ -207,6 +207,8 @@
     <string name="current_plan">Current Ruuvi plan</string>
     <string name="current_version">Current version</string>
     <string name="current_version_fw">Current version:</string>
+    <string name="customisation_settings">Customisation settings</string>
+    <string name="customisation_settings_description">Drag and drop the measurements into desired ordering.</string>
     <string name="dark_theme">Dark theme</string>
     <string name="darktheme_disabled">Dark theme is disabled.</string>
     <string name="darktheme_enabled">Dark theme is enabled.</string>
@@ -312,12 +314,14 @@
     <string name="help_seen_tags">Seen sensors: %1$,d</string>
     <string name="help_troubleshooting_text">Find help using the Ruuvi Station apps, Ruuvi products and Ruuvi Cloud service from our support center: ruuvi.com/support</string>
     <string name="help_troubleshooting_title">Troubleshooting</string>
+    <string name="hide_measurements">Hidden measurements</string>
     <string name="history_view">History view</string>
     <string name="hour">Hour</string>
     <string name="hour_1">1 hour</string>
     <string name="hour_12">12 hours</string>
     <string name="hour_2">2 hours</string>
     <string name="hour_3">3 hours</string>
+    <string name="hour_6">6 hours</string>
     <string name="hour_x">%1$s hours</string>
     <string name="hours">Hours</string>
     <string name="humidity">Humidity</string>
@@ -344,7 +348,7 @@
     <string name="latest_available_fw">Latest available Ruuvi firmware version:</string>
     <string name="latest_measured_value">Latest measured value: %1$s</string>
     <string name="lets_do_it">Let\'s Sign In</string>
-    <string name="light">Light</string>
+    <string name="light">Luminosity</string>
     <string name="light_theme">Light theme</string>
     <string name="logged_in">Signed in:</string>
     <string name="login_description">To enjoy all the features, create a free account or sign in to your existing Ruuvi account by entering your email address.</string>
@@ -403,7 +407,7 @@
     <string name="no_password_needed">A free account will be created for this email if you don\'t already have one. Only email address is required. We keep your information safe.</string>
     <string name="none">none</string>
     <string name="note">Note!</string>
-    <string name="notification_permission_needed">To enable alerts please allow Notifications in settings</string>
+    <string name="notification_permission_needed">To enable alerts and background scanning please allow Notifications in settings</string>
     <string name="nox">NOx</string>
     <string name="nox_with_unit">NOx (%1$s)</string>
     <string name="off">Off</string>
@@ -454,7 +458,6 @@
     <string name="permission_dialog_title">Enable Bluetooth scanning</string>
     <string name="permission_location_needed">Please enable location permission in settings to see sensors.</string>
     <string name="permission_location_needed_api31">Please allow to show nearby devices in settings to see sensors.</string>
-    <string name="permission_notification_needed">To enable alerts please allow notifications in settings.</string>
     <string name="plan_expiry_date">Ruuvi plan\'s expiry date</string>
     <string name="pm1">PM1.0</string>
     <string name="pm10">PM10.0</string>
@@ -485,6 +488,7 @@
     <string name="pressure_reading">%1$,.2f %2$s</string>
     <string name="pressure_reading_pa">%1$,.0f %2$s</string>
     <string name="pressure_with_unit">Air pressure (%1$s)</string>
+    <string name="preview">Preview</string>
     <string name="reading_history">Reading history</string>
     <string name="reading_history_not_supported">Firmware not supported</string>
     <string name="reading_history_x">Reading Bluetooth: %1$s</string>
@@ -590,6 +594,7 @@
     <string name="share_sensor_title">Share sensor</string>
     <string name="share_sensor_unshare_confirm">Do you want to unshare sensor for %1$s?</string>
     <string name="shared_to_x">Shared to %1$,d/%2$,d</string>
+    <string name="show_measurements">Visible measurements</string>
     <string name="sign_in">Sign in</string>
     <string name="sign_in_benefits_description">Benefits:\n\n ● Sensor names, background images, offsets and alert settings will be securely stored in the cloud\n\n ● Access sensors remotely over the Internet (requires a Ruuvi Gateway)\n\n ● Share sensors with friends and family (requires a Ruuvi Gateway)\n\n ● Browse up to 2 years of history on station.ruuvi.com (requires a Ruuvi Gateway)</string>
     <string name="sign_in_check_email">We\'ve sent a one-time password to your email %1$s. Sign in by entering it here:</string>
@@ -654,7 +659,7 @@
     <string name="try_again">Try again</string>
     <string name="tx_power">Tx power</string>
     <string name="tx_power_reading">%1$,.0f dBm</string>
-    <string name="type_your_email">Type your email..</string>
+    <string name="type_your_email">Type your email...</string>
     <string name="unclaim">Unclaim</string>
     <string name="unclaim_sensor">Unclaim sensor</string>
     <string name="unclaim_sensor_description">Ownership of this sensor has been claimed to your Ruuvi account. Press Unclaim to remove this sensor\'s settings and related data from your Ruuvi account.</string>
@@ -678,6 +683,9 @@
     <string name="use_without_account">No thanks, skip</string>
     <string name="version">Version: %1$s</string>
     <string name="view">View</string>
+    <string name="visible_measurements">Visible measurements</string>
+    <string name="visible_measurements_description">Here, you can choose which measurements you\'d like to see and in what order. Switch the "Use default" toggle off to customise the settings.</string>
+    <string name="visible_measurements_use_default">Use default</string>
     <string name="voc">VOC</string>
     <string name="voc_with_unit">VOC (%1$s)</string>
     <string name="voltage_reading">%1$,.2f %2$s</string>

@@ -7,9 +7,7 @@ import com.ruuvi.station.dashboard.DashboardType
 import com.ruuvi.station.network.data.response.NetworkUserSettings
 import com.ruuvi.station.units.domain.UnitsConverter
 import com.ruuvi.station.units.model.Accuracy
-import com.ruuvi.station.units.model.HumidityUnit
-import com.ruuvi.station.units.model.PressureUnit
-import com.ruuvi.station.units.model.TemperatureUnit
+import com.ruuvi.station.units.model.UnitType.*
 import com.ruuvi.station.util.BackgroundScanModes
 import com.ruuvi.station.util.extensions.toBooleanExtra
 import com.ruuvi.station.util.extensions.toInt
@@ -109,7 +107,7 @@ class NetworkApplicationSettings (
     }
 
     private fun applyHumidityUnit(settings: NetworkUserSettings) {
-        settings.UNIT_HUMIDITY?.toIntOrNull()?.let {
+        settings.UNIT_HUMIDITY?.let {
             val unit = HumidityUnit.getByCode(it)
             if (unit != null) {
                 Timber.d("NetworkApplicationSettings-applyHumidityUnit: $unit")
@@ -119,7 +117,7 @@ class NetworkApplicationSettings (
     }
 
     private fun applyPressureUnit(settings: NetworkUserSettings) {
-        settings.UNIT_PRESSURE?.toIntOrNull()?.let {
+        settings.UNIT_PRESSURE?.let {
             val unit = PressureUnit.getByCode(it)
             if (unit != null) {
                 Timber.d("NetworkApplicationSettings-applyPressureUnit: $unit")
@@ -234,10 +232,10 @@ class NetworkApplicationSettings (
 
     fun updateTemperatureUnit() {
         if (networkInteractor.signedIn) {
-            Timber.d("NetworkApplicationSettings-updateTemperatureUnit: ${unitsConverter.getTemperatureUnit().code}")
+            Timber.d("NetworkApplicationSettings-updateTemperatureUnit: ${unitsConverter.getTemperatureUnit().unitCode}")
             networkInteractor.updateUserSetting(
                 UNIT_TEMPERATURE,
-                unitsConverter.getTemperatureUnit().code
+                unitsConverter.getTemperatureUnit().unitCode
             )
         }
     }
@@ -254,10 +252,10 @@ class NetworkApplicationSettings (
 
     fun updateHumidityUnit() {
         if (networkInteractor.signedIn) {
-            Timber.d("NetworkApplicationSettings-updateHumidityUnit: ${unitsConverter.getHumidityUnit().code}")
+            Timber.d("NetworkApplicationSettings-updateHumidityUnit: ${unitsConverter.getHumidityUnit().unitCode}")
             networkInteractor.updateUserSetting(
                 UNIT_HUMIDITY,
-                unitsConverter.getHumidityUnit().code.toString()
+                unitsConverter.getHumidityUnit().unitCode
             )
         }
     }
@@ -324,10 +322,10 @@ class NetworkApplicationSettings (
 
     fun updatePressureUnit() {
         if (networkInteractor.signedIn) {
-            Timber.d("NetworkApplicationSettings-updatePressureUnit: ${unitsConverter.getPressureUnit().code}")
+            Timber.d("NetworkApplicationSettings-updatePressureUnit: ${unitsConverter.getPressureUnit().unitCode}")
             networkInteractor.updateUserSetting(
                 UNIT_PRESSURE,
-                unitsConverter.getPressureUnit().code.toString()
+                unitsConverter.getPressureUnit().unitCode
             )
         }
     }

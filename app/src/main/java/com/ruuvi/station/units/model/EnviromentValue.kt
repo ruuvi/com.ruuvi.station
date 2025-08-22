@@ -6,5 +6,6 @@ data class EnvironmentValue(
     val accuracy: Accuracy,
     val valueWithUnit: String,
     val valueWithoutUnit: String,
-    val unitString: String
+    val unitString: String,
+    val unitType: UnitType
 )

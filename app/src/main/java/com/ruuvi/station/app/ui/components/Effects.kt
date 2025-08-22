@@ -15,16 +15,17 @@ fun BlinkingEffect(
 
     AnimatedVisibility(
         visible = contentVisible,
-        enter = fadeIn(animationSpec = tween(300)),
-        exit = fadeOut(animationSpec = tween(300))
+        enter = fadeIn(animationSpec = tween(250)),
+        exit = fadeOut(animationSpec = tween(250))
     ) {
         content()
     }
 
     LaunchedEffect(key1 = 1) {
         while (true) {
-            delay(500)
-            contentVisible = !contentVisible
+            val time = System.currentTimeMillis()
+            contentVisible = (time % 1000) < 500
+            delay(75)
         }
     }
 }

@@ -12,10 +12,15 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionOnScreen
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
@@ -261,7 +266,8 @@ fun ViewPeriodMenu(
             )
         }
         DropdownMenu(
-            modifier = Modifier.background(color = RuuviStationTheme.colors.background),
+            modifier = Modifier
+                .background(color = RuuviStationTheme.colors.background),
             expanded = daysMenuExpanded,
             onDismissRequest = { daysMenuExpanded = false }) {
             val periodOptions = listOf(
@@ -269,6 +275,7 @@ fun ViewPeriodMenu(
                 Period.Hour1,
                 Period.Hour2,
                 Period.Hour3,
+                Period.Hour6,
                 Period.Hour12,
                 Period.Day1,
                 Period.Day2,

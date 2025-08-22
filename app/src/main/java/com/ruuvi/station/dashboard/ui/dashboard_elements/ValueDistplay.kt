@@ -1,0 +1,73 @@
+package com.ruuvi.station.dashboard.ui.dashboard_elements
+
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.width
+import androidx.compose.material.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import com.ruuvi.station.app.ui.components.limitScaleTo
+import com.ruuvi.station.app.ui.theme.RuuviStationTheme
+import com.ruuvi.station.app.ui.theme.RuuviTheme
+import com.ruuvi.station.app.ui.theme.ruuviStationFontsSizes
+import com.ruuvi.station.units.model.Accuracy
+import com.ruuvi.station.units.model.EnvironmentValue
+import com.ruuvi.station.units.model.UnitType
+
+@Composable
+fun ValueDisplay(
+    value: EnvironmentValue,
+    alertTriggered: Boolean,
+    modifier: Modifier = Modifier
+) {
+    val textColor = if (alertTriggered) {
+        RuuviStationTheme.colors.activeAlert
+    } else {
+        RuuviStationTheme.colors.primary
+    }
+
+    Row(
+        modifier = modifier,
+        verticalAlignment = Alignment.Bottom
+    ) {
+        Text(
+            modifier = Modifier.alignByBaseline(),
+            text = value.valueWithoutUnit,
+            style = RuuviStationTheme.typography.dashboardValue,
+            fontSize = ruuviStationFontsSizes.compact.limitScaleTo(1.5f),
+            color = textColor,
+            maxLines = 1
+        )
+        Spacer(modifier = Modifier.width(width = 4.dp))
+        Text(
+            modifier = Modifier.alignByBaseline(),
+            text = value.unitString,
+            style = RuuviStationTheme.typography.dashboardUnit,
+            fontSize = ruuviStationFontsSizes.petite.limitScaleTo(1.5f),
+            color = textColor,
+            maxLines = 1
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun ValueDisplayPreview() {
+    RuuviTheme {
+        ValueDisplay(
+            value = EnvironmentValue(
+                original = 22.50,
+                value = 22.50,
+                accuracy = Accuracy.Accuracy1,
+                valueWithUnit = "22.5 %",
+                valueWithoutUnit = "22.5",
+                unitString = "%",
+                unitType = UnitType.HumidityUnit.Relative
+            ),
+            alertTriggered = false,
+        )
+    }
+}

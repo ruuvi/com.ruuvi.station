@@ -43,7 +43,6 @@ class MyAccountViewModel(
     }
 
     fun signOut() {
-        networkDataSyncInteractor.stopSync()
         networkSignInInteractor.signOut {
             sendEvent(MyAccountEvent.CloseActivity)
         }

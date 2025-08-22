@@ -4,6 +4,7 @@ import android.content.Context
 import com.ruuvi.station.R
 import com.ruuvi.station.units.model.Accuracy
 import com.ruuvi.station.units.model.EnvironmentValue
+import com.ruuvi.station.units.model.UnitType
 
 class MovementConverter(val context: Context) {
     fun getMovementString(movement: Int?): String {
@@ -33,7 +34,8 @@ class MovementConverter(val context: Context) {
             accuracy = Accuracy.Accuracy0,
             valueWithUnit = getMovementString(movement),
             valueWithoutUnit = getMovementStringWithoutUnit(movement),
-            unitString = getMovementUnit().toString()
+            unitString = getMovementUnit().toString(),
+            unitType = UnitType.MovementUnit.MovementsCount
         )
 
     companion object {

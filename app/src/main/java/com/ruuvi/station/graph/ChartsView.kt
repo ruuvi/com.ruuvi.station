@@ -24,12 +24,10 @@ import com.ruuvi.station.R
 import com.ruuvi.station.app.ui.components.LoadingAnimation3dots
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.ruuviStationFonts
-import com.ruuvi.station.database.tables.Alarm
 import com.ruuvi.station.graph.model.ChartContainer
-import com.ruuvi.station.graph.model.ChartSensorType
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.units.domain.UnitsConverter
-import com.ruuvi.station.units.model.PressureUnit
+import com.ruuvi.station.units.model.UnitType
 import com.ruuvi.station.util.Period
 import com.ruuvi.station.util.ui.pxToDp
 import com.ruuvi.station.util.ui.scrollbar
@@ -52,13 +50,12 @@ fun ChartsView(
     size: Size,
     increasedChartSize: Boolean,
     historyUpdater: (String) -> Flow<MutableList<ChartContainer>>,
-    getActiveAlarms: (String) -> List<Alarm>
 ) {
     Timber.d("ChartView - top ${sensor.id} $selected viewPeriod = ${viewPeriod.value}")
     val context = LocalContext.current
 
     val chartUIComponents = remember {
-        mutableMapOf<ChartSensorType, LineChart>()
+        mutableMapOf<UnitType, LineChart>()
     }
 
     var chartContainers by remember {
@@ -85,11 +82,16 @@ fun ChartsView(
 
         historyUpdater(sensor.id).collectLatest { data ->
             Timber.d("ChartView - new data collected ${data.size}")
+            if (chartUIComponents.size != data.size) {
+                chartUIComponents.clear()
+                chartsInitialized = false
+            }
+
             for (newContainer in data) {
-                var uiComponent = chartUIComponents.get(newContainer.chartSensorType)
+                var uiComponent = chartUIComponents.get(newContainer.unitType)
                 if (uiComponent == null) {
                     uiComponent = LineChart(context)
-                    chartUIComponents.put(newContainer.chartSensorType, uiComponent)
+                    chartUIComponents.put(newContainer.unitType, uiComponent)
                 }
                 newContainer.uiComponent = uiComponent
             }
@@ -99,7 +101,7 @@ fun ChartsView(
                 Timber.d("ChartView - initial setup ${sensor.id}")
                 if (chartContainers.isNotEmpty()) {
                     chartsInitialSetup(
-                        charts = chartContainers.mapNotNull { container -> container.uiComponent?.let { container.chartSensorType to it } },
+                        charts = chartContainers.mapNotNull { container -> container.uiComponent?.let { container.unitType to it } },
                         unitsConverter = unitsConverter,
                         context = context
                     )
@@ -222,7 +224,7 @@ fun VerticalChartsPrototype(
                                     .fillMaxWidth(),
                                 data,
                                 unitsConverter,
-                                chartContainer.chartSensorType,
+                                chartContainer.unitType,
                                 graphDrawDots,
                                 showChartStats,
                                 limits = chartContainer.limits,
@@ -251,7 +253,7 @@ fun VerticalChartsPrototype(
                                 .fillMaxWidth(),
                             data,
                             unitsConverter,
-                            chartContainer.chartSensorType,
+                            chartContainer.unitType,
                             graphDrawDots,
                             showChartStats,
                             limits = chartContainer.limits,
@@ -299,7 +301,7 @@ fun LandscapeChartsPrototype(
                 Modifier.fillMaxSize(),
                 data,
                 unitsConverter,
-                chartContainer.chartSensorType,
+                chartContainer.unitType,
                 graphDrawDots,
                 showChartStats,
                 limits = chartContainer.limits,
@@ -333,13 +335,14 @@ fun EmptyCharts(modifier: Modifier) {
 fun setupChart(
     chart: LineChart,
     unitsConverter: UnitsConverter,
-    chartSensorType: ChartSensorType
+    unitType: UnitType
 ) {
-    if (chartSensorType == ChartSensorType.TEMPERATURE || chartSensorType == ChartSensorType.HUMIDITY) {
+    if (unitType is UnitType.TemperatureUnit || unitType is UnitType.HumidityUnit) {
         chart.axisLeft.valueFormatter = AxisLeftValueFormatter("#.##")
         chart.axisLeft.granularity = 0.01f
     } else {
-        if (unitsConverter.getPressureUnit() == PressureUnit.PA) {
+        //TODO refactor this
+        if (unitsConverter.getPressureUnit() == UnitType.PressureUnit.Pascal) {
             chart.axisLeft.valueFormatter = AxisLeftValueFormatter("#")
             chart.axisLeft.granularity = 1f
         } else {

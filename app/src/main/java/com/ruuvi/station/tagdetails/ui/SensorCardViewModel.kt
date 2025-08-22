@@ -15,7 +15,6 @@ import com.ruuvi.station.bluetooth.model.SyncProgress
 import com.ruuvi.station.database.domain.AlarmRepository
 import com.ruuvi.station.database.domain.SensorHistoryRepository
 import com.ruuvi.station.graph.model.ChartContainer
-import com.ruuvi.station.graph.model.ChartSensorType
 import com.ruuvi.station.network.domain.NetworkDataSyncInteractor
 import com.ruuvi.station.nfc.domain.NfcResultInteractor
 import com.ruuvi.station.settings.domain.AppSettingsInteractor
@@ -26,7 +25,8 @@ import com.ruuvi.station.tagsettings.domain.CsvExporter
 import com.ruuvi.station.tagsettings.domain.XlsxExporter
 import com.ruuvi.station.units.domain.UnitsConverter
 import com.ruuvi.station.units.domain.aqi.AQI
-import com.ruuvi.station.units.model.HumidityUnit
+import com.ruuvi.station.units.model.UnitType
+import com.ruuvi.station.units.model.UnitType.*
 import com.ruuvi.station.util.Period
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -89,7 +89,10 @@ class SensorCardViewModel(
             while (true) {
                 val history = tagDetailsInteractor.getTagReadings(sensorId)
 
-                if (history.isEmpty()) {
+                val ruuviTag = tagDetailsInteractor.getTagById(sensorId)
+
+
+                if (history.isEmpty() || ruuviTag == null) {
                     emit(mutableListOf<ChartContainer>())
                     delay(1000)
                     continue
@@ -108,215 +111,104 @@ class SensorCardViewModel(
 //                (tempChart?.uiComponent != null && tempChart.uiComponent.highestVisibleX >= (tempChart.uiComponent.data?.xMax ?: Float.MIN_VALUE))) {
 //                history = freshHistory
 
-                val temperatureDataTemp = mutableListOf<Entry>()
-                val humidityDataTemp = mutableListOf<Entry>()
-                val pressureDataTemp = mutableListOf<Entry>()
-                val batteryDataTemp = mutableListOf<Entry>()
-                val accelerationDataTemp = mutableListOf<Entry>()
-                val rssiDataTemp = mutableListOf<Entry>()
-                val movementDataTemp = mutableListOf<Entry>()
-                val co2DataTemp = mutableListOf<Entry>()
-                val vocDataTemp = mutableListOf<Entry>()
-                val noxDataTemp = mutableListOf<Entry>()
-                val pm25DataTemp = mutableListOf<Entry>()
-                val luminosityDataTemp = mutableListOf<Entry>()
-                val soundDataTemp = mutableListOf<Entry>()
-                val aqiDataTemp = mutableListOf<Entry>()
+                val displayOrder = ruuviTag.displayOrder.filter { it !is  MovementUnit }
+                val datasetsByUnit: Map<UnitType, MutableList<Entry>> = displayOrder.associateWith { mutableListOf<Entry>() }
 
                 history.forEach { item ->
+
                     val timestamp = (item.createdAt.time - from).toFloat()
-                    item.temperature?.let { temperature ->
-                        temperatureDataTemp.add(
-                            Entry(
-                                timestamp,
-                                unitsConverter.getTemperatureValue(temperature).toFloat()
-                            )
-                        )
-                    }
-                    item.humidity?.let { humidity ->
-                        val humidityValue =
-                            unitsConverter.getHumidityValue(humidity, item.temperature)
-                        if (humidityValue != null) {
-                            humidityDataTemp.add(Entry(timestamp, humidityValue.toFloat()))
+
+                    for (unit in displayOrder) {
+                        if (unit is MovementUnit) continue
+
+                        val dataset = datasetsByUnit[unit]
+                        dataset?.let {
+
+                            val entryValue = when (unit) {
+                                is TemperatureUnit -> item.temperature?.let { temperature ->
+                                    unitsConverter.getTemperatureValue(temperature, unit)
+                                }
+                                is HumidityUnit -> item.humidity?.let { humidity ->
+                                    unitsConverter.getHumidityValue(humidity, item.temperature, unit)
+                                }
+                                is PressureUnit -> item.pressure?.let { pressure ->
+                                    unitsConverter.getPressureValue(pressure, unit)
+                                }
+                                is BatteryVoltageUnit -> item.voltage
+                                is Acceleration.GForceX -> item.accelX
+                                is Acceleration.GForceY -> item.accelY
+                                is Acceleration.GForceZ -> item.accelZ
+                                is SignalStrengthUnit -> item.rssi
+                                is AirQuality -> AQI.getAQI(item.pm25, item.co2, item.voc, item.nox).score
+                                is CO2 -> item.co2
+                                is VOC -> item.voc
+                                is NOX -> item.nox
+                                is PM1 -> item.pm1
+                                is PM25 -> item.pm25
+                                is PM4 -> item.pm4
+                                is PM10 -> item.pm10
+                                is Luminosity -> item.luminosity
+                                is SoundAvg -> item.dBaAvg
+                                is SoundPeak -> item.dBaPeak
+                                else -> null
+                            }
+
+                            if (entryValue != null) {
+                                dataset.add(Entry(timestamp, entryValue.toFloat()))
+                            }
+
                         }
-                    }
-                    item.pressure?.let { pressure ->
-                        pressureDataTemp.add(
-                            Entry(
-                                timestamp,
-                                unitsConverter.getPressureValue(pressure).toFloat()
-                            )
-                        )
-                    }
-                    if (_newChartsUI.value) {
-                        item.voltage?.let { voltage ->
-                            batteryDataTemp.add(Entry(timestamp, voltage.toFloat()))
-                        }
-                        item.accelX?.let { accelX ->
-                            accelerationDataTemp.add(Entry(timestamp, accelX.toFloat()))
-                        }
-                        item.rssi?.let { rssi ->
-                            rssiDataTemp.add(Entry(timestamp, rssi.toFloat()))
-                        }
-                        item.movementCounter?.let { movements ->
-                            movementDataTemp.add(Entry(timestamp, movements.toFloat()))
-                        }
-                    }
-                    val aqi = AQI.getAQI(item.pm25, item.co2, item.voc, item.nox)
-                    aqi.score?.let {
-                        aqiDataTemp.add(Entry(timestamp, it.toFloat()))
-                    }
-                    item.co2?.let { co2 ->
-                        co2DataTemp.add(Entry(timestamp, co2.toFloat()))
-                    }
-                    item.voc?.let { voc ->
-                        vocDataTemp.add(Entry(timestamp, voc.toFloat()))
-                    }
-                    item.nox?.let { nox ->
-                        noxDataTemp.add(Entry(timestamp, nox.toFloat()))
-                    }
-                    item.pm25?.let { pm25 ->
-                        pm25DataTemp.add(Entry(timestamp, pm25.toFloat()))
-                    }
-                    item.luminosity?.let { luminosity ->
-                        luminosityDataTemp.add(Entry(timestamp, luminosity.toFloat()))
-                    }
-                    item.dBaAvg?.let { dBaAvg ->
-                        soundDataTemp.add(Entry(timestamp, dBaAvg.toFloat()))
                     }
                 }
 
                 val chartContainers = mutableListOf<ChartContainer>()
 
-                if (temperatureDataTemp.isNotEmpty()) {
-                    chartContainers.add(
-                        ChartContainer(
-                            chartSensorType = ChartSensorType.TEMPERATURE,
-                            data = temperatureDataTemp,
-                            limits = alarms.firstOrNull { it -> it.alarmType == AlarmType.TEMPERATURE }
-                                ?.let {
-                                    unitsConverter.getTemperatureValue(it.min) to unitsConverter.getTemperatureValue(
-                                        it.max
-                                    )
-                                },
-                            from = from,
-                            to = to,
-                            uiComponent = null
-                        )
-                    )
-                }
+                for (unit in displayOrder) {
+                    val dataset = datasetsByUnit[unit]
 
-                if (humidityDataTemp.isNotEmpty()) {
-                    chartContainers.add(ChartContainer(
-                        chartSensorType = ChartSensorType.HUMIDITY,
-                        data = humidityDataTemp,
-                        limits = if (unitsConverter.getHumidityUnit() == HumidityUnit.PERCENT) {
-                            alarms.firstOrNull { it.alarmType == AlarmType.HUMIDITY }
+                    if (!dataset.isNullOrEmpty()) {
+                        val alarmLimit = when (unit) {
+                            is TemperatureUnit -> alarms.firstOrNull{ it -> it.alarmType == AlarmType.TEMPERATURE }?.let {
+                                unitsConverter.getTemperatureValue(it.min, unit) to unitsConverter.getTemperatureValue(it.max, unit)
+                            }
+                            is HumidityUnit.Relative -> alarms.firstOrNull { it.alarmType == AlarmType.HUMIDITY }
                                 ?.let { it.min to it.max }
-                        } else null,
-                        from = from,
-                        to = to,
-                        uiComponent = null
-                    ))
-                }
-
-                if (pressureDataTemp.isNotEmpty()) {
-                    chartContainers.add(
-                        ChartContainer(
-                            chartSensorType = ChartSensorType.PRESSURE,
-                            data = pressureDataTemp,
-                            limits = alarms.firstOrNull { it.alarmType == AlarmType.PRESSURE }
+                            is PressureUnit -> alarms.firstOrNull { it.alarmType == AlarmType.PRESSURE }
                                 ?.let {
                                     unitsConverter.getPressureValue(it.min) to unitsConverter.getPressureValue(it.max)
-                                },
-                            from = from,
-                            to = to,
-                            uiComponent = null
+                                }
+                            is CO2 -> alarms.firstOrNull { it.alarmType == AlarmType.CO2 }
+                                ?.let { it.min to it.max }
+                            is VOC -> alarms.firstOrNull { it.alarmType == AlarmType.VOC }
+                                ?.let { it.min to it.max }
+                            is NOX -> alarms.firstOrNull { it.alarmType == AlarmType.NOX }
+                                ?.let { it.min to it.max }
+                            is PM1 -> alarms.firstOrNull { it.alarmType == AlarmType.PM1 }
+                                ?.let { it.min to it.max }
+                            is PM25 -> alarms.firstOrNull { it.alarmType == AlarmType.PM25 }
+                                ?.let { it.min to it.max }
+                            is PM4 -> alarms.firstOrNull { it.alarmType == AlarmType.PM4 }
+                                ?.let { it.min to it.max }
+                            is PM10 -> alarms.firstOrNull { it.alarmType == AlarmType.PM10 }
+                                ?.let { it.min to it.max }
+                            is Luminosity -> alarms.firstOrNull { it.alarmType == AlarmType.LUMINOSITY }
+                                ?.let { it.min to it.max }
+                            is SoundAvg -> alarms.firstOrNull { it.alarmType == AlarmType.SOUND }
+                                ?.let { it.min to it.max }
+                            else -> null
+                        }
+
+                        chartContainers.add(
+                            ChartContainer(
+                                unitType = unit,
+                                data = dataset,
+                                limits = alarmLimit,
+                                from = from,
+                                to = to,
+                                uiComponent = null
+                            )
                         )
-                    )
-                }
-
-                if (aqiDataTemp.isNotEmpty()) {
-                    chartContainers.add(ChartContainer(
-                        chartSensorType = ChartSensorType.AQI,
-                        data = aqiDataTemp,
-                        limits = null,
-                        from = from,
-                        to = to,
-                        uiComponent = null
-                    ))
-                }
-
-                if (co2DataTemp.isNotEmpty()) {
-                    chartContainers.add(ChartContainer(
-                        chartSensorType = ChartSensorType.CO2,
-                        data = co2DataTemp,
-                        limits = alarms.firstOrNull { it.alarmType == AlarmType.CO2 }
-                            ?.let { it.min to it.max },
-                        from = from,
-                        to = to,
-                        uiComponent = null
-                    ))
-                }
-
-                if (vocDataTemp.isNotEmpty()) {
-                    chartContainers.add(ChartContainer(
-                        chartSensorType = ChartSensorType.VOC,
-                        data = vocDataTemp,
-                        limits = alarms.firstOrNull { it.alarmType == AlarmType.VOC }
-                            ?.let { it.min to it.max },
-                        from = from,
-                        to = to,
-                        uiComponent = null
-                    ))
-                }
-
-                if (noxDataTemp.isNotEmpty()) {
-                    chartContainers.add(ChartContainer(
-                        chartSensorType = ChartSensorType.NOX,
-                        data = noxDataTemp,
-                        limits = alarms.firstOrNull { it.alarmType == AlarmType.NOX }
-                            ?.let { it.min to it.max },
-                        from = from,
-                        to = to,
-                        uiComponent = null
-                    ))
-                }
-
-                if (pm25DataTemp.isNotEmpty()) {
-                    chartContainers.add(ChartContainer(
-                        chartSensorType = ChartSensorType.PM25,
-                        data = pm25DataTemp,
-                        limits = alarms.firstOrNull { it.alarmType == AlarmType.PM25 }
-                            ?.let { it.min to it.max },
-                        from = from,
-                        to = to,
-                        uiComponent = null
-                    ))
-                }
-
-                if (luminosityDataTemp.isNotEmpty()) {
-                    chartContainers.add(ChartContainer(
-                        chartSensorType = ChartSensorType.LUMINOSITY,
-                        data = luminosityDataTemp,
-                        limits = alarms.firstOrNull { it.alarmType == AlarmType.LUMINOSITY }
-                            ?.let { it.min to it.max },
-                        from = from,
-                        to = to,
-                        uiComponent = null
-                    ))
-                }
-
-                if (soundDataTemp.isNotEmpty()) {
-                    chartContainers.add(ChartContainer(
-                        chartSensorType = ChartSensorType.SOUND,
-                        data = soundDataTemp,
-                        limits = alarms.firstOrNull { it.alarmType == AlarmType.SOUND }
-                            ?.let { it.min to it.max },
-                        from = from,
-                        to = to,
-                        uiComponent = null
-                    ))
+                    }
                 }
 
                 emit(chartContainers)
