@@ -155,14 +155,6 @@ fun DashboardTopAppBar(
                     )
 
                     RadioButtonRuuvi(
-                        text = stringResource(id = R.string.imageExt_cards),
-                        isSelected = dashboardType == DashboardType.IMAGE_EXT_VIEW,
-                        onClick = {
-                            changeDashboardType.invoke(DashboardType.IMAGE_EXT_VIEW)
-                        }
-                    )
-
-                    RadioButtonRuuvi(
                         text = stringResource(id = R.string.simple_cards),
                         isSelected = dashboardType == DashboardType.SIMPLE_VIEW,
                         onClick = {

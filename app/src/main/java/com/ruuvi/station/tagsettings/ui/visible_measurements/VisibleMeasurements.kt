@@ -104,7 +104,7 @@ fun VisibleMeasurements(
             modifier = Modifier
                 .padding(RuuviStationTheme.dimensions.screenPadding)
         ){
-            if (dashboardType == DashboardType.IMAGE_VIEW || dashboardType == DashboardType.IMAGE_EXT_VIEW) {
+            if (dashboardType == DashboardType.IMAGE_VIEW) {
                 DashboardItem(
                     lazyGridState = rememberLazyStaggeredGridState(),
                     itemIndex = 0,
@@ -115,8 +115,7 @@ fun VisibleMeasurements(
                     setName = {_,_ ->},
                     moveItem = {_,_,_ ->},
                     showMeasurementTitle = true,
-                    interactionEnabled = false,
-                    extended = dashboardType == DashboardType.IMAGE_EXT_VIEW
+                    interactionEnabled = false
                 )
             } else {
                 DashboardItemSimple(

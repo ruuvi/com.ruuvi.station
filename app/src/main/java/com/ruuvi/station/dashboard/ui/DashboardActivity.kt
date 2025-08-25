@@ -469,7 +469,7 @@ fun DashboardItems(
                             itemIsDragged = itemIsDragged,
                             moveItem = onMove
                             )
-                    DashboardType.IMAGE_VIEW, DashboardType.IMAGE_EXT_VIEW ->
+                    DashboardType.IMAGE_VIEW ->
                         DashboardItem(
                             lazyGridState = dragDropListState.getLazyListState(),
                             itemIndex = index,
@@ -479,8 +479,7 @@ fun DashboardItems(
                             itemIsDragged = itemIsDragged,
                             showMeasurementTitle = showMeasurementTitle,
                             setName = setName,
-                            moveItem = onMove,
-                            extended = dashboardType == DashboardType.IMAGE_EXT_VIEW
+                            moveItem = onMove
                         )
                 }
             }
@@ -563,8 +562,7 @@ fun DashboardItem(
     setName: (String, String?) -> Unit,
     moveItem: (Int, Int, Boolean) -> Unit,
     modifier: Modifier = Modifier,
-    interactionEnabled: Boolean = true,
-    extended: Boolean
+    interactionEnabled: Boolean = true
 ) {
     val context = LocalContext.current
     val modifier = if (itemIsDragged) {
@@ -676,7 +674,7 @@ fun DashboardItem(
                                     top = 6.dp,
                                     bottom = RuuviStationTheme.dimensions.small
                                 ),
-                            extended = extended
+                            extended = true
                         )
                         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.small))
                         ItemBottom(
@@ -996,7 +994,7 @@ fun ItemBottomUpdatedInfo(
             modifier = modifier
                 .height(RuuviStationTheme.dimensions.big)
         ) {
-            val fontScale = min(LocalContext.current.resources.configuration.fontScale, 1.5f)
+            val fontScale = min(LocalConfiguration.current.fontScale, 1.5f)
 
             // Do not simplify this - glitches are possible due to gateway and bluetooth icon differences
             val icon = sensor.getSource().getIconResource()
