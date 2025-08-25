@@ -31,7 +31,7 @@ fun BigValueDisplay(
     modifier: Modifier = Modifier
 ) {
     val textColor = if (alertTriggered) {
-        RuuviStationTheme.colors.activeAlert
+        RuuviStationTheme.colors.activeAlertThemed
     } else {
         RuuviStationTheme.colors.settingsTitleText
     }
@@ -69,7 +69,7 @@ fun BigValueExtDisplay(
     modifier: Modifier = Modifier
 ) {
     val textColor = if (alertTriggered) {
-        RuuviStationTheme.colors.activeAlert
+        RuuviStationTheme.colors.activeAlertThemed
     } else {
         RuuviStationTheme.colors.dashboardValue
     }
@@ -103,7 +103,7 @@ fun BigValueExtDisplay(
 
         if (showTitle) {
             Text(
-                style = RuuviStationTheme.typography.dashboardSecondary,
+                style = RuuviStationTheme.typography.dashboardValueTitle,
                 fontSize = RuuviStationTheme.fontSizes.petite.limitScaleTo(1.2f),
                 text = stringResource(value.unitType.measurementTitle),
                 modifier = Modifier.constrainAs(subscript) {
@@ -122,7 +122,7 @@ fun AQIDisplay(
     modifier: Modifier = Modifier
 ) {
     val textColor = if (alertTriggered) {
-        RuuviStationTheme.colors.activeAlert
+        RuuviStationTheme.colors.activeAlertThemed
     } else {
         RuuviStationTheme.colors.dashboardValue
     }
@@ -155,7 +155,7 @@ fun AQIDisplay(
         )
 
         Text(
-            style = RuuviStationTheme.typography.dashboardSecondary,
+            style = RuuviStationTheme.typography.dashboardValueTitle,
             fontSize = RuuviStationTheme.fontSizes.petite.limitScaleTo(1.2f),
             text = stringResource(id = R.string.air_quality),
             modifier = Modifier.constrainAs(subscript) {

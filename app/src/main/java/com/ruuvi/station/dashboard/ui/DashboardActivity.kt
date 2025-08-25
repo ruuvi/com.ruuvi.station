@@ -671,7 +671,6 @@ fun DashboardItem(
                             dropFirst = true,
                             modifier = Modifier
                                 .padding(
-                                    top = 6.dp,
                                     bottom = RuuviStationTheme.dimensions.small
                                 ),
                             extended = true
@@ -858,7 +857,7 @@ fun ItemButtons(
                         Icon(
                             painter = painterResource(id = R.drawable.ic_notifications_active_24px),
                             contentDescription = null,
-                            tint = RuuviStationTheme.colors.activeAlert
+                            tint = RuuviStationTheme.colors.activeAlertThemed
                         )
                     }
                 }

@@ -48,7 +48,7 @@ fun ValueDisplayExtended(
     modifier: Modifier = Modifier
 ) {
     val textColor = if (alertTriggered) {
-        RuuviStationTheme.colors.activeAlert
+        RuuviStationTheme.colors.activeAlertThemed
     } else {
         RuuviStationTheme.colors.dashboardValue
     }
@@ -85,7 +85,7 @@ fun ValueDisplayExtended(
         Text(
             modifier = Modifier,
             text = stringResource(value.unitType.measurementTitle),
-            style = RuuviStationTheme.typography.dashboardSecondary,
+            style = RuuviStationTheme.typography.dashboardValueTitle,
             fontSize = ruuviStationFontsSizes.petite.limitScaleTo(1.5f),
             maxLines = 1
         )
@@ -99,7 +99,7 @@ fun ValueDisplaySimple(
     modifier: Modifier = Modifier
 ) {
     val textColor = if (alertTriggered) {
-        RuuviStationTheme.colors.activeAlert
+        RuuviStationTheme.colors.activeAlertThemed
     } else {
         RuuviStationTheme.colors.primary
     }

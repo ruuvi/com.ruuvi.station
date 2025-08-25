@@ -442,7 +442,7 @@ private fun AlarmHeader(
                         modifier = Modifier.padding(horizontal = RuuviStationTheme.dimensions.mediumPlus),
                         painter = painterResource(id = R.drawable.ic_notifications_active_24px),
                         contentDescription = null,
-                        tint = RuuviStationTheme.colors.activeAlert
+                        tint = RuuviStationTheme.colors.activeAlertThemed
                     )
                 }
             } else {
