@@ -95,14 +95,14 @@ fun provideTypography(colors: RuuviStationColors): RuuviStationTypography {
             fontSize = ruuviStationFontsSizes.normal,
         ),
         dashboardValue = TextStyle(
-            color = colors.primary,
+            color = colors.dashboardValue,
             fontFamily = ruuviStationFonts.mulishBold,
             fontSize = ruuviStationFontsSizes.compact,
             textAlign = TextAlign.Left
         ),
         dashboardUnit = TextStyle(
-            color = colors.settingsTitleText,
-            fontFamily = ruuviStationFonts.mulishRegular,
+            color = colors.dashboardValue,
+            fontFamily = ruuviStationFonts.mulishBold,
             fontSize = ruuviStationFontsSizes.petite,
             textAlign = TextAlign.Left
         ),

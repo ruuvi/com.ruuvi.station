@@ -1,5 +1,6 @@
 package com.ruuvi.station.dashboard.ui.dashboard_elements
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.width
@@ -20,6 +21,79 @@ import com.ruuvi.station.units.model.UnitType
 
 @Composable
 fun ValueDisplay(
+    value: EnvironmentValue,
+    alertTriggered: Boolean,
+    modifier: Modifier = Modifier,
+    extended: Boolean = false
+) {
+    if (extended) {
+        ValueDisplayExtended(
+            value = value,
+            alertTriggered = alertTriggered,
+            modifier = modifier
+        )
+    } else {
+        ValueDisplaySimple(
+            value = value,
+            alertTriggered = alertTriggered,
+            modifier = modifier
+        )
+    }
+}
+
+@Composable
+fun ValueDisplayExtended(
+    value: EnvironmentValue,
+    alertTriggered: Boolean,
+    modifier: Modifier = Modifier
+) {
+    val textColor = if (alertTriggered) {
+        RuuviStationTheme.colors.activeAlert
+    } else {
+        RuuviStationTheme.colors.dashboardValue
+    }
+
+    val unit = if (value.unitType.extraUnit != null) {
+        val extraUnit = stringResource(value.unitType.extraUnit)
+        "$extraUnit, ${value.unitString}"
+    } else {
+        value.unitString
+    }
+
+    Column {
+        Row(
+            modifier = modifier,
+            verticalAlignment = Alignment.Bottom
+        ) {
+            Text(
+                modifier = Modifier.alignByBaseline(),
+                text = value.valueWithoutUnit,
+                style = RuuviStationTheme.typography.dashboardValue,
+                fontSize = ruuviStationFontsSizes.compact.limitScaleTo(1.5f),
+                color = textColor,
+                maxLines = 1
+            )
+            Spacer(modifier = Modifier.width(width = 4.dp))
+            Text(
+                modifier = Modifier.alignByBaseline(),
+                text = unit,
+                style = RuuviStationTheme.typography.dashboardUnit,
+                fontSize = ruuviStationFontsSizes.petite.limitScaleTo(1.5f),
+                maxLines = 1
+            )
+        }
+        Text(
+            modifier = Modifier,
+            text = stringResource(value.unitType.measurementTitle),
+            style = RuuviStationTheme.typography.dashboardSecondary,
+            fontSize = ruuviStationFontsSizes.petite.limitScaleTo(1.5f),
+            maxLines = 1
+        )
+    }
+}
+
+@Composable
+fun ValueDisplaySimple(
     value: EnvironmentValue,
     alertTriggered: Boolean,
     modifier: Modifier = Modifier

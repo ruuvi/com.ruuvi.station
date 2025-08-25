@@ -21,4 +21,3 @@ fun RuuviTheme(
         content = content
     )
 }
-

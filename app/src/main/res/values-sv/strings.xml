@@ -286,7 +286,7 @@
     <string name="export_csv_header_format2_4">Datum,Temperatur (%1$s),Luftfuktighet (%2$s),Lufttryck (%3$s),Signalstyrka(dBm)</string>
     <string name="export_csv_header_format3">Datum,Temperatur (%1$s),Luftfuktighet (%2$s),Lufttryck (%3$s),Signalstyrka (dBm),Acceleration X (g),Acceleration Y (g),Acceleration Z (g),Spänning (V)</string>
     <string name="export_csv_header_format5">Datum,Temperatur (%1$s),Luftfuktighet (%2$s),Lufttryck (%3$s),Signalstyrka (dBm),Acceleration X (g),Acceleration Y (g),Acceleration Z (g),Spänning (V),Rörelseräknare (rörelser),Mätningssekvensnummer,Sändningseffekt (dBm)</string>
-    <string name="export_csv_header_formatE0">Datum,AQI,Temperatur (%1$s),Luftfuktighet (%2$s),Lufttryck (%3$s),Ljusstyrka (lx),dB medelvärde (dBA),dB topp (dBA),CO2(ppm),VOC,NOX,PM1.0(µg/m³),PM2.5(µg/m³),PM4.0(µg/m³),PM10.0(µg/m³),Signalstyrka (dBm),Acceleration X (g),Acceleration Y (g),Acceleration Z (g),Spänning (V),Rörelseräknare (rörelser),Mätningssekvensnummer,Sändningseffekt (dBm)</string>
+    <string name="export_csv_header_formatE0">Datum,AQI,Temperatur (%1$s),Luftfuktighet (%2$s),Lufttryck (%3$s),Illuminans (lx),Ljud medel(dBA),Ljud topp(dBA),CO2(ppm),VOC,NOX,PM1(µg/m³),PM2.5(µg/m³),PM4(µg/m³),PM10(µg/m³),RSSI (dBm),Acceleration X (g),Acceleration Y (g),Acceleration Z (g),Spänning (V),Räknare rörelser,Mätningssekvensnummer,Sändningseffekt (dBm)</string>
     <string name="export_history">Exportera historik (csv)</string>
     <string name="export_history_xlsx">Exportera historik (xlsx)</string>
     <string name="file_not_supported">Filformatet stöds inte</string>

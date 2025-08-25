@@ -71,7 +71,7 @@ fun BigValueExtDisplay(
     val textColor = if (alertTriggered) {
         RuuviStationTheme.colors.activeAlert
     } else {
-        RuuviStationTheme.colors.settingsTitleText
+        RuuviStationTheme.colors.dashboardValue
     }
 
     ConstraintLayout (
@@ -94,7 +94,6 @@ fun BigValueExtDisplay(
             style = RuuviStationTheme.typography.dashboardBigValueUnit,
             fontSize = RuuviStationTheme.fontSizes.compact.limitScaleTo(1.2f),
             text = value.unitString,
-            color = textColor,
             modifier = Modifier
                 .constrainAs(superscript) {
                     top.linkTo(bigValue.top, 7.dp)
@@ -125,7 +124,7 @@ fun AQIDisplay(
     val textColor = if (alertTriggered) {
         RuuviStationTheme.colors.activeAlert
     } else {
-        RuuviStationTheme.colors.settingsTitleText
+        RuuviStationTheme.colors.dashboardValue
     }
 
     ConstraintLayout (
@@ -148,7 +147,6 @@ fun AQIDisplay(
             style = RuuviStationTheme.typography.dashboardBigValueUnit,
             fontSize = RuuviStationTheme.fontSizes.compact.limitScaleTo(1.2f),
             text = "/100",
-            color = textColor,
             modifier = Modifier
                 .constrainAs(superscript) {
                     top.linkTo(bigValue.top, 7.dp)

@@ -286,7 +286,7 @@
     <string name="export_csv_header_format2_4">Päivämäärä,Lämpötila (%1$s),Ilmankosteus (%2$s),Ilmanpaine (%3$s),Lähetysteho(dBm)</string>
     <string name="export_csv_header_format3">Päivämäärä,Lämpötila (%1$s),Ilmankosteus (%2$s),Ilmanpaine (%3$s),Lähetysteho (dBm),Kiihtyvyys X (g),Kiihtyvyys Y (g),Kiihtyvyys Z (g),Jännite (V)</string>
     <string name="export_csv_header_format5">Päivämäärä,Lämpötila (%1$s),Ilmankosteus (%2$s),Ilmanpaine (%3$s),Lähetysteho,Kiihtyvyys X (g),Kiihtyvyys Y (g),Kiihtyvyys Z (g),Jännite (V),Liikelaskuri (liikettä),Mittausjärjestysnumero,Lähetysteho (dBm)</string>
-    <string name="export_csv_header_formatE0">Päivämäärä,AQI,Lämpötila (%1$s),Ilmankosteus (%2$s),Ilmanpaine (%3$s),Valoisuus (lx),db eskiarvo(dBA),dB huippu (dBA),CO2(ppm),VOC,NOX,PM1.0(µg/m³),PM2.5(µg/m³),PM4.0(µg/m³),PM10.0(µg/m³),Lähetysteho,Kiihtyvyys X (g),Kiihtyvyys Y (g),Kiihtyvyys Z (g),Jännite (V),Liikelaskuri (liikettä),Mittausjärjestysnumero,Lähetysteho (dBm)</string>
+    <string name="export_csv_header_formatE0">Päivämäärä,AQI,Lämpötila (%1$s),Ilmankosteus (%2$s),Ilmanpaine (%3$s),Valoisuus (lx),Ääni keskiarvo(dBA),Ääni huippu (dBA),CO2(ppm),VOC,NOX,PM1(µg/m³),PM2.5(µg/m³),PM4(µg/m³),PM10(µg/m³),Lähetysteho,Kiihtyvyys X (g),Kiihtyvyys Y (g),Kiihtyvyys Z (g),Jännite (V),Liikelaskuri (liikettä),Mittausjärjestysnumero,Lähetysteho (dBm)</string>
     <string name="export_history">Lataa historia (csv)</string>
     <string name="export_history_xlsx">Lataa historia (xlsx)</string>
     <string name="file_not_supported">Tiedostoa ei tueta</string>
