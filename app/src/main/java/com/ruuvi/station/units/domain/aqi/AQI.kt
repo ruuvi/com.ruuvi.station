@@ -5,7 +5,6 @@ import com.ruuvi.station.R
 import com.ruuvi.station.bluetooth.util.extensions.roundHalfUp
 import com.ruuvi.station.tag.domain.SensorMeasurements
 import kotlin.math.max
-import kotlin.math.sqrt
 
 sealed class AQI (val score: Double?) {
     abstract val color: Color
@@ -57,10 +56,14 @@ sealed class AQI (val score: Double?) {
 
         private fun getColorByScore(score: Double): Color{
             return when (score.roundHalfUp(0).toInt()) {
-                in 0..10 -> UnhealthyColor
-                in 11 .. 30 -> PoorColor
-                in 31 .. 70 -> ModerateColor
-                in 71 .. 90 -> GoodColor
+                in 0..9 -> UnhealthyColor
+                10 -> UnhealthyToPoorColor
+                in 11 .. 49 -> PoorColor
+                50 -> PoorToModerateColor
+                in 51 .. 79 -> ModerateColor
+                80 ->  ModerateToGoodColor
+                in 81 .. 89 -> GoodColor
+                90 -> GoodToExcellentColor
                 in 91 .. 100 -> ExcellentColor
                 else -> UnspecifiedColor
             }
@@ -69,9 +72,9 @@ sealed class AQI (val score: Double?) {
         private fun getDescriptionByScore(score: Double): Int{
             return when (score.roundHalfUp(0).toInt()) {
                 in 0..10 -> R.string.aqi_level_1
-                in 11 .. 30 -> R.string.aqi_level_2
-                in 31 .. 70 -> R.string.aqi_level_3
-                in 71 .. 90 -> R.string.aqi_level_4
+                in 11 .. 50 -> R.string.aqi_level_2
+                in 51 .. 80 -> R.string.aqi_level_3
+                in 81 .. 90 -> R.string.aqi_level_4
                 in 91 .. 100 -> R.string.aqi_level_5
                 else -> R.string.aqi_level_0
             }
@@ -79,9 +82,13 @@ sealed class AQI (val score: Double?) {
 
         val UnspecifiedColor = Color.Gray
         val UnhealthyColor = Color(0xFFED5021)
+        val UnhealthyToPoorColor = Color(0xFFF37921)
         val PoorColor = Color(0xFFF79C21)
+        val PoorToModerateColor = Color(0xFFF8C239)
         val ModerateColor = Color(0xFFF7E13E)
+        val ModerateToGoodColor = Color(0xFFCEDD51)
         val GoodColor = Color(0xFF96CC48)
+        val GoodToExcellentColor = Color(0xFF74CD87)
         val ExcellentColor = Color(0xFF4BC8B9)
 
         const val AQI_MAX = 100.0
