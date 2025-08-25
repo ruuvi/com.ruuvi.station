@@ -87,10 +87,10 @@ fun CircularGradientProgress(
                         lineColor.copy(alpha = 0.3f),
                         Color.Transparent
                     ),
-                radius = dotRadius * 2.2f,
+                radius = dotRadius * 2.5f,
                 center = Offset(dotX, dotY)
                 ),
-                radius = dotRadius * 2.5f,
+                radius = dotRadius * 2.7f,
                 center = Offset(dotX, dotY)
             )
 

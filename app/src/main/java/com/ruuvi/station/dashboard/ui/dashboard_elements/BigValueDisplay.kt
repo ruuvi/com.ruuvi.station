@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
-import androidx.compose.material.LinearProgressIndicator
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment.Companion.Top
@@ -164,12 +163,12 @@ fun AQIDisplay(
             }
         )
 
-        LinearProgressIndicator(
+        GlowingProgressBarIndicator(
             progress = (value.score?.toFloat() ?: 0f) / 100F,
-            color = value.color,
+            lineColor = value.color,
             modifier = Modifier
                 .constrainAs(progress) {
-                    top.linkTo(bigValue.bottom, 4.dp)
+                    top.linkTo(bigValue.bottom)
                     start.linkTo(parent.start)
                     end.linkTo(parent.end)
                     width = Dimension.fillToConstraints
