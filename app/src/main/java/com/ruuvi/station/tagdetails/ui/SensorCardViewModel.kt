@@ -120,10 +120,10 @@ class SensorCardViewModel(
                     is CO2 -> item.co2
                     is VOC -> item.voc
                     is NOX -> item.nox
-                    is PM10 -> item.pm1
-                    is PM25 -> item.pm25
-                    is PM40 -> item.pm4
-                    is PM100 -> item.pm10
+                    is PM.PM10 -> item.pm1
+                    is PM.PM25 -> item.pm25
+                    is PM.PM40 -> item.pm4
+                    is PM.PM100 -> item.pm10
                     is Luminosity -> item.luminosity
                     is SoundAvg -> item.dBaAvg
                     is SoundPeak -> item.dBaPeak
@@ -200,10 +200,10 @@ class SensorCardViewModel(
                                 is CO2 -> item.co2
                                 is VOC -> item.voc
                                 is NOX -> item.nox
-                                is PM10 -> item.pm1
-                                is PM25 -> item.pm25
-                                is PM40 -> item.pm4
-                                is PM100 -> item.pm10
+                                is PM.PM10 -> item.pm1
+                                is PM.PM25 -> item.pm25
+                                is PM.PM40 -> item.pm4
+                                is PM.PM100 -> item.pm10
                                 is Luminosity -> item.luminosity
                                 is SoundAvg -> item.dBaAvg
                                 is SoundPeak -> item.dBaPeak
@@ -240,13 +240,13 @@ class SensorCardViewModel(
                                 ?.let { it.min to it.max }
                             is NOX -> alarms.firstOrNull { it.alarmType == AlarmType.NOX }
                                 ?.let { it.min to it.max }
-                            is PM10 -> alarms.firstOrNull { it.alarmType == AlarmType.PM10 }
+                            is PM.PM10 -> alarms.firstOrNull { it.alarmType == AlarmType.PM10 }
                                 ?.let { it.min to it.max }
-                            is PM25 -> alarms.firstOrNull { it.alarmType == AlarmType.PM25 }
+                            is PM.PM25 -> alarms.firstOrNull { it.alarmType == AlarmType.PM25 }
                                 ?.let { it.min to it.max }
-                            is PM40 -> alarms.firstOrNull { it.alarmType == AlarmType.PM40 }
+                            is PM.PM40 -> alarms.firstOrNull { it.alarmType == AlarmType.PM40 }
                                 ?.let { it.min to it.max }
-                            is PM100 -> alarms.firstOrNull { it.alarmType == AlarmType.PM100 }
+                            is PM.PM100 -> alarms.firstOrNull { it.alarmType == AlarmType.PM100 }
                                 ?.let { it.min to it.max }
                             is Luminosity -> alarms.firstOrNull { it.alarmType == AlarmType.LUMINOSITY }
                                 ?.let { it.min to it.max }

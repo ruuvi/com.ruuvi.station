@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="abs_humidity">Absol. ilmankosteus</string>
+    <string name="absolute_humidity">Absoluuttinen kosteus</string>
+    <string name="acc_x">Kiiht. X</string>
+    <string name="acc_y">Kiiht. Y</string>
+    <string name="acc_z">Kiiht. Z</string>
     <string name="acceleration_reading">%1$,.3f %2$s</string>
     <string name="acceleration_unit">g</string>
     <string name="acceleration_unit_x">g (x)</string>
@@ -22,6 +27,7 @@
     <string name="advertisement">Laiteilmoitus</string>
     <string name="ago">sitten</string>
     <string name="agree">Hyväksy</string>
+    <string name="air_pressure">Ilmanpaine</string>
     <string name="air_quality">Ilmanlaatu</string>
     <string name="alarm_custom_description_title">Aseta hälytysviesti</string>
     <string name="alarm_custom_title_hint">Muokkaa kuvausta...</string>
@@ -96,7 +102,7 @@
     <string name="aqi_level_3">Kohtalainen</string>
     <string name="aqi_level_4">Hyvä</string>
     <string name="aqi_level_5">Erinomainen</string>
-    <string name="aqi_with_unit">AQI (%1$s)</string>
+    <string name="aqi_with_unit">Ilmanlaatu (%1$s)</string>
     <string name="average">Keskimääräinen</string>
     <string name="back">Takaisin</string>
     <string name="background_image">Taustakuva</string>
@@ -141,6 +147,7 @@
     <string name="camera">Kamera</string>
     <string name="camera_fail">Kameran käynnistäminen epäonnistui</string>
     <string name="cancel">Peruuta</string>
+    <string name="carbon_dioxide">Hiilidioksidi</string>
     <string name="card_action">Siirry kortista</string>
     <string name="card_type">Korttityyppi</string>
     <string name="change_background">Vaihda taustakuva</string>
@@ -260,6 +267,7 @@
     <string name="description_text_temperature_kelvin">Lämpötila-anturi mittaa ympäröivän ilman lämpötilaa.\n\nKotona lämpötila vaikuttaa olennaisesti mukavuuteen, unenlaatuun, keskittymiseen ja yleiseen terveyteen. Lämpötilan seuraaminen auttaa optimoimaan myös energiakustannuksia ja parantamaan asumismukavuutta.\n\nLämpötila-anturi kannattaa sijoittaa sisätilassa silmien korkeudelle ja riittävän kauas pinnoista tai esineistä, jotka voivat johtaa lämpöä tai kylmää, sekä paikoista, joissa esiintyy vetoa.\n\nAsenna anturi mielellään pystyasentoon niin, että ilma pääsee kiertämään anturin ympärillä vapaasti. Ulkona anturi kannattaa sijoittaa varjoon ja suojaan suoralta sateelta.\n\nHuom. Vaikka anturi tunnistaa ja raportoi lämpötilamuutokset hyvin nopeasti, laitteelta voi kestää jopa tunti saavuttaa täydellinen lämpötasapaino ympäröivän tilan kanssa. Tämä on laitteen normaali ominaisuus.</string>
     <string name="details">Tiedot</string>
     <string name="dewpoint">Kastepiste</string>
+    <string name="dewpoint_with_unit">Kastepiste (%1$s)</string>
     <string name="dfu_air_update_instructions">\u0026lt;title\u0026gt;Laitteen päivittäminen\u0026lt;/title\u0026gt;\n\n1. Tuo mobiililaitteesi lähelle Ruuvi-anturia\n\n2. Napauta Käynnistä päivitys -painiketta ja odota päivityksen valmistumista\n\n3. Laite käynnistyy automaattisesti uudelleen, kun laiteohjelmiston päivitys on valmis.</string>
     <string name="dfu_low_battery_warning">Anturin paristojännite on alhainen ja päivitysprosessi voi epäonnistua. Suosittelemme vaihtamaan pariston ennen ohjelmiston päivittämistä.</string>
     <string name="dfu_no_internet">Laiteohjelmiston lataaminen epäonnistui. Tarkasta Internet-yhteyden tila.</string>
@@ -370,9 +378,10 @@
     <string name="longer_history_title">Pidempi historia</string>
     <string name="low_battery">Paristo vähissä</string>
     <string name="luminosity">Valaistusvoimakkuus</string>
-    <string name="luminosity_with_unit">Valaistusvoimakkuus (%1$s)</string>
+    <string name="luminosity_with_unit">Valoisuus (%1$s)</string>
     <string name="mac_address">MAC-osoite</string>
     <string name="mac_copied">MAC-osoite kopioitu leikepöydälle</string>
+    <string name="meas_seq_number">Mittausjnro</string>
     <string name="measurement_sequence_number">Mittausjärjestysnumero</string>
     <string name="menu_about_help">Tietoa / Apua</string>
     <string name="menu_add_new_sensor">Lisää uusi anturi</string>
@@ -388,7 +397,7 @@
     <string name="move_down">Siirrä alas</string>
     <string name="move_up">Siirrä ylös</string>
     <string name="movement_counter">Liikelaskuri</string>
-    <string name="movements">liikettä</string>
+    <string name="movements">Liikkeet</string>
     <string name="muted_till">Poissa käytöstä %1$s saakka</string>
     <string name="my_account_change_email">Ota yhteyttä support@ruuvi.com, jos haluat vaihtaa tämän käyttäjätilin sähköpostiosoitteen.</string>
     <string name="my_account_change_email_link">mailto:support@ruuvi.com</string>
@@ -413,6 +422,7 @@
     <string name="nfc_dialog_name">Nimi:</string>
     <string name="nfc_dialog_unique_id">Yksilöivä tunniste:</string>
     <string name="nfc_enable_bt_to_add_sensor">Ota Bluetooth käyttöön ja lisää anturi skannaamalla</string>
+    <string name="nitrogen_oxides">Typpidioksidit</string>
     <string name="no">Ei</string>
     <string name="no_data">Ei historiatietoja</string>
     <string name="no_data_10_days">Ei historiatietoja viimeiseltä 10 päivältä</string>
@@ -464,6 +474,10 @@
     <string name="ordering">Järjestäminen</string>
     <string name="owner_none">Ei omistajaa</string>
     <string name="owners_plan">Omistajan Ruuvi-tilaus</string>
+    <string name="particulate_matter_10">Pienhiukkaset 1</string>
+    <string name="particulate_matter_100">Pienhiukkaset 10</string>
+    <string name="particulate_matter_25">Pienhiukkaset 2.5</string>
+    <string name="particulate_matter_40">Pienhiukkaset 4</string>
     <string name="peak">Huippu</string>
     <string name="permission_background_dialog_title">Ota käyttöön taustaskannaus</string>
     <string name="permission_dialog_background_request_message">Android käyttöjärjestelmä käyttää sijaintitietoja lähellä olevien Bluetooth-laitteiden skannaamiseen. \n\nSalli käyttö, mikäli haluat käyttää taustaskannaus-toiminnallisuutta.\n\nRuuvi ei koskaan jaa käyttäjiensä sijaintitietoja. Käyttö on turvallista.</string>
@@ -489,7 +503,7 @@
     <string name="prepare_your_sensor_instructions_5">3.2. Anturissasi on yksi painike: pidä painiketta alaspainettuna 10 sekunnin ajan.</string>
     <string name="prepare_your_sensor_instructions_6">4. Päivitystilaan siirtyminen onnistui, mikäli piirilevyllä oleva punainen LED-valo on nyt aktiivinen ja sovelluksen painikkeen nimeksi on vaihtunut “Aloita päivitys”.</string>
     <string name="press_to_add">Ei antureita\nLisää antureita napauttamalla tästä</string>
-    <string name="pressure">Paine</string>
+    <string name="pressure">Ilmanpaine</string>
     <string name="pressure_accuracy_title">Paineen resoluutio</string>
     <string name="pressure_hpa_name">Hehtopascal (hPa)</string>
     <string name="pressure_hpa_unit">hPa</string>
@@ -507,6 +521,8 @@
     <string name="reading_history_not_supported">Laiteohjelmistoa ei tueta</string>
     <string name="reading_history_x">Bluetooth-lataus: %1$s</string>
     <string name="real_time">Reaaliaika</string>
+    <string name="rel_humidity">Suht. ilmankosteus</string>
+    <string name="relative_humidity">Suhteellinen kosteus</string>
     <string name="remove">Poista</string>
     <string name="remove_claimed_sensor">Anturin poistaminen mitätöi omistajuuden. Kuka tahansa voi vaatia anturin omistajuutta poistamisen jälkeen. Jokaisella Ruuvi-anturilla voi olla vain yksi omistaja.</string>
     <string name="remove_claimed_sensor_description">Poistamalla anturin omistusoikeutesi peruutetaan, ja anturin asetukset, kuten nimi, taustakuva, kalibrointiasetukset ja hälytysasetukset poistetaan. Poiston jälkeen joku toinen voi ottaa anturin omistukseensa. Jokaisella Ruuvi-anturilla voi olla vain yksi omistaja.</string>
@@ -628,6 +644,7 @@
     <string name="sign_out_confirm">Anturit, joiden omistajuuden olet vahvistanut asetussivulla poistetaan sovelluksesta automaattisesti uloskirjauduttaessa. Anturitiedot palautetaan pilvipalvelusta samalla sähköpostiosoitteella uudelleenkirjauduttaessa.\n\nHaluatko varmasti kirjautua ulos?</string>
     <string name="signal_reading">%1$,d %2$s</string>
     <string name="signal_reading_zero">- %1$s</string>
+    <string name="signal_strength">Signaalin voimakkuus</string>
     <string name="signal_strength_dbm">Signaalin voimakkuus (dBm)</string>
     <string name="signal_strength_rssi">Signaalin voimakkuus (RSSI)</string>
     <string name="signal_unit">dBm</string>
@@ -705,6 +722,7 @@
     <string name="visible_measurements_use_default">Käytä oletusta</string>
     <string name="voc">VOC</string>
     <string name="voc_with_unit">VOC (%1$s)</string>
+    <string name="volatile_organic_compounds">Haihtuvat orgaaniset yhdisteet</string>
     <string name="voltage_reading">%1$,.2f %2$s</string>
     <string name="voltage_unit">V</string>
     <string name="welcome_text_0">Tutustu Ruuvi Station -sovellukseen.</string>

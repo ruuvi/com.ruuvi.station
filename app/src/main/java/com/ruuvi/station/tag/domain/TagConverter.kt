@@ -68,10 +68,10 @@ class TagConverter(
                 accelerationY = entity.accelY,
                 accelerationZ = entity.accelZ,
                 txPower = entity.txPower,
-                pm10 = entity.pm1?.let { unitsConverter.getPmEnvironmentValue(it, PM10.Mgm3) },
-                pm25 = entity.pm25?.let { unitsConverter.getPmEnvironmentValue(it, PM25.Mgm3) },
-                pm40 = entity.pm4?.let { unitsConverter.getPmEnvironmentValue(it, PM40.Mgm3) },
-                pm100 = entity.pm10?.let { unitsConverter.getPmEnvironmentValue(it, PM100.Mgm3) },
+                pm10 = entity.pm1?.let { unitsConverter.getPmEnvironmentValue(it, PM.PM10) },
+                pm25 = entity.pm25?.let { unitsConverter.getPmEnvironmentValue(it, PM.PM25) },
+                pm40 = entity.pm4?.let { unitsConverter.getPmEnvironmentValue(it, PM.PM40) },
+                pm100 = entity.pm10?.let { unitsConverter.getPmEnvironmentValue(it, PM.PM100) },
                 co2 = entity.co2?.let { unitsConverter.getCo2EnvironmentValue(it) },
                 nox = entity.nox?.let { unitsConverter.getNoxEnvironmentValue(it) },
                 voc = entity.voc?.let { unitsConverter.getVocEnvironmentValue(it) },
@@ -207,24 +207,24 @@ class TagConverter(
                         valuesToDisplay.add(unitsConverter.getNoxEnvironmentValue(it))
                     }
                 }
-                PM10.Mgm3 -> {
+                PM.PM10 -> {
                     entity.pm1?.let {
-                        valuesToDisplay.add(unitsConverter.getPmEnvironmentValue(it, PM10.Mgm3))
+                        valuesToDisplay.add(unitsConverter.getPmEnvironmentValue(it, PM.PM10))
                     }
                 }
-                PM25.Mgm3 -> {
+                PM.PM25 -> {
                     entity.pm25?.let {
-                        valuesToDisplay.add(unitsConverter.getPmEnvironmentValue(it, PM25.Mgm3))
+                        valuesToDisplay.add(unitsConverter.getPmEnvironmentValue(it, PM.PM25))
                     }
                 }
-                PM40.Mgm3 -> {
+                PM.PM40 -> {
                     entity.pm4?.let {
-                        valuesToDisplay.add(unitsConverter.getPmEnvironmentValue(it, PM40.Mgm3))
+                        valuesToDisplay.add(unitsConverter.getPmEnvironmentValue(it, PM.PM40))
                     }
                 }
-                PM100.Mgm3 -> {
+                PM.PM100 -> {
                     entity.pm10?.let {
-                        valuesToDisplay.add(unitsConverter.getPmEnvironmentValue(it, PM100.Mgm3))
+                        valuesToDisplay.add(unitsConverter.getPmEnvironmentValue(it, PM.PM100))
                     }
                 }
                 else -> {}
@@ -275,10 +275,10 @@ class TagConverter(
                     accelerationY = entity.accelY,
                     accelerationZ = entity.accelZ,
                     txPower = entity.txPower,
-                    pm10 = entity.pm1?.let { unitsConverter.getPmEnvironmentValue(it, PM10.Mgm3) },
-                    pm25 = entity.pm25?.let { unitsConverter.getPmEnvironmentValue(it, PM25.Mgm3) },
-                    pm40 = entity.pm4?.let { unitsConverter.getPmEnvironmentValue(it, PM40.Mgm3) },
-                    pm100 = entity.pm10?.let { unitsConverter.getPmEnvironmentValue(it, PM100.Mgm3) },
+                    pm10 = entity.pm1?.let { unitsConverter.getPmEnvironmentValue(it, PM.PM10) },
+                    pm25 = entity.pm25?.let { unitsConverter.getPmEnvironmentValue(it, PM.PM25) },
+                    pm40 = entity.pm4?.let { unitsConverter.getPmEnvironmentValue(it, PM.PM40) },
+                    pm100 = entity.pm10?.let { unitsConverter.getPmEnvironmentValue(it, PM.PM100) },
                     co2 = entity.co2?.let { unitsConverter.getCo2EnvironmentValue(it) },
                     nox = entity.nox?.let { unitsConverter.getNoxEnvironmentValue(it) },
                     voc = entity.voc?.let { unitsConverter.getVocEnvironmentValue(it) },
@@ -304,7 +304,7 @@ class TagConverter(
         if (isAir) {
             displayOrder.add(AirQuality.AqiIndex)
             displayOrder.add(CO2.Ppm)
-            displayOrder.add(PM25.Mgm3)
+            displayOrder.add(PM.PM25)
             displayOrder.add(VOC.VocIndex)
             displayOrder.add(NOX.NoxIndex)
             displayOrder.add(preferencesRepository.getTemperatureUnit())
@@ -357,10 +357,10 @@ class TagConverter(
             displayOptions.add(CO2.Ppm)
             displayOptions.add(VOC.VocIndex)
             displayOptions.add(NOX.NoxIndex)
-            displayOptions.add(PM10.Mgm3)
-            displayOptions.add(PM25.Mgm3)
-            displayOptions.add(PM40.Mgm3)
-            displayOptions.add(PM100.Mgm3)
+            displayOptions.add(PM.PM10)
+            displayOptions.add(PM.PM25)
+            displayOptions.add(PM.PM40)
+            displayOptions.add(PM.PM100)
         } else {
             displayOptions.add(TemperatureUnit.Celsius)
             displayOptions.add(TemperatureUnit.Fahrenheit)

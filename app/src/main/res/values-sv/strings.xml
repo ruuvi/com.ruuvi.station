@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="abs_humidity">Absol. luftfuktighet</string>
+    <string name="absolute_humidity">Absolut luftfuktighet</string>
+    <string name="acc_x">Acc. X</string>
+    <string name="acc_y">Acc. Y</string>
+    <string name="acc_z">Acc. Z</string>
     <string name="acceleration_reading">%1$,.3f %2$s</string>
     <string name="acceleration_unit">g</string>
     <string name="acceleration_unit_x">g (x)</string>
@@ -22,6 +27,7 @@
     <string name="advertisement">Advertisement</string>
     <string name="ago">sedan</string>
     <string name="agree">Godkänn</string>
+    <string name="air_pressure">Luftfuktighet</string>
     <string name="air_quality">Luftkvalitet</string>
     <string name="alarm_custom_description_title">Ställ in ett alarm-meddelande</string>
     <string name="alarm_custom_title_hint">Redigera beskrivningen...</string>
@@ -96,7 +102,7 @@
     <string name="aqi_level_3">Måttlig</string>
     <string name="aqi_level_4">Bra</string>
     <string name="aqi_level_5">Utmärkt</string>
-    <string name="aqi_with_unit">AQI (%1$s)</string>
+    <string name="aqi_with_unit">Luftkvalitet (%1$s)</string>
     <string name="average">Genomsnitt</string>
     <string name="back">Tillbaka</string>
     <string name="background_image">Bakgrundsbild</string>
@@ -141,6 +147,7 @@
     <string name="camera">Kamera</string>
     <string name="camera_fail">Kunde inte öppna kameran</string>
     <string name="cancel">Avbryt</string>
+    <string name="carbon_dioxide">Koldioxid</string>
     <string name="card_action">Kortåtgärd</string>
     <string name="card_type">Kort typ</string>
     <string name="change_background">Byt bakgrund</string>
@@ -260,6 +267,7 @@
     <string name="description_text_temperature_kelvin">Temperatursensorn mäter omgivningens lufttemperatur.\n\nHemma påverkar temperaturen i hög grad komfort, sömnkvalitet, koncentration och allmän hälsa. Att övervaka temperaturen hjälper också till att optimera energikostnader och förbättra boendekomforten.\n\nInomhus bör sensorn placeras i ögonhöjd, tillräckligt långt från ytor eller föremål som kan leda värme eller kyla, samt från dragiga platser.\n\nInstallera gärna sensorn i upprätt läge så att luften kan cirkulera fritt runt den. Utomhus bör sensorn placeras i skugga och skyddad från direkt regn.\n\nObs: även om sensorn reagerar snabbt på temperaturförändringar kan det ta upp till en timme innan den uppnår fullständig termisk jämvikt med omgivningen. Detta är normalt.</string>
     <string name="details">Info</string>
     <string name="dewpoint">Daggpunkt</string>
+    <string name="dewpoint_with_unit">Daggpunkt (%1$s)</string>
     <string name="dfu_air_update_instructions">\u0026lt;title\u0026gt;Uppdatera enheten\u0026lt;/title\u0026gt;\n\n1. För din mobila enhet nära din Ruuvi-sensor\n\n2. Tryck på knappen Starta uppdatering och vänta tills processen är klar\n\n3. När uppdateringen är klar startar enheten om och uppdateringen är färdig.</string>
     <string name="dfu_low_battery_warning">Sensorns batterispänning är låg och uppgraderingsprocessen kan misslyckas. Vi rekommenderar att du byter ut batteriet innan du uppdaterar programvaran.</string>
     <string name="dfu_no_internet">Nedladdning av programvara misslyckades. Kontrollera din internetanslutning.</string>
@@ -370,9 +378,10 @@
     <string name="longer_history_title">Längre historik</string>
     <string name="low_battery">Låg batterinivå</string>
     <string name="luminosity">Illuminans</string>
-    <string name="luminosity_with_unit">Illuminans (%1$s)</string>
+    <string name="luminosity_with_unit">Ljusstyrka (%1$s)</string>
     <string name="mac_address">MAC Adress</string>
     <string name="mac_copied">MAC-adressen kopierad till urklippet</string>
+    <string name="meas_seq_number">Mätn.seq.nr</string>
     <string name="measurement_sequence_number">Mätningssekvensnummer</string>
     <string name="menu_about_help">Om / Hjälp</string>
     <string name="menu_add_new_sensor">Lägg till en ny Sensor</string>
@@ -388,7 +397,7 @@
     <string name="move_down">Flytta ner</string>
     <string name="move_up">Flytta upp</string>
     <string name="movement_counter">Rörelseräknare</string>
-    <string name="movements">rörelser</string>
+    <string name="movements">Rörelser</string>
     <string name="muted_till">Avstängd till %1$s</string>
     <string name="my_account_change_email">Kontakta support@ruuvi.com om du vill ändra e-postadressen som är kopplad till detta användarkonto.</string>
     <string name="my_account_change_email_link">mailto:support@ruuvi.com</string>
@@ -413,6 +422,7 @@
     <string name="nfc_dialog_name">Namn:</string>
     <string name="nfc_dialog_unique_id">Unikt ID:</string>
     <string name="nfc_enable_bt_to_add_sensor">Aktivera Bluetooth och skanningssensor för att lägga till den</string>
+    <string name="nitrogen_oxides">Kväveoxider</string>
     <string name="no">Nej</string>
     <string name="no_data">Ingen data</string>
     <string name="no_data_10_days">Ingen data under de senaste 10 dagarna</string>
@@ -464,6 +474,10 @@
     <string name="ordering">Sortering</string>
     <string name="owner_none">Ingen</string>
     <string name="owners_plan">Ägarens Ruuvi-plan</string>
+    <string name="particulate_matter_10">Partiklar 1</string>
+    <string name="particulate_matter_100">Partiklar 10</string>
+    <string name="particulate_matter_25">Partiklar 2.5</string>
+    <string name="particulate_matter_40">Partiklar 4</string>
     <string name="peak">Topp</string>
     <string name="permission_background_dialog_title">Aktivera bakgrundsskanning</string>
     <string name="permission_dialog_background_request_message">Android-operativsystemet kräver åtkomst av platsinformation för att skanna Bluetooth-enheter i närheten. \n\nTillåt om du vill använda bakgrundsskanning\n\n Ruuvi delar aldrig din platsinformation. Användningen är säker.</string>
@@ -489,7 +503,7 @@
     <string name="prepare_your_sensor_instructions_5">3.2. Om din sensor har en knapp, håll knappen intryckt i 10 sekunder.</string>
     <string name="prepare_your_sensor_instructions_6">4. Uppgraderingsläget lyckades om den röda lysdioden på kretskortet lyser och knappens text i appen har bytts till “Starta uppdatering“.</string>
     <string name="press_to_add">Inga sensorer har lags till\nTryck här för att lägga till sensorer</string>
-    <string name="pressure">Lufttryck</string>
+    <string name="pressure">Luftfuktighet</string>
     <string name="pressure_accuracy_title">Tryckupplösning</string>
     <string name="pressure_hpa_name">Hektopascal (hPa)</string>
     <string name="pressure_hpa_unit">hPa</string>
@@ -507,6 +521,8 @@
     <string name="reading_history_not_supported">Firmware versionen stöds inte</string>
     <string name="reading_history_x">Läser Bluetooth: %1$s</string>
     <string name="real_time">Realtid</string>
+    <string name="rel_humidity">Rel. luftfuktighet</string>
+    <string name="relative_humidity">Relativ luftfuktighet</string>
     <string name="remove">Ta bort</string>
     <string name="remove_claimed_sensor">Om du tar bort sensorn upphör ägarskapet. Vem som helst kan göra anspråk på ägandet av sensorn efter borttagning. Varje Ruuvi-sensor kan bara ha en ägare.</string>
     <string name="remove_claimed_sensor_description">Genom att ta bort sensorn kommer den inte längre synas i ditt konto och sensorinställningar som namn, bakgrundsbild, kalibreringsinställningar och larminställningar kommer att tas bort. Efter borttagning kan någon annan ta ägande om sensorn. Varje Ruuvi-sensor kan bara ha en ägare.</string>
@@ -628,6 +644,7 @@
     <string name="sign_out_confirm">Sensorer som du har verifierat äganderätten till på inställningssidan tas automatiskt bort från appen när du loggar ut. Sensordata hämtas från molnet igen om du loggar in med samma e-postadress.\n\nÄr du säker på att du vill logga ut? </string>
     <string name="signal_reading">%1$,d %2$s</string>
     <string name="signal_reading_zero">- %1$s</string>
+    <string name="signal_strength">Signalstyrka</string>
     <string name="signal_strength_dbm">Signalstyrka (dBm)</string>
     <string name="signal_strength_rssi">Signalstyrka (RSSI)</string>
     <string name="signal_unit">dBm</string>
@@ -705,6 +722,7 @@
     <string name="visible_measurements_use_default">Använd standard</string>
     <string name="voc">VOC</string>
     <string name="voc_with_unit">VOC (%1$s)</string>
+    <string name="volatile_organic_compounds">Flyktiga organiska föreningar</string>
     <string name="voltage_reading">%1$,.2f %2$s</string>
     <string name="voltage_unit">V</string>
     <string name="welcome_text_0">Det här kan Ruuvi Station göra för dig.</string>

@@ -206,13 +206,13 @@ class ComplexWidgetSensorItem(
         checkedNOX = savedState?.checkedNOX
             ?: if (supportedType.any { it.unitType == UnitType.NOX.NoxIndex }) checkedNOXDefault else false
         checkedPM10 = savedState?.checkedPM10
-            ?: if (supportedType.any { it.unitType == UnitType.PM10.Mgm3 }) checkedPM10Default else false
+            ?: if (supportedType.any { it.unitType == UnitType.PM.PM10 }) checkedPM10Default else false
         checkedPM25 = savedState?.checkedPM25
-            ?: if (supportedType.any { it.unitType == UnitType.PM25.Mgm3 }) checkedPM25Default else false
+            ?: if (supportedType.any { it.unitType == UnitType.PM.PM25 }) checkedPM25Default else false
         checkedPM40 = savedState?.checkedPM40
-            ?: if (supportedType.any { it.unitType == UnitType.PM40.Mgm3 }) checkedPM40Default else false
+            ?: if (supportedType.any { it.unitType == UnitType.PM.PM40 }) checkedPM40Default else false
         checkedPM100 = savedState?.checkedPM100
-            ?: if (supportedType.any { it.unitType == UnitType.PM100.Mgm3 }) checkedPM100Default else false
+            ?: if (supportedType.any { it.unitType == UnitType.PM.PM100 }) checkedPM100Default else false
     }
 
     companion object {

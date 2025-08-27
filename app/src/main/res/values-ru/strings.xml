@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="abs_humidity">Абс. влажность</string>
+    <string name="absolute_humidity">Абсолютная влажность</string>
+    <string name="acc_x">Уск. X</string>
+    <string name="acc_y">Уск. Y</string>
+    <string name="acc_z">Уск. Z</string>
     <string name="acceleration_reading">%1$,.3f %2$s</string>
     <string name="acceleration_unit">g</string>
     <string name="acceleration_unit_x">g (x)</string>
@@ -19,6 +24,8 @@
     <string name="advertisement">Вещания</string>
     <string name="ago">назад</string>
     <string name="agree">Согласие</string>
+    <string name="air_pressure">Атмосферное Давление</string>
+    <string name="air_quality">Качество воздуха</string>
     <string name="alarm_custom_description_title">Описание уведомления</string>
     <string name="alarm_custom_title_hint">Введите описание...</string>
     <string name="alarm_mute_for_hour">Отключить на час</string>
@@ -59,7 +66,7 @@
     <string name="aqi_level_3">Умеренно</string>
     <string name="aqi_level_4">Хорошо</string>
     <string name="aqi_level_5">Отлично</string>
-    <string name="aqi_with_unit">AQI (%1$s)</string>
+    <string name="aqi_with_unit">Качество воздух (%1$s)</string>
     <string name="average">Среднее</string>
     <string name="back">Назад</string>
     <string name="background_image">Фоновое изображение</string>
@@ -101,6 +108,7 @@
     <string name="camera">Камера</string>
     <string name="camera_fail">Не удалось запустить камеру</string>
     <string name="cancel">Отмена</string>
+    <string name="carbon_dioxide">Углекислый газ</string>
     <string name="change_background_image">Изменить фоновое изображение</string>
     <string name="changelog_android_url">https://f.ruuvi.com/t/4262</string>
     <string name="chart_latest_min_max_avg">Мин: %1$s Макс: %2$s Среднее: %3$s Последний: %4$s</string>
@@ -189,6 +197,7 @@
     <string name="description_text_temperature_kelvin">Датчик температуры измеряет температуру окружающего воздуха.\n\nДома температура существенно влияет на комфорт, качество сна, концентрацию и общее состояние здоровья. Мониторинг температуры помогает оптимизировать энергозатраты и улучшить комфорт проживания.\n\nВ помещении установите датчик на уровне глаз, вдали от поверхностей или предметов, проводящих тепло или холод, и вдали от сквозняков.\n\nУстанавливайте датчик вертикально, чтобы воздух мог свободно циркулировать вокруг него. На улице размещайте его в тени и защищённым от прямого дождя.\n\nПримечание: хотя датчик быстро фиксирует и передаёт изменения температуры, для достижения полного теплового равновесия с окружающей средой может потребоваться до часа. Это нормальное поведение устройства.</string>
     <string name="details">Подробнее</string>
     <string name="dewpoint">Точка Росы</string>
+    <string name="dewpoint_with_unit">Точка росы (%1$s)</string>
     <string name="dfu_air_update_instructions">\u0026lt;title\u0026gt;Обновление устройства\u0026lt;/title\u0026gt;\n\n1. Поднесите мобильное устройство к датчику Ruuvi\n\n2. Нажмите кнопку Начать обновление и дождитесь завершения процесса\n\n3. Когда обновление прошивки завершится, устройство перезагрузится и обновление будет завершено.</string>
     <string name="dfu_low_battery_warning">Уровень заряда батареи датчика слишком низкий и обновление прошивки может завершиться неудачей. Мы рекомендуем заменить батарейку перед обновлением.</string>
     <string name="dfu_no_internet">Не удалось получить последнюю версию прошивки. Проверьте подключение к интернету.</string>
@@ -275,8 +284,11 @@
     <string name="logged_in">Пользователь:</string>
     <string name="login_description">Чтобы воспользоваться всеми функциями, создайте аккаунт или войдите в существующий. Пожалуйста, введите ваш email.</string>
     <string name="login_to_ruuvi_network">Войти в\nRuuvi\nStation</string>
+    <string name="luminosity">Освещённость</string>
+    <string name="luminosity_with_unit">Яркость (%1$s)</string>
     <string name="mac_address">MAC адрес</string>
     <string name="mac_copied">MAC адрес скопирован в буфер обмена</string>
+    <string name="meas_seq_number">№ изм.</string>
     <string name="measurement_sequence_number">Порядковый Номер Измерения</string>
     <string name="menu_about_help">О Приложении</string>
     <string name="menu_add_new_sensor">Добавить Сенсор</string>
@@ -290,7 +302,7 @@
     <string name="more">Больше...</string>
     <string name="more_info">Дополнительно</string>
     <string name="movement_counter">Счетчик Движения</string>
-    <string name="movements">движений</string>
+    <string name="movements">Движение</string>
     <string name="my_account_change_email">Свяжитесь с support@ruuvi.com, если вы хотите изменить адрес электронной почты.</string>
     <string name="my_account_change_email_link">mailto:support@ruuvi.com</string>
     <string name="my_account_change_email_link_markup">support@ruuvi.com</string>
@@ -306,6 +318,7 @@
     <string name="network_syncing">Синхронизация...</string>
     <string name="network_user">Пользователь: %1$s</string>
     <string name="never">никогда</string>
+    <string name="nitrogen_oxides">Оксиды азота</string>
     <string name="no">Нет</string>
     <string name="no_data">Нет данных</string>
     <string name="no_new_data_points">Нет новых измерений</string>
@@ -323,6 +336,10 @@
     <string name="onboarding_start_tos_link">https://ruuvi.com/privacy/#apps</string>
     <string name="open_settings">Открыть настройки</string>
     <string name="owner_none">Нет владельца</string>
+    <string name="particulate_matter_10">Твердые частицы 1</string>
+    <string name="particulate_matter_100">Твердые частицы 10</string>
+    <string name="particulate_matter_25">Твердые частицы 2.5</string>
+    <string name="particulate_matter_40">Твердые частицы 4</string>
     <string name="peak">Пик</string>
     <string name="permission_background_dialog_title">Включить сканирование в фоне</string>
     <string name="permission_dialog_background_request_message">Для того чтобы находить Bluetooth-утройства в фоновом режиме, Android требует включить доступ к фоновому местоположению.\n\nПожалуйста разрешите постоянный доспуп к местоположению\n\nRuuvi не отслеживает ваше расположение. Вы в безопасности.</string>
@@ -339,7 +356,7 @@
     <string name="pm40">PM4</string>
     <string name="pm40_with_unit">PM4 (%1$s)</string>
     <string name="press_to_add">Нет добавленных датчиков\nнажмите чтобы добавить</string>
-    <string name="pressure">Давление</string>
+    <string name="pressure">Атмосферное Давление</string>
     <string name="pressure_hpa_name">Гектопаскаль (гПа)</string>
     <string name="pressure_hpa_unit">гПа</string>
     <string name="pressure_inhg_name">Дюймов ртутного столба (inHg)</string>
@@ -356,6 +373,8 @@
     <string name="reading_history_not_supported">Прошивка не поддерживается</string>
     <string name="reading_history_x">Bluetooth sync: %1$s</string>
     <string name="real_time">Реальное время</string>
+    <string name="rel_humidity">Отн. влажность</string>
+    <string name="relative_humidity">Относительная влажность</string>
     <string name="remove">Удалить</string>
     <string name="remove_claimed_sensor">Удаляя датчик вы также отказываетесь от владения. Кто-то другой сможет заявить о владении этим датчиком. Каждый датчик может иметь только одного владельца.</string>
     <string name="remove_local_sensor">Вы уверены что хотите удалить этот сенсор?</string>
@@ -449,6 +468,7 @@
     <string name="sign_out_confirm">После выхода все датчики, которые зарегистрованы на вас, будут удалены из приложения. Если вы повторно войдете с тем же email адресом, список ваших датчиков будет загружен из облака. \n\nВы хотите выйти из сети?</string>
     <string name="signal_reading">%1$,d %2$s</string>
     <string name="signal_reading_zero">- %1$s</string>
+    <string name="signal_strength">Сила сигнала</string>
     <string name="signal_strength_dbm">Сила сигнала (dBm)</string>
     <string name="signal_strength_rssi">Сила сигнала (RSSI)</string>
     <string name="signal_unit">дБм</string>
@@ -457,7 +477,9 @@
     <string name="something_went_wrong">Что-то пошло не так</string>
     <string name="sound">Звук</string>
     <string name="sound_average_with_unit">Звук (среднее) (%1$s)</string>
+    <string name="sound_avg">Звук (среднее)</string>
     <string name="sound_instant_with_unit">Звук (мгновенный) (%1$s)</string>
+    <string name="sound_peak">Звук (пик)</string>
     <string name="sound_peak_with_unit">Звук (пик) (%1$s)</string>
     <string name="start_update_process">Начать процесс обновления</string>
     <string name="successfully_claimed">Владение датчиком зарегистрировано</string>
@@ -507,8 +529,9 @@
     <string name="visible_measurements">Отображаемые измерения</string>
     <string name="visible_measurements_description">Здесь вы можете выбрать, какие измерения отображать и в каком порядке. Отключите переключатель «Использовать по умолчанию», чтобы настроить параметры.</string>
     <string name="visible_measurements_use_default">Использовать по умолчанию</string>
-    <string name="voc">VOC</string>
-    <string name="voc_with_unit">VOC (%1$s)</string>
+    <string name="voc">ЛОС</string>
+    <string name="voc_with_unit">ЛОС (%1$s)</string>
+    <string name="volatile_organic_compounds">Летучие органические соединения</string>
     <string name="voltage_reading">%1$,.2f %2$s</string>
     <string name="voltage_unit">В</string>
     <string name="welcome_text_0">Проведите пальцем чтобы узнать, чем Ruuvi Station может помочь вам.</string>

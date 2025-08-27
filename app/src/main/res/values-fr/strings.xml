@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="abs_humidity">Hum. absolue</string>
+    <string name="absolute_humidity">Humidité absolue</string>
+    <string name="acc_x">Accél. X</string>
+    <string name="acc_y">Accél. Y</string>
+    <string name="acc_z">Accél. Z</string>
     <string name="acceleration_reading">%1$,.3f %2$s</string>
     <string name="acceleration_unit">g</string>
     <string name="acceleration_unit_x">g (x)</string>
@@ -22,6 +27,7 @@
     <string name="advertisement">Messages des capteurs</string>
     <string name="ago">avant</string>
     <string name="agree">Accepter</string>
+    <string name="air_pressure">Pression de l\'air</string>
     <string name="air_quality">Qualité de l\'air</string>
     <string name="alarm_custom_description_title">Description personnalisée de l\'alerte</string>
     <string name="alarm_custom_title_hint">Modifier la description...</string>
@@ -96,7 +102,7 @@
     <string name="aqi_level_3">Modéré</string>
     <string name="aqi_level_4">Bon</string>
     <string name="aqi_level_5">Excellent</string>
-    <string name="aqi_with_unit">AQI (%1$s)</string>
+    <string name="aqi_with_unit">Qualité de l\'air (%1$s)</string>
     <string name="average">Moyenne</string>
     <string name="back">Retour</string>
     <string name="background_image">Fond d\'écran</string>
@@ -141,6 +147,7 @@
     <string name="camera">Appareil photo</string>
     <string name="camera_fail">Impossible d\'accéder à l\'appareil photo</string>
     <string name="cancel">Annuler</string>
+    <string name="carbon_dioxide">Dioxyde de carbone</string>
     <string name="card_action">Action de la carte</string>
     <string name="card_type">Type de carte</string>
     <string name="change_background">Changer le fond d\'écran</string>
@@ -260,6 +267,7 @@
     <string name="description_text_temperature_kelvin">Le capteur de température mesure la température de l\'air ambiant.\n\nÀ la maison, la température influence fortement le confort, la qualité du sommeil, la concentration et la santé générale. Surveiller la température aide également à optimiser les coûts énergétiques et à améliorer le confort de vie.\n\nÀ l\'intérieur, placez le capteur à hauteur des yeux, suffisamment éloigné des surfaces ou objets pouvant conduire la chaleur ou le froid, ainsi que des zones sujettes aux courants d\'air.\n\nInstallez idéalement le capteur en position verticale pour permettre une bonne circulation de l\'air autour. À l\'extérieur, placez-le à l’ombre et à l’abri de la pluie directe.\n\nRemarque : même si le capteur détecte et rapporte rapidement les variations de température, il peut prendre jusqu’à une heure pour atteindre un équilibre thermique complet avec son environnement. Ceci est normal.</string>
     <string name="details">Détails</string>
     <string name="dewpoint">Point de rosée</string>
+    <string name="dewpoint_with_unit">Point de rosée (%1$s)</string>
     <string name="dfu_air_update_instructions">\u0026lt;title\u0026gt;Mise à jour de l\'appareil\u0026lt;/title\u0026gt;\n\n1. Approchez votre appareil mobile du capteur Ruuvi\n\n2. Appuyez sur le bouton Démarrer la mise à jour et attendez la fin du processus\n\n3. Une fois la mise à jour du firmware terminée, l\'appareil redémarrera et la mise à jour sera terminée.</string>
     <string name="dfu_low_battery_warning">La tension de la pile du capteur est faible et risque de faire echouer la mise à jour. Nous vous conseillons de remplacer la batterie avant la mise à jour.</string>
     <string name="dfu_no_internet">Echec du téléchargement de la mise à jour. Veuillez vérifier votre connexion Internet.</string>
@@ -375,9 +383,10 @@
     <string name="longer_history_title">Une histoire plus longue</string>
     <string name="low_battery">Batterie faible</string>
     <string name="luminosity">Éclairement</string>
-    <string name="luminosity_with_unit">Éclairement (%1$s)</string>
+    <string name="luminosity_with_unit">Luminosité (%1$s)</string>
     <string name="mac_address">Adresse MAC</string>
     <string name="mac_copied">Adreesse MAC copiée dans le presse-papiers</string>
+    <string name="meas_seq_number">N° séq. mes.</string>
     <string name="measurement_sequence_number">Numéro de séquence</string>
     <string name="menu_about_help">Infos/Aide</string>
     <string name="menu_add_new_sensor">Ajouter un capteur</string>
@@ -392,8 +401,8 @@
     <string name="more_info">Plus d\'infos</string>
     <string name="move_down">Descendre</string>
     <string name="move_up">Monter</string>
-    <string name="movement_counter">Mouvement</string>
-    <string name="movements">mouvements</string>
+    <string name="movement_counter">Compteur de mouvements</string>
+    <string name="movements">Mouvements</string>
     <string name="muted_till">Muet jusqu\'à %1$s</string>
     <string name="my_account_change_email">Contactez support@ruuvi.com si vous souhaitez modifier l\'adresse e-mail associée à ce compte utilisateur.</string>
     <string name="my_account_change_email_link">mailto:support@ruuvi.com</string>
@@ -418,6 +427,7 @@
     <string name="nfc_dialog_name">Nom:</string>
     <string name="nfc_dialog_unique_id">Identifiant unique:</string>
     <string name="nfc_enable_bt_to_add_sensor">Activez Bluetooth et scannez le capteur pour l\'ajouter</string>
+    <string name="nitrogen_oxides">Oxydes d\'azote</string>
     <string name="no">Non</string>
     <string name="no_data">Pas d\'informations</string>
     <string name="no_data_10_days">Aucune donnée au cours des 10 derniers jours</string>
@@ -469,6 +479,10 @@
     <string name="ordering">Tri</string>
     <string name="owner_none">Pas de propriétaire</string>
     <string name="owners_plan">Plan Ruuvi du propriétaire</string>
+    <string name="particulate_matter_10">Matières particulaires 1</string>
+    <string name="particulate_matter_100">Matières particulaires 10</string>
+    <string name="particulate_matter_25">Matières particulaires 2.5</string>
+    <string name="particulate_matter_40">Matières particulaires 4</string>
     <string name="peak">Pic</string>
     <string name="permission_background_dialog_title">Activer le balayage en arrière plan</string>
     <string name="permission_dialog_background_request_message">Les appareils Android utilisent votre localisation pour balayer les appareils à proximité. \n\nAutorisez l\'utilisation de votre position pour utiliser le balayage en arrière plan. \n\nRuuvi ne partage jamais votre position, elle reste confidentielle.</string>
@@ -486,7 +500,7 @@
     <string name="pm40">PM4</string>
     <string name="pm40_with_unit">PM4 (%1$s)</string>
     <string name="prepare_your_sensor">Préparez votre capteur</string>
-    <string name="prepare_your_sensor_instructions">\u0026lt;title\u0026gt;Préparez votre capteur\u0026lt;/title\u0026gt;\n\n1. Ouvrez le couvercle de votre capteur Ruuvi\n\n2. Localisez les petits boutons ronds noirs sur la carte de circuit imprimé blanche ; les anciens capteurs Ruuvi ont 2 boutons étiquetés "R" et "B" tandis que les plus récents n\'ont qu\'un seul bouton sans étiquette.\n\n3. Mettez le capteur en mode de mise à jour :\n\n3.1. Si votre capteur est équipé de 2 boutons : maintenez le bouton "B" enfoncé tout en appuyant momentanément sur le bouton "R". Relâchez le bouton "B".\n\n3.2. Si votre capteur possède un seul bouton : maintenez le bouton enfoncé pendant 10 secondes.\n\n4. Si le réglage est réussi, vous verrez une lumière rouge fixe s\'allumer sur la carte de circuit imprimé et le bouton de l\'application passera à "Démarrer la mise à jour".</string>
+    <string name="prepare_your_sensor_instructions">\u0026lt;title\u0026gt;Préparez votre capteur\u0026lt;/title\u0026gt;\n\n1. Ouvrez le couvercle de votre capteur Ruuvi\n\n2. Localisez les petits boutons ronds noirs sur la carte de circuit imprimé blanche ; les anciens capteurs Ruuvi ont 2 boutons étiquetés “R” et “B” tandis que les plus récents n\'ont qu\'un seul bouton sans étiquette.\n\n3. Mettez le capteur en mode de mise à jour :\n\n3.1. Si votre capteur est équipé de 2 boutons : maintenez le bouton “B” enfoncé tout en appuyant momentanément sur le bouton “R”. Relâchez le bouton “B”.\n\n3.2. Si votre capteur possède un seul bouton : maintenez le bouton enfoncé pendant 10 secondes.\n\n4. Si le réglage est réussi, vous verrez une lumière rouge fixe s\'allumer sur la carte de circuit imprimé et le bouton de l\'application passera à “Démarrer la mise à jour”.</string>
     <string name="prepare_your_sensor_instructions_1">1. Ouvrez le couvercle de votre capteur Ruuvi</string>
     <string name="prepare_your_sensor_instructions_2">2. Localisez les petits boutons ronds noirs sur la carte de circuit imprimé blanche ; les anciens capteurs Ruuvi ont 2 boutons étiquetés \"R\" et \"B\" tandis que les plus récents n\'ont qu\'un seul bouton sans étiquette.</string>
     <string name="prepare_your_sensor_instructions_3">3. Mettez le capteur en mode de mise à jour :</string>
@@ -494,7 +508,7 @@
     <string name="prepare_your_sensor_instructions_5">3.2. Si votre capteur possède un seul bouton : maintenez le bouton enfoncé pendant 10 secondes.</string>
     <string name="prepare_your_sensor_instructions_6">4. Si le réglage est réussi, vous verrez une lumière rouge fixe s\'allumer sur la carte de circuit imprimé et le bouton de l\'application passera à \"Démarrer la mise à jour\".</string>
     <string name="press_to_add">Pas de capteurs\nAjoutez-en en cliquant ici</string>
-    <string name="pressure">Pression</string>
+    <string name="pressure">Pression de l\'air</string>
     <string name="pressure_accuracy_title">Résolution de la pression</string>
     <string name="pressure_hpa_name">Hectopascal (hPa)</string>
     <string name="pressure_hpa_unit">hPa</string>
@@ -512,6 +526,8 @@
     <string name="reading_history_not_supported">Firmware non supporté</string>
     <string name="reading_history_x">Bluetooth sync: %1$s</string>
     <string name="real_time">Temps réel</string>
+    <string name="rel_humidity">Hum. relative</string>
+    <string name="relative_humidity">Humidité relative</string>
     <string name="remove">Supprimer</string>
     <string name="remove_claimed_sensor">Le propriétaire sera réinitialisé en supprimant le capteur. N\'importe qui pourra alors s\'approprier le capteur. Chaque capteur Ruuvi ne pouvant avoir qu\'un propriétaire.</string>
     <string name="remove_claimed_sensor_description">En supprimant le capteur, votre statut de propriétaire du capteur sera révoqué, et les paramètres du capteur, tels que le nom, l\'image d\'arrière-plan, les paramètres de calibration et les paramètres d\'alerte, seront supprimés. Après la suppression, quelqu\'un d\'autre peut revendiquer la propriété du capteur. Chaque capteur Ruuvi ne peut avoir qu\'un seul propriétaire.</string>
@@ -633,6 +649,7 @@
     <string name="sign_out_confirm">Les capteurs dont vous êtes propriétaire seront suspprimés de l\'application lorsque vous vous déconnectez de votre compte Ruuvi. Les données seront importées du cloud lorsque vous vous connectez à nouveau.\n\nSouhaitez vous vous déconnecter ?</string>
     <string name="signal_reading">%1$,d %2$s</string>
     <string name="signal_reading_zero">- %1$s</string>
+    <string name="signal_strength">Puissance du signal</string>
     <string name="signal_strength_dbm">Puissance du signal (dBm)</string>
     <string name="signal_strength_rssi">Puissance du signal (RSSI)</string>
     <string name="signal_unit">dBm</string>
@@ -708,8 +725,9 @@
     <string name="visible_measurements">Mesures visibles</string>
     <string name="visible_measurements_description">Ici, vous pouvez choisir quelles mesures afficher et dans quel ordre. Désactivez l’option « Utiliser par défaut » pour personnaliser les paramètres.</string>
     <string name="visible_measurements_use_default">Utiliser par défaut</string>
-    <string name="voc">VOC</string>
-    <string name="voc_with_unit">VOC (%1$s)</string>
+    <string name="voc">COV</string>
+    <string name="voc_with_unit">COV (%1$s)</string>
+    <string name="volatile_organic_compounds">Composés organiques volatils</string>
     <string name="voltage_reading">%1$,.2f %2$s</string>
     <string name="voltage_unit">V</string>
     <string name="welcome_text_0">Découvrez l\'application Ruuvi Station.</string>

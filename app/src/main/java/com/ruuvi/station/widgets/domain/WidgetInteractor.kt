@@ -137,33 +137,33 @@ class WidgetInteractor (
                 val pm10Value = SensorValue(
                     type = WidgetType.PM10,
                     sensorValue = lastMeasurement.pm1?.let {
-                        context.getString(UnitType.PM10.Mgm3.defaultAccuracy.nameTemplateId, it, "")
+                        context.getString(UnitType.PM.PM10.defaultAccuracy.nameTemplateId, it, "")
                     } ?: UNDEFINED_VALUE,
-                    unit = context.getString(UnitType.PM10.Mgm3.unit)
+                    unit = context.getString(UnitType.PM.PM10.unit)
                 )
 
                 val pm25Value = SensorValue(
                     type = WidgetType.PM25,
                     sensorValue = lastMeasurement.pm25?.let {
-                        context.getString(UnitType.PM25.Mgm3.defaultAccuracy.nameTemplateId, it, "")
+                        context.getString(UnitType.PM.PM25.defaultAccuracy.nameTemplateId, it, "")
                     } ?: UNDEFINED_VALUE,
-                    unit = context.getString(UnitType.PM25.Mgm3.unit)
+                    unit = context.getString(UnitType.PM.PM25.unit)
                 )
 
                 val pm40Value = SensorValue(
                     type = WidgetType.PM40,
                     sensorValue = lastMeasurement.pm4?.let {
-                        context.getString(UnitType.PM40.Mgm3.defaultAccuracy.nameTemplateId, it, "")
+                        context.getString(UnitType.PM.PM40.defaultAccuracy.nameTemplateId, it, "")
                     } ?: UNDEFINED_VALUE,
-                    unit = context.getString(UnitType.PM40.Mgm3.unit)
+                    unit = context.getString(UnitType.PM.PM40.unit)
                 )
 
                 val pm100Value = SensorValue(
                     type = WidgetType.PM100,
                     sensorValue = lastMeasurement.pm10?.let {
-                        context.getString(UnitType.PM100.Mgm3.defaultAccuracy.nameTemplateId, it, "")
+                        context.getString(UnitType.PM.PM100.defaultAccuracy.nameTemplateId, it, "")
                     } ?: UNDEFINED_VALUE,
-                    unit = context.getString(UnitType.PM100.Mgm3.unit)
+                    unit = context.getString(UnitType.PM.PM100.unit)
                 )
 
                 val co2Value = SensorValue(
@@ -308,33 +308,33 @@ class WidgetInteractor (
             val pm10Value = SensorValue(
                 type = WidgetType.PM10,
                 sensorValue = lastMeasurement.pm10?.let {
-                    context.getString(UnitType.PM10.Mgm3.defaultAccuracy.nameTemplateId, it.value, "")
+                    context.getString(UnitType.PM.PM10.defaultAccuracy.nameTemplateId, it.value, "")
                 } ?: UNDEFINED_VALUE,
-                unit = context.getString(UnitType.PM10.Mgm3.unit)
+                unit = context.getString(UnitType.PM.PM10.unit)
             )
 
             val pm25Value = SensorValue(
                 type = WidgetType.PM25,
                 sensorValue = lastMeasurement.pm25?.let {
-                    context.getString(UnitType.PM25.Mgm3.defaultAccuracy.nameTemplateId, it.value, "")
+                    context.getString(UnitType.PM.PM25.defaultAccuracy.nameTemplateId, it.value, "")
                 } ?: UNDEFINED_VALUE,
-                unit = context.getString(UnitType.PM25.Mgm3.unit)
+                unit = context.getString(UnitType.PM.PM25.unit)
             )
 
             val pm40Value = SensorValue(
                 type = WidgetType.PM40,
                 sensorValue = lastMeasurement.pm40?.let {
-                    context.getString(UnitType.PM40.Mgm3.defaultAccuracy.nameTemplateId, it.value, "")
+                    context.getString(UnitType.PM.PM40.defaultAccuracy.nameTemplateId, it.value, "")
                 } ?: UNDEFINED_VALUE,
-                unit = context.getString(UnitType.PM40.Mgm3.unit)
+                unit = context.getString(UnitType.PM.PM40.unit)
             )
 
             val pm100Value = SensorValue(
                 type = WidgetType.PM100,
                 sensorValue = lastMeasurement.pm100?.let {
-                    context.getString(UnitType.PM100.Mgm3.defaultAccuracy.nameTemplateId, it.value, "")
+                    context.getString(UnitType.PM.PM100.defaultAccuracy.nameTemplateId, it.value, "")
                 } ?: UNDEFINED_VALUE,
-                unit = context.getString(UnitType.PM100.Mgm3.unit)
+                unit = context.getString(UnitType.PM.PM100.unit)
             )
 
             val co2Value = SensorValue(
@@ -642,20 +642,20 @@ class WidgetInteractor (
                         sensorValue = context.getString(UnitType.NOX.NoxIndex.defaultAccuracy.nameTemplateId, decoded.nox, "");
                     }
                     WidgetType.PM10 -> {
-                        unit = context.getString(UnitType.PM10.Mgm3.unit)
-                        sensorValue = context.getString(UnitType.PM10.Mgm3.defaultAccuracy.nameTemplateId, decoded.pm1, "");
+                        unit = context.getString(UnitType.PM.PM10.unit)
+                        sensorValue = context.getString(UnitType.PM.PM10.defaultAccuracy.nameTemplateId, decoded.pm1, "");
                     }
                     WidgetType.PM25 -> {
-                        unit = context.getString(UnitType.PM25.Mgm3.unit)
-                        sensorValue = context.getString(UnitType.PM25.Mgm3.defaultAccuracy.nameTemplateId, decoded.pm25, "");
+                        unit = context.getString(UnitType.PM.PM25.unit)
+                        sensorValue = context.getString(UnitType.PM.PM25.defaultAccuracy.nameTemplateId, decoded.pm25, "");
                     }
                     WidgetType.PM40 -> {
-                        unit = context.getString(UnitType.PM40.Mgm3.unit)
-                        sensorValue = context.getString(UnitType.PM40.Mgm3.defaultAccuracy.nameTemplateId, decoded.pm4, "");
+                        unit = context.getString(UnitType.PM.PM40.unit)
+                        sensorValue = context.getString(UnitType.PM.PM40.defaultAccuracy.nameTemplateId, decoded.pm4, "");
                     }
                     WidgetType.PM100 -> {
-                        unit = context.getString(UnitType.PM100.Mgm3.unit)
-                        sensorValue = context.getString(UnitType.PM100.Mgm3.defaultAccuracy.nameTemplateId, decoded.pm10, "");
+                        unit = context.getString(UnitType.PM.PM100.unit)
+                        sensorValue = context.getString(UnitType.PM.PM100.defaultAccuracy.nameTemplateId, decoded.pm10, "");
                     }
                 }
 

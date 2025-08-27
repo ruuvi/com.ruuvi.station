@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="abs_humidity">Abs. Luftfeuchtigkeit</string>
+    <string name="absolute_humidity">Absolute Luftfeuchtigkeit</string>
+    <string name="acc_x">Beschl. X</string>
+    <string name="acc_y">Beschl. Y</string>
+    <string name="acc_z">Beschl. Z</string>
     <string name="acceleration_reading">%1$,.3f %2$s</string>
     <string name="acceleration_unit">g</string>
     <string name="acceleration_unit_x">g (x)</string>
@@ -22,6 +27,7 @@
     <string name="advertisement">Advertisement</string>
     <string name="ago">vor</string>
     <string name="agree">Zustimmen</string>
+    <string name="air_pressure">Luftdruck</string>
     <string name="air_quality">Luftqualität</string>
     <string name="alarm_custom_description_title">Benutzerdefinierte Beschreibung des Alarms</string>
     <string name="alarm_custom_title_hint">Benutzerdefinierte Beschreibung festlegen...</string>
@@ -96,7 +102,7 @@
     <string name="aqi_level_3">Mäßig</string>
     <string name="aqi_level_4">Gut</string>
     <string name="aqi_level_5">Ausgezeichnet</string>
-    <string name="aqi_with_unit">AQI (%1$s)</string>
+    <string name="aqi_with_unit">Luftqualität (%1$s)</string>
     <string name="average">Durchschnitt</string>
     <string name="back">Zurück</string>
     <string name="background_image">Hintergrundbild</string>
@@ -141,6 +147,7 @@
     <string name="camera">Kamera</string>
     <string name="camera_fail">Kamera konnte nicht gestartet werden</string>
     <string name="cancel">Abbrechen</string>
+    <string name="carbon_dioxide">Kohlendioxid</string>
     <string name="card_action">Kartenaktion</string>
     <string name="card_type">Speicherkarten-Typ</string>
     <string name="change_background">Hintergrundbild ändern</string>
@@ -260,6 +267,7 @@
     <string name="description_text_temperature_kelvin">Der Temperatursensor misst die Umgebungstemperatur der Luft.\n\nZu Hause beeinflusst die Temperatur maßgeblich den Komfort, die Schlafqualität, die Konzentration und die allgemeine Gesundheit. Die Überwachung der Temperatur hilft auch, Energiekosten zu optimieren und den Wohnkomfort zu verbessern.\n\nPlatzieren Sie den Sensor im Innenbereich auf Augenhöhe, ausreichend entfernt von Flächen oder Gegenständen, die Wärme oder Kälte leiten können, sowie an zugfreien Orten.\n\nInstallieren Sie den Sensor idealerweise aufrecht, damit die Luft frei um ihn herum zirkulieren kann. Im Freien sollte der Sensor im Schatten und vor direktem Regen geschützt angebracht werden.\n\nHinweis: Obwohl der Sensor Temperaturänderungen sehr schnell erkennt und meldet, kann es bis zu einer Stunde dauern, bis er das thermische Gleichgewicht mit der Umgebung vollständig erreicht hat. Dies ist normales Verhalten des Geräts.</string>
     <string name="details">Einzelheiten</string>
     <string name="dewpoint">Taupunkt</string>
+    <string name="dewpoint_with_unit">Taupunkt (%1$s)</string>
     <string name="dfu_air_update_instructions">\u0026lt;title\u0026gt;Geräteaktualisierung\u0026lt;/title\u0026gt;\n\n1. Bringen Sie Ihr Mobilgerät in die Nähe Ihres Ruuvi-Sensors\n\n2. Tippen Sie auf die Schaltfläche Update starten und warten Sie, bis der Vorgang abgeschlossen ist\n\n3. Wenn das Firmware-Update abgeschlossen ist, startet das Gerät neu und das Update ist beendet.</string>
     <string name="dfu_low_battery_warning">Die Batteriespannung des Sensors scheint zu niedrig zu sein, und der Firmware-Aktualisierungsprozess kann fehlschlagen. Wir empfehlen, die Batterie vor der Aktualisierung zu ersetzen.</string>
     <string name="dfu_no_internet">Die neueste Firmware kann nicht abgerufen werden. Überprüfen Sie Ihre Internetverbindung.</string>
@@ -381,9 +389,10 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="longer_history_title">Längere Geschichte</string>
     <string name="low_battery">Schwache Batterie</string>
     <string name="luminosity">Beleuchtungsstärke</string>
-    <string name="luminosity_with_unit">Beleuchtungsstärke (%1$s)</string>
+    <string name="luminosity_with_unit">Helligkeit (%1$s)</string>
     <string name="mac_address">MAC-Adresse</string>
     <string name="mac_copied">MAC-Adresse in Zwischenablage kopiert</string>
+    <string name="meas_seq_number">Messseq.nr</string>
     <string name="measurement_sequence_number">Messsequenznummer</string>
     <string name="menu_about_help">Über / Hilfe</string>
     <string name="menu_add_new_sensor">Neuen Sensor hinzufügen</string>
@@ -399,7 +408,7 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="move_down">Nach unten bewegen</string>
     <string name="move_up">Nach oben bewegen</string>
     <string name="movement_counter">Bewegungszähler</string>
-    <string name="movements">bewegungen</string>
+    <string name="movements">Bewegungen</string>
     <string name="muted_till">Stummgeschaltet bis %1$s</string>
     <string name="my_account_change_email">Kontaktieren Sie support@ruuvi.com, wenn Sie die mit diesem Benutzerkonto verknüpfte E-Mail-Adresse ändern möchten.</string>
     <string name="my_account_change_email_link">mailto:support@ruuvi.com</string>
@@ -424,6 +433,7 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="nfc_dialog_name">Name:</string>
     <string name="nfc_dialog_unique_id">Eindeutige ID:</string>
     <string name="nfc_enable_bt_to_add_sensor">Aktivieren Sie Bluetooth und scannen Sie den Sensor, um ihn hinzuzufügen</string>
+    <string name="nitrogen_oxides">Stickoxide</string>
     <string name="no">Nein</string>
     <string name="no_data">Keine Daten</string>
     <string name="no_data_10_days">Keine Daten in den letzten 10 Tagen</string>
@@ -475,6 +485,10 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="ordering">Sortierung</string>
     <string name="owner_none">Keiner</string>
     <string name="owners_plan">Ruuvi-Plan des Eigentümers</string>
+    <string name="particulate_matter_10">Feinstaub 1</string>
+    <string name="particulate_matter_100">Feinstaub 10</string>
+    <string name="particulate_matter_25">Feinstaub 2.5</string>
+    <string name="particulate_matter_40">Feinstaub 4</string>
     <string name="peak">Spitze</string>
     <string name="permission_background_dialog_title">Scannen im Hintergrund aktivieren</string>
     <string name="permission_dialog_background_request_message">Um Bluetooth-Geräte in der Nähe im Hintergrund zu scannen, muss für Android der Zugriff auf den Standort im Hintergrund aktiviert sein. \n\n Bitte klicken Sie auf \'immer zulassen\', wenn Sie die Funktion zum Scannen im Hintergrund verwenden möchten. \n\nRuuvi verfolgt Ihre Bewegungen nicht. Sie sind sicher.</string>
@@ -492,7 +506,7 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="pm40">PM4</string>
     <string name="pm40_with_unit">PM4 (%1$s)</string>
     <string name="prepare_your_sensor">Bereiten Sie Ihren Sensor vor</string>
-    <string name="prepare_your_sensor_instructions">\u0026lt;title\u0026gt;Bereiten Sie Ihren Sensor vor\u0026lt;/title\u0026gt;\n\n1. Öffnen Sie den Deckel Ihres Ruuvi-Sensors\n\n2. Suchen Sie die kleinen runden schwarzen Knöpfe auf der weißen Platine; ältere Ruuvi-Sensoren haben zwei Knöpfe mit den Bezeichnungen "R" und "B", während neuere nur einen Knopf ohne Beschriftung haben.\n\n3. Stellen Sie den Sensor in den Aktualisierungsmodus:\n\n3.1. Wenn Ihr Sensor 2 Tasten hat: Halten Sie die Taste "B" gedrückt und tippen Sie gleichzeitig kurz auf die Taste "R". Lassen Sie die Taste "B" los.\n\n3.2. Wenn Ihr Sensor eine einzelne Taste hat: Halten Sie die Taste 10 Sekunden lang gedrückt.\n\n4. Wenn die Einstellung erfolgreich war, leuchtet ein rotes Licht auf der Platine und die Schaltfläche in der App ändert sich in "Start the update".</string>
+    <string name="prepare_your_sensor_instructions">\u0026lt;title\u0026gt;Bereiten Sie Ihren Sensor vor\u0026lt;/title\u0026gt;\n\n1. Öffnen Sie den Deckel Ihres Ruuvi-Sensors\n\n2. Suchen Sie die kleinen runden schwarzen Knöpfe auf der weißen Platine; ältere Ruuvi-Sensoren haben zwei Knöpfe mit den Bezeichnungen “R” und “B”, während neuere nur einen Knopf ohne Beschriftung haben.\n\n3. Stellen Sie den Sensor in den Aktualisierungsmodus:\n\n3.1. Wenn Ihr Sensor 2 Tasten hat: Halten Sie die Taste “B” gedrückt und tippen Sie gleichzeitig kurz auf die Taste “R”. Lassen Sie die Taste “B” los.\n\n3.2. Wenn Ihr Sensor eine einzelne Taste hat: Halten Sie die Taste 10 Sekunden lang gedrückt.\n\n4. Wenn die Einstellung erfolgreich war, leuchtet ein rotes Licht auf der Platine und die Schaltfläche in der App ändert sich in “Starten Sie die Aktualisierung”.</string>
     <string name="prepare_your_sensor_instructions_1">1. Öffnen Sie den Deckel Ihres Ruuvi-Sensors</string>
     <string name="prepare_your_sensor_instructions_2">2. Suchen Sie die kleinen runden schwarzen Knöpfe auf der weißen Platine; ältere Ruuvi-Sensoren haben zwei Knöpfe mit den Bezeichnungen \"R\" und \"B\", während neuere nur einen Knopf ohne Beschriftung haben.</string>
     <string name="prepare_your_sensor_instructions_3">3. Stellen Sie den Sensor in den Aktualisierungsmodus:</string>
@@ -500,7 +514,7 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="prepare_your_sensor_instructions_5">3.2. Wenn Ihr Sensor eine einzelne Taste hat: Halten Sie die Taste 10 Sekunden lang gedrückt.</string>
     <string name="prepare_your_sensor_instructions_6">4. Wenn die Einstellung erfolgreich war, leuchtet ein rotes Licht auf der Platine und die Schaltfläche in der App ändert sich in \"Start the update\".</string>
     <string name="press_to_add">Keine Sensoren hinzugefügt\nKlicken Sie hier, um Sensoren hinzuzufügen</string>
-    <string name="pressure">Druck</string>
+    <string name="pressure">Luftdruck</string>
     <string name="pressure_accuracy_title">Auflösung des Drucks</string>
     <string name="pressure_hpa_name">Hektopascal (hPa)</string>
     <string name="pressure_hpa_unit">hPa</string>
@@ -518,6 +532,8 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="reading_history_not_supported">Firmware nicht unterstützt</string>
     <string name="reading_history_x">Bluetooth-Sync: %1$s</string>
     <string name="real_time">Echtzeit</string>
+    <string name="rel_humidity">Rel. Luftfeuchtigkeit</string>
+    <string name="relative_humidity">Relative Luftfeuchtigkeit</string>
     <string name="remove">Löschen</string>
     <string name="remove_claimed_sensor">Durch das Entfernen des Sensors wird Ihr Sensor-Eigentumsstatus widerrufen. Nach dem Entfernen kann eine andere Person das Eigentum an dem Sensor beanspruchen. Jeder Ruuvi-Sensor kann nur einen Besitzer haben.</string>
     <string name="remove_claimed_sensor_description">Durch das Entfernen des Sensors wird Ihr Sensor-Eigentumsstatus aufgehoben, und Sensor-Einstellungen wie Name, Hintergrundbild, Kalibrierungseinstellungen und Alarmeinstellungen werden entfernt. Nach der Entfernung kann jemand anderes das Eigentum am Sensor beanspruchen. Jeder Ruuvi-Sensor kann nur einen Besitzer haben.</string>
@@ -639,6 +655,7 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="sign_out_confirm">Wenn Sie sich abmelden, werden Sensoren, deren Eigentum Sie mit den Sensoreinstellungen bestätigt haben, automatisch aus der App entfernt. Wenn Sie sich erneut mit derselben E-Mail-Adresse anmelden, werden die Sensoren aus der Cloud zurückgegeben.\n\nMöchten Sie sich abmelden?</string>
     <string name="signal_reading">%1$,d %2$s</string>
     <string name="signal_reading_zero">- %1$s</string>
+    <string name="signal_strength">Signalstärke</string>
     <string name="signal_strength_dbm">Signalstärke (dBm)</string>
     <string name="signal_strength_rssi">Signalstärke (RSSI)</string>
     <string name="signal_unit">dBm</string>
@@ -716,6 +733,7 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="visible_measurements_use_default">Standard verwenden</string>
     <string name="voc">VOC</string>
     <string name="voc_with_unit">VOC (%1$s)</string>
+    <string name="volatile_organic_compounds">Flüchtige organische Verbindungen</string>
     <string name="voltage_reading">%1$,.2f %2$s</string>
     <string name="voltage_unit">V</string>
     <string name="welcome_text_0">Wischen Sie, um zu sehen, was Ruuvi Station für Sie tun kann.</string>

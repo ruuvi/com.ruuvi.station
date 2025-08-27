@@ -53,13 +53,6 @@ fun ValueDisplayExtended(
         RuuviStationTheme.colors.dashboardValue
     }
 
-    val unit = if (value.unitType.extraUnit != null) {
-        val extraUnit = stringResource(value.unitType.extraUnit)
-        "$extraUnit, ${value.unitString}"
-    } else {
-        value.unitString
-    }
-
     Column {
         Row(
             modifier = modifier,
@@ -76,7 +69,7 @@ fun ValueDisplayExtended(
             Spacer(modifier = Modifier.width(width = 4.dp))
             Text(
                 modifier = Modifier.alignByBaseline(),
-                text = unit,
+                text = value.unitString,
                 style = RuuviStationTheme.typography.dashboardUnit,
                 fontSize = ruuviStationFontsSizes.petite.limitScaleTo(1.5f),
                 maxLines = 1
@@ -104,12 +97,12 @@ fun ValueDisplaySimple(
         RuuviStationTheme.colors.primary
     }
 
-    val unit = if (value.unitType.extraUnit != null) {
-        val extraUnit = stringResource(value.unitType.extraUnit)
-        "$extraUnit, ${value.unitString}"
-    } else {
-        value.unitString
-    }
+//    val unit = if (value.unitType.extraUnit != null) {
+//        val extraUnit = stringResource(value.unitType.extraUnit)
+//        "$extraUnit, ${value.unitString}"
+//    } else {
+//        value.unitString
+//    }
 
     Row(
         modifier = modifier,
@@ -126,7 +119,7 @@ fun ValueDisplaySimple(
         Spacer(modifier = Modifier.width(width = 4.dp))
         Text(
             modifier = Modifier.alignByBaseline(),
-            text = unit,
+            text = value.unitString,
             style = RuuviStationTheme.typography.dashboardUnit,
             fontSize = ruuviStationFontsSizes.petite.limitScaleTo(1.5f),
             color = textColor,
