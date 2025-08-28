@@ -654,7 +654,7 @@ fun DashboardItem(
                             if (bigValue.unitType is UnitType.AirQuality) {
                                 AQIDisplay(
                                     value = AQI.getAQI(sensor.latestMeasurement),
-                                    alertTriggered = false
+                                    alertTriggered = sensor.alarmSensorStatus.triggered(AlarmType.AQI)
                                 )
                                 Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.medium))
                             } else {

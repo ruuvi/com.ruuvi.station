@@ -329,6 +329,7 @@ sealed class UnitType(
         iconRes = R.drawable.icon_air_quality,
         measurementTitle = R.string.air_quality,
         measurementName = R.string.air_quality,
+        alarmType = AlarmType.AQI,
         defaultAccuracy = Accuracy.Accuracy0
     ) {
         data object AqiIndex: AirQuality(AQI_INDEX)
@@ -355,6 +356,7 @@ sealed class UnitType(
         measurementCode = LUMINOSITY_MEASUREMENT_CODE,
         measurementTitle = R.string.luminosity,
         measurementName = R.string.light,
+        alarmType = AlarmType.LUMINOSITY,
         defaultAccuracy = Accuracy.Accuracy0
     ) {
         data object Lux: Luminosity(
