@@ -31,7 +31,7 @@ class UnitsConverter (
                 value = value.score.toDouble(),
                 accuracy = Accuracy.Accuracy0,
                 valueWithUnit = "$aqi/100 ${context.getString(AirQuality.AqiIndex.unit)}",
-                valueWithoutUnit = aqi,
+                valueWithoutUnit = "$aqi/100",
                 unitString = context.getString(AirQuality.AqiIndex.unit),
                 unitType = AirQuality.AqiIndex
             )

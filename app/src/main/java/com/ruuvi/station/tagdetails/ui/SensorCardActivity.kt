@@ -761,7 +761,7 @@ fun SensorValues(
                         alertActive = value.unitType.alarmType?.let {
                             sensor.alarmSensorStatus.triggered(it)
                         } ?: false,
-                        name = value.unitType.measurementTitle.let { stringResource(it) }
+                        name = value.unitType.measurementName.let { stringResource(it) }
                     )
                     {
                         onValueClick.invoke(value)

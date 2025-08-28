@@ -30,6 +30,7 @@ import com.ruuvi.station.alarm.domain.AlarmItemState
 import com.ruuvi.station.alarm.domain.AlarmType
 import com.ruuvi.station.app.ui.components.*
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
+import com.ruuvi.station.bluetooth.util.extensions.roundHalfUp
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tagsettings.ui.SensorSettingsTitle
 import com.ruuvi.station.units.domain.UnitsConverter
@@ -287,7 +288,7 @@ fun AlertEditItem(
                 AlarmType.LUMINOSITY -> sensorState.latestMeasurement.luminosity?.valueWithUnit
                 AlarmType.VOC -> sensorState.latestMeasurement.voc?.valueWithUnit
                 AlarmType.NOX -> sensorState.latestMeasurement.nox?.valueWithUnit
-                AlarmType.AQI -> sensorState.latestMeasurement.aqi?.valueWithUnit
+                AlarmType.AQI -> sensorState.latestMeasurement.aqi?.value?.roundHalfUp(0)?.toInt().toString()
                 else -> null
             }
             if (latestValue != null) {

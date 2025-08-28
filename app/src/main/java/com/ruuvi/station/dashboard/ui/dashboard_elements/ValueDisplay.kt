@@ -77,7 +77,7 @@ fun ValueDisplayExtended(
         }
         Text(
             modifier = Modifier,
-            text = stringResource(value.unitType.measurementTitle),
+            text = stringResource(value.unitType.measurementName),
             style = RuuviStationTheme.typography.dashboardValueTitle,
             fontSize = ruuviStationFontsSizes.petite.limitScaleTo(1.5f),
             maxLines = 1
@@ -130,9 +130,9 @@ fun ValueDisplaySimple(
 
 @Preview
 @Composable
-private fun ValueDisplayPreview() {
+private fun ValueDisplayExtendedPreview() {
     RuuviTheme {
-        ValueDisplay(
+        ValueDisplayExtended(
             value = EnvironmentValue(
                 original = 22.50,
                 value = 22.50,

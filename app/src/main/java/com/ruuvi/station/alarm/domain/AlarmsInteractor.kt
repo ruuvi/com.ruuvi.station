@@ -157,7 +157,7 @@ class AlarmsInteractor(
             AlarmType.LUMINOSITY -> context.getString(R.string.luminosity_with_unit, context.getString(R.string.unit_luminosity))
             AlarmType.VOC -> context.getString(R.string.voc_with_unit, context.getString(R.string.unit_voc))
             AlarmType.NOX -> context.getString(R.string.nox_with_unit, context.getString(R.string.unit_nox))
-            AlarmType.AQI -> context.getString(R.string.aqi)
+            AlarmType.AQI -> context.getString(R.string.air_quality)
         }
     }
 

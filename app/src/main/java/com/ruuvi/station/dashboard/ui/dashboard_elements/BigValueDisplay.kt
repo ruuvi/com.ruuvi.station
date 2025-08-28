@@ -104,7 +104,7 @@ fun BigValueExtDisplay(
             Text(
                 style = RuuviStationTheme.typography.dashboardValueTitle,
                 fontSize = RuuviStationTheme.fontSizes.petite.limitScaleTo(1.2f),
-                text = stringResource(value.unitType.measurementTitle),
+                text = stringResource(value.unitType.measurementName),
                 modifier = Modifier.constrainAs(subscript) {
                     start.linkTo(bigValue.end, 4.dp)
                     baseline.linkTo(bigValue.baseline)

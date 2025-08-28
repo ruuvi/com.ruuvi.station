@@ -179,7 +179,7 @@ private fun SensorValueItemPreview() {
             icon = unitType.iconRes,
             value = "23.5",
             unit = stringResource(unitType.unit),
-            name = stringResource(unitType.measurementTitle),
+            name = stringResource(unitType.measurementName),
             itemHeight = RuuviStationTheme.dimensions.sensorCardValueItemHeight,
             alertActive = false,
             modifier = Modifier,
