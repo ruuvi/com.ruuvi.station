@@ -13,7 +13,7 @@ enum class AlarmType(val value: Int, val networkCode: String?, val possibleRange
     PM40(9, "pm40", 0..250, 0..250),
     PM100(10, "pm100", 0..250, 0..250),
     SOUND(11, "sound", 0..127, 0..127),
-    LUMINOSITY(12, "luminosity", 0..10000, 0..10000),
+    LUMINOSITY(12, "luminosity", 0..144284, 0..144284),
     VOC(13, "voc", 0..500, 0..500),
     NOX(14, "nox", 0..500, 0..500),
     AQI(15, "aqi", 0 .. 100, 0 .. 100);
