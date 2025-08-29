@@ -2,10 +2,13 @@ package com.ruuvi.station.about.ui
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
 import android.text.method.LinkMovementMethod
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.WindowCompat
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.snackbar.BaseTransientBottomBar.LENGTH_SHORT
 import com.google.android.material.snackbar.Snackbar
@@ -31,8 +34,16 @@ class AboutActivity : AppCompatActivity(R.layout.activity_about), KodeinAware {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+
         binding = ActivityAboutBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+            window.statusBarColor = Color.parseColor("#01000000")
+        } else {
+            window.statusBarColor = Color.TRANSPARENT
+        }
 
         setupUI()
         setupViewModel()

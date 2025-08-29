@@ -1,6 +1,7 @@
 package com.ruuvi.station.app.ui.components.modifier
 
 import androidx.compose.foundation.ScrollState
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.BlendMode
@@ -24,7 +25,7 @@ val topFade = Brush.verticalGradient(
 )
 
 val bottomFade = Brush.verticalGradient(
-    0f to Color.Transparent,
+    0f to Color.White,
     0.08f to Color.White,
     0.92f to Color.White,
     1f to Color.Transparent
@@ -35,9 +36,32 @@ fun Modifier.fadingEdge(scrollState: ScrollState) = this
     .drawWithContent {
         drawContent()
         val fadeBrush = when {
+            scrollState.maxValue == 0 -> null
             scrollState.value == scrollState.maxValue -> topFade
             scrollState.value == 0 -> bottomFade
             else -> topBottomFade
         }
-        drawRect(brush = fadeBrush, blendMode = BlendMode.DstIn)
+        fadeBrush?.let {
+            drawRect(brush = fadeBrush, blendMode = BlendMode.DstIn)
+        }
+    }
+
+fun Modifier.fadingEdge(lazyListState: LazyListState) = this
+    .graphicsLayer(compositingStrategy = CompositingStrategy.Offscreen)
+    .drawWithContent {
+        drawContent()
+
+        val notTop = lazyListState.canScrollBackward
+        val notBottom = lazyListState.canScrollForward
+
+        val fadeBrush = when {
+            notTop && notBottom -> topBottomFade
+            notTop -> topFade
+            notBottom -> bottomFade
+            else -> null
+        }
+
+        fadeBrush?.let {
+            drawRect(brush = fadeBrush, blendMode = BlendMode.DstIn)
+        }
     }

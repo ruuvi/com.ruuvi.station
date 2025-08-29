@@ -6,6 +6,7 @@ import android.os.Bundle
  import android.text.format.DateUtils
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
@@ -79,13 +80,15 @@ class MyAccountActivity : AppCompatActivity(), KodeinAware {
             RuuviTheme {
                 val systemUiController = rememberSystemUiController()
 
-                MyAccountBody(
-                    user = username,
-                    signOut = viewModel::signOut,
-                    deleteAccount = viewModel::removeAccount,
-                    subscription = subscription,
-                    tokens = tokens
-                )
+                StatusBarFill {
+                    MyAccountBody(
+                        user = username,
+                        signOut = viewModel::signOut,
+                        deleteAccount = viewModel::removeAccount,
+                        subscription = subscription,
+                        tokens = tokens
+                    )
+                }
 
                 if (isLoading) {
                     LoadingStatusDialog()
@@ -129,7 +132,11 @@ fun MyAccountBody(
         mutableStateOf(false)
     }
 
-    Column() {
+    Column(modifier = Modifier
+        .fillMaxSize()
+        .systemBarsPadding()
+        .background(RuuviStationTheme.colors.background)
+    ) {
         RuuviTopAppBar(title = stringResource(id = R.string.my_ruuvi_account))
         PageSurfaceWithPadding() {
             Column() {

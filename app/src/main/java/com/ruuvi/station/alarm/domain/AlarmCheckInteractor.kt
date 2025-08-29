@@ -163,9 +163,13 @@ class AlarmCheckInteractor(
                         val displayThreshold = unitsConverter.getDisplayValue(thresholdValue.toFloat())
                         context.getString(resource, "$displayThreshold ${context.getString(R.string.unit_luminosity)}")
                     }
-                    AlarmType.PM1, AlarmType.PM25, AlarmType.PM4, AlarmType.PM10 -> {
+                    AlarmType.PM10, AlarmType.PM25, AlarmType.PM40, AlarmType.PM100 -> {
                         val displayThreshold = unitsConverter.getDisplayValue(thresholdValue.toFloat())
                         context.getString(resource, "$displayThreshold ${context.getString(R.string.unit_pm25)}")
+                    }
+                    AlarmType.AQI -> {
+                        val displayThreshold = unitsConverter.getDisplayValue(thresholdValue.toFloat())
+                        context.getString(resource, "$displayThreshold")
                     }
                     AlarmType.MOVEMENT -> context.getString(resource)
                     else -> null
@@ -181,13 +185,14 @@ class AlarmCheckInteractor(
                 AlarmType.TEMPERATURE,
                 AlarmType.RSSI,
                 AlarmType.CO2,
-                AlarmType.PM1,
-                AlarmType.PM25,
-                AlarmType.PM4,
                 AlarmType.PM10,
+                AlarmType.PM25,
+                AlarmType.PM40,
+                AlarmType.PM100,
                 AlarmType.SOUND,
                 AlarmType.LUMINOSITY,
                 AlarmType.VOC,
+                AlarmType.AQI,
                 AlarmType.NOX -> compareWithAlarmRange()
                 AlarmType.MOVEMENT -> checkMovementData()
                 AlarmType.OFFLINE -> checkOfflineData()
@@ -277,28 +282,36 @@ class AlarmCheckInteractor(
                                     R.string.alert_notification_pm25_high_threshold
                         )
                     }
-                AlarmType.PM1.value ->
-                    ruuviTag.latestMeasurement?.pm1?.let {
-                        compareValues(
-                            it,
-                            R.string.alert_notification_pm1_low_threshold to
-                                    R.string.alert_notification_pm1_high_threshold
-                        )
-                    }
-                AlarmType.PM4.value ->
-                    ruuviTag.latestMeasurement?.pm4?.let {
-                        compareValues(
-                            it,
-                            R.string.alert_notification_pm4_low_threshold to
-                                    R.string.alert_notification_pm4_high_threshold
-                        )
-                    }
                 AlarmType.PM10.value ->
                     ruuviTag.latestMeasurement?.pm10?.let {
                         compareValues(
                             it,
                             R.string.alert_notification_pm10_low_threshold to
                                     R.string.alert_notification_pm10_high_threshold
+                        )
+                    }
+                AlarmType.PM40.value ->
+                    ruuviTag.latestMeasurement?.pm40?.let {
+                        compareValues(
+                            it,
+                            R.string.alert_notification_pm40_low_threshold to
+                                    R.string.alert_notification_pm40_high_threshold
+                        )
+                    }
+                AlarmType.PM100.value ->
+                    ruuviTag.latestMeasurement?.pm100?.let {
+                        compareValues(
+                            it,
+                            R.string.alert_notification_pm100_low_threshold to
+                                    R.string.alert_notification_pm100_high_threshold
+                        )
+                    }
+                AlarmType.AQI.value ->
+                    ruuviTag.latestMeasurement?.aqi?.let {
+                        compareValues(
+                            it,
+                            R.string.alert_notification_aqi_low_threshold to
+                                    R.string.alert_notification_aqi_high_threshold
                         )
                     }
             }

@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardOptions
@@ -52,6 +53,7 @@ import com.ruuvi.station.app.ui.components.Paragraph
 import com.ruuvi.station.app.ui.components.ParagraphWithPadding
 import com.ruuvi.station.app.ui.components.RuuviButton
 import com.ruuvi.station.app.ui.components.RuuviDialog
+import com.ruuvi.station.app.ui.components.StatusBarFill
 import com.ruuvi.station.app.ui.components.SubtitleWithPadding
 import com.ruuvi.station.app.ui.components.TextFieldRuuvi
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
@@ -83,13 +85,15 @@ class ShareSensorActivity : AppCompatActivity() , KodeinAware {
                 val emails by viewModel.emailsObserve.observeAsState(emptyList())
                 val scaffoldState = rememberScaffoldState()
 
-                ShareBody(
-                    scaffoldState,
-                    canShare,
-                    emails,
-                    viewModel::shareTag,
-                    viewModel::unshareTag
-                )
+                StatusBarFill {
+                    ShareBody(
+                        scaffoldState = scaffoldState,
+                        canShare = canShare,
+                        emails = emails,
+                        shareToUser = viewModel::shareTag,
+                        unshare = viewModel::unshareTag
+                    )
+                }
 
                 LaunchedEffect(null) {
                     viewModel.uiEvent.collect { uiEvent ->
@@ -133,7 +137,9 @@ fun ShareBody(
     val systemBarsColor = RuuviStationTheme.colors.systemBars
 
     Scaffold(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .systemBarsPadding()
+            .fillMaxSize(),
         backgroundColor = RuuviStationTheme.colors.background,
         topBar = { RuuviTopAppBar(title = stringResource(id = R.string.share_sensor_title)) },
         scaffoldState = scaffoldState

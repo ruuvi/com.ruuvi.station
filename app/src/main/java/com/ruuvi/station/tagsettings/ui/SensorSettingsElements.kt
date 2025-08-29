@@ -49,7 +49,7 @@ import timber.log.Timber
 @Composable
 fun SensorSettings(
     scaffoldState: ScaffoldState,
-    onNavigate: (UiEvent.Navigate) -> Unit,
+    onNavigate: (String) -> Unit,
     viewModel: TagSettingsViewModel,
     alarmsViewModel: AlarmItemsViewModel
 ) {
@@ -87,7 +87,7 @@ fun SensorSettings(
                 icon = painterResource(id = R.drawable.arrow_forward_16),
                 tint = RuuviStationTheme.colors.trackInactive
             ) {
-                onNavigate.invoke(UiEvent.Navigate(SensorSettingsRoutes.VISIBLE_MEASUREMENTS))
+                onNavigate.invoke(SensorSettingsRoutes.VISIBLE_MEASUREMENTS)
             }
         }
         AlarmsGroup(
@@ -116,7 +116,7 @@ fun SensorSettings(
         )
         DividerSurfaceColor()
         RemoveGroup(
-            deleteSensor = { onNavigate.invoke(UiEvent.Navigate(SensorSettingsRoutes.SENSOR_REMOVE)) }
+            deleteSensor = { onNavigate.invoke(SensorSettingsRoutes.SENSOR_REMOVE) }
         )
     }
 

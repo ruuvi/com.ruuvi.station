@@ -28,12 +28,15 @@ import com.ruuvi.station.units.domain.aqi.AQI
 import com.ruuvi.station.units.model.UnitType
 import com.ruuvi.station.units.model.UnitType.*
 import com.ruuvi.station.util.Period
+import com.ruuvi.station.vico.model.ChartData
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.util.*
+
 
 class SensorCardViewModel(
     private val arguments: SensorCardViewModelArguments,
@@ -82,6 +85,60 @@ class SensorCardViewModel(
 
     private val _increasedChartSize = MutableStateFlow<Boolean>(preferencesRepository.isIncreasedChartSize())
     val increasedChartSize: StateFlow<Boolean> = _increasedChartSize
+
+    private val _scrollToChartEvent = Channel<UnitType>(Channel.BUFFERED)
+    val scrollToChartEvent = _scrollToChartEvent.receiveAsFlow()
+
+
+    fun getChartData(sensorId: String, unitType: UnitType, hours: Int): Flow<ChartData> =
+        flow<ChartData> {
+            val history = tagDetailsInteractor.getTagReadings(sensorId, 48)
+            val values = mutableListOf<Double>()
+            val timestamps = mutableListOf<Long>()
+
+            history.forEach { item ->
+
+
+                val entryValue = when (unitType) {
+                    is TemperatureUnit -> item.temperature?.let { temperature ->
+                        unitsConverter.getTemperatureValue(temperature, unitType)
+                    }
+
+                    is HumidityUnit -> item.humidity?.let { humidity ->
+                        unitsConverter.getHumidityValue(humidity, item.temperature, unitType)
+                    }
+
+                    is PressureUnit -> item.pressure?.let { pressure ->
+                        unitsConverter.getPressureValue(pressure, unitType)
+                    }
+                    is BatteryVoltageUnit -> item.voltage
+                    is Acceleration.GForceX -> item.accelX
+                    is Acceleration.GForceY -> item.accelY
+                    is Acceleration.GForceZ -> item.accelZ
+                    is SignalStrengthUnit -> item.rssi
+                    is AirQuality -> AQI.getAQI(item.pm25, item.co2).score
+                    is CO2 -> item.co2
+                    is VOC -> item.voc
+                    is NOX -> item.nox
+                    is PM.PM10 -> item.pm1
+                    is PM.PM25 -> item.pm25
+                    is PM.PM40 -> item.pm4
+                    is PM.PM100 -> item.pm10
+                    is Luminosity -> item.luminosity
+                    is SoundAvg -> item.dBaAvg
+                    is SoundPeak -> item.dBaPeak
+                    is MovementUnit -> item.movementCounter
+                    else -> null
+                }
+
+                if (entryValue != null) {
+                    values.add(entryValue.toDouble())
+                    timestamps.add(item.createdAt.time)
+                }
+            }
+
+            emit(ChartData(timestamps = timestamps, values = values))
+        }.flowOn(Dispatchers.IO)
 
     fun historyUpdater(sensorId: String): Flow<MutableList<ChartContainer>> =
         flow<MutableList<ChartContainer>> {
@@ -139,14 +196,14 @@ class SensorCardViewModel(
                                 is Acceleration.GForceY -> item.accelY
                                 is Acceleration.GForceZ -> item.accelZ
                                 is SignalStrengthUnit -> item.rssi
-                                is AirQuality -> AQI.getAQI(item.pm25, item.co2, item.voc, item.nox).score
+                                is AirQuality -> AQI.getAQI(item.pm25, item.co2).score
                                 is CO2 -> item.co2
                                 is VOC -> item.voc
                                 is NOX -> item.nox
-                                is PM1 -> item.pm1
-                                is PM25 -> item.pm25
-                                is PM4 -> item.pm4
-                                is PM10 -> item.pm10
+                                is PM.PM10 -> item.pm1
+                                is PM.PM25 -> item.pm25
+                                is PM.PM40 -> item.pm4
+                                is PM.PM100 -> item.pm10
                                 is Luminosity -> item.luminosity
                                 is SoundAvg -> item.dBaAvg
                                 is SoundPeak -> item.dBaPeak
@@ -183,13 +240,13 @@ class SensorCardViewModel(
                                 ?.let { it.min to it.max }
                             is NOX -> alarms.firstOrNull { it.alarmType == AlarmType.NOX }
                                 ?.let { it.min to it.max }
-                            is PM1 -> alarms.firstOrNull { it.alarmType == AlarmType.PM1 }
+                            is PM.PM10 -> alarms.firstOrNull { it.alarmType == AlarmType.PM10 }
                                 ?.let { it.min to it.max }
-                            is PM25 -> alarms.firstOrNull { it.alarmType == AlarmType.PM25 }
+                            is PM.PM25 -> alarms.firstOrNull { it.alarmType == AlarmType.PM25 }
                                 ?.let { it.min to it.max }
-                            is PM4 -> alarms.firstOrNull { it.alarmType == AlarmType.PM4 }
+                            is PM.PM40 -> alarms.firstOrNull { it.alarmType == AlarmType.PM40 }
                                 ?.let { it.min to it.max }
-                            is PM10 -> alarms.firstOrNull { it.alarmType == AlarmType.PM10 }
+                            is PM.PM100 -> alarms.firstOrNull { it.alarmType == AlarmType.PM100 }
                                 ?.let { it.min to it.max }
                             is Luminosity -> alarms.firstOrNull { it.alarmType == AlarmType.LUMINOSITY }
                                 ?.let { it.min to it.max }
@@ -222,6 +279,13 @@ class SensorCardViewModel(
     fun changeShowChartStats() {
         preferencesRepository.setShowChartStats(!preferencesRepository.getShowChartStats())
         _showChartStats.value = preferencesRepository.getShowChartStats()
+    }
+
+    fun scrollToChart(type: UnitType) {
+        _showCharts.value = true
+        viewModelScope.launch {
+            _scrollToChartEvent.send(type)
+        }
     }
 
     fun changeIncreaseChartSize() {

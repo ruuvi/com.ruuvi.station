@@ -2,6 +2,8 @@ package com.ruuvi.station.bluetooth
 
 import android.bluetooth.BluetoothManager
 import android.content.Context
+import android.net.Uri
+import androidx.core.net.toUri
 import io.runtime.mcumgr.McuMgrCallback
 import io.runtime.mcumgr.ble.McuMgrBleTransport
 import io.runtime.mcumgr.exception.McuMgrException
@@ -13,6 +15,8 @@ import io.runtime.mcumgr.transfer.FileUploader
 import io.runtime.mcumgr.transfer.UploadCallback
 import no.nordicsemi.android.ble.ConnectionPriorityRequest
 import timber.log.Timber
+import java.io.File
+
 class AirFirmwareInteractor (
     val context: Context,
 ){
@@ -55,35 +59,45 @@ class AirFirmwareInteractor (
         }
     }
 
-    fun upload(fileName: String, data: ByteArray, progress: (Int, Int) -> Unit, done: () -> Unit) {
-        val path = "/lfs1/$fileName"
+    fun upload(
+        file: File,
+        progress: (Int, Int) -> Unit,
+        done: () -> Unit,
+        fail: (String) -> Unit
+    ) {
+        val path = "/lfs1/${file.name}"
 
-        Timber.d("upload dest $path size ${data.size}")
+        val data = readBytesFromUri(context, file.toUri())
 
-        requestHighConnectionPriority()
-        setLoggingEnabled(false)
+        Timber.d("upload dest $path defaultManager $defaultManager size ${data?.size}")
 
-        val controller = FileUploader(FsManager(defaultManager!!.transporter), path, data, 3, 4)
-            .uploadAsync(object : UploadCallback {
-                override fun onUploadProgressChanged(p0: Int, p1: Int, p2: Long) {
-                    progress(p0, p1)
-                    Timber.d("AirFirmwareInteractor onUploadProgressChanged $p0, $p1, $p2")
-                }
+        data?.let {
+            requestHighConnectionPriority()
+            setLoggingEnabled(false)
 
-                override fun onUploadFailed(p0: McuMgrException) {
-                    Timber.d("AirFirmwareInteractor onUploadFailed $p0")
-                }
+            val controller = FileUploader(FsManager(defaultManager!!.transporter), path, data, 3, 4)
+                .uploadAsync(object : UploadCallback {
+                    override fun onUploadProgressChanged(p0: Int, p1: Int, p2: Long) {
+                        Timber.d("AirFirmwareInteractor onUploadProgressChanged $p0, $p1, $p2")
+                        progress(p0, p1)
+                    }
 
-                override fun onUploadCanceled() {
-                    Timber.d("AirFirmwareInteractor onUploadCanceled")
-                }
+                    override fun onUploadFailed(p0: McuMgrException) {
+                        Timber.d("AirFirmwareInteractor onUploadFailed $p0")
+                        fail(p0.message ?: "")
+                    }
 
-                override fun onUploadCompleted() {
-                    Timber.d("AirFirmwareInteractor onUploadCompleted")
-                    reset()
-                    done()
-                }
-            })
+                    override fun onUploadCanceled() {
+                        Timber.d("AirFirmwareInteractor onUploadCanceled")
+                    }
+
+                    override fun onUploadCompleted() {
+                        Timber.d("AirFirmwareInteractor onUploadCompleted")
+                        reset()
+                        done()
+                    }
+                })
+        }
     }
 
     fun reset() {
@@ -97,5 +111,16 @@ class AirFirmwareInteractor (
             }
 
         })
+    }
+
+    private fun readBytesFromUri(context: Context, uri: Uri): ByteArray? {
+        return try {
+            context.contentResolver.openInputStream(uri)?.use { inputStream ->
+                inputStream.readBytes()
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
     }
 }

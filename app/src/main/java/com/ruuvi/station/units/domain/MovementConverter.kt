@@ -34,7 +34,7 @@ class MovementConverter(val context: Context) {
             accuracy = Accuracy.Accuracy0,
             valueWithUnit = getMovementString(movement),
             valueWithoutUnit = getMovementStringWithoutUnit(movement),
-            unitString = getMovementUnit().toString(),
+            unitString = context.getString(UnitType.MovementUnit.MovementsCount.unit),
             unitType = UnitType.MovementUnit.MovementsCount
         )
 

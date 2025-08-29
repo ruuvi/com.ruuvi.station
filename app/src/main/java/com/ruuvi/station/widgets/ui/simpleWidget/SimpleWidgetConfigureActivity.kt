@@ -5,10 +5,10 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -16,15 +16,16 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.AnnotatedString
 import androidx.core.view.WindowCompat
 import com.ruuvi.station.R
 import com.ruuvi.station.app.ui.components.Paragraph
 import com.ruuvi.station.app.ui.components.ruuviRadioButtonColors
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.RuuviTheme
+import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.util.extensions.viewModel
 import com.ruuvi.station.widgets.data.WidgetType
+import com.ruuvi.station.widgets.data.WidgetType.Companion.filterWidgetTypes
 import com.ruuvi.station.widgets.ui.AddSensorsFirstScreen
 import com.ruuvi.station.widgets.ui.EnableBackgroundService
 import com.ruuvi.station.widgets.ui.WidgetConfigTopAppBar
@@ -42,7 +43,7 @@ class SimpleWidgetConfigureActivity : AppCompatActivity(), KodeinAware {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        WindowCompat.setDecorFitsSystemWindows(window, true)
+        WindowCompat.setDecorFitsSystemWindows(window, false)
 
         appWidgetId = intent?.extras?.getInt(
             AppWidgetManager.EXTRA_APPWIDGET_ID,
@@ -58,7 +59,7 @@ class SimpleWidgetConfigureActivity : AppCompatActivity(), KodeinAware {
 
         setContent {
             RuuviTheme {
-                Column() {
+                Column(modifier = Modifier.systemBarsPadding()) {
                     WidgetConfigTopAppBar(viewModel, title = stringResource(id = R.string.select_sensor))
                     WidgetSetupScreen(viewModel)
                 }
@@ -121,9 +122,8 @@ fun SelectSensorScreen(viewModel: SimpleWidgetConfigureViewModel) {
         }
 
         itemsIndexed(items = sensors) { _, item ->
-            SensorCard(
-                title = item.displayName,
-                sensorId = item.id,
+            SensorItem(
+                sensor = item,
                 viewModel = viewModel,
                 isSelected = item.id == selectedOption
             )
@@ -132,7 +132,11 @@ fun SelectSensorScreen(viewModel: SimpleWidgetConfigureViewModel) {
 }
 
 @Composable
-fun SensorCard(viewModel: SimpleWidgetConfigureViewModel, title: String, sensorId: String, isSelected: Boolean) {
+fun SensorItem(
+    sensor: RuuviTag,
+    viewModel: SimpleWidgetConfigureViewModel,
+    isSelected: Boolean
+) {
     Column() {
         Box(
             modifier = Modifier
@@ -142,28 +146,30 @@ fun SensorCard(viewModel: SimpleWidgetConfigureViewModel, title: String, sensorI
                 RadioButton(
                     selected = (isSelected),
                     colors = ruuviRadioButtonColors(),
-                    onClick = { viewModel.selectSensor(sensorId) }
+                    onClick = { viewModel.selectSensor(sensor.id) }
                 )
 
-                ClickableText(
+                Text(
                     modifier = Modifier
-                        .fillMaxWidth(),
-                    text = AnnotatedString(title),
-                    style = RuuviStationTheme.typography.paragraph,
-                    onClick = {
-                        viewModel.selectSensor(sensorId)
-                    })
+                        .fillMaxWidth()
+                        .clickable { viewModel.selectSensor(sensor.id) },
+                    text = sensor.displayName,
+                    style = RuuviStationTheme.typography.paragraph
+                )
             }
 
         }
         if (isSelected) {
-            WidgetTypeList(viewModel)
+            WidgetTypeList(sensor, viewModel)
         }
     }
 }
 
 @Composable
-fun WidgetTypeList(viewModel: SimpleWidgetConfigureViewModel) {
+fun WidgetTypeList(
+    sensor: RuuviTag,
+    viewModel: SimpleWidgetConfigureViewModel
+) {
     val selectedOption by viewModel.widgetType.observeAsState()
 
     Column(modifier = Modifier.padding(start = RuuviStationTheme.dimensions.extraBig)) {
@@ -173,7 +179,7 @@ fun WidgetTypeList(viewModel: SimpleWidgetConfigureViewModel) {
                 modifier = Modifier.padding(RuuviStationTheme.dimensions.medium)
             )
         }
-        for (item in WidgetType.values()) {
+        for (item in filterWidgetTypes(sensor)) {
             WidgetTypeItem(viewModel, item ,selectedOption == item)
         }
     }
@@ -181,8 +187,9 @@ fun WidgetTypeList(viewModel: SimpleWidgetConfigureViewModel) {
 
 @Composable
 fun WidgetTypeItem (viewModel: SimpleWidgetConfigureViewModel, widgetType: WidgetType, isSelected: Boolean) {
-    Box ( modifier = Modifier
-        .fillMaxWidth()
+    Box (
+        modifier = Modifier
+            .fillMaxWidth()
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             RadioButton(
@@ -190,14 +197,12 @@ fun WidgetTypeItem (viewModel: SimpleWidgetConfigureViewModel, widgetType: Widge
                 colors = ruuviRadioButtonColors(),
                 onClick = { viewModel.selectWidgetType(widgetType) })
 
-            ClickableText(
+            Text(
                 modifier = Modifier
-                    .fillMaxWidth(),
-                text = AnnotatedString(stringResource(id = widgetType.titleResId)),
-                style = RuuviStationTheme.typography.paragraph,
-                onClick = {
-                    viewModel.selectWidgetType(widgetType)
-                })
+                    .fillMaxWidth()
+                    .clickable { viewModel.selectWidgetType(widgetType) },
+                text = stringResource(id = widgetType.titleResId),
+                style = RuuviStationTheme.typography.paragraph)
         }
     }
 }

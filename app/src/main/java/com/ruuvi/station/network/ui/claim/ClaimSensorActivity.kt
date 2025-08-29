@@ -27,7 +27,6 @@ import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.RuuviTheme
 import com.ruuvi.station.network.ui.SignInActivity
 import com.ruuvi.station.util.base.NfcActivity
-import com.ruuvi.station.util.extensions.navigate
 import com.ruuvi.station.util.extensions.viewModel
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
@@ -51,7 +50,9 @@ class ClaimSensorActivity : NfcActivity(), KodeinAware {
 
         setContent {
             RuuviTheme {
-                Body()
+                StatusBarFill{
+                    Body()
+                }
             }
         }
 
@@ -73,8 +74,13 @@ class ClaimSensorActivity : NfcActivity(), KodeinAware {
                 Timber.d("uiEvent $uiEvent")
                 when (uiEvent) {
                     is UiEvent.Navigate -> {
-                        navController.navigate(uiEvent)
-                    }
+                        if (uiEvent.popBackStack) {
+                            navController.navigate(uiEvent.route) {
+                                popUpToRoute
+                            }
+                        } else {
+                            navController.navigate(uiEvent.route)
+                        }                    }
                     is UiEvent.ShowSnackbar -> {
                         scaffoldState.snackbarHostState.showSnackbar(uiEvent.message.asString(context))
                     }
@@ -94,7 +100,9 @@ class ClaimSensorActivity : NfcActivity(), KodeinAware {
         }
 
         Scaffold(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .systemBarsPadding()
+                .fillMaxSize(),
             backgroundColor = RuuviStationTheme.colors.background,
             topBar = { RuuviTopAppBar(title = title) },
             scaffoldState = scaffoldState

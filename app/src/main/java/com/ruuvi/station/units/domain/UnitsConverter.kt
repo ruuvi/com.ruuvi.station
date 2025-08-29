@@ -25,12 +25,13 @@ class UnitsConverter (
         value: AQI
     ): EnvironmentValue {
         if (value.score != null) {
+            val aqi = getValueWithoutUnit(value.score.toDouble(), Accuracy.Accuracy0)
             return EnvironmentValue(
                 original = value.score.toDouble(),
                 value = value.score.toDouble(),
                 accuracy = Accuracy.Accuracy0,
-                valueWithUnit = "${value.score}/100 ${context.getString(AirQuality.AqiIndex.unit)}",
-                valueWithoutUnit = "${value.score}/100",
+                valueWithUnit = "$aqi/100 ${context.getString(AirQuality.AqiIndex.unit)}",
+                valueWithoutUnit = "$aqi/100",
                 unitString = context.getString(AirQuality.AqiIndex.unit),
                 unitType = AirQuality.AqiIndex
             )
@@ -469,13 +470,13 @@ class UnitsConverter (
             unitType = NOX.NoxIndex
         )
 
-    fun getLuminosityEnvironmentValue(luminosity: Int) =
+    fun getLuminosityEnvironmentValue(luminosity: Double) =
         EnvironmentValue(
-            original = luminosity.toDouble(),
-            value = luminosity.toDouble(),
+            original = luminosity,
+            value = luminosity,
             accuracy = Accuracy.Accuracy1,
-            valueWithUnit = context.getString(Accuracy.Accuracy0.nameTemplateId, luminosity.toDouble(), context.getString(Luminosity.Lux.unit)),
-            valueWithoutUnit = context.getString(Accuracy.Accuracy0.nameTemplateId, luminosity.toDouble(), "").trim(),
+            valueWithUnit = context.getString(Accuracy.Accuracy0.nameTemplateId, luminosity, context.getString(Luminosity.Lux.unit)),
+            valueWithoutUnit = context.getString(Accuracy.Accuracy0.nameTemplateId, luminosity, "").trim(),
             unitString = context.getString(Luminosity.Lux.unit),
             unitType = Luminosity.Lux
         )

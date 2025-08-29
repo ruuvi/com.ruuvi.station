@@ -1,12 +1,11 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:theme="@style/AppTheme.AppWidgetContainer"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:layout_height="100dp"
     tools:layout_width="130dp">
-    <!--    style="@style/Widget.Comruuvistation.AppWidget.Container"-->
 
     <RelativeLayout
         android:id="@+id/simpleWidgetLayout"
@@ -55,11 +54,15 @@
             android:ellipsize="end"
             android:fontFamily="sans-serif-medium"
             android:gravity="bottom"
-            android:lines="2"
-            android:maxLines="2"
+            android:lines="1"
+            android:maxLines="1"
             android:text="@string/widgets_loading"
+            tools:text="2 lines of name to fit in here"
             android:textColor="?attr/colorOnSecondary"
-            android:textSize="16dp" />
+            android:textSize="18dp"
+            android:includeFontPadding="false"
+            android:lineSpacingExtra="0sp"
+            />
 
         <TextView
             android:id="@+id/sensorValueTextView"
@@ -72,7 +75,7 @@
             android:height="30dp"
             android:fontFamily="sans-serif-condensed-medium"
             android:gravity="bottom"
-            android:includeFontPadding="true"
+            android:includeFontPadding="false"
             android:lineSpacingExtra="0sp"
             android:lines="1"
             android:textColor="?attr/colorOnSurface"
@@ -90,8 +93,10 @@
             android:ellipsize="end"
             android:fontFamily="sans-serif-condensed"
             android:gravity="bottom|start"
-            android:includeFontPadding="true"
-            android:paddingStart="2dp"
+            android:includeFontPadding="false"
+            android:lineSpacingExtra="0sp"
+            android:layout_marginStart="2dp"
+            android:layout_marginTop="2dp"
             android:textColor="?attr/colorOnSecondary"
             android:textSize="12dp"
             tools:text="%" />
