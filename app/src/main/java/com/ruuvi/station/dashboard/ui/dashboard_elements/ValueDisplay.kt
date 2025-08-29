@@ -97,13 +97,6 @@ fun ValueDisplaySimple(
         RuuviStationTheme.colors.primary
     }
 
-//    val unit = if (value.unitType.extraUnit != null) {
-//        val extraUnit = stringResource(value.unitType.extraUnit)
-//        "$extraUnit, ${value.unitString}"
-//    } else {
-//        value.unitString
-//    }
-
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.Bottom
@@ -123,7 +116,6 @@ fun ValueDisplaySimple(
                 text = value.unitString,
                 style = RuuviStationTheme.typography.dashboardUnit,
                 fontSize = ruuviStationFontsSizes.petite.limitScaleTo(1.5f),
-                color = RuuviStationTheme.colors.primary,
                 maxLines = 1
             )
         }
@@ -131,9 +123,8 @@ fun ValueDisplaySimple(
         Text(
             modifier = Modifier.alignByBaseline(),
             text = stringResource(value.unitType.measurementName),
-            style = RuuviStationTheme.typography.dashboardUnit,
+            style = RuuviStationTheme.typography.dashboardValueTitle,
             fontSize = ruuviStationFontsSizes.petite.limitScaleTo(1.5f),
-            color = RuuviStationTheme.colors.primary,
             maxLines = 1
         )
     }

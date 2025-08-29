@@ -15,6 +15,7 @@ import com.patrykandpatrick.vico.compose.cartesian.VicoZoomState
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberAxisGuidelineComponent
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberAxisLabelComponent
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberAxisLineComponent
+import com.patrykandpatrick.vico.compose.cartesian.axis.rememberAxisTickComponent
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottom
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberStart
 import com.patrykandpatrick.vico.compose.cartesian.layer.continuous
@@ -69,6 +70,12 @@ fun VicoChartNoInteraction(
         thickness = 0.8.dp
     )
 
+    val axisTick = rememberAxisTickComponent(
+        fill = fill(RuuviStationTheme.colors.chartGuideline),
+        shape = Shape.Rectangle,
+        thickness = 0.3.dp
+    )
+
     CartesianChartHost(
         chart =
             rememberCartesianChart(
@@ -86,14 +93,16 @@ fun VicoChartNoInteraction(
                     line = axisLine,
                     label = label,
                     itemPlacer = rememberItemPlacerVertical(),
-                    guideline = axisGuideLine
+                    guideline = axisGuideLine,
+                    tick = axisTick
                 ),
                 bottomAxis = HorizontalAxis.rememberBottom(
                     line = axisLine,
                     label = label,
                     valueFormatter = rememberDateFormatter(),
                     itemPlacer = rememberItemPlacerHorizontal(),
-                    guideline = axisGuideLine
+                    guideline = axisGuideLine,
+                    tick = axisTick
                 ),
             ),
         modelProducer = modelProducer,
