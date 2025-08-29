@@ -123,7 +123,7 @@ fun ValueDisplaySimple(
                 text = value.unitString,
                 style = RuuviStationTheme.typography.dashboardUnit,
                 fontSize = ruuviStationFontsSizes.petite.limitScaleTo(1.5f),
-                color = textColor,
+                color = RuuviStationTheme.colors.primary,
                 maxLines = 1
             )
         }
@@ -133,7 +133,7 @@ fun ValueDisplaySimple(
             text = stringResource(value.unitType.measurementName),
             style = RuuviStationTheme.typography.dashboardUnit,
             fontSize = ruuviStationFontsSizes.petite.limitScaleTo(1.5f),
-            color = textColor,
+            color = RuuviStationTheme.colors.primary,
             maxLines = 1
         )
     }
