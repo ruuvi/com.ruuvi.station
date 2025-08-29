@@ -116,10 +116,21 @@ fun ValueDisplaySimple(
             color = textColor,
             maxLines = 1
         )
+        if (value.unitString.isNotEmpty()) {
+            Spacer(modifier = Modifier.width(width = 4.dp))
+            Text(
+                modifier = Modifier.alignByBaseline(),
+                text = value.unitString,
+                style = RuuviStationTheme.typography.dashboardUnit,
+                fontSize = ruuviStationFontsSizes.petite.limitScaleTo(1.5f),
+                color = textColor,
+                maxLines = 1
+            )
+        }
         Spacer(modifier = Modifier.width(width = 4.dp))
         Text(
             modifier = Modifier.alignByBaseline(),
-            text = value.unitString,
+            text = stringResource(value.unitType.measurementName),
             style = RuuviStationTheme.typography.dashboardUnit,
             fontSize = ruuviStationFontsSizes.petite.limitScaleTo(1.5f),
             color = textColor,
