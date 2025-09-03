@@ -1,6 +1,8 @@
 package com.ruuvi.station.tagdetails.ui
 
 import android.net.Uri
+import androidx.compose.ui.util.fastCoerceAtLeast
+import androidx.compose.ui.util.fastCoerceAtMost
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.mikephil.charting.data.Entry
@@ -14,6 +16,7 @@ import com.ruuvi.station.bluetooth.domain.BluetoothGattInteractor
 import com.ruuvi.station.bluetooth.model.SyncProgress
 import com.ruuvi.station.database.domain.AlarmRepository
 import com.ruuvi.station.database.domain.SensorHistoryRepository
+import com.ruuvi.station.database.tables.TagSensorReading
 import com.ruuvi.station.graph.model.ChartContainer
 import com.ruuvi.station.network.domain.NetworkDataSyncInteractor
 import com.ruuvi.station.nfc.domain.NfcResultInteractor
@@ -29,6 +32,8 @@ import com.ruuvi.station.units.model.UnitType
 import com.ruuvi.station.units.model.UnitType.*
 import com.ruuvi.station.util.Period
 import com.ruuvi.station.vico.model.ChartData
+import com.ruuvi.station.vico.model.Segment
+import com.ruuvi.station.vico.model.SegmentType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
@@ -92,53 +97,115 @@ class SensorCardViewModel(
 
     fun getChartData(sensorId: String, unitType: UnitType, hours: Int): Flow<ChartData> =
         flow<ChartData> {
-            val history = tagDetailsInteractor.getTagReadings(sensorId, 48)
-            val values = mutableListOf<Double>()
-            val timestamps = mutableListOf<Long>()
+            val history = tagDetailsInteractor.getTagReadings(sensorId, hours)
+            val segments = mutableListOf<Segment>()
+            var solidValues = mutableListOf<Double>()
+            var solidTimestamps = mutableListOf<Long>()
 
-            history.forEach { item ->
+            var firstPoint = true
+            var previousTimestamp: Long? = null
+            var previousValue: Double? = null
 
+            var minValue = Double.MAX_VALUE
+            var maxValue = Double.MIN_VALUE
 
-                val entryValue = when (unitType) {
-                    is TemperatureUnit -> item.temperature?.let { temperature ->
-                        unitsConverter.getTemperatureValue(temperature, unitType)
-                    }
+            for (item in history) {
+                val entryValue = getUnitValue(item, unitType)
 
-                    is HumidityUnit -> item.humidity?.let { humidity ->
-                        unitsConverter.getHumidityValue(humidity, item.temperature, unitType)
-                    }
-
-                    is PressureUnit -> item.pressure?.let { pressure ->
-                        unitsConverter.getPressureValue(pressure, unitType)
-                    }
-                    is BatteryVoltageUnit -> item.voltage
-                    is Acceleration.GForceX -> item.accelX
-                    is Acceleration.GForceY -> item.accelY
-                    is Acceleration.GForceZ -> item.accelZ
-                    is SignalStrengthUnit -> item.rssi
-                    is AirQuality -> AQI.getAQI(item.pm25, item.co2).score
-                    is CO2 -> item.co2
-                    is VOC -> item.voc
-                    is NOX -> item.nox
-                    is PM.PM10 -> item.pm1
-                    is PM.PM25 -> item.pm25
-                    is PM.PM40 -> item.pm4
-                    is PM.PM100 -> item.pm10
-                    is Luminosity -> item.luminosity
-                    is SoundAvg -> item.dBaAvg
-                    is SoundPeak -> item.dBaPeak
-                    is MovementUnit -> item.movementCounter
-                    else -> null
+                if (entryValue == null) {
+                    continue
                 }
 
-                if (entryValue != null) {
-                    values.add(entryValue.toDouble())
-                    timestamps.add(item.createdAt.time)
+                minValue = minValue.fastCoerceAtMost(entryValue)
+                maxValue = maxValue.fastCoerceAtLeast(entryValue)
+
+                val timestamp = item.createdAt.time
+
+                if (firstPoint) {
+                    solidValues += entryValue
+                    solidTimestamps += timestamp
+                    firstPoint = false
+                } else {
+
+                    if (timestamp - (previousTimestamp ?: timestamp) > 60 * 60 * 1000) {
+                        if (solidValues.size > 0) {
+                            val segmentType = if (solidValues.size == 1) SegmentType.Single else SegmentType.Solid
+                            segments.add(
+                                Segment(
+                                    timestamps = solidTimestamps.toList(),
+                                    values = solidValues.toList(),
+                                    segmentType = segmentType
+                                )
+                            )
+                        }
+                        solidTimestamps = mutableListOf()
+                        solidValues = mutableListOf()
+
+                        segments.add(
+                            Segment(
+                                timestamps = listOf(previousTimestamp ?: timestamp, timestamp),
+                                values = listOf(previousValue ?: entryValue, entryValue),
+                                segmentType = SegmentType.Dotted
+                            )
+                        )
+                    }
+                    solidValues += entryValue
+                    solidTimestamps += timestamp
+
                 }
+
+                previousTimestamp = timestamp
+                previousValue = entryValue
+            }
+            if (solidValues.size > 0) {
+                val segmentType = if (solidValues.size == 1) SegmentType.Single else SegmentType.Solid
+                segments.add(Segment (
+                    timestamps = solidTimestamps.toList(),
+                    values = solidValues.toList(),
+                    segmentType = segmentType
+                ))
             }
 
-            emit(ChartData(timestamps = timestamps, values = values))
+            emit(ChartData(
+                segments = segments,
+                minValue = minValue,
+                maxValue = maxValue
+            ))
         }.flowOn(Dispatchers.IO)
+
+
+    fun getUnitValue(item: TagSensorReading, unitType: UnitType): Double? {
+        val entryValue = when (unitType) {
+            is TemperatureUnit -> item.temperature?.let { temperature ->
+                unitsConverter.getTemperatureValue(temperature, unitType)
+            }
+            is HumidityUnit -> item.humidity?.let { humidity ->
+                unitsConverter.getHumidityValue(humidity, item.temperature, unitType)
+            }
+            is PressureUnit -> item.pressure?.let { pressure ->
+                unitsConverter.getPressureValue(pressure, unitType)
+            }
+            is BatteryVoltageUnit -> item.voltage
+            is Acceleration.GForceX -> item.accelX
+            is Acceleration.GForceY -> item.accelY
+            is Acceleration.GForceZ -> item.accelZ
+            is SignalStrengthUnit -> item.rssi
+            is AirQuality -> AQI.getAQI(item.pm25, item.co2).score
+            is CO2 -> item.co2
+            is VOC -> item.voc
+            is NOX -> item.nox
+            is PM.PM10 -> item.pm1
+            is PM.PM25 -> item.pm25
+            is PM.PM40 -> item.pm4
+            is PM.PM100 -> item.pm10
+            is Luminosity -> item.luminosity
+            is SoundAvg -> item.dBaAvg
+            is SoundPeak -> item.dBaPeak
+            is MovementUnit -> item.movementCounter
+            else -> null
+        }
+        return entryValue?.toDouble()
+    }
 
     fun historyUpdater(sensorId: String): Flow<MutableList<ChartContainer>> =
         flow<MutableList<ChartContainer>> {

@@ -103,7 +103,7 @@ fun ValueSheetContent(
         ValueSheetHeader(sheetValue)
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
         if (sheetValue.unitType != UnitType.MovementUnit.MovementsCount) {
-            if (chartHistory != null && chartHistory.timestamps.isNotEmpty()) {
+            if (chartHistory != null && chartHistory.segments.isNotEmpty()) {
                 VicoChartNoInteraction(
                     chartHistory = chartHistory,
                     modifier = Modifier.clickable {

@@ -658,11 +658,19 @@ fun SensorCard(
     if (showBottomSheet) {
         sheetValue?.let { value ->
 
-            val chartHistory = getChartData(sensor.id, value.unitType, 48).collectAsState(null)
+            val chartHistory by produceState<ChartData?>(
+                initialValue = null,
+                key1 = sensor.id,
+                key2 = value.unitType
+            ) {
+                getChartData(sensor.id, value.unitType, 48).collectLatest { data ->
+                    this.value = data
+                }
+            }
 
             ValueBottomSheet(
                 sheetValue = value,
-                chartHistory = chartHistory.value,
+                chartHistory = chartHistory,
                 maxHeight = size.height,
                 modifier = Modifier,
                 scrollToChart = scrollToChart
