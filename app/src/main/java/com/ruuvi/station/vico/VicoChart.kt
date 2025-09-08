@@ -58,7 +58,7 @@ fun VicoChartNoInteraction(
     val solidLine =
         LineCartesianLayer.rememberLine(
             fill = LineCartesianLayer.LineFill.single(fill(RuuviStationTheme.colors.chartLine)),
-            stroke = LineCartesianLayer.LineStroke.continuous(thickness = 1.dp)
+            stroke = LineCartesianLayer.LineStroke.continuous(thickness = 1.3.dp)
         )
 
     val pointComponent = rememberShapeComponent(
@@ -68,7 +68,7 @@ fun VicoChartNoInteraction(
     val pointsOnlyLine = LineCartesianLayer.rememberLine(
             stroke = LineCartesianLayer.LineStroke.continuous(thickness = 0.dp),
             pointProvider = LineCartesianLayer.PointProvider.single(
-                point = LineCartesianLayer.point(component = pointComponent, size = 1.dp)
+                point = LineCartesianLayer.point(component = pointComponent, size = 1.3.dp)
             )
         )
 
@@ -78,8 +78,8 @@ fun VicoChartNoInteraction(
                 fill(RuuviStationTheme.colors.chartLine)
             ),
             stroke = LineCartesianLayer.LineStroke.dashed(
-                thickness = 1.dp,
-                dashLength = 0.8.dp,
+                thickness = 1.3.dp,
+                dashLength = 1.dp,
                 gapLength = 1.8.dp
             )
         )
