@@ -24,8 +24,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
-import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
-import com.bumptech.glide.integration.compose.GlideImage
+import coil.compose.AsyncImage
 import com.google.accompanist.pager.*
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.ruuvi.station.R
@@ -100,7 +99,6 @@ class OnboardingActivity : AppCompatActivity(), KodeinAware {
     }
 }
 
-@OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun OnboardingBody(
     firstStart: Boolean,
@@ -114,7 +112,7 @@ fun OnboardingBody(
     }
     val pagerState = rememberPagerState(initialPage)
 
-    GlideImage(
+    AsyncImage(
         modifier = Modifier.fillMaxSize(),
         model = rememberResourceUri(R.drawable.onboarding_background),
         contentScale = ContentScale.Crop,
@@ -261,7 +259,6 @@ fun MeasureYourWorldPage() {
     }
 }
 
-@OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun BackgroundBeaver(imageRes: Int, imageFraction: Pair<Float, Float> = 0.8f to 1f) {
     val isTablet = booleanResource(id = R.bool.isTablet)
@@ -273,7 +270,7 @@ fun BackgroundBeaver(imageRes: Int, imageFraction: Pair<Float, Float> = 0.8f to 
             .systemBarsPadding(),
         contentAlignment = Alignment.Center
     ) {
-        GlideImage(
+        AsyncImage(
             modifier = Modifier
                 .fillMaxHeight()
                 .fillMaxWidth(imageSizeFraction)
@@ -417,7 +414,6 @@ fun WebPage() {
     }
 }
 
-@OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun FitImageAboveBanner(
     imageSizeFraction: Float,
@@ -430,7 +426,7 @@ fun FitImageAboveBanner(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        GlideImage(
+        AsyncImage(
             modifier = Modifier
                 .weight(1f)
                 .fillMaxWidth(imageSizeFraction),
@@ -502,8 +498,6 @@ fun FinishPage(
     }
 }
 
-
-@OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun GatewayBanner() {
     Column(
@@ -520,7 +514,7 @@ fun GatewayBanner() {
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            GlideImage(
+            AsyncImage(
                 modifier = Modifier.padding(start = RuuviStationTheme.dimensions.big),
                 contentScale = ContentScale.Fit,
                 model = rememberResourceUri(resourceId = R.drawable.onboarding_gateway),

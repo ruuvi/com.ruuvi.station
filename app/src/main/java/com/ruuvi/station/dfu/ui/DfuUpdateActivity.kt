@@ -6,6 +6,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.provider.OpenableColumns
+import androidx.activity.compose.LocalActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -29,8 +30,7 @@ import androidx.core.view.WindowCompat
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
-import com.bumptech.glide.integration.compose.GlideImage
+import coil.compose.AsyncImage
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.ruuvi.station.tagsettings.di.TagSettingsViewModelArgs
 import com.ruuvi.station.util.extensions.viewModel
@@ -186,9 +186,9 @@ class DfuUpdateActivity : AppCompatActivity() , KodeinAware {
 fun DfuUpdateScreen(viewModel: DfuUpdateViewModel, selectFile: ()-> Unit) {
 
     val stage: DfuUpdateStage by viewModel.stage.observeAsState(DfuUpdateStage.CHECKING_CURRENT_FW_VERSION)
-    val activity = LocalContext.current as Activity
+    val activity = LocalActivity.current
 
-    Body(activity.title.toString()) {
+    Body(activity?.title.toString()) {
         when (stage) {
             DfuUpdateStage.CHECKING_CURRENT_FW_VERSION -> CheckingCurrentFwStageScreen(
                 viewModel
@@ -284,7 +284,7 @@ fun CheckingCurrentFwStageScreen(viewModel: DfuUpdateViewModel) {
             ParagraphWithPadding(stringResource(id = R.string.old_sensor_fw))
         }
     }
-    val context = LocalContext.current as Activity
+    val context = LocalContext.current
 
     if (lowBattery == true) {
         WarningWithPadding(text = stringResource(id = R.string.dfu_low_battery_warning))
@@ -321,7 +321,6 @@ fun AlreadyLatestVersionScreen(viewModel: DfuUpdateViewModel) {
     ParagraphWithPadding(text = stringResource(id = R.string.already_latest_version))
 }
 
-@OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun ReadyForUpdateScreen(viewModel: DfuUpdateViewModel) {
     val deviceDiscovered by viewModel.deviceDiscovered.observeAsState()
@@ -332,7 +331,7 @@ fun ReadyForUpdateScreen(viewModel: DfuUpdateViewModel) {
         horizontalArrangement = Arrangement.Center,
         modifier = Modifier.fillMaxWidth()
     ) {
-        GlideImage(
+        AsyncImage(
             model = rememberResourceUri(resourceId = R.drawable.ruuvitag_button_location),
             contentDescription = "",
             modifier = Modifier
