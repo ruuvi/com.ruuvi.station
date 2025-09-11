@@ -46,8 +46,8 @@ import androidx.core.app.TaskStackBuilder
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.*
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
-import com.bumptech.glide.integration.compose.GlideImage
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.ruuvi.gateway.tester.nfc.model.SensorNfсScanInfo
 import com.ruuvi.station.R
@@ -306,14 +306,7 @@ fun SensorsPager(
         if (sensor.userBackground != null) {
             val uri = Uri.parse(sensor.userBackground)
             if (uri.path != null) {
-                if (showCharts) {
-                    SensorCardImage(uri, showCharts)
-                } else {
-                    Crossfade(targetState = uri, label = "switch background") {
-                        Timber.d("image for sensor ${sensor.displayName}")
-                        SensorCardImage(it, showCharts)
-                    }
-                }
+                SensorCardImage(uri, showCharts)
             }
         }
     }
@@ -658,11 +651,19 @@ fun SensorCard(
     if (showBottomSheet) {
         sheetValue?.let { value ->
 
-            val chartHistory = getChartData(sensor.id, value.unitType, 48).collectAsState(null)
+            val chartHistory by produceState<ChartData?>(
+                initialValue = null,
+                key1 = sensor.id,
+                key2 = value.unitType
+            ) {
+                getChartData(sensor.id, value.unitType, 48).collectLatest { data ->
+                    this.value = data
+                }
+            }
 
             ValueBottomSheet(
                 sheetValue = value,
-                chartHistory = chartHistory.value,
+                chartHistory = chartHistory,
                 maxHeight = size.height,
                 modifier = Modifier,
                 scrollToChart = scrollToChart
@@ -918,7 +919,6 @@ fun SensorCardLowBattery(modifier: Modifier = Modifier) {
     }
 }
 
-@OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun SensorCardImage(
     userBackground: Uri,
@@ -926,19 +926,23 @@ fun SensorCardImage(
 ) {
     Timber.d("Image path $userBackground")
 
-    GlideImage(
+    AsyncImage(
         modifier = Modifier.fillMaxSize(),
-        model = userBackground,
+        model = ImageRequest.Builder(LocalContext.current)
+            .data(userBackground)
+            .crossfade(true)
+            .build(),
+        contentDescription = null,
+        contentScale = ContentScale.Crop
+    )
+    Image(
+        modifier = Modifier.fillMaxSize(),
+        painter = painterResource(R.drawable.tag_bg_layer),
         contentDescription = null,
         contentScale = ContentScale.Crop
     )
 
-    Image(
-        modifier = Modifier.fillMaxSize(),
-        painter = painterResource(id = R.drawable.tag_bg_layer),
-        contentDescription = null,
-        contentScale = ContentScale.Crop
-    )
+
     if (chartsEnabled) {
         Box(
             modifier = Modifier

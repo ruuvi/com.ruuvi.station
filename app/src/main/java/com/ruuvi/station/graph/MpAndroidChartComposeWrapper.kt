@@ -16,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.booleanResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -271,16 +272,19 @@ fun applyChartStyle(
         Timber.e(e)
     }
 
-    val sizeInPx = TypedValue.applyDimension(
-        TypedValue.COMPLEX_UNIT_SP,
-        if (context.resources.getBoolean(R.bool.isTablet)) 6.5f else 3.8f,
-        context.resources.displayMetrics
-    )
+    val fontSize = if (context.resources.getBoolean(R.bool.isTablet)) 14.sp else 10.sp
+    val sizeInPx = context.spToDpRespectingFontScale(fontSize.value)
 
     chart.description.textSize = sizeInPx
     chart.axisLeft.textSize = sizeInPx
     chart.xAxis.textSize = sizeInPx
     chart.legend.isEnabled = false
+}
+
+fun Context.spToDpRespectingFontScale(sp: Float): Float {
+    val dm = resources.displayMetrics
+    val px = sp * dm.scaledDensity          // honors Settings > Font size
+    return px / dm.density                  // convert px -> dp for MPAndroidChart
 }
 
 fun setupMarker(

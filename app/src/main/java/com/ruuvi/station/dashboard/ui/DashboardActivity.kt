@@ -48,8 +48,8 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.whenStarted
-import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
-import com.bumptech.glide.integration.compose.GlideImage
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.ruuvi.station.R
 import com.ruuvi.station.addtag.ui.AddTagActivity
@@ -1038,28 +1038,36 @@ fun ItemBottomUpdatedInfo(
     }
 }
 
-@OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun DashboardImage(
     userBackground: Uri,
     modifier: Modifier = Modifier
 ) {
-    Timber.d("Image path $userBackground")
-    GlideImage(
-        modifier = modifier.fillMaxSize(),
-        model = userBackground,
-        contentDescription = null,
-        contentScale = ContentScale.Crop
-    )
-    GlideImage(
-        modifier = modifier.fillMaxSize(),
-        model = rememberResourceUri(R.drawable.tag_bg_layer_dashboard),
-        contentDescription = null,
-        contentScale = ContentScale.Crop
-    )
+    val context = LocalContext.current
+    Box(modifier = modifier) {
+        AsyncImage(
+            modifier = modifier.fillMaxSize(),
+            model = ImageRequest.Builder(context)
+                .data(userBackground)
+                .crossfade(false)
+                .build(),
+            contentDescription = null,
+            contentScale = ContentScale.Crop
+        )
+        AsyncImage(
+            modifier = modifier.fillMaxSize(),
+            model = R.drawable.tag_bg_layer_dashboard,
+            contentDescription = null,
+            contentScale = ContentScale.Crop
+        )
+//        Image(
+//            modifier = modifier.matchParentSize(),
+//            painter = painterResource(R.drawable.tag_bg_layer_dashboard),
+//            contentDescription = null,
+//            contentScale = ContentScale.Crop
+//        )
+    }
 }
-
-
 
 @Composable
 fun DashboardItemDropdownMenu(
