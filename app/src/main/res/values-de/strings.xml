@@ -295,6 +295,7 @@
     <string name="error_dfu_disconnected">Gerät nicht angeschlossen</string>
     <string name="error_dfu_firmware_not_valid">Firmware ist nicht gültig</string>
     <string name="error_dfu_update">Firmware-Update fehlgeschlagen</string>
+    <string name="excellent">Ausgezeichnet</string>
     <string name="export">EXPORT</string>
     <string name="export_csv_chooser_title">Sensor %1$s CSV-Export</string>
     <string name="export_csv_created">.csv erstellt, Freigabemenü öffnen</string>
@@ -337,6 +338,7 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="gatt_please_wait">Manchmal ist der Download des Protokolls aufgrund der Bluetooth-Verbindung langsam. Bitte warten Sie einen Moment.</string>
     <string name="gatt_sync_description">Ruuvi Station lädt den internen Verlauf des Sensors für die letzten 10 Tage herunter, wenn der Messverlauf verfügbar ist.\n\nDer Verlauf wird über eine Bluetooth-Verbindung heruntergeladen. Stellen Sie sicher, dass Sie sich in der Nähe des Sensors befinden.</string>
     <string name="general">Allgemein</string>
+    <string name="good">Gut</string>
     <string name="h">h</string>
     <string name="help_about_text">Ruuvi Station ist eine benutzerfreundliche Anwendung, mit der Sie die Messdaten von Ruuvi-Sensoren überwachen können.</string>
     <string name="help_about_title">Über / Hilfe</string>
@@ -411,6 +413,7 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="menu_what_to_measure">Was mit Ruuvi messen?</string>
     <string name="min">min</string>
     <string name="minutes">Minuten</string>
+    <string name="moderate">Mäßig</string>
     <string name="more">Mehr...</string>
     <string name="more_info">Mehr info</string>
     <string name="move_down">Nach unten bewegen</string>
@@ -441,7 +444,7 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="nfc_dialog_name">Name:</string>
     <string name="nfc_dialog_unique_id">Eindeutige ID:</string>
     <string name="nfc_enable_bt_to_add_sensor">Aktivieren Sie Bluetooth und scannen Sie den Sensor, um ihn hinzuzufügen</string>
-    <string name="nitrogen_oxides">Stickoxide</string>
+    <string name="nitrogen_oxides">Index der Stickoxide</string>
     <string name="no">Nein</string>
     <string name="no_data">Keine Daten</string>
     <string name="no_data_10_days">Keine Daten in den letzten 10 Tagen</string>
@@ -450,8 +453,8 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="none">keiner</string>
     <string name="note">Notiz!</string>
     <string name="notification_permission_needed">Um Warnmeldungen und das Scannen im Hintergrund zu aktivieren, erlauben Sie Benachrichtigungen in den Einstellungen</string>
-    <string name="nox">NOx</string>
-    <string name="nox_with_unit">NOx (%1$s)</string>
+    <string name="nox">NOx-Index</string>
+    <string name="nox_with_unit">NOx-Index (%1$s)</string>
     <string name="off">Aus</string>
     <string name="offset_correction">Offset-Korrektur</string>
     <string name="ok">OK</string>
@@ -513,6 +516,7 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="pm25_with_unit">PM2.5 (%1$s)</string>
     <string name="pm40">PM4</string>
     <string name="pm40_with_unit">PM4 (%1$s)</string>
+    <string name="poor">Schlecht</string>
     <string name="prepare_your_sensor">Bereiten Sie Ihren Sensor vor</string>
     <string name="prepare_your_sensor_instructions">\u0026lt;title\u0026gt;Bereiten Sie Ihren Sensor vor\u0026lt;/title\u0026gt;\n\n1. Öffnen Sie den Deckel Ihres Ruuvi-Sensors\n\n2. Suchen Sie die kleinen runden schwarzen Knöpfe auf der weißen Platine; ältere Ruuvi-Sensoren haben zwei Knöpfe mit den Bezeichnungen “R” und “B”, während neuere nur einen Knopf ohne Beschriftung haben.\n\n3. Stellen Sie den Sensor in den Aktualisierungsmodus:\n\n3.1. Wenn Ihr Sensor 2 Tasten hat: Halten Sie die Taste “B” gedrückt und tippen Sie gleichzeitig kurz auf die Taste “R”. Lassen Sie die Taste “B” los.\n\n3.2. Wenn Ihr Sensor eine einzelne Taste hat: Halten Sie die Taste 10 Sekunden lang gedrückt.\n\n4. Wenn die Einstellung erfolgreich war, leuchtet ein rotes Licht auf der Platine und die Schaltfläche in der App ändert sich in “Starten Sie die Aktualisierung”.</string>
     <string name="prepare_your_sensor_instructions_1">1. Öffnen Sie den Deckel Ihres Ruuvi-Sensors</string>
@@ -739,9 +743,9 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="visible_measurements">Sichtbare Messwerte</string>
     <string name="visible_measurements_description">Hier kannst du auswählen, welche Messwerte du sehen möchtest und in welcher Reihenfolge. Deaktiviere den Schalter „Standard verwenden“, um die Einstellungen anzupassen.</string>
     <string name="visible_measurements_use_default">Standard verwenden</string>
-    <string name="voc">VOC</string>
-    <string name="voc_with_unit">VOC (%1$s)</string>
-    <string name="volatile_organic_compounds">Flüchtige organische Verbindungen</string>
+    <string name="voc">VOC-Index</string>
+    <string name="voc_with_unit">VOC-Index (%1$s)</string>
+    <string name="volatile_organic_compounds">Index flüchtiger organischer Verbindungen</string>
     <string name="voltage_reading">%1$,.2f %2$s</string>
     <string name="voltage_unit">V</string>
     <string name="welcome_text_0">Wischen Sie, um zu sehen, was Ruuvi Station für Sie tun kann.</string>

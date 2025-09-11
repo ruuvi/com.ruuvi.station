@@ -102,6 +102,17 @@
     <string name="app_theme">App theme</string>
     <string name="appearance_settings_description">%1$s %2$s</string>
     <string name="aqi">AQI</string>
+    <string name="aqi_advice_excellent">Your Air Quality is excellent! Well done, enjoy the fresh air</string>
+    <string name="aqi_advice_good">Your Air Quality is good! Well done, enjoy the fresh air.</string>
+    <string name="aqi_advice_moderate_both">Your Air Quality is moderate, because both CO2 and PM2.5 are high. Consider ventilating the room, but take in account possible outdoor air pollution</string>
+    <string name="aqi_advice_moderate_co2">Your Air Quality is moderate, because CO2 is high. Consider ventilating the room</string>
+    <string name="aqi_advice_moderate_pm25">Your Air Quality is moderate, because PM2.5 is high. Consider ventilating the room, but take in account possible outdoor air pollution</string>
+    <string name="aqi_advice_poor_both">Your Air Quality is poor, because both CO2 and PM2.5 are high. Ventilate the room, but take in account possible outdoor air pollution</string>
+    <string name="aqi_advice_poor_co2">Your Air Quality is poor, because CO2 is high. Ventilate the room for better air</string>
+    <string name="aqi_advice_poor_pm25">Your Air Quality is poor, because PM2.5 is high. Ventilate the room, but take in account possible outdoor air pollution</string>
+    <string name="aqi_advice_verypoor_both">Your Air Quality is very poor, because both CO2 and PM2.5 are high. Ventilate the room, but take in account possible outdoor air pollution</string>
+    <string name="aqi_advice_verypoor_co2">Your Air Quality is very poor, because CO2 is high. Ventilate the room for better air</string>
+    <string name="aqi_advice_verypoor_pm25">Your Air Quality is very poor, because PM2.5 is high. Ventilate the room, but take in account possible outdoor air pollution</string>
     <string name="aqi_level_0">Undefined</string>
     <string name="aqi_level_1">Unhealthy</string>
     <string name="aqi_level_2">Poor</string>
@@ -304,6 +315,7 @@
     <string name="error_dfu_disconnected">Device disconnected</string>
     <string name="error_dfu_firmware_not_valid">Firmware is not valid</string>
     <string name="error_dfu_update">Firmware update failed</string>
+    <string name="excellent">Excellent</string>
     <string name="export">EXPORT</string>
     <string name="export_csv_chooser_title">Sensor %1$s CSV export</string>
     <string name="export_csv_created">.csv created, opening share menu</string>
@@ -335,6 +347,7 @@
     <string name="gatt_please_wait">Sometimes the history download is slow due to the Bluetooth connectivity. Please wait a moment.</string>
     <string name="gatt_sync_description">Ruuvi Station downloads the internal history of the sensor for the last 10 days if the measurement history is available.\n\nThe history is downloaded using a Bluetooth connection. Make sure you are near the sensor.</string>
     <string name="general">General</string>
+    <string name="good">Good</string>
     <string name="h">h</string>
     <string name="help_about_text">Ruuvi Station is an easy-to-use application that allows you to monitor the measurement data of Ruuvi sensors.</string>
     <string name="help_about_title">About / Help</string>
@@ -378,6 +391,7 @@
     <string name="image_view">Image view</string>
     <string name="increase_graph_size">Increase graph size</string>
     <string name="information">Information</string>
+    <string name="initial_description_text_air_quality">Air quality index is based on two factors: particulate matter (PM2.5) floating in the air, and carbon dioxide (CO₂) that accumulates when people spend time indoors</string>
     <string name="internet_connection_problem">Internet connection problem</string>
     <string name="language_english">English</string>
     <string name="language_finnish">Suomi</string>
@@ -410,6 +424,7 @@
     <string name="menu_what_to_measure">What to measure with Ruuvi?</string>
     <string name="min">min</string>
     <string name="minutes">Minutes</string>
+    <string name="moderate">Moderate</string>
     <string name="more">More...</string>
     <string name="more_info">More info</string>
     <string name="move_down">Move down</string>
@@ -440,7 +455,7 @@
     <string name="nfc_dialog_name">Name:</string>
     <string name="nfc_dialog_unique_id">Unique ID:</string>
     <string name="nfc_enable_bt_to_add_sensor">Enable Bluetooth and scan sensor to add it</string>
-    <string name="nitrogen_oxides">Nitrogen oxides</string>
+    <string name="nitrogen_oxides">Nitrogen oxides index</string>
     <string name="no">No</string>
     <string name="no_data">No data</string>
     <string name="no_data_10_days">No data during the last 10 days</string>
@@ -449,8 +464,8 @@
     <string name="none">none</string>
     <string name="note">Note!</string>
     <string name="notification_permission_needed">To enable alerts and background scanning please allow Notifications in settings</string>
-    <string name="nox">NOx</string>
-    <string name="nox_with_unit">NOx (%1$s)</string>
+    <string name="nox">NOx index</string>
+    <string name="nox_with_unit">NOx index (%1$s)</string>
     <string name="off">Off</string>
     <string name="offset_correction">Offset correction</string>
     <string name="ok">OK</string>
@@ -513,6 +528,7 @@
     <string name="pm25_with_unit">PM2.5 (%1$s)</string>
     <string name="pm40">PM4</string>
     <string name="pm40_with_unit">PM4 (%1$s)</string>
+    <string name="poor">Poor</string>
     <string name="prepare_your_sensor">Prepare your sensor</string>
     <string name="prepare_your_sensor_instructions">\u0026lt;title\u0026gt;Prepare your sensor\u0026lt;/title\u0026gt;\n\n1. Open the cover of your Ruuvi sensor\n\n2. Locate the small round black buttons on the white circuit board; older Ruuvi sensors have 2 buttons labelled “R” and “B” while newer ones have only one button without a label.\n\n3. Set the sensor to updating mode:\n\n3.1. If your sensor has 2 buttons: keep “B” button pressed while tapping button “R” momentarily. Release button “B”.\n\n3.2. If your sensor has a single button: keep the button pressed for 10 seconds.\n\n4. If set successfully, you will see a solid red light lit on the circuit board and the button in the app will change to “Start the update”.</string>
     <string name="prepare_your_sensor_instructions_1">1. Open the cover of your Ruuvi sensor</string>
@@ -735,13 +751,14 @@
     <string name="use_dev_server_description">To apply changes simply sync data from dashboard or wait till next sync.</string>
     <string name="use_without_account">No thanks, skip</string>
     <string name="version">Version: %1$s</string>
+    <string name="verypoor">Very poor</string>
     <string name="view">View</string>
     <string name="visible_measurements">Visible measurements</string>
     <string name="visible_measurements_description">Here, you can choose which measurements you\'d like to see and in what order. Switch the "Use default" toggle off to customise the settings.</string>
     <string name="visible_measurements_use_default">Use default</string>
-    <string name="voc">VOC</string>
-    <string name="voc_with_unit">VOC (%1$s)</string>
-    <string name="volatile_organic_compounds">Volatile organic compounds</string>
+    <string name="voc">VOC index</string>
+    <string name="voc_with_unit">VOC index (%1$s)</string>
+    <string name="volatile_organic_compounds">Volatile organic compounds index</string>
     <string name="voltage_reading">%1$,.2f %2$s</string>
     <string name="voltage_unit">V</string>
     <string name="welcome_text_0">Swipe to see what Ruuvi Station can do for you.</string>

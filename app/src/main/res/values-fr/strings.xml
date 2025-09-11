@@ -295,6 +295,7 @@
     <string name="error_dfu_disconnected">Connexion interrompue avec le capteur</string>
     <string name="error_dfu_firmware_not_valid">Mise à jour invalide</string>
     <string name="error_dfu_update">Echec de la mise à jour système</string>
+    <string name="excellent">Excellent</string>
     <string name="export">EXPORTER</string>
     <string name="export_csv_chooser_title">Capteur %1$s export CSV</string>
     <string name="export_csv_created">fichier .csv créé, ouverture du menu de partage</string>
@@ -331,6 +332,7 @@
     <string name="gatt_please_wait">Parfois, le téléchargement de l\'historique est lent en raison de la connectivité Bluetooth. Veuillez patienter un moment.</string>
     <string name="gatt_sync_description">Ruuvi Station télécharge l\'historique interne du capteur pour les 10 derniers jours si l\'historique des mesures est disponible.\n\nL\'historique est téléchargé à l\'aide d\'une connexion Bluetooth. Assurez-vous d\'être à proximité du capteur.</string>
     <string name="general">Général</string>
+    <string name="good">Bon</string>
     <string name="h">h</string>
     <string name="help_about_text">Ruuvi Station est une application facile à utiliser qui vous permet de surveiller les données de mesure des capteurs Ruuvi.</string>
     <string name="help_about_title">Infos / Aide</string>
@@ -405,6 +407,7 @@
     <string name="menu_what_to_measure">Que mesurer avec Ruuvi?</string>
     <string name="min">min</string>
     <string name="minutes">Minutes</string>
+    <string name="moderate">Modéré</string>
     <string name="more">Plus...</string>
     <string name="more_info">Plus d\'infos</string>
     <string name="move_down">Descendre</string>
@@ -435,7 +438,7 @@
     <string name="nfc_dialog_name">Nom:</string>
     <string name="nfc_dialog_unique_id">Identifiant unique:</string>
     <string name="nfc_enable_bt_to_add_sensor">Activez Bluetooth et scannez le capteur pour l\'ajouter</string>
-    <string name="nitrogen_oxides">Oxydes d\'azote</string>
+    <string name="nitrogen_oxides">Indice des oxydes d’azote</string>
     <string name="no">Non</string>
     <string name="no_data">Pas d\'informations</string>
     <string name="no_data_10_days">Aucune donnée au cours des 10 derniers jours</string>
@@ -444,8 +447,8 @@
     <string name="none">non connecté</string>
     <string name="note">Note!</string>
     <string name="notification_permission_needed">Pour activer les alertes et la numérisation en arrière-plan, autorisez les notifications dans les paramètres</string>
-    <string name="nox">NOx</string>
-    <string name="nox_with_unit">NOx (%1$s)</string>
+    <string name="nox">Indice NOx</string>
+    <string name="nox_with_unit">Indice NOx (%1$s)</string>
     <string name="off">Désactivé</string>
     <string name="offset_correction">Correction</string>
     <string name="ok">OK</string>
@@ -507,6 +510,7 @@
     <string name="pm25_with_unit">PM2.5 (%1$s)</string>
     <string name="pm40">PM4</string>
     <string name="pm40_with_unit">PM4 (%1$s)</string>
+    <string name="poor">Mauvais</string>
     <string name="prepare_your_sensor">Préparez votre capteur</string>
     <string name="prepare_your_sensor_instructions">\u0026lt;title\u0026gt;Préparez votre capteur\u0026lt;/title\u0026gt;\n\n1. Ouvrez le couvercle de votre capteur Ruuvi\n\n2. Localisez les petits boutons ronds noirs sur la carte de circuit imprimé blanche ; les anciens capteurs Ruuvi ont 2 boutons étiquetés “R” et “B” tandis que les plus récents n\'ont qu\'un seul bouton sans étiquette.\n\n3. Mettez le capteur en mode de mise à jour :\n\n3.1. Si votre capteur est équipé de 2 boutons : maintenez le bouton “B” enfoncé tout en appuyant momentanément sur le bouton “R”. Relâchez le bouton “B”.\n\n3.2. Si votre capteur possède un seul bouton : maintenez le bouton enfoncé pendant 10 secondes.\n\n4. Si le réglage est réussi, vous verrez une lumière rouge fixe s\'allumer sur la carte de circuit imprimé et le bouton de l\'application passera à “Démarrer la mise à jour”.</string>
     <string name="prepare_your_sensor_instructions_1">1. Ouvrez le couvercle de votre capteur Ruuvi</string>
@@ -733,9 +737,9 @@
     <string name="visible_measurements">Mesures visibles</string>
     <string name="visible_measurements_description">Ici, vous pouvez choisir quelles mesures afficher et dans quel ordre. Désactivez l’option « Utiliser par défaut » pour personnaliser les paramètres.</string>
     <string name="visible_measurements_use_default">Utiliser par défaut</string>
-    <string name="voc">COV</string>
-    <string name="voc_with_unit">COV (%1$s)</string>
-    <string name="volatile_organic_compounds">Composés organiques volatils</string>
+    <string name="voc">Indice COV</string>
+    <string name="voc_with_unit">Indice COV (%1$s)</string>
+    <string name="volatile_organic_compounds">Indice des composés organiques volatils</string>
     <string name="voltage_reading">%1$,.2f %2$s</string>
     <string name="voltage_unit">V</string>
     <string name="welcome_text_0">Découvrez l\'application Ruuvi Station.</string>

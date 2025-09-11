@@ -536,7 +536,7 @@ sealed class UnitType(
             measurementCode = PM10_MEASUREMENT_CODE,
             measurementTitle = R.string.particulate_matter_10,
             measurementName = R.string.pm10,
-            iconRes = R.drawable.icon_pm100,
+            iconRes = R.drawable.icon_pm10,
             alarmType = AlarmType.PM10
         )
 

@@ -295,6 +295,7 @@
     <string name="error_dfu_disconnected">Yhteys päivitettävään laitteeseen menetetty</string>
     <string name="error_dfu_firmware_not_valid">Laiteohjelmisto ei kelpaa</string>
     <string name="error_dfu_update">Laiteohjelmiston päivitys epäonnistui</string>
+    <string name="excellent">Erinomainen</string>
     <string name="export">LATAA</string>
     <string name="export_csv_chooser_title">Anturin %1$s CSV-lokitiedosto</string>
     <string name="export_csv_created">.csv tiedosto luotu, avataan tiedostonjakoikkuna</string>
@@ -326,6 +327,7 @@
     <string name="gatt_please_wait">Historian lataaminen voi kestää pitkään Bluetooth-yhteyden laadusta riippuen. Odota hetki.</string>
     <string name="gatt_sync_description">Ruuvi Station lataa anturin sisäisen historian viimeiseltä 10 päivältä, jos historia on saatavilla.\n\nMittaushistoria ladataan Bluetooth-yhteydellä. Varmista, että olet anturin läheisyydessä.</string>
     <string name="general">Yleisasetukset</string>
+    <string name="good">Hyvä</string>
     <string name="h">t</string>
     <string name="help_about_text">Ruuvi Station on kätevä ja helppokäyttöinen sovellus, jonka avulla voit seurata Ruuvin anturien mittaustietoja.</string>
     <string name="help_about_title">Tietoa / Apua</string>
@@ -400,6 +402,7 @@
     <string name="menu_what_to_measure">Mitä mitata Ruuvilla?</string>
     <string name="min">min</string>
     <string name="minutes">Minuuttia</string>
+    <string name="moderate">Kohtalainen</string>
     <string name="more">Lisää...</string>
     <string name="more_info">Lisätietoa</string>
     <string name="move_down">Siirrä alas</string>
@@ -430,7 +433,7 @@
     <string name="nfc_dialog_name">Nimi:</string>
     <string name="nfc_dialog_unique_id">Yksilöivä tunniste:</string>
     <string name="nfc_enable_bt_to_add_sensor">Ota Bluetooth käyttöön ja lisää anturi skannaamalla</string>
-    <string name="nitrogen_oxides">Typpidioksidit</string>
+    <string name="nitrogen_oxides">Typen oksidien indeksi</string>
     <string name="no">Ei</string>
     <string name="no_data">Ei historiatietoja</string>
     <string name="no_data_10_days">Ei historiatietoja viimeiseltä 10 päivältä</string>
@@ -439,8 +442,8 @@
     <string name="none">ei kirjautunut</string>
     <string name="note">Huomaa!</string>
     <string name="notification_permission_needed">Salli hälytysilmoitukset ja taustaskannaus antamalla sovellukselle lupa näyttää ilmoituksia</string>
-    <string name="nox">NOx</string>
-    <string name="nox_with_unit">NOx (%1$s)</string>
+    <string name="nox">NOx-indeksi</string>
+    <string name="nox_with_unit">NOx-indeksi (%1$s)</string>
     <string name="off">Pois</string>
     <string name="offset_correction">Kalibrointi</string>
     <string name="ok">OK</string>
@@ -502,6 +505,7 @@
     <string name="pm25_with_unit">PM2.5 (%1$s)</string>
     <string name="pm40">PM4</string>
     <string name="pm40_with_unit">PM4 (%1$s)</string>
+    <string name="poor">Huono</string>
     <string name="prepare_your_sensor">Laitteen asettaminen päivitystilaan</string>
     <string name="prepare_your_sensor_instructions">\u0026lt;title\u0026gt;Laitteen asettaminen päivitystilaan\u0026lt;/title\u0026gt;\n\n1. Avaa Ruuvi-anturin suojakotelo\n\n2. Paikanna valkoisella piirilevyllä olevat pienet pyöreät mustat painikkeet; vanhemmissa Ruuvi-antureissa on 2 painiketta “R” ja “B”, kun taas uudemmissa on vain yksi nimeämätön painike.\n\n3. Aseta anturi päivitystilaan:\n\n3.1. Anturissasi on kaksi painiketta: pidä painike “B” alaspainettuna ja napauta samalla painiketta “R”. Vapauta painike “B”.\n\n3.2. Anturissasi on yksi painike: pidä painiketta alaspainettuna 10 sekunnin ajan.\n\n4. Päivitystilaan siirtyminen onnistui, mikäli piirilevyllä oleva punainen LED-valo on nyt aktiivinen ja sovelluksen painikkeen nimeksi on vaihtunut “Aloita päivitys”.</string>
     <string name="prepare_your_sensor_instructions_1">1. Avaa Ruuvi-anturin suojakotelo</string>
@@ -728,9 +732,9 @@
     <string name="visible_measurements">Näytettävät mittaukset</string>
     <string name="visible_measurements_description">Tällä sivulla voit valita, mitkä mittaukset haluat nähdä ja missä järjestyksessä. Poista "Käytä oletusta" -valinta muokataksesi asetuksia.</string>
     <string name="visible_measurements_use_default">Käytä oletusta</string>
-    <string name="voc">VOC</string>
-    <string name="voc_with_unit">VOC (%1$s)</string>
-    <string name="volatile_organic_compounds">Haihtuvat orgaaniset yhdisteet</string>
+    <string name="voc">VOC-indeksi</string>
+    <string name="voc_with_unit">VOC-indeksi (%1$s)</string>
+    <string name="volatile_organic_compounds">Haihtuvien orgaanisten yhdisteiden indeksi</string>
     <string name="voltage_reading">%1$,.2f %2$s</string>
     <string name="voltage_unit">V</string>
     <string name="welcome_text_0">Tutustu Ruuvi Station -sovellukseen.</string>

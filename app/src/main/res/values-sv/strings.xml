@@ -295,6 +295,7 @@
     <string name="error_dfu_disconnected">Kontakten till sensor förlorades</string>
     <string name="error_dfu_firmware_not_valid">Ogiltig programmvara</string>
     <string name="error_dfu_update">Programvaruuppdateringen misslyckades</string>
+    <string name="excellent">Utmärkt</string>
     <string name="export">EXPORTERA</string>
     <string name="export_csv_chooser_title">Sensor %1$s csv export</string>
     <string name="export_csv_created">.csv skapad, öppnar dela menyn</string>
@@ -326,6 +327,7 @@
     <string name="gatt_please_wait">Ibland går nedladdningen av historik långsamt på grund av Bluetooth-anslutningen. Var god vänta ett ögonblick.</string>
     <string name="gatt_sync_description">Ruuvi Station laddar ner sensorns interna historik för de senaste 10 dagarna om mäthistoriken är tillgänglig.\n\nHistorien laddas ner med en Bluetooth-anslutning. Se till att du är nära sensorn.</string>
     <string name="general">Allmänt</string>
+    <string name="good">Bra</string>
     <string name="h">h</string>
     <string name="help_about_text">Ruuvi Station är en lättanvänd applikation som låter dig övervaka mätdata från Ruuvi-sensorer.</string>
     <string name="help_about_title">Om / Hjälp</string>
@@ -400,6 +402,7 @@
     <string name="menu_what_to_measure">Vad ska man mäta med Ruuvi?</string>
     <string name="min">min</string>
     <string name="minutes">Minuter</string>
+    <string name="moderate">Måttlig</string>
     <string name="more">Mer...</string>
     <string name="more_info">Mer info</string>
     <string name="move_down">Flytta ner</string>
@@ -430,7 +433,7 @@
     <string name="nfc_dialog_name">Namn:</string>
     <string name="nfc_dialog_unique_id">Unikt ID:</string>
     <string name="nfc_enable_bt_to_add_sensor">Aktivera Bluetooth och skanningssensor för att lägga till den</string>
-    <string name="nitrogen_oxides">Kväveoxider</string>
+    <string name="nitrogen_oxides">Index för kväveoxider</string>
     <string name="no">Nej</string>
     <string name="no_data">Ingen data</string>
     <string name="no_data_10_days">Ingen data under de senaste 10 dagarna</string>
@@ -439,8 +442,8 @@
     <string name="none">ingen</string>
     <string name="note">Obs!</string>
     <string name="notification_permission_needed">För att aktivera aviseringar och bakgrundsskanning, tillåt aviseringar i inställningarna</string>
-    <string name="nox">NOx</string>
-    <string name="nox_with_unit">NOx (%1$s)</string>
+    <string name="nox">NOx-index</string>
+    <string name="nox_with_unit">NOx-index (%1$s)</string>
     <string name="off">Av</string>
     <string name="offset_correction">Kalibrering</string>
     <string name="ok">OK</string>
@@ -502,6 +505,7 @@
     <string name="pm25_with_unit">PM2.5 (%1$s)</string>
     <string name="pm40">PM4</string>
     <string name="pm40_with_unit">PM4 (%1$s)</string>
+    <string name="poor">Dålig</string>
     <string name="prepare_your_sensor">Förbered din sensor</string>
     <string name="prepare_your_sensor_instructions">\u0026lt;title\u0026gt;Förbered din sensor\u0026lt;/title\u0026gt;\n\n1. Öppna locket på din Ruuvi sensor\n\n2. Leta reda på små runda svarta knappar på det vita kretskortet; äldre Ruuvi-sensorer har 2 knappar märkta “R“ och “B“ medan nyare har bara en knapp utan etikett.\n\n3. Lägg sensorn i uppdateringsläge\n\n3.1. Om din sensor har två knappar: håll knappen “B” intryckt medan du trycker en gång på “R”. Släpp knapp “B”.\n\n3.2. Om din sensor har en knapp, håll knappen intryckt i 10 sekunder.\n\n4. Uppgraderingsläget lyckades om den röda lysdioden på kretskortet lyser och knappens text i appen har bytts till “Starta uppdatering“.</string>
     <string name="prepare_your_sensor_instructions_1">1. Öppna locket på din Ruuvi sensor</string>
@@ -728,9 +732,9 @@
     <string name="visible_measurements">Synliga mätvärden</string>
     <string name="visible_measurements_description">Här kan du välja vilka mätvärden du vill se och i vilken ordning. Stäng av "Använd standard" för att anpassa inställningarna.</string>
     <string name="visible_measurements_use_default">Använd standard</string>
-    <string name="voc">VOC</string>
-    <string name="voc_with_unit">VOC (%1$s)</string>
-    <string name="volatile_organic_compounds">Flyktiga organiska föreningar</string>
+    <string name="voc">VOC-index</string>
+    <string name="voc_with_unit">VOC-index (%1$s)</string>
+    <string name="volatile_organic_compounds">Index för flyktiga organiska föreningar</string>
     <string name="voltage_reading">%1$,.2f %2$s</string>
     <string name="voltage_unit">V</string>
     <string name="welcome_text_0">Det här kan Ruuvi Station göra för dig.</string>

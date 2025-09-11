@@ -75,7 +75,7 @@ import com.ruuvi.station.tagdetails.ui.elements.BigValueDisplay
 import com.ruuvi.station.tagdetails.ui.elements.CircularAQIDisplay
 import com.ruuvi.station.tagdetails.ui.elements.SensorCardLegacy
 import com.ruuvi.station.tagdetails.ui.elements.SensorValueItem
-import com.ruuvi.station.tagdetails.ui.elements.ValueBottomSheet
+import com.ruuvi.station.tagdetails.ui.elements.popup.ValueBottomSheet
 import com.ruuvi.station.tagsettings.ui.TagSettingsActivity
 import com.ruuvi.station.units.domain.UnitsConverter
 import com.ruuvi.station.units.model.EnvironmentValue
@@ -661,12 +661,20 @@ fun SensorCard(
                 }
             }
 
+            val extraValues = if (value.unitType is UnitType.AirQuality.AqiIndex) {
+                listOfNotNull(sensor.latestMeasurement?.pm25, sensor.latestMeasurement?.co2)
+            } else {
+                listOf()
+            }
+
             ValueBottomSheet(
                 sheetValue = value,
+                extraValues = extraValues,
                 chartHistory = chartHistory,
                 maxHeight = size.height,
                 modifier = Modifier,
-                scrollToChart = scrollToChart
+                scrollToChart = scrollToChart,
+                onChangeValue = { newValue -> sheetValue = newValue}
             ) {
                 showBottomSheet = false
             }

@@ -97,6 +97,7 @@ dependencies {
     implementation "androidx.compose.ui:ui-tooling-preview:1.8.2"
     implementation "androidx.activity:activity-compose:1.10.1"
     implementation("androidx.compose.material:material-icons-core:1.7.8")
+    implementation("androidx.compose.material:material-icons-extended:1.7.8")
     implementation "org.jetbrains.kotlin:kotlin-compose-compiler-plugin-embeddable:$kotlin_version"
     implementation "androidx.constraintlayout:constraintlayout-compose:1.1.1"
     implementation "androidx.compose.runtime:runtime-livedata:1.8.2"

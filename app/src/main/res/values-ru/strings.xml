@@ -221,6 +221,7 @@
     <string name="error_dfu_disconnected">Потеряно соединение с датчиком</string>
     <string name="error_dfu_firmware_not_valid">Неверный файл обновления</string>
     <string name="error_dfu_update">Сбой обновления прошивки</string>
+    <string name="excellent">Отлично</string>
     <string name="export">ЭКСПОРТ</string>
     <string name="export_csv_chooser_title">Датчик %1$s экспорт CSV</string>
     <string name="export_csv_created">.csv создан, открываем меню отправки файла</string>
@@ -242,6 +243,7 @@
     <string name="gateway_test_success">Шлюз работает! Код ответа: %1$d</string>
     <string name="gateway_testing">Проверка...</string>
     <string name="general">Основное</string>
+    <string name="good">Хорошо</string>
     <string name="h">ч</string>
     <string name="help_about_text">Ruuvi Station — это простое в использовании приложение, позволяющее отслеживать данные измерений датчиков Ruuvi.</string>
     <string name="help_about_title">О приложении</string>
@@ -307,6 +309,7 @@
     <string name="menu_what_to_measure">Что измерять с помощью Ruuvi?</string>
     <string name="min">мин</string>
     <string name="minutes">Минут</string>
+    <string name="moderate">Умеренно</string>
     <string name="more">Больше...</string>
     <string name="more_info">Дополнительно</string>
     <string name="movement_counter">Счетчик Движения</string>
@@ -326,14 +329,14 @@
     <string name="network_syncing">Синхронизация...</string>
     <string name="network_user">Пользователь: %1$s</string>
     <string name="never">никогда</string>
-    <string name="nitrogen_oxides">Оксиды азота</string>
+    <string name="nitrogen_oxides">Индекс оксидов азота</string>
     <string name="no">Нет</string>
     <string name="no_data">Нет данных</string>
     <string name="no_new_data_points">Нет новых измерений</string>
     <string name="none">нет</string>
     <string name="notification_permission_needed">Чтобы включить оповещения и фоновое сканирование, разрешите уведомления в настройках</string>
-    <string name="nox">NOx</string>
-    <string name="nox_with_unit">NOx (%1$s)</string>
+    <string name="nox">Индекс NOx</string>
+    <string name="nox_with_unit">Индекс NOx (%1$s)</string>
     <string name="off">Выкл</string>
     <string name="offset_correction">Калибровка</string>
     <string name="ok">OK</string>
@@ -363,6 +366,7 @@
     <string name="pm25_with_unit">PM2.5 (%1$s)</string>
     <string name="pm40">PM4</string>
     <string name="pm40_with_unit">PM4 (%1$s)</string>
+    <string name="poor">Плохо</string>
     <string name="press_to_add">Нет добавленных датчиков\nнажмите чтобы добавить</string>
     <string name="pressure">Атмосферное Давление</string>
     <string name="pressure_hpa_name">Гектопаскаль (гПа)</string>
@@ -533,13 +537,14 @@
     <string name="updating">Обновляю...</string>
     <string name="use_dev_server_description">Чтобы применить изменения, просто синхронизируйте данные с панели управления или дождитесь следующей синхронизации.</string>
     <string name="version">Версия: %1$s</string>
+    <string name="verypoor">Очень плохо</string>
     <string name="view">Вид</string>
     <string name="visible_measurements">Отображаемые измерения</string>
     <string name="visible_measurements_description">Здесь вы можете выбрать, какие измерения отображать и в каком порядке. Отключите переключатель «Использовать по умолчанию», чтобы настроить параметры.</string>
     <string name="visible_measurements_use_default">Использовать по умолчанию</string>
-    <string name="voc">ЛОС</string>
-    <string name="voc_with_unit">ЛОС (%1$s)</string>
-    <string name="volatile_organic_compounds">Летучие органические соединения</string>
+    <string name="voc">Индекс ЛОС</string>
+    <string name="voc_with_unit">Индекс ЛОС (%1$s)</string>
+    <string name="volatile_organic_compounds">Индекс летучих органических соединений</string>
     <string name="voltage_reading">%1$,.2f %2$s</string>
     <string name="voltage_unit">В</string>
     <string name="welcome_text_0">Проведите пальцем чтобы узнать, чем Ruuvi Station может помочь вам.</string>
