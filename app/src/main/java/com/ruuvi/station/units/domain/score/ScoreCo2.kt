@@ -5,7 +5,7 @@ object ScoreCo2: IScoreMeasurement {
         return when {
             value < 600 -> QualityRange.Excellent
             value < 800 -> QualityRange.Good
-            value < 1350 -> QualityRange.Moderate
+            value < 1350 -> QualityRange.Fair
             value < 2100 -> QualityRange.Poor
             else -> QualityRange.VeryPoor
         }

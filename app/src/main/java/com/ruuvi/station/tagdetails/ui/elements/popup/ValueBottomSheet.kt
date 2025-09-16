@@ -35,8 +35,8 @@ import com.ruuvi.station.app.ui.components.modifier.fadingEdge
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.RuuviTheme
 import com.ruuvi.station.app.ui.theme.ruuviStationFontsSizes
-import com.ruuvi.station.units.domain.aqi.AQI
 import com.ruuvi.station.units.domain.score.QualityCalculator
+import com.ruuvi.station.units.domain.score.QualityRange
 import com.ruuvi.station.units.domain.score.ScoreAqi
 import com.ruuvi.station.units.domain.score.ScoreCo2
 import com.ruuvi.station.units.domain.score.ScorePM
@@ -229,12 +229,12 @@ fun getBeaverAdvice(
     val pm25 = extraValues.firstOrNull{it.unitType == UnitType.PM.PM25}
     val scoreCo2 = co2?.value?.let { ScoreCo2.score(it) }
     val scorePm25 = pm25?.value?.let { ScorePM.score(it) }
-    return when (aqiScore.description) {
-        R.string.aqi_level_5 -> R.string.aqi_advice_excellent
-        R.string.aqi_level_4 -> R.string.aqi_advice_good
-        R.string.aqi_level_3 -> {
-            if (scoreCo2?.description == R.string.moderate) {
-                if (scorePm25?.description == R.string.moderate) {
+    return when (aqiScore) {
+        QualityRange.Excellent -> R.string.aqi_advice_excellent
+        QualityRange.Good -> R.string.aqi_advice_good
+        QualityRange.Fair -> {
+            if (scoreCo2 == QualityRange.Fair) {
+                if (scorePm25 == QualityRange.Fair) {
                     R.string.aqi_advice_moderate_both
                 } else {
                     R.string.aqi_advice_moderate_co2
@@ -243,9 +243,9 @@ fun getBeaverAdvice(
                 R.string.aqi_advice_moderate_pm25
             }
         }
-        R.string.aqi_level_2 -> {
-            if (scoreCo2?.description == R.string.poor) {
-                if (scorePm25?.description == R.string.poor) {
+        QualityRange.Poor -> {
+            if (scoreCo2 == QualityRange.Poor) {
+                if (scorePm25 == QualityRange.Poor) {
                     R.string.aqi_advice_poor_both
                 } else {
                     R.string.aqi_advice_poor_co2
@@ -254,9 +254,9 @@ fun getBeaverAdvice(
                 R.string.aqi_advice_poor_pm25
             }
         }
-        R.string.aqi_level_1 -> {
-            if (scoreCo2?.description == R.string.verypoor) {
-                if (scorePm25?.description == R.string.verypoor) {
+        QualityRange.VeryPoor -> {
+            if (scoreCo2 == QualityRange.VeryPoor) {
+                if (scorePm25 == QualityRange.VeryPoor) {
                     R.string.aqi_advice_verypoor_both
                 } else {
                     R.string.aqi_advice_verypoor_co2

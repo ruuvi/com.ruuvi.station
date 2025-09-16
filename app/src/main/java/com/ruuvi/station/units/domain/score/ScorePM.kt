@@ -5,7 +5,7 @@ object ScorePM: IScoreMeasurement {
         return when {
             value < 5 -> QualityRange.Excellent
             value < 12 -> QualityRange.Good
-            value < 30 -> QualityRange.Moderate
+            value < 30 -> QualityRange.Fair
             value < 55 -> QualityRange.Poor
             else -> QualityRange.VeryPoor
         }

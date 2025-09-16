@@ -88,7 +88,9 @@ fun ValueSheetHeader(
             QualityIndicator(
                 color = score.color,
                 description = score.description,
-                modifier = Modifier.align(Alignment.End)
+                modifier = Modifier
+                    .align(Alignment.End)
+                    .padding(vertical = 4.dp)
             )
         }
     }

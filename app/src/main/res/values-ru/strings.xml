@@ -232,6 +232,7 @@
     <string name="export_csv_header_formatE0">Дата,AQI,Температура (%1$s),Влажность (%2$s),Давление (%3$s),Освещённость (lx),Средний звук (dBA),Пиковый звук (dBA),CO2(ppm),VOC,NOX,PM1(µg/m³),PM2.5(µg/m³),PM4(µg/m³),PM10(µg/m³),RSSI (dBm),Ускорение X (g),Ускорение Y (g),Ускорение Z (g),Напряжение (V),Счётчик движений,Порядковый номер измерения,Мощность передачи (dBm)</string>
     <string name="export_history">Выгрузить историю (csv)</string>
     <string name="export_history_xlsx">Выгрузить историю (xlsx)</string>
+    <string name="fair">Удовлетворительно</string>
     <string name="file_not_supported">Тип файла не поддерживается</string>
     <string name="firmware">Прошивка</string>
     <string name="firmware_update">Обновить</string>
@@ -309,7 +310,6 @@
     <string name="menu_what_to_measure">Что измерять с помощью Ruuvi?</string>
     <string name="min">мин</string>
     <string name="minutes">Минут</string>
-    <string name="moderate">Удовлетворительно</string>
     <string name="more">Больше...</string>
     <string name="more_info">Дополнительно</string>
     <string name="movement_counter">Счетчик Движения</string>

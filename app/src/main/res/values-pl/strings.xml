@@ -189,6 +189,7 @@
     <string name="export_csv_header_format3">Znacznik czasu,temperatura (%1$s), wilgotność (%2$s), ciśnienie (%3$s),RSSI,przyspieszenie X,przyspieszenie Y,przyspieszenie Z,napięcie</string>
     <string name="export_csv_header_format5">Znacznik czasu,temperatura (%1$s), wilgotność (%2$s), ciśnienie (%3$s),RSSI,przyspieszenie X,przyspieszenie Y,przyspieszenie Z,napięcie,licznik przesunięć, numer sekwencji pomiaru</string>
     <string name="export_csv_header_formatE0">Data,AQI,Temperatura (%1$s),Wilgotność (%2$s),Ciśnienie (%3$s),Natężenie światła (lx),Dźwięk średni(dBA),Dźwięk szczytowy(dBA),CO2(ppm),VOC,NOX,PM1(µg/m³),PM2.5(µg/m³),PM4(µg/m³),PM10(µg/m³),RSSI (dBm),Przyspieszenie X (g),Przyspieszenie Y (g),Przyspieszenie Z (g),Napięcie (V),Licznik ruchów,Numer sekwencji pomiarowej,Moc TX (dBm)</string>
+    <string name="fair">Dostateczny</string>
     <string name="file_not_supported">Nieobsługiwany typ pliku</string>
     <string name="firmware">Firmware</string>
     <string name="firmware_update">Aktualizuj Firmware</string>
@@ -257,7 +258,6 @@
     <string name="menu_send_feedback">Prześlij opinię</string>
     <string name="min">min</string>
     <string name="minutes">Minuty</string>
-    <string name="moderate">Dostateczny</string>
     <string name="more_info">WIĘCEJ INFORMACJI</string>
     <string name="move_down">Przesuń w dół</string>
     <string name="move_up">Przesuń w górę</string>

@@ -306,6 +306,7 @@
     <string name="export_csv_header_formatE0">Datum,AQI,Temperatur (%1$s),Luftfeuchtigkeit (%2$s),Luftdruck (%3$s),Beleuchtungsstärke (lx),Schall Mittelwert(dBA),Schall Spitze(dBA),CO2(ppm),VOC,NOX,PM1(µg/m³),PM2.5(µg/m³),PM4(µg/m³),PM10(µg/m³),RSSI (dBm),Beschleunigung X (g),Beschleunigung Y (g),Beschleunigung Z (g),Spannung (V),Bewegungszähler,Messfolgenummer,Sendeleistung (dBm)</string>
     <string name="export_history">Verlauf exportieren (csv)</string>
     <string name="export_history_xlsx">Verlauf exportieren (xlsx)</string>
+    <string name="fair">Ausreichend</string>
     <string name="file_not_supported">Dateityp wird nicht unterstützt</string>
     <string name="firmware">Firmware</string>
     <string name="firmware_update">Aktualisiere</string>
@@ -413,7 +414,6 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="menu_what_to_measure">Was mit Ruuvi messen?</string>
     <string name="min">min</string>
     <string name="minutes">Minuten</string>
-    <string name="moderate">Ausreichend</string>
     <string name="more">Mehr...</string>
     <string name="more_info">Mehr info</string>
     <string name="move_down">Nach unten bewegen</string>

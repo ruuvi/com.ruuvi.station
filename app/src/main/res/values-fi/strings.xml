@@ -306,6 +306,7 @@
     <string name="export_csv_header_formatE0">Päivämäärä,AQI,Lämpötila (%1$s),Ilmankosteus (%2$s),Ilmanpaine (%3$s),Valoisuus (lx),Ääni keskiarvo(dBA),Ääni huippu (dBA),CO2(ppm),VOC,NOX,PM1(µg/m³),PM2.5(µg/m³),PM4(µg/m³),PM10(µg/m³),Lähetysteho,Kiihtyvyys X (g),Kiihtyvyys Y (g),Kiihtyvyys Z (g),Jännite (V),Liikelaskuri (liikettä),Mittausjärjestysnumero,Lähetysteho (dBm)</string>
     <string name="export_history">Lataa historia (csv)</string>
     <string name="export_history_xlsx">Lataa historia (xlsx)</string>
+    <string name="fair">Välttävä</string>
     <string name="file_not_supported">Tiedostoa ei tueta</string>
     <string name="firmware">Laiteohjelmisto</string>
     <string name="firmware_update">Päivitä</string>
@@ -402,7 +403,6 @@
     <string name="menu_what_to_measure">Mitä mitata Ruuvilla?</string>
     <string name="min">min</string>
     <string name="minutes">Minuuttia</string>
-    <string name="moderate">Välttävä</string>
     <string name="more">Lisää...</string>
     <string name="more_info">Lisätietoa</string>
     <string name="move_down">Siirrä alas</string>

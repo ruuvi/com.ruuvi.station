@@ -21,13 +21,9 @@ import androidx.compose.ui.unit.dp
 import com.ruuvi.station.app.ui.theme.RuuviTheme
 import com.ruuvi.station.units.domain.score.ExcellentColor
 import com.ruuvi.station.units.domain.score.GoodColor
-import com.ruuvi.station.units.domain.score.GoodToExcellentColor
-import com.ruuvi.station.units.domain.score.ModerateColor
-import com.ruuvi.station.units.domain.score.ModerateToGoodColor
+import com.ruuvi.station.units.domain.score.FairColor
 import com.ruuvi.station.units.domain.score.PoorColor
-import com.ruuvi.station.units.domain.score.PoorToModerateColor
-import com.ruuvi.station.units.domain.score.UnhealthyColor
-import com.ruuvi.station.units.domain.score.UnhealthyToPoorColor
+import com.ruuvi.station.units.domain.score.VeryPoorColor
 
 @Composable
 fun GlowingProgressBarIndicator(
@@ -104,14 +100,7 @@ private fun PreviewGlowingProgressBarIndicator() {
         Column {
             GlowingProgressBarIndicator(
                 progress = 0.05f,
-                lineColor = UnhealthyColor,
-                modifier = Modifier
-                    .background(Color(0xFF083C3D))
-                    .width(100.dp)
-            )
-            GlowingProgressBarIndicator(
-                progress = 0.10f,
-                lineColor = UnhealthyToPoorColor,
+                lineColor = VeryPoorColor,
                 modifier = Modifier
                     .background(Color(0xFF083C3D))
                     .width(100.dp)
@@ -124,22 +113,8 @@ private fun PreviewGlowingProgressBarIndicator() {
                     .width(100.dp)
             )
             GlowingProgressBarIndicator(
-                progress = 0.50f,
-                lineColor = PoorToModerateColor,
-                modifier = Modifier
-                    .background(Color(0xFF083C3D))
-                    .width(100.dp)
-            )
-            GlowingProgressBarIndicator(
                 progress = 0.60f,
-                lineColor = ModerateColor,
-                modifier = Modifier
-                    .background(Color(0xFF083C3D))
-                    .width(100.dp)
-            )
-            GlowingProgressBarIndicator(
-                progress = 0.80f,
-                lineColor = ModerateToGoodColor,
+                lineColor = FairColor,
                 modifier = Modifier
                     .background(Color(0xFF083C3D))
                     .width(100.dp)
@@ -151,13 +126,7 @@ private fun PreviewGlowingProgressBarIndicator() {
                     .background(Color(0xFF083C3D))
                     .width(100.dp)
             )
-            GlowingProgressBarIndicator(
-                progress = 0.90f,
-                lineColor = GoodToExcellentColor,
-                modifier = Modifier
-                    .background(Color(0xFF083C3D))
-                    .width(100.dp)
-            )
+
             GlowingProgressBarIndicator(
                 progress = 0.95f,
                 lineColor = ExcellentColor,

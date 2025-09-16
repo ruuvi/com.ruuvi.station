@@ -306,6 +306,7 @@
     <string name="export_csv_header_formatE0">Date,AQI,Température (%1$s),Humidité (%2$s),Pression (%3$s),Éclairement (lx),Son moyen(dBA),Son pic(dBA),CO2(ppm),COV,NOX,PM1(µg/m³),PM2.5(µg/m³),PM4(µg/m³),PM10(µg/m³),RSSI (dBm),Accélération X (g),Accélération Y (g),Accélération Z (g),Tension (V),Compteur de mouvements,Numéro de mesure,Puissance TX (dBm)</string>
     <string name="export_history">Exportation de l\'historique (csv)</string>
     <string name="export_history_xlsx">Exportation de l\'historique (xlsx)</string>
+    <string name="fair">Passable</string>
     <string name="file_not_supported">Format non supporté</string>
     <string name="firmware">Firmware</string>
     <string name="firmware_update">Mettre à jour</string>
@@ -407,7 +408,6 @@
     <string name="menu_what_to_measure">Que mesurer avec Ruuvi?</string>
     <string name="min">min</string>
     <string name="minutes">Minutes</string>
-    <string name="moderate">Passable</string>
     <string name="more">Plus...</string>
     <string name="more_info">Plus d\'infos</string>
     <string name="move_down">Descendre</string>
