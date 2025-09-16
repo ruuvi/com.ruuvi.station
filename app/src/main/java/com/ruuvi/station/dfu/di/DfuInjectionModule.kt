@@ -16,11 +16,11 @@ import org.kodein.di.generic.singleton
 object DfuInjectionModule {
     val module = Kodein.Module(DfuInjectionModule.javaClass.name) {
         bind<DfuUpdateViewModel>() with factory { sensorId: TagSettingsViewModelArgs ->
-            DfuUpdateViewModel(sensorId.tagId, instance(), instance(), instance(), instance(), instance(), instance(), instance())
+            DfuUpdateViewModel(sensorId.tagId, instance(), instance(), instance(), instance(), instance(), instance())
         }
 
         bind<DfuAirUpdateViewModel>() with factory { sensorId: String ->
-            DfuAirUpdateViewModel(sensorId, instance(), instance())
+            DfuAirUpdateViewModel(sensorId, instance(), instance(), instance(), instance(), instance())
         }
 
         bind<GitHubRepository>() with singleton {

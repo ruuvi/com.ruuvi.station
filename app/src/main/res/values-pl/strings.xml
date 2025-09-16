@@ -65,6 +65,8 @@
     <string name="android_8_required">Ta funkcja jest dostępna na urządzeniach z Androidem 8 i nowszymi. Użyj opcji eksportu do pliku CSV zamiast tego.</string>
     <string name="app_name">Ruuvi Station</string>
     <string name="aqi">AQI</string>
+    <string name="aqi_level_1">Bardzo zły</string>
+    <string name="aqi_level_3">Dostateczny</string>
     <string name="aqi_with_unit">Jakość powietrza (%1$s)</string>
     <string name="average">Średnia</string>
     <string name="background_notification_message">Możesz wyłączyć skanowanie w tle w ustawieniach</string>
@@ -255,6 +257,7 @@
     <string name="menu_send_feedback">Prześlij opinię</string>
     <string name="min">min</string>
     <string name="minutes">Minuty</string>
+    <string name="moderate">Dostateczny</string>
     <string name="more_info">WIĘCEJ INFORMACJI</string>
     <string name="move_down">Przesuń w dół</string>
     <string name="move_up">Przesuń w górę</string>
@@ -309,6 +312,7 @@
     <string name="pm25_with_unit">PM2.5 (%1$s)</string>
     <string name="pm40">PM4</string>
     <string name="pm40_with_unit">PM4 (%1$s)</string>
+    <string name="popup_no_data">Brak historii. Brak pomiarów w tym okresie. Wczytaj pamięć czujnika przez przycisk synchronizacji.</string>
     <string name="prepare_your_sensor">Przygotuj swój czujnik</string>
     <string name="prepare_your_sensor_instructions">\u0026lt;title\u0026gt;Przygotuj swój czujnik\u0026lt;/title\u0026gt;\n\n1. Otwórz osłonę swojego czujnika Ruuvi.</string>
     <string name="prepare_your_sensor_instructions_1">1. Otwórz osłonę swojego czujnika Ruuvi.</string>
@@ -475,6 +479,7 @@
     <string name="updating">Aktualizowanie...</string>
     <string name="use_dev_server_description">Aby zastosować zmiany, po prostu zsynchronizuj dane z pulpitu nawigacyjnego lub poczekaj do następnej synchronizacji.</string>
     <string name="version">Wersja: %1$s</string>
+    <string name="verypoor">Bardzo zły</string>
     <string name="voc">Indeks LZO</string>
     <string name="voc_with_unit">Indeks LZO (%1$s)</string>
     <string name="volatile_organic_compounds">Indeks lotnych związków organicznych</string>

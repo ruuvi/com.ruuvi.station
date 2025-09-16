@@ -4,6 +4,7 @@ import androidx.compose.material.SnackbarDuration
 
 sealed class UiEvent {
     data class Navigate(val route: String, val popBackStack: Boolean = false): UiEvent()
+    data class NavigateNew(val route: Any, val popBackStack: Boolean = false): UiEvent()
     object NavigateUp: UiEvent()
     object Finish: UiEvent()
     data class ShowSnackbar(val message: UiText, val duration: SnackbarDuration = SnackbarDuration.Short): UiEvent()

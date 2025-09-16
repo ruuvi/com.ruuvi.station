@@ -97,9 +97,9 @@
     <string name="appearance_settings_description">%1$s %2$s</string>
     <string name="aqi">AQI</string>
     <string name="aqi_level_0">Odefinierad</string>
-    <string name="aqi_level_1">Ohälsosamt</string>
+    <string name="aqi_level_1">Mycket dålig</string>
     <string name="aqi_level_2">Dålig</string>
-    <string name="aqi_level_3">Måttlig</string>
+    <string name="aqi_level_3">Godtagbar</string>
     <string name="aqi_level_4">Bra</string>
     <string name="aqi_level_5">Utmärkt</string>
     <string name="aqi_with_unit">Luftkvalitet (%1$s)</string>
@@ -402,7 +402,7 @@
     <string name="menu_what_to_measure">Vad ska man mäta med Ruuvi?</string>
     <string name="min">min</string>
     <string name="minutes">Minuter</string>
-    <string name="moderate">Måttlig</string>
+    <string name="moderate">Godtagbar</string>
     <string name="more">Mer...</string>
     <string name="more_info">Mer info</string>
     <string name="move_down">Flytta ner</string>
@@ -506,6 +506,7 @@
     <string name="pm40">PM4</string>
     <string name="pm40_with_unit">PM4 (%1$s)</string>
     <string name="poor">Dålig</string>
+    <string name="popup_no_data">Ingen historik. Inga mätningar under perioden. Ladda sensorns minne via synk i historikvyn.</string>
     <string name="prepare_your_sensor">Förbered din sensor</string>
     <string name="prepare_your_sensor_instructions">\u0026lt;title\u0026gt;Förbered din sensor\u0026lt;/title\u0026gt;\n\n1. Öppna locket på din Ruuvi sensor\n\n2. Leta reda på små runda svarta knappar på det vita kretskortet; äldre Ruuvi-sensorer har 2 knappar märkta “R“ och “B“ medan nyare har bara en knapp utan etikett.\n\n3. Lägg sensorn i uppdateringsläge\n\n3.1. Om din sensor har två knappar: håll knappen “B” intryckt medan du trycker en gång på “R”. Släpp knapp “B”.\n\n3.2. Om din sensor har en knapp, håll knappen intryckt i 10 sekunder.\n\n4. Uppgraderingsläget lyckades om den röda lysdioden på kretskortet lyser och knappens text i appen har bytts till “Starta uppdatering“.</string>
     <string name="prepare_your_sensor_instructions_1">1. Öppna locket på din Ruuvi sensor</string>
@@ -728,6 +729,7 @@
     <string name="use_dev_server_description">För att tillämpa ändringar synkronisera helt enkelt data från instrumentpanelen eller vänta till nästa synkronisering.</string>
     <string name="use_without_account">Nej tack, hoppa över</string>
     <string name="version">Version: %1$s</string>
+    <string name="verypoor">Mycket dålig</string>
     <string name="view">Vy</string>
     <string name="visible_measurements">Synliga mätvärden</string>
     <string name="visible_measurements_description">Här kan du välja vilka mätvärden du vill se och i vilken ordning. Stäng av "Använd standard" för att anpassa inställningarna.</string>

@@ -2,7 +2,6 @@ package com.ruuvi.station.dfu.ui
 
 import androidx.lifecycle.*
 import com.ruuvi.station.R
-import com.ruuvi.station.bluetooth.AirFirmwareInteractor
 import com.ruuvi.station.bluetooth.domain.*
 import com.ruuvi.station.bluetooth.model.SensorFirmwareResult
 import com.ruuvi.station.database.domain.SensorSettingsRepository
@@ -34,7 +33,6 @@ class DfuUpdateViewModel(
     private val dfuInteractor: DfuInteractor,
     private val tagRepository: TagRepository,
     private val sensorSettingsRepository: SensorSettingsRepository,
-    private val airFirmwareInteractor: AirFirmwareInteractor
 ): ViewModel() {
 
     private val _deviceType = MutableStateFlow<DeviceType>(DeviceType.TAG)
@@ -84,7 +82,6 @@ class DfuUpdateViewModel(
 
         if (ruuviTag?.isAir() == true) {
             _deviceType.value = DeviceType.AIR
-            _stage.value = DfuUpdateStage.AIR_UPDATE
         } else {
             _deviceType.value = DeviceType.TAG
             _stage.value = DfuUpdateStage.CHECKING_CURRENT_FW_VERSION
@@ -94,10 +91,6 @@ class DfuUpdateViewModel(
         canStartUpdate.addSource(_sensorFwVersion) { canStartUpdate.value = updateAllowed() }
         canStartUpdate.addSource(_latestFwVersion) { canStartUpdate.value = updateAllowed() }
         canStartUpdate.addSource(_stage) { canStartUpdate.value = updateAllowed() }
-    }
-
-    fun initAirInteractor() {
-        airFirmwareInteractor.connect(sensorId)
     }
 
     fun permissionsChecked(permissionsGranted: Boolean) {
@@ -157,7 +150,7 @@ class DfuUpdateViewModel(
     fun getLatestFw() {
         viewModelScope.launch {
             try {
-                val latestFw = latestFwInteractor.funGetLatestFwVersion()
+                val latestFw = latestFwInteractor.getLatestFwVersion()
                 latestFwinfo = latestFw
                 _latestFwVersion.value = latestFw?.tag_name
             } catch (e: Exception) {
@@ -318,6 +311,5 @@ enum class DfuUpdateStage{
     READY_FOR_UPDATE,
     UPDATING_FW,
     UPDATE_FINISHED,
-    ERROR,
-    AIR_UPDATE
+    ERROR
 }

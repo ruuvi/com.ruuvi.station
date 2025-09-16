@@ -97,9 +97,9 @@
     <string name="appearance_settings_description">%1$s %2$s</string>
     <string name="aqi">AQI</string>
     <string name="aqi_level_0">Indéfini</string>
-    <string name="aqi_level_1">Malsain</string>
+    <string name="aqi_level_1">Très mauvais</string>
     <string name="aqi_level_2">Mauvais</string>
-    <string name="aqi_level_3">Modéré</string>
+    <string name="aqi_level_3">Passable</string>
     <string name="aqi_level_4">Bon</string>
     <string name="aqi_level_5">Excellent</string>
     <string name="aqi_with_unit">Qualité de l\'air (%1$s)</string>
@@ -407,7 +407,7 @@
     <string name="menu_what_to_measure">Que mesurer avec Ruuvi?</string>
     <string name="min">min</string>
     <string name="minutes">Minutes</string>
-    <string name="moderate">Modéré</string>
+    <string name="moderate">Passable</string>
     <string name="more">Plus...</string>
     <string name="more_info">Plus d\'infos</string>
     <string name="move_down">Descendre</string>
@@ -511,6 +511,7 @@
     <string name="pm40">PM4</string>
     <string name="pm40_with_unit">PM4 (%1$s)</string>
     <string name="poor">Mauvais</string>
+    <string name="popup_no_data">Aucune historique. Aucune mesure reçue. Chargez la mémoire du capteur via le bouton sync dans l’historique.</string>
     <string name="prepare_your_sensor">Préparez votre capteur</string>
     <string name="prepare_your_sensor_instructions">\u0026lt;title\u0026gt;Préparez votre capteur\u0026lt;/title\u0026gt;\n\n1. Ouvrez le couvercle de votre capteur Ruuvi\n\n2. Localisez les petits boutons ronds noirs sur la carte de circuit imprimé blanche ; les anciens capteurs Ruuvi ont 2 boutons étiquetés “R” et “B” tandis que les plus récents n\'ont qu\'un seul bouton sans étiquette.\n\n3. Mettez le capteur en mode de mise à jour :\n\n3.1. Si votre capteur est équipé de 2 boutons : maintenez le bouton “B” enfoncé tout en appuyant momentanément sur le bouton “R”. Relâchez le bouton “B”.\n\n3.2. Si votre capteur possède un seul bouton : maintenez le bouton enfoncé pendant 10 secondes.\n\n4. Si le réglage est réussi, vous verrez une lumière rouge fixe s\'allumer sur la carte de circuit imprimé et le bouton de l\'application passera à “Démarrer la mise à jour”.</string>
     <string name="prepare_your_sensor_instructions_1">1. Ouvrez le couvercle de votre capteur Ruuvi</string>
@@ -733,6 +734,7 @@
     <string name="use_dev_server_description">Pour appliquer les modifications, synchronisez simplement les données du tableau de bord ou attendez la prochaine synchronisation.</string>
     <string name="use_without_account">Non merci, ignorer</string>
     <string name="version">Version : %1$s</string>
+    <string name="verypoor">Très mauvais</string>
     <string name="view">Voir</string>
     <string name="visible_measurements">Mesures visibles</string>
     <string name="visible_measurements_description">Ici, vous pouvez choisir quelles mesures afficher et dans quel ordre. Désactivez l’option « Utiliser par défaut » pour personnaliser les paramètres.</string>

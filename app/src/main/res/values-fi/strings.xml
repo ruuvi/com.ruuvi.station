@@ -97,9 +97,9 @@
     <string name="appearance_settings_description">%1$s %2$s</string>
     <string name="aqi">AQI</string>
     <string name="aqi_level_0">Määrittämätön</string>
-    <string name="aqi_level_1">Epäterveellinen</string>
+    <string name="aqi_level_1">Erittäin huono</string>
     <string name="aqi_level_2">Huono</string>
-    <string name="aqi_level_3">Kohtalainen</string>
+    <string name="aqi_level_3">Välttävä</string>
     <string name="aqi_level_4">Hyvä</string>
     <string name="aqi_level_5">Erinomainen</string>
     <string name="aqi_with_unit">Ilmanlaatu (%1$s)</string>
@@ -402,7 +402,7 @@
     <string name="menu_what_to_measure">Mitä mitata Ruuvilla?</string>
     <string name="min">min</string>
     <string name="minutes">Minuuttia</string>
-    <string name="moderate">Kohtalainen</string>
+    <string name="moderate">Välttävä</string>
     <string name="more">Lisää...</string>
     <string name="more_info">Lisätietoa</string>
     <string name="move_down">Siirrä alas</string>
@@ -506,6 +506,7 @@
     <string name="pm40">PM4</string>
     <string name="pm40_with_unit">PM4 (%1$s)</string>
     <string name="poor">Huono</string>
+    <string name="popup_no_data">Ei historiatietoa. Mittauksia ei saatu tältä jaksolta. Lataa anturin muisti painamalla synkronoi historianäkymässä.</string>
     <string name="prepare_your_sensor">Laitteen asettaminen päivitystilaan</string>
     <string name="prepare_your_sensor_instructions">\u0026lt;title\u0026gt;Laitteen asettaminen päivitystilaan\u0026lt;/title\u0026gt;\n\n1. Avaa Ruuvi-anturin suojakotelo\n\n2. Paikanna valkoisella piirilevyllä olevat pienet pyöreät mustat painikkeet; vanhemmissa Ruuvi-antureissa on 2 painiketta “R” ja “B”, kun taas uudemmissa on vain yksi nimeämätön painike.\n\n3. Aseta anturi päivitystilaan:\n\n3.1. Anturissasi on kaksi painiketta: pidä painike “B” alaspainettuna ja napauta samalla painiketta “R”. Vapauta painike “B”.\n\n3.2. Anturissasi on yksi painike: pidä painiketta alaspainettuna 10 sekunnin ajan.\n\n4. Päivitystilaan siirtyminen onnistui, mikäli piirilevyllä oleva punainen LED-valo on nyt aktiivinen ja sovelluksen painikkeen nimeksi on vaihtunut “Aloita päivitys”.</string>
     <string name="prepare_your_sensor_instructions_1">1. Avaa Ruuvi-anturin suojakotelo</string>
@@ -728,6 +729,7 @@
     <string name="use_dev_server_description">Ota muutokset käyttöön yksinkertaisesti synkronoimalla koontinäytöllä tai odota seuraavaa synkronointia.</string>
     <string name="use_without_account">Ei kiitos, ohita</string>
     <string name="version">Versio: %1$s</string>
+    <string name="verypoor">Erittäin huono</string>
     <string name="view">Näkymä</string>
     <string name="visible_measurements">Näytettävät mittaukset</string>
     <string name="visible_measurements_description">Tällä sivulla voit valita, mitkä mittaukset haluat nähdä ja missä järjestyksessä. Poista "Käytä oletusta" -valinta muokataksesi asetuksia.</string>

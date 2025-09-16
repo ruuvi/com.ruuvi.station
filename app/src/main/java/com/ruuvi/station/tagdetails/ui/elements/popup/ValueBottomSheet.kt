@@ -280,7 +280,7 @@ fun NoHistoryData() {
             style = RuuviStationTheme.typography.dashboardSecondary,
             fontSize = ruuviStationFontsSizes.petite.limitScaleTo(1.5f),
             textAlign = TextAlign.Center,
-            text = stringResource(R.string.no_data),
+            text = stringResource(R.string.popup_no_data),
         )
     }
 }

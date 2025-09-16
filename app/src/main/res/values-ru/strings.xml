@@ -61,9 +61,9 @@
     <string name="appearance_settings_description">%1$s %2$s</string>
     <string name="aqi">AQI</string>
     <string name="aqi_level_0">Неопределено</string>
-    <string name="aqi_level_1">Вредно</string>
+    <string name="aqi_level_1">Очень плохо</string>
     <string name="aqi_level_2">Плохо</string>
-    <string name="aqi_level_3">Умеренно</string>
+    <string name="aqi_level_3">Удовлетворительно</string>
     <string name="aqi_level_4">Хорошо</string>
     <string name="aqi_level_5">Отлично</string>
     <string name="aqi_with_unit">Качество воздух (%1$s)</string>
@@ -309,7 +309,7 @@
     <string name="menu_what_to_measure">Что измерять с помощью Ruuvi?</string>
     <string name="min">мин</string>
     <string name="minutes">Минут</string>
-    <string name="moderate">Умеренно</string>
+    <string name="moderate">Удовлетворительно</string>
     <string name="more">Больше...</string>
     <string name="more_info">Дополнительно</string>
     <string name="movement_counter">Счетчик Движения</string>
@@ -367,6 +367,7 @@
     <string name="pm40">PM4</string>
     <string name="pm40_with_unit">PM4 (%1$s)</string>
     <string name="poor">Плохо</string>
+    <string name="popup_no_data">Нет данных истории. За этот период нет измерений. Загрузите память датчика, нажав «Синхронизировать» в истории.</string>
     <string name="press_to_add">Нет добавленных датчиков\nнажмите чтобы добавить</string>
     <string name="pressure">Атмосферное Давление</string>
     <string name="pressure_hpa_name">Гектопаскаль (гПа)</string>

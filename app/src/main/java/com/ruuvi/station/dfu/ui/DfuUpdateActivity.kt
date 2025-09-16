@@ -1,6 +1,5 @@
 package com.ruuvi.station.dfu.ui
 
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -43,6 +42,7 @@ import com.ruuvi.station.app.ui.theme.RuuviTheme
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.permissions.PermissionsInteractor
 import com.ruuvi.station.app.ui.RuuviTopAppBar
+import com.ruuvi.station.app.ui.UiEvent
 import timber.log.Timber
 
 class DfuUpdateActivity : AppCompatActivity() , KodeinAware {
@@ -127,6 +127,31 @@ class DfuUpdateActivity : AppCompatActivity() , KodeinAware {
 
                 StatusBarFill {
                     if (deviceType == DeviceType.AIR) {
+                        LaunchedEffect(null) {
+                            viewModelAir.uiEvent.collect { uiEvent ->
+                                Timber.d("uiEvent $uiEvent")
+                                when (uiEvent) {
+                                    is UiEvent.NavigateNew -> {
+                                        if (uiEvent.popBackStack) {
+                                            navController.navigate(uiEvent.route) {
+                                                popUpToRoute
+                                            }
+                                        } else {
+                                            navController.navigate(uiEvent.route)
+                                        }
+                                    }
+                                    is UiEvent.ShowSnackbar -> {
+                                        scaffoldState.snackbarHostState.showSnackbar(
+                                            message = uiEvent.message.asString(this@DfuUpdateActivity),
+                                            actionLabel = getString(R.string.ok)
+                                        )
+                                    }
+                                    is UiEvent.NavigateUp -> navController.navigateUp()
+                                    else -> {}
+                                }
+                            }
+                        }
+
                         Scaffold(
                             modifier = Modifier
                                 .systemBarsPadding()
@@ -169,6 +194,7 @@ class DfuUpdateActivity : AppCompatActivity() , KodeinAware {
         permissionsInteractor.requestPermissions(false, true)
         val permissionsGranted = permissionsInteractor.arePermissionsGranted()
         viewModel.permissionsChecked(permissionsGranted)
+        viewModelAir.permissionsChecked(permissionsGranted)
     }
 
     companion object {
@@ -203,27 +229,7 @@ fun DfuUpdateScreen(viewModel: DfuUpdateViewModel, selectFile: ()-> Unit) {
             DfuUpdateStage.UPDATE_FINISHED -> UpdateSuccessfulScreen(viewModel)
             DfuUpdateStage.UPDATING_FW -> UpdatingFwStageScreen(viewModel)
             DfuUpdateStage.ERROR -> ErrorScreen(viewModel)
-            DfuUpdateStage.AIR_UPDATE -> AirUpdate(viewModel, selectFile)
         }
-    }
-}
-
-@Composable
-fun AirUpdate(viewModel: DfuUpdateViewModel, selectFile: ()-> Unit) {
-    LaunchedEffect(key1 = viewModel.sensorId) {
-        selectFile()
-    }
-
-    val updatePercent by viewModel.updateFwProgress.observeAsState()
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        SubtitleWithPadding(text = stringResource(id = R.string.updating))
-        Progress(progress = (updatePercent?.toFloat() ?: 0f) / 100f)
-
-        ParagraphWithPadding(text = "$updatePercent %")
-        SubtitleWithPadding(text = stringResource(id = R.string.dfu_update_do_not_close_app))
     }
 }
 
@@ -369,7 +375,7 @@ fun ReadyForUpdateScreen(viewModel: DfuUpdateViewModel) {
 
 @Composable
 fun UpdateSuccessfulScreen(viewModel: DfuUpdateViewModel) {
-    SubtitleWithPadding(text = stringResource(id = R.string.update_successful))
+    SubtitleWithPadding(text = stringResource(id = R.string.update_successful_tag))
 }
 
 @Composable

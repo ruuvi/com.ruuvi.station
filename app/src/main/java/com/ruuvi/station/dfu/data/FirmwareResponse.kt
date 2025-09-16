@@ -9,9 +9,9 @@ data class FirmwareInfo(
 )
 
 data class FirmwareData(
-    val latest: FirmwareInfo,
-    val beta: FirmwareInfo,
-    val alpha: FirmwareInfo,
+    val latest: FirmwareInfo?,
+    val beta: FirmwareInfo?,
+    val alpha: FirmwareInfo?,
 )
 
 data class FirmwareResponse(

@@ -97,9 +97,9 @@
     <string name="appearance_settings_description">%1$s %2$s</string>
     <string name="aqi">AQI</string>
     <string name="aqi_level_0">Undefiniert</string>
-    <string name="aqi_level_1">Ungesund</string>
+    <string name="aqi_level_1">Sehr schlecht</string>
     <string name="aqi_level_2">Schlecht</string>
-    <string name="aqi_level_3">Mäßig</string>
+    <string name="aqi_level_3">Ausreichend</string>
     <string name="aqi_level_4">Gut</string>
     <string name="aqi_level_5">Ausgezeichnet</string>
     <string name="aqi_with_unit">Luftqualität (%1$s)</string>
@@ -413,7 +413,7 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="menu_what_to_measure">Was mit Ruuvi messen?</string>
     <string name="min">min</string>
     <string name="minutes">Minuten</string>
-    <string name="moderate">Mäßig</string>
+    <string name="moderate">Ausreichend</string>
     <string name="more">Mehr...</string>
     <string name="more_info">Mehr info</string>
     <string name="move_down">Nach unten bewegen</string>
@@ -517,6 +517,7 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="pm40">PM4</string>
     <string name="pm40_with_unit">PM4 (%1$s)</string>
     <string name="poor">Schlecht</string>
+    <string name="popup_no_data">Keine Historie. Keine Messungen in diesem Zeitraum. Laden Sie den Speicherdaten des Sensors über Synchronisieren.</string>
     <string name="prepare_your_sensor">Bereiten Sie Ihren Sensor vor</string>
     <string name="prepare_your_sensor_instructions">\u0026lt;title\u0026gt;Bereiten Sie Ihren Sensor vor\u0026lt;/title\u0026gt;\n\n1. Öffnen Sie den Deckel Ihres Ruuvi-Sensors\n\n2. Suchen Sie die kleinen runden schwarzen Knöpfe auf der weißen Platine; ältere Ruuvi-Sensoren haben zwei Knöpfe mit den Bezeichnungen “R” und “B”, während neuere nur einen Knopf ohne Beschriftung haben.\n\n3. Stellen Sie den Sensor in den Aktualisierungsmodus:\n\n3.1. Wenn Ihr Sensor 2 Tasten hat: Halten Sie die Taste “B” gedrückt und tippen Sie gleichzeitig kurz auf die Taste “R”. Lassen Sie die Taste “B” los.\n\n3.2. Wenn Ihr Sensor eine einzelne Taste hat: Halten Sie die Taste 10 Sekunden lang gedrückt.\n\n4. Wenn die Einstellung erfolgreich war, leuchtet ein rotes Licht auf der Platine und die Schaltfläche in der App ändert sich in “Starten Sie die Aktualisierung”.</string>
     <string name="prepare_your_sensor_instructions_1">1. Öffnen Sie den Deckel Ihres Ruuvi-Sensors</string>
@@ -739,6 +740,7 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="use_dev_server_description">Um Änderungen zu übernehmen, synchronisieren Sie einfach die Daten vom Dashboard oder warten Sie bis zur nächsten Synchronisierung.</string>
     <string name="use_without_account">Nein danke, überspringen</string>
     <string name="version">Version: %1$s</string>
+    <string name="verypoor">Sehr schlecht</string>
     <string name="view">Ansicht</string>
     <string name="visible_measurements">Sichtbare Messwerte</string>
     <string name="visible_measurements_description">Hier kannst du auswählen, welche Messwerte du sehen möchtest und in welcher Reihenfolge. Deaktiviere den Schalter „Standard verwenden“, um die Einstellungen anzupassen.</string>

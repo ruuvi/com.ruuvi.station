@@ -114,9 +114,9 @@
     <string name="aqi_advice_verypoor_co2">Your Air Quality is very poor, because CO2 is high. Ventilate the room for better air</string>
     <string name="aqi_advice_verypoor_pm25">Your Air Quality is very poor, because PM2.5 is high. Ventilate the room, but take in account possible outdoor air pollution</string>
     <string name="aqi_level_0">Undefined</string>
-    <string name="aqi_level_1">Unhealthy</string>
+    <string name="aqi_level_1">Very poor</string>
     <string name="aqi_level_2">Poor</string>
-    <string name="aqi_level_3">Moderate</string>
+    <string name="aqi_level_3">Fair</string>
     <string name="aqi_level_4">Good</string>
     <string name="aqi_level_5">Excellent</string>
     <string name="aqi_with_unit">Air Quality (%1$s)</string>
@@ -424,7 +424,7 @@
     <string name="menu_what_to_measure">What to measure with Ruuvi?</string>
     <string name="min">min</string>
     <string name="minutes">Minutes</string>
-    <string name="moderate">Moderate</string>
+    <string name="moderate">Fair</string>
     <string name="more">More...</string>
     <string name="more_info">More info</string>
     <string name="move_down">Move down</string>
@@ -529,6 +529,7 @@
     <string name="pm40">PM4</string>
     <string name="pm40_with_unit">PM4 (%1$s)</string>
     <string name="poor">Poor</string>
+    <string name="popup_no_data">No history to show. No measurements received in this period. Load sensor memory by pressing sync in the history view.</string>
     <string name="prepare_your_sensor">Prepare your sensor</string>
     <string name="prepare_your_sensor_instructions">\u0026lt;title\u0026gt;Prepare your sensor\u0026lt;/title\u0026gt;\n\n1. Open the cover of your Ruuvi sensor\n\n2. Locate the small round black buttons on the white circuit board; older Ruuvi sensors have 2 buttons labelled “R” and “B” while newer ones have only one button without a label.\n\n3. Set the sensor to updating mode:\n\n3.1. If your sensor has 2 buttons: keep “B” button pressed while tapping button “R” momentarily. Release button “B”.\n\n3.2. If your sensor has a single button: keep the button pressed for 10 seconds.\n\n4. If set successfully, you will see a solid red light lit on the circuit board and the button in the app will change to “Start the update”.</string>
     <string name="prepare_your_sensor_instructions_1">1. Open the cover of your Ruuvi sensor</string>
@@ -745,6 +746,8 @@
     <string name="update_action">RESTART</string>
     <string name="update_downloaded_message">An update has just been downloaded.</string>
     <string name="update_successful">Update successful</string>
+    <string name="update_successful_air">Your Ruuvi Air firmware was uploaded successfully, wait few moments for the Ruuvi Air to restart and finish the update.</string>
+    <string name="update_successful_tag">Your RuuviTag firmware was updated successfully.</string>
     <string name="updated">Updated %1$s</string>
     <string name="updating">Updating...</string>
     <string name="use_dev_server">Use Dev server</string>
