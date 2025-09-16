@@ -25,6 +25,7 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.toUpperCase
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
@@ -39,10 +40,12 @@ import com.ruuvi.station.dfu.ui.FirmwareGroup
 import com.ruuvi.station.network.ui.claim.ClaimSensorActivity
 import com.ruuvi.station.network.ui.ShareSensorActivity
 import com.ruuvi.station.tag.domain.RuuviTag
+import com.ruuvi.station.tag.domain.isAir
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import okhttp3.internal.toHexString
 import timber.log.Timber
+import java.util.Locale
 
 @Composable
 fun SensorSettings(
@@ -344,46 +347,73 @@ fun MoreInfoGroup(
             title = stringResource(id = R.string.mac_address),
             value = sensorState.id
         )
-        if (sensorState.latestMeasurement?.dataFormat == 3 ||
-            sensorState.latestMeasurement?.dataFormat == 5 ||
-            sensorState.latestMeasurement?.dataFormat == 0xC5) {
+
+        sensorState.latestMeasurement?.dataFormat?.toHexString()?.let {
             MoreInfoItem(
                 title = stringResource(id = R.string.data_format),
-                value = sensorState.latestMeasurement.dataFormat.toHexString()
+                value = it.uppercase()
             )
-            MoreInfoItem(
-                title = stringResource(id = R.string.data_received_via),
-                value = stringResource(id = sensorState.getSource().getDescriptionResource())
-            )
-            BatteryInfoItem(
-                voltage = sensorState.latestMeasurement.voltage.value,
-                isLowBattery = isLowBattery
-            )
-            MoreInfoItem(
-                title = stringResource(id = R.string.acceleration_x),
-                value = getAccelerationString(sensorState.latestMeasurement.accelerationX)
-            )
-            MoreInfoItem(
-                title = stringResource(id = R.string.acceleration_y),
-                value = getAccelerationString(sensorState.latestMeasurement.accelerationY)
-            )
-            MoreInfoItem(
-                title = stringResource(id = R.string.acceleration_z),
-                value = getAccelerationString(sensorState.latestMeasurement.accelerationZ)
-            )
-            MoreInfoItem(
-                title = stringResource(id = R.string.tx_power),
-                value = stringResource(id = R.string.tx_power_reading, sensorState.latestMeasurement.txPower)
-            )
+        }
+
+        MoreInfoItem(
+            title = stringResource(id = R.string.data_received_via),
+            value = stringResource(id = sensorState.getSource().getDescriptionResource())
+        )
+
+        if (!sensorState.isAir()) {
+            sensorState.latestMeasurement?.voltage?.value?.let {
+                BatteryInfoItem(
+                    voltage = it,
+                    isLowBattery = isLowBattery
+                )
+            }
+
+            sensorState.latestMeasurement?.accelerationX?.let {
+                MoreInfoItem(
+                    title = stringResource(id = R.string.acceleration_x),
+                    value = getAccelerationString(it)
+                )
+            }
+
+            sensorState.latestMeasurement?.accelerationY?.let {
+                MoreInfoItem(
+                    title = stringResource(id = R.string.acceleration_y),
+                    value = getAccelerationString(it)
+                )
+            }
+
+            sensorState.latestMeasurement?.accelerationZ?.let {
+                MoreInfoItem(
+                    title = stringResource(id = R.string.acceleration_z),
+                    value = getAccelerationString(it)
+                )
+            }
+
+            sensorState.latestMeasurement?.txPower?.let {
+                MoreInfoItem(
+                    title = stringResource(id = R.string.tx_power),
+                    value = stringResource(
+                        id = R.string.tx_power_reading,
+                        it
+                    )
+                )
+            }
+        }
+
+        sensorState.latestMeasurement?.rssi?.valueWithUnit?.let {
             MoreInfoItem(
                 title = stringResource(id = R.string.signal_strength_rssi),
                 value = sensorState.latestMeasurement.rssi.valueWithUnit
             )
+        }
+
+        sensorState.latestMeasurement?.measurementSequenceNumber?.let {
             MoreInfoItem(
                 title = stringResource(id = R.string.measurement_sequence_number),
-                value = sensorState.latestMeasurement.measurementSequenceNumber.toString()
+                value = it.toString()
             )
         }
+
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.medium))
     }
 }
