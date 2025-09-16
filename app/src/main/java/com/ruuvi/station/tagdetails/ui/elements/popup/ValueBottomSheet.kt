@@ -36,18 +36,16 @@ import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.RuuviTheme
 import com.ruuvi.station.app.ui.theme.ruuviStationFontsSizes
 import com.ruuvi.station.units.domain.score.QualityCalculator
-import com.ruuvi.station.units.domain.score.QualityRange
-import com.ruuvi.station.units.domain.score.ScoreAqi
-import com.ruuvi.station.units.domain.score.ScoreCo2
-import com.ruuvi.station.units.domain.score.ScorePM
 import com.ruuvi.station.units.model.Accuracy
 import com.ruuvi.station.units.model.EnvironmentValue
 import com.ruuvi.station.units.model.UnitType
 import com.ruuvi.station.units.model.getDescriptionBodyResId
+import com.ruuvi.station.util.extensions.diffGreaterThan
 import com.ruuvi.station.util.ui.pxToDp
 import com.ruuvi.station.vico.VicoChartNoInteraction
 import com.ruuvi.station.vico.model.ChartData
 import kotlinx.coroutines.launch
+import java.util.Date
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -128,20 +126,29 @@ fun ValueSheetContent(
             } else {
                 NoHistoryData()
             }
-            Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.small))
-            Text(
-                modifier = Modifier.fillMaxWidth(),
-                style = RuuviStationTheme.typography.dashboardSecondary,
-                fontSize = ruuviStationFontsSizes.petite.limitScaleTo(1.5f),
-                textAlign = TextAlign.Right,
-                text = stringResource(R.string.day_2),
-            )
+            if (got2DaysOfHistory(chartHistory)) {
+                Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.small))
+                Text(
+                    modifier = Modifier.fillMaxWidth(),
+                    style = RuuviStationTheme.typography.dashboardSecondary,
+                    fontSize = ruuviStationFontsSizes.petite.limitScaleTo(1.5f),
+                    textAlign = TextAlign.Right,
+                    text = stringResource(R.string.day_2),
+                )
+            }
             Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
         }
 
         MarkupText(sheetValue.unitType.getDescriptionBodyResId())
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extraBig))
     }
+}
+
+fun got2DaysOfHistory(chartHistory: ChartData?): Boolean {
+    val firstTimestamp = chartHistory?.segments?.firstOrNull()?.timestamps?.firstOrNull()
+    return firstTimestamp?.let {
+         Date(it).diffGreaterThan(36*60*60*1000)
+    } ?: true
 }
 
 @Composable
@@ -217,55 +224,6 @@ fun AirValueSheetContent(
         }
         MarkupText(sheetValue.unitType.getDescriptionBodyResId())
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extraBig))
-    }
-}
-
-fun getBeaverAdvice(
-    aqi: EnvironmentValue,
-    extraValues: List<EnvironmentValue>
-): Int? {
-    val aqiScore = ScoreAqi.score(aqi.value)
-    val co2 = extraValues.firstOrNull{it.unitType == UnitType.CO2.Ppm}
-    val pm25 = extraValues.firstOrNull{it.unitType == UnitType.PM.PM25}
-    val scoreCo2 = co2?.value?.let { ScoreCo2.score(it) }
-    val scorePm25 = pm25?.value?.let { ScorePM.score(it) }
-    return when (aqiScore) {
-        QualityRange.Excellent -> R.string.aqi_advice_excellent
-        QualityRange.Good -> R.string.aqi_advice_good
-        QualityRange.Fair -> {
-            if (scoreCo2 == QualityRange.Fair) {
-                if (scorePm25 == QualityRange.Fair) {
-                    R.string.aqi_advice_moderate_both
-                } else {
-                    R.string.aqi_advice_moderate_co2
-                }
-            } else {
-                R.string.aqi_advice_moderate_pm25
-            }
-        }
-        QualityRange.Poor -> {
-            if (scoreCo2 == QualityRange.Poor) {
-                if (scorePm25 == QualityRange.Poor) {
-                    R.string.aqi_advice_poor_both
-                } else {
-                    R.string.aqi_advice_poor_co2
-                }
-            } else {
-                R.string.aqi_advice_poor_pm25
-            }
-        }
-        QualityRange.VeryPoor -> {
-            if (scoreCo2 == QualityRange.VeryPoor) {
-                if (scorePm25 == QualityRange.VeryPoor) {
-                    R.string.aqi_advice_verypoor_both
-                } else {
-                    R.string.aqi_advice_verypoor_co2
-                }
-            } else {
-                R.string.aqi_advice_verypoor_pm25
-            }
-        }
-        else -> null
     }
 }
 

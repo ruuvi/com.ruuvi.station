@@ -19,6 +19,12 @@ import com.ruuvi.station.app.ui.components.SmallerParagraph
 import com.ruuvi.station.app.ui.components.rememberResourceUri
 import com.ruuvi.station.app.ui.theme.Elm
 import com.ruuvi.station.app.ui.theme.RuuviTheme
+import com.ruuvi.station.units.domain.score.QualityRange
+import com.ruuvi.station.units.domain.score.ScoreAqi
+import com.ruuvi.station.units.domain.score.ScoreCo2
+import com.ruuvi.station.units.domain.score.ScorePM
+import com.ruuvi.station.units.model.EnvironmentValue
+import com.ruuvi.station.units.model.UnitType
 
 @Composable
 fun BeaverAdvice(
@@ -59,5 +65,54 @@ fun BeaverAdvice(
 fun BeaverAdvicePreview() {
     RuuviTheme {
         BeaverAdvice("Have a nice day!")
+    }
+}
+
+fun getBeaverAdvice(
+    aqi: EnvironmentValue,
+    extraValues: List<EnvironmentValue>
+): Int? {
+    val aqiScore = ScoreAqi.score(aqi.value)
+    val co2 = extraValues.firstOrNull{it.unitType == UnitType.CO2.Ppm}
+    val pm25 = extraValues.firstOrNull{it.unitType == UnitType.PM.PM25}
+    val scoreCo2 = co2?.value?.let { ScoreCo2.score(it) }
+    val scorePm25 = pm25?.value?.let { ScorePM.score(it) }
+    return when (aqiScore) {
+        QualityRange.Excellent -> R.string.aqi_advice_excellent
+        QualityRange.Good -> R.string.aqi_advice_good
+        QualityRange.Fair -> {
+            if (scoreCo2 == QualityRange.Fair) {
+                if (scorePm25 == QualityRange.Fair) {
+                    R.string.aqi_advice_moderate_both
+                } else {
+                    R.string.aqi_advice_moderate_co2
+                }
+            } else {
+                R.string.aqi_advice_moderate_pm25
+            }
+        }
+        QualityRange.Poor -> {
+            if (scoreCo2 == QualityRange.Poor) {
+                if (scorePm25 == QualityRange.Poor) {
+                    R.string.aqi_advice_poor_both
+                } else {
+                    R.string.aqi_advice_poor_co2
+                }
+            } else {
+                R.string.aqi_advice_poor_pm25
+            }
+        }
+        QualityRange.VeryPoor -> {
+            if (scoreCo2 == QualityRange.VeryPoor) {
+                if (scorePm25 == QualityRange.VeryPoor) {
+                    R.string.aqi_advice_verypoor_both
+                } else {
+                    R.string.aqi_advice_verypoor_co2
+                }
+            } else {
+                R.string.aqi_advice_verypoor_pm25
+            }
+        }
+        else -> null
     }
 }
