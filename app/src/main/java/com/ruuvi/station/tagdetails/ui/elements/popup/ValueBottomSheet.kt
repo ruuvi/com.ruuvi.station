@@ -186,19 +186,18 @@ fun AirValueSheetContent(
         } else {
             NoHistoryData()
         }
-        Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.small))
-        Text(
-            modifier = Modifier.fillMaxWidth(),
-            style = RuuviStationTheme.typography.dashboardSecondary,
-            fontSize = ruuviStationFontsSizes.petite.limitScaleTo(1.5f),
-            textAlign = TextAlign.Right,
-            text = stringResource(R.string.day_2),
-        )
+        if (got2DaysOfHistory(chartHistory)) {
+            Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.small))
+            Text(
+                modifier = Modifier.fillMaxWidth(),
+                style = RuuviStationTheme.typography.dashboardSecondary,
+                fontSize = ruuviStationFontsSizes.petite.limitScaleTo(1.5f),
+                textAlign = TextAlign.Right,
+                text = stringResource(R.string.day_2),
+            )
+        }
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.mediumPlus))
         if (extraValues.isNotEmpty()) {
-            MarkupText(R.string.initial_description_text_air_quality)
-            Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.mediumPlus))
-
             for (extra in extraValues) {
                 ValueWithIndicator(
                     icon = extra.unitType.iconRes,
