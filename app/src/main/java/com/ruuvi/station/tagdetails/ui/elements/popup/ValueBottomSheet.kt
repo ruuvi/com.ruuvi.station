@@ -148,7 +148,7 @@ fun got2DaysOfHistory(chartHistory: ChartData?): Boolean {
     val firstTimestamp = chartHistory?.segments?.firstOrNull()?.timestamps?.firstOrNull()
     return firstTimestamp?.let {
          Date(it).diffGreaterThan(36*60*60*1000)
-    } ?: true
+    } ?: false
 }
 
 @Composable
