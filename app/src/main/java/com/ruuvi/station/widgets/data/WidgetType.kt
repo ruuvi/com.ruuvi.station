@@ -30,7 +30,8 @@ enum class WidgetType(val code: Int, val titleResId: Int, val unitType: UnitType
 
         fun filterWidgetTypes(sensor: RuuviTag): List<WidgetType> {
             val result = mutableListOf<WidgetType>()
-            for (item in WidgetType.entries) {
+            // For now only main measurements
+            for (item in WidgetType.entries.filter { it !in listOf(PM10, PM40, PM100) }) {
                 if (sensor.possibleDisplayOptions.any{ it == item.unitType} || sensor.displayOrder.any{ it == item.unitType}) {
                     result.add(item)
                 }
