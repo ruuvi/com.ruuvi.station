@@ -20,10 +20,12 @@ import androidx.compose.material3.SheetState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -160,6 +162,7 @@ fun AirValueSheetContent(
     scrollToChart: (UnitType) -> Unit,
     onChangeValue: (EnvironmentValue) -> Unit
 ) {
+    val context = LocalContext.current
     val scrollState = rememberScrollState()
     val coroutineScope = rememberCoroutineScope()
     val columnModifier = Modifier.fadingEdge(scrollState)
@@ -215,11 +218,11 @@ fun AirValueSheetContent(
                 Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.medium))
             }
             Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.mediumPlus))
-            val advice = getBeaverAdvice(sheetValue, extraValues)
-            if (advice != null) {
-                BeaverAdvice(stringResource(advice))
-                Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
+            val advice = remember {
+                getBeaverAdvice(context, sheetValue, extraValues)
             }
+            BeaverAdvice(advice)
+            Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
         }
         MarkupText(sheetValue.unitType.getDescriptionBodyResId())
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extraBig))
