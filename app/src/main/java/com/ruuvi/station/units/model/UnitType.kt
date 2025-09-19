@@ -472,7 +472,7 @@ sealed class UnitType(
         iconRes = R.drawable.icon_voc,
         measurementCode = VOC_MEASUREMENT_CODE,
         measurementTitle = R.string.volatile_organic_compounds,
-        measurementName = R.string.voc,
+        measurementName = R.string.voc_index,
         alarmType = AlarmType.VOC,
         defaultAccuracy = Accuracy.Accuracy0
     ) {
@@ -499,7 +499,7 @@ sealed class UnitType(
         iconRes = R.drawable.icon_nox,
         measurementCode = NOX_MEASUREMENT_CODE,
         measurementTitle = R.string.nitrogen_oxides,
-        measurementName = R.string.nox,
+        measurementName = R.string.nox_index,
         alarmType = AlarmType.NOX,
         defaultAccuracy = Accuracy.Accuracy0
     ) {

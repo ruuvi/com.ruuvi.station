@@ -144,7 +144,7 @@ fun SensorValuesLegacy(
                 }
 
                 sensor.latestMeasurement?.nox?.let {
-                    SensorValueItemLegacy(R.drawable.icon_measure_small_temp, it.valueWithoutUnit, "", stringResource(R.string.nox))
+                    SensorValueItemLegacy(R.drawable.icon_measure_small_temp, it.valueWithoutUnit, "", stringResource(R.string.nox_index))
                     Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
                 }
 

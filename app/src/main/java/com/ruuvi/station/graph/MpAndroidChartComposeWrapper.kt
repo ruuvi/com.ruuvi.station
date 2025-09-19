@@ -81,8 +81,8 @@ fun ChartViewPrototype(
         is UnitType.Acceleration -> stringResource(unitType.measurementTitle) + " ($unitString)"
         is UnitType.SignalStrengthUnit -> stringResource(id = R.string.signal_strength_rssi)
         is UnitType.CO2 -> stringResource(id = R.string.co2_with_unit, unitString)
-        is UnitType.VOC -> stringResource(id = R.string.voc)
-        is UnitType.NOX -> stringResource(id = R.string.nox)
+        is UnitType.VOC -> stringResource(id = R.string.voc_index)
+        is UnitType.NOX -> stringResource(id = R.string.nox_index)
         is UnitType.PM.PM10 -> stringResource(id = R.string.pm10_with_unit, unitString)
         is UnitType.PM.PM25 -> stringResource(id = R.string.pm25_with_unit, unitString)
         is UnitType.PM.PM40 -> stringResource(id = R.string.pm40_with_unit, unitString)

@@ -442,7 +442,7 @@
     <string name="none">ei kirjautunut</string>
     <string name="note">Huomaa!</string>
     <string name="notification_permission_needed">Salli hälytysilmoitukset ja taustaskannaus antamalla sovellukselle lupa näyttää ilmoituksia</string>
-    <string name="nox">NOx-indeksi</string>
+    <string name="nox_index">NOx-indeksi</string>
     <string name="nox_with_unit">NOx-indeksi (%1$s)</string>
     <string name="off">Pois</string>
     <string name="offset_correction">Kalibrointi</string>
@@ -734,7 +734,7 @@
     <string name="visible_measurements">Näytettävät mittaukset</string>
     <string name="visible_measurements_description">Tällä sivulla voit valita, mitkä mittaukset haluat nähdä ja missä järjestyksessä. Poista "Käytä oletusta" -valinta muokataksesi asetuksia.</string>
     <string name="visible_measurements_use_default">Käytä oletusta</string>
-    <string name="voc">VOC-indeksi</string>
+    <string name="voc_index">VOC-indeksi</string>
     <string name="voc_with_unit">VOC-indeksi (%1$s)</string>
     <string name="volatile_organic_compounds">Haihtuvien orgaanisten yhdisteiden indeksi</string>
     <string name="voltage_reading">%1$,.2f %2$s</string>

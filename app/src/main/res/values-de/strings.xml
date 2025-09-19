@@ -453,7 +453,7 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="none">keiner</string>
     <string name="note">Notiz!</string>
     <string name="notification_permission_needed">Um Warnmeldungen und das Scannen im Hintergrund zu aktivieren, erlauben Sie Benachrichtigungen in den Einstellungen</string>
-    <string name="nox">NOx-Index</string>
+    <string name="nox_index">NOx-Index</string>
     <string name="nox_with_unit">NOx-Index (%1$s)</string>
     <string name="off">Aus</string>
     <string name="offset_correction">Offset-Korrektur</string>
@@ -745,7 +745,7 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="visible_measurements">Sichtbare Messwerte</string>
     <string name="visible_measurements_description">Hier kannst du auswählen, welche Messwerte du sehen möchtest und in welcher Reihenfolge. Deaktiviere den Schalter „Standard verwenden“, um die Einstellungen anzupassen.</string>
     <string name="visible_measurements_use_default">Standard verwenden</string>
-    <string name="voc">VOC-Index</string>
+    <string name="voc_index">VOC-Index</string>
     <string name="voc_with_unit">VOC-Index (%1$s)</string>
     <string name="volatile_organic_compounds">Index flüchtiger organischer Verbindungen</string>
     <string name="voltage_reading">%1$,.2f %2$s</string>
