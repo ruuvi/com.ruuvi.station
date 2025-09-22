@@ -11,6 +11,7 @@ import com.ruuvi.station.database.domain.SensorHistoryRepository
 import com.ruuvi.station.database.domain.SensorSettingsRepository
 import com.ruuvi.station.database.domain.TagRepository
 import com.ruuvi.station.database.tables.isAir
+import com.ruuvi.station.tag.domain.RuuviTag.Companion.dataFormatIsAir
 import com.ruuvi.station.units.domain.UnitsConverter
 import com.ruuvi.station.units.domain.aqi.AQI
 import com.ruuvi.station.util.extensions.prepareFilename
@@ -64,24 +65,24 @@ class CsvExporter(
         try {
             var fileWriter = FileWriter(csvFile.absolutePath)
 
-            when (tag?.dataFormat) {
-                3 -> fileWriter.append(
+            when  {
+                tag?.dataFormat == 3 -> fileWriter.append(
                     context.getString(
                         R.string.export_csv_header_format3,
                         unitsConverter.getTemperatureUnitString(),
                         unitsConverter.getHumidityUnitString(),
                         unitsConverter.getPressureUnitString()
                     ))
-                5 -> fileWriter.append(
+                tag?.dataFormat == 5 -> fileWriter.append(
                     context.getString(
                         R.string.export_csv_header_format5,
                         unitsConverter.getTemperatureUnitString(),
                         unitsConverter.getHumidityUnitString(),
                         unitsConverter.getPressureUnitString()
                     ))
-                0xE0 -> fileWriter.append(
+                dataFormatIsAir(tag?.dataFormat) -> fileWriter.append(
                     context.getString(
-                        R.string.export_csv_header_formatE0,
+                        R.string.export_csv_header_format_air,
                         unitsConverter.getTemperatureUnitString(),
                         unitsConverter.getHumidityUnitString(),
                         unitsConverter.getPressureUnitString()
@@ -133,7 +134,7 @@ class CsvExporter(
                     fileWriter.append(',')
                 }
                 fileWriter.append(reading.rssi?.toString() ?: nullValue)
-                if (tag?.dataFormat == 3 || tag?.dataFormat == 5 || tag?.isAir() == true) {
+                if (tag?.dataFormat == 3 || tag?.dataFormat == 5) {
                     fileWriter.append(',')
                     fileWriter.append(reading.accelX?.let { reading.accelX.toString() } ?: nullValue)
                     fileWriter.append(',')
@@ -144,12 +145,17 @@ class CsvExporter(
                     fileWriter.append(reading.voltage?.toString() ?: nullValue)
                 }
                 if (tag?.dataFormat == 5 || tag?.isAir() == true) {
-                    fileWriter.append(',')
-                    fileWriter.append(reading.movementCounter?.let { reading.movementCounter.toString() } ?: nullValue)
+                    if(!tag.isAir()) {
+                        fileWriter.append(',')
+                        fileWriter.append(reading.movementCounter?.let { reading.movementCounter.toString() }
+                            ?: nullValue)
+                    }
                     fileWriter.append(',')
                     fileWriter.append(reading.measurementSequenceNumber?.toString() ?: nullValue)
-                    fileWriter.append(',')
-                    fileWriter.append(reading.txPower?.toInt()?.toString() ?: nullValue)
+                    if(!tag.isAir()) {
+                        fileWriter.append(',')
+                        fileWriter.append(reading.txPower?.toInt()?.toString() ?: nullValue)
+                    }
                 }
                 fileWriter.append('\n')
             }

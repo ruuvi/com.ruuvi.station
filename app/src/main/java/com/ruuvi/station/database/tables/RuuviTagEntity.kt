@@ -6,6 +6,7 @@ import com.raizlabs.android.dbflow.annotation.Table
 import com.raizlabs.android.dbflow.structure.BaseModel
 import com.ruuvi.station.bluetooth.contract.FoundRuuviTag
 import com.ruuvi.station.database.domain.LocalDatabase
+import com.ruuvi.station.tag.domain.RuuviTag.Companion.dataFormatIsAir
 import com.ruuvi.station.util.MacAddressUtils
 import java.util.*
 
@@ -214,5 +215,4 @@ fun RuuviTagEntity.isLowBattery(): Boolean {
     }
 }
 
-fun RuuviTagEntity.isAir(): Boolean =
-    this.dataFormat == 0xE0 || this.dataFormat == 0xF0
+fun RuuviTagEntity.isAir(): Boolean = dataFormatIsAir(this.dataFormat)

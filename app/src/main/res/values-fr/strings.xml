@@ -357,7 +357,7 @@
     <string name="export_csv_header_format2_4">Date,Température (%1$s),Humidité (%2$s),Pression (%3$s),Puissance d\'émission(dBm)</string>
     <string name="export_csv_header_format3">Date,Température (%1$s),Humidité (%2$s),Pression (%3$s),Puissance d\'émission (dBm),Accélération en X (g),Accélération en Y (g),Accélération en Z (g),Tension (V)</string>
     <string name="export_csv_header_format5">Date,Température (%1$s),Humidité (%2$s),Pression (%3$s),Puissance d\'émission (dBm),Accélération en X (g), Accélération en Y (g), Accélération en Z (g),Tension (V),Compteur de mouvements (mouvements),Numéro de séquence,Puissance d\'émission (dBm)</string>
-    <string name="export_csv_header_formatE0">Date,AQI,Température (%1$s),Humidité (%2$s),Pression (%3$s),Éclairement (lx),Son moyen(dBA),Son pic(dBA),CO2(ppm),COV,NOX,PM1(µg/m³),PM2.5(µg/m³),PM4(µg/m³),PM10(µg/m³),RSSI (dBm),Accélération X (g),Accélération Y (g),Accélération Z (g),Tension (V),Compteur de mouvements,Numéro de mesure,Puissance TX (dBm)</string>
+    <string name="export_csv_header_format_air">Date,AQI,Température (%1$s),Humidité (%2$s),Pression (%3$s),Éclairement (lx),CO2(ppm),COV,NOX,PM1(µg/m³),PM2.5(µg/m³),PM4(µg/m³),PM10(µg/m³),RSSI (dBm),Numéro de mesure</string>
     <string name="export_history">Exportation de l\'historique (csv)</string>
     <string name="export_history_xlsx">Exportation de l\'historique (xlsx)</string>
     <string name="fair">Passable</string>

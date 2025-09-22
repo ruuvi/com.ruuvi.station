@@ -283,7 +283,7 @@
     <string name="export_csv_header_format2_4">Дата,Температура (%1$s),Влажность (%2$s),Давление (%3$s),RSSI(dBm)</string>
     <string name="export_csv_header_format3">Дата,Температура (%1$s),Влажность (%2$s),Давление (%3$s),RSSI (dBm),Ускорение по X (g),Ускорение по Y (g),Ускорение по Z (g),Напряжение Батареи (V)</string>
     <string name="export_csv_header_format5">Дата,Температура (%1$s),Влажность (%2$s),Давление (%3$s),RSSI (dBm),Ускорение по X (g),Ускорение по Y (g),Ускорение по Z (g),Напряжение Батареи (V),Счетчик Движения (движений),Порядковый Номер Измерения,Мощность Передачи (dBm)</string>
-    <string name="export_csv_header_formatE0">Дата,AQI,Температура (%1$s),Влажность (%2$s),Давление (%3$s),Освещённость (lx),Средний звук (dBA),Пиковый звук (dBA),CO2(ppm),VOC,NOX,PM1(µg/m³),PM2.5(µg/m³),PM4(µg/m³),PM10(µg/m³),RSSI (dBm),Ускорение X (g),Ускорение Y (g),Ускорение Z (g),Напряжение (V),Счётчик движений,Порядковый номер измерения,Мощность передачи (dBm)</string>
+    <string name="export_csv_header_format_air">Дата,AQI,Температура (%1$s),Влажность (%2$s),Давление (%3$s),Освещённость (lx),CO2(ppm),VOC,NOX,PM1(µg/m³),PM2.5(µg/m³),PM4(µg/m³),PM10(µg/m³),RSSI (dBm),Порядковый номер измерения</string>
     <string name="export_history">Выгрузить историю (csv)</string>
     <string name="export_history_xlsx">Выгрузить историю (xlsx)</string>
     <string name="fair">Удовлетворительно</string>

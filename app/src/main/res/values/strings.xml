@@ -366,7 +366,7 @@
     <string name="export_csv_header_format2_4">Date,Temperature (%1$s),Humidity (%2$s),Pressure (%3$s),RSSI(dBm)</string>
     <string name="export_csv_header_format3">Date,Temperature (%1$s),Humidity (%2$s),Pressure (%3$s),RSSI (dBm),Acceleration X (g),Acceleration Y (g),Acceleration Z (g),Voltage (V)</string>
     <string name="export_csv_header_format5">Date,Temperature (%1$s),Humidity (%2$s),Pressure (%3$s),RSSI (dBm),Acceleration X (g),Acceleration Y (g),Acceleration Z (g),Voltage (V),Movement counter (movements),Measurement sequence number,TX power (dBm)</string>
-    <string name="export_csv_header_formatE0">Date,AQI,Temperature (%1$s),Humidity (%2$s),Pressure (%3$s),Illuminance(lx),dB Avg(dBA),dB peak(dBA),CO2(ppm),VOC,NOX,PM1(µg/m³),PM2.5(µg/m³),PM4(µg/m³),PM10(µg/m³),RSSI (dBm),Acceleration X (g),Acceleration Y (g),Acceleration Z (g),Voltage (V),Movement counter (movements),Measurement sequence number,TX power (dBm)</string>
+    <string name="export_csv_header_format_air">Date,AQI,Temperature (%1$s),Humidity (%2$s),Pressure (%3$s),Illuminance(lx),CO2(ppm),VOC,NOX,PM1(µg/m³),PM2.5(µg/m³),PM4(µg/m³),PM10(µg/m³),RSSI (dBm),Measurement sequence number</string>
     <string name="export_history">Export history (csv)</string>
     <string name="export_history_xlsx">Export history (xlsx)</string>
     <string name="fair">Fair</string>
