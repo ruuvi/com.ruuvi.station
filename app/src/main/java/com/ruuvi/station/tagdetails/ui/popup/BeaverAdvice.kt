@@ -1,4 +1,4 @@
-package com.ruuvi.station.tagdetails.ui.elements.popup
+package com.ruuvi.station.tagdetails.ui.popup
 
 import android.content.Context
 import androidx.annotation.StringRes

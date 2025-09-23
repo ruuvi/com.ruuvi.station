@@ -1,4 +1,4 @@
-package com.ruuvi.station.tagdetails.ui.elements.popup
+package com.ruuvi.station.tagdetails.ui.popup
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -59,12 +59,12 @@ fun ValueSheetHeader(
             )
 
             ValueSheetHeaderText(
-                modifier = Modifier,
+                modifier = Modifier.weight(1f),
                 text = stringResource(sheetValue.unitType.measurementTitle)
             )
 
             Row(
-                modifier = Modifier.weight(1f),
+                modifier = Modifier,
                 horizontalArrangement = Arrangement.End,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
