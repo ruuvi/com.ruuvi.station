@@ -38,6 +38,12 @@ fun MarkupText(@StringRes textRes: Int) {
                     fontWeight = FontWeight.Bold,
                     color = headerColor
                 ),
+                "b" to SpanStyle(
+                    fontSize = ruuviStationFontsSizes.compact,
+                    fontFamily = ruuviStationFonts.mulishBold,
+                    fontWeight = FontWeight.Bold,
+                    color = textColor
+                ),
                 "link" to SpanStyle(
                     color = linkColor,
                     fontFamily = ruuviStationFonts.mulishBold,
