@@ -76,11 +76,14 @@ class ClaimSensorActivity : NfcActivity(), KodeinAware {
                     is UiEvent.Navigate -> {
                         if (uiEvent.popBackStack) {
                             navController.navigate(uiEvent.route) {
-                                popUpToRoute
+                                popUpTo(navController.graph.id) { inclusive = true }
+                                launchSingleTop = true
+                                restoreState = false
                             }
                         } else {
                             navController.navigate(uiEvent.route)
-                        }                    }
+                        }
+                    }
                     is UiEvent.ShowSnackbar -> {
                         scaffoldState.snackbarHostState.showSnackbar(uiEvent.message.asString(context))
                     }
