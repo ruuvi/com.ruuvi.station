@@ -72,7 +72,7 @@ fun parseModernMarkup(
 
 
     var cursor = 0
-    val tagRegex = Regex("""<(\w+)(?:\s+url\s*=\s*"([^"]+)")?>""")
+    val tagRegex = Regex("""\[(\w+)(?:\s+url\s*=\s*"([^"]+)")?]""")
 
     while (cursor < input.length) {
         val match = tagRegex.find(input, cursor)
@@ -101,7 +101,7 @@ fun parseModernMarkup(
         }
 
         // Find corresponding closing tag
-        val closingTag = "</$tag>"
+        val closingTag = "[/$tag]"
         val closeIndex = input.indexOf(closingTag, tagEnd)
         if (closeIndex == -1) {
             // Malformed tag: treat as plain text
