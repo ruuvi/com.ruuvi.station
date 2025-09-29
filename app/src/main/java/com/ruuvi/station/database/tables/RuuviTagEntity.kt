@@ -134,7 +134,7 @@ data class RuuviTagEntity(
         updateAt = reading.createdAt,
     )
 
-    fun displayName(): String = id?.let { MacAddressUtils.getDefaultName(it) } ?: ""
+    fun displayName(): String = id?.let { MacAddressUtils.getDefaultName(it, isAir()) } ?: ""
 
     fun preserveData(tag: RuuviTagEntity) {
         tag.favorite = favorite
