@@ -26,6 +26,7 @@ xmlns:tools="http://schemas.android.com/tools">
 <uses-permission android:name="com.google.android.gms.permission.AD_ID"/>
 <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 <uses-permission android:name="android.permission.FOREGROUND_SERVICE_CONNECTED_DEVICE" />
+<uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
 
 <uses-feature android:name="android.hardware.bluetooth" />
 
@@ -226,15 +227,13 @@ xmlns:tools="http://schemas.android.com/tools">
 
     <service
         android:name=".bluetooth.ScanForDevicesService"
-        android:exported="false"
-        android:permission="android.permission.BIND_JOB_SERVICE" />
+        android:exported="false" />
 
     <service
         android:name=".bluetooth.BluetoothForegroundService"
         android:enabled="true"
-        android:exported="true"
-        android:foregroundServiceType="connectedDevice"
-        android:permission="android.permission.BIND_JOB_SERVICE" />
+        android:exported="false"
+        android:foregroundServiceType="connectedDevice|dataSync" />
 
     <service
         android:name="androidx.work.impl.foreground.SystemForegroundService"
