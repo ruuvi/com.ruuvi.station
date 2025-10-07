@@ -48,8 +48,8 @@
     <string name="alert_movement_description">Ändert sich der Wert des sensorinternen Bewegungszählers, wird ein Bewegungsalarm ausgelöst. Mit diesem Alarm können beispielsweise Türbewegungen oder Vibrationen in der Nähe des Sensors erkannt werden.</string>
     <string name="alert_notification_aqi_high_threshold">Luftqualität liegt über %1$s</string>
     <string name="alert_notification_aqi_low_threshold">Luftqualität liegt unter %1$s</string>
-    <string name="alert_notification_co2_high_threshold">CO2 liegt über %1$s</string>
-    <string name="alert_notification_co2_low_threshold">CO2 liegt unter %1$s</string>
+    <string name="alert_notification_co2_high_threshold">CO₂ liegt über %1$s</string>
+    <string name="alert_notification_co2_low_threshold">CO₂ liegt unter %1$s</string>
     <string name="alert_notification_humidity_high">Luftfeuchtigkeit zu hoch!</string>
     <string name="alert_notification_humidity_high_threshold">Luftfeuchtigkeit liegt über %1$s</string>
     <string name="alert_notification_humidity_low">Luftfeuchtigkeit zu niedrig!</string>
@@ -263,8 +263,8 @@
     <string name="cloud_stored_names">● Sensornamen</string>
     <string name="cloud_stored_ownerships">● Sensorbesitz</string>
     <string name="cloud_stored_sharing">● App Einstellungen</string>
-    <string name="co2">CO2</string>
-    <string name="co2_with_unit">CO2 (%1$s)</string>
+    <string name="co2">CO₂</string>
+    <string name="co2_with_unit">CO₂ (%1$s)</string>
     <string name="confirm">Bestätige</string>
     <string name="connected_reading_info">Synchronisieren...</string>
     <string name="connecting">Verbinden...</string>

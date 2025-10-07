@@ -48,8 +48,8 @@
     <string name="alert_movement_description">Une alarme de mouvement se déclenche si la valeur du compteur de mouvement interne du capteur change. Cette alarme peut être utilisée, par exemple, pour détecter un mouvement ou une vibration de porte à proximité du capteur.</string>
     <string name="alert_notification_aqi_high_threshold">Qualité de l\'air est supérieure à %1$s</string>
     <string name="alert_notification_aqi_low_threshold">Qualité de l\'air est inférieure à %1$s</string>
-    <string name="alert_notification_co2_high_threshold">Le CO2 est supérieure à %1$s</string>
-    <string name="alert_notification_co2_low_threshold">CO2 est inférieure à %1$s</string>
+    <string name="alert_notification_co2_high_threshold">Le CO₂ est supérieure à %1$s</string>
+    <string name="alert_notification_co2_low_threshold">CO₂ est inférieure à %1$s</string>
     <string name="alert_notification_humidity_high">L\'humidité trop haute !</string>
     <string name="alert_notification_humidity_high_threshold">L\'humidité de l\'air est supérieure à %1$s</string>
     <string name="alert_notification_humidity_low">L\'humidité trop basse !</string>
@@ -263,8 +263,8 @@
     <string name="cloud_stored_names">● Noms des capteurs</string>
     <string name="cloud_stored_ownerships">● Propriété des capteurs</string>
     <string name="cloud_stored_sharing">● Paramètres de l\'application</string>
-    <string name="co2">CO2</string>
-    <string name="co2_with_unit">CO2 (%1$s)</string>
+    <string name="co2">CO₂</string>
+    <string name="co2_with_unit">CO₂ (%1$s)</string>
     <string name="confirm">Confirmer</string>
     <string name="connected_reading_info">Synchronisation...</string>
     <string name="connecting">Connexion...</string>

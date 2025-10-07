@@ -48,8 +48,8 @@
     <string name="alert_movement_description">Liikehälytys laukeaa, jos anturin sisäisen liikelaskurin arvo muuttuu. Tätä hälytystä voi käyttää esimerkiksi havaitsemaan oven liikkeen tai tärinän anturin läheisyydessä.</string>
     <string name="alert_notification_aqi_high_threshold">Ilmanlaatu on yli %1$s</string>
     <string name="alert_notification_aqi_low_threshold">Ilmanlaatu on alle %1$s</string>
-    <string name="alert_notification_co2_high_threshold">CO2 on yli %1$s</string>
-    <string name="alert_notification_co2_low_threshold">CO2 on alle %1$s</string>
+    <string name="alert_notification_co2_high_threshold">CO₂ on yli %1$s</string>
+    <string name="alert_notification_co2_low_threshold">CO₂ on alle %1$s</string>
     <string name="alert_notification_humidity_high">Ilmankosteus liian korkea!</string>
     <string name="alert_notification_humidity_high_threshold">Ilmankosteus on yli %1$s</string>
     <string name="alert_notification_humidity_low">Ilmankosteus liian alhainen!</string>
@@ -263,8 +263,8 @@
     <string name="cloud_stored_names">● Anturinimet</string>
     <string name="cloud_stored_ownerships">● Anturien omistajuustiedot</string>
     <string name="cloud_stored_sharing">● Sovellusasetukset</string>
-    <string name="co2">CO2</string>
-    <string name="co2_with_unit">CO2 (%1$s)</string>
+    <string name="co2">CO₂</string>
+    <string name="co2_with_unit">CO₂ (%1$s)</string>
     <string name="confirm">Vahvista</string>
     <string name="connected_reading_info">Synkronoidaan...</string>
     <string name="connecting">Yhdistetään...</string>

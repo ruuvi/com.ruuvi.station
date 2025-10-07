@@ -48,8 +48,8 @@
     <string name="alert_movement_description">Movement alert is triggered if the value of the sensor\'s internal motion counter changes. This alert can be used, for example, to detect door movement or vibration in the vicinity of the sensor.</string>
     <string name="alert_notification_aqi_high_threshold">Air quality is above %1$s</string>
     <string name="alert_notification_aqi_low_threshold">Air quality is below %1$s</string>
-    <string name="alert_notification_co2_high_threshold">CO2 is above %1$s</string>
-    <string name="alert_notification_co2_low_threshold">  is below %1$s</string>
+    <string name="alert_notification_co2_high_threshold">CO₂ is above %1$s</string>
+    <string name="alert_notification_co2_low_threshold">CO₂ is below %1$s</string>
     <string name="alert_notification_humidity_high">Humidity too high!</string>
     <string name="alert_notification_humidity_high_threshold">Air humidity is above %1$s</string>
     <string name="alert_notification_humidity_low">Humidity too low!</string>
@@ -270,8 +270,8 @@
     <string name="cloud_stored_names">● Custom names</string>
     <string name="cloud_stored_ownerships">● Sensor ownerships</string>
     <string name="cloud_stored_sharing">● App settings</string>
-    <string name="co2">CO2</string>
-    <string name="co2_with_unit">CO2 (%1$s)</string>
+    <string name="co2">CO₂</string>
+    <string name="co2_with_unit">CO₂ (%1$s)</string>
     <string name="confirm">Confirm</string>
     <string name="connected_reading_info">Synchronising...</string>
     <string name="connecting">Connecting...</string>

@@ -29,8 +29,8 @@
     <string name="alert_movement_description">Alarm ruchu jest wyzwalany w przypadku zmiany wartości wewnętrznego licznika ruchu czujnika. Alarm ten można wykorzystać na przykład do wykrycia ruchu drzwi lub wibracji w pobliżu czujnika.</string>
     <string name="alert_notification_aqi_high_threshold">Jakość powietrza przekracza %1$s</string>
     <string name="alert_notification_aqi_low_threshold">Jakość powietrza jest poniżej %1$s</string>
-    <string name="alert_notification_co2_high_threshold">CO2 przekracza %1$s</string>
-    <string name="alert_notification_co2_low_threshold">CO2 jest poniżej %1$s</string>
+    <string name="alert_notification_co2_high_threshold">CO₂ przekracza %1$s</string>
+    <string name="alert_notification_co2_low_threshold">CO₂ jest poniżej %1$s</string>
     <string name="alert_notification_humidity_high">Zbyt wysoka wilgotność powietrza!</string>
     <string name="alert_notification_humidity_low">Zbyt niska wilgotność powietrza!</string>
     <string name="alert_notification_luminosity_high_threshold">Jasność przekracza %1$s</string>
@@ -188,8 +188,8 @@
     <string name="cloud_er_user_not_found">Nie znaleziono użytkownika</string>
     <string name="cloud_only_mode">Wyłącz Bluetooth</string>
     <string name="cloud_only_mode_description">Gdy opcja Wyłącz Bluetooth jest aktywna, aplikacja zignoruje wszelkie pomiary wysyłane przez czujniki Ruuvi przez Bluetooth, gdy czujniki znajdują się w pobliżu routera Ruuvi Gateway. Zamiast tego aplikacja będzie odbierać dane pomiarowe czujników wyłącznie z Ruuvi Cloud. Aby dane pomiarowe mogły być przesyłane do Ruuvi Cloud, czujnik musi znajdować się w pobliżu routera Ruuvi Gateway.</string>
-    <string name="co2">CO2</string>
-    <string name="co2_with_unit">CO2 (%1$s)</string>
+    <string name="co2">CO₂</string>
+    <string name="co2_with_unit">CO₂ (%1$s)</string>
     <string name="confirm">Zatwierdź</string>
     <string name="connected_reading_info">Synchronizacja...</string>
     <string name="connecting">Łączenie...</string>

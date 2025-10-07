@@ -48,8 +48,8 @@
     <string name="alert_movement_description">Ett rörelselarm utlöses om värdet på sensorns interna rörelseräknare ändras. Detta larm kan till exempel användas för att detektera dörrrörelser eller vibrationer i närheten av sensorn.</string>
     <string name="alert_notification_aqi_high_threshold">Luftkvalitet är över %1$s</string>
     <string name="alert_notification_aqi_low_threshold">Luftkvalitet är under %1$s</string>
-    <string name="alert_notification_co2_high_threshold">CO2 är över %1$s</string>
-    <string name="alert_notification_co2_low_threshold">CO2 är under %1$s</string>
+    <string name="alert_notification_co2_high_threshold">CO₂ är över %1$s</string>
+    <string name="alert_notification_co2_low_threshold">CO₂ är under %1$s</string>
     <string name="alert_notification_humidity_high">För hög Luftfuktighet!</string>
     <string name="alert_notification_humidity_high_threshold">Luftfuktigheten är över %1$s</string>
     <string name="alert_notification_humidity_low">För låg Luftfuktighet!</string>
@@ -263,8 +263,8 @@
     <string name="cloud_stored_names">● Sensornamn</string>
     <string name="cloud_stored_ownerships">● Sensorns ägarskap</string>
     <string name="cloud_stored_sharing">● App inställningar</string>
-    <string name="co2">CO2</string>
-    <string name="co2_with_unit">CO2 (%1$s)</string>
+    <string name="co2">CO₂</string>
+    <string name="co2_with_unit">CO₂ (%1$s)</string>
     <string name="confirm">Bekräfta</string>
     <string name="connected_reading_info">Synkroniserar...</string>
     <string name="connecting">Ansluter...</string>
