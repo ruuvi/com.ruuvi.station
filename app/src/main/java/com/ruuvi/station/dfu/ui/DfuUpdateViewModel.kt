@@ -17,6 +17,8 @@ import com.ruuvi.station.util.MacAddressUtils.Companion.incrementMacAddress
 import com.ruuvi.station.util.extensions.diffGreaterThan
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import net.swiftzer.semver.SemVer
 import timber.log.Timber
@@ -34,6 +36,9 @@ class DfuUpdateViewModel(
     private val sensorSettingsRepository: SensorSettingsRepository,
     private val airFirmwareInteractor: AirFirmwareInteractor
 ): ViewModel() {
+
+    private val _deviceType = MutableStateFlow<DeviceType>(DeviceType.TAG)
+    val deviceType: StateFlow<DeviceType> = _deviceType
 
     private val _stage = MutableLiveData(DfuUpdateStage.CHECKING_CURRENT_FW_VERSION)
     val stage: LiveData<DfuUpdateStage> = _stage
@@ -78,9 +83,10 @@ class DfuUpdateViewModel(
         val ruuviTag = tagRepository.getFavoriteSensorById(sensorId)
 
         if (ruuviTag?.isAir() == true) {
-            initAirInteractor()
+            _deviceType.value = DeviceType.AIR
             _stage.value = DfuUpdateStage.AIR_UPDATE
         } else {
+            _deviceType.value = DeviceType.TAG
             _stage.value = DfuUpdateStage.CHECKING_CURRENT_FW_VERSION
             getLatestFw()
         }
@@ -297,19 +303,6 @@ class DfuUpdateViewModel(
         if (permissionsGranted) {
             bluetoothDevicesInteractor.cancelDiscovery()
         }
-    }
-
-    fun upload(fileName: String, readBytesFromUri: ByteArray) {
-        airFirmwareInteractor.upload(fileName, readBytesFromUri, { current, total ->
-            viewModelScope.launch {
-                _updateFwProgress.value = (current.toDouble() / total * 100).toInt()
-            }
-        },
-            {
-                viewModelScope.launch {
-                    updateFinished()
-                }
-            })
     }
 
     companion object {

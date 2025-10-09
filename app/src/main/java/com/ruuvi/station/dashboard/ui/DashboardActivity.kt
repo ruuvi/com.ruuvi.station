@@ -48,8 +48,8 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.whenStarted
-import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
-import com.bumptech.glide.integration.compose.GlideImage
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.ruuvi.station.R
 import com.ruuvi.station.addtag.ui.AddTagActivity
@@ -654,7 +654,7 @@ fun DashboardItem(
                             if (bigValue.unitType is UnitType.AirQuality) {
                                 AQIDisplay(
                                     value = AQI.getAQI(sensor.latestMeasurement),
-                                    alertTriggered = false
+                                    alertTriggered = sensor.alarmSensorStatus.triggered(AlarmType.AQI)
                                 )
                                 Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.medium))
                             } else {
@@ -671,9 +671,9 @@ fun DashboardItem(
                             dropFirst = true,
                             modifier = Modifier
                                 .padding(
-                                    top = RuuviStationTheme.dimensions.medium,
                                     bottom = RuuviStationTheme.dimensions.small
-                                )
+                                ),
+                            extended = true
                         )
                         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.small))
                         ItemBottom(
@@ -764,7 +764,8 @@ fun DashboardItemSimple(
                     sensor = sensor,
                     dropFirst = false,
                     modifier = Modifier
-                        .padding(vertical = RuuviStationTheme.dimensions.small)
+                        .padding(vertical = RuuviStationTheme.dimensions.small),
+                    extended = false
                 )
 
                 ItemBottom(
@@ -856,7 +857,7 @@ fun ItemButtons(
                         Icon(
                             painter = painterResource(id = R.drawable.ic_notifications_active_24px),
                             contentDescription = null,
-                            tint = RuuviStationTheme.colors.activeAlert
+                            tint = RuuviStationTheme.colors.activeAlertThemed
                         )
                     }
                 }
@@ -881,7 +882,8 @@ fun ItemButtons(
 fun ItemValues(
     sensor: RuuviTag,
     modifier: Modifier = Modifier,
-    dropFirst:Boolean = false
+    dropFirst:Boolean = false,
+    extended: Boolean
 ) {
     val valuesToDisplay =
         if (dropFirst) {
@@ -908,12 +910,14 @@ fun ItemValues(
                 verticalArrangement = Arrangement.Bottom,
             ) {
                 for (valueDisplay in evenValues) {
+                    if (extended) Spacer(modifier = Modifier.height(4.dp))
                     ValueDisplay(
                         value = valueDisplay,
                         alertTriggered = valueDisplay.unitType?.alarmType?.let {
                             sensor.alarmSensorStatus.triggered(it)
                         } ?: false,
-                        modifier = Modifier.padding(top = 2.dp)
+                        modifier = Modifier.padding(top = 2.dp),
+                        extended = extended
                     )
                 }
             }
@@ -924,12 +928,14 @@ fun ItemValues(
                 verticalArrangement = Arrangement.Bottom,
             ) {
                 for (valueDisplay in oddValues) {
+                    if (extended) Spacer(modifier = Modifier.height(4.dp))
                     ValueDisplay(
                         value = valueDisplay,
                         alertTriggered = valueDisplay.unitType?.alarmType?.let {
                             sensor.alarmSensorStatus.triggered(it)
                         } ?: false,
-                        modifier = Modifier.padding(top = 2.dp)
+                        modifier = Modifier.padding(top = 2.dp),
+                        extended = extended
                     )
                 }
             }
@@ -987,7 +993,7 @@ fun ItemBottomUpdatedInfo(
             modifier = modifier
                 .height(RuuviStationTheme.dimensions.big)
         ) {
-            val fontScale = min(LocalContext.current.resources.configuration.fontScale, 1.5f)
+            val fontScale = min(LocalConfiguration.current.fontScale, 1.5f)
 
             // Do not simplify this - glitches are possible due to gateway and bluetooth icon differences
             val icon = sensor.getSource().getIconResource()
@@ -1032,29 +1038,36 @@ fun ItemBottomUpdatedInfo(
     }
 }
 
-@OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun DashboardImage(
     userBackground: Uri,
     modifier: Modifier = Modifier
 ) {
-    Timber.d("Image path $userBackground")
-    GlideImage(
-        modifier = modifier.fillMaxSize(),
-        model = userBackground,
-        contentDescription = null,
-        contentScale = ContentScale.Crop
-    )
-    GlideImage(
-        modifier = modifier.fillMaxSize(),
-        model = rememberResourceUri(R.drawable.tag_bg_layer),
-        contentDescription = null,
-        alpha = RuuviStationTheme.colors.backgroundAlpha,
-        contentScale = ContentScale.Crop
-    )
+    val context = LocalContext.current
+    Box(modifier = modifier) {
+        AsyncImage(
+            modifier = modifier.fillMaxSize(),
+            model = ImageRequest.Builder(context)
+                .data(userBackground)
+                .crossfade(false)
+                .build(),
+            contentDescription = null,
+            contentScale = ContentScale.Crop
+        )
+        AsyncImage(
+            modifier = modifier.fillMaxSize(),
+            model = R.drawable.tag_bg_layer_dashboard,
+            contentDescription = null,
+            contentScale = ContentScale.Crop
+        )
+//        Image(
+//            modifier = modifier.matchParentSize(),
+//            painter = painterResource(R.drawable.tag_bg_layer_dashboard),
+//            contentDescription = null,
+//            contentScale = ContentScale.Crop
+//        )
+    }
 }
-
-
 
 @Composable
 fun DashboardItemDropdownMenu(

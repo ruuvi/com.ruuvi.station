@@ -13,7 +13,7 @@ import com.ruuvi.station.database.tables.*
 class LocalDatabase {
     companion object {
         const val NAME = "LocalDatabase"
-        const val VERSION = 37
+        const val VERSION = 38
     }
 
     @Migration(version = 37, database = LocalDatabase::class)

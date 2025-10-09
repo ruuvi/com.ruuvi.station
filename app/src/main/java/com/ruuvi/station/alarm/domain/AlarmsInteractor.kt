@@ -8,6 +8,7 @@ import com.ruuvi.station.network.domain.OperationStatus
 import com.ruuvi.station.network.domain.RuuviNetworkInteractor
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tag.domain.canUseCloudAlerts
+import com.ruuvi.station.tag.domain.isAir
 import com.ruuvi.station.units.domain.UnitsConverter
 import com.ruuvi.station.util.extensions.equalsEpsilon
 import com.ruuvi.station.util.extensions.isInteger
@@ -98,21 +99,22 @@ class AlarmsInteractor(
     fun getAvailableAlarmTypesForSensor(sensor: RuuviTag?): Set<AlarmType> {
         return if (sensor != null) {
             val alarmTypes = mutableSetOf<AlarmType>()
+            if (sensor.isAir() && sensor.latestMeasurement?.aqi != null) alarmTypes.add(AlarmType.AQI)
             if (sensor.latestMeasurement?.temperature != null) alarmTypes.add(AlarmType.TEMPERATURE)
-            if (sensor.latestMeasurement?.rssi != null) alarmTypes.add(AlarmType.RSSI)
             if (sensor.latestMeasurement?.humidity != null) alarmTypes.add(AlarmType.HUMIDITY)
             if (sensor.latestMeasurement?.pressure != null) alarmTypes.add(AlarmType.PRESSURE)
-            if (sensor.latestMeasurement?.movement != null) alarmTypes.add(AlarmType.MOVEMENT)
-            if (sensor.networkSensor && sensor.canUseCloudAlerts() ) alarmTypes.add(AlarmType.OFFLINE)
             if (sensor.latestMeasurement?.co2 != null) alarmTypes.add(AlarmType.CO2)
-            if (sensor.latestMeasurement?.pm1 != null) alarmTypes.add(AlarmType.PM1)
-            if (sensor.latestMeasurement?.pm25 != null) alarmTypes.add(AlarmType.PM25)
-            if (sensor.latestMeasurement?.pm4 != null) alarmTypes.add(AlarmType.PM4)
             if (sensor.latestMeasurement?.pm10 != null) alarmTypes.add(AlarmType.PM10)
+            if (sensor.latestMeasurement?.pm25 != null) alarmTypes.add(AlarmType.PM25)
+            if (sensor.latestMeasurement?.pm40 != null) alarmTypes.add(AlarmType.PM40)
+            if (sensor.latestMeasurement?.pm100 != null) alarmTypes.add(AlarmType.PM100)
             if (sensor.latestMeasurement?.voc != null) alarmTypes.add(AlarmType.VOC)
             if (sensor.latestMeasurement?.nox != null) alarmTypes.add(AlarmType.NOX)
             if (sensor.latestMeasurement?.luminosity != null) alarmTypes.add(AlarmType.LUMINOSITY)
             if (sensor.latestMeasurement?.dBaAvg != null) alarmTypes.add(AlarmType.SOUND)
+            if (sensor.latestMeasurement?.movement != null) alarmTypes.add(AlarmType.MOVEMENT)
+            if (sensor.networkSensor && sensor.canUseCloudAlerts() ) alarmTypes.add(AlarmType.OFFLINE)
+            if (sensor.latestMeasurement?.rssi != null) alarmTypes.add(AlarmType.RSSI)
             alarmTypes
         } else {
             emptySet()
@@ -147,14 +149,15 @@ class AlarmsInteractor(
             AlarmType.MOVEMENT -> context.getString(R.string.alert_movement)
             AlarmType.OFFLINE -> context.getString(R.string.alert_cloud_connection_title)
             AlarmType.CO2 -> context.getString(R.string.co2_with_unit, context.getString(R.string.unit_co2))
-            AlarmType.PM1 -> context.getString(R.string.pm1_with_unit, context.getString(R.string.unit_pm1))
-            AlarmType.PM25 -> context.getString(R.string.pm25_with_unit, context.getString(R.string.unit_pm25))
-            AlarmType.PM4 -> context.getString(R.string.pm4_with_unit, context.getString(R.string.unit_pm4))
             AlarmType.PM10 -> context.getString(R.string.pm10_with_unit, context.getString(R.string.unit_pm10))
-            AlarmType.SOUND -> context.getString(R.string.sound_with_unit, context.getString(R.string.unit_sound))
+            AlarmType.PM25 -> context.getString(R.string.pm25_with_unit, context.getString(R.string.unit_pm25))
+            AlarmType.PM40 -> context.getString(R.string.pm40_with_unit, context.getString(R.string.unit_pm40))
+            AlarmType.PM100 -> context.getString(R.string.pm100_with_unit, context.getString(R.string.unit_pm100))
+            AlarmType.SOUND -> context.getString(R.string.sound_average_with_unit, context.getString(R.string.unit_sound))
             AlarmType.LUMINOSITY -> context.getString(R.string.luminosity_with_unit, context.getString(R.string.unit_luminosity))
             AlarmType.VOC -> context.getString(R.string.voc_with_unit, context.getString(R.string.unit_voc))
             AlarmType.NOX -> context.getString(R.string.nox_with_unit, context.getString(R.string.unit_nox))
+            AlarmType.AQI -> context.getString(R.string.air_quality)
         }
     }
 
@@ -167,14 +170,15 @@ class AlarmsInteractor(
             AlarmType.MOVEMENT -> context.getString(R.string.alert_movement)
             AlarmType.OFFLINE -> ""
             AlarmType.CO2 -> context.getString(R.string.unit_co2)
-            AlarmType.PM1 -> context.getString(R.string.unit_pm1)
-            AlarmType.PM25 -> context.getString(R.string.unit_pm25)
-            AlarmType.PM4 -> context.getString(R.string.unit_pm4)
             AlarmType.PM10 -> context.getString(R.string.unit_pm10)
+            AlarmType.PM25 -> context.getString(R.string.unit_pm25)
+            AlarmType.PM40 -> context.getString(R.string.unit_pm40)
+            AlarmType.PM100 -> context.getString(R.string.unit_pm100)
             AlarmType.SOUND -> context.getString(R.string.unit_sound)
             AlarmType.LUMINOSITY -> context.getString(R.string.unit_luminosity)
             AlarmType.VOC -> context.getString(R.string.unit_voc)
             AlarmType.NOX -> context.getString(R.string.unit_nox)
+            AlarmType.AQI -> ""
         }
     }
 

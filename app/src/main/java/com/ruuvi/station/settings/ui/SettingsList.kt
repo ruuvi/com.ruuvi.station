@@ -41,7 +41,7 @@ fun shouldShowLanguageSelection(): Boolean {
 @Composable
 fun SettingsList(
     scaffoldState: ScaffoldState,
-    onNavigate: (UiEvent.Navigate) -> Unit,
+    onNavigate: (String) -> Unit,
     viewModel: AppSettingsListViewModel
 ) {
     val context = LocalContext.current
@@ -83,7 +83,7 @@ fun SettingsList(
                     name = stringResource(id = R.string.settings_alert_notifications),
                     value = null,
                     onClick = {
-                        onNavigate.invoke(UiEvent.Navigate(SettingsRoutes.ALERT_NOTIFICATIONS))
+                        onNavigate.invoke(SettingsRoutes.ALERT_NOTIFICATIONS)
                     }
                 )
             }
@@ -93,7 +93,7 @@ fun SettingsList(
             SettingsElement(
                 name = stringResource(id = R.string.settings_appearance),
                 value = null,
-                onClick = { onNavigate.invoke(UiEvent.Navigate(SettingsRoutes.APPEARANCE)) }
+                onClick = { onNavigate.invoke(SettingsRoutes.APPEARANCE) }
             )
         }
 
@@ -101,7 +101,7 @@ fun SettingsList(
             SettingsElement(
                 name = stringResource(id = R.string.settings_background_scan),
                 value = intervalText,
-                onClick = { onNavigate.invoke(UiEvent.Navigate(SettingsRoutes.BACKGROUNDSCAN)) }
+                onClick = { onNavigate.invoke(SettingsRoutes.BACKGROUNDSCAN) }
             )
         }
 
@@ -109,7 +109,7 @@ fun SettingsList(
             SettingsElement(
                 name = stringResource(id = R.string.settings_temperature_unit),
                 value = stringResource(id = viewModel.getTemperatureUnit().unit),
-                onClick = { onNavigate.invoke(UiEvent.Navigate(SettingsRoutes.TEMPERATURE)) }
+                onClick = { onNavigate.invoke(SettingsRoutes.TEMPERATURE) }
             )
         }
 
@@ -117,7 +117,7 @@ fun SettingsList(
             SettingsElement(
                 name = stringResource(id = R.string.settings_humidity_unit),
                 value = stringResource(id = viewModel.getHumidityUnit().unit),
-                onClick = { onNavigate.invoke(UiEvent.Navigate(SettingsRoutes.HUMIDITY)) }
+                onClick = { onNavigate.invoke(SettingsRoutes.HUMIDITY) }
             )
         }
 
@@ -125,7 +125,7 @@ fun SettingsList(
             SettingsElement(
                 name = stringResource(id = R.string.settings_pressure_unit ),
                 value = stringResource(id = viewModel.getPressureUnit().unit),
-                onClick = { onNavigate.invoke(UiEvent.Navigate(SettingsRoutes.PRESSURE)) }
+                onClick = { onNavigate.invoke(SettingsRoutes.PRESSURE) }
             )
         }
 
@@ -134,7 +134,7 @@ fun SettingsList(
                 SettingsElement(
                     name = stringResource(id = R.string.ruuvi_cloud),
                     value = null,
-                    onClick = { onNavigate.invoke(UiEvent.Navigate(SettingsRoutes.CLOUD)) }
+                    onClick = { onNavigate.invoke(SettingsRoutes.CLOUD) }
                 )
             }
         }
@@ -143,7 +143,7 @@ fun SettingsList(
             SettingsElement(
                 name = stringResource(id = R.string.settings_chart),
                 value = null,
-                onClick = { onNavigate.invoke(UiEvent.Navigate(SettingsRoutes.CHARTS)) }
+                onClick = { onNavigate.invoke(SettingsRoutes.CHARTS) }
             )
         }
 
@@ -151,7 +151,7 @@ fun SettingsList(
             SettingsElement(
                 name = stringResource(id = R.string.settings_data_forwarding),
                 value = null,
-                onClick = { onNavigate.invoke(UiEvent.Navigate(SettingsRoutes.DATAFORWARDING)) }
+                onClick = { onNavigate.invoke(SettingsRoutes.DATAFORWARDING) }
             )
         }
 
@@ -160,7 +160,7 @@ fun SettingsList(
                 SettingsElement(
                     name = stringResource(id = R.string.settings_developer),
                     value = null,
-                    onClick = { onNavigate.invoke(UiEvent.Navigate(SettingsRoutes.DEVELOPER)) }
+                    onClick = { onNavigate.invoke(SettingsRoutes.DEVELOPER) }
                 )
             }
         }
@@ -216,8 +216,7 @@ fun SettingsElement(
 
                 if (!description.isNullOrEmpty()) {
                     Text(
-                        style = RuuviStationTheme.typography.subtitle.copy(
-                            fontFamily = ruuviStationFonts.mulishRegular),
+                        style = RuuviStationTheme.typography.paragraph,
                         text = description,
                         textAlign = TextAlign.Left
                     )

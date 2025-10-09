@@ -24,7 +24,7 @@ class LatestFwInteractor(
     }
 }
 
-fun ResponseBody.downloadToFileWithProgress(filename: String): Flow<DownloadFileStatus> =
+    fun ResponseBody.downloadToFileWithProgress(filename: String): Flow<DownloadFileStatus> =
     flow {
         emit(DownloadFileStatus.Progress(0))
 

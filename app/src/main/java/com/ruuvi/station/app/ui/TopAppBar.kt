@@ -33,6 +33,7 @@ import com.ruuvi.station.util.extensions.clickableSingle
 @Composable
 fun RuuviTopAppBar(
     title: String,
+    modifier: Modifier = Modifier,
     actions: @Composable RowScope.() -> Unit = {}
 ) {
     val context = LocalContext.current as Activity
@@ -56,7 +57,8 @@ fun RuuviTopAppBar(
         actions = actions,
         backgroundColor = RuuviStationTheme.colors.topBar,
         contentColor = RuuviStationTheme.colors.topBarText,
-        elevation = 0.dp
+        elevation = 0.dp,
+        modifier = modifier
     )
 }
 

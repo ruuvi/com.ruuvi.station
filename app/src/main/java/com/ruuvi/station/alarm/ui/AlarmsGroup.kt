@@ -30,6 +30,7 @@ import com.ruuvi.station.alarm.domain.AlarmItemState
 import com.ruuvi.station.alarm.domain.AlarmType
 import com.ruuvi.station.app.ui.components.*
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
+import com.ruuvi.station.bluetooth.util.extensions.roundHalfUp
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tagsettings.ui.SensorSettingsTitle
 import com.ruuvi.station.units.domain.UnitsConverter
@@ -78,11 +79,11 @@ fun AlarmsGroup(
 
     Column {
         if (alarms.isNotEmpty()) SensorSettingsTitle(title = stringResource(id = R.string.alerts))
-        for (itemState in alarms.sortedBy { it.type.value }) {
+        for (itemState in alarms) {
             Timber.d("AlarmItem $itemState")
             val title = viewModel.getTitle(itemState.type)
             when (itemState.type) {
-                AlarmType.TEMPERATURE, AlarmType.HUMIDITY, AlarmType.PRESSURE, AlarmType.CO2, AlarmType.PM25, AlarmType.PM1, AlarmType.PM4, AlarmType.PM10, AlarmType.VOC, AlarmType.NOX, AlarmType.SOUND, AlarmType.LUMINOSITY->
+                AlarmType.TEMPERATURE, AlarmType.HUMIDITY, AlarmType.PRESSURE, AlarmType.CO2, AlarmType.PM25, AlarmType.PM10, AlarmType.PM40, AlarmType.PM100, AlarmType.VOC, AlarmType.NOX, AlarmType.SOUND, AlarmType.LUMINOSITY, AlarmType.AQI->
                     AlertEditItem(
                         title = title,
                         alarmState = itemState,
@@ -279,14 +280,15 @@ fun AlertEditItem(
                 )
                 AlarmType.PRESSURE -> sensorState.latestMeasurement.pressure?.valueWithUnit
                 AlarmType.CO2 -> sensorState.latestMeasurement.co2?.valueWithUnit
-                AlarmType.PM1 -> sensorState.latestMeasurement.pm1?.valueWithUnit
-                AlarmType.PM25 -> sensorState.latestMeasurement.pm25?.valueWithUnit
-                AlarmType.PM4 -> sensorState.latestMeasurement.pm4?.valueWithUnit
                 AlarmType.PM10 -> sensorState.latestMeasurement.pm10?.valueWithUnit
+                AlarmType.PM25 -> sensorState.latestMeasurement.pm25?.valueWithUnit
+                AlarmType.PM40 -> sensorState.latestMeasurement.pm40?.valueWithUnit
+                AlarmType.PM100 -> sensorState.latestMeasurement.pm100?.valueWithUnit
                 AlarmType.SOUND -> sensorState.latestMeasurement.dBaAvg?.valueWithUnit
                 AlarmType.LUMINOSITY -> sensorState.latestMeasurement.luminosity?.valueWithUnit
                 AlarmType.VOC -> sensorState.latestMeasurement.voc?.valueWithUnit
                 AlarmType.NOX -> sensorState.latestMeasurement.nox?.valueWithUnit
+                AlarmType.AQI -> sensorState.latestMeasurement.aqi?.value?.roundHalfUp(0)?.toInt().toString()
                 else -> null
             }
             if (latestValue != null) {
@@ -441,7 +443,7 @@ private fun AlarmHeader(
                         modifier = Modifier.padding(horizontal = RuuviStationTheme.dimensions.mediumPlus),
                         painter = painterResource(id = R.drawable.ic_notifications_active_24px),
                         contentDescription = null,
-                        tint = RuuviStationTheme.colors.activeAlert
+                        tint = RuuviStationTheme.colors.activeAlertThemed
                     )
                 }
             } else {

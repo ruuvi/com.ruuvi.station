@@ -29,11 +29,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
 import androidx.core.view.WindowCompat
-import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
-import com.bumptech.glide.integration.compose.GlideImage
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import coil.compose.AsyncImage
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.ruuvi.station.R
 import com.ruuvi.station.app.ui.UiEvent
@@ -44,7 +43,6 @@ import com.ruuvi.station.app.ui.theme.RuuviTheme
 import com.ruuvi.station.network.ui.components.SignInEmailTextField
 import com.ruuvi.station.onboarding.ui.*
 import com.ruuvi.station.startup.ui.StartupActivity
-import com.ruuvi.station.util.extensions.navigate
 import com.ruuvi.station.util.extensions.scaledSp
 import com.ruuvi.station.util.extensions.viewModel
 import kotlinx.coroutines.flow.SharedFlow
@@ -58,7 +56,6 @@ class SignInActivity: AppCompatActivity(), KodeinAware {
 
     private val viewModel: SignInViewModel by viewModel()
 
-    @OptIn(ExperimentalGlideComposeApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
@@ -68,7 +65,6 @@ class SignInActivity: AppCompatActivity(), KodeinAware {
                 val navController = rememberNavController()
                 val scaffoldState = rememberScaffoldState()
                 val systemUiController = rememberSystemUiController()
-                val activity = LocalContext.current as Activity
                 var inProgress by remember { mutableStateOf(false) }
                 val email by viewModel.email.collectAsState()
 
@@ -78,7 +74,7 @@ class SignInActivity: AppCompatActivity(), KodeinAware {
                     }
                 }
 
-                GlideImage(
+                AsyncImage(
                     modifier = Modifier.fillMaxSize(),
                     model = rememberResourceUri(R.drawable.onboarding_background),
                     contentScale = ContentScale.Crop,
@@ -141,7 +137,13 @@ class SignInActivity: AppCompatActivity(), KodeinAware {
                         Timber.d("uiEvent $uiEvent")
                         when (uiEvent) {
                             is UiEvent.Navigate -> {
-                                navController.navigate(uiEvent)
+                                if (uiEvent.popBackStack) {
+                                    navController.navigate(uiEvent.route) {
+                                        popUpToRoute
+                                    }
+                                } else {
+                                    navController.navigate(uiEvent.route)
+                                }
                             }
                             is UiEvent.ShowSnackbar -> {
                                 scaffoldState.snackbarHostState.showSnackbar(

@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="abs_humidity">Absol. luftfuktighet</string>
+    <string name="absolute_humidity">Absolut luftfuktighet</string>
+    <string name="acc_x">Acc. X</string>
+    <string name="acc_y">Acc. Y</string>
+    <string name="acc_z">Acc. Z</string>
     <string name="acceleration_reading">%1$,.3f %2$s</string>
     <string name="acceleration_unit">g</string>
     <string name="acceleration_unit_x">g (x)</string>
@@ -22,6 +27,7 @@
     <string name="advertisement">Advertisement</string>
     <string name="ago">sedan</string>
     <string name="agree">Godkänn</string>
+    <string name="air_pressure">Luftfuktighet</string>
     <string name="air_quality">Luftkvalitet</string>
     <string name="alarm_custom_description_title">Ställ in ett alarm-meddelande</string>
     <string name="alarm_custom_title_hint">Redigera beskrivningen...</string>
@@ -40,6 +46,8 @@
     <string name="alert_dialog_title_temperature">Ställ in temperaturalarm</string>
     <string name="alert_movement">Rörelse</string>
     <string name="alert_movement_description">Ett rörelselarm utlöses om värdet på sensorns interna rörelseräknare ändras. Detta larm kan till exempel användas för att detektera dörrrörelser eller vibrationer i närheten av sensorn.</string>
+    <string name="alert_notification_aqi_high_threshold">AQI är över %1$s</string>
+    <string name="alert_notification_aqi_low_threshold">AQI är under %1$s</string>
     <string name="alert_notification_co2_high_threshold">CO2 är över %1$s</string>
     <string name="alert_notification_co2_low_threshold">CO2 är under %1$s</string>
     <string name="alert_notification_humidity_high">För hög Luftfuktighet!</string>
@@ -52,14 +60,14 @@
     <string name="alert_notification_nox_high_threshold">NOx är över {%@^%1$s</string>
     <string name="alert_notification_nox_low_threshold">NOx är under %1$s</string>
     <string name="alert_notification_offline_message">Sensorn har varit offline över %1$s minuter</string>
-    <string name="alert_notification_pm10_high_threshold">PM10.0 är över {%@^%1$s</string>
-    <string name="alert_notification_pm10_low_threshold">PM10.0 är under %1$s</string>
-    <string name="alert_notification_pm1_high_threshold">PM1.0 är över {%@^%1$s</string>
-    <string name="alert_notification_pm1_low_threshold">PM1.0 är under %1$s</string>
+    <string name="alert_notification_pm100_high_threshold">PM10.0 är över {%@^%1$s</string>
+    <string name="alert_notification_pm100_low_threshold">PM10.0 är under %1$s</string>
+    <string name="alert_notification_pm10_high_threshold">PM1.0 är över {%@^%1$s</string>
+    <string name="alert_notification_pm10_low_threshold">PM1.0 är under %1$s</string>
     <string name="alert_notification_pm25_high_threshold">PM2.5 är över {%@^%1$s</string>
     <string name="alert_notification_pm25_low_threshold">PM2.5 är under %1$s</string>
-    <string name="alert_notification_pm4_high_threshold">PM4.0 är över {%@^%1$s</string>
-    <string name="alert_notification_pm4_low_threshold">PM4.0 är under %1$s</string>
+    <string name="alert_notification_pm40_high_threshold">PM4.0 är över {%@^%1$s</string>
+    <string name="alert_notification_pm40_low_threshold">PM4.0 är under %1$s</string>
     <string name="alert_notification_pressure_high">För högt Lufttryck!</string>
     <string name="alert_notification_pressure_high_threshold">Lufttrycket är över %1$s</string>
     <string name="alert_notification_pressure_low">För lågt Lufttryck!</string>
@@ -94,6 +102,8 @@
     <string name="aqi_level_3">Måttlig</string>
     <string name="aqi_level_4">Bra</string>
     <string name="aqi_level_5">Utmärkt</string>
+    <string name="aqi_with_unit">Luftkvalitet (%1$s)</string>
+    <string name="average">Genomsnitt</string>
     <string name="back">Tillbaka</string>
     <string name="background_image">Bakgrundsbild</string>
     <string name="background_interval">varje %1$s min</string>
@@ -128,7 +138,7 @@
     <string name="calibration_humidity_disclaimer">Observera att kalibreringsdata lagras lokalt i din mobila enhet. Om du tar bort Ruuvi Station appen och installerar den igen behöver du kalibrera på nytt.</string>
     <string name="calibration_humidity_link">Se videor</string>
     <string name="calibration_humidity_link_url">https://www.youtube.com/results?search_query=hygrometer+salt+calibration</string>
-    <string name="calibration_humidity_offset">Fuktighet offset</string>
+    <string name="calibration_humidity_offset">Relativ fuktighet offset</string>
     <string name="calibration_offset">(Offset %1$s)</string>
     <string name="calibration_original_value">Ursprungligt värde</string>
     <string name="calibration_pressure_offset">Lufttryck offset</string>
@@ -137,6 +147,7 @@
     <string name="camera">Kamera</string>
     <string name="camera_fail">Kunde inte öppna kameran</string>
     <string name="cancel">Avbryt</string>
+    <string name="carbon_dioxide">Koldioxid</string>
     <string name="card_action">Kortåtgärd</string>
     <string name="card_type">Kort typ</string>
     <string name="change_background">Byt bakgrund</string>
@@ -246,7 +257,26 @@
     <string name="decline">Avböj</string>
     <string name="decrease_graph_size">Minska diagrammens storlek</string>
     <string name="delete_account">Radera konto</string>
+    <string name="description_text_acceleration">Accelerometern upptäcker om enheten har rört sig eller lutat. Den mäter förändringar i tre riktningar (x-, y- och z-axlarna), vilket gör det möjligt att avgöra om enheten är stilla eller i rörelse.\n\nJordens gravitation orsakar ungefär 1 g acceleration på den axel som pekar rakt mot marken.\n\nOm värdena är stabila står enheten stilla. Om de förändras upptäcker sensorn att enheten har rört sig, roterat eller lutat. Snabba toppar i mätningarna tyder på hastiga rörelser, medan långsamma förändringar visar att enheten gradvis har lutat eller förflyttats.\n\nVid fasta installationer visar stabila accelerationsvärden att sensorn sitter ordentligt på plats. I mobila eller experimentella system kan värdena användas för att i realtid följa enhetens position eller exempelvis vibrationer.</string>
+    <string name="description_text_air_quality">Luftkvalitet visas med ett enda indexliknande tal som berättar hur bra eller dålig inomhusluften är. Värdet baseras på två faktorer: partiklar (PM2.5) som svävar i luften och koldioxid (CO₂) som samlas när människor vistas inomhus.\n\nLuftkvalitetsbetyget tar hänsyn till båda faktorerna, men om någon av dem blir för hög minskar det totala värdet. Till exempel kan partikelhalten öka vid matlagning, vilket gör att betyget sjunker även om koldioxidnivån fortfarande är bra.\n\nJu högre betyg, desto hälsosammare är luften att andas. God inomhusluft stödjer vakenhet, koncentration och sömnkvalitet. Om värdet sjunker under 70 kan det bero på en tillfällig situation, som dålig ventilation eller matlagning. Om det faller under 40 betyder det tydligt att friskt luft behövs eller att något i rummet försämrar luftkvaliteten.\n\nDet enklaste sättet att förbättra luftkvaliteten är att vädra rummet genom att öppna fönster. Även en luftrenare kan hjälpa till att hålla värdet på en bra nivå.\n\nOptimalt resultat: 90 – 100\nSkala: 0 – 100</string>
+    <string name="description_text_battery_voltage">Batterispänningen visar sensorns batteristatus.\n\nNär spänningen börjar sjunka håller batteriet på att ta slut. Detta kan leda till att sensorn mäter mindre exakt eller att dataluckor uppstår. Genom att övervaka spänningen ser du i tid när batteriet behöver bytas och undviker att enheten plötsligt slutar fungera.\n\nEtt nytt knappcellsbatteri ligger vanligtvis på cirka 3 volt. När värdet närmar sig 2,5 volt eller lägre är batteriet nästan slut. Om spänningen plötsligt sjunker mer än vanligt kan det bero på att batteriet är gammalt eller att kyla har försämrat dess kapacitet.\n\nRuuvi Station visar en låg batterivarning när spänningen faller under en temperaturberoende gräns: 2,0 V vid –20 °C, 2,3 V under 0 °C och 2,5 V vid andra temperaturer.\n\nVi rekommenderar att använda CR2477-batterier från välkända tillverkare med RuuviTag-sensorer. Batteriets förväntade livslängd under normala förhållanden är cirka 1–2 år. Uppladdningsbara batterier är inte lämpliga att använda med Ruuvi-sensorer.\n\nBatterispänning: 3V</string>
+    <string name="description_text_co2">Koldioxid (CO₂) bildas varje gång vi andas. Om ett rum har dålig ventilation kan nivån snabbt stiga. Detta kan orsaka trötthet, dåsighet, huvudvärk och försämrad kognitiv prestation. Matlagning, flera personer i samma utrymme eller svag ventilation kan också höja CO₂-nivåerna.\n\nUtomhusluften innehåller normalt cirka 420–430 ppm, medan inomhusnivåer över 1000 ppm tyder på behov av ventilation. I sovrum bör man ligga klart under denna nivå för att bevara en god sömnkvalitet.\n\nFör att sänka CO₂-nivåerna, ställ in larmgränsen på 1000 så vet du när det är dags att vädra.\n\nOptimalt område: 400 – 500\nSensorns mätningsområde: 350 – 40000</string>
+    <string name="description_text_humidity_absolute">Absolut luftfuktighet anger mängden vattenånga i gram per kubikmeter luft (g/m³). Till skillnad från relativ fuktighet visar den den faktiska mängden fukt i luften.\n\nAtt mäta absolut luftfuktighet är viktigt i miljöer där temperaturen varierar kraftigt och fukthantering är avgörande. Exakta värden är till nytta inom till exempel industri och lager, eftersom de hjälper till att förhindra skador eller förstöring. I hemmet hjälper förståelsen för fuktnivån att avgöra när en luftfuktare, avfuktare eller bättre ventilation behövs.\n\nAbsolut fuktighet är mest informativ när den följs över tid eller jämförs tillsammans med temperatur och relativ fuktighet. Den hjälper till att identifiera situationer där luften känns torr trots måttlig relativ fuktighet – eller tvärtom.\n\nEftersom komfort och luftkvalitetsproblem ofta är mer relaterade till mängden vatten i luften än till relativa procenttal, kan denna mätning avslöja dolda trender i inomhusklimatet som annars skulle förbises.</string>
+    <string name="description_text_humidity_dewpoint">Daggpunkten är den temperatur vid vilken vattenånga kondenseras (dagg bildas), med enhet i °C, °F eller K.\n\nDaggpunktstemperaturen visar direkt risken för kondens och påverkar inomhuskomforten. Ett högre värde betyder att luften innehåller mer fukt, vilket ofta leder till ett fuktigt eller instängt klimat. En låg daggpunkt innebär torrare luft.\n\nKondens på ytor sker när luften kyls ner till daggpunkten. Detta är avgörande att beakta för att förhindra mögel, korrosion och fuktskador i både bostäder och kommersiella utrymmen. Om temperatur vid exempelvis ett fönster eller en vägg sjunker till daggpunkten eller lägre, bildas kondens som kan orsaka skador över tid.\n\nDaggpunktsvärden förändras långsammare än relativ luftfuktighet, vilket gör dem till en tillförlitlig indikator på ventilationsproblem eller fuktkällor.\n\nGenom att följa daggpunkten tillsammans med absolut och relativ luftfuktighet får du en mer heltäckande bild av fuktförhållandena i realtid. Det hjälper dig att skydda byggnadens struktur, inredning och elektronik samt förbättra luftkvaliteten.</string>
+    <string name="description_text_humidity_relative">Relativ luftfuktighet (RH %) visar hur mycket fukt luften innehåller jämfört med den maximala mängd den kan hålla vid en viss temperatur.\n\nEn balanserad luftfuktighet i hemmet (helst 30–50 %) gör inomhusluften hälsosammare. För hög luftfuktighet gynnar mögel och kvalster, medan för låg torkar ut hud och andningsvägar.\n\nFuktnivån kan variera mellan olika rum och vid olika tider på dygnet. I badrum och kök är värdena ofta högre efter dusch eller matlagning. Placera sensorn i det rum du är mest orolig för och följ värdena över tid för att upptäcka återkommande situationer och kunna förebygga dem.\n\nDu kan reglera luftfuktigheten genom att justera inomhustemperaturen och vädra när luftfuktigheten utomhus är lägre än inomhus. När du lär dig kontrollera luftfuktigheten blir det lättare att upprätthålla en hälsosam inomhusmiljö och förebygga fuktskador.\n\nRelativ luftfuktighet (%) används oftast, men du kan även välja absolut luftfuktighet eller daggpunkt i appens inställningar.\n\nOptimalt område: 40–80%\nSensorns mätområde: 0–100%\n\nFör idéer om lämpliga larmgränser, se Ruuvins användningsexempel: \u0026lt;link url=\"https://ruuvi.com/ideas/\"\u0026gt;ruuvi.com/ideas\u0026lt;/link\u0026gt;</string>
+    <string name="description_text_movement">Räknaren för rörelse visar rörelser som upptäcks genom förändringar i accelerometern.\n\nAtt övervaka enhetens rörelseaktivitet visar om den har flyttats eller om dess omgivning har störts.\n\nObservera att fler händelser än förväntat kan registreras vid instabila placeringar, till exempel på fönsterbrädor.</string>
+    <string name="description_text_nox">NOx-indexet visar hur mycket kväveoxider det finns i luften.\n\nDessa är skadliga gaser som bildas till exempel från trafikavgaser, gasspisar, eldstäder eller vissa värmeanläggningar. Även små mängder kan irritera luftvägarna, förvärra astma och öka mottagligheten för infektioner. Långvarig exponering kan också påverka lungor och hjärta.\n\nNOx-indexet visar inte exakta koncentrationer, utan en trend: om luftkvaliteten har förbättrats eller försämrats jämfört med tidigare. Till exempel under matlagning eller när luftföroreningar utomhus ökar kan värdet snabbt stiga.\n\nSensorn fungerar bäst om den inte placeras direkt bredvid spisar eller ventilationsöppningar.\n\nVärldshälsoorganisationen (WHO) rekommenderar ett 24-timmarsmedelvärde på 25 µg/m³ för kvävedioxid (NO₂).\n\nSensorns mätningsområde: 0 – 500</string>
+    <string name="description_text_pm">Partiklar (PM) är små, osynliga partiklar i luften, som damm, pollen, rök och andra föroreningar. Mycket små partiklar (PM2.5 och mindre) är skadliga för hälsan eftersom de kan tränga djupt ner i lungorna och förvärra allergier och andningssymptom.\n\nGenom att övervaka PM-nivåer kan du märka när inomhusluften försämras, till exempel vid matlagning, dammsugning, tända ljus eller trafikföroreningar utifrån. Detta gör att du kan reagera i tid, till exempel genom att vädra eller använda en luftrenare.\n\nPlacera sensorn så att den inte står direkt bredvid utsläppskällor, som spisen, för att hålla mätresultaten tillförlitliga. Det är bäst att tolka mätningarna som trender – att se när värdena stiger eller sjunker – snarare än att fokusera på enskilda siffror.\n\nSensorn ger en uppskattning av mängden partiklar i luften. Det vanligaste värdet som övervakas är PM2.5. I inställningarna kan du även välja att visa andra partikelstorlekar, som PM1.0, PM4.0 och PM10.\n\nVärldshälsoorganisationen (WHO) rekommenderar ett dygnsmedelvärde för PM2.5 på 15 μg/m³. Denna riktlinje gäller för utomhusluft men fungerar också som jämförelse för att förbättra inomhusluften.\n\nSensorns mätområde: 0 – 1000</string>
+    <string name="description_text_pressure">Barometertryck (Pa, hPa, mmHg, inHg) anger det tryck som luftens vikt utövar på en viss plats – i praktiken hur mycket atmosfären trycker mot markytan vid ett givet tillfälle.\n\nAtt övervaka lufttrycket hjälper till att förutsäga väderförändringar och förstå ventilationsflöden, vilket kan påverka byggnaders skick och inomhuskomfort.\n\nFör bästa noggrannhet bör sensorn inte placeras direkt i luftflöden, som vid fläktar, ventilationsöppningar eller öppna fönster, eftersom dessa kan tillfälligt påverka mätresultaten.\n\nHöjden över havet för mätplatsen påverkar tryckvärdet och därmed också mätresultatet. Lufttrycket vid havsytan är 1013,25 hektopascal (hPa).\n\nSensor mätningsområde: 500–1155 hPa</string>
+    <string name="description_text_signal_strength">Signalstyrka (RSSI) visar kvaliteten på Bluetooth-anslutningen. Ju starkare signal (närmare 0 dBm), desto mer tillförlitligt uppdateras sensordata på mottagande enhet. Om signalen är svag kan anslutningen hacka eller brytas helt, vilket gör att mätdata inte uppdateras.\n\nAnslutningens kvalitet påverkas till exempel av avståndet mellan sensorn och mottagarenheten, väggar och andra hinder samt störningar från hushållselektronik.\n\nGenom att övervaka signalstyrkan kan du placera sensorn på en bättre plats. Om signalen är svag kan du förbättra anslutningen genom att flytta sensorn så att den har så fri sikt som möjligt mot mottagarenheten. På så sätt säkerställer du att mätdata visas tillförlitligt i appen.\n\nOptimalt resultat: -60 – 0\nSensorns mätningsområde: -100 – 0</string>
+    <string name="description_text_temperature_celsius">Temperatursensorn mäter den omgivande lufttemperaturen.\n\nHemma påverkar temperaturen i hög grad komfort, sömnkvalitet, koncentration och allmän hälsa. Att övervaka temperaturen hjälper också till att optimera energikostnader och förbättra boendekomforten.\n\nInomhus bör sensorn placeras i ögonhöjd, långt från ytor eller föremål som leder värme eller kyla, samt från dragiga platser.\n\nInstallera helst sensorn upprätt så att luften kan cirkulera fritt runt den. För utomhusbruk (RuuviTag/RuuviTag Pro) bör sensorn placeras i skugga och skyddas från direkt regn.\n\nObs: Även om sensorn snabbt upptäcker och rapporterar temperaturförändringar kan det ta upp till en timme innan den uppnår fullständig värmebalans med omgivningen. Detta är en normal egenskap hos enheten.\n\nFör idéer om lämpliga larmgränser, se Ruuvins användningsexempel: \u0026lt;link url=\"https://ruuvi.com/ideas/\"\u0026gt;ruuvi.com/ideas\u0026lt;/link\u0026gt;</string>
+    <string name="description_text_temperature_fahrenheit">Temperatursensorn mäter den omgivande lufttemperaturen.\n\nHemma påverkar temperaturen i hög grad komfort, sömnkvalitet, koncentration och allmän hälsa. Att övervaka temperaturen hjälper också till att optimera energikostnader och förbättra boendekomforten.\n\nInomhus bör sensorn placeras i ögonhöjd, långt från ytor eller föremål som leder värme eller kyla, samt från dragiga platser.\n\nInstallera helst sensorn upprätt så att luften kan cirkulera fritt runt den. För utomhusbruk (RuuviTag/RuuviTag Pro) bör sensorn placeras i skugga och skyddas från direkt regn.\n\nObs: Även om sensorn snabbt upptäcker och rapporterar temperaturförändringar kan det ta upp till en timme innan den uppnår fullständig värmebalans med omgivningen. Detta är en normal egenskap hos enheten.\n\nFör idéer om lämpliga larmgränser, se Ruuvins användningsexempel: \u0026lt;link url=\"https://ruuvi.com/ideas/\"\u0026gt;ruuvi.com/ideas\u0026lt;/link\u0026gt;</string>
+    <string name="description_text_temperature_kelvin">Temperatursensorn mäter den omgivande lufttemperaturen.\n\nHemma påverkar temperaturen i hög grad komfort, sömnkvalitet, koncentration och allmän hälsa. Att övervaka temperaturen hjälper också till att optimera energikostnader och förbättra boendekomforten.\n\nInomhus bör sensorn placeras i ögonhöjd, långt från ytor eller föremål som leder värme eller kyla, samt från dragiga platser.\n\nInstallera helst sensorn upprätt så att luften kan cirkulera fritt runt den. För utomhusbruk (RuuviTag/RuuviTag Pro) bör sensorn placeras i skugga och skyddas från direkt regn.\n\nObs: Även om sensorn snabbt upptäcker och rapporterar temperaturförändringar kan det ta upp till en timme innan den uppnår fullständig värmebalans med omgivningen. Detta är en normal egenskap hos enheten.\n\nFör idéer om lämpliga larmgränser, se Ruuvins användningsexempel: \u0026lt;link url=\"https://ruuvi.com/ideas/\"\u0026gt;ruuvi.com/ideas\u0026lt;/link\u0026gt;</string>
+    <string name="description_text_voc">VOC-indexet visar med ett enda tal hur mycket flyktiga kemikalier som finns i luften.\n\nIndexet efterliknar människans luktsinne genom att visa den relativa intensiteten av lukter och upptäcker även luktfria VOC-föreningar, men kan inte skilja dem åt.\n\nDessa kemikalier kan frigöras från många vardagsprodukter, som rengöringsmedel, färger, möbler och till och med vissa hushållsapparater. När halterna av VOC är för höga kan de orsaka irritation i ögon, näsa eller hals, huvudvärk och på längre sikt även hälsorisker.\n\nVOC-värden kan variera under dagen. Till exempel kan städning, målning eller införandet av nya möbler snabbt höja nivåerna.\n\nDet bästa är att följa mätningarna under flera dagar och notera vad som har gjorts i hemmet när värdena ändras. På så sätt kan du se var föroreningarna kommer ifrån.\n\nOm VOC-nivåerna stiger, vädra rummet, använd en luftrenare eller välj produkter med mindre kemikalier. Detta hjälper till att hålla inomhusluften hälsosam.\n\nVärldshälsoorganisationen (WHO) rekommenderar en maximal nivå av flyktiga organiska föreningar (TVOC) i inomhusluft på 0,05 mg/m³ (eller 0,05 ppm).\n\nSensorns mätningsområde: 0 – 500</string>
     <string name="details">Info</string>
+    <string name="dewpoint">Daggpunkt</string>
+    <string name="dewpoint_with_unit">Daggpunkt (%1$s)</string>
+    <string name="dfu_air_update_instructions">\u0026lt;title\u0026gt;Uppdatera enheten\u0026lt;/title\u0026gt;\n\n1. För din mobila enhet nära din Ruuvi-sensor\n\n2. Tryck på knappen Starta uppdatering och vänta tills processen är klar\n\n3. När uppdateringen är klar startar enheten om och uppdateringen är färdig.</string>
     <string name="dfu_low_battery_warning">Sensorns batterispänning är låg och uppgraderingsprocessen kan misslyckas. Vi rekommenderar att du byter ut batteriet innan du uppdaterar programvaran.</string>
     <string name="dfu_no_internet">Nedladdning av programvara misslyckades. Kontrollera din internetanslutning.</string>
     <string name="dfu_update_do_not_close_app">Stäng inte appen eller stäng av sensorn under uppdateringen.</string>
@@ -272,7 +302,7 @@
     <string name="export_csv_header_format2_4">Datum,Temperatur (%1$s),Luftfuktighet (%2$s),Lufttryck (%3$s),Signalstyrka(dBm)</string>
     <string name="export_csv_header_format3">Datum,Temperatur (%1$s),Luftfuktighet (%2$s),Lufttryck (%3$s),Signalstyrka (dBm),Acceleration X (g),Acceleration Y (g),Acceleration Z (g),Spänning (V)</string>
     <string name="export_csv_header_format5">Datum,Temperatur (%1$s),Luftfuktighet (%2$s),Lufttryck (%3$s),Signalstyrka (dBm),Acceleration X (g),Acceleration Y (g),Acceleration Z (g),Spänning (V),Rörelseräknare (rörelser),Mätningssekvensnummer,Sändningseffekt (dBm)</string>
-    <string name="export_csv_header_formatE0">Datum,AQI,Temperatur (%1$s),Luftfuktighet (%2$s),Lufttryck (%3$s),Ljusstyrka (lx),dB medelvärde (dBA),dB topp (dBA),CO2(ppm),VOC,NOX,PM1.0(µg/m³),PM2.5(µg/m³),PM4.0(µg/m³),PM10.0(µg/m³),Signalstyrka (dBm),Acceleration X (g),Acceleration Y (g),Acceleration Z (g),Spänning (V),Rörelseräknare (rörelser),Mätningssekvensnummer,Sändningseffekt (dBm)</string>
+    <string name="export_csv_header_formatE0">Datum,AQI,Temperatur (%1$s),Luftfuktighet (%2$s),Lufttryck (%3$s),Illuminans (lx),Ljud medel(dBA),Ljud topp(dBA),CO2(ppm),VOC,NOX,PM1(µg/m³),PM2.5(µg/m³),PM4(µg/m³),PM10(µg/m³),RSSI (dBm),Acceleration X (g),Acceleration Y (g),Acceleration Z (g),Spänning (V),Räknare rörelser,Mätningssekvensnummer,Sändningseffekt (dBm)</string>
     <string name="export_history">Exportera historik (csv)</string>
     <string name="export_history_xlsx">Exportera historik (xlsx)</string>
     <string name="file_not_supported">Filformatet stöds inte</string>
@@ -355,10 +385,11 @@
     <string name="longer_history_message">Ruuvi Station mobilapp stöder högst 10 dagars historik. Ruuvi Cloud-prenumeranter kan se upp till 3 års historisk data med hjälp av webbappen på ruuvi.com/station (kräver Ruuvi Gateway-router).</string>
     <string name="longer_history_title">Längre historik</string>
     <string name="low_battery">Låg batterinivå</string>
-    <string name="luminosity">Luminans</string>
-    <string name="luminosity_with_unit">Luminans (%1$s)</string>
+    <string name="luminosity">Belysningsnivå</string>
+    <string name="luminosity_with_unit">Ljusstyrka (%1$s)</string>
     <string name="mac_address">MAC Adress</string>
     <string name="mac_copied">MAC-adressen kopierad till urklippet</string>
+    <string name="meas_seq_number">Mätn.seq.nr</string>
     <string name="measurement_sequence_number">Mätningssekvensnummer</string>
     <string name="menu_about_help">Om / Hjälp</string>
     <string name="menu_add_new_sensor">Lägg till en ny Sensor</string>
@@ -374,7 +405,7 @@
     <string name="move_down">Flytta ner</string>
     <string name="move_up">Flytta upp</string>
     <string name="movement_counter">Rörelseräknare</string>
-    <string name="movements">rörelser</string>
+    <string name="movements">Rörelser</string>
     <string name="muted_till">Avstängd till %1$s</string>
     <string name="my_account_change_email">Kontakta support@ruuvi.com om du vill ändra e-postadressen som är kopplad till detta användarkonto.</string>
     <string name="my_account_change_email_link">mailto:support@ruuvi.com</string>
@@ -399,6 +430,7 @@
     <string name="nfc_dialog_name">Namn:</string>
     <string name="nfc_dialog_unique_id">Unikt ID:</string>
     <string name="nfc_enable_bt_to_add_sensor">Aktivera Bluetooth och skanningssensor för att lägga till den</string>
+    <string name="nitrogen_oxides">Kväveoxider</string>
     <string name="no">Nej</string>
     <string name="no_data">Ingen data</string>
     <string name="no_data_10_days">Ingen data under de senaste 10 dagarna</string>
@@ -406,6 +438,7 @@
     <string name="no_password_needed">Ett gratiskonto kommer att skapas för denna e-post om du inte redan har ett. Endast e-postadress krävs. Vi håller din information säker.</string>
     <string name="none">ingen</string>
     <string name="note">Obs!</string>
+    <string name="notification_permission_needed">För att aktivera aviseringar och bakgrundsskanning, tillåt aviseringar i inställningarna</string>
     <string name="nox">NOx</string>
     <string name="nox_with_unit">NOx (%1$s)</string>
     <string name="off">Av</string>
@@ -449,6 +482,11 @@
     <string name="ordering">Sortering</string>
     <string name="owner_none">Ingen</string>
     <string name="owners_plan">Ägarens Ruuvi-plan</string>
+    <string name="particulate_matter_10">Partiklar 1</string>
+    <string name="particulate_matter_100">Partiklar 10</string>
+    <string name="particulate_matter_25">Partiklar 2.5</string>
+    <string name="particulate_matter_40">Partiklar 4</string>
+    <string name="peak">Topp</string>
     <string name="permission_background_dialog_title">Aktivera bakgrundsskanning</string>
     <string name="permission_dialog_background_request_message">Android-operativsystemet kräver åtkomst av platsinformation för att skanna Bluetooth-enheter i närheten. \n\nTillåt om du vill använda bakgrundsskanning\n\n Ruuvi delar aldrig din platsinformation. Användningen är säker.</string>
     <string name="permission_dialog_request_message_api31">För att söka efter närliggande Bluetooth-enheter, ge tillstånd att hitta och ansluta till närliggande enheter. Detta tillstånd krävs också för bakgrundsskanning om det är aktiverat i appens inställningar, även när appen är stängd.\n\nRuuvi Station använder inte denna information för att spåra din plats.</string>
@@ -456,15 +494,16 @@
     <string name="permission_location_needed">Tillåt åtkomst av platsinfomration för att se sensorer.</string>
     <string name="permission_location_needed_api31">Tillåt att enheter i närheten visas i Inställningar.</string>
     <string name="plan_expiry_date">Ruuvi-prenumerationens utgångsdatum</string>
-    <string name="pm1">PM1.0</string>
-    <string name="pm10">PM10.0</string>
-    <string name="pm10_with_unit">PM10.0 (%1$s)</string>
-    <string name="pm1_with_unit">PM1.0 (%1$s)</string>
+    <string name="pm10">PM1</string>
+    <string name="pm100">PM10</string>
+    <string name="pm100_with_unit">PM10 (%1$s)</string>
+    <string name="pm10_with_unit">PM1 (%1$s)</string>
     <string name="pm25">PM2.5</string>
     <string name="pm25_with_unit">PM2.5 (%1$s)</string>
-    <string name="pm4">PM4.0</string>
-    <string name="pm4_with_unit">PM4.0 (%1$s)</string>
+    <string name="pm40">PM4</string>
+    <string name="pm40_with_unit">PM4 (%1$s)</string>
     <string name="prepare_your_sensor">Förbered din sensor</string>
+    <string name="prepare_your_sensor_instructions">\u0026lt;title\u0026gt;Förbered din sensor\u0026lt;/title\u0026gt;\n\n1. Öppna locket på din Ruuvi sensor\n\n2. Leta reda på små runda svarta knappar på det vita kretskortet; äldre Ruuvi-sensorer har 2 knappar märkta “R“ och “B“ medan nyare har bara en knapp utan etikett.\n\n3. Lägg sensorn i uppdateringsläge\n\n3.1. Om din sensor har två knappar: håll knappen “B” intryckt medan du trycker en gång på “R”. Släpp knapp “B”.\n\n3.2. Om din sensor har en knapp, håll knappen intryckt i 10 sekunder.\n\n4. Uppgraderingsläget lyckades om den röda lysdioden på kretskortet lyser och knappens text i appen har bytts till “Starta uppdatering“.</string>
     <string name="prepare_your_sensor_instructions_1">1. Öppna locket på din Ruuvi sensor</string>
     <string name="prepare_your_sensor_instructions_2">2. Leta reda på små runda svarta knappar på det vita kretskortet; äldre Ruuvi-sensorer har 2 knappar märkta “R“ och “B“ medan nyare har bara en knapp utan etikett.</string>
     <string name="prepare_your_sensor_instructions_3">3. Lägg sensorn i uppdateringsläge</string>
@@ -472,7 +511,7 @@
     <string name="prepare_your_sensor_instructions_5">3.2. Om din sensor har en knapp, håll knappen intryckt i 10 sekunder.</string>
     <string name="prepare_your_sensor_instructions_6">4. Uppgraderingsläget lyckades om den röda lysdioden på kretskortet lyser och knappens text i appen har bytts till “Starta uppdatering“.</string>
     <string name="press_to_add">Inga sensorer har lags till\nTryck här för att lägga till sensorer</string>
-    <string name="pressure">Lufttryck</string>
+    <string name="pressure">Luftfuktighet</string>
     <string name="pressure_accuracy_title">Tryckupplösning</string>
     <string name="pressure_hpa_name">Hektopascal (hPa)</string>
     <string name="pressure_hpa_unit">hPa</string>
@@ -489,6 +528,9 @@
     <string name="reading_history">Läser historik</string>
     <string name="reading_history_not_supported">Firmware versionen stöds inte</string>
     <string name="reading_history_x">Läser Bluetooth: %1$s</string>
+    <string name="real_time">Realtid</string>
+    <string name="rel_humidity">Rel. luftfuktighet</string>
+    <string name="relative_humidity">Relativ luftfuktighet</string>
     <string name="remove">Ta bort</string>
     <string name="remove_claimed_sensor">Om du tar bort sensorn upphör ägarskapet. Vem som helst kan göra anspråk på ägandet av sensorn efter borttagning. Varje Ruuvi-sensor kan bara ha en ägare.</string>
     <string name="remove_claimed_sensor_description">Genom att ta bort sensorn kommer den inte längre synas i ditt konto och sensorinställningar som namn, bakgrundsbild, kalibreringsinställningar och larminställningar kommer att tas bort. Efter borttagning kan någon annan ta ägande om sensorn. Varje Ruuvi-sensor kan bara ha en ägare.</string>
@@ -610,6 +652,7 @@
     <string name="sign_out_confirm">Sensorer som du har verifierat äganderätten till på inställningssidan tas automatiskt bort från appen när du loggar ut. Sensordata hämtas från molnet igen om du loggar in med samma e-postadress.\n\nÄr du säker på att du vill logga ut? </string>
     <string name="signal_reading">%1$,d %2$s</string>
     <string name="signal_reading_zero">- %1$s</string>
+    <string name="signal_strength">Signalstyrka</string>
     <string name="signal_strength_dbm">Signalstyrka (dBm)</string>
     <string name="signal_strength_rssi">Signalstyrka (RSSI)</string>
     <string name="signal_unit">dBm</string>
@@ -620,9 +663,11 @@
     <string name="skip">SKIPPA</string>
     <string name="something_went_wrong">Något gick fel</string>
     <string name="sound">Ljud</string>
-    <string name="sound_avg">Ljudnivå (genomsnitt)</string>
-    <string name="sound_peak">Ljudnivå (topp)</string>
-    <string name="sound_with_unit">Ljud (%1$s)</string>
+    <string name="sound_average_with_unit">Ljud (medel) (%1$s)</string>
+    <string name="sound_avg">Ljud (genomsnitt)</string>
+    <string name="sound_instant_with_unit">Ljud (momentan) (%1$s)</string>
+    <string name="sound_peak">Ljud (topp)</string>
+    <string name="sound_peak_with_unit">Ljud (topp) (%1$s)</string>
     <string name="start_the_update">Starta uppdatering</string>
     <string name="start_update_process">Starta uppdateringsprocessen</string>
     <string name="subscription_disclaimer">Detta är en helt gratis app som inte stöder månadsvisa prenumerationsköp eller andra in-app-köp. Om du är användare av Ruuvi Gateway-routern och du söker mer detaljerad information om ditt Ruuvi-konto, gå till vår hemsida och logga in.</string>
@@ -662,13 +707,13 @@
     <string name="unclaim_sensor_description">Äganderätten till denna sensor har gjorts anspråk på ditt Ruuvi-konto. Tryck på Unclaim för att ta bort sensorns inställningar och relaterade data från ditt Ruuvi-konto.</string>
     <string name="unit_co2">ppm</string>
     <string name="unit_luminosity">lx</string>
-    <string name="unit_nox">NOx Index</string>
-    <string name="unit_pm1">µg/m³</string>
+    <string name="unit_nox">NOx</string>
     <string name="unit_pm10">µg/m³</string>
+    <string name="unit_pm100">µg/m³</string>
     <string name="unit_pm25">µg/m³</string>
-    <string name="unit_pm4">µg/m³</string>
+    <string name="unit_pm40">µg/m³</string>
     <string name="unit_sound">dBA</string>
-    <string name="unit_voc">VOC Index</string>
+    <string name="unit_voc">VOC</string>
     <string name="unknown_error">Okänt fel</string>
     <string name="update_action">STARTA OM</string>
     <string name="update_downloaded_message">En uppdatering har laddats ner.</string>
@@ -685,6 +730,7 @@
     <string name="visible_measurements_use_default">Använd standard</string>
     <string name="voc">VOC</string>
     <string name="voc_with_unit">VOC (%1$s)</string>
+    <string name="volatile_organic_compounds">Flyktiga organiska föreningar</string>
     <string name="voltage_reading">%1$,.2f %2$s</string>
     <string name="voltage_unit">V</string>
     <string name="welcome_text_0">Det här kan Ruuvi Station göra för dig.</string>

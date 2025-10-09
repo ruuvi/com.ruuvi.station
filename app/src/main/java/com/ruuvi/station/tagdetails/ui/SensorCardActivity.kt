@@ -22,6 +22,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -30,6 +31,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
@@ -44,8 +46,8 @@ import androidx.core.app.TaskStackBuilder
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.*
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
-import com.bumptech.glide.integration.compose.GlideImage
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.ruuvi.gateway.tester.nfc.model.SensorNfсScanInfo
 import com.ruuvi.station.R
@@ -73,8 +75,10 @@ import com.ruuvi.station.tagdetails.ui.elements.BigValueDisplay
 import com.ruuvi.station.tagdetails.ui.elements.CircularAQIDisplay
 import com.ruuvi.station.tagdetails.ui.elements.SensorCardLegacy
 import com.ruuvi.station.tagdetails.ui.elements.SensorValueItem
+import com.ruuvi.station.tagdetails.ui.elements.ValueBottomSheet
 import com.ruuvi.station.tagsettings.ui.TagSettingsActivity
 import com.ruuvi.station.units.domain.UnitsConverter
+import com.ruuvi.station.units.model.EnvironmentValue
 import com.ruuvi.station.units.model.UnitType
 import com.ruuvi.station.util.Period
 import com.ruuvi.station.util.base.NfcActivity
@@ -82,12 +86,15 @@ import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
 import com.ruuvi.station.util.extensions.*
 import com.ruuvi.station.util.ui.pxToDp
+import com.ruuvi.station.vico.model.ChartData
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
 import org.kodein.di.generic.instance
 import timber.log.Timber
+import kotlin.math.ceil
+import kotlin.math.floor
 
 class SensorCardActivity : NfcActivity(), KodeinAware {
 
@@ -156,7 +163,10 @@ class SensorCardActivity : NfcActivity(), KodeinAware {
                         addSensor = viewModel::addSensor,
                         changeShowStats = viewModel::changeShowChartStats,
                         saveSelected = viewModel::saveSelected,
-                        getIndex = viewModel::getIndex
+                        getIndex = viewModel::getIndex,
+                        scrollToChart = viewModel::scrollToChart,
+                        scrollToChartEvent = viewModel.scrollToChartEvent,
+                        getChartData = viewModel::getChartData
                     )
                 }
             }
@@ -252,7 +262,10 @@ fun SensorsPager(
     changeShowStats: () -> Unit,
     changeIncreasedChartSize: () -> Unit,
     saveSelected: (String) -> Unit,
-    getIndex: (String) -> Int
+    getIndex: (String) -> Int,
+    scrollToChart: (UnitType) -> Unit,
+    scrollToChartEvent: Flow<UnitType>,
+    getChartData: (String, UnitType, Int) -> Flow<ChartData>
 ) {
     Timber.d("SensorsPager selected $selectedSensor sensors count ${sensors.size}")
     val systemUiController = rememberSystemUiController()
@@ -293,14 +306,7 @@ fun SensorsPager(
         if (sensor.userBackground != null) {
             val uri = Uri.parse(sensor.userBackground)
             if (uri.path != null) {
-                if (showCharts) {
-                    SensorCardImage(uri, showCharts)
-                } else {
-                    Crossfade(targetState = uri, label = "switch background") {
-                        Timber.d("image for sensor ${sensor.displayName}")
-                        SensorCardImage(it, showCharts)
-                    }
-                }
+                SensorCardImage(uri, showCharts)
             }
         }
     }
@@ -388,13 +394,16 @@ fun SensorsPager(
                                 showChartStats = showChartStats,
                                 historyUpdater = historyUpdater,
                                 increasedChartSize = increasedChartSize,
+                                scrollToChartEvent = scrollToChartEvent,
                                 size = size
                             )
                         } else {
                             if (newSensorCard) {
                                 SensorCard(
                                     sensor = sensor,
-                                    modifier = Modifier.weight(1f)
+                                    modifier = Modifier.weight(1f),
+                                    getChartData = getChartData,
+                                    scrollToChart = scrollToChart
                                 )
                             } else {
                                 SensorCardLegacy(
@@ -538,13 +547,19 @@ fun SensorTitle(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SensorCard(
     modifier: Modifier = Modifier,
-    sensor: RuuviTag
+    sensor: RuuviTag,
+    getChartData: (String, UnitType, Int) -> Flow<ChartData>,
+    scrollToChart: (UnitType) -> Unit
 ) {
+    var showBottomSheet by remember { mutableStateOf(false) }
+    var sheetValue by remember { mutableStateOf<EnvironmentValue?>(null) }
     val itemHeight = RuuviStationTheme.dimensions.sensorCardValueItemHeight.scaleUpTo(1.5f)
     var size by remember { mutableStateOf(IntSize.Zero) }
+    var topSize by remember { mutableStateOf(IntSize.Zero) }
     val halfSize = (size.height / 2).pxToDp()
     val scrollState = rememberScrollState()
     val valuesWithoutFirst = if (sensor.valuesToDisplay.isNotEmpty()) {
@@ -552,12 +567,12 @@ fun SensorCard(
     } else {
         listOf()
     }
+    val padding = if (halfSize < 200.dp) 8.dp else 32.dp
+    val itemSeparator = 8.dp
+    val bottomSize = floor(((size.height - topSize.height).pxToDp() - padding - itemSeparator).value).dp
+    val columnMaxWidth = 200.dp
 
-    val columnModifier = if (valuesWithoutFirst.size > 3) {
-        modifier.fadingEdge(scrollState)
-    } else {
-        modifier
-    }
+    val columnModifier = modifier.fadingEdge(scrollState)
 
     Column(
         modifier = columnModifier
@@ -573,128 +588,185 @@ fun SensorCard(
         if (size.height > 0) {
             Box(
                 modifier = Modifier
-                        .height(halfSize)
-                        .padding(48.dp)
+                    .defaultMinSize(minHeight = halfSize)
+                    .padding(top = padding, bottom = itemSeparator)
+                    .onGloballyPositioned { layoutCoordinates ->
+                        topSize = layoutCoordinates.size
+                    }
             ) {
                 val firstValue = sensor.valuesToDisplay.firstOrNull()
                 if (firstValue != null) {
-                    if (firstValue.unitType is UnitType.AirQuality) {
-                        if (sensor.latestMeasurement != null) {
-                            CircularAQIDisplay(sensor.latestMeasurement.aqiScore)
-                        }
-                    } else {
-                        BigValueDisplay(
-                            value = firstValue,
-                            showName = true
-                        )
+                    TopMeasurement(
+                        sensor = sensor,
+                        value = firstValue,
+                    ) {
+                        showBottomSheet = true
+                        sheetValue = firstValue
                     }
                 }
             }
 
+            val configuration = LocalConfiguration.current
+            val columnCount = if (configuration.screenWidthDp > 650) {
+                floor(configuration.screenWidthDp / columnMaxWidth.value).toInt()
+            } else {
+                2
+            }
+            val rowCount = ceil(valuesWithoutFirst.size / columnCount.toFloat())
 
-            if ((valuesWithoutFirst.size / 2) * itemHeight <= halfSize) {
+            if (rowCount * (itemHeight + itemSeparator) <= bottomSize) {
                 Column(
                     verticalArrangement = Arrangement.Bottom,
+                    horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier
-                        .height((size.height / 2).pxToDp())
+                        .height(bottomSize)
                         .fillMaxWidth()
                 ) {
                     SensorValues(
                         modifier = Modifier,
                         sensor = sensor,
-                        itemHeight = itemHeight
-                    )
+                        itemHeight = itemHeight,
+                        columnCount = columnCount,
+                        columnMaxWidth = columnMaxWidth
+                    ) {
+                        showBottomSheet = true
+                        sheetValue = it
+                    }
                 }
             } else {
                 SensorValues(
                     modifier = Modifier,
                     sensor = sensor,
-                    itemHeight = itemHeight
-                )
+                    itemHeight = itemHeight,
+                    columnCount = columnCount,
+                    columnMaxWidth = columnMaxWidth
+                ) {
+                    showBottomSheet = true
+                    sheetValue = it
+                }
+            }
+        }
+    }
+
+    if (showBottomSheet) {
+        sheetValue?.let { value ->
+
+            val chartHistory by produceState<ChartData?>(
+                initialValue = null,
+                key1 = sensor.id,
+                key2 = value.unitType
+            ) {
+                getChartData(sensor.id, value.unitType, 48).collectLatest { data ->
+                    this.value = data
+                }
+            }
+
+            ValueBottomSheet(
+                sheetValue = value,
+                chartHistory = chartHistory,
+                maxHeight = size.height,
+                modifier = Modifier,
+                scrollToChart = scrollToChart
+            ) {
+                showBottomSheet = false
             }
         }
     }
 }
 
+@Composable
+fun TopMeasurement(
+    sensor: RuuviTag,
+    value: EnvironmentValue,
+    modifier: Modifier = Modifier,
+    clickAction: () -> Unit = {}
+) {
+    if (value.unitType is UnitType.AirQuality) {
+        if (sensor.latestMeasurement != null) {
+            CircularAQIDisplay(
+                value = value,
+                aqi = sensor.latestMeasurement.aqiScore,
+                alertActive = value.unitType.alarmType?.let {
+                    sensor.alarmSensorStatus.triggered(it)
+                } ?: false
+            ) { clickAction.invoke() }
+        }
+    } else {
+        BigValueDisplay(
+            value = value,
+            showName = true,
+            alertActive = value.unitType.alarmType?.let {
+                sensor.alarmSensorStatus.triggered(it)
+            } ?: false
+        ) { clickAction.invoke() }
+    }
+}
 
+fun <T> distributeRoundRobin(list: List<T>, n: Int): List<List<T>> {
+    require(n > 0) { "Number of groups must be > 0" }
+
+    // Create n empty mutable lists
+    val result = List(n) { mutableListOf<T>() }
+
+    // Distribute each item to the appropriate sublist
+    list.forEachIndexed { index, item ->
+        result[index % n].add(item)
+    }
+
+    return result
+}
 
 @Composable
 fun SensorValues(
     modifier: Modifier,
     sensor: RuuviTag,
-    itemHeight: Dp
+    columnCount: Int,
+    itemHeight: Dp,
+    columnMaxWidth: Dp,
+    onValueClick: (EnvironmentValue) -> Unit
 ) {
     if (sensor.valuesToDisplay.size <= 1) return
     val valuesWithoutFirst = sensor.valuesToDisplay.subList(1, sensor.valuesToDisplay.size)
 
-    if (valuesWithoutFirst.size <= 3) {
-        Column(
-            modifier = modifier
-                .fillMaxHeight()
-                .widthIn(max = 180.dp)
-                .padding(start = RuuviStationTheme.dimensions.screenPadding),
-            verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.Bottom),
-            horizontalAlignment = Alignment.Start
-        ) {
-            for (value in valuesWithoutFirst) {
-                SensorValueItem(
-                    icon = value.unitType.iconRes,
-                    value = value.valueWithoutUnit,
-                    unit = value.unitString,
-                    itemHeight = itemHeight,
-                    modifier = Modifier.fillMaxWidth(),
-                    name = value.unitType.measurementTitle.let { stringResource(it) }
-                )
-            }
-        }
-    } else {
-        val evenValues = valuesWithoutFirst.filterIndexed { index, _ ->
-            index % 2 == 0
-        }
-        val oddValues = valuesWithoutFirst.filterIndexed { index, _ ->
-            index % 2 != 0
-        }
+    val valuesDistributed = distributeRoundRobin(valuesWithoutFirst, columnCount)
 
-
-        Row(
-            modifier = modifier
-                .fillMaxWidth()
-                .padding(horizontal = RuuviStationTheme.dimensions.screenPadding),
-            verticalAlignment = Alignment.Top,
-            horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally)
-        ) {
+    Row(
+        modifier = modifier
+            .widthIn(max = columnMaxWidth * columnCount)
+            .padding(horizontal = RuuviStationTheme.dimensions.screenPadding),
+        verticalAlignment = Alignment.Top,
+        horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally)
+    ) {
+        for (columnValues in valuesDistributed) {
             Column(
                 modifier = Modifier
-                    .widthIn(max = 180.dp),
+                    .weight(1f),
                 verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.Top),
                 horizontalAlignment = Alignment.Start
             ) {
-                for (value in evenValues) {
-                    SensorValueItem(
-                        icon = value.unitType.iconRes,
-                        value = value.valueWithoutUnit,
-                        unit = value.unitString,
-                        itemHeight = itemHeight,
-                        modifier = Modifier.fillMaxWidth(),
-                        name = value.unitType.measurementTitle.let { stringResource(it) }
-                    )
+                if (columnValues.isEmpty()) {
+                    Box(modifier = Modifier.fillMaxWidth()) {}
                 }
-            }
-            Column(
-                modifier = Modifier
-                    .widthIn(max = 180.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.Top),
-                horizontalAlignment = Alignment.Start
-            ) {
-                for (value in oddValues) {
+                for (value in columnValues) {
+                    val unit = if (value.unitType == UnitType.MovementUnit.MovementsCount) {
+                        ""
+                    } else {
+                        value.unitString
+                    }
                     SensorValueItem(
                         icon = value.unitType.iconRes,
                         value = value.valueWithoutUnit,
-                        unit = value.unitString,
+                        unit = unit,
                         itemHeight = itemHeight,
                         modifier = Modifier.fillMaxWidth(),
-                        name = value.unitType.measurementTitle.let { stringResource(it) }
+                        alertActive = value.unitType.alarmType?.let {
+                            sensor.alarmSensorStatus.triggered(it)
+                        } ?: false,
+                        name = value.unitType.measurementName.let { stringResource(it) }
                     )
+                    {
+                        onValueClick.invoke(value)
+                    }
                 }
             }
         }
@@ -847,7 +919,6 @@ fun SensorCardLowBattery(modifier: Modifier = Modifier) {
     }
 }
 
-@OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun SensorCardImage(
     userBackground: Uri,
@@ -855,19 +926,23 @@ fun SensorCardImage(
 ) {
     Timber.d("Image path $userBackground")
 
-    GlideImage(
+    AsyncImage(
         modifier = Modifier.fillMaxSize(),
-        model = userBackground,
+        model = ImageRequest.Builder(LocalContext.current)
+            .data(userBackground)
+            .crossfade(true)
+            .build(),
+        contentDescription = null,
+        contentScale = ContentScale.Crop
+    )
+    Image(
+        modifier = Modifier.fillMaxSize(),
+        painter = painterResource(R.drawable.tag_bg_layer),
         contentDescription = null,
         contentScale = ContentScale.Crop
     )
 
-    Image(
-        modifier = Modifier.fillMaxSize(),
-        painter = painterResource(id = R.drawable.tag_bg_layer),
-        contentDescription = null,
-        contentScale = ContentScale.Crop
-    )
+
     if (chartsEnabled) {
         Box(
             modifier = Modifier
@@ -896,7 +971,8 @@ fun SensorCardBottom(
             modifier = modifier
                 .padding(
                     horizontal = RuuviStationTheme.dimensions.screenPadding,
-                    vertical = RuuviStationTheme.dimensions.mediumPlus)
+                    vertical = RuuviStationTheme.dimensions.mediumPlus
+                )
                 .fillMaxWidth()
         ) {
             val icon = sensor.getSource().getIconResource()

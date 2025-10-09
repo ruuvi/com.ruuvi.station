@@ -17,11 +17,11 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.ruuviStationFonts
 import kotlin.math.cos
 import kotlin.math.sin
@@ -29,17 +29,23 @@ import kotlin.math.sin
 @Composable
 fun CircularGradientProgress(
     progress: Float,
+    progressText: String,
     lineColor: Color,
-    size: Dp = 130.dp,
+    size: Dp = 140.dp,
     modifier: Modifier = Modifier
 ) {
+    val density = LocalDensity.current
+
     Box(
         contentAlignment = Alignment.Center,
         modifier = modifier.size(size)
     ) {
-
-        Canvas(modifier = Modifier.fillMaxSize().padding(8.dp)) {
-            val strokeWidth = 20f
+        Canvas(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(8.dp)
+        ) {
+            val strokeWidth = with(density) { 6.dp.toPx() }
             val size = this.size.minDimension
             val radius = size / 2
             val startAngle = 135f
@@ -81,10 +87,10 @@ fun CircularGradientProgress(
                         lineColor.copy(alpha = 0.3f),
                         Color.Transparent
                     ),
-                radius = dotRadius * 2.2f,
+                radius = dotRadius * 2.5f,
                 center = Offset(dotX, dotY)
                 ),
-                radius = dotRadius * 2.5f,
+                radius = dotRadius * 2.7f,
                 center = Offset(dotX, dotY)
             )
 
@@ -98,10 +104,9 @@ fun CircularGradientProgress(
 
         // Centered Label
         Text(
-            text = progress.toInt().toString(),
-            fontSize = 54.sp,
+            text = progressText,
+            fontSize = RuuviStationTheme.fontSizes.bigValue.fixedSp(),
             fontFamily = ruuviStationFonts.oswaldBold,
-            fontWeight = FontWeight.Bold,
             color = Color.White,
             modifier = Modifier.padding(bottom = 8.dp)
         )
@@ -113,9 +118,10 @@ fun CircularGradientProgress(
         ) {
             Text(
                 text = "/100",
-                fontSize = 18.sp,
+                fontSize = RuuviStationTheme.fontSizes.big.fixedSp(),
                 fontFamily = ruuviStationFonts.oswaldRegular,
-                color = Color.White
+                color = Color.White,
+                modifier = Modifier
             )
         }
     }
@@ -129,6 +135,7 @@ fun CircularGradientProgressPreview0(
 ) {
     CircularGradientProgress(
         progress = 0f,
+        progressText = "0",
         lineColor = Color.Red,
         modifier = modifier
     )
@@ -141,6 +148,7 @@ fun CircularGradientProgressPreview25(
 ) {
     CircularGradientProgress(
         progress = 25f,
+        progressText = "25",
         lineColor = Color.Red,
         modifier = modifier
     )
@@ -153,6 +161,7 @@ fun CircularGradientProgressPreview(
 ) {
     CircularGradientProgress(
         progress = 50f,
+        progressText = "50",
         lineColor = Color.Yellow,
         modifier = modifier
     )
@@ -165,6 +174,7 @@ fun CircularGradientProgressPreview75(
 ) {
     CircularGradientProgress(
         progress = 75f,
+        progressText = "75",
         lineColor = Color.Green,
         modifier = modifier
     )
@@ -177,6 +187,7 @@ fun CircularGradientProgressPreview100(
 ) {
     CircularGradientProgress(
         progress = 100f,
+        progressText = "100",
         lineColor = Color.Green,
         modifier = modifier
     )

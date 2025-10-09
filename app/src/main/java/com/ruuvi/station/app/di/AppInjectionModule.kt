@@ -3,6 +3,7 @@ package com.ruuvi.station.app.di
 import androidx.lifecycle.ViewModelProvider
 import com.ruuvi.station.app.domain.ImageMigrationInteractor
 import com.ruuvi.station.app.domain.PowerManagerInterator
+import com.ruuvi.station.app.domain.Version3MigrationInteractor
 import com.ruuvi.station.app.locale.LocaleInteractor
 import com.ruuvi.station.app.permissions.PermissionLogicInteractor
 import com.ruuvi.station.app.review.ReviewManagerInteractor
@@ -28,5 +29,11 @@ object AppInjectionModule {
         bind<ImageMigrationInteractor>() with singleton { ImageMigrationInteractor(instance(), instance(), instance()) }
 
         bind<LocaleInteractor>() with singleton { LocaleInteractor(instance()) }
+
+        bind<Version3MigrationInteractor>() with singleton { Version3MigrationInteractor(
+            context = instance(),
+            preferencesRepository = instance(),
+            networkApplicationSettings = instance()
+        ) }
     }
 }

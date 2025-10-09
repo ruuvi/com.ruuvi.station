@@ -6,6 +6,7 @@ import android.graphics.Matrix
 import android.graphics.Paint
 import android.text.format.DateUtils
 import android.view.MotionEvent
+import android.util.TypedValue
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -15,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.booleanResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -37,8 +39,12 @@ import com.github.mikephil.charting.listener.OnChartGestureListener
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener
 import com.github.mikephil.charting.utils.Utils
 import com.ruuvi.station.R
+import com.ruuvi.station.app.ui.components.limitScaleTo
 import com.ruuvi.station.app.ui.components.scaledToMax
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
+import com.ruuvi.station.app.ui.theme.White50
+import com.ruuvi.station.app.ui.theme.ruuviStationFonts
+import com.ruuvi.station.app.ui.theme.ruuviStationFontsSizes
 import com.ruuvi.station.units.domain.UnitsConverter
 import com.ruuvi.station.units.model.UnitType
 import com.ruuvi.station.util.extensions.isStartOfTheDay
@@ -48,7 +54,6 @@ import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
 import java.util.*
 import kotlin.math.max
-import kotlin.math.min
 
 @Composable
 fun ChartViewPrototype(
@@ -80,12 +85,13 @@ fun ChartViewPrototype(
         is UnitType.CO2 -> stringResource(id = R.string.co2_with_unit, unitString)
         is UnitType.VOC -> stringResource(id = R.string.voc_with_unit, unitString)
         is UnitType.NOX -> stringResource(id = R.string.nox_with_unit, unitString)
-        is UnitType.PM1 -> stringResource(id = R.string.pm1_with_unit, unitString)
-        is UnitType.PM25 -> stringResource(id = R.string.pm25_with_unit, unitString)
-        is UnitType.PM4 -> stringResource(id = R.string.pm4_with_unit, unitString)
-        is UnitType.PM10 -> stringResource(id = R.string.pm10_with_unit, unitString)
+        is UnitType.PM.PM10 -> stringResource(id = R.string.pm10_with_unit, unitString)
+        is UnitType.PM.PM25 -> stringResource(id = R.string.pm25_with_unit, unitString)
+        is UnitType.PM.PM40 -> stringResource(id = R.string.pm40_with_unit, unitString)
+        is UnitType.PM.PM100 -> stringResource(id = R.string.pm100_with_unit, unitString)
         is UnitType.Luminosity -> stringResource(id = R.string.luminosity_with_unit, unitString)
-        is UnitType.SoundAvg -> stringResource(id = R.string.sound_with_unit, unitString)
+        is UnitType.SoundAvg -> stringResource(id = R.string.sound_average_with_unit, unitString)
+        is UnitType.SoundPeak -> stringResource(id = R.string.sound_peak_with_unit, unitString)
         is UnitType.AirQuality -> stringResource(id = R.string.aqi)
         else -> ""
     }
@@ -104,8 +110,8 @@ fun ChartViewPrototype(
     ){
         Text(
             modifier = Modifier.padding(start = offset, top = RuuviStationTheme.dimensions.medium),
-            style = RuuviStationTheme.typography.subtitle,
-            fontSize = RuuviStationTheme.fontSizes.miniature.scaledToMax(max = 20.sp),
+            fontFamily = ruuviStationFonts.mulishBold,
+            fontSize = RuuviStationTheme.fontSizes.small.scaledToMax(max = 20.sp),
             text = title,
             color = RuuviStationTheme.colors.buttonText
         )
@@ -113,13 +119,14 @@ fun ChartViewPrototype(
             Text(
                 modifier = Modifier.padding(
                     start = offset,
+                    top = RuuviStationTheme.dimensions.tiny,
                     bottom = RuuviStationTheme.dimensions.small,
                     end = RuuviStationTheme.dimensions.medium
                 ),
-                style = RuuviStationTheme.typography.paragraphSmall,
+                color = White50,
+                fontFamily = ruuviStationFonts.mulishRegular,
+                fontSize = ruuviStationFontsSizes.petite.limitScaleTo(1.5f),
                 text = description,
-                fontSize = RuuviStationTheme.fontSizes.miniature.scaledToMax(max = 20.sp),
-                color = RuuviStationTheme.colors.buttonText
             )
         }
 
@@ -265,15 +272,19 @@ fun applyChartStyle(
         Timber.e(e)
     }
 
-    var textSize = context.resources.getDimension(R.dimen.graph_description_size)
-    val density = context.resources.displayMetrics.density
-    if (density < 2) textSize *= 2
-    textSize = min(textSize, 20f)
-    Timber.d("graph_description_sizegraph_description_size $textSize $density")
-    chart.description.textSize = textSize
-    chart.axisLeft.textSize = textSize
-    chart.xAxis.textSize = textSize
+    val fontSize = if (context.resources.getBoolean(R.bool.isTablet)) 14.sp else 10.sp
+    val sizeInPx = context.spToDpRespectingFontScale(fontSize.value)
+
+    chart.description.textSize = sizeInPx
+    chart.axisLeft.textSize = sizeInPx
+    chart.xAxis.textSize = sizeInPx
     chart.legend.isEnabled = false
+}
+
+fun Context.spToDpRespectingFontScale(sp: Float): Float {
+    val dm = resources.displayMetrics
+    val px = sp * dm.scaledDensity          // honors Settings > Font size
+    return px / dm.density                  // convert px -> dp for MPAndroidChart
 }
 
 fun setupMarker(

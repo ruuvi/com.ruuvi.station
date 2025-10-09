@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="abs_humidity">Abs. Luftfeuchtigkeit</string>
+    <string name="absolute_humidity">Absolute Luftfeuchtigkeit</string>
+    <string name="acc_x">Beschl. X</string>
+    <string name="acc_y">Beschl. Y</string>
+    <string name="acc_z">Beschl. Z</string>
     <string name="acceleration_reading">%1$,.3f %2$s</string>
     <string name="acceleration_unit">g</string>
     <string name="acceleration_unit_x">g (x)</string>
@@ -22,6 +27,7 @@
     <string name="advertisement">Advertisement</string>
     <string name="ago">vor</string>
     <string name="agree">Zustimmen</string>
+    <string name="air_pressure">Luftdruck</string>
     <string name="air_quality">Luftqualität</string>
     <string name="alarm_custom_description_title">Benutzerdefinierte Beschreibung des Alarms</string>
     <string name="alarm_custom_title_hint">Benutzerdefinierte Beschreibung festlegen...</string>
@@ -40,6 +46,8 @@
     <string name="alert_dialog_title_temperature">Temperaturalarm einstellen</string>
     <string name="alert_movement">Bewegung</string>
     <string name="alert_movement_description">Ändert sich der Wert des sensorinternen Bewegungszählers, wird ein Bewegungsalarm ausgelöst. Mit diesem Alarm können beispielsweise Türbewegungen oder Vibrationen in der Nähe des Sensors erkannt werden.</string>
+    <string name="alert_notification_aqi_high_threshold">AQI liegt über %1$s</string>
+    <string name="alert_notification_aqi_low_threshold">AQI liegt unter %1$s</string>
     <string name="alert_notification_co2_high_threshold">CO2 liegt über %1$s</string>
     <string name="alert_notification_co2_low_threshold">CO2 liegt unter %1$s</string>
     <string name="alert_notification_humidity_high">Luftfeuchtigkeit zu hoch!</string>
@@ -52,14 +60,14 @@
     <string name="alert_notification_nox_high_threshold">NOx liegt über %1$s</string>
     <string name="alert_notification_nox_low_threshold">NOx liegt unter %1$s</string>
     <string name="alert_notification_offline_message">Der Sensor war über %1$s Minuten offline</string>
-    <string name="alert_notification_pm10_high_threshold">PM10.0 liegt über %1$s</string>
-    <string name="alert_notification_pm10_low_threshold">PM10.0 liegt unter %1$s</string>
-    <string name="alert_notification_pm1_high_threshold">PM1.0 liegt über %1$s</string>
-    <string name="alert_notification_pm1_low_threshold">PM1.0 liegt unter %1$s</string>
+    <string name="alert_notification_pm100_high_threshold">PM10.0 liegt über %1$s</string>
+    <string name="alert_notification_pm100_low_threshold">PM10.0 liegt unter %1$s</string>
+    <string name="alert_notification_pm10_high_threshold">PM1.0 liegt über %1$s</string>
+    <string name="alert_notification_pm10_low_threshold">PM1.0 liegt unter %1$s</string>
     <string name="alert_notification_pm25_high_threshold">PM2.5 liegt über %1$s</string>
     <string name="alert_notification_pm25_low_threshold">PM2.5 liegt unter %1$s</string>
-    <string name="alert_notification_pm4_high_threshold">PM4.0 liegt über %1$s</string>
-    <string name="alert_notification_pm4_low_threshold">PM4.0 liegt unter %1$s</string>
+    <string name="alert_notification_pm40_high_threshold">PM4.0 liegt über %1$s</string>
+    <string name="alert_notification_pm40_low_threshold">PM4.0 liegt unter %1$s</string>
     <string name="alert_notification_pressure_high">Luftdruck zu hoch!</string>
     <string name="alert_notification_pressure_high_threshold">Luftdruck liegt über %1$s</string>
     <string name="alert_notification_pressure_low">Luftdruck zu niedrig!</string>
@@ -94,6 +102,8 @@
     <string name="aqi_level_3">Mäßig</string>
     <string name="aqi_level_4">Gut</string>
     <string name="aqi_level_5">Ausgezeichnet</string>
+    <string name="aqi_with_unit">Luftqualität (%1$s)</string>
+    <string name="average">Durchschnitt</string>
     <string name="back">Zurück</string>
     <string name="background_image">Hintergrundbild</string>
     <string name="background_interval">alle %1$s min</string>
@@ -128,7 +138,7 @@
     <string name="calibration_humidity_disclaimer">Beachten Sie, dass die Kalibrierungsdaten lokal auf Ihrem Mobilgerät gespeichert werden. Nach der Deinstallation und Installation von Ruuvi Station müssen Sie möglicherweise eine Neukalibrierung durchführen.</string>
     <string name="calibration_humidity_link">Videoanleitungen</string>
     <string name="calibration_humidity_link_url">https://www.youtube.com/results?search_query=hygrometer+salt+calibration</string>
-    <string name="calibration_humidity_offset">Feuchtigkeits-Offset</string>
+    <string name="calibration_humidity_offset">Relative Luftfeuchtigkeits-Offset</string>
     <string name="calibration_offset">(Offset %1$s)</string>
     <string name="calibration_original_value">Ursprünglicher Messwert</string>
     <string name="calibration_pressure_offset">Druckoffset</string>
@@ -137,6 +147,7 @@
     <string name="camera">Kamera</string>
     <string name="camera_fail">Kamera konnte nicht gestartet werden</string>
     <string name="cancel">Abbrechen</string>
+    <string name="carbon_dioxide">Kohlendioxid</string>
     <string name="card_action">Kartenaktion</string>
     <string name="card_type">Speicherkarten-Typ</string>
     <string name="change_background">Hintergrundbild ändern</string>
@@ -246,7 +257,26 @@
     <string name="decline">Ablehnen</string>
     <string name="decrease_graph_size">Verkleinern Sie die Größe der Diagramme</string>
     <string name="delete_account">Konto löschen</string>
+    <string name="description_text_acceleration">Der Beschleunigungssensor erkennt, ob sich das Gerät bewegt oder geneigt hat. Er misst Veränderungen in drei Richtungen (x-, y- und z-Achsen), wodurch festgestellt werden kann, ob das Gerät stillsteht oder in Bewegung ist.\n\nDie Erdanziehung verursacht etwa 1 g Beschleunigung auf der Achse, die senkrecht zum Boden zeigt.\n\nBleiben die Werte konstant, steht das Gerät stabil. Ändern sich die Werte, erkennt der Sensor, dass sich das Gerät bewegt, gedreht oder geneigt hat. Plötzliche Ausschläge in den Messungen weisen auf schnelle Bewegungen hin, während langsame Veränderungen darauf hindeuten, dass sich das Gerät allmählich geneigt oder verschoben hat.\n\nIn festen Installationen bestätigen stabile Beschleunigungswerte, dass der Sensor sicher positioniert ist. In mobilen oder experimentellen Systemen können die Werte beispielsweise zur Echtzeitüberwachung der Position oder Vibrationen des Geräts genutzt werden.</string>
+    <string name="description_text_air_quality">Die Luftqualität wird mit einer einzigen indexähnlichen Zahl angezeigt, die angibt, wie gut oder schlecht die Raumluft ist. Der Wert basiert auf zwei Faktoren: Feinstaub (PM2.5) in der Luft und Kohlendioxid (CO₂), das sich ansammelt, wenn Menschen in Innenräumen verweilen.\n\nDie Luftqualitätsbewertung berücksichtigt beide Faktoren, aber wenn einer von ihnen zu hoch wird, sinkt der Gesamtwert. Zum Beispiel steigt die Partikelmenge beim Kochen, wodurch die Bewertung sinkt, auch wenn der Kohlendioxidgehalt noch auf einem guten Niveau liegt.\n\nJe höher der Wert, desto gesünder ist die Luft zum Atmen. Gute Raumluft unterstützt Wachheit, Konzentration und Schlafqualität. Wenn der Wert unter 70 fällt, kann dies an einer vorübergehenden Situation liegen, wie schlechter Belüftung oder Kochen. Fällt er unter 40, zeigt dies deutlich, dass frische Luft benötigt wird oder dass etwas im Raum die Luftqualität verschlechtert.\n\nDie einfachste Möglichkeit, die Luftqualität zu verbessern, besteht darin, den Raum durch Öffnen der Fenster zu lüften. Auch ein Luftreiniger kann helfen, den Wert auf einem guten Niveau zu halten.\n\nOptimales Ergebnis: 90 – 100\nSkala: 0 – 100</string>
+    <string name="description_text_battery_voltage">Die Batteriespannung zeigt den Zustand der Sensorsbatterie an.\n\nWenn die Spannung sinkt, geht die Batterie zur Neige. Dies kann dazu führen, dass der Sensor weniger genau misst oder Datenlücken auftreten. Durch Überwachung der Spannung erkennen Sie rechtzeitig, wann die Batterie gewechselt werden muss, und vermeiden ein plötzliches Abschalten des Geräts.\n\nEine neue Knopfzelle hat normalerweise etwa 3 Volt. Wenn der Wert 2,5 Volt oder weniger erreicht, ist die Batterie fast leer. Fällt der Wert plötzlich stärker ab, kann dies am Alter der Batterie oder an Kälte liegen, die ihre Leistung verringert.\n\nRuuvi Station zeigt eine Warnung bei niedriger Batterie an, wenn die Spannung unter einen temperaturabhängigen Schwellenwert fällt: 2,0 V bei –20 °C, 2,3 V unter 0 °C und 2,5 V bei anderen Temperaturen.\n\nWir empfehlen die Verwendung von CR2477-Batterien namhafter Hersteller für RuuviTag-Sensoren. Die erwartete Batterielebensdauer unter normalen Bedingungen beträgt etwa 1–2 Jahre. Wiederaufladbare Batterien sind für die Verwendung mit Ruuvi-Sensoren nicht geeignet.\n\nBatteriespannung: 3V</string>
+    <string name="description_text_co2">Kohlendioxid (CO₂) entsteht jedes Mal, wenn wir atmen. In einem Raum mit schlechter Belüftung kann der Wert schnell ansteigen. Dies kann Müdigkeit, Schläfrigkeit, Kopfschmerzen und eine verringerte kognitive Leistungsfähigkeit verursachen. Auch Kochen, mehrere Personen im selben Raum oder schwache Belüftung können den CO₂-Gehalt erhöhen.\n\nDie Außenluft enthält normalerweise etwa 420–430 ppm, während Werte über 1000 ppm in Innenräumen auf einen Lüftungsbedarf hinweisen. Im Schlafzimmer sollte man deutlich darunter bleiben, um eine gute Schlafqualität zu gewährleisten.\n\nUm den CO₂-Wert zu senken, stellen Sie die Alarmgrenze auf 1000 ein, damit Sie wissen, wann es Zeit zum Lüften ist.\n\nOptimaler Bereich: 400 – 500\nMessbereich des Sensors: 350 – 40000</string>
+    <string name="description_text_humidity_absolute">Die absolute Luftfeuchtigkeit gibt die Menge an Wasserdampf in Gramm pro Kubikmeter Luft an (g/m³). Im Gegensatz zur relativen Luftfeuchtigkeit zeigt sie den tatsächlichen Wassergehalt in der Luft an.\n\nDie Messung der absoluten Luftfeuchtigkeit ist besonders wichtig in Bereichen mit starken Temperaturschwankungen, in denen die Feuchtigkeitskontrolle entscheidend ist. Genaue Messwerte helfen z. B. in der Produktion oder Lagerung, Schäden oder Verderb zu vermeiden. Im Haushalt hilft das Verständnis der tatsächlichen Feuchtelast bei der Entscheidung, wann ein Luftbefeuchter, -entfeuchter oder bessere Belüftung notwendig ist.\n\nAm aussagekräftigsten ist die absolute Feuchtigkeit, wenn sie über einen Zeitraum hinweg betrachtet oder mit Temperatur und relativer Feuchte kombiniert wird. Sie hilft, Situationen zu erkennen, in denen die Luft trocken wirkt, obwohl die relative Feuchte im normalen Bereich liegt – oder umgekehrt.\n\nDa Komfort- und Luftqualitätsprobleme häufig stärker mit dem tatsächlichen Wassergehalt in der Luft als mit prozentualen Werten zusammenhängen, kann das Monitoring dieser Kennzahl versteckte Trends im Raumklima aufdecken, die bei alleiniger Betrachtung der relativen Luftfeuchtigkeit unbemerkt bleiben würden.</string>
+    <string name="description_text_humidity_dewpoint">Der Taupunkt ist die Temperatur, bei der Wasserdampf kondensiert (Tau bildet sich), gemessen in °C, °F oder K.\n\nDie Taupunkttemperatur zeigt direkt das Risiko von Kondensation an und beeinflusst das Raumklima maßgeblich. Ein höherer Taupunkt bedeutet mehr Feuchtigkeit in der Luft, was zu einem feuchten oder unangenehmen Raumklima führen kann. Ein niedriger Taupunkt steht für trockene Luft.\n\nKondensation auf Oberflächen tritt auf, wenn die Luft auf den Taupunkt abkühlt. Dies ist entscheidend, um Schimmel, Korrosion und Wasserschäden in Wohn- und Geschäftsräumen zu vermeiden. Wenn z. B. ein Fenster oder eine Wand auf oder unter den Taupunkt abkühlt, bildet sich Feuchtigkeit auf der Oberfläche, was langfristig Schäden verursachen kann.\n\nTaupunktwerte ändern sich langsamer als die relative Luftfeuchtigkeit und sind daher ein zuverlässiger Indikator für Lüftungsprobleme oder Feuchtigkeitsquellen.\n\nDurch das Überwachen des Taupunkts zusammen mit absoluter und relativer Luftfeuchtigkeit erhältst du ein vollständigeres Bild der Feuchtigkeitsdynamik in Echtzeit. So kannst du die Bausubstanz, Möbel, Elektronik schützen und die Raumluftqualität verbessern.</string>
+    <string name="description_text_humidity_relative">Die relative Luftfeuchtigkeit (RH %) gibt an, wie viel Feuchtigkeit die Luft im Vergleich zur maximal möglichen Menge bei einer bestimmten Temperatur enthält.\n\nEin ausgewogener Feuchtigkeitswert im Haus (idealerweise 30–50 %) macht die Raumluft gesünder. Zu hohe Luftfeuchtigkeit begünstigt Schimmel und Hausstaubmilben, während zu niedrige die Haut und die Atemwege austrocknet.\n\nDie Feuchtigkeitswerte können je nach Raum und Tageszeit variieren. In Badezimmern und Küchen sind die Werte nach dem Duschen oder Kochen oft höher. Platzieren Sie den Sensor in dem Raum, der Ihnen am meisten Sorgen bereitet, und beobachten Sie die Werte über längere Zeit, um wiederkehrende Situationen zu erkennen und Gegenmaßnahmen zu ergreifen.\n\nDie Luftfeuchtigkeit lässt sich regulieren, indem man die Innentemperatur anpasst und zu Zeiten lüftet, in denen die Außenluftfeuchtigkeit niedriger ist als drinnen. Wenn Sie lernen, die Luftfeuchtigkeit zu kontrollieren, können Sie leichter eine gesunde Raumluft erhalten und mögliche Feuchtigkeitsschäden verhindern.\n\nAm häufigsten wird die relative Luftfeuchtigkeit (%) verwendet, Sie können jedoch in den App-Einstellungen auch die absolute Feuchtigkeit oder den Taupunkt auswählen.\n\nOptimaler Bereich: 40–80%\nMessbereich des Sensors: 0–100%\n\nIdeen für geeignete Alarmgrenzen finden Sie in den Anwendungsbeispielen von Ruuvi: \u0026lt;link url=\"https://ruuvi.com/ideas/\"\u0026gt;ruuvi.com/ideas\u0026lt;/link\u0026gt;</string>
+    <string name="description_text_movement">Der Bewegungszähler zeigt Bewegungen an, die durch Änderungen im Beschleunigungssensor erkannt werden.\n\nDie Überwachung der Bewegungen des Geräts gibt Aufschluss darüber, ob es bewegt oder seine Umgebung gestört wurde.\n\nBeachte, dass bei instabilen Platzierungen, z. B. auf Fensterbänken, mehr Ereignisse als erwartet registriert werden können.</string>
+    <string name="description_text_nox">Der NOx-Index zeigt, wie viele Stickoxide sich in der Luft befinden.\n\nDies sind schädliche Gase, die zum Beispiel durch Autoabgase, Gasherde, Kamine oder bestimmte Heizgeräte entstehen. Schon kleine Mengen können die Atemwege reizen, Asthma verschlimmern und die Anfälligkeit für Infektionen erhöhen. Langfristige Exposition kann sich auch auf Lunge und Herz auswirken.\n\nDer NOx-Index gibt keine genauen Konzentrationen an, sondern zeigt einen Trend: ob sich die Luftqualität im Vergleich zu früher verbessert oder verschlechtert hat. Zum Beispiel kann der Wert beim Kochen oder bei zunehmender Außenluftverschmutzung schnell ansteigen.\n\nDer Sensor funktioniert am besten, wenn er nicht direkt neben Herden oder Lüftungsöffnungen platziert wird.\n\nDie Weltgesundheitsorganisation (WHO) empfiehlt für Stickstoffdioxid (NO₂) einen 24-Stunden-Mittelwert von 25 µg/m³.\n\nMessbereich des Sensors: 0 – 500</string>
+    <string name="description_text_pm">Feinstaub (PM) sind winzige, unsichtbare Partikel in der Luft, wie Staub, Pollen, Rauch und andere Schadstoffe. Sehr kleine Partikel (PM2.5 und kleiner) sind gesundheitsschädlich, da sie tief in die Lunge gelangen und Allergien sowie Atembeschwerden verschlimmern können.\n\nDurch die Überwachung der PM-Werte erkennen Sie, wann sich die Luftqualität in Innenräumen verschlechtert, zum Beispiel durch Kochen, Staubsaugen, Kerzen oder Verkehrsemissionen von draußen. So können Sie rechtzeitig reagieren, etwa durch Lüften oder den Einsatz eines Luftreinigers.\n\nPlatzieren Sie den Sensor nicht direkt neben Emissionsquellen wie dem Herd, damit die Messwerte zuverlässig bleiben. Es ist besser, die Messungen als Trends zu interpretieren – also zu beobachten, wann die Werte steigen oder fallen – anstatt sich auf einzelne Zahlen zu konzentrieren.\n\nDer Sensor gibt eine Schätzung der Partikelmenge in der Luft ab. Am häufigsten wird der PM2.5-Wert überwacht. In den Einstellungen können Sie auch andere Partikelgrößen wie PM1.0, PM4.0 und PM10 anzeigen lassen.\n\nDie Weltgesundheitsorganisation (WHO) empfiehlt einen Tagesmittelwert von 15 μg/m³ für PM2.5. Diese Richtlinie gilt für Außenluft, dient aber auch als Vergleichswert zur Verbesserung der Innenraumluft.\n\nMessbereich des Sensors: 0 – 1000</string>
+    <string name="description_text_pressure">Der barometrische Luftdruck (Pa, hPa, mmHg, inHg) gibt den Druck an, den das Gewicht der Luft an einem bestimmten Ort ausübt – also wie stark die Atmosphäre zu einem bestimmten Zeitpunkt auf die Erdoberfläche drückt.\n\nDie Überwachung des Luftdrucks hilft, Wetteränderungen vorherzusagen und das Verhalten der Lüftung zu verstehen, was sich auf die Bausubstanz und den Wohnkomfort auswirken kann.\n\nUm eine möglichst genaue Messung zu gewährleisten, sollte der Sensor nicht direkt im Luftstrom platziert werden, z.B. in der Nähe von Ventilatoren, Lüftungsöffnungen oder offenen Fenstern, da dies die Messwerte vorübergehend beeinflussen kann.\n\nDie Höhe des Messorts über dem Meeresspiegel beeinflusst den gemessenen Druckwert und somit die Messergebnisse. Der Luftdruck auf Meereshöhe beträgt 1013,25 Hektopascal (hPa).\n\nMessbereich des Sensors: 500–1155 hPa</string>
+    <string name="description_text_signal_strength">Die Signalstärke (RSSI) zeigt die Qualität der Bluetooth-Verbindung an. Je stärker das Signal (näher bei 0 dBm), desto zuverlässiger werden Sensordaten auf dem Empfangsgerät aktualisiert. Ist das Signal schwach, kann die Verbindung unterbrochen werden oder ganz ausfallen, sodass Messdaten nicht mehr aktualisiert werden.\n\nDie Verbindungsqualität wird zum Beispiel durch den Abstand zwischen Sensor und Empfangsgerät, Wände und andere Hindernisse sowie durch Störungen von Haushaltsgeräten beeinflusst.\n\nDie Überwachung der Signalstärke hilft, den Sensor am besten zu platzieren. Bei schwachem Signal kann die Verbindung verbessert werden, indem der Sensor so positioniert wird, dass er möglichst freie Sicht auf das Empfangsgerät hat. Dadurch werden Messdaten zuverlässig in der App angezeigt.\n\nOptimales Ergebnis: -60 – 0\nMessbereich des Sensors: -100 – 0</string>
+    <string name="description_text_temperature_celsius">Der Temperatursensor misst die Umgebungslufttemperatur.\n\nZu Hause beeinflusst die Temperatur wesentlich den Komfort, die Schlafqualität, die Konzentration und die allgemeine Gesundheit. Die Überwachung der Temperatur hilft auch, Energiekosten zu optimieren und den Wohnkomfort zu verbessern.\n\nIn Innenräumen sollte der Sensor auf Augenhöhe angebracht werden, fern von Oberflächen oder Objekten, die Wärme oder Kälte leiten, sowie von zugigen Stellen.\n\nInstallieren Sie den Sensor idealerweise aufrecht, damit die Luft frei um ihn herum zirkulieren kann. Für den Außeneinsatz (RuuviTag/RuuviTag Pro) sollte der Sensor im Schatten platziert und vor direktem Regen geschützt werden.\n\nHinweis: Obwohl der Sensor Temperaturänderungen sehr schnell erkennt und meldet, kann es bis zu einer Stunde dauern, bis er das vollständige thermische Gleichgewicht mit der Umgebung erreicht. Dies ist ein normales Verhalten des Geräts.\n\nIdeen für geeignete Alarmgrenzen finden Sie in den Anwendungsbeispielen von Ruuvi: \u0026lt;link url=\"https://ruuvi.com/ideas/\"\u0026gt;ruuvi.com/ideas\u0026lt;/link\u0026gt;</string>
+    <string name="description_text_temperature_fahrenheit">Der Temperatursensor misst die Umgebungslufttemperatur.\n\nZu Hause beeinflusst die Temperatur wesentlich den Komfort, die Schlafqualität, die Konzentration und die allgemeine Gesundheit. Die Überwachung der Temperatur hilft auch, Energiekosten zu optimieren und den Wohnkomfort zu verbessern.\n\nIn Innenräumen sollte der Sensor auf Augenhöhe angebracht werden, fern von Oberflächen oder Objekten, die Wärme oder Kälte leiten, sowie von zugigen Stellen.\n\nInstallieren Sie den Sensor idealerweise aufrecht, damit die Luft frei um ihn herum zirkulieren kann. Für den Außeneinsatz (RuuviTag/RuuviTag Pro) sollte der Sensor im Schatten platziert und vor direktem Regen geschützt werden.\n\nHinweis: Obwohl der Sensor Temperaturänderungen sehr schnell erkennt und meldet, kann es bis zu einer Stunde dauern, bis er das vollständige thermische Gleichgewicht mit der Umgebung erreicht. Dies ist ein normales Verhalten des Geräts.\n\nIdeen für geeignete Alarmgrenzen finden Sie in den Anwendungsbeispielen von Ruuvi: \u0026lt;link url=\"https://ruuvi.com/ideas/\"\u0026gt;ruuvi.com/ideas\u0026lt;/link\u0026gt;</string>
+    <string name="description_text_temperature_kelvin">Der Temperatursensor misst die Umgebungslufttemperatur.\n\nZu Hause beeinflusst die Temperatur wesentlich den Komfort, die Schlafqualität, die Konzentration und die allgemeine Gesundheit. Die Überwachung der Temperatur hilft auch, Energiekosten zu optimieren und den Wohnkomfort zu verbessern.\n\nIn Innenräumen sollte der Sensor auf Augenhöhe angebracht werden, fern von Oberflächen oder Objekten, die Wärme oder Kälte leiten, sowie von zugigen Stellen.\n\nInstallieren Sie den Sensor idealerweise aufrecht, damit die Luft frei um ihn herum zirkulieren kann. Für den Außeneinsatz (RuuviTag/RuuviTag Pro) sollte der Sensor im Schatten platziert und vor direktem Regen geschützt werden.\n\nHinweis: Obwohl der Sensor Temperaturänderungen sehr schnell erkennt und meldet, kann es bis zu einer Stunde dauern, bis er das vollständige thermische Gleichgewicht mit der Umgebung erreicht. Dies ist ein normales Verhalten des Geräts.\n\nIdeen für geeignete Alarmgrenzen finden Sie in den Anwendungsbeispielen von Ruuvi: \u0026lt;link url=\"https://ruuvi.com/ideas/\"\u0026gt;ruuvi.com/ideas\u0026lt;/link\u0026gt;</string>
+    <string name="description_text_voc">Der VOC-Index gibt mit einer einzigen Zahl an, wie viele flüchtige Chemikalien sich in der Luft befinden.\n\nDer Index ahmt den menschlichen Geruchssinn nach, indem er die relative Geruchsintensität anzeigt, und erkennt auch geruchlose VOCs, unterscheidet diese jedoch nicht.\n\nDiese Chemikalien können aus vielen Alltagsprodukten freigesetzt werden, wie z. B. Reinigungsmitteln, Farben, Möbeln und sogar einigen Haushaltsgeräten. Bei zu hohen VOC-Werten können Augen-, Nasen- oder Halsreizungen, Kopfschmerzen und langfristig auch Gesundheitsrisiken auftreten.\n\nDie VOC-Werte können im Laufe des Tages schwanken. Beispielsweise können Putzen, Malen oder das Aufstellen neuer Möbel die Werte schnell ansteigen lassen.\n\nAm besten ist es, die Messungen über mehrere Tage hinweg zu verfolgen und zu notieren, was im Haushalt gemacht wurde, wenn sich die Werte ändern. So lässt sich feststellen, woher die Verunreinigungen kommen.\n\nWenn die VOC-Werte steigen, lüften Sie den Raum, verwenden Sie einen Luftreiniger oder wählen Sie Produkte mit weniger Chemikalien. So bleibt die Raumluft gesund.\n\nDie Weltgesundheitsorganisation (WHO) empfiehlt für flüchtige organische Gesamtverbindungen (TVOC) in Innenräumen einen Höchstwert von 0,05 mg/m³ (oder 0,05 ppm).\n\nMessbereich des Sensors: 0 – 500</string>
     <string name="details">Einzelheiten</string>
+    <string name="dewpoint">Taupunkt</string>
+    <string name="dewpoint_with_unit">Taupunkt (%1$s)</string>
+    <string name="dfu_air_update_instructions">\u0026lt;title\u0026gt;Geräteaktualisierung\u0026lt;/title\u0026gt;\n\n1. Bringen Sie Ihr Mobilgerät in die Nähe Ihres Ruuvi-Sensors\n\n2. Tippen Sie auf die Schaltfläche Update starten und warten Sie, bis der Vorgang abgeschlossen ist\n\n3. Wenn das Firmware-Update abgeschlossen ist, startet das Gerät neu und das Update ist beendet.</string>
     <string name="dfu_low_battery_warning">Die Batteriespannung des Sensors scheint zu niedrig zu sein, und der Firmware-Aktualisierungsprozess kann fehlschlagen. Wir empfehlen, die Batterie vor der Aktualisierung zu ersetzen.</string>
     <string name="dfu_no_internet">Die neueste Firmware kann nicht abgerufen werden. Überprüfen Sie Ihre Internetverbindung.</string>
     <string name="dfu_update_do_not_close_app">Schließen Sie die App nicht und schalten Sie den Sensor während des Updates nicht aus.</string>
@@ -272,7 +302,7 @@
     <string name="export_csv_header_format2_4">Zeitstempel,Temperatur (%1$s),Luftfeuchtigkeit (%2$s),Druck (%3$s),RSSI(dBm)</string>
     <string name="export_csv_header_format3">Zeitstempel,Temperatur (%1$s),Luftfeuchtigkeit (%2$s),Druck (%3$s),RSSI (dBm),Beschleunigung X (g),Beschleunigung Y (g),Beschleunigung Z (g),Spannung (V)</string>
     <string name="export_csv_header_format5">Zeitstempel,Temperatur (%1$s),Feuchtigkeit (%2$s),Druck (%3$s),RSSI (dBm),Beschleunigung X (g),Beschleunigung Y (g),Beschleunigung Z (g),Spannung (V),Bewegungszähler,Messsequenznummer,TX-Leistung (dBm)</string>
-    <string name="export_csv_header_formatE0">Zeitstempel,TAQI,emperatur (%1$s),Feuchtigkeit (%2$s),Druck (%3$s),Helligkeit (lx),dB-Mittelwert (dBA),db-Spitze (dBA),CO2(ppm),VOC,NOX,PM1.0(µg/m³),PM2.5(µg/m³),PM4.0(µg/m³),PM10.0(µg/m³),Beschleunigung X (g),Beschleunigung Y (g),Beschleunigung Z (g),Spannung (V),Bewegungszähler,Messsequenznummer,TX-Leistung (dBm)</string>
+    <string name="export_csv_header_formatE0">Datum,AQI,Temperatur (%1$s),Luftfeuchtigkeit (%2$s),Luftdruck (%3$s),Beleuchtungsstärke (lx),Schall Mittelwert(dBA),Schall Spitze(dBA),CO2(ppm),VOC,NOX,PM1(µg/m³),PM2.5(µg/m³),PM4(µg/m³),PM10(µg/m³),RSSI (dBm),Beschleunigung X (g),Beschleunigung Y (g),Beschleunigung Z (g),Spannung (V),Bewegungszähler,Messfolgenummer,Sendeleistung (dBm)</string>
     <string name="export_history">Verlauf exportieren (csv)</string>
     <string name="export_history_xlsx">Verlauf exportieren (xlsx)</string>
     <string name="file_not_supported">Dateityp wird nicht unterstützt</string>
@@ -366,10 +396,11 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="longer_history_message">Die Ruuvi Station Mobile App unterstützt maximal 10 Tage Historie. Ruuvi-Cloud-Abonnenten können mit der Web-App unter ruuvi.com/station (erfordert Ruuvi-Gateway-Router) bis zu 3 Jahre historische Daten anzeigen.</string>
     <string name="longer_history_title">Längere Geschichte</string>
     <string name="low_battery">Schwache Batterie</string>
-    <string name="luminosity">Helligkeit</string>
+    <string name="luminosity">Beleuchtungsstärke</string>
     <string name="luminosity_with_unit">Helligkeit (%1$s)</string>
     <string name="mac_address">MAC-Adresse</string>
     <string name="mac_copied">MAC-Adresse in Zwischenablage kopiert</string>
+    <string name="meas_seq_number">Messseq.nr</string>
     <string name="measurement_sequence_number">Messsequenznummer</string>
     <string name="menu_about_help">Über / Hilfe</string>
     <string name="menu_add_new_sensor">Neuen Sensor hinzufügen</string>
@@ -385,7 +416,7 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="move_down">Nach unten bewegen</string>
     <string name="move_up">Nach oben bewegen</string>
     <string name="movement_counter">Bewegungszähler</string>
-    <string name="movements">bewegungen</string>
+    <string name="movements">Bewegungen</string>
     <string name="muted_till">Stummgeschaltet bis %1$s</string>
     <string name="my_account_change_email">Kontaktieren Sie support@ruuvi.com, wenn Sie die mit diesem Benutzerkonto verknüpfte E-Mail-Adresse ändern möchten.</string>
     <string name="my_account_change_email_link">mailto:support@ruuvi.com</string>
@@ -410,6 +441,7 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="nfc_dialog_name">Name:</string>
     <string name="nfc_dialog_unique_id">Eindeutige ID:</string>
     <string name="nfc_enable_bt_to_add_sensor">Aktivieren Sie Bluetooth und scannen Sie den Sensor, um ihn hinzuzufügen</string>
+    <string name="nitrogen_oxides">Stickoxide</string>
     <string name="no">Nein</string>
     <string name="no_data">Keine Daten</string>
     <string name="no_data_10_days">Keine Daten in den letzten 10 Tagen</string>
@@ -417,6 +449,7 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="no_password_needed">Für diese E-Mail wird ein kostenloses Konto erstellt, falls Sie noch keines haben. Es ist nur eine E-Mail-Adresse erforderlich. Wir bewahren Ihre Informationen sicher auf.</string>
     <string name="none">keiner</string>
     <string name="note">Notiz!</string>
+    <string name="notification_permission_needed">Um Warnmeldungen und das Scannen im Hintergrund zu aktivieren, erlauben Sie Benachrichtigungen in den Einstellungen</string>
     <string name="nox">NOx</string>
     <string name="nox_with_unit">NOx (%1$s)</string>
     <string name="off">Aus</string>
@@ -460,6 +493,11 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="ordering">Sortierung</string>
     <string name="owner_none">Keiner</string>
     <string name="owners_plan">Ruuvi-Plan des Eigentümers</string>
+    <string name="particulate_matter_10">Feinstaub 1</string>
+    <string name="particulate_matter_100">Feinstaub 10</string>
+    <string name="particulate_matter_25">Feinstaub 2.5</string>
+    <string name="particulate_matter_40">Feinstaub 4</string>
+    <string name="peak">Spitze</string>
     <string name="permission_background_dialog_title">Scannen im Hintergrund aktivieren</string>
     <string name="permission_dialog_background_request_message">Um Bluetooth-Geräte in der Nähe im Hintergrund zu scannen, muss für Android der Zugriff auf den Standort im Hintergrund aktiviert sein. \n\n Bitte klicken Sie auf \'immer zulassen\', wenn Sie die Funktion zum Scannen im Hintergrund verwenden möchten. \n\nRuuvi verfolgt Ihre Bewegungen nicht. Sie sind sicher.</string>
     <string name="permission_dialog_request_message_api31">Um in der Nähe befindliche Bluetooth-Geräte zu scannen, erteilen Sie bitte die Berechtigung, nahegelegene Geräte zu suchen und sich mit ihnen zu verbinden. Diese Berechtigung ist auch erforderlich, wenn das Hintergrundscannen in den App-Einstellungen aktiviert ist, selbst wenn die App geschlossen ist.\n\nRuuvi Station verwendet diese Informationen nicht, um Ihren Standort zu verfolgen.</string>
@@ -467,15 +505,16 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="permission_location_needed">Bitte aktivieren Sie die Standortberechtigung in den Einstellungen, um Sensoren anzuzeigen.</string>
     <string name="permission_location_needed_api31">Bitte erlauben Sie die Anzeige von Geräten in der Nähe in den Einstellungen, um Sensoren zu sehen.</string>
     <string name="plan_expiry_date">Verfallsdatum des Ruuvi-Plans</string>
-    <string name="pm1">PM1.0</string>
-    <string name="pm10">PM10.0</string>
-    <string name="pm10_with_unit">PM10.0 (%1$s)</string>
-    <string name="pm1_with_unit">PM1.0 (%1$s)</string>
+    <string name="pm10">PM1</string>
+    <string name="pm100">PM10</string>
+    <string name="pm100_with_unit">PM10 (%1$s)</string>
+    <string name="pm10_with_unit">PM1 (%1$s)</string>
     <string name="pm25">PM2.5</string>
     <string name="pm25_with_unit">PM2.5 (%1$s)</string>
-    <string name="pm4">PM4.0</string>
-    <string name="pm4_with_unit">PM4.0 (%1$s)</string>
+    <string name="pm40">PM4</string>
+    <string name="pm40_with_unit">PM4 (%1$s)</string>
     <string name="prepare_your_sensor">Bereiten Sie Ihren Sensor vor</string>
+    <string name="prepare_your_sensor_instructions">\u0026lt;title\u0026gt;Bereiten Sie Ihren Sensor vor\u0026lt;/title\u0026gt;\n\n1. Öffnen Sie den Deckel Ihres Ruuvi-Sensors\n\n2. Suchen Sie die kleinen runden schwarzen Knöpfe auf der weißen Platine; ältere Ruuvi-Sensoren haben zwei Knöpfe mit den Bezeichnungen “R” und “B”, während neuere nur einen Knopf ohne Beschriftung haben.\n\n3. Stellen Sie den Sensor in den Aktualisierungsmodus:\n\n3.1. Wenn Ihr Sensor 2 Tasten hat: Halten Sie die Taste “B” gedrückt und tippen Sie gleichzeitig kurz auf die Taste “R”. Lassen Sie die Taste “B” los.\n\n3.2. Wenn Ihr Sensor eine einzelne Taste hat: Halten Sie die Taste 10 Sekunden lang gedrückt.\n\n4. Wenn die Einstellung erfolgreich war, leuchtet ein rotes Licht auf der Platine und die Schaltfläche in der App ändert sich in “Starten Sie die Aktualisierung”.</string>
     <string name="prepare_your_sensor_instructions_1">1. Öffnen Sie den Deckel Ihres Ruuvi-Sensors</string>
     <string name="prepare_your_sensor_instructions_2">2. Suchen Sie die kleinen runden schwarzen Knöpfe auf der weißen Platine; ältere Ruuvi-Sensoren haben zwei Knöpfe mit den Bezeichnungen \"R\" und \"B\", während neuere nur einen Knopf ohne Beschriftung haben.</string>
     <string name="prepare_your_sensor_instructions_3">3. Stellen Sie den Sensor in den Aktualisierungsmodus:</string>
@@ -483,7 +522,7 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="prepare_your_sensor_instructions_5">3.2. Wenn Ihr Sensor eine einzelne Taste hat: Halten Sie die Taste 10 Sekunden lang gedrückt.</string>
     <string name="prepare_your_sensor_instructions_6">4. Wenn die Einstellung erfolgreich war, leuchtet ein rotes Licht auf der Platine und die Schaltfläche in der App ändert sich in \"Start the update\".</string>
     <string name="press_to_add">Keine Sensoren hinzugefügt\nKlicken Sie hier, um Sensoren hinzuzufügen</string>
-    <string name="pressure">Druck</string>
+    <string name="pressure">Luftdruck</string>
     <string name="pressure_accuracy_title">Auflösung des Drucks</string>
     <string name="pressure_hpa_name">Hektopascal (hPa)</string>
     <string name="pressure_hpa_unit">hPa</string>
@@ -500,6 +539,9 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="reading_history">History wird gelesen</string>
     <string name="reading_history_not_supported">Firmware nicht unterstützt</string>
     <string name="reading_history_x">Bluetooth-Sync: %1$s</string>
+    <string name="real_time">Echtzeit</string>
+    <string name="rel_humidity">Rel. Luftfeuchtigkeit</string>
+    <string name="relative_humidity">Relative Luftfeuchtigkeit</string>
     <string name="remove">Löschen</string>
     <string name="remove_claimed_sensor">Durch das Entfernen des Sensors wird Ihr Sensor-Eigentumsstatus widerrufen. Nach dem Entfernen kann eine andere Person das Eigentum an dem Sensor beanspruchen. Jeder Ruuvi-Sensor kann nur einen Besitzer haben.</string>
     <string name="remove_claimed_sensor_description">Durch das Entfernen des Sensors wird Ihr Sensor-Eigentumsstatus aufgehoben, und Sensor-Einstellungen wie Name, Hintergrundbild, Kalibrierungseinstellungen und Alarmeinstellungen werden entfernt. Nach der Entfernung kann jemand anderes das Eigentum am Sensor beanspruchen. Jeder Ruuvi-Sensor kann nur einen Besitzer haben.</string>
@@ -621,6 +663,7 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="sign_out_confirm">Wenn Sie sich abmelden, werden Sensoren, deren Eigentum Sie mit den Sensoreinstellungen bestätigt haben, automatisch aus der App entfernt. Wenn Sie sich erneut mit derselben E-Mail-Adresse anmelden, werden die Sensoren aus der Cloud zurückgegeben.\n\nMöchten Sie sich abmelden?</string>
     <string name="signal_reading">%1$,d %2$s</string>
     <string name="signal_reading_zero">- %1$s</string>
+    <string name="signal_strength">Signalstärke</string>
     <string name="signal_strength_dbm">Signalstärke (dBm)</string>
     <string name="signal_strength_rssi">Signalstärke (RSSI)</string>
     <string name="signal_unit">dBm</string>
@@ -631,9 +674,11 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="skip">ÜBERSPRINGEN</string>
     <string name="something_went_wrong">Something went wrong</string>
     <string name="sound">Ton</string>
-    <string name="sound_avg">Schalldruckpegel (Durchschnitt)</string>
-    <string name="sound_peak">Schalldruckpegel (Spitze)</string>
-    <string name="sound_with_unit">Ton (%1$s)</string>
+    <string name="sound_average_with_unit">Ton (durchschnitt) (%1$s)</string>
+    <string name="sound_avg">Ton (durchschnitt)</string>
+    <string name="sound_instant_with_unit">Ton (sofort) (%1$s)</string>
+    <string name="sound_peak">Ton (spitze)</string>
+    <string name="sound_peak_with_unit">Ton (spitze) (%1$s)</string>
     <string name="start_the_update">Starten Sie die Aktualisierung</string>
     <string name="start_update_process">Update-Prozess starten</string>
     <string name="subscription_disclaimer">Dies ist eine völlig kostenlose App, die keine monatlichen Abonnementkäufe oder andere In-App-Käufe unterstützt. Wenn Sie ein Nutzer des Ruuvi Gateway Routers sind und detailliertere Informationen über Ihr Ruuvi Konto suchen, gehen Sie auf unsere Website und melden Sie sich an.</string>
@@ -673,13 +718,13 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="unclaim_sensor_description">Das Eigentum an diesem Sensor wurde Ihrem Ruuvi-Konto zugeordnet. Klicken Sie auf „Anspruch aufheben“, um die Einstellungen dieses Sensors und die zugehörigen Daten aus Ihrem Ruuvi-Konto zu entfernen.</string>
     <string name="unit_co2">ppm</string>
     <string name="unit_luminosity">lx</string>
-    <string name="unit_nox">NOx Index</string>
-    <string name="unit_pm1">µg/m³</string>
+    <string name="unit_nox">NOx</string>
     <string name="unit_pm10">µg/m³</string>
+    <string name="unit_pm100">µg/m³</string>
     <string name="unit_pm25">µg/m³</string>
-    <string name="unit_pm4">µg/m³</string>
+    <string name="unit_pm40">µg/m³</string>
     <string name="unit_sound">dBA</string>
-    <string name="unit_voc">VOC Index</string>
+    <string name="unit_voc">VOC</string>
     <string name="unknown_error">Unbekannter Fehler</string>
     <string name="update_action">NEUSTART</string>
     <string name="update_downloaded_message">Ein Update wurde soeben heruntergeladen.</string>
@@ -696,6 +741,7 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="visible_measurements_use_default">Standard verwenden</string>
     <string name="voc">VOC</string>
     <string name="voc_with_unit">VOC (%1$s)</string>
+    <string name="volatile_organic_compounds">Flüchtige organische Verbindungen</string>
     <string name="voltage_reading">%1$,.2f %2$s</string>
     <string name="voltage_unit">V</string>
     <string name="welcome_text_0">Wischen Sie, um zu sehen, was Ruuvi Station für Sie tun kann.</string>

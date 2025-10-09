@@ -18,7 +18,15 @@ data class DecodedSensorData(
     val movementCounter: Int? = null,
     val measurementSequenceNumber: Int? = null,
     val connectable: Boolean? = null,
-    val updatedAt: Date
+    val updatedAt: Date,
+    var pm1: Double? = null,
+    var pm25: Double? = null,
+    var pm4: Double? = null,
+    var pm10: Double? = null,
+    var co2: Int? = null,
+    var voc: Int? = null,
+    var nox: Int? = null,
+    var luminosity: Double? = null,
 ) {
     constructor(foundRuuviTag: FoundRuuviTag, updatedAt: Date): this(
         id = foundRuuviTag.id,
@@ -35,6 +43,14 @@ data class DecodedSensorData(
         movementCounter = foundRuuviTag.movementCounter,
         measurementSequenceNumber = foundRuuviTag.measurementSequenceNumber,
         connectable = foundRuuviTag.connectable,
-        updatedAt = updatedAt
+        updatedAt = updatedAt,
+        pm1 = foundRuuviTag.pm1,
+        pm25 = foundRuuviTag.pm25,
+        pm4 = foundRuuviTag.pm4,
+        pm10 = foundRuuviTag.pm10,
+        co2 = foundRuuviTag.co2,
+        voc = foundRuuviTag.voc,
+        nox = foundRuuviTag.nox,
+        luminosity = foundRuuviTag.luminosity
     )
 }

@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="abs_humidity">Abs. humidity</string>
+    <string name="absolute_humidity">Absolute humidity</string>
+    <string name="acc_x">Acc. X</string>
+    <string name="acc_y">Acc. Y</string>
+    <string name="acc_z">Acc. Z</string>
     <string name="acceleration_reading">%1$,.3f %2$s</string>
     <string name="acceleration_unit">g</string>
     <string name="acceleration_unit_x">g (x)</string>
@@ -22,6 +27,7 @@
     <string name="advertisement">Advertisement</string>
     <string name="ago">ago</string>
     <string name="agree">Agree</string>
+    <string name="air_pressure">Air pressure</string>
     <string name="air_quality">Air Quality</string>
     <string name="alarm_custom_description_title">Alert custom description</string>
     <string name="alarm_custom_title_hint">Set custom description...</string>
@@ -40,8 +46,10 @@
     <string name="alert_dialog_title_temperature">Set temperature alert</string>
     <string name="alert_movement">Movement</string>
     <string name="alert_movement_description">Movement alert is triggered if the value of the sensor\'s internal motion counter changes. This alert can be used, for example, to detect door movement or vibration in the vicinity of the sensor.</string>
+    <string name="alert_notification_aqi_high_threshold">AQI is above %1$s</string>
+    <string name="alert_notification_aqi_low_threshold">AQI is below %1$s</string>
     <string name="alert_notification_co2_high_threshold">CO2 is above %1$s</string>
-    <string name="alert_notification_co2_low_threshold">CO2 is below %1$s</string>
+    <string name="alert_notification_co2_low_threshold">  is below %1$s</string>
     <string name="alert_notification_humidity_high">Humidity too high!</string>
     <string name="alert_notification_humidity_high_threshold">Air humidity is above %1$s</string>
     <string name="alert_notification_humidity_low">Humidity too low!</string>
@@ -52,14 +60,14 @@
     <string name="alert_notification_nox_high_threshold">NOx is above %1$s</string>
     <string name="alert_notification_nox_low_threshold">NOx is below %1$s</string>
     <string name="alert_notification_offline_message">Sensor has been offline over %1$s minutes</string>
-    <string name="alert_notification_pm10_high_threshold">PM10.0 is above %1$s</string>
-    <string name="alert_notification_pm10_low_threshold">PM10.0 is below %1$s</string>
-    <string name="alert_notification_pm1_high_threshold">PM1.0 is above %1$s</string>
-    <string name="alert_notification_pm1_low_threshold">PM1.0 is below %1$s</string>
+    <string name="alert_notification_pm100_high_threshold">PM10.0 is above %1$s</string>
+    <string name="alert_notification_pm100_low_threshold">PM10.0 is below %1$s</string>
+    <string name="alert_notification_pm10_high_threshold">PM1.0 is above %1$s</string>
+    <string name="alert_notification_pm10_low_threshold">PM1.0 is below %1$s</string>
     <string name="alert_notification_pm25_high_threshold">PM2.5 is above %1$s</string>
     <string name="alert_notification_pm25_low_threshold">PM2.5 is below %1$s</string>
-    <string name="alert_notification_pm4_high_threshold">PM4.0 is above %1$s</string>
-    <string name="alert_notification_pm4_low_threshold">PM4.0 is below %1$s</string>
+    <string name="alert_notification_pm40_high_threshold">PM4.0 is above %1$s</string>
+    <string name="alert_notification_pm40_low_threshold">PM4.0 is below %1$s</string>
     <string name="alert_notification_pressure_high">Pressure too high!</string>
     <string name="alert_notification_pressure_high_threshold">Air pressure is above %1$s</string>
     <string name="alert_notification_pressure_low">Pressure too low!</string>
@@ -68,8 +76,14 @@
     <string name="alert_notification_rssi_high_threshold">Signal strength is above %1$s</string>
     <string name="alert_notification_rssi_low">Signal strength too low!</string>
     <string name="alert_notification_rssi_low_threshold">Signal strength is below %1$s</string>
+    <string name="alert_notification_sound_average_high_threshold">Sound Average is above %1$s</string>
+    <string name="alert_notification_sound_average_low_threshold">Sound Average is below %1$s</string>
     <string name="alert_notification_sound_high_threshold">Sound is above %1$s</string>
+    <string name="alert_notification_sound_instant_high_threshold">Current sound level is above %1$s</string>
+    <string name="alert_notification_sound_instant_low_threshold">Current sound level is below %1$s</string>
     <string name="alert_notification_sound_low_threshold">Sound is below %1$s</string>
+    <string name="alert_notification_sound_peak_high_threshold">Sound Peak is above %1$s</string>
+    <string name="alert_notification_sound_peak_low_threshold">Sound Peak is below %1$s</string>
     <string name="alert_notification_temperature_high">Temperature too high!</string>
     <string name="alert_notification_temperature_high_threshold">Temperature is above %1$s</string>
     <string name="alert_notification_temperature_low">Temperature too low!</string>
@@ -94,6 +108,8 @@
     <string name="aqi_level_3">Moderate</string>
     <string name="aqi_level_4">Good</string>
     <string name="aqi_level_5">Excellent</string>
+    <string name="aqi_with_unit">Air Quality (%1$s)</string>
+    <string name="average">Average</string>
     <string name="back">Back</string>
     <string name="background_image">Background image</string>
     <string name="background_interval">every %1$s min</string>
@@ -129,7 +145,7 @@
     <string name="calibration_humidity_disclaimer">Note that calibration data will be stored locally in your mobile device. After Ruuvi Station uninstall and install, you may need to recalibrate.</string>
     <string name="calibration_humidity_link">video tutorials</string>
     <string name="calibration_humidity_link_url">https://www.youtube.com/results?search_query=hygrometer+salt+calibration</string>
-    <string name="calibration_humidity_offset">Humidity offset</string>
+    <string name="calibration_humidity_offset">Relative humidity offset</string>
     <string name="calibration_offset">(Offset %1$s)</string>
     <string name="calibration_original_value">Original measured value</string>
     <string name="calibration_pressure_offset">Pressure offset</string>
@@ -138,6 +154,7 @@
     <string name="camera">Camera</string>
     <string name="camera_fail">Could not start camera</string>
     <string name="cancel">Cancel</string>
+    <string name="carbon_dioxide">Carbon dioxide</string>
     <string name="card_action">Card action</string>
     <string name="card_type">Card type</string>
     <string name="change_background">Change background</string>
@@ -247,7 +264,28 @@
     <string name="decline">Decline</string>
     <string name="decrease_graph_size">Decrease graph size</string>
     <string name="delete_account">Delete account</string>
+    <string name="description_text_acceleration">The accelerometer detects whether the device has moved or tilted. It measures changes along three directions (x, y, and z axes), which makes it possible to determine if the device is stationary or in motion.\n\nEarth’s gravity causes about 1 g of acceleration on the axis pointing directly toward the ground.\n\nIf the values remain steady, the device is firmly in place. If the values change, the sensor detects that the device has moved, turned, or tilted. Sudden spikes in the readings indicate rapid movement, while slower changes suggest that the device has gradually tilted or shifted.\n\nIn fixed installations, stable acceleration values confirm that the sensor is securely positioned. In mobile or experimental setups, the values can be used for real-time monitoring of the device’s orientation or vibrations, for example.</string>
+    <string name="description_text_air_quality">Air quality is shown with a single index-like number that tells how good or bad the indoor air is. The score is based on two factors: particulate matter (PM2.5) floating in the air, and carbon dioxide (CO₂) that accumulates when people spend time indoors.\n\nThe air quality score takes both factors into account, but if either one rises too much, the overall value decreases. For example, if particle levels increase during cooking, the score will drop even if carbon dioxide is still at a good level.\n\nThe higher the score, the healthier the air is to breathe. Good indoor air supports alertness, concentration, and sleep quality. If the score falls below 70, it may be due to a temporary situation such as poor ventilation or cooking. If it drops below 40, it clearly indicates that fresh air is needed or that there is something indoors that is reducing air quality.\n\nThe easiest way to improve indoor air quality is to ventilate the room by opening windows. Using an air purifier can also help keep the score at a good level.\n\nOptimal result: 90 – 100\nScore scale: 0 – 100</string>
+    <string name="description_text_battery_voltage">Battery voltage indicates the condition of the sensor’s battery.\n\nWhen the voltage starts to drop, the battery is running low. This can cause the sensor to measure less accurately or lead to gaps in the data. By monitoring the voltage, you can see in time when the battery needs replacing and avoid sudden device shutdowns.\n\nA new coin cell battery typically starts at about 3 volts. When the value approaches 2.5 volts or lower, the battery is close to empty. If the reading suddenly drops below normal, it may be due to battery aging or cold temperatures reducing its efficiency.\n\nRuuvi Station shows a low battery warning when the voltage falls below a temperature-dependent threshold: 2.0 V at –20 °C, 2.3 V below 0 °C, and 2.5 V at other temperatures.\n\nWe recommend using CR2477 batteries from well-known manufacturers with RuuviTag sensors. The expected battery life under normal conditions is about 1–2 years. Rechargeable batteries are not suitable for use with Ruuvi sensors.\n\nBattery voltage: 3V</string>
+    <string name="description_text_co2">Carbon dioxide (CO₂) is produced every time we breathe. If a room has poor ventilation, the level can rise quickly. This may cause tiredness, drowsiness, headaches, and reduced cognitive performance. Cooking, several people staying in the same space, or weak ventilation can also raise CO₂ levels.\n\nOutdoor air normally contains about 420–430 ppm, while indoor levels above 1000 ppm indicate a need for ventilation. In bedrooms, it is best to stay well below this level to maintain good sleep quality.\n\nTo reduce CO₂ levels, set the alarm limit to 1000 so you know when it’s time to ventilate.\n\nOptimal range: 400 – 500\nSensor measurement range: 350 – 40000</string>
+    <string name="description_text_humidity_absolute">Absolute humidity indicates the amount of water vapor in grams per cubic meter of air (g/m³). Unlike relative humidity, it tells the actual amount of water vapor in the air.\n\nMeasuring absolute humidity is important in environments where temperature varies greatly and moisture control is critical. Accurate moisture readings benefit industries like manufacturing and storage by helping to prevent spoilage or degradation. At home, understanding actual moisture load helps determine when a humidifier, dehumidifier, or improved ventilation is needed.\n\nAbsolute humidity is most informative when viewed over time or alongside temperature and relative humidity. It helps identify conditions where air may feel dry despite moderate relative humidity — or the opposite.\n\nSince comfort and air quality issues often relate more closely to the actual water content in the air than to percentage-based values, tracking this metric can reveal hidden indoor air balance trends that may be missed by relying solely on relative humidity.</string>
+    <string name="description_text_humidity_dewpoint">The dew point is the temperature at which water vapor condenses (dew forms), and it is measured in °C, °F, or K.\n\nDew point temperature directly indicates the risk of condensation and significantly affects indoor comfort. A higher dew point means more moisture in the air, often leading to a humid or stuffy indoor environment. A low dew point indicates drier air.\n\nCondensation on surfaces occurs when air cools to its dew point. This is a major concern for preventing mold growth, corrosion, and water damage in both residential and commercial spaces. If the temperature of a window or wall drops to or below the dew point, moisture condenses on the surface and may cause damage over time.\n\nDew point values change more slowly than relative humidity, making them a reliable indicator for identifying ventilation issues or sources of excess indoor moisture.\n\nBy monitoring the dew point together with absolute and relative humidity, you gain a more complete picture of humidity dynamics in real time. This helps protect your home\'s structure, furnishings, and electronics while improving indoor air quality.</string>
+    <string name="description_text_humidity_relative">Relative humidity (RH %) indicates how much moisture is in the air compared to the maximum amount the air can hold at a given temperature.\n\nA balanced humidity level at home (ideally 30–50%) makes indoor air healthier. Too much humidity promotes mold and dust mites, while too little dries out the skin and respiratory system.\n\nHumidity levels can vary between rooms and at different times of the day. Bathrooms and kitchens often show higher readings after showers or cooking. Place the sensor in the room you are most concerned about and track values over time to recognize recurring situations and take steps to avoid them.\n\nYou can manage humidity by adjusting indoor temperature and ventilating at times when outdoor humidity is lower than indoors. Once you learn to control indoor humidity, it is easier to maintain healthy air quality and also prevent potential moisture damage.\n\nRelative humidity (%) is the most commonly used unit, but you can also choose absolute humidity or dew point in the app settings.\n\nOptimal range: 40–80%\nSensor measurement range: 0–100%\n\nFor ideas on suitable alert limits, see Ruuvi’s use case examples: \u0026lt;link url=\"https://ruuvi.com/ideas/\"\u0026gt;ruuvi.com/ideas\u0026lt;/link\u0026gt;</string>
+    <string name="description_text_luminosity">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</string>
+    <string name="description_text_movement">The movement counter displays movements detected via changes in the accelerometer.\n\nMonitoring the device’s motion activity indicates whether it has been moved or if its surroundings have been disturbed.\n\nNote that more events than expected may be recorded in unstable placements, such as on window sills.</string>
+    <string name="description_text_nox">The NOx index indicates how much nitrogen oxides are in the air.\n\nThese are harmful gases produced, for example, by traffic exhaust, gas stoves, fireplaces, or some heating devices. Even small amounts can irritate the respiratory tract, worsen asthma, and increase susceptibility to infections. Long-term exposure can also affect the lungs and heart.\n\nThe NOx index does not provide exact concentrations but shows a trend: whether air quality has improved or worsened compared to before. For example, during cooking or when outdoor pollution increases, the value can rise quickly.\n\nThe sensor works best when it is not placed directly next to stoves or ventilation outlets.\n\nThe World Health Organization (WHO) recommends a 24-hour average of 25 µg/m³ for nitrogen dioxide (NO₂).\n\nSensor measurement range: 0 – 500</string>
+    <string name="description_text_pm">Particulate matter (PM) refers to tiny, invisible particles in the air, such as dust, pollen, smoke, and other pollutants. Very small particles (PM2.5 and smaller) are harmful to health because they can reach deep into the lungs and worsen allergies and respiratory symptoms.\n\nBy monitoring PM levels, you can detect when indoor air quality decreases, for example due to cooking, vacuuming, burning candles, or outdoor traffic pollution. This helps you react in time by ventilating or using an air purifier.\n\nPlace the sensor where it is not directly next to emission sources, such as a stove, to keep the readings reliable. It is best to interpret the measurements as trends – noticing when the values rise or fall – rather than focusing on single numbers.\n\nThe sensor provides an estimate of the amount of particles in the air. The most commonly monitored value is PM2.5. In the settings, you can also choose to display other particle sizes, such as PM1.0, PM4.0, and PM10.\n\nThe World Health Organization (WHO) recommends a daily average PM2.5 level of 15 μg/m³. This guideline applies to outdoor air but also serves as a benchmark for improving indoor air quality.\n\nSensor measurement range: 0 – 1000</string>
+    <string name="description_text_pressure">Barometric pressure (Pa, hPa, mmHg, inHg) indicates the pressure exerted by the weight of air at a specific location — essentially, how much the atmosphere is pressing down on the Earth\'s surface at that moment.\n\nMonitoring air pressure helps anticipate weather changes and understand ventilation dynamics, which can affect building integrity and indoor comfort.\n\nTo ensure the best accuracy, do not place the sensor directly in airflow, such as near fans, ventilation vents, or open windows, as these can temporarily affect the readings.\n\nThe altitude of the measurement location above sea level influences the pressure value and, consequently, the measurement results. Air pressure at sea level is 1013.25 hectopascals (hPa).\n\nSensor measurement range: 500–1155 hPa</string>
+    <string name="description_text_signal_strength">Signal strength (RSSI) indicates the quality of the Bluetooth connection. The stronger the signal (closer to 0 dBm), the more reliably sensor data is updated on the receiving device. If the signal is weak, the connection may drop or be lost entirely, causing measurement data to stop updating.\n\nConnection quality can be affected by the distance between the sensor and the receiving device, walls and other obstacles, as well as interference from household electronics.\n\nMonitoring signal strength helps you place the sensor in an optimal location. If the signal is weak, you can improve the connection by moving the sensor so it has a clearer line of sight to the receiving device. This ensures measurement data is shown reliably in the app.\n\nOptimal result: -60 – 0\nSensor measurement range: -100 – 0</string>
+    <string name="description_text_sound_level">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</string>
+    <string name="description_text_temperature_celsius">The temperature sensor measures the ambient air temperature.\n\nAt home, temperature significantly affects comfort, sleep quality, concentration, and overall health. Monitoring temperature also helps optimize energy costs and improve living comfort.\n\nIndoors, place the sensor at eye level, away from surfaces or objects that conduct heat or cold, and from drafty areas.\n\nIdeally, install the sensor upright so that air can flow freely around it. For outdoor use (RuuviTag/RuuviTag Pro), place the sensor in the shade and protect it from direct rain.\n\nNote: Although the sensor detects and reports temperature changes very quickly, it may take up to an hour to fully reach thermal equilibrium with the surrounding environment. This is normal device behavior.\n\nFor ideas on suitable alert limits, see Ruuvi’s use case examples: \u0026lt;link url=\"https://ruuvi.com/ideas/\"\u0026gt;ruuvi.com/ideas\u0026lt;/link\u0026gt;</string>
+    <string name="description_text_temperature_fahrenheit">The temperature sensor measures the ambient air temperature.\n\nAt home, temperature significantly affects comfort, sleep quality, concentration, and overall health. Monitoring temperature also helps optimize energy costs and improve living comfort.\n\nIndoors, place the sensor at eye level, away from surfaces or objects that conduct heat or cold, and from drafty areas.\n\nIdeally, install the sensor upright so that air can flow freely around it. For outdoor use (RuuviTag/RuuviTag Pro), place the sensor in the shade and protect it from direct rain.\n\nNote: Although the sensor detects and reports temperature changes very quickly, it may take up to an hour to fully reach thermal equilibrium with the surrounding environment. This is normal device behavior.\n\nFor ideas on suitable alert limits, see Ruuvi’s use case examples: \u0026lt;link url=\"https://ruuvi.com/ideas/\"\u0026gt;ruuvi.com/ideas\u0026lt;/link\u0026gt;</string>
+    <string name="description_text_temperature_kelvin">The temperature sensor measures the ambient air temperature.\n\nAt home, temperature significantly affects comfort, sleep quality, concentration, and overall health. Monitoring temperature also helps optimize energy costs and improve living comfort.\n\nIndoors, place the sensor at eye level, away from surfaces or objects that conduct heat or cold, and from drafty areas.\n\nIdeally, install the sensor upright so that air can flow freely around it. For outdoor use (RuuviTag/RuuviTag Pro), place the sensor in the shade and protect it from direct rain.\n\nNote: Although the sensor detects and reports temperature changes very quickly, it may take up to an hour to fully reach thermal equilibrium with the surrounding environment. This is normal device behavior.\n\nFor ideas on suitable alert limits, see Ruuvi’s use case examples: \u0026lt;link url=\"https://ruuvi.com/ideas/\"\u0026gt;ruuvi.com/ideas\u0026lt;/link\u0026gt;</string>
+    <string name="description_text_voc">The VOC index gives a single number showing how much volatile chemicals are in the air.\n\nThe index mimics the human sense of smell by indicating the relative intensity of odors and also detects odorless VOCs, though it cannot distinguish between them.\n\nThese chemicals can be released from many everyday products, such as cleaning agents, paints, furniture, and even some common household appliances. When VOC levels are too high, they may cause eye, nose, or throat irritation, headaches, and long-term health risks.\n\nVOC values can vary throughout the day. For example, cleaning, painting, or bringing in new furniture can cause levels to rise quickly.\n\nThe best approach is to monitor measurements over several days and take note of activities at home when values change. This helps identify where pollutants are coming from.\n\nIf VOC levels rise, ventilate the room, use an air purifier, or choose products with fewer chemicals. This helps keep indoor air healthy.\n\nThe World Health Organization (WHO) recommends a maximum indoor level of 0.05 mg/m³ (or 0.05 ppm) for total volatile organic compounds (TVOCs).\n\nSensor measurement range: 0 – 500</string>
     <string name="details">Details</string>
+    <string name="dewpoint">Dew point</string>
+    <string name="dewpoint_with_unit">Dew point (%1$s)</string>
+    <string name="dfu_air_update_instructions">\u0026lt;title\u0026gt;Device Update\u0026lt;/title\u0026gt;\n\n1. Bring your mobile device close to your Ruuvi sensor\n\n2. Tap the Start the update button and wait for the process to complete\n\n3. When the firmware update is finished, the device will reboot to complete the update.</string>
     <string name="dfu_low_battery_warning">Sensor\'s battery voltage seems to be low and the firmware update process may fail. We recommend to replace the battery before updating.</string>
     <string name="dfu_no_internet">Unable to get latest firmware. Check your Internet connection.</string>
     <string name="dfu_update_do_not_close_app">Do not close the app or power off the sensor during the update.</string>
@@ -273,7 +311,7 @@
     <string name="export_csv_header_format2_4">Date,Temperature (%1$s),Humidity (%2$s),Pressure (%3$s),RSSI(dBm)</string>
     <string name="export_csv_header_format3">Date,Temperature (%1$s),Humidity (%2$s),Pressure (%3$s),RSSI (dBm),Acceleration X (g),Acceleration Y (g),Acceleration Z (g),Voltage (V)</string>
     <string name="export_csv_header_format5">Date,Temperature (%1$s),Humidity (%2$s),Pressure (%3$s),RSSI (dBm),Acceleration X (g),Acceleration Y (g),Acceleration Z (g),Voltage (V),Movement counter (movements),Measurement sequence number,TX power (dBm)</string>
-    <string name="export_csv_header_formatE0">Date,AQI,Temperature (%1$s),Humidity (%2$s),Pressure (%3$s),Luminosity(lx),dB Avg(dBA),dB peak(dBA),CO2(ppm),VOC,NOX,PM1.0(µg/m³),PM2.5(µg/m³),PM4.0(µg/m³),PM10.0(µg/m³),RSSI (dBm),Acceleration X (g),Acceleration Y (g),Acceleration Z (g),Voltage (V),Movement counter (movements),Measurement sequence number,TX power (dBm)</string>
+    <string name="export_csv_header_formatE0">Date,AQI,Temperature (%1$s),Humidity (%2$s),Pressure (%3$s),Illuminance(lx),dB Avg(dBA),dB peak(dBA),CO2(ppm),VOC,NOX,PM1(µg/m³),PM2.5(µg/m³),PM4(µg/m³),PM10(µg/m³),RSSI (dBm),Acceleration X (g),Acceleration Y (g),Acceleration Z (g),Voltage (V),Movement counter (movements),Measurement sequence number,TX power (dBm)</string>
     <string name="export_history">Export history (csv)</string>
     <string name="export_history_xlsx">Export history (xlsx)</string>
     <string name="file_not_supported">File type not supported</string>
@@ -334,6 +372,7 @@
     <string name="humidity_relative_name">Relative (%)</string>
     <string name="humidity_relative_unit">%</string>
     <string name="humidity_with_unit">Air Humidity (%1$s)</string>
+    <string name="imageExt_cards">Image extended cards</string>
     <string name="image_cards">Image cards</string>
     <string name="image_format_not_supported">Image format not supported</string>
     <string name="image_view">Image view</string>
@@ -348,7 +387,7 @@
     <string name="latest_available_fw">Latest available Ruuvi firmware version:</string>
     <string name="latest_measured_value">Latest measured value: %1$s</string>
     <string name="lets_do_it">Let\'s Sign In</string>
-    <string name="light">Luminosity</string>
+    <string name="light">Light</string>
     <string name="light_theme">Light theme</string>
     <string name="logged_in">Signed in:</string>
     <string name="login_description">To enjoy all the features, create a free account or sign in to your existing Ruuvi account by entering your email address.</string>
@@ -356,10 +395,11 @@
     <string name="longer_history_message">Ruuvi Station mobile app supports maximum 10 days of history. Ruuvi Cloud subscribers are able to view up to 3 years of historical data using web app at ruuvi.com/station (requires Ruuvi Gateway router).</string>
     <string name="longer_history_title">Longer history</string>
     <string name="low_battery">Low battery</string>
-    <string name="luminosity">Luminosity</string>
-    <string name="luminosity_with_unit">Luminosity (%1$s)</string>
+    <string name="luminosity">Light level</string>
+    <string name="luminosity_with_unit">Light (%1$s)</string>
     <string name="mac_address">MAC address</string>
     <string name="mac_copied">MAC address copied to clipboard</string>
+    <string name="meas_seq_number">Meas. seq. number</string>
     <string name="measurement_sequence_number">Measurement sequence number</string>
     <string name="menu_about_help">About / Help</string>
     <string name="menu_add_new_sensor">Add a new sensor</string>
@@ -375,7 +415,7 @@
     <string name="move_down">Move down</string>
     <string name="move_up">Move up</string>
     <string name="movement_counter">Movement counter</string>
-    <string name="movements">movements</string>
+    <string name="movements">Movements</string>
     <string name="muted_till">Muted till %1$s</string>
     <string name="my_account_change_email">Contact support@ruuvi.com if you wish to change the email address associated with this user account.</string>
     <string name="my_account_change_email_link">mailto:support@ruuvi.com</string>
@@ -400,6 +440,7 @@
     <string name="nfc_dialog_name">Name:</string>
     <string name="nfc_dialog_unique_id">Unique ID:</string>
     <string name="nfc_enable_bt_to_add_sensor">Enable Bluetooth and scan sensor to add it</string>
+    <string name="nitrogen_oxides">Nitrogen oxides</string>
     <string name="no">No</string>
     <string name="no_data">No data</string>
     <string name="no_data_10_days">No data during the last 10 days</string>
@@ -451,6 +492,11 @@
     <string name="ordering">Ordering</string>
     <string name="owner_none">No owner</string>
     <string name="owners_plan">Owner\'s Ruuvi plan</string>
+    <string name="particulate_matter_10">Particulate matter 1</string>
+    <string name="particulate_matter_100">Particulate matter 10</string>
+    <string name="particulate_matter_25">Particulate matter 2.5</string>
+    <string name="particulate_matter_40">Particulate matter 4</string>
+    <string name="peak">Peak</string>
     <string name="permission_background_dialog_title">Enable background scanning</string>
     <string name="permission_dialog_background_request_message">In order to scan nearby Bluetooth devices in the background, Android requires background location access to be enabled. \n\nPlease click \'allow all the time\' on next permission dialog if you\'d like to use the background scanning feature. \n\We do not collect or store your location data.</string>
     <string name="permission_dialog_request_message">Ruuvi Station requires location permission to detect and communicate with nearby Bluetooth devices, even when the app is closed or not in use.\n\nWe do not collect or store your location data.\n\nThis permission is required by Android for Bluetooth scanning on devices running Android 11 or older.</string>
@@ -459,15 +505,16 @@
     <string name="permission_location_needed">Please enable location permission in settings to see sensors.</string>
     <string name="permission_location_needed_api31">Please allow to show nearby devices in settings to see sensors.</string>
     <string name="plan_expiry_date">Ruuvi plan\'s expiry date</string>
-    <string name="pm1">PM1.0</string>
-    <string name="pm10">PM10.0</string>
-    <string name="pm10_with_unit">PM10.0 (%1$s)</string>
-    <string name="pm1_with_unit">PM1.0 (%1$s)</string>
+    <string name="pm10">PM1</string>
+    <string name="pm100">PM10</string>
+    <string name="pm100_with_unit">PM10 (%1$s)</string>
+    <string name="pm10_with_unit">PM1 (%1$s)</string>
     <string name="pm25">PM2.5</string>
     <string name="pm25_with_unit">PM2.5 (%1$s)</string>
-    <string name="pm4">PM4.0</string>
-    <string name="pm4_with_unit">PM4.0 (%1$s)</string>
+    <string name="pm40">PM4</string>
+    <string name="pm40_with_unit">PM4 (%1$s)</string>
     <string name="prepare_your_sensor">Prepare your sensor</string>
+    <string name="prepare_your_sensor_instructions">\u0026lt;title\u0026gt;Prepare your sensor\u0026lt;/title\u0026gt;\n\n1. Open the cover of your Ruuvi sensor\n\n2. Locate the small round black buttons on the white circuit board; older Ruuvi sensors have 2 buttons labelled “R” and “B” while newer ones have only one button without a label.\n\n3. Set the sensor to updating mode:\n\n3.1. If your sensor has 2 buttons: keep “B” button pressed while tapping button “R” momentarily. Release button “B”.\n\n3.2. If your sensor has a single button: keep the button pressed for 10 seconds.\n\n4. If set successfully, you will see a solid red light lit on the circuit board and the button in the app will change to “Start the update”.</string>
     <string name="prepare_your_sensor_instructions_1">1. Open the cover of your Ruuvi sensor</string>
     <string name="prepare_your_sensor_instructions_2">2. Locate the small round black buttons on the white circuit board; older Ruuvi sensors have 2 buttons labelled “R” and “B” while newer ones have only one button without a label.</string>
     <string name="prepare_your_sensor_instructions_3">3. Set the sensor to updating mode:</string>
@@ -475,7 +522,7 @@
     <string name="prepare_your_sensor_instructions_5">3.2. If your sensor has a single button: keep the button pressed for 10 seconds.</string>
     <string name="prepare_your_sensor_instructions_6">4. If set successfully, you will see a solid red light lit on the circuit board and the button in the app will change to “Start the update”.</string>
     <string name="press_to_add">No sensors added\nPress here to add sensors</string>
-    <string name="pressure">Pressure</string>
+    <string name="pressure">Air pressure</string>
     <string name="pressure_accuracy_title">Pressure resolution</string>
     <string name="pressure_hpa_name">Hectopascal (hPa)</string>
     <string name="pressure_hpa_unit">hPa</string>
@@ -492,6 +539,9 @@
     <string name="reading_history">Reading history</string>
     <string name="reading_history_not_supported">Firmware not supported</string>
     <string name="reading_history_x">Reading Bluetooth: %1$s</string>
+    <string name="real_time">Real time</string>
+    <string name="rel_humidity">Rel. humidity</string>
+    <string name="relative_humidity">Relative humidity</string>
     <string name="remove">Remove</string>
     <string name="remove_claimed_sensor">By removing the sensor, your sensor ownership status will be revoked. After removal, someone else can claim ownership of the sensor. Each Ruuvi sensor can have only one owner.</string>
     <string name="remove_claimed_sensor_description">By removing the sensor, your sensor ownership status will be revoked and sensor settings, such as name, background image, calibration settings and alert settings will be removed. After removal, someone else can claim ownership of the sensor. Each Ruuvi sensor can have only one owner.</string>
@@ -613,6 +663,7 @@
     <string name="sign_out_confirm">When you sign out, sensors the ownerships of which you\'ve claimed on the sensor settings page will be automatically removed from the app. When you sign in again using the same email address, the sensors will be returned from the cloud.\n\nDo you want to sign out?</string>
     <string name="signal_reading">%1$,d %2$s</string>
     <string name="signal_reading_zero">- %1$s</string>
+    <string name="signal_strength">Signal strength</string>
     <string name="signal_strength_dbm">Signal strength (dBm)</string>
     <string name="signal_strength_rssi">Signal strength (RSSI)</string>
     <string name="signal_unit">dBm</string>
@@ -623,9 +674,11 @@
     <string name="skip">SKIP</string>
     <string name="something_went_wrong">Something went wrong</string>
     <string name="sound">Sound</string>
-    <string name="sound_avg">Sound level (average)</string>
-    <string name="sound_peak">Sound level (peak)</string>
-    <string name="sound_with_unit">Sound (%1$s)</string>
+    <string name="sound_average_with_unit">Sound average (%1$s)</string>
+    <string name="sound_avg">Sound (average)</string>
+    <string name="sound_instant_with_unit">Sound (instant) (%1$s)</string>
+    <string name="sound_peak">Sound (peak)</string>
+    <string name="sound_peak_with_unit">Sound (peak) (%1$s)</string>
     <string name="start_the_update">Start the update</string>
     <string name="start_update_process">Start update process</string>
     <string name="subscription_disclaimer">This is a completely free app that does not support monthly subscription purchases or other in-app purchases. If you are a user of the Ruuvi Gateway router and you are looking for more detailed information about your Ruuvi account, go to our website and sign in.</string>
@@ -665,13 +718,13 @@
     <string name="unclaim_sensor_description">Ownership of this sensor has been claimed to your Ruuvi account. Press Unclaim to remove this sensor\'s settings and related data from your Ruuvi account.</string>
     <string name="unit_co2">ppm</string>
     <string name="unit_luminosity">lx</string>
-    <string name="unit_nox">NOx Index</string>
-    <string name="unit_pm1">µg/m³</string>
+    <string name="unit_nox">NOx</string>
     <string name="unit_pm10">µg/m³</string>
+    <string name="unit_pm100">µg/m³</string>
     <string name="unit_pm25">µg/m³</string>
-    <string name="unit_pm4">µg/m³</string>
+    <string name="unit_pm40">µg/m³</string>
     <string name="unit_sound">dBA</string>
-    <string name="unit_voc">VOC Index</string>
+    <string name="unit_voc">VOC</string>
     <string name="unknown_error">Unknown error</string>
     <string name="update_action">RESTART</string>
     <string name="update_downloaded_message">An update has just been downloaded.</string>
@@ -688,6 +741,7 @@
     <string name="visible_measurements_use_default">Use default</string>
     <string name="voc">VOC</string>
     <string name="voc_with_unit">VOC (%1$s)</string>
+    <string name="volatile_organic_compounds">Volatile organic compounds</string>
     <string name="voltage_reading">%1$,.2f %2$s</string>
     <string name="voltage_unit">V</string>
     <string name="welcome_text_0">Swipe to see what Ruuvi Station can do for you.</string>

@@ -27,12 +27,10 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
-import com.bumptech.glide.integration.compose.GlideImage
+import coil.compose.AsyncImage
 import com.ruuvi.station.R
 import com.ruuvi.station.alarm.ui.AlarmsGroup
 import com.ruuvi.station.alarm.ui.AlarmItemsViewModel
-import com.ruuvi.station.app.ui.UiEvent
 import com.ruuvi.station.app.ui.UiText
 import com.ruuvi.station.app.ui.components.*
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
@@ -49,7 +47,7 @@ import timber.log.Timber
 @Composable
 fun SensorSettings(
     scaffoldState: ScaffoldState,
-    onNavigate: (UiEvent.Navigate) -> Unit,
+    onNavigate: (String) -> Unit,
     viewModel: TagSettingsViewModel,
     alarmsViewModel: AlarmItemsViewModel
 ) {
@@ -87,7 +85,7 @@ fun SensorSettings(
                 icon = painterResource(id = R.drawable.arrow_forward_16),
                 tint = RuuviStationTheme.colors.trackInactive
             ) {
-                onNavigate.invoke(UiEvent.Navigate(SensorSettingsRoutes.VISIBLE_MEASUREMENTS))
+                onNavigate.invoke(SensorSettingsRoutes.VISIBLE_MEASUREMENTS)
             }
         }
         AlarmsGroup(
@@ -116,7 +114,7 @@ fun SensorSettings(
         )
         DividerSurfaceColor()
         RemoveGroup(
-            deleteSensor = { onNavigate.invoke(UiEvent.Navigate(SensorSettingsRoutes.SENSOR_REMOVE)) }
+            deleteSensor = { onNavigate.invoke(SensorSettingsRoutes.SENSOR_REMOVE) }
         )
     }
 
@@ -152,7 +150,6 @@ fun SensorSettings(
     )
 }
 
-@OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun SensorSettingsImage(
     sensorState: RuuviTag,
@@ -173,7 +170,7 @@ fun SensorSettingsImage(
             val uri = Uri.parse(sensorState.userBackground)
 
             if (uri.path != null) {
-                GlideImage(
+                AsyncImage(
                     modifier = Modifier.fillMaxSize(),
                     model = uri,
                     contentDescription = null,

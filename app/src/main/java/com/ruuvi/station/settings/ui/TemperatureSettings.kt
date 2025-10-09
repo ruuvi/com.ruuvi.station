@@ -65,7 +65,7 @@ fun TemperatureUnitElement(
     onUnitSelected: (TemperatureUnit) -> Unit
 ) {
     RadioButtonRuuvi(
-        text = stringResource(id = unit.unitTitle),
+        text = stringResource(unit.unitTitle),
         isSelected = isSelected,
         onClick = { onUnitSelected.invoke(unit) }
     )

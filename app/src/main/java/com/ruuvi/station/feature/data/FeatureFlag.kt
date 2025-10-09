@@ -7,5 +7,5 @@ enum class FeatureFlag (
     override val defaultValue: Boolean
 ) : Feature {
     VISIBLE_MEASUREMENTS("android_visible_measurements", "Visible Measurements", "Enable visible measurements", false),
-    NEW_SENSOR_CARD("android_new_sensor_card", "New sensor card UI", "Enable new sensor card UI", false)
+    NEW_SENSOR_CARD("android_new_sensor_card", "New sensor card UI", "Enable new sensor card UI", true)
 }

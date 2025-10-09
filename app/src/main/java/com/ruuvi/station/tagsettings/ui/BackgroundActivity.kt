@@ -24,8 +24,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.core.view.WindowCompat
-import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
-import com.bumptech.glide.integration.compose.GlideImage
+import coil.compose.AsyncImage
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.ruuvi.station.R
 import com.ruuvi.station.app.ui.RuuviTopAppBar
@@ -33,7 +32,6 @@ import com.ruuvi.station.app.ui.UiEvent
 import com.ruuvi.station.app.ui.components.*
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.RuuviTheme
-import com.ruuvi.station.util.extensions.navigate
 import com.ruuvi.station.util.extensions.viewModel
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
@@ -61,24 +59,26 @@ class BackgroundActivity : AppCompatActivity(), KodeinAware {
                 val scaffoldState = rememberScaffoldState()
                 val context = LocalContext.current
 
-                Body(
-                    scaffoldState = scaffoldState,
-                    defaultImages = viewModel.getDefaultImages(),
-                    setDefaultImage = { image ->
-                        viewModel.setDefaultImage(image)
-                        finish()
-                    },
-                    setImageFromGallery = { uri ->
-                        if (viewModel.setImageFromGallery(uri)) {
+                StatusBarFill {
+                    Body(
+                        scaffoldState = scaffoldState,
+                        defaultImages = viewModel.getDefaultImages(),
+                        setDefaultImage = { image ->
+                            viewModel.setDefaultImage(image)
+                            finish()
+                        },
+                        setImageFromGallery = { uri ->
+                            if (viewModel.setImageFromGallery(uri)) {
+                                finish()
+                            }
+                        },
+                        getImageFileForCamera = viewModel::getImageFileForCamera,
+                        setImageFromCamera = {
+                            viewModel.setImageFromCamera()
                             finish()
                         }
-                    },
-                    getImageFileForCamera = viewModel::getImageFileForCamera,
-                    setImageFromCamera = {
-                        viewModel.setImageFromCamera()
-                        finish()
-                    }
-                )
+                    )
+                }
 
                 LaunchedEffect(null) {
                     viewModel.uiEvent.collect { uiEvent ->
@@ -96,7 +96,6 @@ class BackgroundActivity : AppCompatActivity(), KodeinAware {
         }
     }
 
-    @OptIn(ExperimentalGlideComposeApi::class)
     @Composable
     fun Body(
         scaffoldState: ScaffoldState,
@@ -111,14 +110,17 @@ class BackgroundActivity : AppCompatActivity(), KodeinAware {
         val systemBarsColor = RuuviStationTheme.colors.systemBars
 
         Scaffold(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize()
+                .systemBarsPadding(),
             backgroundColor = RuuviStationTheme.colors.background,
             topBar = { RuuviTopAppBar(title = stringResource(id = R.string.change_background)) },
             scaffoldState = scaffoldState
         ) { paddingValues ->
 
             LazyVerticalGrid(
-                columns = GridCells.Fixed(3)
+                columns = GridCells.Fixed(3),
+                modifier = Modifier.padding(paddingValues)
             ) {
                 item(span = { GridItemSpan(3) }) {
                     PageHeader(
@@ -129,7 +131,7 @@ class BackgroundActivity : AppCompatActivity(), KodeinAware {
                 }
 
                 items(defaultImages) { defaultImage ->
-                    GlideImage(
+                    AsyncImage(
                         modifier = Modifier.height(RuuviStationTheme.dimensions.defaultImagePreviewHeight)
                             .padding(RuuviStationTheme.dimensions.small)
                             .clickable { setDefaultImage.invoke(defaultImage) },

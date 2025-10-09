@@ -2,9 +2,12 @@ package com.ruuvi.station.calibration.ui
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MenuItem
+import androidx.core.view.WindowCompat
 import androidx.fragment.app.Fragment
 import com.ruuvi.station.R
 import com.ruuvi.station.calibration.model.CalibrationType
@@ -19,12 +22,21 @@ class CalibrationActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+
         binding = ActivityCalibrationBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
+
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+            window.statusBarColor = Color.parseColor("#01000000") // 1% black — invisible but not transparent
+        } else {
+            window.statusBarColor = Color.TRANSPARENT
+        }
 
         sensorId = intent.getStringExtra(SENSOR_ID) ?: ""
         calibrationType = intent.getSerializableExtra(CALIBRATION_TYPE) as CalibrationType

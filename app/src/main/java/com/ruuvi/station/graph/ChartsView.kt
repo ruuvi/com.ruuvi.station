@@ -22,6 +22,7 @@ import com.github.mikephil.charting.components.AxisBase
 import com.github.mikephil.charting.formatter.IAxisValueFormatter
 import com.ruuvi.station.R
 import com.ruuvi.station.app.ui.components.LoadingAnimation3dots
+import com.ruuvi.station.app.ui.components.modifier.fadingEdge
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.ruuviStationFonts
 import com.ruuvi.station.graph.model.ChartContainer
@@ -49,6 +50,7 @@ fun ChartsView(
     viewPeriod: Period,
     size: Size,
     increasedChartSize: Boolean,
+    scrollToChartEvent: Flow<UnitType>,
     historyUpdater: (String) -> Flow<MutableList<ChartContainer>>,
 ) {
     Timber.d("ChartView - top ${sensor.id} $selected viewPeriod = ${viewPeriod.value}")
@@ -155,11 +157,12 @@ fun ChartsView(
     } else {
        if (isLandscape) {
            LandscapeChartsPrototype(
-                modifier,
-                chartContainers,
-                unitsConverter,
-                graphDrawDots,
-                showChartStats
+               modifier = modifier,
+               chartContainers = chartContainers,
+               unitsConverter = unitsConverter,
+               graphDrawDots = graphDrawDots,
+               scrollToChartEvent = scrollToChartEvent,
+               showChartStats = showChartStats
             )
         } else {
             Box (modifier = modifier.fillMaxSize()) {
@@ -173,6 +176,7 @@ fun ChartsView(
                         graphDrawDots = graphDrawDots,
                         showChartStats = showChartStats,
                         height = height,
+                        scrollToChartEvent = scrollToChartEvent,
                         needsScroll = needsScroll
                     )
             }
@@ -188,6 +192,7 @@ fun VerticalChartsPrototype(
     graphDrawDots: Boolean,
     showChartStats: Boolean,
     height: Dp,
+    scrollToChartEvent: Flow<UnitType>,
     needsScroll: Boolean
 ) {
     val clearMarker = {
@@ -203,13 +208,23 @@ fun VerticalChartsPrototype(
         val listState = rememberLazyListState()
 
         if (needsScroll) {
+
+            LaunchedEffect(Unit) {
+                scrollToChartEvent.collectLatest{ unitType ->
+                    val index = chartContainers.indexOfFirst { it.unitType == unitType }
+                    if (index != -1) {
+                        listState.animateScrollToItem(index = index)
+                    }
+                }
+            }
+
             val columnModifier = modifier
                 .fillMaxSize()
                 .scrollbar(state = listState, horizontal = false)
 
             LazyColumn(
                 state = listState,
-                modifier = columnModifier
+                modifier = columnModifier.fadingEdge(listState)
             ) {
                 for (chartContainer in chartContainers) {
                     val data = chartContainer.data
@@ -274,6 +289,7 @@ fun LandscapeChartsPrototype(
     chartContainers: List<ChartContainer>,
     unitsConverter: UnitsConverter,
     graphDrawDots: Boolean,
+    scrollToChartEvent: Flow<UnitType>,
     showChartStats: Boolean
 ) {
     val clearMarker = {
@@ -285,6 +301,16 @@ fun LandscapeChartsPrototype(
     val pagerState = rememberPagerState {
         return@rememberPagerState chartContainers.size
     }
+
+    LaunchedEffect(Unit) {
+        scrollToChartEvent.collectLatest{ unitType ->
+            val index = chartContainers.indexOfFirst { it.unitType == unitType }
+            if (index != -1) {
+                pagerState.scrollToPage(index)
+            }
+        }
+    }
+
 
     VerticalPager(
         modifier = modifier.fillMaxSize(),

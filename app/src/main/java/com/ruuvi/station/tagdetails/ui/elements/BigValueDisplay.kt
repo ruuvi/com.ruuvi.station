@@ -1,9 +1,9 @@
 package com.ruuvi.station.tagdetails.ui.elements
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
@@ -11,14 +11,14 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.Alignment.Companion.Top
+import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.ruuvi.station.app.ui.components.limitScaleTo
+import com.ruuvi.station.app.ui.components.fixedSp
+import com.ruuvi.station.app.ui.components.scaleUpTo
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.RuuviTheme
 import com.ruuvi.station.app.ui.theme.ruuviStationFonts
@@ -30,52 +30,59 @@ import com.ruuvi.station.units.model.UnitType
 fun BigValueDisplay(
     value: EnvironmentValue,
     showName: Boolean,
-    modifier: Modifier = Modifier
+    alertActive: Boolean,
+    modifier: Modifier = Modifier,
+    clickAction: () -> Unit = {}
 ) {
     Column(
-        verticalArrangement = Arrangement.Center,
+        verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ){
-        Row(
-            modifier = modifier.wrapContentSize(),
-            verticalAlignment = Top
+        Box(
+            contentAlignment = Center,
+            modifier = Modifier.height(140.dp)
         ) {
-            Text(
-                modifier = Modifier
-                    .offset(y = 14.dp)
-                    .padding(start = 4.dp),
-                fontSize = 36.sp.limitScaleTo(1.2f),
-                fontFamily = ruuviStationFonts.oswaldRegular,
-                text = value.unitString,
-                color = Color.Transparent
-            )
-            Text(
-                modifier = Modifier,
-                fontSize = 72.sp.limitScaleTo(1.5f),
-                fontFamily = ruuviStationFonts.oswaldBold,
-                text = value.valueWithoutUnit,
-                color = Color.White
-            )
-
-            Text(
-                modifier = Modifier
-                    .offset(y = 14.dp)
-                    .padding(start = 4.dp),
-                fontSize = 36.sp.limitScaleTo(1.2f),
-                fontFamily = ruuviStationFonts.oswaldRegular,
-                text = value.unitString,
-                color = Color.White
-            )
+            Row(
+                modifier = modifier.wrapContentSize(),
+                verticalAlignment = Alignment.Top
+            ) {
+                Text(
+                    modifier = Modifier
+                        .padding(start = 4.dp),
+                    fontSize = RuuviStationTheme.fontSizes.big.fixedSp(),
+                    fontFamily = ruuviStationFonts.oswaldRegular,
+                    text = value.unitString,
+                    color = Color.Transparent
+                )
+                Text(
+                    modifier = Modifier
+                        .padding(bottom = 8.dp),
+                    fontSize = RuuviStationTheme.fontSizes.bigValue.fixedSp(),
+                    fontFamily = ruuviStationFonts.oswaldBold,
+                    text = value.valueWithoutUnit,
+                    color = Color.White
+                )
+                Text(
+                    modifier = Modifier
+                        .offset(y = 14.dp)
+                        .padding(start = 4.dp),
+                    fontSize = RuuviStationTheme.fontSizes.big.fixedSp(),
+                    fontFamily = ruuviStationFonts.oswaldRegular,
+                    text = value.unitString,
+                    color = Color.White
+                )
+            }
         }
         if (showName) {
-            Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.medium))
-
-            SensorValueName(
+            SensorUnitName(
                 icon = value.unitType.iconRes,
                 name = stringResource(value.unitType.measurementTitle),
-                itemHeight = RuuviStationTheme.dimensions.sensorCardValueItemHeight,
+                itemHeight = RuuviStationTheme.dimensions.sensorCardValueItemHeight.scaleUpTo(1.5f),
+                alertActive = alertActive,
                 modifier = Modifier.padding(horizontal = RuuviStationTheme.dimensions.extended)
-            )
+            ) {
+                clickAction.invoke()
+            }
         }
     }
 }
@@ -95,6 +102,7 @@ private fun BigValueDisplayPreview() {
                 unitType = UnitType.HumidityUnit.Relative
             ),
             showName = true,
+            alertActive = false,
             modifier = Modifier
         )
     }

@@ -44,7 +44,6 @@ fun SensorCardLegacy(
 
     Box(
         modifier = modifier
-            //.height(halfSize)
             .fillMaxSize(),
         contentAlignment = Alignment.TopCenter
     ) {
@@ -52,13 +51,22 @@ fun SensorCardLegacy(
         if (firstValue != null) {
             if (firstValue.unitType is UnitType.AirQuality) {
                 if (sensor.latestMeasurement != null) {
-                    CircularAQIDisplay(sensor.latestMeasurement.aqiScore)
+                    CircularAQIDisplay(
+                        value = firstValue,
+                        aqi = sensor.latestMeasurement.aqiScore,
+                        alertActive = firstValue.unitType.alarmType?.let {
+                            sensor.alarmSensorStatus.triggered(it)
+                        } ?: false
+                    )
                 }
             } else {
                 BigValueDisplay(
-                    modifier = Modifier.padding(48.dp),
+                    modifier = Modifier.padding(24.dp),
                     value = firstValue,
-                    showName = false
+                    showName = false,
+                    alertActive = firstValue.unitType.alarmType?.let {
+                        sensor.alarmSensorStatus.triggered(it)
+                    } ?: false
                 )
             }
         }

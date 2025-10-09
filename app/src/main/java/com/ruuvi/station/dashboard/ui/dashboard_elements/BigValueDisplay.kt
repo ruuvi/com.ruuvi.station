@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
-import androidx.compose.material.LinearProgressIndicator
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment.Companion.Top
@@ -31,7 +30,7 @@ fun BigValueDisplay(
     modifier: Modifier = Modifier
 ) {
     val textColor = if (alertTriggered) {
-        RuuviStationTheme.colors.activeAlert
+        RuuviStationTheme.colors.activeAlertThemed
     } else {
         RuuviStationTheme.colors.settingsTitleText
     }
@@ -69,9 +68,9 @@ fun BigValueExtDisplay(
     modifier: Modifier = Modifier
 ) {
     val textColor = if (alertTriggered) {
-        RuuviStationTheme.colors.activeAlert
+        RuuviStationTheme.colors.activeAlertThemed
     } else {
-        RuuviStationTheme.colors.settingsTitleText
+        RuuviStationTheme.colors.dashboardValue
     }
 
     ConstraintLayout (
@@ -94,7 +93,6 @@ fun BigValueExtDisplay(
             style = RuuviStationTheme.typography.dashboardBigValueUnit,
             fontSize = RuuviStationTheme.fontSizes.compact.limitScaleTo(1.2f),
             text = value.unitString,
-            color = textColor,
             modifier = Modifier
                 .constrainAs(superscript) {
                     top.linkTo(bigValue.top, 7.dp)
@@ -104,9 +102,9 @@ fun BigValueExtDisplay(
 
         if (showTitle) {
             Text(
-                style = RuuviStationTheme.typography.dashboardSecondary,
+                style = RuuviStationTheme.typography.dashboardValueTitle,
                 fontSize = RuuviStationTheme.fontSizes.petite.limitScaleTo(1.2f),
-                text = stringResource(value.unitType.measurementTitle),
+                text = stringResource(value.unitType.measurementName),
                 modifier = Modifier.constrainAs(subscript) {
                     start.linkTo(bigValue.end, 4.dp)
                     baseline.linkTo(bigValue.baseline)
@@ -123,9 +121,9 @@ fun AQIDisplay(
     modifier: Modifier = Modifier
 ) {
     val textColor = if (alertTriggered) {
-        RuuviStationTheme.colors.activeAlert
+        RuuviStationTheme.colors.activeAlertThemed
     } else {
-        RuuviStationTheme.colors.settingsTitleText
+        RuuviStationTheme.colors.dashboardValue
     }
 
     ConstraintLayout (
@@ -135,7 +133,7 @@ fun AQIDisplay(
 
         Text(
             style = RuuviStationTheme.typography.dashboardBigValue,
-            text = value.score.toString(),
+            text = value.scoreString,
             fontSize = RuuviStationTheme.fontSizes.huge.limitScaleTo(1.5f),
             color = textColor,
             modifier = Modifier.constrainAs(bigValue) {
@@ -148,7 +146,6 @@ fun AQIDisplay(
             style = RuuviStationTheme.typography.dashboardBigValueUnit,
             fontSize = RuuviStationTheme.fontSizes.compact.limitScaleTo(1.2f),
             text = "/100",
-            color = textColor,
             modifier = Modifier
                 .constrainAs(superscript) {
                     top.linkTo(bigValue.top, 7.dp)
@@ -157,7 +154,7 @@ fun AQIDisplay(
         )
 
         Text(
-            style = RuuviStationTheme.typography.dashboardSecondary,
+            style = RuuviStationTheme.typography.dashboardValueTitle,
             fontSize = RuuviStationTheme.fontSizes.petite.limitScaleTo(1.2f),
             text = stringResource(id = R.string.air_quality),
             modifier = Modifier.constrainAs(subscript) {
@@ -166,12 +163,12 @@ fun AQIDisplay(
             }
         )
 
-        LinearProgressIndicator(
-            progress = (value.score ?: 0) / 100F,
-            color = value.color,
+        GlowingProgressBarIndicator(
+            progress = (value.score?.toFloat() ?: 0f) / 100F,
+            lineColor = value.color,
             modifier = Modifier
                 .constrainAs(progress) {
-                    top.linkTo(bigValue.bottom, 4.dp)
+                    top.linkTo(bigValue.bottom)
                     start.linkTo(parent.start)
                     end.linkTo(parent.end)
                     width = Dimension.fillToConstraints
@@ -228,9 +225,7 @@ private fun AQIDisplayDisplay() {
         AQIDisplay(
             value = AQI.getAQI(
                 pm25 = 12.0,
-                co2 = 11,
-                nox = 1,
-                voc = 1
+                co2 = 11
             ),
             alertTriggered = false,
             modifier = Modifier

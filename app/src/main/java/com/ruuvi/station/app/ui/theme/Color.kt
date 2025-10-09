@@ -4,7 +4,12 @@ import androidx.compose.ui.graphics.Color
 
 val White = Color.White
 val White80 = Color(0xCCFFFFFF)
+val White70 = Color(0xB3FFFFFF)
 val White50 = Color(0x80FFFFFF)
+val White30 = Color(0x4DFFFFFF)
+val Gray80 = Color.Gray.copy(alpha = 0.8f)
+val Gray50 = Color.Gray.copy(alpha = 0.5f)
+val Gray30 = Color.Gray.copy(alpha = 0.3f)
 val Black = Color.Black
 val Titan = Color(0xFF083C3D)
 val Titan50 = Color(0x80083C3D)
@@ -28,6 +33,7 @@ val Lines = Color(0xFFE5EAE9)
 val Lines10 = Color(0xFF1F3836)
 val Orange = Color(0xCCF48021)
 val OrangeSolid = Color(0xFFF48021)
+val OrangeSolid2 = Color(0xFFEB602B)
 val Orange2 = Color(0xFFF8B075)
 val Milky = Color(0xFFD6EAE7)
 val Milky2 = Color(0xFFEEF2F2)
@@ -54,10 +60,13 @@ data class RuuviStationColors(
     val settingsTitleText: Color,
     val divider: Color,
     val activeAlert: Color,
+    val activeAlertThemed: Color,
     val dashboardBackground: Color,
     val dashboardCardBackground: Color,
     val dashboardIcons: Color,
     val dashboardBurger: Color,
+    val dashboardValue: Color,
+    val dashboardValueTitle: Color,
     val defaultSensorBackground: Color,
     val secondaryTextColor: Color,
     val backgroundAlpha: Float,
@@ -65,7 +74,15 @@ data class RuuviStationColors(
     val dangerousButton: Color,
     val navigationTransparent: Color,
     val bannerBackground: Color,
-    val indicatorColor: Color
+    val indicatorColor: Color,
+    val sensorValueBottomSheetBackground: Color,
+    val chartLine: Color,
+    val popupBackground: Color,
+    val popupHeaderText: Color,
+    val popupDragHandle: Color,
+    val chartLabel: Color,
+    val chartAxisLine: Color,
+    val chartGuideline: Color
 )
 
 val lightPalette = RuuviStationColors(
@@ -88,10 +105,13 @@ val lightPalette = RuuviStationColors(
     settingsTitleText = Titan,
     divider = Lines,
     activeAlert = Orange,
+    activeAlertThemed = OrangeSolid2,
     dashboardBackground = Milky2,
     dashboardCardBackground = White,
     dashboardIcons = Titan,
     dashboardBurger = Titan,
+    dashboardValue = Titan,
+    dashboardValueTitle = Titan70,
     defaultSensorBackground = DefaultSensorBackgroundLight,
     secondaryTextColor = Titan50,
     backgroundAlpha = 0.3f,
@@ -99,7 +119,15 @@ val lightPalette = RuuviStationColors(
     dangerousButton = OrangeSolid,
     navigationTransparent = White50,
     bannerBackground = RuuviNew,
-    indicatorColor = Titan50
+    indicatorColor = Titan50,
+    sensorValueBottomSheetBackground = Titan,
+    chartLine = Keppel,
+    popupBackground = White,
+    popupHeaderText = Titan,
+    popupDragHandle = Gray80,
+    chartLabel = Titan,
+    chartAxisLine = Gray30,
+    chartGuideline = Gray30
 )
 
 val darkPalette = RuuviStationColors(
@@ -122,10 +150,13 @@ val darkPalette = RuuviStationColors(
     settingsTitleText = White,
     divider = Lines10,
     activeAlert = Orange,
+    activeAlertThemed = Orange,
     dashboardBackground = Dark,
     dashboardCardBackground = Titan,
     dashboardIcons = Keppel,
     dashboardBurger = White,
+    dashboardValue = White,
+    dashboardValueTitle = White70,
     defaultSensorBackground = DefaultSensorBackgroundDark,
     secondaryTextColor = White50,
     backgroundAlpha = 0.75f,
@@ -133,5 +164,13 @@ val darkPalette = RuuviStationColors(
     dangerousButton = OrangeSolid,
     navigationTransparent = Titan50,
     bannerBackground = Keppel50,
-    indicatorColor = Keppel50
+    indicatorColor = Keppel50,
+    sensorValueBottomSheetBackground = Titan,
+    chartLine = Keppel,
+    popupBackground = Titan,
+    popupHeaderText = White,
+    popupDragHandle = White50,
+    chartLabel = White,
+    chartAxisLine = White30,
+    chartGuideline = White30
 )
