@@ -191,5 +191,5 @@ fun getBeaverAdvice(
     val addString = co2PmResId(scoreCo2, scorePm25)
 
     return context.getString(aqiResId) +
-            (addString?.let { "\n\n" + context.getString(it) } ?: "")
+            (addString?.let { " " + context.getString(it) } ?: "")
 }
