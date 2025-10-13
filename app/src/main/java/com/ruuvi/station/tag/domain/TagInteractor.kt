@@ -61,7 +61,7 @@ class TagInteractor constructor(
     fun makeSensorFavorite(sensor: RuuviTagEntity) {
         sensor.id?.let { sensorId ->
             tagRepository.makeSensorFavorite(sensor)
-            tagSettingsInteractor.setRandomDefaultBackgroundImage(sensorId)
+            tagSettingsInteractor.setRandomDefaultBackgroundImage(sensorId, sensor.isAir())
             sensor.id?.let {sensorId ->
                 sortingInteractor.addNewSensor(sensorId)
             }
@@ -78,7 +78,7 @@ class TagInteractor constructor(
                 name = MacAddressUtils.getDefaultName(sensorId, tag?.isAir())
             )
             sensorSettings.save()
-            tagSettingsInteractor.setRandomDefaultBackgroundImage(sensorId)
+            tagSettingsInteractor.setRandomDefaultBackgroundImage(sensorId, tag?.isAir() == true)
             sortingInteractor.addNewSensor(sensorId)
         }
     }
