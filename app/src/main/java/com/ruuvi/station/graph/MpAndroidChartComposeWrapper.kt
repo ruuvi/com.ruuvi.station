@@ -5,6 +5,8 @@ import android.graphics.Color
 import android.graphics.Matrix
 import android.graphics.Paint
 import android.text.format.DateUtils
+import android.view.GestureDetector
+import android.view.HapticFeedbackConstants
 import android.view.MotionEvent
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -141,6 +143,51 @@ fun ChartViewPrototype(
                 Timber.d("ChartView AndroidView - factory")
                 val chart = lineChart
                 setupMarker(context, chart, unitsConverter, unitType, clearMarker = clearMarker, getFrom =  { from })
+
+                var longPressActive = false
+
+                val detector = GestureDetector(context,
+                    object : GestureDetector.SimpleOnGestureListener() {
+                        override fun onDown(e: MotionEvent): Boolean = true
+
+                        override fun onLongPress(e: MotionEvent) {
+                            longPressActive = true
+                            chart.parent?.requestDisallowInterceptTouchEvent(true)
+                            chart.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
+
+                            chart.getHighlightByTouchPoint(e.x, e.y)?.let { h ->
+                                chart.highlightValue(h, true)
+                            }
+                        }
+                    }
+                )
+
+                chart.setOnTouchListener { v, event ->
+                    detector.onTouchEvent(event)
+
+                    when (event.actionMasked) {
+                        MotionEvent.ACTION_MOVE -> {
+                            if (longPressActive) {
+                                // keep parent from stealing while scrubbing
+                                v.parent?.requestDisallowInterceptTouchEvent(true)
+                                // update highlight on every move for smooth scrubbing
+                                chart.getHighlightByTouchPoint(event.x, event.y)?.let { h ->
+                                    chart.highlightValue(h, true) // updates Marker as well
+                                }
+                                return@setOnTouchListener true
+                            }
+                        }
+                        MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                            if (longPressActive) {
+                                longPressActive = false
+                                v.parent?.requestDisallowInterceptTouchEvent(false)
+                            }
+                        }
+                    }
+
+                    longPressActive
+                }
+
                 chart
             },
             update = { view ->
@@ -259,7 +306,8 @@ fun applyChartStyle(
     chart.xAxis.gridColor = ColorUtils.setAlphaComponent(chart.xAxis.gridColor, 100)
     chart.axisLeft.gridColor = ColorUtils.setAlphaComponent(chart.xAxis.gridColor, 100)
     chart.isDoubleTapToZoomEnabled = false
-    chart.isHighlightPerTapEnabled = true
+    chart.isHighlightPerTapEnabled = false
+    chart.isHighlightPerDragEnabled = false
 
     try {
         val font = ResourcesCompat.getFont(context, R.font.mulish_regular)

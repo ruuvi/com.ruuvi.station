@@ -357,7 +357,7 @@
     <string name="export_csv_header_format2_4">Zeitstempel,Temperatur (%1$s),Luftfeuchtigkeit (%2$s),Druck (%3$s),RSSI(dBm)</string>
     <string name="export_csv_header_format3">Zeitstempel,Temperatur (%1$s),Luftfeuchtigkeit (%2$s),Druck (%3$s),RSSI (dBm),Beschleunigung X (g),Beschleunigung Y (g),Beschleunigung Z (g),Spannung (V)</string>
     <string name="export_csv_header_format5">Zeitstempel,Temperatur (%1$s),Feuchtigkeit (%2$s),Druck (%3$s),RSSI (dBm),Beschleunigung X (g),Beschleunigung Y (g),Beschleunigung Z (g),Spannung (V),Bewegungszähler,Messsequenznummer,TX-Leistung (dBm)</string>
-    <string name="export_csv_header_format_air">Datum,Luftqualität,Temperatur (%1$s),Luftfeuchtigkeit (%2$s),Luftdruck (%3$s),Beleuchtungsstärke (lx),CO2 (ppm),VOC-Index,NOX,PM1 (µg/m³),PM2.5 (µg/m³),PM4 (µg/m³),PM10 (µg/m³),RSSI (dBm),Messfolgenummer</string>
+    <string name="export_csv_header_format_air">Datum,Luftqualität,Temperatur (%1$s),Luftfeuchtigkeit (%2$s),Luftdruck (%3$s),Beleuchtungsstärke (lx),CO₂ (ppm),VOC-Index,NOX,PM1 (µg/m³),PM2.5 (µg/m³),PM4 (µg/m³),PM10 (µg/m³),RSSI (dBm),Messfolgenummer</string>
     <string name="export_history">Verlauf exportieren (csv)</string>
     <string name="export_history_xlsx">Verlauf exportieren (xlsx)</string>
     <string name="fair">Ausreichend</string>

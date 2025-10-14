@@ -27,7 +27,7 @@
     <string name="advertisement">Advertisement</string>
     <string name="ago">sedan</string>
     <string name="agree">Godkänn</string>
-    <string name="air_pressure">Luftfuktighet</string>
+    <string name="air_pressure">Lufttryck</string>
     <string name="air_quality">Luftkvalitet</string>
     <string name="alarm_custom_description_title">Ställ in ett alarm-meddelande</string>
     <string name="alarm_custom_title_hint">Redigera beskrivningen...</string>
@@ -357,7 +357,7 @@
     <string name="export_csv_header_format2_4">Datum,Temperatur (%1$s),Luftfuktighet (%2$s),Lufttryck (%3$s),Signalstyrka(dBm)</string>
     <string name="export_csv_header_format3">Datum,Temperatur (%1$s),Luftfuktighet (%2$s),Lufttryck (%3$s),Signalstyrka (dBm),Acceleration X (g),Acceleration Y (g),Acceleration Z (g),Spänning (V)</string>
     <string name="export_csv_header_format5">Datum,Temperatur (%1$s),Luftfuktighet (%2$s),Lufttryck (%3$s),Signalstyrka (dBm),Acceleration X (g),Acceleration Y (g),Acceleration Z (g),Spänning (V),Rörelseräknare (rörelser),Mätningssekvensnummer,Sändningseffekt (dBm)</string>
-    <string name="export_csv_header_format_air">Datum,Luftkvalitet,Temperatur (%1$s),Luftfuktighet (%2$s),Lufttryck (%3$s),Illuminans (lx),CO2 (ppm),VOC-index,NOX,PM1 (µg/m³),PM2.5 (µg/m³),PM4 (µg/m³),PM10 (µg/m³),RSSI (dBm),Mätningssekvensnummer</string>
+    <string name="export_csv_header_format_air">Datum,Luftkvalitet,Temperatur (%1$s),Luftfuktighet (%2$s),Lufttryck (%3$s),Illuminans (lx),CO₂ (ppm),VOC-index,NOX,PM1 (µg/m³),PM2.5 (µg/m³),PM4 (µg/m³),PM10 (µg/m³),RSSI (dBm),Mätningssekvensnummer</string>
     <string name="export_history">Exportera historik (csv)</string>
     <string name="export_history_xlsx">Exportera historik (xlsx)</string>
     <string name="fair">Godtagbar</string>
@@ -570,7 +570,7 @@
     <string name="prepare_your_sensor_instructions_5">3.2. Om din sensor har en knapp, håll knappen intryckt i 10 sekunder.</string>
     <string name="prepare_your_sensor_instructions_6">4. Uppgraderingsläget lyckades om den röda lysdioden på kretskortet lyser och knappens text i appen har bytts till “Starta uppdatering“.</string>
     <string name="press_to_add">Inga sensorer har lags till\nTryck här för att lägga till sensorer</string>
-    <string name="pressure">Luftfuktighet</string>
+    <string name="pressure">Lufttryck</string>
     <string name="pressure_accuracy_title">Tryckupplösning</string>
     <string name="pressure_hpa_name">Hektopascal (hPa)</string>
     <string name="pressure_hpa_unit">hPa</string>
