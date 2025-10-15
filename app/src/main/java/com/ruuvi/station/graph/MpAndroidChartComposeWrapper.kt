@@ -178,10 +178,8 @@ fun ChartViewPrototype(
                             }
                         }
                         MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
-                            if (longPressActive) {
-                                longPressActive = false
-                                v.parent?.requestDisallowInterceptTouchEvent(false)
-                            }
+                            longPressActive = false
+                            v.parent?.requestDisallowInterceptTouchEvent(false)
                         }
                     }
 
