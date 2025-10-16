@@ -1,5 +1,6 @@
 package com.ruuvi.station.graph
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Color
 import android.graphics.Matrix
@@ -14,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
@@ -55,6 +57,7 @@ import java.text.DecimalFormatSymbols
 import java.util.*
 import kotlin.math.max
 
+@SuppressLint("ClickableViewAccessibility")
 @Composable
 fun ChartViewPrototype(
     lineChart: LineChart,
@@ -67,7 +70,7 @@ fun ChartViewPrototype(
     limits: Pair<Double,Double>?,
     from: Long,
     to: Long,
-    clearMarker: () -> Unit
+    sharedX: MutableState<Float?>,
 ) {
     val context = LocalContext.current
     Timber.d("ChartView - ChartViewPrototype")
@@ -142,7 +145,14 @@ fun ChartViewPrototype(
             factory = { context ->
                 Timber.d("ChartView AndroidView - factory")
                 val chart = lineChart
-                setupMarker(context, chart, unitsConverter, unitType, clearMarker = clearMarker, getFrom =  { from })
+                setupMarker(
+                    context = context,
+                    chart = chart,
+                    unitsConverter = unitsConverter,
+                    unitType = unitType,
+                    clearMarker = { sharedX.value = null },
+                    getFrom = { from }
+                )
 
                 var longPressActive = false
 
@@ -156,8 +166,8 @@ fun ChartViewPrototype(
                             chart.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
 
                             chart.getHighlightByTouchPoint(e.x, e.y)?.let { h ->
-                                chart.highlightValue(h, true)
-                            }
+                                chart.highlightValue(h, false)
+                                sharedX.value = h.x                            }
                         }
                     }
                 )
@@ -168,11 +178,12 @@ fun ChartViewPrototype(
                     when (event.actionMasked) {
                         MotionEvent.ACTION_MOVE -> {
                             if (longPressActive) {
-                                // keep parent from stealing while scrubbing
+
                                 v.parent?.requestDisallowInterceptTouchEvent(true)
-                                // update highlight on every move for smooth scrubbing
+
                                 chart.getHighlightByTouchPoint(event.x, event.y)?.let { h ->
-                                    chart.highlightValue(h, true) // updates Marker as well
+                                    chart.highlightValue(h, false)
+                                    sharedX.value = h.x
                                 }
                                 return@setOnTouchListener true
                             }
@@ -195,6 +206,16 @@ fun ChartViewPrototype(
                     addDataToChart(context, chartData, view, "", graphDrawDots, limits, from, to)
                     (view.marker as ChartMarkerView).getFrom = { from }
                 }
+
+                if (view.data != null) {
+                    val x = sharedX.value
+                    if (x != null) {
+                        view.highlightValue(x, 0, false)
+                    } else {
+                        view.highlightValue(null, false)
+                    }
+                }
+
             }
         )
     }
@@ -277,7 +298,6 @@ fun chartsInitialSetup(
 
     normalizeOffsets(charts)
     synchronizeChartGestures(charts.map { it.second }.toSet())
-    setupHighLighting(charts.map { it.second }.toSet())
 }
 
 
@@ -540,28 +560,5 @@ fun synchronizeChartGestures(charts: Set<LineChart>) {
                 synchronizeCharts(chart)
             }
         }
-    }
-}
-
-fun setupHighLighting(charts: Set<LineChart>) {
-    for (chart in charts) {
-        val otherCharts = charts.filter { it != chart }
-        chart.setOnChartValueSelectedListener(object : OnChartValueSelectedListener {
-            override fun onValueSelected(entry: Entry, highlight: Highlight) {
-                for (otherChart in otherCharts) {
-                    if (!otherChart.isEmpty) {
-                        otherChart.highlightValue(entry.x, highlight.dataSetIndex, false)
-                    }
-                }
-            }
-
-            override fun onNothingSelected() {
-                for (otherChart in otherCharts) {
-                    if (!otherChart.isEmpty) {
-                        otherChart.highlightValue(0f, -1, false)
-                    }
-                }
-            }
-        })
     }
 }

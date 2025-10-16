@@ -8,6 +8,7 @@ import androidx.compose.foundation.pager.VerticalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Size
@@ -195,11 +196,7 @@ fun VerticalChartsPrototype(
     scrollToChartEvent: Flow<UnitType>,
     needsScroll: Boolean
 ) {
-    val clearMarker = {
-        for (chartContainer in chartContainers) {
-            chartContainer.uiComponent?.highlightValue(null)
-        }
-    }
+    val sharedX = rememberSaveable { mutableStateOf<Float?>(null) }
 
     if (chartContainers.firstOrNull()?.data.isNullOrEmpty()) {
         EmptyCharts(modifier)
@@ -245,7 +242,7 @@ fun VerticalChartsPrototype(
                                 limits = chartContainer.limits,
                                 from,
                                 to,
-                                clearMarker
+                                sharedX = sharedX,
                             )
                         }
                     }
@@ -274,7 +271,7 @@ fun VerticalChartsPrototype(
                             limits = chartContainer.limits,
                             from,
                             to,
-                            clearMarker
+                            sharedX = sharedX,
                         )
                     }
                 }
@@ -292,12 +289,6 @@ fun LandscapeChartsPrototype(
     scrollToChartEvent: Flow<UnitType>,
     showChartStats: Boolean
 ) {
-    val clearMarker = {
-        for (chartContainer in chartContainers) {
-            chartContainer.uiComponent!!.highlightValue(null)
-        }
-    }
-
     val pagerState = rememberPagerState {
         return@rememberPagerState chartContainers.size
     }
@@ -311,6 +302,7 @@ fun LandscapeChartsPrototype(
         }
     }
 
+    val sharedX = rememberSaveable { mutableStateOf<Float?>(null) }
 
     VerticalPager(
         modifier = modifier.fillMaxSize(),
@@ -333,7 +325,7 @@ fun LandscapeChartsPrototype(
                 limits = chartContainer.limits,
                 from,
                 to,
-                clearMarker
+                sharedX = sharedX,
             )
         }
     }
