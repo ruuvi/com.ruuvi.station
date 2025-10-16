@@ -158,7 +158,10 @@ fun ChartViewPrototype(
 
                 val detector = GestureDetector(context,
                     object : GestureDetector.SimpleOnGestureListener() {
-                        override fun onDown(e: MotionEvent): Boolean = true
+                        override fun onDown(e: MotionEvent): Boolean {
+                            longPressActive = false
+                            return true
+                        }
 
                         override fun onLongPress(e: MotionEvent) {
                             longPressActive = true
@@ -191,6 +194,9 @@ fun ChartViewPrototype(
                         MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
                             longPressActive = false
                             v.parent?.requestDisallowInterceptTouchEvent(false)
+                        }
+                        MotionEvent.ACTION_DOWN -> {
+                            longPressActive = false
                         }
                     }
 
