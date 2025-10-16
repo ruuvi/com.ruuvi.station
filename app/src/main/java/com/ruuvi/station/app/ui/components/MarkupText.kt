@@ -72,7 +72,7 @@ fun parseModernMarkup(
 
 
     var cursor = 0
-    val tagRegex = Regex("""\[(\w+)(?:\s+url\s*=\s*"([^"]+)")?]""")
+    val tagRegex = Regex("""\[(\w+)(?:\s+url\s*=\s*(?:"([^"]+)"|([^\]\s]+)))?]""")
 
     while (cursor < input.length) {
         val match = tagRegex.find(input, cursor)
@@ -90,7 +90,8 @@ fun parseModernMarkup(
         val tagStart = match.range.first
         val tagEnd = match.range.last + 1
         val tag = match.groupValues[1]
-        val url = match.groupValues.getOrNull(2).takeIf { it?.isNotBlank() == true }
+        val url = match.groups[2]?.value?.takeIf { it.isNotBlank() }
+            ?: match.groups[3]?.value?.takeIf { it.isNotBlank() }
 
         // Append plain text before tag
         if (tagStart > cursor) {
