@@ -1,10 +1,13 @@
 package com.ruuvi.station.graph
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Color
 import android.graphics.Matrix
 import android.graphics.Paint
 import android.text.format.DateUtils
+import android.view.GestureDetector
+import android.view.HapticFeedbackConstants
 import android.view.MotionEvent
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -12,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
@@ -53,6 +57,7 @@ import java.text.DecimalFormatSymbols
 import java.util.*
 import kotlin.math.max
 
+@SuppressLint("ClickableViewAccessibility")
 @Composable
 fun ChartViewPrototype(
     lineChart: LineChart,
@@ -65,7 +70,7 @@ fun ChartViewPrototype(
     limits: Pair<Double,Double>?,
     from: Long,
     to: Long,
-    clearMarker: () -> Unit
+    sharedX: MutableState<Float?>,
 ) {
     val context = LocalContext.current
     Timber.d("ChartView - ChartViewPrototype")
@@ -140,7 +145,64 @@ fun ChartViewPrototype(
             factory = { context ->
                 Timber.d("ChartView AndroidView - factory")
                 val chart = lineChart
-                setupMarker(context, chart, unitsConverter, unitType, clearMarker = clearMarker, getFrom =  { from })
+                setupMarker(
+                    context = context,
+                    chart = chart,
+                    unitsConverter = unitsConverter,
+                    unitType = unitType,
+                    clearMarker = { sharedX.value = null },
+                    getFrom = { from }
+                )
+
+                var longPressActive = false
+
+                val detector = GestureDetector(context,
+                    object : GestureDetector.SimpleOnGestureListener() {
+                        override fun onDown(e: MotionEvent): Boolean {
+                            longPressActive = false
+                            return true
+                        }
+
+                        override fun onLongPress(e: MotionEvent) {
+                            longPressActive = true
+                            chart.parent?.requestDisallowInterceptTouchEvent(true)
+                            chart.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
+
+                            chart.getHighlightByTouchPoint(e.x, e.y)?.let { h ->
+                                chart.highlightValue(h, false)
+                                sharedX.value = h.x                            }
+                        }
+                    }
+                )
+
+                chart.setOnTouchListener { v, event ->
+                    detector.onTouchEvent(event)
+
+                    when (event.actionMasked) {
+                        MotionEvent.ACTION_MOVE -> {
+                            if (longPressActive) {
+
+                                v.parent?.requestDisallowInterceptTouchEvent(true)
+
+                                chart.getHighlightByTouchPoint(event.x, event.y)?.let { h ->
+                                    chart.highlightValue(h, false)
+                                    sharedX.value = h.x
+                                }
+                                return@setOnTouchListener true
+                            }
+                        }
+                        MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                            longPressActive = false
+                            v.parent?.requestDisallowInterceptTouchEvent(false)
+                        }
+                        MotionEvent.ACTION_DOWN -> {
+                            longPressActive = false
+                        }
+                    }
+
+                    longPressActive
+                }
+
                 chart
             },
             update = { view ->
@@ -150,6 +212,16 @@ fun ChartViewPrototype(
                     addDataToChart(context, chartData, view, "", graphDrawDots, limits, from, to)
                     (view.marker as ChartMarkerView).getFrom = { from }
                 }
+
+                if (view.data != null) {
+                    val x = sharedX.value
+                    if (x != null) {
+                        view.highlightValue(x, 0, false)
+                    } else {
+                        view.highlightValue(null, false)
+                    }
+                }
+
             }
         )
     }
@@ -232,7 +304,6 @@ fun chartsInitialSetup(
 
     normalizeOffsets(charts)
     synchronizeChartGestures(charts.map { it.second }.toSet())
-    setupHighLighting(charts.map { it.second }.toSet())
 }
 
 
@@ -259,7 +330,8 @@ fun applyChartStyle(
     chart.xAxis.gridColor = ColorUtils.setAlphaComponent(chart.xAxis.gridColor, 100)
     chart.axisLeft.gridColor = ColorUtils.setAlphaComponent(chart.xAxis.gridColor, 100)
     chart.isDoubleTapToZoomEnabled = false
-    chart.isHighlightPerTapEnabled = true
+    chart.isHighlightPerTapEnabled = false
+    chart.isHighlightPerDragEnabled = false
 
     try {
         val font = ResourcesCompat.getFont(context, R.font.mulish_regular)
@@ -494,28 +566,5 @@ fun synchronizeChartGestures(charts: Set<LineChart>) {
                 synchronizeCharts(chart)
             }
         }
-    }
-}
-
-fun setupHighLighting(charts: Set<LineChart>) {
-    for (chart in charts) {
-        val otherCharts = charts.filter { it != chart }
-        chart.setOnChartValueSelectedListener(object : OnChartValueSelectedListener {
-            override fun onValueSelected(entry: Entry, highlight: Highlight) {
-                for (otherChart in otherCharts) {
-                    if (!otherChart.isEmpty) {
-                        otherChart.highlightValue(entry.x, highlight.dataSetIndex, false)
-                    }
-                }
-            }
-
-            override fun onNothingSelected() {
-                for (otherChart in otherCharts) {
-                    if (!otherChart.isEmpty) {
-                        otherChart.highlightValue(0f, -1, false)
-                    }
-                }
-            }
-        })
     }
 }
