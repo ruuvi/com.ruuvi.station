@@ -190,7 +190,6 @@ fun ChartViewPrototype(
                                 }
                                 return@setOnTouchListener true
                             }
-                            return@setOnTouchListener true
                         }
                         MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
                             longPressActive = false
