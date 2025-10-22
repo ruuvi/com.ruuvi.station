@@ -83,7 +83,7 @@ dependencies {
     implementation 'com.opencsv:opencsv:3.10'
 
 
-    implementation 'com.github.ruuvi:com.ruuvi.bluetooth.default:1.8.6'
+    implementation 'com.github.ruuvi:com.ruuvi.bluetooth.default:1.8.7'
     //implementation project(':default_bluetooth_library')
     implementation 'no.nordicsemi.android:dfu:2.4.2'
     implementation 'no.nordicsemi.android:ble-ktx:2.7.3'
@@ -118,6 +118,10 @@ dependencies {
     implementation 'androidx.gridlayout:gridlayout:1.0.0'
     implementation 'androidx.preference:preference-ktx:1.1.1'
     implementation 'org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3'
+
+    implementation 'androidx.datastore:datastore-core:1.1.7'
+    implementation("androidx.datastore:datastore-preferences:1.1.7")
+    implementation 'androidx.datastore:datastore-preferences-core:1.1.7'
 
     // Lifecycle
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version"

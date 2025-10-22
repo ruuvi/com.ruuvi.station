@@ -16,6 +16,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
@@ -35,10 +39,8 @@ import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.formatter.IAxisValueFormatter
-import com.github.mikephil.charting.highlight.Highlight
 import com.github.mikephil.charting.listener.ChartTouchListener
 import com.github.mikephil.charting.listener.OnChartGestureListener
-import com.github.mikephil.charting.listener.OnChartValueSelectedListener
 import com.github.mikephil.charting.utils.Utils
 import com.ruuvi.station.R
 import com.ruuvi.station.app.ui.components.limitScaleTo
@@ -47,6 +49,8 @@ import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.White50
 import com.ruuvi.station.app.ui.theme.ruuviStationFonts
 import com.ruuvi.station.app.ui.theme.ruuviStationFontsSizes
+import com.ruuvi.station.tutorials.Tutorial
+import com.ruuvi.station.tutorials.ui.TutorialDialog
 import com.ruuvi.station.units.domain.UnitsConverter
 import com.ruuvi.station.units.model.UnitType
 import com.ruuvi.station.util.extensions.isStartOfTheDay
@@ -133,6 +137,11 @@ fun ChartViewPrototype(
             )
         }
 
+        var chartTapped by rememberSaveable { mutableStateOf(false) }
+        if (chartTapped) {
+            TutorialDialog(Tutorial.ChartActionTutorial)
+        }
+
         AndroidView(
             modifier = Modifier
                 .fillMaxWidth()
@@ -161,6 +170,11 @@ fun ChartViewPrototype(
                         override fun onDown(e: MotionEvent): Boolean {
                             longPressActive = false
                             return true
+                        }
+
+                        override fun onSingleTapConfirmed(e: MotionEvent): Boolean {
+                            chartTapped = true
+                            return super.onSingleTapConfirmed(e)
                         }
 
                         override fun onLongPress(e: MotionEvent) {
