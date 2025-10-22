@@ -10,7 +10,7 @@ sealed interface Tutorial  {
     val body: @Composable () -> Unit
 
     object ChartActionTutorial: Tutorial {
-        override val preferenceKey: String = "chartLongTap13"
+        override val preferenceKey: String = "chartLongTap"
         override val body: @Composable (() -> Unit) = {
             Paragraph(stringResource(R.string.tutorial_chart_long_tap))
         }
