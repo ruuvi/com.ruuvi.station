@@ -144,6 +144,7 @@
     <string name="aqi_advice_good4">Air’s looking good! Small improvements could make it excellent.</string>
     <string name="aqi_advice_good5">The air feels nice. Just a tiny step more and it’ll be excellent.</string>
     <string name="aqi_advice_good6">Good air quality today! With a bit of care, it can be even fresher.</string>
+    <string name="aqi_advice_outdated">Measurement data is not up to date.</string>
     <string name="aqi_advice_poor1">Your air quality is poor. You should try to improve it.</string>
     <string name="aqi_advice_poor2">Your air quality is poor — let’s work on improving it.</string>
     <string name="aqi_advice_poor3">Hmm, the air isn’t great right now. A few changes could help.</string>

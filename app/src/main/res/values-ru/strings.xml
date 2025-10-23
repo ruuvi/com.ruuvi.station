@@ -104,6 +104,7 @@
     <string name="aqi_advice_good4">Воздух выглядит хорошо! Небольшие улучшения сделают его отличным.</string>
     <string name="aqi_advice_good5">Воздух приятный. Еще маленький шаг — и он будет отличным.</string>
     <string name="aqi_advice_good6">Сегодня хорошее качество воздуха! С небольшой заботой оно станет еще свежее.</string>
+    <string name="aqi_advice_outdated">Данные измерений не актуальны.</string>
     <string name="aqi_advice_poor1">Качество воздуха плохое. Стоит постараться его улучшить.</string>
     <string name="aqi_advice_poor2">Качество воздуха плохое — давайте работать над улучшением.</string>
     <string name="aqi_advice_poor3">Хм, сейчас воздух не самый лучший. Пара изменений поможет.</string>

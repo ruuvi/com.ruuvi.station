@@ -107,6 +107,7 @@
     <string name="aqi_advice_good4">Powietrze wygląda dobrze! Małe poprawki uczynią je doskonałym.</string>
     <string name="aqi_advice_good5">Powietrze jest przyjemne. Jeszcze krok i będzie doskonałe.</string>
     <string name="aqi_advice_good6">Dziś dobra jakość powietrza! Z odrobiną troski może być jeszcze świeższa.</string>
+    <string name="aqi_advice_outdated">Dane pomiarowe nie są aktualne.</string>
     <string name="aqi_advice_poor1">Jakość powietrza jest słaba. Warto spróbować ją poprawić.</string>
     <string name="aqi_advice_poor2">Jakość powietrza jest słaba — popracujmy nad jej poprawą.</string>
     <string name="aqi_advice_poor3">Hmm, powietrze nie jest teraz najlepsze. Kilka zmian może pomóc.</string>

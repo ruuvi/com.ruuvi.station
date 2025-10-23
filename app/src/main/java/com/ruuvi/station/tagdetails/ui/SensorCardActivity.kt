@@ -671,6 +671,7 @@ fun SensorCard(
                 extraValues = extraValues,
                 chartHistory = chartHistory,
                 maxHeight = size.height,
+                lastUpdate = sensor.latestMeasurement?.updatedAt,
                 modifier = Modifier,
                 scrollToChart = scrollToChart,
                 onChangeValue = { newValue -> sheetValue = newValue}

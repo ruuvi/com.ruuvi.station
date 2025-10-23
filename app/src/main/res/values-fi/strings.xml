@@ -138,6 +138,7 @@
     <string name="aqi_advice_good4">Ilma tuntuu oikein hyvältä! Saat nostettua sen erinomaiselle tasolle pienillä parannuksilla.</string>
     <string name="aqi_advice_good5">Ilma tuntuu olevan miellyttävällä tasolla. Saisit ilmanlaadusta erinomaisen hyvin pienillä toimenpiteillä.</string>
     <string name="aqi_advice_good6">Ilmanlaatu on tänään hyvällä tasolla! Pienillä parannuksilla sen voisi saada vieläkin raikkaammaksi.</string>
+    <string name="aqi_advice_outdated">Mittaustiedot eivät ole ajan tasalla.</string>
     <string name="aqi_advice_poor1">Sisäilmanlaatusi on heikolla tasolla. Sitä kannattaa nyt aktiivisesti parantaa.</string>
     <string name="aqi_advice_poor2">Ilmanlaatusi on nyt heikolla tasolla — parannathan sitä pikimmiten.</string>
     <string name="aqi_advice_poor3">Hmm, sisäilmanlaatusi ei ole nyt kovin hyvällä tasolla. Ryhdythän heti toimiin tilanteen korjaamiseksi.</string>

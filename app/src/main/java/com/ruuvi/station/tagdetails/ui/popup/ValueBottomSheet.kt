@@ -57,6 +57,7 @@ fun ValueBottomSheet (
     modifier: Modifier = Modifier,
     chartHistory: ChartData?,
     maxHeight: Int,
+    lastUpdate: Date?,
     sheetState: SheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
     scrollToChart: (UnitType) -> Unit,
     onChangeValue: (EnvironmentValue) -> Unit,
@@ -83,6 +84,7 @@ fun ValueBottomSheet (
                 sheetValue = sheetValue,
                 extraValues = extraValues,
                 maxHeight = maxHeight,
+                lastUpdate = lastUpdate,
                 chartHistory = chartHistory,
                 scrollToChart = scrollToChart,
                 onChangeValue = onChangeValue
@@ -158,6 +160,7 @@ fun AirValueSheetContent(
     sheetValue: EnvironmentValue,
     extraValues: List<EnvironmentValue> = listOf(),
     maxHeight: Int,
+    lastUpdate: Date?,
     chartHistory: ChartData?,
     scrollToChart: (UnitType) -> Unit,
     onChangeValue: (EnvironmentValue) -> Unit
@@ -219,7 +222,7 @@ fun AirValueSheetContent(
             }
             Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.mediumPlus))
             val advice = remember {
-                getBeaverAdvice(context, sheetValue, extraValues)
+                getBeaverAdvice(context, lastUpdate, sheetValue, extraValues)
             }
             BeaverAdvice(advice)
             Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))

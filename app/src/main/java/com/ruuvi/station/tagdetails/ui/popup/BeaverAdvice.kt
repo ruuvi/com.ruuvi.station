@@ -30,6 +30,8 @@ import com.ruuvi.station.units.domain.score.ScoreCo2
 import com.ruuvi.station.units.domain.score.ScorePM
 import com.ruuvi.station.units.model.EnvironmentValue
 import com.ruuvi.station.units.model.UnitType
+import com.ruuvi.station.util.extensions.diffGreaterThan
+import java.util.Date
 
 @Composable
 fun BeaverAdvice(
@@ -176,9 +178,14 @@ private fun co2PmResId(
 
 fun getBeaverAdvice(
     context: Context,
+    latestUpdate: Date?,
     aqi: EnvironmentValue,
     extraValues: List<EnvironmentValue>
 ): String {
+    if (latestUpdate?.diffGreaterThan(15*60*1000) ?: true) {
+        return context.getString(R.string.aqi_advice_outdated)
+    }
+
     val co2 = extraValues.firstOrNull{it.unitType == UnitType.CO2.Ppm}
     val pm25 = extraValues.firstOrNull{it.unitType == UnitType.PM.PM25}
     val aqiScore = ScoreAqi.score(aqi.value)

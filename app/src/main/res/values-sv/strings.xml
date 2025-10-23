@@ -138,6 +138,7 @@
     <string name="aqi_advice_good4">Luften ser bra ut! Små förbättringar kan göra den utmärkt.</string>
     <string name="aqi_advice_good5">Luften känns bra. Bara ett litet steg till så är den utmärkt.</string>
     <string name="aqi_advice_good6">Bra luftkvalitet idag! Med lite omsorg kan den bli ännu friskare.</string>
+    <string name="aqi_advice_outdated">Mätdata är inte uppdaterade.</string>
     <string name="aqi_advice_poor1">Din luftkvalitet är dålig. Försök gärna förbättra den.</string>
     <string name="aqi_advice_poor2">Luftkvaliteten är dålig — låt oss förbättra den.</string>
     <string name="aqi_advice_poor3">Hmm, luften är inte så bra just nu. Några förändringar kan hjälpa.</string>
