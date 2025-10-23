@@ -27,6 +27,10 @@ class DeveloperSettingsViewModel(
         ruuviNetworkRepository.reinitialize()
     }
 
+    fun setDevModeEnabled(isEnabled: Boolean) {
+        preferencesRepository.setDeveloperFeaturesEnabled(isEnabled)
+    }
+
     fun getWebViewToken(): String? {
         val tokenInfo = networkTokenRepository.getTokenInfo()
         if (tokenInfo != null) {
