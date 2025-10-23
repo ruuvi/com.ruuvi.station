@@ -576,6 +576,7 @@
     <string name="temperature_with_unit">Температура (%1$s)</string>
     <string name="time_since">%1$s назад</string>
     <string name="title_activity_dfu_update">Обновление Прошивки</string>
+    <string name="tutorial_chart_long_tap">Нажмите и удерживайте график, чтобы отобразить курсор с подробными данными измерений.</string>
     <string name="tx_power">Мощность Передачи</string>
     <string name="tx_power_reading">%1$,.0f дБм</string>
     <string name="unit_co2">ppm</string>

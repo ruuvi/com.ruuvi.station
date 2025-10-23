@@ -138,9 +138,11 @@ fun ChartViewPrototype(
         }
 
         var chartTapped by rememberSaveable { mutableStateOf(false) }
-        if (chartTapped) {
-            TutorialDialog(Tutorial.ChartActionTutorial)
-        }
+        TutorialDialog(
+            tutorial = Tutorial.ChartActionTutorial,
+            showThisSession = chartTapped,
+            onShowThisSessionChange = { chartTapped = it }
+        )
 
         AndroidView(
             modifier = Modifier

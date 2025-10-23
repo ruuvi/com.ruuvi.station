@@ -770,7 +770,7 @@
     <string name="title_activity_dfu_update">Firmware update</string>
     <string name="to_use_all_app_features">No password needed.</string>
     <string name="try_again">Try again</string>
-    <string name="tutorial_chart_long_tap">Long press chart to show detailed info.</string>
+    <string name="tutorial_chart_long_tap">Long-press on the graph to bring up a cursor with measurement details.</string>
     <string name="tx_power">Tx power</string>
     <string name="tx_power_reading">%1$,.0f dBm</string>
     <string name="type_your_email">Type your email...</string>

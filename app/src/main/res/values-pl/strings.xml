@@ -518,6 +518,7 @@
     <string name="temperature_with_unit">Temperatura (%1$s)</string>
     <string name="time_since">%1$s temu</string>
     <string name="title_activity_dfu_update">Aktualizacja Firmware</string>
+    <string name="tutorial_chart_long_tap">Przytrzymaj wykres, aby wyświetlić kursor ze szczegółami pomiaru.</string>
     <string name="tx_power">Moc nadawania</string>
     <string name="tx_power_reading">%1$,.0f dBm</string>
     <string name="unit_co2">ppm</string>

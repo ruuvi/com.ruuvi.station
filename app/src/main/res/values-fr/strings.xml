@@ -764,6 +764,7 @@
     <string name="title_activity_dfu_update">Mise à jour du firmware</string>
     <string name="to_use_all_app_features">Aucun mot de passe nécessaire.</string>
     <string name="try_again">Essayez à nouveau</string>
+    <string name="tutorial_chart_long_tap">Appuyez longuement sur le graphique pour afficher un curseur avec les détails des mesures.</string>
     <string name="tx_power">Puissance d\'émission</string>
     <string name="tx_power_reading">%1$,.0f dBm</string>
     <string name="type_your_email">Tapez votre e-mail...</string>

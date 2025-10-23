@@ -759,6 +759,7 @@
     <string name="title_activity_dfu_update">Firmware Uppdatering</string>
     <string name="to_use_all_app_features">Inget lösenord behövs.</string>
     <string name="try_again">Försök igen</string>
+    <string name="tutorial_chart_long_tap">Tryck länge på diagrammet för att visa en markör med mätinformation.</string>
     <string name="tx_power">Sändningseffekten</string>
     <string name="tx_power_reading">%1$,.0f dBm</string>
     <string name="type_your_email">Skriv in din e-postadress...</string>

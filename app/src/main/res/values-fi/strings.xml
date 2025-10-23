@@ -759,6 +759,7 @@
     <string name="title_activity_dfu_update">Laiteohjelmiston päivitys</string>
     <string name="to_use_all_app_features">Kirjautuminen ei vaadi salasanaa.</string>
     <string name="try_again">Yritä uudelleen</string>
+    <string name="tutorial_chart_long_tap">Paina kaaviota pitkään saadaksesi esiin kursorin ja mittausten tarkemmat tiedot.</string>
     <string name="tx_power">Lähetysteho</string>
     <string name="tx_power_reading">%1$,.0f dBm</string>
     <string name="type_your_email">Anna sähköpostiosoite...</string>

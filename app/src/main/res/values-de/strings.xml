@@ -770,6 +770,7 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="title_activity_dfu_update">Firmware Update</string>
     <string name="to_use_all_app_features">Kein Passwort erforderlich.</string>
     <string name="try_again">Erneut versuchen</string>
+    <string name="tutorial_chart_long_tap">Drücken Sie lange auf das Diagramm, um einen Cursor mit Messdetails anzuzeigen.</string>
     <string name="tx_power">Sendeleistung</string>
     <string name="tx_power_reading">%1$,.0f dBm</string>
     <string name="type_your_email">Geben Sie Ihre E-Mail ein...</string>

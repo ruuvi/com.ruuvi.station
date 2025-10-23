@@ -32,6 +32,8 @@ import timber.log.Timber
 @Composable
 fun TutorialDialog(
     tutorial: Tutorial,
+    showThisSession: Boolean,
+    onShowThisSessionChange: (Boolean) -> Unit,
 ) {
     val context = LocalContext.current
     val prefs = remember { TutorialPreferences(context) }
@@ -40,17 +42,16 @@ fun TutorialDialog(
         .shouldShow(tutorial.preferenceKey)
         .collectAsState(initial = false)
 
-    var dismissedThisSession by rememberSaveable { mutableStateOf(false) }
     var doNotShow by rememberSaveable { mutableStateOf(false) }
 
-    val open = shouldShow && !dismissedThisSession
+    val open = shouldShow && showThisSession
 
     Timber.d("TutorialDialog $open")
     if (open) {
         Dialog(
             onDismissRequest = {
                 Timber.d("TutorialDialog onDismissRequest $doNotShow")
-                dismissedThisSession = true
+                onShowThisSessionChange(false)
                 if (doNotShow) prefs.setDontShowAgain(tutorial.preferenceKey)
             },
         ) {
@@ -78,7 +79,7 @@ fun TutorialDialog(
                     TextButton(
                         modifier = Modifier.align(Alignment.End),
                         onClick = {
-                            dismissedThisSession = true
+                            onShowThisSessionChange(false)
                             if (doNotShow) prefs.setDontShowAgain(tutorial.preferenceKey)
                         }
                     ) {
