@@ -56,6 +56,11 @@ fun DeveloperSettings(
             Subtitle("Debug info")
             val scale = LocalDensity.current.fontScale
             Paragraph(text = "Font scaling ${scale * 100}%")
+            Spacer(modifier = Modifier.height(48.dp))
+            RuuviButton(text = "Disable dev mode") {
+                viewModel.setDevModeEnabled(false)
+                onNavigate.invoke(SettingsRoutes.LIST)
+            }
         }
     }
 }

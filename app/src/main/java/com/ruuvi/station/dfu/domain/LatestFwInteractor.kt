@@ -11,7 +11,7 @@ import java.io.File
 class LatestFwInteractor(
     private val gitHubRepository: GitHubRepository
 ) {
-    suspend fun funGetLatestFwVersion(): LatestReleaseResponse? {
+    suspend fun getLatestFwVersion(): LatestReleaseResponse? {
         val response = gitHubRepository.getLatestFwVersion()
         Timber.d(response.toString())
         return response

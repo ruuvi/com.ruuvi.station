@@ -19,7 +19,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.ruuvi.station.app.ui.theme.RuuviTheme
-import com.ruuvi.station.units.domain.aqi.AQI
+import com.ruuvi.station.units.domain.score.ExcellentColor
+import com.ruuvi.station.units.domain.score.GoodColor
+import com.ruuvi.station.units.domain.score.FairColor
+import com.ruuvi.station.units.domain.score.PoorColor
+import com.ruuvi.station.units.domain.score.VeryPoorColor
 
 @Composable
 fun GlowingProgressBarIndicator(
@@ -96,63 +100,36 @@ private fun PreviewGlowingProgressBarIndicator() {
         Column {
             GlowingProgressBarIndicator(
                 progress = 0.05f,
-                lineColor = AQI.UnhealthyColor,
-                modifier = Modifier
-                    .background(Color(0xFF083C3D))
-                    .width(100.dp)
-            )
-            GlowingProgressBarIndicator(
-                progress = 0.10f,
-                lineColor = AQI.UnhealthyToPoorColor,
+                lineColor = VeryPoorColor,
                 modifier = Modifier
                     .background(Color(0xFF083C3D))
                     .width(100.dp)
             )
             GlowingProgressBarIndicator(
                 progress = 0.35f,
-                lineColor = AQI.PoorColor,
-                modifier = Modifier
-                    .background(Color(0xFF083C3D))
-                    .width(100.dp)
-            )
-            GlowingProgressBarIndicator(
-                progress = 0.50f,
-                lineColor = AQI.PoorToModerateColor,
+                lineColor = PoorColor,
                 modifier = Modifier
                     .background(Color(0xFF083C3D))
                     .width(100.dp)
             )
             GlowingProgressBarIndicator(
                 progress = 0.60f,
-                lineColor = AQI.ModerateColor,
-                modifier = Modifier
-                    .background(Color(0xFF083C3D))
-                    .width(100.dp)
-            )
-            GlowingProgressBarIndicator(
-                progress = 0.80f,
-                lineColor = AQI.ModerateToGoodColor,
+                lineColor = FairColor,
                 modifier = Modifier
                     .background(Color(0xFF083C3D))
                     .width(100.dp)
             )
             GlowingProgressBarIndicator(
                 progress = 0.85f,
-                lineColor = AQI.GoodColor,
+                lineColor = GoodColor,
                 modifier = Modifier
                     .background(Color(0xFF083C3D))
                     .width(100.dp)
             )
-            GlowingProgressBarIndicator(
-                progress = 0.90f,
-                lineColor = AQI.GoodToExcellentColor,
-                modifier = Modifier
-                    .background(Color(0xFF083C3D))
-                    .width(100.dp)
-            )
+
             GlowingProgressBarIndicator(
                 progress = 0.95f,
-                lineColor = AQI.ExcellentColor,
+                lineColor = ExcellentColor,
                 modifier = Modifier
                     .background(Color(0xFF083C3D))
                     .width(100.dp)

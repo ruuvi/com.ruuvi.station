@@ -11,6 +11,9 @@ object UpdateTag: DfuRoute
 object UpdateAir: DfuRoute
 
 @Serializable
+object CheckFirmwareVersion: DfuRoute
+
+@Serializable
 object UpdateAirDownload: DfuRoute
 
 @Serializable
@@ -21,3 +24,9 @@ object UpdateAirUploadFirmware: DfuRoute
 
 @Serializable
 object UpdateAirSuccess: DfuRoute
+
+@Serializable
+object AlreadyUpdated: DfuRoute
+
+@Serializable
+object UpdateFailed: DfuRoute

@@ -7,7 +7,6 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import androidx.activity.compose.setContent
-import androidx.compose.animation.*
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
@@ -75,7 +74,7 @@ import com.ruuvi.station.tagdetails.ui.elements.BigValueDisplay
 import com.ruuvi.station.tagdetails.ui.elements.CircularAQIDisplay
 import com.ruuvi.station.tagdetails.ui.elements.SensorCardLegacy
 import com.ruuvi.station.tagdetails.ui.elements.SensorValueItem
-import com.ruuvi.station.tagdetails.ui.elements.ValueBottomSheet
+import com.ruuvi.station.tagdetails.ui.popup.ValueBottomSheet
 import com.ruuvi.station.tagsettings.ui.TagSettingsActivity
 import com.ruuvi.station.units.domain.UnitsConverter
 import com.ruuvi.station.units.model.EnvironmentValue
@@ -661,12 +660,21 @@ fun SensorCard(
                 }
             }
 
+            val extraValues = if (value.unitType is UnitType.AirQuality.AqiIndex) {
+                listOfNotNull(sensor.latestMeasurement?.pm25, sensor.latestMeasurement?.co2)
+            } else {
+                listOf()
+            }
+
             ValueBottomSheet(
                 sheetValue = value,
+                extraValues = extraValues,
                 chartHistory = chartHistory,
                 maxHeight = size.height,
+                lastUpdate = sensor.latestMeasurement?.updatedAt,
                 modifier = Modifier,
-                scrollToChart = scrollToChart
+                scrollToChart = scrollToChart,
+                onChangeValue = { newValue -> sheetValue = newValue}
             ) {
                 showBottomSheet = false
             }

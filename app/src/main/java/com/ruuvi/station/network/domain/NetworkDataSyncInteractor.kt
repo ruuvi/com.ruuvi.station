@@ -4,7 +4,7 @@ import android.net.Uri
 import com.ruuvi.station.app.preferences.GlobalSettings
 import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.bluetooth.BluetoothLibrary
-import com.ruuvi.station.bluetooth.DefaultOnTagFoundListener.Companion.legacyAirDataformat
+import com.ruuvi.station.bluetooth.DefaultOnTagFoundListener.Companion.legacyAirDataformats
 import com.ruuvi.station.calibration.domain.CalibrationInteractor
 import com.ruuvi.station.database.domain.SensorHistoryRepository
 import com.ruuvi.station.database.domain.SensorSettingsRepository
@@ -293,7 +293,7 @@ class NetworkDataSyncInteractor (
         val sensorId = sensorSettings.id
         val list = measurements.mapNotNull { measurement ->
             preparePoint(sensorSettings, measurement)
-        }.filter { it.dataFormat != legacyAirDataformat }
+        }.filter { it.dataFormat !in legacyAirDataformats }
 
         val newestPoint = list.maxByOrNull { it.createdAt }
 

@@ -7,6 +7,8 @@ val White80 = Color(0xCCFFFFFF)
 val White70 = Color(0xB3FFFFFF)
 val White50 = Color(0x80FFFFFF)
 val White30 = Color(0x4DFFFFFF)
+val White10 = Color(0x1AFFFFFF)
+
 val Gray80 = Color.Gray.copy(alpha = 0.8f)
 val Gray50 = Color.Gray.copy(alpha = 0.5f)
 val Gray30 = Color.Gray.copy(alpha = 0.3f)
@@ -14,6 +16,8 @@ val Black = Color.Black
 val Titan = Color(0xFF083C3D)
 val Titan50 = Color(0x80083C3D)
 val Titan70 = Color(0xB3083C3D)
+val Titan30 = Color(0x4D083C3D)
+val Titan10 = Color(0x1A083C3D)
 val Ruuvi = Color(0xFF158EA5)
 val RuuviNew = Color(0xFFC6EEE6)
 val Red = Color.Red
@@ -80,6 +84,7 @@ data class RuuviStationColors(
     val popupBackground: Color,
     val popupHeaderText: Color,
     val popupDragHandle: Color,
+    val popupButtonBackground: Color,
     val chartLabel: Color,
     val chartAxisLine: Color,
     val chartGuideline: Color
@@ -125,6 +130,7 @@ val lightPalette = RuuviStationColors(
     popupBackground = White,
     popupHeaderText = Titan,
     popupDragHandle = Gray80,
+    popupButtonBackground = Titan10,
     chartLabel = Titan,
     chartAxisLine = Gray30,
     chartGuideline = Gray30
@@ -170,6 +176,7 @@ val darkPalette = RuuviStationColors(
     popupBackground = Titan,
     popupHeaderText = White,
     popupDragHandle = White50,
+    popupButtonBackground = White10,
     chartLabel = White,
     chartAxisLine = White30,
     chartGuideline = White30

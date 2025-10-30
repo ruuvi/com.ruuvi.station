@@ -13,16 +13,18 @@ import io.runtime.mcumgr.response.dflt.McuMgrEchoResponse
 import io.runtime.mcumgr.response.dflt.McuMgrOsResponse
 import io.runtime.mcumgr.transfer.FileUploader
 import io.runtime.mcumgr.transfer.UploadCallback
+import kotlinx.coroutines.suspendCancellableCoroutine
 import no.nordicsemi.android.ble.ConnectionPriorityRequest
 import timber.log.Timber
 import java.io.File
+import kotlin.coroutines.resume
 
 class AirFirmwareInteractor (
     val context: Context,
 ){
     private var defaultManager: DefaultManager? = null
 
-    fun connect(address: String) {
+    suspend fun connect(address: String): Boolean {
         Timber.d("Creating device for $address")
         val device = context.getSystemService(BluetoothManager::class.java).adapter.getRemoteDevice(address)
         Timber.d("Creating transport for $device")
@@ -30,15 +32,19 @@ class AirFirmwareInteractor (
         Timber.d("Creating DefaultManager for $transport")
         defaultManager = DefaultManager(transport)
         Timber.d("Sending echo with $defaultManager")
-        defaultManager?.echo("Hello!", object : McuMgrCallback<McuMgrEchoResponse> {
-            override fun onResponse(p0: McuMgrEchoResponse) {
-                Timber.d("AirFirmwareInteractor onResponse $p0")
-            }
+        return suspendCancellableCoroutine<Boolean> { cont ->
+            defaultManager?.echo("Hello!", object : McuMgrCallback<McuMgrEchoResponse> {
+                override fun onResponse(p0: McuMgrEchoResponse) {
+                    Timber.d("AirFirmwareInteractor onResponse $p0")
+                    cont.resume(true)
+                }
 
-            override fun onError(p0: McuMgrException) {
-                Timber.d("AirFirmwareInteractor onError $p0")
-            }
-        })
+                override fun onError(p0: McuMgrException) {
+                    Timber.d("AirFirmwareInteractor onError $p0")
+                    cont.resume(false)
+                }
+            }) ?: cont.resume(false)
+        }
     }
 
     private fun requestHighConnectionPriority() {

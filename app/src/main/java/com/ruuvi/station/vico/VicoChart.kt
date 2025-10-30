@@ -28,13 +28,17 @@ import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineCartesianLa
 import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
 import com.patrykandpatrick.vico.compose.common.component.rememberShapeComponent
 import com.patrykandpatrick.vico.compose.common.fill
+import com.patrykandpatrick.vico.core.cartesian.CartesianDrawingContext
+import com.patrykandpatrick.vico.core.cartesian.CartesianMeasuringContext
 import com.patrykandpatrick.vico.core.cartesian.Zoom
+import com.patrykandpatrick.vico.core.cartesian.axis.Axis
 import com.patrykandpatrick.vico.core.cartesian.axis.HorizontalAxis
 import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianLayerRangeProvider
 import com.patrykandpatrick.vico.core.cartesian.data.lineSeries
 import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer
+import com.patrykandpatrick.vico.core.common.Position
 import com.patrykandpatrick.vico.core.common.shape.CorneredShape
 import com.patrykandpatrick.vico.core.common.shape.Shape
 import com.ruuvi.station.R
@@ -45,10 +49,12 @@ import com.ruuvi.station.vico.model.SegmentType
 @Composable
 fun VicoChartNoInteraction(
     chartHistory: ChartData,
+    minMaxLocked: Pair<Double, Double>? = null,
+    yAxisValues: List<Float>? = null,
     modifier: Modifier = Modifier
 ) {
-    val minY = chartHistory.minValue
-    val maxY = chartHistory.maxValue
+    val minY = minMaxLocked?.first ?: chartHistory.minValue
+    val maxY = minMaxLocked?.second ?: chartHistory.maxValue
     val context = LocalContext.current
 
     val modelProducer = remember { CartesianChartModelProducer() }
@@ -109,6 +115,54 @@ fun VicoChartNoInteraction(
         }
     }
 
+    val customYAxisItemPlacer = remember(yAxisValues) {
+        yAxisValues?.distinct()?.sorted()?.map { it.toDouble() }?.let { values ->
+            object : VerticalAxis.ItemPlacer {
+                override fun getHeightMeasurementLabelValues(
+                    context: CartesianMeasuringContext,
+                    position: Axis.Position.Vertical
+                ) = values
+
+                override fun getWidthMeasurementLabelValues(
+                    context: CartesianMeasuringContext,
+                    axisHeight: Float,
+                    maxLabelHeight: Float,
+                    position: Axis.Position.Vertical
+                ) = values
+
+                override fun getLabelValues(
+                    context: CartesianDrawingContext,
+                    axisHeight: Float,
+                    maxLabelHeight: Float,
+                    position: Axis.Position.Vertical
+                ) = values
+
+                override fun getLineValues(
+                    context: CartesianDrawingContext,
+                    axisHeight: Float,
+                    maxLabelHeight: Float,
+                    position: Axis.Position.Vertical
+                ) = values // guidelines & ticks exactly at these values
+
+                override fun getShiftTopLines(context: CartesianDrawingContext) = false
+
+                override fun getTopLayerMargin(
+                    context: CartesianMeasuringContext,
+                    verticalLabelPosition: Position.Vertical,
+                    maxLabelHeight: Float,
+                    maxLineThickness: Float
+                ) = 0f
+
+                override fun getBottomLayerMargin(
+                    context: CartesianMeasuringContext,
+                    verticalLabelPosition: Position.Vertical,
+                    maxLabelHeight: Float,
+                    maxLineThickness: Float
+                ): Float =0f
+            }
+        }
+    }
+
     val fontSize = if (booleanResource(R.bool.isTablet)) 14.sp else 10.sp
     val label = rememberAxisLabelComponent(
         color = RuuviStationTheme.colors.chartLabel,
@@ -146,7 +200,7 @@ fun VicoChartNoInteraction(
                 startAxis = VerticalAxis.rememberStart(
                     line = axisLine,
                     label = label,
-                    itemPlacer = rememberItemPlacerVertical(),
+                    itemPlacer = customYAxisItemPlacer ?: rememberItemPlacerVertical(),
                     guideline = axisGuideLine,
                     tick = axisTick
                 ),

@@ -5,6 +5,7 @@ import android.nfc.NfcManager
 import com.ruuvi.gateway.tester.nfc.model.SensorNfсScanInfo
 import com.ruuvi.station.database.domain.SensorSettingsRepository
 import com.ruuvi.station.database.domain.TagRepository
+import com.ruuvi.station.database.tables.isAir
 import com.ruuvi.station.util.MacAddressUtils
 
 class NfcResultInteractor(
@@ -30,9 +31,10 @@ class NfcResultInteractor(
                 canBeAdded = canBeAdded
             )
         } else {
+            val tag = tagRepository.getTagById(info.mac)
             return NfcScanResponse(
                 id = info.id,
-                name = MacAddressUtils.getDefaultName(info.mac),
+                name = MacAddressUtils.getDefaultName(info.mac, tag?.isAir()),
                 sensorId = info.mac,
                 firmware = info.sw,
                 existingSensor = false,

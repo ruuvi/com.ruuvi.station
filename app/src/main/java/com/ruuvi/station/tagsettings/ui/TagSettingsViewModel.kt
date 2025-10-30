@@ -92,6 +92,8 @@ class TagSettingsViewModel(
                 }
             }
         }
+
+        updateSensorFirmwareVersion()
     }
 
     fun getVisibleMeasurementsCount(): UiText {
@@ -128,8 +130,7 @@ class TagSettingsViewModel(
     fun updateSensorFirmwareVersion() {
         Timber.d("updateSensorFirmwareVersion")
         CoroutineScope(Dispatchers.IO).launch {
-            val storredFw = sensorState.value.firmware
-            if (storredFw.isNullOrEmpty() && sensorState.value.latestMeasurement?.connectable == true) {
+            if (sensorState.value.latestMeasurement?.connectable == true) {
                 val fwResult = sensorFwInteractor.getSensorFirmwareVersion(sensorId)
                 if (fwResult.isSuccess && fwResult.fw.isNotEmpty()) {
                     interactor.setSensorFirmware(sensorId, fwResult.fw)
