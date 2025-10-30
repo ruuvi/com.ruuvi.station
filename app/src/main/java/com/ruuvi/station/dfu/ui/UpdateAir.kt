@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.ScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -29,9 +30,11 @@ import com.ruuvi.station.R
 import com.ruuvi.station.app.ui.components.MarkupText
 import com.ruuvi.station.app.ui.components.ParagraphWithPadding
 import com.ruuvi.station.app.ui.components.Progress
+import com.ruuvi.station.app.ui.components.RadioButtonRuuvi
 import com.ruuvi.station.app.ui.components.RuuviButton
 import com.ruuvi.station.app.ui.components.SubtitleWithPadding
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
+import com.ruuvi.station.bluetooth.model.SensorFirmwareResult
 import com.ruuvi.station.dfu.data.DownloadFileStatus
 import com.ruuvi.station.dfu.data.UploadFirmwareStatus
 import kotlinx.coroutines.flow.Flow
@@ -45,8 +48,26 @@ fun NavGraphBuilder.UpdateAir(
     viewModel: DfuAirUpdateViewModel
 ) {
     this.navigation<UpdateAir>(
-        startDestination = UpdateAirDownload,
+        startDestination = CheckFirmwareVersion,
     ) {
+        composable<CheckFirmwareVersion> {
+            val sensorFW by viewModel.sensorFwVersion.collectAsState()
+            val selectedFw by viewModel.selectedOption.collectAsState()
+            val fwOptions by viewModel.fwOptions.collectAsState()
+            val devMode = viewModel.devMode
+            //val latestFW by viewModel.latestFwVersion.observeAsState()
+
+            CheckFirmwareVersion(
+                sensorFW = sensorFW,
+                selectedFw = selectedFw,
+                fwOptions = fwOptions,
+                devMode = devMode,
+                modifier = Modifier,
+                selectFw = viewModel::selectOption,
+                confirmOption = viewModel::confirmOption
+            )
+        }
+
         composable<UpdateAirDownload> {
             DownloadFirmwareScreen(
                 navController = navController,
@@ -69,6 +90,94 @@ fun NavGraphBuilder.UpdateAir(
         composable<UpdateAirSuccess> {
             UpdateSuccessScreen(navController)
         }
+
+        composable<AlreadyUpdated> {
+            AlreadyUpdatedScreen(navController)
+        }
+
+        composable<UpdateFailed> {
+            UpdateFailedScreen(navController)
+        }
+    }
+}
+
+@Composable
+fun CheckFirmwareVersion(
+    sensorFW: SensorFirmwareResult?,
+    selectedFw: FirmwareVersionOption?,
+    fwOptions: List<FirmwareVersionOption>?,
+    devMode: Boolean,
+    selectFw: (FirmwareVersionOption) -> Unit,
+    confirmOption: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = Modifier
+            .padding(RuuviStationTheme.dimensions.screenPadding)
+    ) {
+        SubtitleWithPadding(stringResource(R.string.latest_available_fw))
+        if (selectedFw == null) {
+            LoadingStatus(modifier = Modifier.padding(vertical = RuuviStationTheme.dimensions.textTopPadding))
+        } else {
+            if (devMode && fwOptions != null && (fwOptions?.size ?: 0) > 1) {
+                for (fw in fwOptions) {
+                    RadioButtonRuuvi("${fw.label} ${fw.version}" , isSelected = fw == selectedFw) {
+                        selectFw(fw)
+                    }
+                }
+                Spacer(Modifier.height(16.dp))
+                RuuviButton("Proceed"
+                ) {
+                    confirmOption.invoke()
+                }
+                Spacer(Modifier.height(16.dp))
+            } else {
+                ParagraphWithPadding(selectedFw.version)
+            }
+        }
+        SubtitleWithPadding(stringResource(R.string.current_version_fw))
+        if (sensorFW == null) {
+            LoadingStatus(modifier = Modifier.padding(vertical = RuuviStationTheme.dimensions.textTopPadding))
+        } else {
+            if (sensorFW?.isSuccess == true) {
+                ParagraphWithPadding("${sensorFW?.fw}")
+            } else {
+                ParagraphWithPadding(stringResource(id = R.string.old_sensor_fw))
+            }
+        }
+
+    }
+}
+
+@Composable
+fun AlreadyUpdatedScreen(
+    navController: NavHostController,
+    modifier: Modifier = Modifier
+) {
+    val activity = LocalActivity.current
+    BackHandler { activity?.finish() }
+
+    Column(modifier =
+        Modifier
+            .padding(RuuviStationTheme.dimensions.screenPadding)
+    ) {
+        MarkupText(R.string.already_latest_version)
+    }
+}
+
+@Composable
+fun UpdateFailedScreen(
+    navController: NavHostController,
+    modifier: Modifier = Modifier
+) {
+    val activity = LocalActivity.current
+    BackHandler { activity?.finish() }
+
+    Column(modifier =
+        Modifier
+            .padding(RuuviStationTheme.dimensions.screenPadding)
+    ) {
+        MarkupText(R.string.unknown_error)
     }
 }
 
@@ -143,6 +252,8 @@ fun UploadFirmwareScreen(
             } else if (it is UploadFirmwareStatus.Finished) {
                 uploadPercent = 100
                 navController.navigate(UpdateAirSuccess)
+            } else if (it is UploadFirmwareStatus.Failed) {
+                navController.navigate(UpdateFailed)
             }
             Timber.d("Collected status $it")
         }
@@ -172,6 +283,6 @@ fun UpdateSuccessScreen(
         Modifier
             .padding(RuuviStationTheme.dimensions.screenPadding)
     ) {
-        MarkupText(R.string.update_successful)
+        MarkupText(R.string.update_successful_air)
     }
 }

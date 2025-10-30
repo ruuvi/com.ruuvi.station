@@ -8,6 +8,7 @@ import com.ruuvi.station.database.domain.SensorHistoryRepository
 import com.ruuvi.station.database.domain.SensorSettingsRepository
 import com.ruuvi.station.database.tables.RuuviTagEntity
 import com.ruuvi.station.database.tables.SensorSettings
+import com.ruuvi.station.database.tables.isAir
 import com.ruuvi.station.tagsettings.domain.TagSettingsInteractor
 import com.ruuvi.station.util.BackgroundScanModes
 import com.ruuvi.station.util.MacAddressUtils
@@ -60,7 +61,7 @@ class TagInteractor constructor(
     fun makeSensorFavorite(sensor: RuuviTagEntity) {
         sensor.id?.let { sensorId ->
             tagRepository.makeSensorFavorite(sensor)
-            tagSettingsInteractor.setRandomDefaultBackgroundImage(sensorId)
+            tagSettingsInteractor.setRandomDefaultBackgroundImage(sensorId, sensor.isAir())
             sensor.id?.let {sensorId ->
                 sortingInteractor.addNewSensor(sensorId)
             }
@@ -69,21 +70,23 @@ class TagInteractor constructor(
 
     fun makeSensorFavorite(sensorId: String) {
         val existingSettings = sensorSettingsRepository.getSensorSettings(sensorId)
+        val tag = tagRepository.getTagById(sensorId)
         if (existingSettings == null) {
             val sensorSettings = SensorSettings(
                 id = sensorId,
                 createDate = Date(),
-                name = MacAddressUtils.getDefaultName(sensorId)
+                name = MacAddressUtils.getDefaultName(sensorId, tag?.isAir())
             )
             sensorSettings.save()
-            tagSettingsInteractor.setRandomDefaultBackgroundImage(sensorId)
+            tagSettingsInteractor.setRandomDefaultBackgroundImage(sensorId, tag?.isAir() == true)
             sortingInteractor.addNewSensor(sensorId)
         }
     }
 
     fun updateTagName(sensorId: String, sensorName: String?) {
+        val tag = tagRepository.getTagById(sensorId)
         val name =
-            if (sensorName.isNullOrEmpty()) MacAddressUtils.getDefaultName(sensorId) else sensorName
+            if (sensorName.isNullOrEmpty()) MacAddressUtils.getDefaultName(sensorId, tag?.isAir()) else sensorName
         sensorSettingsRepository.updateSensorName(sensorId, name)
     }
 }

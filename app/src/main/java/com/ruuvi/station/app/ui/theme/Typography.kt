@@ -131,7 +131,7 @@ fun provideTypography(colors: RuuviStationColors): RuuviStationTypography {
         ),
         onboardingTitle = TextStyle(
             color = colors.onboardingTextColor,
-            fontFamily = ruuviStationFonts.mulishExtraBold,
+            fontFamily = ruuviStationFonts.montserratExtraBold,
             fontSize = 36.sp
         ),
         onboardingSubtitle = TextStyle(

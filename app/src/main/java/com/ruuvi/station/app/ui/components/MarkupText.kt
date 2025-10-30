@@ -38,6 +38,12 @@ fun MarkupText(@StringRes textRes: Int) {
                     fontWeight = FontWeight.Bold,
                     color = headerColor
                 ),
+                "b" to SpanStyle(
+                    fontSize = ruuviStationFontsSizes.compact,
+                    fontFamily = ruuviStationFonts.mulishBold,
+                    fontWeight = FontWeight.Bold,
+                    color = textColor
+                ),
                 "link" to SpanStyle(
                     color = linkColor,
                     fontFamily = ruuviStationFonts.mulishBold,
@@ -66,7 +72,7 @@ fun parseModernMarkup(
 
 
     var cursor = 0
-    val tagRegex = Regex("""<(\w+)(?:\s+url\s*=\s*"([^"]+)")?>""")
+    val tagRegex = Regex("""\[(\w+)(?:\s+url\s*=\s*(?:"([^"]+)"|([^\]\s]+)))?]""")
 
     while (cursor < input.length) {
         val match = tagRegex.find(input, cursor)
@@ -84,7 +90,8 @@ fun parseModernMarkup(
         val tagStart = match.range.first
         val tagEnd = match.range.last + 1
         val tag = match.groupValues[1]
-        val url = match.groupValues.getOrNull(2).takeIf { it?.isNotBlank() == true }
+        val url = match.groups[2]?.value?.takeIf { it.isNotBlank() }
+            ?: match.groups[3]?.value?.takeIf { it.isNotBlank() }
 
         // Append plain text before tag
         if (tagStart > cursor) {
@@ -95,7 +102,7 @@ fun parseModernMarkup(
         }
 
         // Find corresponding closing tag
-        val closingTag = "</$tag>"
+        val closingTag = "[/$tag]"
         val closeIndex = input.indexOf(closingTag, tagEnd)
         if (closeIndex == -1) {
             // Malformed tag: treat as plain text

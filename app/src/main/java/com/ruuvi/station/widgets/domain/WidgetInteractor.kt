@@ -169,7 +169,7 @@ class WidgetInteractor (
                 val co2Value = SensorValue(
                     type = WidgetType.CO2,
                     sensorValue = lastMeasurement.co2?.let {
-                        context.getString(UnitType.CO2.Ppm.defaultAccuracy.nameTemplateId, it, "")
+                        context.getString(UnitType.CO2.Ppm.defaultAccuracy.nameTemplateId, it.toDouble(), "")
                     } ?: UNDEFINED_VALUE,
                     unit = context.getString(UnitType.CO2.Ppm.unit)
                 )
@@ -177,7 +177,7 @@ class WidgetInteractor (
                 val vocValue = SensorValue(
                     type = WidgetType.VOC,
                     sensorValue = lastMeasurement.voc?.let {
-                        context.getString(UnitType.VOC.VocIndex.defaultAccuracy.nameTemplateId, it, "")
+                        context.getString(UnitType.VOC.VocIndex.defaultAccuracy.nameTemplateId, it.toDouble(), "")
                     } ?: UNDEFINED_VALUE,
                     unit = context.getString(UnitType.VOC.VocIndex.unit)
                 )
@@ -185,7 +185,7 @@ class WidgetInteractor (
                 val noxValue = SensorValue(
                     type = WidgetType.NOX,
                     sensorValue = lastMeasurement.nox?.let {
-                        context.getString(UnitType.NOX.NoxIndex.defaultAccuracy.nameTemplateId, it, "")
+                        context.getString(UnitType.NOX.NoxIndex.defaultAccuracy.nameTemplateId, it.toDouble(), "")
                     } ?: UNDEFINED_VALUE,
                     unit = context.getString(UnitType.NOX.NoxIndex.unit)
                 )

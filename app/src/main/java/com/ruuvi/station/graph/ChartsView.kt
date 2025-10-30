@@ -8,6 +8,7 @@ import androidx.compose.foundation.pager.VerticalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Size
@@ -78,6 +79,8 @@ fun ChartsView(
         mutableStateOf(true)
     }
 
+    val sharedX = rememberSaveable { mutableStateOf<Float?>(null) }
+
     LaunchedEffect(key1 = sensor.id) {
         Timber.d("ChartView - chart containers fill ${sensor.id}")
         chartsInitialized = false
@@ -126,6 +129,7 @@ fun ChartsView(
     LaunchedEffect(key1 = sensor.id) {
         chartCleared.collect{
             Timber.d("ChartView - chart cleared $it")
+            sharedX.value = null
             for (container in chartContainers) {
                 container.data?.clear()
                 container.uiComponent?.fitScreen()
@@ -133,11 +137,9 @@ fun ChartsView(
         }
     }
 
-    var viewPeriodLocal by remember { mutableStateOf<Period?>(viewPeriod) }
-
-    if (viewPeriod != viewPeriodLocal) {
-        Timber.d("ChartView - viewPeriod changed ${sensor.id} $viewPeriod $viewPeriodLocal")
-        viewPeriodLocal = viewPeriod
+    LaunchedEffect(key1 = viewPeriod) {
+        Timber.d("ChartView - viewPeriod changed ${sensor.id} $viewPeriod")
+        sharedX.value = null
         for (container in chartContainers) {
             container.uiComponent?.fitScreen()
         }
@@ -162,7 +164,8 @@ fun ChartsView(
                unitsConverter = unitsConverter,
                graphDrawDots = graphDrawDots,
                scrollToChartEvent = scrollToChartEvent,
-               showChartStats = showChartStats
+               showChartStats = showChartStats,
+               sharedX = sharedX
             )
         } else {
             Box (modifier = modifier.fillMaxSize()) {
@@ -177,6 +180,7 @@ fun ChartsView(
                         showChartStats = showChartStats,
                         height = height,
                         scrollToChartEvent = scrollToChartEvent,
+                        sharedX = sharedX,
                         needsScroll = needsScroll
                     )
             }
@@ -193,14 +197,9 @@ fun VerticalChartsPrototype(
     showChartStats: Boolean,
     height: Dp,
     scrollToChartEvent: Flow<UnitType>,
+    sharedX: MutableState<Float?>,
     needsScroll: Boolean
 ) {
-    val clearMarker = {
-        for (chartContainer in chartContainers) {
-            chartContainer.uiComponent?.highlightValue(null)
-        }
-    }
-
     if (chartContainers.firstOrNull()?.data.isNullOrEmpty()) {
         EmptyCharts(modifier)
     } else {
@@ -245,7 +244,7 @@ fun VerticalChartsPrototype(
                                 limits = chartContainer.limits,
                                 from,
                                 to,
-                                clearMarker
+                                sharedX = sharedX,
                             )
                         }
                     }
@@ -274,7 +273,7 @@ fun VerticalChartsPrototype(
                             limits = chartContainer.limits,
                             from,
                             to,
-                            clearMarker
+                            sharedX = sharedX,
                         )
                     }
                 }
@@ -290,14 +289,9 @@ fun LandscapeChartsPrototype(
     unitsConverter: UnitsConverter,
     graphDrawDots: Boolean,
     scrollToChartEvent: Flow<UnitType>,
+    sharedX: MutableState<Float?>,
     showChartStats: Boolean
 ) {
-    val clearMarker = {
-        for (chartContainer in chartContainers) {
-            chartContainer.uiComponent!!.highlightValue(null)
-        }
-    }
-
     val pagerState = rememberPagerState {
         return@rememberPagerState chartContainers.size
     }
@@ -310,7 +304,6 @@ fun LandscapeChartsPrototype(
             }
         }
     }
-
 
     VerticalPager(
         modifier = modifier.fillMaxSize(),
@@ -333,7 +326,7 @@ fun LandscapeChartsPrototype(
                 limits = chartContainer.limits,
                 from,
                 to,
-                clearMarker
+                sharedX = sharedX,
             )
         }
     }

@@ -54,8 +54,11 @@ class DefaultOnTagFoundListener(
                     val sensorSettings = sensorSettingsRepository.getSensorSettings(sensorId)
                     if (!shouldSkipForCloudMode(sensorSettings)) {
                         repository.updateTag(ruuviTag)
-                        if (sensorSettings != null && ruuviTag.dataFormat != legacyAirDataformat) {
+                        if (sensorSettings != null && ruuviTag.dataFormat !in legacyAirDataformats) {
                             saveFavoriteReading(ruuviTag, sensorSettings)
+                        }
+                        sensorSettings?.let {
+                            alarmCheckInteractor.checkAlarmsForSensor(ruuviTag, sensorSettings)
                         }
                     }
                 } else {
@@ -76,7 +79,6 @@ class DefaultOnTagFoundListener(
             } else {
                 Timber.d("saveFavoriteReading SKIPPED ${ruuviTag.id}")
             }
-            alarmCheckInteractor.checkAlarmsForSensor(ruuviTag, sensorSettings)
         }
     }
 
@@ -116,6 +118,6 @@ class DefaultOnTagFoundListener(
 
     companion object {
         private const val DATA_LOG_INTERVAL = 0
-        const val legacyAirDataformat = 0xF0
+        val legacyAirDataformats = listOf(0xF0, 0x06)
     }
 }

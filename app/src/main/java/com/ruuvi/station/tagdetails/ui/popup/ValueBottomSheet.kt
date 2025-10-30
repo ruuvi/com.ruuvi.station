@@ -1,11 +1,9 @@
-package com.ruuvi.station.tagdetails.ui.elements
+package com.ruuvi.station.tagdetails.ui.popup
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -15,7 +13,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
@@ -23,11 +20,12 @@ import androidx.compose.material3.SheetState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -36,28 +34,33 @@ import com.ruuvi.station.R
 import com.ruuvi.station.app.ui.components.MarkupText
 import com.ruuvi.station.app.ui.components.limitScaleTo
 import com.ruuvi.station.app.ui.components.modifier.fadingEdge
-import com.ruuvi.station.app.ui.components.scaleUpTo
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.RuuviTheme
-import com.ruuvi.station.app.ui.theme.ruuviStationFonts
 import com.ruuvi.station.app.ui.theme.ruuviStationFontsSizes
+import com.ruuvi.station.units.domain.score.QualityCalculator
 import com.ruuvi.station.units.model.Accuracy
 import com.ruuvi.station.units.model.EnvironmentValue
 import com.ruuvi.station.units.model.UnitType
 import com.ruuvi.station.units.model.getDescriptionBodyResId
+import com.ruuvi.station.util.extensions.diffGreaterThan
 import com.ruuvi.station.util.ui.pxToDp
 import com.ruuvi.station.vico.VicoChartNoInteraction
 import com.ruuvi.station.vico.model.ChartData
+import kotlinx.coroutines.launch
+import java.util.Date
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ValueBottomSheet (
     sheetValue: EnvironmentValue,
+    extraValues: List<EnvironmentValue> = listOf(),
     modifier: Modifier = Modifier,
     chartHistory: ChartData?,
     maxHeight: Int,
+    lastUpdate: Date?,
     sheetState: SheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
     scrollToChart: (UnitType) -> Unit,
+    onChangeValue: (EnvironmentValue) -> Unit,
     onDismiss: () -> Unit
 ) {
     ModalBottomSheet(
@@ -76,12 +79,24 @@ fun ValueBottomSheet (
         sheetState = sheetState,
         modifier = modifier
     ) {
-        ValueSheetContent(
-            sheetValue = sheetValue,
-            maxHeight = maxHeight,
-            chartHistory = chartHistory,
-            scrollToChart = scrollToChart
-        )
+        if (sheetValue.unitType == UnitType.AirQuality.AqiIndex) {
+            AirValueSheetContent(
+                sheetValue = sheetValue,
+                extraValues = extraValues,
+                maxHeight = maxHeight,
+                lastUpdate = lastUpdate,
+                chartHistory = chartHistory,
+                scrollToChart = scrollToChart,
+                onChangeValue = onChangeValue
+            )
+        } else {
+            ValueSheetContent(
+                sheetValue = sheetValue,
+                maxHeight = maxHeight,
+                chartHistory = chartHistory,
+                scrollToChart = scrollToChart,
+            )
+        }
     }
 }
 
@@ -115,6 +130,69 @@ fun ValueSheetContent(
             } else {
                 NoHistoryData()
             }
+            if (got2DaysOfHistory(chartHistory)) {
+                Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.small))
+                Text(
+                    modifier = Modifier.fillMaxWidth(),
+                    style = RuuviStationTheme.typography.dashboardSecondary,
+                    fontSize = ruuviStationFontsSizes.petite.limitScaleTo(1.5f),
+                    textAlign = TextAlign.Right,
+                    text = stringResource(R.string.day_2),
+                )
+            }
+            Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
+        }
+
+        MarkupText(sheetValue.unitType.getDescriptionBodyResId())
+        Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extraBig))
+    }
+}
+
+fun got2DaysOfHistory(chartHistory: ChartData?): Boolean {
+    val firstTimestamp = chartHistory?.segments?.firstOrNull()?.timestamps?.firstOrNull()
+    return firstTimestamp?.let {
+         Date(it).diffGreaterThan(36*60*60*1000)
+    } ?: false
+}
+
+@Composable
+fun AirValueSheetContent(
+    sheetValue: EnvironmentValue,
+    extraValues: List<EnvironmentValue> = listOf(),
+    maxHeight: Int,
+    lastUpdate: Date?,
+    chartHistory: ChartData?,
+    scrollToChart: (UnitType) -> Unit,
+    onChangeValue: (EnvironmentValue) -> Unit
+) {
+    val context = LocalContext.current
+    val scrollState = rememberScrollState()
+    val coroutineScope = rememberCoroutineScope()
+    val columnModifier = Modifier.fadingEdge(scrollState)
+    Column(
+        modifier = columnModifier
+            .heightIn(max = maxHeight.pxToDp())
+            .padding(horizontal = RuuviStationTheme.dimensions.screenPadding)
+            .verticalScroll(scrollState)
+    ) {
+        ValueSheetHeader(sheetValue)
+        Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
+
+        if (chartHistory != null && chartHistory.segments.isNotEmpty()) {
+            VicoChartNoInteraction(
+                chartHistory = chartHistory,
+                minMaxLocked = 1.0 to 99.0,
+                yAxisValues = listOf(10f, 50f, 80f, 90f, 100f),
+                modifier = Modifier.clickable {
+                    if (sheetValue.unitType != UnitType.MovementUnit.MovementsCount) {
+                        scrollToChart(sheetValue.unitType)
+                    }
+                }
+            )
+        } else {
+            NoHistoryData()
+        }
+        if (got2DaysOfHistory(chartHistory)) {
             Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.small))
             Text(
                 modifier = Modifier.fillMaxWidth(),
@@ -123,9 +201,32 @@ fun ValueSheetContent(
                 textAlign = TextAlign.Right,
                 text = stringResource(R.string.day_2),
             )
+        }
+        Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.mediumPlus))
+        if (extraValues.isNotEmpty()) {
+            for (extra in extraValues) {
+                ValueWithIndicator(
+                    icon = extra.unitType.iconRes,
+                    value = extra.valueWithoutUnit,
+                    unit = extra.unitString,
+                    name = stringResource(extra.unitType.measurementName),
+                    score = QualityCalculator.calc(extra),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    coroutineScope.launch {
+                        scrollState.scrollTo(0)
+                        onChangeValue.invoke(extra)
+                    }
+                }
+                Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.medium))
+            }
+            Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.mediumPlus))
+            val advice = remember {
+                getBeaverAdvice(context, lastUpdate, sheetValue, extraValues)
+            }
+            BeaverAdvice(advice)
             Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
         }
-
         MarkupText(sheetValue.unitType.getDescriptionBodyResId())
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extraBig))
     }
@@ -142,108 +243,11 @@ fun NoHistoryData() {
             style = RuuviStationTheme.typography.dashboardSecondary,
             fontSize = ruuviStationFontsSizes.petite.limitScaleTo(1.5f),
             textAlign = TextAlign.Center,
-            text = stringResource(R.string.no_data),
+            text = stringResource(R.string.popup_no_data),
         )
     }
 }
 
-@Composable
-fun ValueSheetHeader(
-    sheetValue: EnvironmentValue,
-    modifier: Modifier = Modifier
-) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Start
-    ) {
-
-        Icon(
-            modifier = Modifier
-                .height(24.dp.scaleUpTo(1.5f))
-                .padding(end = RuuviStationTheme.dimensions.medium),
-            painter = painterResource(id = sheetValue.unitType.iconRes),
-            tint = Color(0xff5ebdb2),
-            contentDescription = ""
-        )
-
-        ValueSheetHeaderText(
-            modifier = Modifier,
-            text = stringResource(sheetValue.unitType.measurementTitle)
-        )
-
-        Row(
-            modifier = Modifier.weight(1f),
-            horizontalArrangement = Arrangement.End,
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            ValueSheetHeaderText(
-                modifier = Modifier
-                    .alignByBaseline(),
-                text = sheetValue.valueWithoutUnit
-            )
-
-            ValueSheetUnitText(
-                modifier = Modifier
-                    .alignByBaseline()
-                    .padding(
-                        start = RuuviStationTheme.dimensions.small
-                    ),
-                text = sheetValue.unitString
-            )
-        }
-    }
-}
-
-@Composable
-fun ValueSheetHeaderText(
-    text: String,
-    modifier: Modifier = Modifier
-) {
-    Text(
-        modifier = modifier,
-        fontSize = RuuviStationTheme.fontSizes.normal.limitScaleTo(1.5f),
-        fontFamily = ruuviStationFonts.mulishBold,
-        text = text,
-        color = RuuviStationTheme.colors.popupHeaderText
-    )
-}
-
-@Composable
-fun ValueSheetUnitText(
-    text: String,
-    modifier: Modifier = Modifier
-) {
-    Text(
-        modifier = modifier,
-        fontFamily = ruuviStationFonts.mulishBold,
-        color = RuuviStationTheme.colors.popupHeaderText,
-        fontSize = RuuviStationTheme.fontSizes.miniature.limitScaleTo(1.5f),
-        text = text,
-        maxLines = 1
-    )
-}
-
-@Preview
-@Composable
-private fun HeaderPreview() {
-    val value = EnvironmentValue(
-        original = 22.50,
-        value = 22.50,
-        accuracy = Accuracy.Accuracy1,
-        valueWithUnit = "22.5 %",
-        valueWithoutUnit = "22.5",
-        unitString = "%",
-        unitType = UnitType.HumidityUnit.Relative
-    )
-
-    RuuviTheme {
-        Surface(color = RuuviStationTheme.colors.popupBackground) {
-            ValueSheetHeader(
-                sheetValue = value
-            )
-        }
-    }
-}
 
 @Preview
 @Composable

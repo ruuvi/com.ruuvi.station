@@ -1,22 +1,28 @@
 package com.ruuvi.station.graph
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Color
 import android.graphics.Matrix
 import android.graphics.Paint
 import android.text.format.DateUtils
+import android.view.GestureDetector
+import android.view.HapticFeedbackConstants
 import android.view.MotionEvent
-import android.util.TypedValue
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.booleanResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -33,10 +39,8 @@ import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.formatter.IAxisValueFormatter
-import com.github.mikephil.charting.highlight.Highlight
 import com.github.mikephil.charting.listener.ChartTouchListener
 import com.github.mikephil.charting.listener.OnChartGestureListener
-import com.github.mikephil.charting.listener.OnChartValueSelectedListener
 import com.github.mikephil.charting.utils.Utils
 import com.ruuvi.station.R
 import com.ruuvi.station.app.ui.components.limitScaleTo
@@ -45,6 +49,8 @@ import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.White50
 import com.ruuvi.station.app.ui.theme.ruuviStationFonts
 import com.ruuvi.station.app.ui.theme.ruuviStationFontsSizes
+import com.ruuvi.station.tutorials.Tutorial
+import com.ruuvi.station.tutorials.ui.TutorialDialog
 import com.ruuvi.station.units.domain.UnitsConverter
 import com.ruuvi.station.units.model.UnitType
 import com.ruuvi.station.util.extensions.isStartOfTheDay
@@ -55,6 +61,7 @@ import java.text.DecimalFormatSymbols
 import java.util.*
 import kotlin.math.max
 
+@SuppressLint("ClickableViewAccessibility")
 @Composable
 fun ChartViewPrototype(
     lineChart: LineChart,
@@ -67,7 +74,7 @@ fun ChartViewPrototype(
     limits: Pair<Double,Double>?,
     from: Long,
     to: Long,
-    clearMarker: () -> Unit
+    sharedX: MutableState<Float?>,
 ) {
     val context = LocalContext.current
     Timber.d("ChartView - ChartViewPrototype")
@@ -83,8 +90,8 @@ fun ChartViewPrototype(
         is UnitType.Acceleration -> stringResource(unitType.measurementTitle) + " ($unitString)"
         is UnitType.SignalStrengthUnit -> stringResource(id = R.string.signal_strength_rssi)
         is UnitType.CO2 -> stringResource(id = R.string.co2_with_unit, unitString)
-        is UnitType.VOC -> stringResource(id = R.string.voc_with_unit, unitString)
-        is UnitType.NOX -> stringResource(id = R.string.nox_with_unit, unitString)
+        is UnitType.VOC -> stringResource(id = R.string.voc_index)
+        is UnitType.NOX -> stringResource(id = R.string.nox_index)
         is UnitType.PM.PM10 -> stringResource(id = R.string.pm10_with_unit, unitString)
         is UnitType.PM.PM25 -> stringResource(id = R.string.pm25_with_unit, unitString)
         is UnitType.PM.PM40 -> stringResource(id = R.string.pm40_with_unit, unitString)
@@ -130,6 +137,13 @@ fun ChartViewPrototype(
             )
         }
 
+        var chartTapped by rememberSaveable { mutableStateOf(false) }
+        TutorialDialog(
+            tutorial = Tutorial.ChartActionTutorial,
+            showThisSession = chartTapped,
+            onShowThisSessionChange = { chartTapped = it }
+        )
+
         AndroidView(
             modifier = Modifier
                 .fillMaxWidth()
@@ -142,7 +156,69 @@ fun ChartViewPrototype(
             factory = { context ->
                 Timber.d("ChartView AndroidView - factory")
                 val chart = lineChart
-                setupMarker(context, chart, unitsConverter, unitType, clearMarker = clearMarker, getFrom =  { from })
+                setupMarker(
+                    context = context,
+                    chart = chart,
+                    unitsConverter = unitsConverter,
+                    unitType = unitType,
+                    clearMarker = { sharedX.value = null },
+                    getFrom = { from }
+                )
+
+                var longPressActive = false
+
+                val detector = GestureDetector(context,
+                    object : GestureDetector.SimpleOnGestureListener() {
+                        override fun onDown(e: MotionEvent): Boolean {
+                            longPressActive = false
+                            return true
+                        }
+
+                        override fun onSingleTapConfirmed(e: MotionEvent): Boolean {
+                            chartTapped = true
+                            return super.onSingleTapConfirmed(e)
+                        }
+
+                        override fun onLongPress(e: MotionEvent) {
+                            longPressActive = true
+                            chart.parent?.requestDisallowInterceptTouchEvent(true)
+                            chart.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
+
+                            chart.getHighlightByTouchPoint(e.x, e.y)?.let { h ->
+                                chart.highlightValue(h, false)
+                                sharedX.value = h.x                            }
+                        }
+                    }
+                )
+
+                chart.setOnTouchListener { v, event ->
+                    detector.onTouchEvent(event)
+
+                    when (event.actionMasked) {
+                        MotionEvent.ACTION_MOVE -> {
+                            if (longPressActive) {
+
+                                v.parent?.requestDisallowInterceptTouchEvent(true)
+
+                                chart.getHighlightByTouchPoint(event.x, event.y)?.let { h ->
+                                    chart.highlightValue(h, false)
+                                    sharedX.value = h.x
+                                }
+                                return@setOnTouchListener true
+                            }
+                        }
+                        MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                            longPressActive = false
+                            v.parent?.requestDisallowInterceptTouchEvent(false)
+                        }
+                        MotionEvent.ACTION_DOWN -> {
+                            longPressActive = false
+                        }
+                    }
+
+                    longPressActive
+                }
+
                 chart
             },
             update = { view ->
@@ -152,6 +228,16 @@ fun ChartViewPrototype(
                     addDataToChart(context, chartData, view, "", graphDrawDots, limits, from, to)
                     (view.marker as ChartMarkerView).getFrom = { from }
                 }
+
+                if (view.data != null) {
+                    val x = sharedX.value
+                    if (x != null) {
+                        view.highlightValue(x, 0, false)
+                    } else {
+                        view.highlightValue(null, false)
+                    }
+                }
+
             }
         )
     }
@@ -234,7 +320,6 @@ fun chartsInitialSetup(
 
     normalizeOffsets(charts)
     synchronizeChartGestures(charts.map { it.second }.toSet())
-    setupHighLighting(charts.map { it.second }.toSet())
 }
 
 
@@ -261,7 +346,8 @@ fun applyChartStyle(
     chart.xAxis.gridColor = ColorUtils.setAlphaComponent(chart.xAxis.gridColor, 100)
     chart.axisLeft.gridColor = ColorUtils.setAlphaComponent(chart.xAxis.gridColor, 100)
     chart.isDoubleTapToZoomEnabled = false
-    chart.isHighlightPerTapEnabled = true
+    chart.isHighlightPerTapEnabled = false
+    chart.isHighlightPerDragEnabled = false
 
     try {
         val font = ResourcesCompat.getFont(context, R.font.mulish_regular)
@@ -496,28 +582,5 @@ fun synchronizeChartGestures(charts: Set<LineChart>) {
                 synchronizeCharts(chart)
             }
         }
-    }
-}
-
-fun setupHighLighting(charts: Set<LineChart>) {
-    for (chart in charts) {
-        val otherCharts = charts.filter { it != chart }
-        chart.setOnChartValueSelectedListener(object : OnChartValueSelectedListener {
-            override fun onValueSelected(entry: Entry, highlight: Highlight) {
-                for (otherChart in otherCharts) {
-                    if (!otherChart.isEmpty) {
-                        otherChart.highlightValue(entry.x, highlight.dataSetIndex, false)
-                    }
-                }
-            }
-
-            override fun onNothingSelected() {
-                for (otherChart in otherCharts) {
-                    if (!otherChart.isEmpty) {
-                        otherChart.highlightValue(0f, -1, false)
-                    }
-                }
-            }
-        })
     }
 }

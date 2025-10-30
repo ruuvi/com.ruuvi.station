@@ -33,6 +33,7 @@ class ImageInteractor (
     private val context: Context
 ) {
     val defaultImages = listOf(
+        R.drawable.new_bg_air,
         R.drawable.new_bg5,
         R.drawable.new_bg6,
         R.drawable.new_bg7,
@@ -269,11 +270,11 @@ class ImageInteractor (
             6 -> R.drawable.bg7
             7 -> R.drawable.bg8
             8 -> R.drawable.bg9
-            else -> getDefaultResource()
+            else -> getDefaultResource(false)
         }
     }
 
-    fun getDefaultResource(): Int = R.drawable.new_bg2
+    fun getDefaultResource(isAir: Boolean): Int = if (isAir) R.drawable.new_bg_air else R.drawable.new_bg2
 }
 
 enum class ImageSource (val prefix: String) {

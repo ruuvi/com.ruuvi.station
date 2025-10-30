@@ -7,6 +7,7 @@ import com.ruuvi.station.database.domain.SensorSettingsRepository
 import com.ruuvi.station.database.domain.TagRepository
 import com.ruuvi.station.database.tables.RuuviTagEntity
 import com.ruuvi.station.database.tables.SensorSettings
+import com.ruuvi.station.database.tables.isAir
 import com.ruuvi.station.image.ImageInteractor
 import com.ruuvi.station.image.ImageSource
 import com.ruuvi.station.network.data.response.SensorSettings_defaultDisplayOrder
@@ -54,8 +55,9 @@ class TagSettingsInteractor(
     }
 
     fun updateTagName(sensorId: String, sensorName: String?) {
+        val tag = tagRepository.getTagById(sensorId)
         val name =
-            if (sensorName.isNullOrEmpty()) MacAddressUtils.getDefaultName(sensorId) else sensorName
+            if (sensorName.isNullOrEmpty()) MacAddressUtils.getDefaultName(sensorId, tag?.isAir()) else sensorName
         sensorSettingsRepository.updateSensorName(sensorId, name)
     }
 
@@ -103,11 +105,12 @@ class TagSettingsInteractor(
     }
 
     fun setRandomDefaultBackgroundImage(
-        sensorId: String
+        sensorId: String,
+        isAir: Boolean
     ) {
         setDefaultBackgroundImageByResource(
             sensorId = sensorId,
-            defaultBackground = imageInteractor.getDefaultResource()
+            defaultBackground = imageInteractor.getDefaultResource(isAir)
         )
     }
 

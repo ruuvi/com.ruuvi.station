@@ -17,8 +17,8 @@ enum class WidgetType(val code: Int, val titleResId: Int, val unitType: UnitType
     AIR_QUALITY(21, R.string.air_quality, UnitType.AirQuality.AqiIndex),
     LUMINOSITY(22, R.string.luminosity, UnitType.Luminosity.Lux),
     CO2(23, R.string.co2, UnitType.CO2.Ppm),
-    VOC(23, R.string.voc, UnitType.VOC.VocIndex),
-    NOX(24, R.string.nox, UnitType.NOX.NoxIndex),
+    VOC(23, R.string.voc_index, UnitType.VOC.VocIndex),
+    NOX(24, R.string.nox_index, UnitType.NOX.NoxIndex),
     PM10(25, R.string.pm10, UnitType.PM.PM10),
     PM25(26, R.string.pm25, UnitType.PM.PM25),
     PM40(27, R.string.pm40, UnitType.PM.PM40),
@@ -30,7 +30,8 @@ enum class WidgetType(val code: Int, val titleResId: Int, val unitType: UnitType
 
         fun filterWidgetTypes(sensor: RuuviTag): List<WidgetType> {
             val result = mutableListOf<WidgetType>()
-            for (item in WidgetType.entries) {
+            // For now only main measurements
+            for (item in WidgetType.entries.filter { it !in listOf(PM10, PM40, PM100) }) {
                 if (sensor.possibleDisplayOptions.any{ it == item.unitType} || sensor.displayOrder.any{ it == item.unitType}) {
                     result.add(item)
                 }

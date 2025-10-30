@@ -33,7 +33,7 @@ data class RuuviTag(
     val valuesToDisplay: List<EnvironmentValue>,
     val latestMeasurement: SensorMeasurements?
 ) {
-    fun getDefaultName(): String = MacAddressUtils.getDefaultName(id)
+    fun getDefaultName(): String = MacAddressUtils.getDefaultName(id, isAir())
 
     fun getSource(): UpdateSource {
 

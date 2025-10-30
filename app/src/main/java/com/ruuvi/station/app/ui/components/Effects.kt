@@ -1,10 +1,11 @@
 package com.ruuvi.station.app.ui.components
 
-import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.*
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import kotlinx.coroutines.delay
 
 @Composable
@@ -13,15 +14,17 @@ fun BlinkingEffect(
 ) {
     var contentVisible by remember { mutableStateOf(true) }
 
-    AnimatedVisibility(
-        visible = contentVisible,
-        enter = fadeIn(animationSpec = tween(250)),
-        exit = fadeOut(animationSpec = tween(250))
-    ) {
+    val alpha by animateFloatAsState(
+        targetValue = if (contentVisible) 1f else 0f,
+        animationSpec = tween(250),
+        label = "blinkAlpha"
+    )
+
+    Box(Modifier.alpha(alpha)) {
         content()
     }
 
-    LaunchedEffect(key1 = 1) {
+    LaunchedEffect(Unit) {
         while (true) {
             val time = System.currentTimeMillis()
             contentVisible = (time % 1000) < 500
