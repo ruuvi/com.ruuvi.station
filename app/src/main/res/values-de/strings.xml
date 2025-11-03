@@ -359,7 +359,7 @@
     <string name="export_csv_header_format2_4">Zeitstempel,Temperatur (%1$s),Luftfeuchtigkeit (%2$s),Druck (%3$s),RSSI(dBm)</string>
     <string name="export_csv_header_format3">Zeitstempel,Temperatur (%1$s),Luftfeuchtigkeit (%2$s),Druck (%3$s),RSSI (dBm),Beschleunigung X (g),Beschleunigung Y (g),Beschleunigung Z (g),Spannung (V)</string>
     <string name="export_csv_header_format5">Zeitstempel,Temperatur (%1$s),Feuchtigkeit (%2$s),Druck (%3$s),RSSI (dBm),Beschleunigung X (g),Beschleunigung Y (g),Beschleunigung Z (g),Spannung (V),Bewegungszähler,Messsequenznummer,TX-Leistung (dBm)</string>
-    <string name="export_csv_header_format_air">Datum,Luftqualität,Temperatur (%1$s),Luftfeuchtigkeit (%2$s),Luftdruck (%3$s),Beleuchtungsstärke (lx),CO₂ (ppm),VOC-Index,NOX,PM1 (µg/m³),PM2.5 (µg/m³),PM4 (µg/m³),PM10 (µg/m³),RSSI (dBm),Messfolgenummer</string>
+    <string name="export_csv_header_format_air">Datum,Luftqualität,Temperatur (%1$s),Luftfeuchtigkeit (%2$s),Luftdruck (%3$s),CO₂ (ppm),VOC-Index,NOX,PM1 (µg/m³),PM2.5 (µg/m³),PM4 (µg/m³),PM10 (µg/m³),RSSI (dBm),Messfolgenummer</string>
     <string name="export_history">Verlauf exportieren (csv)</string>
     <string name="export_history_xlsx">Verlauf exportieren (xlsx)</string>
     <string name="fair">Ausreichend</string>
@@ -800,13 +800,16 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="verypoor">Sehr schlecht</string>
     <string name="view">Ansicht</string>
     <string name="visible_measurements">Sichtbare Messwerte</string>
+    <string name="visible_measurements_active_alert_confirmation">Sie blenden %1$s aus den sichtbaren Messungen aus. Dadurch wird auch die derzeit aktive Warnung deaktiviert und die Warnungseinstellungen für diese Messung ausgeblendet.</string>
     <string name="visible_measurements_description">Hier kannst du auswählen, welche Messwerte du sehen möchtest und in welcher Reihenfolge. Deaktiviere den Schalter „Standard verwenden“, um die Einstellungen anzupassen.</string>
+    <string name="visible_measurements_last_element_message">Die letzte sichtbare Messung kann nicht gelöscht werden. Mindestens eine Messung muss verbleiben.</string>
     <string name="visible_measurements_use_default">Standard verwenden</string>
     <string name="voc_index">VOC-Index</string>
     <string name="voc_with_unit">VOC-Index (%1$s)</string>
     <string name="volatile_organic_compounds">Index flüchtiger organischer Verbindungen</string>
     <string name="voltage_reading">%1$,.2f %2$s</string>
     <string name="voltage_unit">V</string>
+    <string name="warning">Warnung</string>
     <string name="welcome_text_0">Wischen Sie, um zu sehen, was Ruuvi Station für Sie tun kann.</string>
     <string name="welcome_text_1">Umweltdaten messen: Temperatur, relative Luftfeuchtigkeit und Luftdruck.</string>
     <string name="welcome_text_2">Greifen Sie in Echtzeit auf Daten für jeden verknüpften Sensor zu und erkunden Sie Verlaufsdiagramme.</string>

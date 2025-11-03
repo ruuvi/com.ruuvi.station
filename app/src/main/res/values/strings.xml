@@ -368,7 +368,7 @@
     <string name="export_csv_header_format2_4">Date,Temperature (%1$s),Humidity (%2$s),Pressure (%3$s),RSSI(dBm)</string>
     <string name="export_csv_header_format3">Date,Temperature (%1$s),Humidity (%2$s),Pressure (%3$s),RSSI (dBm),Acceleration X (g),Acceleration Y (g),Acceleration Z (g),Voltage (V)</string>
     <string name="export_csv_header_format5">Date,Temperature (%1$s),Humidity (%2$s),Pressure (%3$s),RSSI (dBm),Acceleration X (g),Acceleration Y (g),Acceleration Z (g),Voltage (V),Movement counter (movements),Measurement sequence number,TX power (dBm)</string>
-    <string name="export_csv_header_format_air">Date,Air quality,Temperature (%1$s),Humidity (%2$s),Pressure (%3$s),Illuminance (lx),CO₂ (ppm),VOC index,NOX,PM1 (µg/m³),PM2.5 (µg/m³),PM4 (µg/m³),PM10 (µg/m³),RSSI (dBm),Measurement sequence number</string>
+    <string name="export_csv_header_format_air">Date,Air quality,Temperature (%1$s),Humidity (%2$s),Pressure (%3$s),CO₂ (ppm),VOC index,NOX,PM1 (µg/m³),PM2.5 (µg/m³),PM4 (µg/m³),PM10 (µg/m³),RSSI (dBm),Measurement sequence number</string>
     <string name="export_history">Export history (csv)</string>
     <string name="export_history_xlsx">Export history (xlsx)</string>
     <string name="fair">Fair</string>
@@ -802,13 +802,16 @@
     <string name="verypoor">Very poor</string>
     <string name="view">View</string>
     <string name="visible_measurements">Visible measurements</string>
+    <string name="visible_measurements_active_alert_confirmation">You are hiding %1$s from visible measurements. This will also deactivate the currently active alert and hide the alert settings for this measurement.</string>
     <string name="visible_measurements_description">Here, you can choose which measurements you\'d like to see and in what order. Switch the "Use default" toggle off to customise the settings.</string>
+    <string name="visible_measurements_last_element_message">Can\'t delete the last visible measurement. At least one measurement must remain.</string>
     <string name="visible_measurements_use_default">Use default</string>
     <string name="voc_index">VOC index</string>
     <string name="voc_with_unit">VOC index (%1$s)</string>
     <string name="volatile_organic_compounds">Volatile organic compounds index</string>
     <string name="voltage_reading">%1$,.2f %2$s</string>
     <string name="voltage_unit">V</string>
+    <string name="warning">Warning</string>
     <string name="welcome_text_0">Swipe to see what Ruuvi Station can do for you.</string>
     <string name="welcome_text_1">Measure environmental data: temperature, relative humidity and air pressure.</string>
     <string name="welcome_text_2">Access data for each linked sensor in real time and explore history graphs.</string>

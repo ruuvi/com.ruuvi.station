@@ -112,12 +112,6 @@ class CsvExporter(
                 fileWriter.append(reading.pressure?.let { unitsConverter.getPressureValue(it).toString() } ?: nullValue)
                 fileWriter.append(',')
                 if (tag?.isAir() == true) {
-                    fileWriter.append(reading.luminosity?.toString() ?: nullValue)
-                    fileWriter.append(',')
-                    fileWriter.append(reading.dBaAvg?.toString() ?: nullValue)
-                    fileWriter.append(',')
-                    fileWriter.append(reading.dBaPeak?.toString() ?: nullValue)
-                    fileWriter.append(',')
                     fileWriter.append(reading.co2?.toString() ?: nullValue)
                     fileWriter.append(',')
                     fileWriter.append(reading.voc?.toString() ?: nullValue)
