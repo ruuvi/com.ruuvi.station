@@ -22,6 +22,8 @@ import com.ruuvi.station.BuildConfig
 import com.ruuvi.station.R
 import com.ruuvi.station.app.ui.RuuviTopAppBar
 import com.ruuvi.station.app.ui.components.*
+import com.ruuvi.station.app.ui.components.dialog.RuuviConfirmDialog
+import com.ruuvi.station.app.ui.components.dialog.MessageDialog
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.RuuviTheme
 import com.ruuvi.station.tagsettings.ui.MoreInfoItem
@@ -95,7 +97,7 @@ class MyAccountActivity : AppCompatActivity(), KodeinAware {
                 }
 
                 if (deleteAccountDialog) {
-                    RuuviMessageDialog(
+                    MessageDialog(
                         message = stringResource(id = R.string.account_delete_confirmation_description),
                         onDismissRequest = { deleteAccountDialog = false }
                     )
@@ -201,7 +203,7 @@ fun MyAccountBody(
                 title = stringResource(id = R.string.sign_out),
                 message = stringResource(id = R.string.sign_out_confirm),
                 onDismissRequest = { signOutDialog = false }
-            ){
+            ) {
                 signOut.invoke()
             }
         }

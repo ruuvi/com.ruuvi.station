@@ -29,6 +29,7 @@ import com.ruuvi.station.R
 import com.ruuvi.station.alarm.domain.AlarmItemState
 import com.ruuvi.station.alarm.domain.AlarmType
 import com.ruuvi.station.app.ui.components.*
+import com.ruuvi.station.app.ui.components.dialog.CustomContentDialog
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.bluetooth.util.extensions.roundHalfUp
 import com.ruuvi.station.tag.domain.RuuviTag
@@ -511,7 +512,7 @@ fun ChangeDescriptionDialog(
         mutableStateOf(TextFieldValue(alarmState.customDescription, TextRange(alarmState.customDescription.length)))
     }
 
-    RuuviDialog(
+    CustomContentDialog(
         title = stringResource(id = R.string.alarm_custom_description_title),
         onDismissRequest = onDismissRequest,
         onOkClickAction = {
@@ -538,7 +539,7 @@ fun ChangeDescriptionDialog(
                 keyboardType = KeyboardType.Text,
                 capitalization = KeyboardCapitalization.Sentences
             ),
-            keyboardActions = KeyboardActions(onDone = {focusManager.clearFocus()})
+            keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() })
         )
 
         LaunchedEffect(key1 = Unit) {
@@ -583,7 +584,7 @@ fun AlarmEditDialog(
         mutableStateOf<Double?>(alarmState.rangeHigh.toDouble())
     }
 
-    RuuviDialog(
+    CustomContentDialog(
         title = title,
         onDismissRequest = onDismissRequest,
         onOkClickAction = {
@@ -599,24 +600,29 @@ fun AlarmEditDialog(
 
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.medium))
 
-        val possibleMinString  = possibleRange.start.toInt().toString() + " " + getUnit(alarmState.type)
+        val possibleMinString =
+            possibleRange.start.toInt().toString() + " " + getUnit(alarmState.type)
         Subtitle(text = stringResource(id = R.string.alert_dialog_min, possibleMinString))
         NumberTextFieldRuuvi(
             value = alarmState.displayLow,
             keyboardOptions = KeyboardOptions.Default.copy(keyboardType = keyboardType),
-            keyboardActions = KeyboardActions(onDone = {focusRequester.requestFocus()})
+            keyboardActions = KeyboardActions(onDone = { focusRequester.requestFocus() })
         ) { parsed, value ->
             min = value
         }
 
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
 
-        val possibleMaxString  = possibleRange.endInclusive.toInt().toString() + " " + getUnit(alarmState.type)
+        val possibleMaxString =
+            possibleRange.endInclusive.toInt().toString() + " " + getUnit(alarmState.type)
         Subtitle(text = stringResource(id = R.string.alert_dialog_max, possibleMaxString))
         NumberTextFieldRuuvi(
             value = alarmState.displayHigh,
             modifier = Modifier.focusRequester(focusRequester),
-            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = keyboardType, imeAction = ImeAction.Done),
+            keyboardOptions = KeyboardOptions.Default.copy(
+                keyboardType = keyboardType,
+                imeAction = ImeAction.Done
+            ),
             keyboardActions = KeyboardActions(onDone = {
                 focusManager.clearFocus()
             })
@@ -637,8 +643,8 @@ fun OfflineAlarmEditDialog(
     var delay by remember {
         mutableDoubleStateOf(alarmState.max / 60)
     }
-    
-    RuuviDialog(
+
+    CustomContentDialog(
         title = title,
         onDismissRequest = onDismissRequest,
         onOkClickAction = {
@@ -652,14 +658,17 @@ fun OfflineAlarmEditDialog(
         }
     ) {
         Paragraph(text = stringResource(id = R.string.alert_cloud_connection_dialog_description))
-        
+
         val focusManager = LocalFocusManager.current
 
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.medium))
 
         NumberTextFieldRuuvi(
             value = delay.toLong().toString(),
-            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number, imeAction = ImeAction.Done),
+            keyboardOptions = KeyboardOptions.Default.copy(
+                keyboardType = KeyboardType.Number,
+                imeAction = ImeAction.Done
+            ),
             keyboardActions = KeyboardActions(onDone = {
                 focusManager.clearFocus()
             })

@@ -1,12 +1,6 @@
-package com.ruuvi.station.app.ui.components
+package com.ruuvi.station.app.ui.components.dialog
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.runtime.Composable
@@ -14,14 +8,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.window.Dialog
 import com.ruuvi.station.R
+import com.ruuvi.station.app.ui.components.ParagraphWithPadding
+import com.ruuvi.station.app.ui.components.RuuviTextButton
+import com.ruuvi.station.app.ui.components.SubtitleWithPadding
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 
 @Composable
-fun RuuviPermissionDialog(
+fun MessageDialog(
     title: String = "",
     message: String = "",
-    onAccept: () -> Unit,
-    onDismissRequest: () -> Unit,
+    onDismissRequest : () -> Unit,
 ) {
     Dialog(onDismissRequest = onDismissRequest) {
         Card(
@@ -48,17 +44,10 @@ fun RuuviPermissionDialog(
 
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
+                    horizontalArrangement = Arrangement.End
                 ) {
                     RuuviTextButton(
-                        text = stringResource(id = R.string.agree),
-                        onClick = {
-                            onDismissRequest.invoke()
-                            onAccept.invoke()
-                        }
-                    )
-                    RuuviTextButton(
-                        text = stringResource(id = R.string.decline),
+                        text = stringResource(id = R.string.ok),
                         onClick = {
                             onDismissRequest.invoke()
                         }

@@ -12,21 +12,18 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.layout.positionOnScreen
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import com.ruuvi.station.R
 import com.ruuvi.station.app.ui.UiText
 import com.ruuvi.station.app.ui.components.*
+import com.ruuvi.station.app.ui.components.dialog.RuuviConfirmDialog
+import com.ruuvi.station.app.ui.components.dialog.MessageDialog
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.bluetooth.model.SyncProgress
 import com.ruuvi.station.tagdetails.ui.SyncStatus
@@ -183,7 +180,7 @@ fun ChartControlElement2(
                 uiEvent = null
             }
             SyncProgress.NOT_SUPPORTED -> {
-                RuuviMessageDialog(message = stringResource(id = R.string.reading_history_not_supported)) {
+                MessageDialog(message = stringResource(id = R.string.reading_history_not_supported)) {
                     uiEvent = null
                 }
             }
@@ -307,7 +304,7 @@ fun ViewPeriodMenu(
     }
     
     if (showMoreDialog) {
-        RuuviMessageDialog(
+        MessageDialog(
             title = stringResource(id = R.string.longer_history_title),
             message = stringResource(id = R.string.longer_history_message)
         ) {
@@ -416,7 +413,7 @@ fun ThreeDotsMenu(
     }
 
     if (android26RequiredDialog) {
-        RuuviMessageDialog(
+        MessageDialog(
             message = stringResource(id = R.string.android_8_required),
             onDismissRequest = { android26RequiredDialog = false }
         )

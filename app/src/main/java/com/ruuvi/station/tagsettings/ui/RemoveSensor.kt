@@ -27,7 +27,7 @@ import com.ruuvi.station.app.ui.components.Paragraph
 import com.ruuvi.station.app.ui.components.ParagraphWithPadding
 import com.ruuvi.station.app.ui.components.RuuviButton
 import com.ruuvi.station.app.ui.components.RuuviCheckbox
-import com.ruuvi.station.app.ui.components.RuuviDialog
+import com.ruuvi.station.app.ui.components.dialog.CustomContentDialog
 import com.ruuvi.station.app.ui.components.TextEditWithCaptionButton
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.dashboard.ui.DashboardActivity
@@ -96,7 +96,7 @@ fun RemoveSensor(
     }
 
     if (removeDialog) {
-        RuuviDialog(
+        CustomContentDialog(
             title = stringResource(id = R.string.dialog_are_you_sure),
             onDismissRequest = { removeDialog = false },
             onOkClickAction = {

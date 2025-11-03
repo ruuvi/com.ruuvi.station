@@ -22,9 +22,12 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
@@ -39,6 +42,8 @@ import com.ruuvi.station.R
 import com.ruuvi.station.app.ui.components.Paragraph
 import com.ruuvi.station.app.ui.components.Subtitle
 import com.ruuvi.station.app.ui.components.SwitchIndicatorRuuvi
+import com.ruuvi.station.app.ui.components.dialog.MessageDialog
+import com.ruuvi.station.app.ui.components.dialog.RuuviConfirmDialog
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.RuuviTheme
 import com.ruuvi.station.dashboard.DashboardType
@@ -49,7 +54,10 @@ import com.ruuvi.station.tag.domain.ruuviTagPreview
 import com.ruuvi.station.tagsettings.ui.SensorSettingsTitle
 import com.ruuvi.station.tagsettings.ui.dragGestureHandler
 import com.ruuvi.station.tagsettings.ui.rememberDragDropListState
+import com.ruuvi.station.units.model.UnitType
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
 import timber.log.Timber
 
 val testSelected = listOf(
@@ -71,9 +79,53 @@ fun VisibleMeasurements(
     useDefault: Boolean,
     dashboardType: DashboardType,
     onAction: (VisibleMeasurementsActions) -> Unit,
+    effects: SharedFlow<VisibleMeasurementsEffect>,
     selected: List<ListOption>,
     allOptions: List<ListOption>
 ) {
+
+    var lastElementDialog by remember { mutableStateOf(false) }
+    var confirmAlertDisableDialogUnit by remember { mutableStateOf<UnitType?>(null) }
+
+    LaunchedEffect(effects) {
+        effects.collect { effect ->
+            when (effect) {
+                is VisibleMeasurementsEffect.ForbiddenRemoveLast -> {
+                    lastElementDialog = true
+                }
+                is VisibleMeasurementsEffect.AskRemovalConfirmation -> {
+                    val unit = UnitType.getByCode(effect.unitCode)
+                    unit?.let {
+                        confirmAlertDisableDialogUnit = it
+                    }
+                }
+                else -> {
+
+                }
+            }
+        }
+    }
+
+    if (lastElementDialog) {
+        MessageDialog(
+            title = stringResource(id = R.string.warning),
+            message = stringResource(id = R.string.visible_measurements_last_element_message)
+        ) {
+            lastElementDialog = false
+        }
+    }
+
+    confirmAlertDisableDialogUnit?.let { unit ->
+        RuuviConfirmDialog(
+            title = stringResource(R.string.confirm),
+            message = stringResource(R.string.visible_measurements_active_alert_confirmation,
+                stringResource(unit.measurementName)),
+            onDismissRequest = { confirmAlertDisableDialogUnit = null }
+        ) {
+            confirmAlertDisableDialogUnit = null
+            onAction(VisibleMeasurementsActions.RemoveFromDisplayOrderAndDisableAlert(unit.getCode()))
+        }
+    }
 
     Column (
         modifier = modifier
@@ -288,6 +340,7 @@ fun VisibleMeasurementsPreview(modifier: Modifier = Modifier) {
             sensorState = ruuviTagPreview,
             selected = testSelected,
             allOptions = testAllOptions,
+            effects = MutableSharedFlow(),
             modifier = Modifier.background(RuuviStationTheme.colors.background)
         )
     }
