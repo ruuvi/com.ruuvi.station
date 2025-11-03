@@ -244,7 +244,7 @@
     <string name="export_csv_header_format2_4">Znacznik czasu,temperatura (%1$s), wilgotność (%2$s), ciśnienie (%3$s),RSSI(dBm)</string>
     <string name="export_csv_header_format3">Znacznik czasu,temperatura (%1$s), wilgotność (%2$s), ciśnienie (%3$s),RSSI,przyspieszenie X,przyspieszenie Y,przyspieszenie Z,napięcie</string>
     <string name="export_csv_header_format5">Znacznik czasu,temperatura (%1$s), wilgotność (%2$s), ciśnienie (%3$s),RSSI,przyspieszenie X,przyspieszenie Y,przyspieszenie Z,napięcie,licznik przesunięć, numer sekwencji pomiaru</string>
-    <string name="export_csv_header_format_air">Data,Jakość powietrza,Temperatura (%1$s),Wilgotność (%2$s),Ciśnienie (%3$s),Natężenie światła (lx),CO₂ (ppm),Indeks LZO,NOX,PM1 (µg/m³),PM2.5 (µg/m³),PM4 (µg/m³),PM10 (µg/m³),RSSI (dBm),Numer sekwencji pomiarowej</string>
+    <string name="export_csv_header_format_air">Data,Jakość powietrza,Temperatura (%1$s),Wilgotność (%2$s),Ciśnienie (%3$s),CO₂ (ppm),Indeks LZO,NOX,PM1 (µg/m³),PM2.5 (µg/m³),PM4 (µg/m³),PM10 (µg/m³),RSSI (dBm),Numer sekwencji pomiarowej</string>
     <string name="fair">Dostateczny</string>
     <string name="file_not_supported">Nieobsługiwany typ pliku</string>
     <string name="firmware">Firmware</string>
@@ -537,11 +537,14 @@
     <string name="use_dev_server_description">Aby zastosować zmiany, po prostu zsynchronizuj dane z pulpitu nawigacyjnego lub poczekaj do następnej synchronizacji.</string>
     <string name="version">Wersja: %1$s</string>
     <string name="verypoor">Bardzo zły</string>
+    <string name="visible_measurements_active_alert_confirmation">Ukrywasz %1$s z widocznych pomiarów. Spowoduje to również dezaktywację aktualnie aktywnego alertu i ukryje ustawienia alertu dla tego pomiaru.</string>
+    <string name="visible_measurements_last_element_message">Nie można usunąć ostatniego widocznego pomiaru. Co najmniej jeden pomiar musi pozostać.</string>
     <string name="voc_index">Indeks LZO</string>
     <string name="voc_with_unit">Indeks LZO (%1$s)</string>
     <string name="volatile_organic_compounds">Indeks lotnych związków organicznych</string>
     <string name="voltage_reading">%1$,.2f %2$s</string>
     <string name="voltage_unit">V</string>
+    <string name="warning">Ostrzeżenie</string>
     <string name="welcome_text_0">Przeciągnij, aby zobaczyć, co Ruuvi Station może dla Ciebie zrobić.</string>
     <string name="welcome_text_1">Dane dotyczące jakości powietrza: temperatura, wilgotność względna i ciśnienie powietrza.</string>
     <string name="welcome_text_2">Uzyskaj dostęp do danych dla każdego połączonego czujnika w czasie rzeczywistym i zbadaj wykresy historii.</string>

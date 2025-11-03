@@ -359,7 +359,7 @@
     <string name="export_csv_header_format2_4">Datum,Temperatur (%1$s),Luftfuktighet (%2$s),Lufttryck (%3$s),Signalstyrka(dBm)</string>
     <string name="export_csv_header_format3">Datum,Temperatur (%1$s),Luftfuktighet (%2$s),Lufttryck (%3$s),Signalstyrka (dBm),Acceleration X (g),Acceleration Y (g),Acceleration Z (g),Spänning (V)</string>
     <string name="export_csv_header_format5">Datum,Temperatur (%1$s),Luftfuktighet (%2$s),Lufttryck (%3$s),Signalstyrka (dBm),Acceleration X (g),Acceleration Y (g),Acceleration Z (g),Spänning (V),Rörelseräknare (rörelser),Mätningssekvensnummer,Sändningseffekt (dBm)</string>
-    <string name="export_csv_header_format_air">Datum,Luftkvalitet,Temperatur (%1$s),Luftfuktighet (%2$s),Lufttryck (%3$s),Illuminans (lx),CO₂ (ppm),VOC-index,NOX,PM1 (µg/m³),PM2.5 (µg/m³),PM4 (µg/m³),PM10 (µg/m³),RSSI (dBm),Mätningssekvensnummer</string>
+    <string name="export_csv_header_format_air">Datum,Luftkvalitet,Temperatur (%1$s),Luftfuktighet (%2$s),Lufttryck (%3$s),CO₂ (ppm),VOC-index,NOX,PM1 (µg/m³),PM2.5 (µg/m³),PM4 (µg/m³),PM10 (µg/m³),RSSI (dBm),Mätningssekvensnummer</string>
     <string name="export_history">Exportera historik (csv)</string>
     <string name="export_history_xlsx">Exportera historik (xlsx)</string>
     <string name="fair">Godtagbar</string>
@@ -789,13 +789,16 @@
     <string name="verypoor">Mycket dålig</string>
     <string name="view">Vy</string>
     <string name="visible_measurements">Synliga mätvärden</string>
+    <string name="visible_measurements_active_alert_confirmation">Du döljer %1$s från de synliga mätningarna. Detta inaktiverar också den aktuellt aktiva varningen och döljer varningsinställningarna för denna mätning.</string>
     <string name="visible_measurements_description">Här kan du välja vilka mätvärden du vill se och i vilken ordning. Stäng av "Använd standard" för att anpassa inställningarna.</string>
+    <string name="visible_measurements_last_element_message">Det går inte att ta bort den sista synliga mätningen. Minst en mätning måste finnas kvar.</string>
     <string name="visible_measurements_use_default">Använd standard</string>
     <string name="voc_index">VOC-index</string>
     <string name="voc_with_unit">VOC-index (%1$s)</string>
     <string name="volatile_organic_compounds">Index för flyktiga organiska föreningar</string>
     <string name="voltage_reading">%1$,.2f %2$s</string>
     <string name="voltage_unit">V</string>
+    <string name="warning">Varning</string>
     <string name="welcome_text_0">Det här kan Ruuvi Station göra för dig.</string>
     <string name="welcome_text_1">Mät förhållandena i din miljö: temperatur, luftfuktighet och lufttryck.</string>
     <string name="welcome_text_2">Visa sensordata i realtid eller granska historisk data som är lagrad på enheten.</string>

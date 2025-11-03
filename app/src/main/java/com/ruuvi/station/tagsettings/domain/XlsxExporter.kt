@@ -114,7 +114,7 @@ class XlsxExporter (
 
         if (isAir) {
             columns.addAll(listOf(
-                ColumnDefinition(context.getString(R.string.luminosity), null, null),
+//                ColumnDefinition(context.getString(R.string.luminosity), null, null),
                 ColumnDefinition(context.getString(R.string.co2), null, null),
                 ColumnDefinition(context.getString(R.string.voc_index), null, null),
                 ColumnDefinition(context.getString(R.string.nox_index), null, null),
@@ -160,7 +160,7 @@ class XlsxExporter (
         dataRow.add(reading.pressure?.let { unitsConverter.getPressureValue(it) })
 
         if (isAir) {
-            dataRow.add(reading.luminosity)
+//            dataRow.add(reading.luminosity)
             dataRow.add(reading.co2)
             dataRow.add(reading.voc)
             dataRow.add(reading.nox)
