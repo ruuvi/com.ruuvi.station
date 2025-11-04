@@ -790,6 +790,8 @@
     <string name="view">Vy</string>
     <string name="visible_measurements">Synliga mätvärden</string>
     <string name="visible_measurements_active_alert_confirmation">Du döljer %1$s från de synliga mätningarna. Detta inaktiverar också den aktuellt aktiva varningen och döljer varningsinställningarna för denna mätning.</string>
+    <string name="visible_measurements_change_use_default_confirmation">Genom att slå på ”Use default” döljer du %1$s från synliga mätningar. Det här inaktiverar också den för närvarande aktiva varningen och döljer varningsinställningarna för denna mätning.</string>
+    <string name="visible_measurements_change_use_default_multiple_alerts_confirmation">Genom att slå på ”Use default” döljer du %1$s från synliga mätningar. Det här inaktiverar också de för närvarande aktiva varningarna och döljer varningsinställningarna för dessa mätningar.</string>
     <string name="visible_measurements_description">Här kan du välja vilka mätvärden du vill se och i vilken ordning. Stäng av "Använd standard" för att anpassa inställningarna.</string>
     <string name="visible_measurements_last_element_message">Det går inte att ta bort den sista synliga mätningen. Minst en mätning måste finnas kvar.</string>
     <string name="visible_measurements_use_default">Använd standard</string>

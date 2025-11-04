@@ -70,8 +70,6 @@ class TagSettingsViewModel(
         !it.networkSensor || it.owner.isNullOrEmpty() || it.owner.equals(networkInteractor.getEmail(), true)
     }
 
-    val visibleMeasurementsEnabled: StateFlow<Boolean> = MutableStateFlow(runtimeBehavior.isFeatureEnabled(FeatureFlag.VISIBLE_MEASUREMENTS))
-
     private val _askToClaim =  MutableSharedFlow<Boolean>()
     val askToClaim: SharedFlow<Boolean> = _askToClaim
 

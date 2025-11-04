@@ -601,6 +601,8 @@
     <string name="view">Вид</string>
     <string name="visible_measurements">Отображаемые измерения</string>
     <string name="visible_measurements_active_alert_confirmation">Вы скрываете %1$s из видимых измерений. Это также отключит текущее активное оповещение и скроет настройки оповещения для этого измерения.</string>
+    <string name="visible_measurements_change_use_default_confirmation">Переключив «Use default», вы скрываете %1$s из видимых измерений. Это также деактивирует текущее активное оповещение и скроет настройки оповещений для этого измерения.</string>
+    <string name="visible_measurements_change_use_default_multiple_alerts_confirmation">Переключив «Use default», вы скрываете %1$s из видимых измерений. Это также деактивирует текущие активные оповещения и скроет настройки оповещений для этих измерений.</string>
     <string name="visible_measurements_description">Здесь вы можете выбрать, какие измерения отображать и в каком порядке. Отключите переключатель «Использовать по умолчанию», чтобы настроить параметры.</string>
     <string name="visible_measurements_last_element_message">Нельзя удалить последнее видимое измерение. Должно оставаться как минимум одно измерение.</string>
     <string name="visible_measurements_use_default">Использовать по умолчанию</string>

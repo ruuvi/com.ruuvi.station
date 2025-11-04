@@ -795,6 +795,8 @@
     <string name="view">Voir</string>
     <string name="visible_measurements">Mesures visibles</string>
     <string name="visible_measurements_active_alert_confirmation">Vous masquez %1$s des mesures visibles. Cela désactivera également l’alerte actuellement active et masquera les paramètres d’alerte pour cette mesure.</string>
+    <string name="visible_measurements_change_use_default_confirmation">En activant « Use default », vous masquez %1$s des mesures visibles. Cela désactivera également l’alerte actuellement active et masquera les paramètres d’alerte pour cette mesure.</string>
+    <string name="visible_measurements_change_use_default_multiple_alerts_confirmation">En activant « Use default », vous masquez %1$s des mesures visibles. Cela désactivera également les alertes actuellement actives et masquera les paramètres d’alerte pour ces mesures.</string>
     <string name="visible_measurements_description">Ici, vous pouvez choisir quelles mesures afficher et dans quel ordre. Désactivez l’option « Utiliser par défaut » pour personnaliser les paramètres.</string>
     <string name="visible_measurements_last_element_message">Impossible de supprimer la dernière mesure visible. Au moins une mesure doit rester.</string>
     <string name="visible_measurements_use_default">Utiliser par défaut</string>

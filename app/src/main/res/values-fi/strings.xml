@@ -790,6 +790,8 @@
     <string name="view">Näkymä</string>
     <string name="visible_measurements">Näytettävät mittaukset</string>
     <string name="visible_measurements_active_alert_confirmation">Olet piilottamassa %1$s näkyvistä mittauksista. Tämä myös poistaa käytöstä tällä hetkellä aktiivisen hälytyksen ja piilottaa tämän mittauksen hälytysasetukset.</string>
+    <string name="visible_measurements_change_use_default_confirmation">Vaihtamalla asetuksen \'Use default\' piilotat kohteen %1$s näkyvistä mittauksista. Tämä myös poistaa käytöstä parhaillaan aktiivisen hälytyksen ja piilottaa tämän mittauksen hälytysasetukset.</string>
+    <string name="visible_measurements_change_use_default_multiple_alerts_confirmation">Vaihtamalla asetuksen \'Use default\' piilotat kohteen %1$s näkyvistä mittauksista. Tämä myös poistaa käytöstä parhaillaan aktiiviset hälytykset ja piilottaa näiden mittausten hälytysasetukset.</string>
     <string name="visible_measurements_description">Tällä sivulla voit valita, mitkä mittaukset haluat nähdä ja missä järjestyksessä. Poista "Käytä oletusta" -valinta muokataksesi asetuksia.</string>
     <string name="visible_measurements_last_element_message">Viimeistä näkyvää mittausta ei voi poistaa. Vähintään yhden mittauksen on jäätävä.</string>
     <string name="visible_measurements_use_default">Käytä oletusta</string>

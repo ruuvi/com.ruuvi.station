@@ -538,6 +538,8 @@
     <string name="version">Wersja: %1$s</string>
     <string name="verypoor">Bardzo zły</string>
     <string name="visible_measurements_active_alert_confirmation">Ukrywasz %1$s z widocznych pomiarów. Spowoduje to również dezaktywację aktualnie aktywnego alertu i ukryje ustawienia alertu dla tego pomiaru.</string>
+    <string name="visible_measurements_change_use_default_confirmation">Po przełączeniu opcji „Use default” ukryjesz %1$s z listy widocznych pomiarów. Spowoduje to również dezaktywację aktualnie aktywnego alertu i ukrycie ustawień alertu dla tego pomiaru.</string>
+    <string name="visible_measurements_change_use_default_multiple_alerts_confirmation">Po przełączeniu opcji „Use default” ukryjesz %1$s z listy widocznych pomiarów. Spowoduje to również dezaktywację aktualnie aktywnych alertów i ukrycie ustawień alertów dla tych pomiarów.</string>
     <string name="visible_measurements_last_element_message">Nie można usunąć ostatniego widocznego pomiaru. Co najmniej jeden pomiar musi pozostać.</string>
     <string name="voc_index">Indeks LZO</string>
     <string name="voc_with_unit">Indeks LZO (%1$s)</string>

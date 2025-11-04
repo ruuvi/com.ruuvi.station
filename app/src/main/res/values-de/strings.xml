@@ -801,6 +801,8 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="view">Ansicht</string>
     <string name="visible_measurements">Sichtbare Messwerte</string>
     <string name="visible_measurements_active_alert_confirmation">Sie blenden %1$s aus den sichtbaren Messungen aus. Dadurch wird auch die derzeit aktive Warnung deaktiviert und die Warnungseinstellungen für diese Messung ausgeblendet.</string>
+    <string name="visible_measurements_change_use_default_confirmation">Durch das Umschalten von „Use default“ blendest du %1$s aus den sichtbaren Messungen aus. Dadurch wird auch der aktuell aktive Alarm deaktiviert und die Alarmeinstellungen für diese Messung werden ausgeblendet.</string>
+    <string name="visible_measurements_change_use_default_multiple_alerts_confirmation">Durch das Umschalten von „Use default“ blendest du %1$s aus den sichtbaren Messungen aus. Dadurch werden auch die aktuell aktiven Alarme deaktiviert und die Alarmeinstellungen für diese Messungen ausgeblendet.</string>
     <string name="visible_measurements_description">Hier kannst du auswählen, welche Messwerte du sehen möchtest und in welcher Reihenfolge. Deaktiviere den Schalter „Standard verwenden“, um die Einstellungen anzupassen.</string>
     <string name="visible_measurements_last_element_message">Die letzte sichtbare Messung kann nicht gelöscht werden. Mindestens eine Messung muss verbleiben.</string>
     <string name="visible_measurements_use_default">Standard verwenden</string>

@@ -54,7 +54,7 @@ class VisibleMeasurementsMigrationInteractor(
     }
 
     companion object {
-        private const val PREFERENCES_NAME = "migration_visible_measurements24x"
-        private const val MIGRATION_DONE_KEY = "migration_donex24"
+        private const val PREFERENCES_NAME = "migration_visible_measurements"
+        private const val MIGRATION_DONE_KEY = "migration_done"
     }
 }

@@ -61,7 +61,6 @@ fun SensorSettings(
     val sensorOwnedOrOffline by viewModel.sensorOwnedOrOffline.collectAsState(initial = false)
     val isLowBattery by viewModel.isLowBattery.collectAsState(initial = false)
     val firmware by viewModel.firmware.collectAsState(initial = null)
-    val visibleMeasurementsEnabled by viewModel.visibleMeasurementsEnabled.collectAsState()
     var showAskToClaimDialog by remember {
         mutableStateOf(false)
     }
@@ -79,16 +78,15 @@ fun SensorSettings(
             sensorIsShared = sensorIsShared,
             setName = viewModel::setName
         )
-        if (visibleMeasurementsEnabled) {
-            DividerRuuvi()
-            TextEditWithCaptionButton(
-                title = stringResource(R.string.visible_measurements),
-                value = viewModel.getVisibleMeasurementsCount().asString(context),
-                icon = painterResource(id = R.drawable.arrow_forward_16),
-                tint = RuuviStationTheme.colors.trackInactive
-            ) {
-                onNavigate.invoke(SensorSettingsRoutes.VISIBLE_MEASUREMENTS)
-            }
+
+        DividerRuuvi()
+        TextEditWithCaptionButton(
+            title = stringResource(R.string.visible_measurements),
+            value = viewModel.getVisibleMeasurementsCount().asString(context),
+            icon = painterResource(id = R.drawable.arrow_forward_16),
+            tint = RuuviStationTheme.colors.trackInactive
+        ) {
+            onNavigate.invoke(SensorSettingsRoutes.VISIBLE_MEASUREMENTS)
         }
         AlarmsGroup(
             scaffoldState,
@@ -138,7 +136,7 @@ fun SensorSettings(
     LaunchedEffect(key1 = Unit) {
         viewModel.updateSensorFirmwareVersion()
     }
-    
+
     LaunchedEffect(key1 = Unit) {
         viewModel.askToClaim.collectLatest {
             Timber.d("askToClaim collected $it")
