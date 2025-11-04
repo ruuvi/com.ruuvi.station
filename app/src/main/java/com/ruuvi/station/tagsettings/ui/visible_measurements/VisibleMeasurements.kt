@@ -31,6 +31,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -61,15 +62,15 @@ import kotlinx.coroutines.flow.SharedFlow
 import timber.log.Timber
 
 val testSelected = listOf(
-    ListOption("temperature_C", "Temperature Celsius"),
-    ListOption("Humidity_0", "Humidity Relative"),
-    ListOption("Pressure_1", "Pressure mmHg")
+    ListOption("temperature_C", "Temperature Celsius", UnitType.TemperatureUnit.Celsius),
+    ListOption("Humidity_0", "Humidity Relative", UnitType.HumidityUnit.Relative),
+    ListOption("Pressure_1", "Pressure mmHg", UnitType.PressureUnit.MmHg)
 )
 
 val testAllOptions = listOf(
-    ListOption("movements", "Movements"),
-    ListOption("signal", "Signal strength"),
-    ListOption("voltage", "Battery Voltage"),
+    ListOption("movements", "Movements", UnitType.MovementUnit.MovementsCount),
+    ListOption("signal", "Signal strength", UnitType.SignalStrengthUnit.SignalDbm),
+    ListOption("voltage", "Battery Voltage", UnitType.BatteryVoltageUnit.Volt),
 )
 
 @Composable
@@ -83,9 +84,11 @@ fun VisibleMeasurements(
     selected: List<ListOption>,
     allOptions: List<ListOption>
 ) {
-
+    val context = LocalContext.current
     var lastElementDialog by remember { mutableStateOf(false) }
     var confirmAlertDisableDialogUnit by remember { mutableStateOf<UnitType?>(null) }
+    var confirmUseDefault by remember { mutableStateOf<List<UnitType>?>(null) }
+    var confirmUseDefaultValue by remember { mutableStateOf<Boolean>(false) }
 
     LaunchedEffect(effects) {
         effects.collect { effect ->
@@ -94,10 +97,13 @@ fun VisibleMeasurements(
                     lastElementDialog = true
                 }
                 is VisibleMeasurementsEffect.AskRemovalConfirmation -> {
-                    val unit = UnitType.getByCode(effect.unitCode)
-                    unit?.let {
+                    effect.unit.let {
                         confirmAlertDisableDialogUnit = it
                     }
+                }
+                is VisibleMeasurementsEffect.AskChangeUseDefaultConfirmation -> {
+                    confirmUseDefault = effect.units
+                    confirmUseDefaultValue = effect.useDefault
                 }
                 else -> {
 
@@ -123,7 +129,32 @@ fun VisibleMeasurements(
             onDismissRequest = { confirmAlertDisableDialogUnit = null }
         ) {
             confirmAlertDisableDialogUnit = null
-            onAction(VisibleMeasurementsActions.RemoveFromDisplayOrderAndDisableAlert(unit.getCode()))
+            onAction(VisibleMeasurementsActions.RemoveFromDisplayOrderAndDisableAlert(unit))
+        }
+    }
+
+    confirmUseDefault?.let { units ->
+        val alertsToDisable = units.joinToString(separator = ", ") { unit ->
+            context.getString(unit.measurementName)
+        }
+        val message = if (units.size > 1) {
+            context.getString(
+                R.string.visible_measurements_change_use_default_multiple_alerts_confirmation,
+                alertsToDisable
+            )
+        } else {
+            context.getString(R.string.visible_measurements_change_use_default_confirmation,
+                alertsToDisable
+            )
+        }
+
+        RuuviConfirmDialog(
+            title = stringResource(R.string.confirm),
+            message = message,
+            onDismissRequest = { confirmUseDefault = null }
+        ) {
+            confirmUseDefault = null
+            onAction(VisibleMeasurementsActions.ChangeUseDefaultAndDisableAlert(confirmUseDefaultValue, units))
         }
     }
 
@@ -206,10 +237,10 @@ fun VisibleMeasurements(
                     onAction(VisibleMeasurementsActions.SwapDisplayOrderItems(from, to))
                 },
                 onAdd = { listOption ->
-                    onAction(VisibleMeasurementsActions.AddToDisplayOrder(listOption.id))
+                    onAction(VisibleMeasurementsActions.AddToDisplayOrder(listOption.unit))
                 },
                 onRemove = { listOption ->
-                    onAction(VisibleMeasurementsActions.RemoveFromDisplayOrder(listOption.id))
+                    onAction(VisibleMeasurementsActions.RemoveFromDisplayOrder(listOption.unit))
                 }
             )
         }
@@ -326,7 +357,8 @@ fun DragAndDropListEdit(
 
 data class ListOption(
     val id: String,
-    val title: String
+    val title: String,
+    val unit: UnitType
 )
 
 @PreviewLightDark

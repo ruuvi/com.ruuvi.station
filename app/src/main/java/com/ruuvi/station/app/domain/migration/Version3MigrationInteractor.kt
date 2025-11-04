@@ -1,10 +1,9 @@
-package com.ruuvi.station.app.domain
+package com.ruuvi.station.app.domain.migration
 
 import android.content.Context
-import android.content.Context.MODE_PRIVATE
 import android.content.SharedPreferences
-import com.ruuvi.station.BuildConfig
 import androidx.core.content.edit
+import com.ruuvi.station.BuildConfig
 import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.dashboard.DashboardTapAction
 import com.ruuvi.station.network.domain.NetworkApplicationSettings
@@ -15,7 +14,7 @@ class Version3MigrationInteractor(
     private val networkApplicationSettings: NetworkApplicationSettings,
 ) {
     private val preferences: SharedPreferences by lazy {
-        context.getSharedPreferences(PREFERENCES_NAME, MODE_PRIVATE)
+        context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE)
     }
 
     private var migrationDone: Boolean

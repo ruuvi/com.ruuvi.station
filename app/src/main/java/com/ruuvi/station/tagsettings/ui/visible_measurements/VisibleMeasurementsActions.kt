@@ -1,21 +1,24 @@
 package com.ruuvi.station.tagsettings.ui.visible_measurements
 
+import com.ruuvi.station.units.model.UnitType
+
 sealed interface VisibleMeasurementsActions {
-    data class ChangeUseDefault(val enabled: Boolean): VisibleMeasurementsActions
-    data class AddToDisplayOrder(val unitCode: String): VisibleMeasurementsActions
-    data class RemoveFromDisplayOrder(val unitCode: String): VisibleMeasurementsActions
-    data class RemoveFromDisplayOrderAndDisableAlert(val unitCode: String): VisibleMeasurementsActions
+    data class ChangeUseDefault(val useDefault: Boolean): VisibleMeasurementsActions
+    data class AddToDisplayOrder(val unit: UnitType): VisibleMeasurementsActions
+    data class RemoveFromDisplayOrder(val unit: UnitType): VisibleMeasurementsActions
+    data class RemoveFromDisplayOrderAndDisableAlert(val unit: UnitType): VisibleMeasurementsActions
     data class SwapDisplayOrderItems(val from: Int, val to: Int): VisibleMeasurementsActions
-    data class ChangeUseDefaultAndDisableAlert(val unitCode: String): VisibleMeasurementsActions
+    data class ChangeUseDefaultAndDisableAlert(val useDefault: Boolean, val units: List<UnitType>): VisibleMeasurementsActions
 }
 
 sealed interface VisibleMeasurementsEffect {
     data class AskRemovalConfirmation(
-        val unitCode: String,
+        val unit: UnitType,
     ) : VisibleMeasurementsEffect
 
     data class AskChangeUseDefaultConfirmation(
-        val unitCode: List<String>,
+        val useDefault: Boolean,
+        val units: List<UnitType>,
     ) : VisibleMeasurementsEffect
 
 
