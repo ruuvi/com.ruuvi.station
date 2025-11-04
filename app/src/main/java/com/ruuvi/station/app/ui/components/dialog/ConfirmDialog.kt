@@ -1,4 +1,4 @@
-package com.ruuvi.station.app.ui.components
+package com.ruuvi.station.app.ui.components.dialog
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -8,6 +8,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.window.Dialog
 import com.ruuvi.station.R
+import com.ruuvi.station.app.ui.components.ParagraphWithPadding
+import com.ruuvi.station.app.ui.components.RuuviTextButton
+import com.ruuvi.station.app.ui.components.SubtitleWithPadding
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 
 

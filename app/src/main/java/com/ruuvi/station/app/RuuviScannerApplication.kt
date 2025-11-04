@@ -9,8 +9,9 @@ import androidx.appcompat.app.AppCompatDelegate
 import com.raizlabs.android.dbflow.config.FlowManager
 import com.ruuvi.station.BuildConfig
 import com.ruuvi.station.app.di.AppInjectionModules
-import com.ruuvi.station.app.domain.ImageMigrationInteractor
-import com.ruuvi.station.app.domain.Version3MigrationInteractor
+import com.ruuvi.station.app.domain.migration.ImageMigrationInteractor
+import com.ruuvi.station.app.domain.migration.Version3MigrationInteractor
+import com.ruuvi.station.app.domain.migration.VisibleMeasurementsMigrationInteractor
 import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.bluetooth.DefaultOnTagFoundListener
 import com.ruuvi.station.bluetooth.domain.BluetoothStateReceiver
@@ -42,6 +43,8 @@ class RuuviScannerApplication : Application(), KodeinAware {
     private val runtimeBehavior: RuntimeBehavior by instance()
     private val imageMigrationInteractor: ImageMigrationInteractor by instance()
     private val version3MigrationInteractor: Version3MigrationInteractor by instance()
+    private val visibleMeasurementsMigrationInteractor: VisibleMeasurementsMigrationInteractor by instance()
+
 
     private var isInForeground: Boolean = false
 
@@ -76,6 +79,7 @@ class RuuviScannerApplication : Application(), KodeinAware {
 
         imageMigrationInteractor.migrateDefaultImages()
         version3MigrationInteractor.migrate()
+        visibleMeasurementsMigrationInteractor.migrate()
 
         registerReceiver(bluetoothReceiver, IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED))
 

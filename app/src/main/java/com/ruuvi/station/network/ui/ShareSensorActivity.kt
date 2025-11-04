@@ -52,7 +52,7 @@ import com.ruuvi.station.app.ui.components.DividerRuuvi
 import com.ruuvi.station.app.ui.components.Paragraph
 import com.ruuvi.station.app.ui.components.ParagraphWithPadding
 import com.ruuvi.station.app.ui.components.RuuviButton
-import com.ruuvi.station.app.ui.components.RuuviDialog
+import com.ruuvi.station.app.ui.components.dialog.CustomContentDialog
 import com.ruuvi.station.app.ui.components.StatusBarFill
 import com.ruuvi.station.app.ui.components.SubtitleWithPadding
 import com.ruuvi.station.app.ui.components.TextFieldRuuvi
@@ -251,7 +251,7 @@ fun SharedEmailItem(
     }
 
     if (unshareDialog) {
-        RuuviDialog(
+        CustomContentDialog(
             title = stringResource(id = R.string.confirm),
             onDismissRequest = { unshareDialog = false },
             onOkClickAction = {

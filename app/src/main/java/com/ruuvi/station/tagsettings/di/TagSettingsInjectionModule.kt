@@ -27,7 +27,7 @@ object TagSettingsInjectionModule {
         }
 
         bind<VisibleMeasurementsViewModel>() with factory { sensorId: String ->
-            VisibleMeasurementsViewModel(sensorId, instance(), instance(), instance())
+            VisibleMeasurementsViewModel(sensorId, instance(), instance(), instance(), instance(), instance(), instance())
         }
 
         bind<RemoveSensorViewModel>() with factory { args: RemoveSensorViewModelArgs ->

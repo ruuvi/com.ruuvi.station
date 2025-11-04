@@ -803,6 +803,8 @@
     <string name="view">View</string>
     <string name="visible_measurements">Visible measurements</string>
     <string name="visible_measurements_active_alert_confirmation">You are hiding %1$s from visible measurements. This will also deactivate the currently active alert and hide the alert settings for this measurement.</string>
+    <string name="visible_measurements_change_use_default_confirmation">By switching \'Use default\' you are hiding %1$s from visible measurements. This will also deactivate the currently active alert and hide the alert settings for this measurement.</string>
+    <string name="visible_measurements_change_use_default_multiple_alerts_confirmation">By switching \'Use default\' you are hiding %1$s from visible measurements. This will also deactivate the currently active alerts and hide the alert settings for these measurements.</string>
     <string name="visible_measurements_description">Here, you can choose which measurements you\'d like to see and in what order. Switch the "Use default" toggle off to customise the settings.</string>
     <string name="visible_measurements_last_element_message">Can\'t delete the last visible measurement. At least one measurement must remain.</string>
     <string name="visible_measurements_use_default">Use default</string>

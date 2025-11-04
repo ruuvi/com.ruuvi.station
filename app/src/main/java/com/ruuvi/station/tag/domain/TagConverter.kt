@@ -1,6 +1,5 @@
 package com.ruuvi.station.tag.domain
 
-import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.database.tables.FavouriteSensorQuery
 import com.ruuvi.station.database.tables.RuuviTagEntity
 import com.ruuvi.station.database.tables.SensorSettings
@@ -8,15 +7,13 @@ import com.ruuvi.station.units.domain.MovementConverter
 import com.ruuvi.station.units.domain.UnitsConverter
 import com.ruuvi.station.units.domain.aqi.AQI
 import com.ruuvi.station.units.model.EnvironmentValue
-import com.ruuvi.station.units.model.UnitType
 import com.ruuvi.station.units.model.UnitType.*
-import com.ruuvi.station.util.extensions.loadList
 import timber.log.Timber
 
 class TagConverter(
     private val unitsConverter: UnitsConverter,
     private val movementConverter: MovementConverter,
-    private val preferencesRepository: PreferencesRepository
+    private val visibleMeasurementsOrderInteractor: VisibleMeasurementsOrderInteractor,
 ) {
 
     fun fromDatabase(entity: RuuviTagEntity, sensorSettings: SensorSettings): RuuviTag {
@@ -91,13 +88,9 @@ class TagConverter(
         val humidity = entity.humidity?.let {it + (entity.humidityOffset ?: 0.0)}
         val pressure = entity.pressure?.let {it + (entity.pressureOffset ?: 0.0)}
 
-        val defaultDisplayOrder = getDefaultDisplayOrder(
-            isAir = RuuviTag.dataFormatIsAir(entity.dataFormat),
-            humidityExist = entity.humidity != null,
-            pressureExist = entity.pressure != null
-        )
+        val defaultDisplayOrder = visibleMeasurementsOrderInteractor.getDefaultDisplayOrder(entity)
 
-        val userDefinedDisplayOrder = UnitType.getListOfUnits(entity.displayOrder?.loadList() ?: emptyList())
+        val userDefinedDisplayOrder = visibleMeasurementsOrderInteractor.getUserDefinedOrder(entity.displayOrder)
 
         val displayOrder =
             if (entity.defaultDisplayOrder || userDefinedDisplayOrder.isEmpty()) {
@@ -106,11 +99,7 @@ class TagConverter(
                 userDefinedDisplayOrder
             }
 
-        val possibleOptions = getPossibleDisplayOptions(
-            isAir = RuuviTag.dataFormatIsAir(entity.dataFormat),
-            humidityExist = entity.humidity != null,
-            pressureExist = entity.pressure != null
-        )
+        val possibleOptions = visibleMeasurementsOrderInteractor.getPossibleDisplayOptions(entity)
 
         val possibleOptionsFiltered = possibleOptions
             .filter { it !in  displayOrder }
@@ -294,97 +283,5 @@ class TagConverter(
         )
     }
 
-    fun getDefaultDisplayOrder(
-        isAir: Boolean,
-        humidityExist: Boolean,
-        pressureExist: Boolean
-    ): List<UnitType> {
-        val displayOrder = mutableListOf<UnitType>()
 
-        if (isAir) {
-            displayOrder.add(AirQuality.AqiIndex)
-            displayOrder.add(CO2.Ppm)
-            displayOrder.add(PM.PM25)
-            displayOrder.add(VOC.VocIndex)
-            displayOrder.add(NOX.NoxIndex)
-            displayOrder.add(preferencesRepository.getTemperatureUnit())
-            if (humidityExist) {
-                displayOrder.add(preferencesRepository.getHumidityUnit())
-            }
-            if (pressureExist) {
-                displayOrder.add(preferencesRepository.getPressureUnit())
-            }
-            displayOrder.add(Luminosity.Lux)
-        } else {
-            displayOrder.add(preferencesRepository.getTemperatureUnit())
-            if (humidityExist) {
-                displayOrder.add(preferencesRepository.getHumidityUnit())
-            }
-            if (pressureExist) {
-                displayOrder.add(preferencesRepository.getPressureUnit())
-            }
-            displayOrder.add(MovementUnit.MovementsCount)
-        }
-        return displayOrder
-    }
-
-    fun getPossibleDisplayOptions(
-        isAir: Boolean,
-        humidityExist: Boolean,
-        pressureExist: Boolean
-    ): List<UnitType> {
-        val displayOptions = mutableListOf<UnitType>()
-
-        if (isAir) {
-            displayOptions.add(AirQuality.AqiIndex)
-            displayOptions.add(TemperatureUnit.Celsius)
-            displayOptions.add(TemperatureUnit.Fahrenheit)
-            displayOptions.add(TemperatureUnit.Kelvin)
-            if (humidityExist) {
-                displayOptions.add(HumidityUnit.Relative)
-                displayOptions.add(HumidityUnit.Absolute)
-                displayOptions.add(HumidityUnit.DewPoint)
-            }
-            if (pressureExist) {
-                displayOptions.add(PressureUnit.Pascal)
-                displayOptions.add(PressureUnit.HectoPascal)
-                displayOptions.add(PressureUnit.MmHg)
-                displayOptions.add(PressureUnit.InchHg)
-            }
-            displayOptions.add(Luminosity.Lux)
-            displayOptions.add(SoundAvg.SoundDba)
-            displayOptions.add(SoundPeak.SoundDba)
-            displayOptions.add(CO2.Ppm)
-            displayOptions.add(VOC.VocIndex)
-            displayOptions.add(NOX.NoxIndex)
-            displayOptions.add(PM.PM10)
-            displayOptions.add(PM.PM25)
-            displayOptions.add(PM.PM40)
-            displayOptions.add(PM.PM100)
-        } else {
-            displayOptions.add(TemperatureUnit.Celsius)
-            displayOptions.add(TemperatureUnit.Fahrenheit)
-            displayOptions.add(TemperatureUnit.Kelvin)
-            if (humidityExist) {
-                displayOptions.add(HumidityUnit.Relative)
-                displayOptions.add(HumidityUnit.Absolute)
-                displayOptions.add(HumidityUnit.DewPoint)
-            }
-            if (pressureExist) {
-                displayOptions.add(PressureUnit.Pascal)
-                displayOptions.add(PressureUnit.HectoPascal)
-                displayOptions.add(PressureUnit.MmHg)
-                displayOptions.add(PressureUnit.InchHg)
-            }
-            displayOptions.add(MovementUnit.MovementsCount)
-            displayOptions.add(BatteryVoltageUnit.Volt)
-            displayOptions.add(SignalStrengthUnit.SignalDbm)
-            displayOptions.add(Acceleration.GForceX)
-            displayOptions.add(Acceleration.GForceY)
-            displayOptions.add(Acceleration.GForceZ)
-        }
-        Timber.d("getPossibleDisplayOptions = $displayOptions")
-
-        return displayOptions
-    }
 }

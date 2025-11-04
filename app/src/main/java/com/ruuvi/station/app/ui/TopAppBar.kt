@@ -23,7 +23,7 @@ import com.ruuvi.station.R
 import com.ruuvi.station.app.ui.components.CircularIndicator
 import com.ruuvi.station.app.ui.components.Paragraph
 import com.ruuvi.station.app.ui.components.RadioButtonRuuvi
-import com.ruuvi.station.app.ui.components.RuuviDialog
+import com.ruuvi.station.app.ui.components.dialog.CustomContentDialog
 import com.ruuvi.station.app.ui.components.Subtitle
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.dashboard.DashboardTapAction
@@ -227,7 +227,7 @@ fun DashboardTopAppBar(
     }
 
     if (resetSensorsOrderDialog) {
-        RuuviDialog(
+        CustomContentDialog(
             title = stringResource(id = R.string.confirm),
             onDismissRequest = { resetSensorsOrderDialog = false },
             onOkClickAction = {

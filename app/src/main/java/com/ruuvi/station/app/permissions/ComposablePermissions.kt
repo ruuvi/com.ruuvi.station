@@ -20,7 +20,7 @@ import androidx.compose.ui.res.stringResource
 import com.google.accompanist.permissions.*
 import com.ruuvi.station.R
 import com.ruuvi.station.app.preferences.PreferencesRepository
-import com.ruuvi.station.app.ui.components.RuuviPermissionDialog
+import com.ruuvi.station.app.ui.components.dialog.RuuviPermissionDialog
 import com.ruuvi.station.util.extensions.locationEnabled
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

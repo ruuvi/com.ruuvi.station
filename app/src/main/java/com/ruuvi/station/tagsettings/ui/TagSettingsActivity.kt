@@ -173,11 +173,13 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
                                 val sensorState by visibleMeasurementsViewModel.sensorState.collectAsStateWithLifecycle()
                                 val selected by visibleMeasurementsViewModel.selected.collectAsStateWithLifecycle()
                                 val possibleOptions by visibleMeasurementsViewModel.possibleOptions.collectAsStateWithLifecycle()
+
                                 VisibleMeasurements(
                                     useDefault = useDefault,
                                     sensorState = sensorState,
                                     dashboardType = visibleMeasurementsViewModel.dashBoardType,
                                     onAction = visibleMeasurementsViewModel::onAction,
+                                    effects = visibleMeasurementsViewModel.effects,
                                     selected = selected,
                                     allOptions = possibleOptions
                                 )

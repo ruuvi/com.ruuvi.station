@@ -10,6 +10,7 @@ import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tag.domain.canUseCloudAlerts
 import com.ruuvi.station.tag.domain.isAir
 import com.ruuvi.station.units.domain.UnitsConverter
+import com.ruuvi.station.units.model.UnitType
 import com.ruuvi.station.util.extensions.equalsEpsilon
 import com.ruuvi.station.util.extensions.isInteger
 import com.ruuvi.station.util.extensions.round
@@ -99,22 +100,58 @@ class AlarmsInteractor(
     fun getAvailableAlarmTypesForSensor(sensor: RuuviTag?): Set<AlarmType> {
         return if (sensor != null) {
             val alarmTypes = mutableSetOf<AlarmType>()
-            if (sensor.isAir() && sensor.latestMeasurement?.aqi != null) alarmTypes.add(AlarmType.AQI)
-            if (sensor.latestMeasurement?.temperature != null) alarmTypes.add(AlarmType.TEMPERATURE)
-            if (sensor.latestMeasurement?.humidity != null) alarmTypes.add(AlarmType.HUMIDITY)
-            if (sensor.latestMeasurement?.pressure != null) alarmTypes.add(AlarmType.PRESSURE)
-            if (sensor.latestMeasurement?.co2 != null) alarmTypes.add(AlarmType.CO2)
-            if (sensor.latestMeasurement?.pm10 != null) alarmTypes.add(AlarmType.PM10)
-            if (sensor.latestMeasurement?.pm25 != null) alarmTypes.add(AlarmType.PM25)
-            if (sensor.latestMeasurement?.pm40 != null) alarmTypes.add(AlarmType.PM40)
-            if (sensor.latestMeasurement?.pm100 != null) alarmTypes.add(AlarmType.PM100)
-            if (sensor.latestMeasurement?.voc != null) alarmTypes.add(AlarmType.VOC)
-            if (sensor.latestMeasurement?.nox != null) alarmTypes.add(AlarmType.NOX)
-            if (sensor.latestMeasurement?.luminosity != null) alarmTypes.add(AlarmType.LUMINOSITY)
-            if (sensor.latestMeasurement?.dBaAvg != null) alarmTypes.add(AlarmType.SOUND)
-            if (sensor.latestMeasurement?.movement != null) alarmTypes.add(AlarmType.MOVEMENT)
+            for (unit in sensor.displayOrder) {
+                when (unit) {
+                    is UnitType.AirQuality.AqiIndex -> {
+                        if (sensor.isAir() && sensor.latestMeasurement?.aqi != null) alarmTypes.add(AlarmType.AQI)
+                    }
+                    is UnitType.CO2.Ppm -> {
+                        if (sensor.latestMeasurement?.co2 != null) alarmTypes.add(AlarmType.CO2)
+                    }
+                    is UnitType.HumidityUnit -> {
+                        if (sensor.latestMeasurement?.humidity != null) alarmTypes.add(AlarmType.HUMIDITY)
+                    }
+                    is UnitType.Luminosity.Lux -> {
+                        if (sensor.latestMeasurement?.luminosity != null) alarmTypes.add(AlarmType.LUMINOSITY)
+                    }
+                    is UnitType.MovementUnit.MovementsCount -> {
+                        if (sensor.latestMeasurement?.movement != null) alarmTypes.add(AlarmType.MOVEMENT)
+                    }
+                    is UnitType.NOX.NoxIndex -> {
+                        if (sensor.latestMeasurement?.nox != null) alarmTypes.add(AlarmType.NOX)
+                    }
+                    is UnitType.PM.PM10 -> {
+                        if (sensor.latestMeasurement?.pm10 != null) alarmTypes.add(AlarmType.PM10)
+                    }
+                    is UnitType.PM.PM100 -> {
+                        if (sensor.latestMeasurement?.pm100 != null) alarmTypes.add(AlarmType.PM100)
+                    }
+                    is UnitType.PM.PM25 -> {
+                        if (sensor.latestMeasurement?.pm25 != null) alarmTypes.add(AlarmType.PM25)
+                    }
+                    is UnitType.PM.PM40 -> {
+                        if (sensor.latestMeasurement?.pm40 != null) alarmTypes.add(AlarmType.PM40)
+                    }
+                    is UnitType.PressureUnit -> {
+                        if (sensor.latestMeasurement?.pressure != null) alarmTypes.add(AlarmType.PRESSURE)
+                    }
+                    is UnitType.SignalStrengthUnit.SignalDbm -> {
+                        if (sensor.latestMeasurement?.rssi != null) alarmTypes.add(AlarmType.RSSI)
+                    }
+                    is UnitType.SoundAvg.SoundDba -> {
+                        if (sensor.latestMeasurement?.dBaAvg != null) alarmTypes.add(AlarmType.SOUND)
+                    }
+                    is UnitType.SoundPeak.SoundDba -> { }
+                    is UnitType.TemperatureUnit -> {
+                        if (sensor.latestMeasurement?.temperature != null) alarmTypes.add(AlarmType.TEMPERATURE)
+                    }
+                    is UnitType.VOC.VocIndex -> {
+                        if (sensor.latestMeasurement?.voc != null) alarmTypes.add(AlarmType.VOC)
+                    }
+                    else -> {}
+                }
+            }
             if (sensor.networkSensor && sensor.canUseCloudAlerts() ) alarmTypes.add(AlarmType.OFFLINE)
-            if (sensor.latestMeasurement?.rssi != null) alarmTypes.add(AlarmType.RSSI)
             alarmTypes
         } else {
             emptySet()

@@ -23,6 +23,7 @@ import com.ruuvi.station.R
 import com.ruuvi.station.app.ui.RuuviTopAppBar
 import com.ruuvi.station.app.ui.UiEvent
 import com.ruuvi.station.app.ui.components.*
+import com.ruuvi.station.app.ui.components.dialog.CustomContentDialog
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.RuuviTheme
 import com.ruuvi.station.network.ui.SignInActivity
@@ -245,7 +246,7 @@ class ClaimSensorActivity : NfcActivity(), KodeinAware {
         }
 
         if (unclaimDialog) {
-            RuuviDialog(
+            CustomContentDialog(
                 title = stringResource(id = R.string.dialog_are_you_sure),
                 onDismissRequest = { unclaimDialog = false },
                 onOkClickAction = {

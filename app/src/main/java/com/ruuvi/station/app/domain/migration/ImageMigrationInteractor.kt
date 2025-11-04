@@ -1,4 +1,4 @@
-package com.ruuvi.station.app.domain
+package com.ruuvi.station.app.domain.migration
 
 import com.ruuvi.station.database.domain.SensorSettingsRepository
 import com.ruuvi.station.image.ImageInteractor
