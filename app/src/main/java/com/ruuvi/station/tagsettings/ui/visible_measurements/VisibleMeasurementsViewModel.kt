@@ -61,7 +61,7 @@ class VisibleMeasurementsViewModel(
                     Timber.d("selected $unitType")
                     ListOption(
                         id = unitType.getCode(),
-                        title = unitsConverter.getTitleForUnitType(unitType),
+                        title = getUnitName(unitType),
                         unit = unitType,
                     )
                 }
@@ -78,7 +78,7 @@ class VisibleMeasurementsViewModel(
                 it.possibleDisplayOptions.mapNotNull { unitType ->
                     ListOption(
                         id = unitType.getCode(),
-                        title = unitsConverter.getTitleForUnitType(unitType),
+                        title = getUnitName(unitType),
                         unit = unitType,
                     )
                 }
@@ -116,6 +116,10 @@ class VisibleMeasurementsViewModel(
                 changeUseDefaultAndDisableAlerts(action.useDefault, action.units)
             }
         }
+    }
+
+    fun getUnitName(unit: UnitType): String {
+        return unitsConverter.getTitleForUnitType(unit)
     }
 
     private fun addToDisplayOrder(unit: UnitType) {

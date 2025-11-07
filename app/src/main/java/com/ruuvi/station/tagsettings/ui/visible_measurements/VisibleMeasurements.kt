@@ -81,6 +81,7 @@ fun VisibleMeasurements(
     dashboardType: DashboardType,
     onAction: (VisibleMeasurementsActions) -> Unit,
     effects: SharedFlow<VisibleMeasurementsEffect>,
+    getUnitName: (UnitType) -> String,
     selected: List<ListOption>,
     allOptions: List<ListOption>
 ) {
@@ -125,7 +126,7 @@ fun VisibleMeasurements(
         RuuviConfirmDialog(
             title = stringResource(R.string.confirm),
             message = stringResource(R.string.visible_measurements_active_alert_confirmation,
-                stringResource(unit.measurementName)),
+                getUnitName(unit)),
             onDismissRequest = { confirmAlertDisableDialogUnit = null }
         ) {
             confirmAlertDisableDialogUnit = null
@@ -135,7 +136,7 @@ fun VisibleMeasurements(
 
     confirmUseDefault?.let { units ->
         val alertsToDisable = units.joinToString(separator = ", ") { unit ->
-            context.getString(unit.measurementName)
+            getUnitName(unit)
         }
         val message = if (units.size > 1) {
             context.getString(
@@ -372,6 +373,7 @@ fun VisibleMeasurementsPreview(modifier: Modifier = Modifier) {
             sensorState = ruuviTagPreview,
             selected = testSelected,
             allOptions = testAllOptions,
+            getUnitName = {_ -> return@VisibleMeasurements ""},
             effects = MutableSharedFlow(),
             modifier = Modifier.background(RuuviStationTheme.colors.background)
         )

@@ -180,6 +180,7 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
                                     dashboardType = visibleMeasurementsViewModel.dashBoardType,
                                     onAction = visibleMeasurementsViewModel::onAction,
                                     effects = visibleMeasurementsViewModel.effects,
+                                    getUnitName = visibleMeasurementsViewModel::getUnitName,
                                     selected = selected,
                                     allOptions = possibleOptions
                                 )
