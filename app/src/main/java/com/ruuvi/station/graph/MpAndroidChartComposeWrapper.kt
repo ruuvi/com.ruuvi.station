@@ -132,13 +132,18 @@ fun ChartViewPrototype(
                 .padding(horizontal = RuuviStationTheme.dimensions.medium),
             factory = { context ->
                 Timber.d("ChartView AndroidView - factory")
+                var markerDismissed = false
+
                 val chart = lineChart
                 setupMarker(
                     context = context,
                     chart = chart,
                     unitsConverter = unitsConverter,
                     unitType = unitType,
-                    clearMarker = { sharedX.value = null },
+                    clearMarker = {
+                        sharedX.value = null
+                        markerDismissed = true
+                    },
                     getFrom = { from }
                 )
 
@@ -152,7 +157,10 @@ fun ChartViewPrototype(
                         }
 
                         override fun onSingleTapConfirmed(e: MotionEvent): Boolean {
-                            chartTapped = true
+                            if (!markerDismissed) {
+                                chartTapped = true
+                            }
+                            markerDismissed = false
                             return super.onSingleTapConfirmed(e)
                         }
 
@@ -163,7 +171,8 @@ fun ChartViewPrototype(
 
                             chart.getHighlightByTouchPoint(e.x, e.y)?.let { h ->
                                 chart.highlightValue(h, false)
-                                sharedX.value = h.x                            }
+                                sharedX.value = h.x
+                            }
                         }
                     }
                 )
