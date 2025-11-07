@@ -17,7 +17,6 @@ sealed class UnitType(
 
     fun getCode(): String = "${measurementCode}_$unitCode"
 
-
     sealed class TemperatureUnit(
         code: String,
         unitTitle: Int,
@@ -249,7 +248,7 @@ sealed class UnitType(
         data object GForceX: Acceleration(
             code = ACCELERATION_UNIT_GX,
             title = R.string.acceleration_x,
-            unit = R.string.acceleration_unit_x,
+            unit = R.string.acceleration_unit,
             measurementCode = ACCELERATION_MEASUREMENT_CODE,
             measurementTitle = R.string.acceleration_x,
             measurementName = R.string.acc_x,
@@ -258,7 +257,7 @@ sealed class UnitType(
         data object GForceY: Acceleration(
             code = ACCELERATION_UNIT_GY,
             title = R.string.acceleration_y,
-            unit = R.string.acceleration_unit_y,
+            unit = R.string.acceleration_unit,
             measurementCode = ACCELERATION_MEASUREMENT_CODE,
             measurementTitle = R.string.acceleration_y,
             measurementName = R.string.acc_y,
@@ -267,7 +266,7 @@ sealed class UnitType(
         data object GForceZ: Acceleration(
             code = ACCELERATION_UNIT_GZ,
             title = R.string.acceleration_z,
-            unit = R.string.acceleration_unit_z,
+            unit = R.string.acceleration_unit,
             measurementCode = ACCELERATION_MEASUREMENT_CODE,
             measurementTitle = R.string.acceleration_z,
             measurementName = R.string.acc_z,

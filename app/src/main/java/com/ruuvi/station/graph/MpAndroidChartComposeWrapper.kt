@@ -79,30 +79,7 @@ fun ChartViewPrototype(
     val context = LocalContext.current
     Timber.d("ChartView - ChartViewPrototype")
 
-
-    val unitString = stringResource(unitType.unit)
-
-    val title = when (unitType) {
-        is UnitType.TemperatureUnit -> stringResource(id = R.string.temperature_with_unit, unitString)
-        is UnitType.HumidityUnit -> stringResource(id = R.string.humidity_with_unit, unitString)
-        is UnitType.PressureUnit -> stringResource(id = R.string.pressure_with_unit, unitString)
-        is UnitType.BatteryVoltageUnit -> stringResource(id = R.string.battery_voltage) + " ($unitString)"
-        is UnitType.Acceleration -> stringResource(unitType.measurementTitle) + " ($unitString)"
-        is UnitType.SignalStrengthUnit -> stringResource(id = R.string.signal_strength_rssi)
-        is UnitType.CO2 -> stringResource(id = R.string.co2_with_unit, unitString)
-        is UnitType.VOC -> stringResource(id = R.string.voc_index)
-        is UnitType.NOX -> stringResource(id = R.string.nox_index)
-        is UnitType.PM.PM10 -> stringResource(id = R.string.pm10_with_unit, unitString)
-        is UnitType.PM.PM25 -> stringResource(id = R.string.pm25_with_unit, unitString)
-        is UnitType.PM.PM40 -> stringResource(id = R.string.pm40_with_unit, unitString)
-        is UnitType.PM.PM100 -> stringResource(id = R.string.pm100_with_unit, unitString)
-        is UnitType.Luminosity -> stringResource(id = R.string.luminosity_with_unit, unitString)
-        is UnitType.SoundAvg -> stringResource(id = R.string.sound_average_with_unit, unitString)
-        is UnitType.SoundPeak -> stringResource(id = R.string.sound_peak_with_unit, unitString)
-        is UnitType.AirQuality -> stringResource(id = R.string.aqi)
-        else -> ""
-    }
-
+    val title = unitsConverter.getTitleForUnitType(unitType)
     val offset = RuuviStationTheme.dimensions.extended
     val description = getPrototypeChartDescription(
         context,

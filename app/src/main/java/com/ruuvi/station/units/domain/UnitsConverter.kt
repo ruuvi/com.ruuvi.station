@@ -15,9 +15,15 @@ class UnitsConverter (
         private val preferences: PreferencesRepository
 ) {
     fun getTitleForUnitType(unitType: UnitType): String {
-        val measurementTitle = context.getString(unitType.measurementTitle)
-        val unitTitle = context.getString(unitType.unitTitle)
-        return "$measurementTitle: $unitTitle"
+        val unit = if (unitType is UnitType.HumidityUnit.DewPoint) {
+            context.getString(getTemperatureUnit().unit)
+        } else {
+            context.getString(unitType.unit)
+        }
+
+        val unitString = if (unit.isNotEmpty()) " ($unit)" else ""
+        val name = context.getString(unitType.measurementName)
+        return name + unitString
     }
 
     // AQI
