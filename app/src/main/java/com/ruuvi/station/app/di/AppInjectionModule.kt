@@ -38,7 +38,7 @@ object AppInjectionModule {
         ) }
 
         bind<VisibleMeasurementsMigrationInteractor>() with singleton {
-            VisibleMeasurementsMigrationInteractor(instance(), instance(), instance(), instance(), instance())
+            VisibleMeasurementsMigrationInteractor(instance(), instance(), instance(),instance(), instance(), instance())
         }
     }
 }
