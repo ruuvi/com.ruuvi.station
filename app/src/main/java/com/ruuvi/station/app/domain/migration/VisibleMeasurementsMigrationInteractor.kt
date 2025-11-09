@@ -39,17 +39,14 @@ class VisibleMeasurementsMigrationInteractor(
 
             val alarms = alarmRepository.getActiveAlarms()
             for (alarm in alarms) {
+                val ruuviTag = tagRepository.getFavoriteSensorById(alarm.ruuviTagId)
                 when (alarm.type) {
                     AlarmType.RSSI.value -> {
-                        val ruuviTag = tagRepository.getFavoriteSensorById(alarm.ruuviTagId)
-                        ruuviTag?.let {
-                            Timber.d("migration for ${ruuviTag.id} ${ruuviTag.displayName}")
-                            if (ruuviTag.defaultDisplayOrder) {
-                                tagSettingsInteractor.setUseDefaultSensorsOrder(
-                                    alarm.ruuviTagId,
-                                    false
-                                )
-                            }
+                        if (ruuviTag?.defaultDisplayOrder == true) {
+                            tagSettingsInteractor.setUseDefaultSensorsOrder(
+                                alarm.ruuviTagId,
+                                false
+                            )
                             val displayOrder = visibleMeasurementsOrderInteractor
                                 .getDefaultDisplayOrder(ruuviTag)
                                 .map { it.getCode() }
@@ -63,9 +60,11 @@ class VisibleMeasurementsMigrationInteractor(
                     }
 
                     AlarmType.PM10.value, AlarmType.PM40.value, AlarmType.PM100.value -> {
-                        alarmRepository.disableAlarm(alarm)
-                        val flow = networkInteractor.setAlert(alarm)
-                        flow?.launchIn(CoroutineScope(Dispatchers.IO))
+                        if (ruuviTag?.defaultDisplayOrder == true) {
+                            alarmRepository.disableAlarm(alarm)
+                            val flow = networkInteractor.setAlert(alarm)
+                            flow?.launchIn(CoroutineScope(Dispatchers.IO))
+                        }
                     }
                 }
             }
