@@ -198,7 +198,6 @@ fun VisibleMeasurements(
                     itemIsDragged = false,
                     setName = {_,_ ->},
                     moveItem = {_,_,_ ->},
-                    showMeasurementTitle = true,
                     interactionEnabled = false
                 )
             } else {

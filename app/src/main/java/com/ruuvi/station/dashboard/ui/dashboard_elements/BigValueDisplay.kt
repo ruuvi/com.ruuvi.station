@@ -91,7 +91,7 @@ fun BigValueExtDisplay(
 
         Text(
             style = RuuviStationTheme.typography.dashboardBigValueUnit,
-            fontSize = RuuviStationTheme.fontSizes.compact.limitScaleTo(1.2f),
+            fontSize = RuuviStationTheme.fontSizes.compact.limitScaleTo(1.1f),
             text = value.unitString,
             modifier = Modifier
                 .constrainAs(superscript) {
@@ -103,7 +103,7 @@ fun BigValueExtDisplay(
         if (showTitle) {
             Text(
                 style = RuuviStationTheme.typography.dashboardValueTitle,
-                fontSize = RuuviStationTheme.fontSizes.petite.limitScaleTo(1.2f),
+                fontSize = RuuviStationTheme.fontSizes.petite.limitScaleTo(1.1f),
                 text = stringResource(value.unitType.measurementName),
                 modifier = Modifier.constrainAs(subscript) {
                     start.linkTo(bigValue.end, 4.dp)
