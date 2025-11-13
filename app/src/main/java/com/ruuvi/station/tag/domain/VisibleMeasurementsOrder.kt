@@ -34,7 +34,8 @@ class VisibleMeasurementsOrderInteractor(
         return getDefaultDisplayOrder(
             isAir = ruuviTag.isAir(),
             humidityExist = ruuviTag.latestMeasurement?.humidity != null,
-            pressureExist = ruuviTag.latestMeasurement?.pressure != null
+            pressureExist = ruuviTag.latestMeasurement?.pressure != null,
+            lightExist = ruuviTag.latestMeasurement?.luminosity != null
         )
     }
 
@@ -42,14 +43,16 @@ class VisibleMeasurementsOrderInteractor(
         return getDefaultDisplayOrder(
             isAir = dataFormatIsAir(entity.dataFormat),
             humidityExist = entity.humidity != null,
-            pressureExist = entity.pressure != null
+            pressureExist = entity.pressure != null,
+            lightExist = entity.luminosity != null
         )
     }
 
     fun getDefaultDisplayOrder(
         isAir: Boolean,
         humidityExist: Boolean,
-        pressureExist: Boolean
+        pressureExist: Boolean,
+        lightExist: Boolean
     ): List<UnitType> {
         val displayOrder = mutableListOf<UnitType>()
 
@@ -66,7 +69,9 @@ class VisibleMeasurementsOrderInteractor(
             if (pressureExist) {
                 displayOrder.add(preferencesRepository.getPressureUnit())
             }
-            displayOrder.add(Luminosity.Lux)
+            if (lightExist) {
+                displayOrder.add(Luminosity.Lux)
+            }
         } else {
             displayOrder.add(preferencesRepository.getTemperatureUnit())
             if (humidityExist) {
