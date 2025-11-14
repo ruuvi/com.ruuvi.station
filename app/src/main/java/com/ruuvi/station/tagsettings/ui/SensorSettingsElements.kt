@@ -79,14 +79,17 @@ fun SensorSettings(
             setName = viewModel::setName
         )
 
-        DividerRuuvi()
-        TextEditWithCaptionButton(
-            title = stringResource(R.string.visible_measurements),
-            value = viewModel.getVisibleMeasurementsCount().asString(context),
-            icon = painterResource(id = R.drawable.arrow_forward_16),
-            tint = RuuviStationTheme.colors.trackInactive
-        ) {
-            onNavigate.invoke(SensorSettingsRoutes.VISIBLE_MEASUREMENTS)
+        if (sensorOwnedOrOffline) {
+            DividerRuuvi()
+
+            TextEditWithCaptionButton(
+                title = stringResource(R.string.visible_measurements),
+                value = viewModel.getVisibleMeasurementsCount().asString(context),
+                icon = painterResource(id = R.drawable.arrow_forward_16),
+                tint = RuuviStationTheme.colors.trackInactive
+            ) {
+                onNavigate.invoke(SensorSettingsRoutes.VISIBLE_MEASUREMENTS)
+            }
         }
         AlarmsGroup(
             scaffoldState,

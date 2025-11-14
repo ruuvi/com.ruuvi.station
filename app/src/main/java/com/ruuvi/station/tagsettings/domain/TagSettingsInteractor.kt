@@ -72,10 +72,6 @@ class TagSettingsInteractor(
 
     fun setSensorFirmware(sensorId: String, firmware: String) = sensorSettingsRepository.setSensorFirmware(sensorId, firmware)
 
-    fun checkSensorOwner(sensorId: String) {
-        networkInteractor.checkSensorOwner(sensorId)
-    }
-
     fun setBackgroundImage(
         sensorId: String,
         userBackground: String,

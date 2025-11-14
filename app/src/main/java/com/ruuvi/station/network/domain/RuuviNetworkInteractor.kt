@@ -125,22 +125,6 @@ class RuuviNetworkInteractor (
         }
     }
 
-    fun checkSensorOwner(sensorId: String) {
-        val token = getToken()?.token
-        token?.let {
-            CoroutineScope(Dispatchers.IO).launch() {
-                val response = networkRepository.checkSensorOwner(sensorId, token)
-                if (response?.isSuccess() == true && response.data?.email?.isNotEmpty() == true) {
-                    sensorSettingsRepository.setSensorOwner(
-                        sensorId,
-                        response.data.email,
-                        false
-                    )
-                }
-            }
-        }
-    }
-
     suspend fun getSensorOwner(sensorId: String, onResult: (CheckSensorResponse?) -> Unit) {
         val token = getToken()?.token
         token?.let {
@@ -150,7 +134,7 @@ class RuuviNetworkInteractor (
                     sensorSettingsRepository.setSensorOwner(
                         sensorId,
                         response.data.email,
-                        false
+                        null
                     )
                 }
                 onResult(response)

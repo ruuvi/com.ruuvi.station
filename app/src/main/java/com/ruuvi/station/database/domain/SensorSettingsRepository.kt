@@ -106,10 +106,10 @@ class SensorSettingsRepository {
             .execute()
     }
 
-    fun setSensorOwner(sensorId: String, owner: String?, isNetworkSensor: Boolean) {
+    fun setSensorOwner(sensorId: String, owner: String?, isNetworkSensor: Boolean?) {
         val settings = getSensorSettingsOrCreate(sensorId)
         settings.owner = owner
-        settings.networkSensor = isNetworkSensor
+        settings.networkSensor = isNetworkSensor ?: settings.networkSensor
         if (owner == null) {
             settings.subscriptionName = null
         }
