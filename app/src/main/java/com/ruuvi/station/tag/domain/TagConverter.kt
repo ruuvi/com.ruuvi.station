@@ -105,7 +105,7 @@ class TagConverter(
         val possibleOptions = visibleMeasurementsOrderInteractor.getPossibleDisplayOptions(entity)
 
         val possibleOptionsFiltered = possibleOptions
-            .filter { it !in  displayOrder }
+            .filter { it !in displayOrder }
             .filterNotNull()
 
         Timber.d("DISPLAY ORDER CHECK possible = $possibleOptions display = $displayOrder filtered = $possibleOptionsFiltered")
@@ -217,6 +217,11 @@ class TagConverter(
                 PM.PM100 -> {
                     entity.pm10?.let {
                         valuesToDisplay.add(unitsConverter.getPmEnvironmentValue(it, PM.PM100))
+                    }
+                }
+                MsnUnit.MsnCount -> {
+                    entity.measurementSequenceNumber?.let {
+                        valuesToDisplay.add(unitsConverter.getMsnValue(it))
                     }
                 }
                 else -> {}

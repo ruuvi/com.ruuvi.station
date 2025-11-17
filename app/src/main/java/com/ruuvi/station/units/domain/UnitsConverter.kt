@@ -498,6 +498,19 @@ class UnitsConverter (
             unitType = unitType
         )
 
+    fun getMsnValue(
+        value: Int
+    ): EnvironmentValue =
+        EnvironmentValue (
+            original = value.toDouble(),
+            value = value.toDouble(),
+            accuracy = Accuracy.Accuracy0,
+            valueWithUnit =context.getString(Accuracy.Accuracy0.nameTemplateId, value.toDouble(), "").trim(),
+            valueWithoutUnit = context.getString(Accuracy.Accuracy0.nameTemplateId, value.toDouble(), "").trim(),
+            unitString = "",
+            unitType = MsnUnit.MsnCount
+        )
+
     companion object {
         const val NO_VALUE_AVAILABLE = "-"
     }

@@ -157,6 +157,7 @@ class VisibleMeasurementsOrderInteractor(
             displayOptions.add(PM.PM25)
             displayOptions.add(PM.PM40)
             displayOptions.add(PM.PM100)
+            displayOptions.add(UnitType.MsnUnit.MsnCount)
         } else {
             displayOptions.add(TemperatureUnit.Celsius)
             displayOptions.add(TemperatureUnit.Fahrenheit)
@@ -178,6 +179,7 @@ class VisibleMeasurementsOrderInteractor(
             displayOptions.add(Acceleration.GForceX)
             displayOptions.add(Acceleration.GForceY)
             displayOptions.add(Acceleration.GForceZ)
+            displayOptions.add(UnitType.MsnUnit.MsnCount)
         }
         Timber.d("getPossibleDisplayOptions = $displayOptions")
 

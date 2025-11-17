@@ -117,7 +117,7 @@ fun ValueSheetContent(
     ) {
         ValueSheetHeader(sheetValue)
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
-        if (sheetValue.unitType != UnitType.MovementUnit.MovementsCount) {
+        if (sheetValue.unitType != UnitType.MovementUnit.MovementsCount && sheetValue.unitType != UnitType.MsnUnit.MsnCount) {
             if (chartHistory != null && chartHistory.segments.isNotEmpty()) {
                 VicoChartNoInteraction(
                     chartHistory = chartHistory,
