@@ -243,7 +243,10 @@ class VisibleMeasurementsViewModel(
     private fun shouldConfirmUseDefault(useDefault: Boolean): List<UnitType> {
         val displayOrder = sensorSettingsRepository.getSensorSettings(sensorId)?.displayOrder
         val default = visibleMeasurementsOrderInteractor.getDefaultDisplayOrder(_sensorState.value)
-        val custom = visibleMeasurementsOrderInteractor.getUserDefinedOrder(displayOrder)
+        val custom = visibleMeasurementsOrderInteractor.getUserDefinedOrder(
+            displayOrder = displayOrder,
+            defaultOrder = default
+        )
         val confirmList = mutableListOf<UnitType>()
         val (difference, testAgainst) = if (useDefault) {
             custom - default to default

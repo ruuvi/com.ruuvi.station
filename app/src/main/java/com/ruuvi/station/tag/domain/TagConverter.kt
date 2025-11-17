@@ -90,10 +90,13 @@ class TagConverter(
 
         val defaultDisplayOrder = visibleMeasurementsOrderInteractor.getDefaultDisplayOrder(entity)
 
-        val userDefinedDisplayOrder = visibleMeasurementsOrderInteractor.getUserDefinedOrder(entity.displayOrder)
+        val userDefinedDisplayOrder = visibleMeasurementsOrderInteractor.getUserDefinedOrder(
+            displayOrder = entity.displayOrder,
+            defaultOrder = defaultDisplayOrder
+        )
 
         val displayOrder =
-            if (entity.defaultDisplayOrder || userDefinedDisplayOrder.isEmpty()) {
+            if (entity.defaultDisplayOrder) {
                 defaultDisplayOrder
             } else {
                 userDefinedDisplayOrder

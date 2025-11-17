@@ -85,8 +85,12 @@ class VisibleMeasurementsOrderInteractor(
         return displayOrder
     }
 
-    fun getUserDefinedOrder(displayOrder: String?): List<UnitType> {
-        return UnitType.getListOfUnits(displayOrder?.loadList() ?: emptyList())
+    fun getUserDefinedOrder(
+        displayOrder: String?,
+        defaultOrder: List<UnitType>
+    ): List<UnitType> {
+        val userOrder =  UnitType.getListOfUnits(displayOrder?.loadList() ?: emptyList())
+        return userOrder.ifEmpty { defaultOrder }
     }
 
 
