@@ -76,7 +76,7 @@ fun BigValueDisplay(
         if (showName) {
             SensorUnitName(
                 icon = value.unitType.iconRes,
-                name = stringResource(value.unitType.measurementTitle),
+                name = stringResource(value.unitType.measurementName),
                 itemHeight = RuuviStationTheme.dimensions.sensorCardValueItemHeight.scaleUpTo(1.5f),
                 alertActive = alertActive,
                 modifier = Modifier.padding(horizontal = RuuviStationTheme.dimensions.extended)
