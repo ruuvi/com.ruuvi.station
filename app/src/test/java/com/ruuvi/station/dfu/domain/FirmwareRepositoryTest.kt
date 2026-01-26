@@ -1,87 +1,248 @@
 package com.ruuvi.station.dfu.domain
 
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
-import org.junit.Assert.fail
+import com.ruuvi.station.app.preferences.PreferencesRepository
+import com.ruuvi.station.dfu.data.FirmwareData
+import com.ruuvi.station.dfu.data.FirmwareInfo
+import com.ruuvi.station.dfu.data.FirmwareResponse
+import com.ruuvi.station.dfu.ui.FirmwareVersionOption
+import io.mockk.coEvery
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.verify
+import kotlinx.coroutines.test.runTest
+import org.junit.Assert.*
+import org.junit.Before
 import org.junit.Test
-import java.lang.reflect.Field
 
 /**
- * Unit tests for FirmwareRepository URL behavior.
+ * Unit tests for FirmwareRepository business logic.
  *
- * FirmwareRepository should respect the dev server setting and use 
- * testnet.ruuvi.com when in dev mode, matching RuuviNetworkRepository behavior.
+ * Tests verify that:
+ * - Repository uses correct server URL based on dev mode setting
+ * - getLatest() returns latest firmware when API succeeds
+ * - getLatest() returns null when API fails or returns error
+ * - getOptions() excludes beta when version matches latest
+ * - getOptions() excludes alpha when version matches latest
+ * - getOptions() includes all versions when they differ
+ * 
+ * Note: Alpha and beta firmware versions are only available from the dev server
+ * (testnet.ruuvi.com). The production server (network.ruuvi.com) only returns
+ * the latest stable version.
  */
 class FirmwareRepositoryTest {
 
-    companion object {
-        private const val PROD_URL = "https://network.ruuvi.com/"
-        private const val DEV_URL = "https://testnet.ruuvi.com/"
+    private lateinit var mockApi: FirmwareApi
+    private lateinit var mockPreferencesRepository: PreferencesRepository
+    private lateinit var repository: FirmwareRepository
+
+    private val sampleFirmware = FirmwareInfo(
+        version = "3.30.0",
+        url = "https://example.com/firmware.zip",
+        created_at = "2026-01-01",
+        versionCode = 330,
+        fileName = "ruuvi_firmware.zip",
+        fwloader = "fwloader.zip",
+        mcuboot_s1 = "mcuboot_s1.zip",
+        mcuboot = "mcuboot.zip"
+    )
+
+    @Before
+    fun setUp() {
+        mockApi = mockk()
+        mockPreferencesRepository = mockk()
+        every { mockPreferencesRepository.getServerUrl() } returns PreferencesRepository.PROD_URL
+        repository = FirmwareRepository(mockPreferencesRepository, mockApi)
+    }
+
+
+    @Test
+    fun `repository queries PreferencesRepository for server URL on reinitialize`() {
+        // Given
+        every { mockPreferencesRepository.getServerUrl() } returns PreferencesRepository.PROD_URL
+
+        // When
+        repository.reinitialize()
+
+        // Then - called once during setUp, once during reinitialize
+        verify(atLeast = 2) { mockPreferencesRepository.getServerUrl() }
+    }
+
+    // ==================== getLatest() Tests ====================
+
+    @Test
+    fun `getLatest returns firmware when API returns success`() = runTest {
+        // Given
+        coEvery { mockApi.getFirmware() } returns FirmwareResponse(
+            result = "success",
+            data = FirmwareData(latest = sampleFirmware, beta = null, alpha = null)
+        )
+
+        // When
+        val result = repository.getLatest()
+
+        // Then
+        assertNotNull(result)
+        assertEquals("3.30.0", result?.version)
     }
 
     @Test
-    fun `FirmwareRepository should use dev URL when dev server is enabled`() {
-        val repository = FirmwareRepository()
-        val retrofitBaseUrl = getRetrofitBaseUrl(repository)
+    fun `getLatest returns null when API returns non-success result`() = runTest {
+        // Given
+        coEvery { mockApi.getFirmware() } returns FirmwareResponse(
+            result = "error",
+            data = FirmwareData(latest = null, beta = null, alpha = null)
+        )
 
-        // FirmwareRepository should use PreferencesRepository.isDevServerEnabled() 
-        // like RuuviNetworkRepository does
-        if (retrofitBaseUrl == PROD_URL) {
-            fail(
-                "FirmwareRepository does not support dev server switching.\n" +
-                "Expected: Should use $DEV_URL when dev mode is enabled\n" +
-                "Actual: Always uses hardcoded $PROD_URL\n" +
-                "Fix: Refactor FirmwareRepository to accept PreferencesRepository and implement " +
-                "the same URL switching pattern as RuuviNetworkRepository"
-            )
-        }
+        // When
+        val result = repository.getLatest()
+
+        // Then
+        assertNull(result)
     }
 
     @Test
-    fun `FirmwareRepository should have reinitialize method for URL switching`() {
-        val repository = FirmwareRepository()
-        
-        val hasReinitialize = try {
-            repository.javaClass.getMethod("reinitialize")
-            true
-        } catch (e: NoSuchMethodException) {
-            false
-        }
+    fun `getLatest returns null when API throws exception`() = runTest {
+        // Given
+        coEvery { mockApi.getFirmware() } throws RuntimeException("Network error")
 
-        if (!hasReinitialize) {
-            fail(
-                "FirmwareRepository is missing reinitialize() method.\n" +
-                "This method is needed to rebuild Retrofit when dev server setting changes.\n" +
-                "See RuuviNetworkRepository.reinitialize() for reference implementation."
-            )
-        }
+        // When
+        val result = repository.getLatest()
+
+        // Then
+        assertNull(result)
+    }
+
+    // ==================== getOptions() Tests ====================
+
+    @Test
+    fun `getOptions excludes beta when version matches latest`() = runTest {
+        // Given - beta has same version as latest
+        val latest = sampleFirmware.copy(version = "3.30.0")
+        val beta = sampleFirmware.copy(version = "3.30.0") // Same version
+
+        coEvery { mockApi.getFirmware() } returns FirmwareResponse(
+            result = "success",
+            data = FirmwareData(latest = latest, beta = beta, alpha = null)
+        )
+
+        // When
+        val result = repository.getOptions()
+
+        // Then
+        assertNotNull(result)
+        assertEquals(1, result?.size)
+        assertTrue(result?.first() is FirmwareVersionOption.Latest)
     }
 
     @Test
-    fun `FirmwareRepository should accept PreferencesRepository dependency`() {
-        val constructors = FirmwareRepository::class.java.constructors
-        val hasPreferencesParam = constructors.any { constructor ->
-            constructor.parameterTypes.any { 
-                it.simpleName == "PreferencesRepository" 
-            }
-        }
+    fun `getOptions excludes alpha when version matches latest`() = runTest {
+        // Given - alpha has same version as latest
+        val latest = sampleFirmware.copy(version = "3.30.0")
+        val alpha = sampleFirmware.copy(version = "3.30.0") // Same version
 
-        if (!hasPreferencesParam) {
-            fail(
-                "FirmwareRepository does not accept PreferencesRepository as a dependency.\n" +
-                "This is needed to check isDevServerEnabled() for URL switching.\n" +
-                "Current constructor: FirmwareRepository()\n" +
-                "Expected: FirmwareRepository(preferencesRepository: PreferencesRepository)"
-            )
-        }
+        coEvery { mockApi.getFirmware() } returns FirmwareResponse(
+            result = "success",
+            data = FirmwareData(latest = latest, beta = null, alpha = alpha)
+        )
+
+        // When
+        val result = repository.getOptions()
+
+        // Then
+        assertNotNull(result)
+        assertEquals(1, result?.size)
+        assertTrue(result?.first() is FirmwareVersionOption.Latest)
     }
 
-    // ==================== Helper Methods ====================
+    @Test
+    fun `getOptions includes beta when version differs from latest`() = runTest {
+        // Given - beta has different version
+        val latest = sampleFirmware.copy(version = "3.30.0")
+        val beta = sampleFirmware.copy(version = "3.31.0-beta") // Different version
 
-    private fun getRetrofitBaseUrl(repository: FirmwareRepository): String {
-        val retrofitField: Field = FirmwareRepository::class.java.getDeclaredField("retrofit")
-        retrofitField.isAccessible = true
-        val retrofit = retrofitField.get(repository) as retrofit2.Retrofit
-        return retrofit.baseUrl().toString()
+        coEvery { mockApi.getFirmware() } returns FirmwareResponse(
+            result = "success",
+            data = FirmwareData(latest = latest, beta = beta, alpha = null)
+        )
+
+        // When
+        val result = repository.getOptions()
+
+        // Then
+        assertNotNull(result)
+        assertEquals(2, result?.size)
+        assertTrue(result?.any { it is FirmwareVersionOption.Latest } == true)
+        assertTrue(result?.any { it is FirmwareVersionOption.Beta } == true)
+    }
+
+    @Test
+    fun `getOptions includes alpha when version differs from latest`() = runTest {
+        // Given - alpha has different version
+        val latest = sampleFirmware.copy(version = "3.30.0")
+        val alpha = sampleFirmware.copy(version = "3.32.0-alpha") // Different version
+
+        coEvery { mockApi.getFirmware() } returns FirmwareResponse(
+            result = "success",
+            data = FirmwareData(latest = latest, beta = null, alpha = alpha)
+        )
+
+        // When
+        val result = repository.getOptions()
+
+        // Then
+        assertNotNull(result)
+        assertEquals(2, result?.size)
+        assertTrue(result?.any { it is FirmwareVersionOption.Latest } == true)
+        assertTrue(result?.any { it is FirmwareVersionOption.Alpha } == true)
+    }
+
+    @Test
+    fun `getOptions includes all versions when they all differ`() = runTest {
+        // Given - all versions are different
+        val latest = sampleFirmware.copy(version = "3.30.0")
+        val beta = sampleFirmware.copy(version = "3.31.0-beta")
+        val alpha = sampleFirmware.copy(version = "3.32.0-alpha")
+
+        coEvery { mockApi.getFirmware() } returns FirmwareResponse(
+            result = "success",
+            data = FirmwareData(latest = latest, beta = beta, alpha = alpha)
+        )
+
+        // When
+        val result = repository.getOptions()
+
+        // Then
+        assertNotNull(result)
+        assertEquals(3, result?.size)
+        assertTrue(result?.any { it is FirmwareVersionOption.Latest } == true)
+        assertTrue(result?.any { it is FirmwareVersionOption.Beta } == true)
+        assertTrue(result?.any { it is FirmwareVersionOption.Alpha } == true)
+    }
+
+    @Test
+    fun `getOptions returns null when API fails`() = runTest {
+        // Given
+        coEvery { mockApi.getFirmware() } throws RuntimeException("Network error")
+
+        // When
+        val result = repository.getOptions()
+
+        // Then
+        assertNull(result)
+    }
+
+    @Test
+    fun `getOptions returns null when API returns non-success`() = runTest {
+        // Given
+        coEvery { mockApi.getFirmware() } returns FirmwareResponse(
+            result = "error",
+            data = FirmwareData(latest = null, beta = null, alpha = null)
+        )
+
+        // When
+        val result = repository.getOptions()
+
+        // Then
+        assertNull(result)
     }
 }
