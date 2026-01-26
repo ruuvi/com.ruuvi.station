@@ -28,6 +28,10 @@ Thumbs.db
 # Android Studio
 *.iml
 .idea
+
+# VS Code
+.vscode/
+
 #.idea/workspace.xml - remove # and delete .idea if it better suit your needs.
 .gradle
 build/
