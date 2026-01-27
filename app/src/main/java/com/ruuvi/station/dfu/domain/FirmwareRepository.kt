@@ -20,11 +20,8 @@ class FirmwareRepository
         buildRetrofit(preferencesRepository).create(FirmwareApi::class.java)
     )
 
-    private var retrofit = buildRetrofit(preferencesRepository)
-
     fun reinitialize() {
-        retrofit = buildRetrofit(preferencesRepository)
-        api = retrofit.create(FirmwareApi::class.java)
+        api = buildRetrofit(preferencesRepository).create(FirmwareApi::class.java)
     }
 
     suspend fun getLatest(): FirmwareInfo? {

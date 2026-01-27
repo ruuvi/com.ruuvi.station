@@ -60,11 +60,14 @@ class FirmwareRepositoryTest {
         // Given
         every { mockPreferencesRepository.getServerUrl() } returns PreferencesRepository.PROD_URL
 
+        // Then - not called during setUp (test constructor uses mock api directly)
+        verify(exactly = 0) { mockPreferencesRepository.getServerUrl() }
+
         // When
         repository.reinitialize()
 
-        // Then - called once during setUp, once during reinitialize
-        verify(atLeast = 2) { mockPreferencesRepository.getServerUrl() }
+        // Then - called once during reinitialize
+        verify(exactly = 1) { mockPreferencesRepository.getServerUrl() }
     }
 
     // ==================== getLatest() Tests ====================
