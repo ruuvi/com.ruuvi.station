@@ -3,6 +3,7 @@ package com.ruuvi.station.settings.ui
 import androidx.lifecycle.ViewModel
 import com.google.gson.Gson
 import com.ruuvi.station.app.preferences.PreferencesRepository
+import com.ruuvi.station.dfu.domain.FirmwareRepository
 import com.ruuvi.station.feature.data.Feature
 import com.ruuvi.station.feature.provider.RuntimeFeatureFlagProvider
 import com.ruuvi.station.network.data.response.UserVerifyResponseBody
@@ -15,7 +16,8 @@ class DeveloperSettingsViewModel(
     val preferencesRepository: PreferencesRepository,
     val ruuviNetworkRepository: RuuviNetworkRepository,
     private val networkTokenRepository: NetworkTokenRepository,
-    val runtimeFeatureFlagProvider: RuntimeFeatureFlagProvider
+    val runtimeFeatureFlagProvider: RuntimeFeatureFlagProvider,
+    private val firmwareRepository: FirmwareRepository
 ): ViewModel() {
 
     private var _devServerEnabled = MutableStateFlow(preferencesRepository.isDevServerEnabled())
@@ -25,6 +27,7 @@ class DeveloperSettingsViewModel(
         preferencesRepository.setDevServerEnabled(isEnabled)
         _devServerEnabled.value = preferencesRepository.isDevServerEnabled()
         ruuviNetworkRepository.reinitialize()
+        firmwareRepository.reinitialize()
     }
 
     fun setDevModeEnabled(isEnabled: Boolean) {
