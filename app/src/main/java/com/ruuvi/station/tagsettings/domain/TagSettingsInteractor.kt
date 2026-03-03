@@ -18,6 +18,7 @@ import com.ruuvi.station.units.model.UnitType.*
 import com.ruuvi.station.util.MacAddressUtils
 import timber.log.Timber
 import java.io.File
+import java.util.Date
 
 class TagSettingsInteractor(
     private val tagRepository: TagRepository,
@@ -167,24 +168,28 @@ class TagSettingsInteractor(
 
     fun setUseDefaultSensorsOrder(sensorId: String, useDefault: Boolean) {
         val sensorSettings = getSensorSettings(sensorId)
-        sensorSettingsRepository.updateUseDefaultSensorOrder(sensorId, useDefault)
+        val timestamp = Date().time/1000
+        sensorSettingsRepository.updateUseDefaultSensorOrder(sensorId, useDefault, timestamp)
         if (sensorSettings?.networkSensor == true) {
             networkInteractor.updateSensorSetting(
                 sensorId = sensorId,
                 name = SensorSettings_defaultDisplayOrder,
-                value = useDefault.toString()
+                value = useDefault.toString(),
+                timestamp = timestamp
             )
         }
     }
 
     fun newDisplayOrder(sensorId: String, displayOrder: String) {
         val sensorSettings = getSensorSettings(sensorId)
-        sensorSettingsRepository.newDisplayOrder(sensorId, displayOrder)
+        val timestamp = Date().time/1000
+        sensorSettingsRepository.newDisplayOrder(sensorId, displayOrder, timestamp)
         if (sensorSettings?.networkSensor == true) {
             networkInteractor.updateSensorSetting(
                 sensorId = sensorId,
                 name = SensorSettings_displayOrder,
-                value = displayOrder
+                value = displayOrder,
+                timestamp = timestamp
             )
         }
     }

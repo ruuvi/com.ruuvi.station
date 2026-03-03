@@ -29,7 +29,8 @@ fun DeveloperSettings(
     onNavigate: (String) -> Unit,
     viewModel: DeveloperSettingsViewModel
 ) {
-    val devServerEnabled = viewModel.devServerEnabled.collectAsState()
+    val devServerEnabled by viewModel.devServerEnabled.collectAsState()
+    val useWebShare by viewModel.useWebShare.collectAsState()
 
     PageSurfaceWithPadding {
         Column() {
@@ -44,10 +45,15 @@ fun DeveloperSettings(
 //                checked = viewModel::getFeatureState,
 //                onCheckedChange = viewModel::setFeatureValue
 //            )
+            SwitchIndicatorRuuvi(
+                text = "Use web version of share",
+                checked = useWebShare,
+                onCheckedChange = viewModel::setUseWebShare
+            )
 
             SwitchIndicatorRuuvi(
                 text = stringResource(id = R.string.use_dev_server),
-                checked = devServerEnabled.value,
+                checked = devServerEnabled,
                 onCheckedChange = viewModel::setDevServerEnabled
             )
             Paragraph(text = stringResource(id = R.string.use_dev_server_description))
@@ -83,76 +89,4 @@ fun FeatureSwitch(
                           },
         modifier = modifier
     )
-}
-
-
-
-@Composable
-fun SharingWebView(
-    scaffoldState: ScaffoldState,
-    viewModel: DeveloperSettingsViewModel
-) {
-    val userToken = viewModel.getWebViewToken()
-    val script = "window.localStorage.setItem('user','$userToken')"
-    var webView: WebView? = null
-    PageSurface {
-        Column(modifier = Modifier.fillMaxSize()) {
-            AndroidView(
-                modifier = Modifier.fillMaxSize(),
-                factory = { context ->
-                    WebView(context).apply {
-                        layoutParams = ViewGroup.LayoutParams(
-                            ViewGroup.LayoutParams.MATCH_PARENT,
-                            ViewGroup.LayoutParams.MATCH_PARENT,
-                        )
-                        settings.javaScriptEnabled = true
-                        settings.allowContentAccess = true
-                        settings.allowFileAccess = true
-                        settings.domStorageEnabled = true
-                        settings.databaseEnabled = true
-                        settings.cacheMode = LOAD_DEFAULT
-                        setWebViewClient(object: WebViewClient() {
-                            override fun shouldOverrideUrlLoading(
-                                view: WebView?,
-                                url: String?
-                            ): Boolean {
-                                return false
-                            }
-
-                            override fun shouldOverrideUrlLoading(
-                                view: WebView?,
-                                request: WebResourceRequest?
-                            ): Boolean {
-                                return false
-                            }
-
-                            override fun onPageStarted(
-                                view: WebView?,
-                                url: String?,
-                                favicon: Bitmap?
-                            ) {
-                                super.onPageStarted(view, url, favicon)
-                                evaluateJavascript(script) {
-                                    Timber.d("evaluateJavascript $script RESULT $it")
-                                }
-
-                            }
-
-                            override fun onPageFinished(view: WebView?, url: String?) {
-                                super.onPageFinished(view, url)
-                                evaluateJavascript(script) {
-                                    Timber.d("evaluateJavascript $script RESULT $it")
-                                }
-                            }
-                        })
-
-                        loadUrl("https://devstation.ruuvi.com/shares")
-
-                        webView = this
-                    }
-                }, update = {
-                    webView = it
-                })
-        }
-    }
 }

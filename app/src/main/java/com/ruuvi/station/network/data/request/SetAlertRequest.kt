@@ -20,7 +20,8 @@ data class SetAlertRequest(
                 min = alarm.min,
                 max = alarm.max,
                 enabled = alarm.enabled,
-                description = alarm.customDescription
+                description = alarm.customDescription,
+                timestamp = alarm.lastUpdated
             )
         }
     }

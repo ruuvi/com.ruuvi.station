@@ -18,6 +18,7 @@ data class SensorsDenseInfo (
     val offsetPressure: Double,
     val measurements: List<SensorDataMeasurementResponse>,
     val alerts: List<NetworkAlertItem>,
+    val lastUpdated: Long,
     val subscription: SensorSubscription,
     val settings: SensorSettings?,
     val sharedTo: List<String>,
@@ -33,7 +34,9 @@ data class SensorSubscription(
 
 data class SensorSettings(
     val displayOrder: String?,
-    val defaultDisplayOrder: String?
+    val defaultDisplayOrder: String?,
+    val displayOrder_lastUpdated: Long?,
+    val defaultDisplayOrder_lastUpdated: Long?,
 )
 
 const val SensorSettings_displayOrder = "displayOrder"

@@ -129,6 +129,13 @@ class PreferencesRepository(
         preferences.visibleMeasurements = visibleMeasurements
     }
 
+    fun getUseWebShare(): Boolean =
+        preferences.useWebShare
+
+    fun setUseWebShare(useWebShare: Boolean) {
+        preferences.useWebShare = useWebShare
+    }
+
     fun graphDrawDots(): Boolean = preferences.graphDrawDots
 
     fun setGraphDrawDots(drawDots: Boolean) {

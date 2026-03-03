@@ -129,6 +129,13 @@ class VisibleMeasurementsOrderInteractor(
 
         if (isAir) {
             displayOptions.add(AirQuality.AqiIndex)
+            displayOptions.add(CO2.Ppm)
+            displayOptions.add(PM.PM10)
+            displayOptions.add(PM.PM25)
+            displayOptions.add(PM.PM40)
+            displayOptions.add(PM.PM100)
+            displayOptions.add(VOC.VocIndex)
+            displayOptions.add(NOX.NoxIndex)
             displayOptions.add(TemperatureUnit.Celsius)
             displayOptions.add(TemperatureUnit.Fahrenheit)
             displayOptions.add(TemperatureUnit.Kelvin)
@@ -138,25 +145,18 @@ class VisibleMeasurementsOrderInteractor(
                 displayOptions.add(HumidityUnit.DewPoint)
             }
             if (pressureExist) {
-                displayOptions.add(PressureUnit.Pascal)
                 displayOptions.add(PressureUnit.HectoPascal)
+                displayOptions.add(PressureUnit.Pascal)
                 displayOptions.add(PressureUnit.MmHg)
                 displayOptions.add(PressureUnit.InchHg)
-            }
-            if (luminosityExist) {
-                displayOptions.add(Luminosity.Lux)
             }
             if (soundExist) {
                 displayOptions.add(SoundAvg.SoundDba)
                 displayOptions.add(SoundPeak.SoundDba)
             }
-            displayOptions.add(CO2.Ppm)
-            displayOptions.add(VOC.VocIndex)
-            displayOptions.add(NOX.NoxIndex)
-            displayOptions.add(PM.PM10)
-            displayOptions.add(PM.PM25)
-            displayOptions.add(PM.PM40)
-            displayOptions.add(PM.PM100)
+            if (luminosityExist) {
+                displayOptions.add(Luminosity.Lux)
+            }
             displayOptions.add(SignalStrengthUnit.SignalDbm)
             displayOptions.add(UnitType.MsnUnit.MsnCount)
         } else {
@@ -169,17 +169,17 @@ class VisibleMeasurementsOrderInteractor(
                 displayOptions.add(HumidityUnit.DewPoint)
             }
             if (pressureExist) {
-                displayOptions.add(PressureUnit.Pascal)
                 displayOptions.add(PressureUnit.HectoPascal)
+                displayOptions.add(PressureUnit.Pascal)
                 displayOptions.add(PressureUnit.MmHg)
                 displayOptions.add(PressureUnit.InchHg)
             }
             displayOptions.add(MovementUnit.MovementsCount)
             displayOptions.add(BatteryVoltageUnit.Volt)
-            displayOptions.add(SignalStrengthUnit.SignalDbm)
             displayOptions.add(Acceleration.GForceX)
             displayOptions.add(Acceleration.GForceY)
             displayOptions.add(Acceleration.GForceZ)
+            displayOptions.add(SignalStrengthUnit.SignalDbm)
             displayOptions.add(UnitType.MsnUnit.MsnCount)
         }
         Timber.d("getPossibleDisplayOptions = $displayOptions")

@@ -20,7 +20,8 @@ import java.io.FileWriter
 import java.text.SimpleDateFormat
 import java.util.*
 
-class CsvExporter(
+// to be removed
+class CsvExporter_(
     private val context: Context,
     private val repository: TagRepository,
     private val sensorHistoryRepository: SensorHistoryRepository,

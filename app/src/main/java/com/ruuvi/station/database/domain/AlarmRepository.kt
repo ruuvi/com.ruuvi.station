@@ -78,7 +78,8 @@ class AlarmRepository {
         type: Int,
         enabled: Boolean,
         description: String,
-        mutedTill: Date?
+        mutedTill: Date?,
+        timestamp: Long?
     ): Alarm {
         var alarm = getForSensor(sensorId).firstOrNull { it.type == type }
         if (alarm == null) {
@@ -102,6 +103,7 @@ class AlarmRepository {
         alarm.mutedTill = mutedTill
         alarm.latestTriggered = if (enabled) alarm.latestTriggered else null
         alarm.extended = alarm.extended || extended
+        alarm.lastUpdated = timestamp ?: (Date().time / 1000)
         alarm.save()
         return alarm
     }

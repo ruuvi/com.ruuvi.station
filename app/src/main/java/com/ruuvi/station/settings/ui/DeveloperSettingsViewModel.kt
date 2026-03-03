@@ -21,10 +21,18 @@ class DeveloperSettingsViewModel(
     private var _devServerEnabled = MutableStateFlow(preferencesRepository.isDevServerEnabled())
     val devServerEnabled: StateFlow<Boolean> = _devServerEnabled
 
+    private var _useWebShare = MutableStateFlow(preferencesRepository.getUseWebShare())
+    val useWebShare: StateFlow<Boolean> = _useWebShare
+
     fun setDevServerEnabled(isEnabled: Boolean) {
         preferencesRepository.setDevServerEnabled(isEnabled)
         _devServerEnabled.value = preferencesRepository.isDevServerEnabled()
         ruuviNetworkRepository.reinitialize()
+    }
+
+    fun setUseWebShare(isEnabled: Boolean) {
+        preferencesRepository.setUseWebShare(isEnabled)
+        _useWebShare.value = preferencesRepository.getUseWebShare()
     }
 
     fun setDevModeEnabled(isEnabled: Boolean) {

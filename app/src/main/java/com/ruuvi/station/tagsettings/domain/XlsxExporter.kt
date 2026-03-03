@@ -23,7 +23,8 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-class XlsxExporter (
+// to be removed
+class XlsxExporter_ (
     private val context: Context,
     private val repository: TagRepository,
     private val sensorHistoryRepository: SensorHistoryRepository,

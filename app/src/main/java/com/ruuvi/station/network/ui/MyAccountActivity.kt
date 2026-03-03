@@ -150,12 +150,13 @@ fun MyAccountBody(
                 SubtitleWithPadding(text = stringResource(id = R.string.signed_in_user))
                 ParagraphWithPadding(text = user)
 
-                SwitchIndicatorRuuvi(
-                    text = stringResource(id = R.string.communication_channels),
-                    checked = marketingPermission,
-                    onCheckedChange = setMarketingPermission
-                )
-                Paragraph(text = stringResource(id = R.string.communication_channels_description))
+                // ISSUE 1258 Temporary disabled
+//                SwitchIndicatorRuuvi(
+//                    text = stringResource(id = R.string.communication_channels),
+//                    checked = marketingPermission,
+//                    onCheckedChange = setMarketingPermission
+//                )
+//                Paragraph(text = stringResource(id = R.string.communication_channels_description))
 
                 Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extraBig))
 
