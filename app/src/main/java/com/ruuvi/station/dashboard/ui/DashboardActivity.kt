@@ -37,7 +37,6 @@ import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
@@ -230,9 +229,7 @@ class DashboardActivity : NfcActivity(), KodeinAware {
                                     EmptyDashboard(
                                         signedIn,
                                         signedInOnce
-                                    ) {
-                                        openUrl(getString(R.string.buy_sensors_link))
-                                    }
+                                    )
                                 } else {
                                     Column {
                                         if (!signedIn && signedInOnce && !bannerDisabled) {
@@ -325,8 +322,7 @@ class DashboardActivity : NfcActivity(), KodeinAware {
 @Composable
 fun EmptyDashboard(
     signedIn: Boolean,
-    signedInOnce: Boolean,
-    buySensors: () -> Unit
+    signedInOnce: Boolean
 ) {
     val context = LocalContext.current
 
@@ -385,16 +381,6 @@ fun EmptyDashboard(
             ) {
                 AddTagActivity.start(context)
             }
-            Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extraBig))
-            Text(
-                modifier = Modifier
-                    .padding(horizontal = RuuviStationTheme.dimensions.extended)
-                    .clickable { buySensors.invoke() },
-                style = RuuviStationTheme.typography.title,
-                textAlign = TextAlign.Center,
-                text = stringResource(id = R.string.menu_buy_sensors),
-                textDecoration = TextDecoration.Underline
-            )
         }
     }
 }
