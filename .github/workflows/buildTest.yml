@@ -48,5 +48,26 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
-    - name: Build all artifacts
+    - name: Build release APKs
       run: ./gradlew assembleRelease
+
+    - name: Build release bundle
+      run: ./gradlew bundleRelease
+
+    - name: Upload with-file-logs APK
+      uses: actions/upload-artifact@v4.6.0
+      with:
+        name: withFileLogsTestApk
+        path: app/build/outputs/apk/withFileLogs/release/*.apk
+
+    - name: Upload without-file-logs APK
+      uses: actions/upload-artifact@v4.6.0
+      with:
+        name: withoutFileLogsReleaseApk
+        path: app/build/outputs/apk/withoutFileLogs/release/*.apk
+
+    - name: Upload release bundle
+      uses: actions/upload-artifact@v4.6.0
+      with:
+        name: withoutFileLogsReleaseBundle
+        path: app/build/outputs/bundle/withoutFileLogsRelease/*.aab
