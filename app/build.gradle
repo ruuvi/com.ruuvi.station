@@ -6,45 +6,6 @@ apply plugin: 'com.google.firebase.crashlytics'
 apply plugin: "androidx.navigation.safeargs.kotlin"
 apply plugin: "kotlinx-serialization"
 apply plugin: "org.jetbrains.kotlin.plugin.compose"
-apply plugin: 'jacoco'
-
-jacoco {
-    toolVersion = "0.8.11"
-}
-
-tasks.register('jacocoTestReport', JacocoReport) {
-    dependsOn 'testWithoutFileLogsDebugUnitTest'
-
-    reports {
-        xml.required = true
-        html.required = true
-        xml.outputLocation = layout.buildDirectory.file("reports/jacoco/jacocoTestReport/jacocoTestReport.xml")
-        html.outputLocation = layout.buildDirectory.dir("reports/jacoco/jacocoTestReport/html")
-    }
-
-    def fileFilter = [
-        '**/R.class',
-        '**/R$*.class',
-        '**/BuildConfig.*',
-        '**/Manifest*.*',
-        '**/*Test*.*',
-        'android/**/*.*',
-        '**/databinding/**',
-        '**/di/**',
-        '**/*_Factory.*',
-        '**/*_MembersInjector.*'
-    ]
-
-    def debugTree = fileTree(dir: "${buildDir}/tmp/kotlin-classes/withoutFileLogsDebug", excludes: fileFilter)
-    def mainSrc = "${project.projectDir}/src/main/java"
-
-    sourceDirectories.setFrom(files([mainSrc]))
-    classDirectories.setFrom(files([debugTree]))
-    executionData.setFrom(fileTree(dir: "$buildDir", includes: [
-        "outputs/unit_test_code_coverage/withoutFileLogsDebugUnitTest/testWithoutFileLogsDebugUnitTest.exec",
-        "jacoco/testWithoutFileLogsDebugUnitTest.exec"
-    ]))
-}
 
 android {
 
@@ -75,25 +36,9 @@ android {
     }
 
     buildTypes {
-        debug {
-            testCoverageEnabled true
-        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-        }
-    }
-
-    testOptions {
-        unitTests {
-            includeAndroidResources = true
-            returnDefaultValues = true
-            all {
-                jacoco {
-                    includeNoLocationClasses = true
-                    excludes = ['jdk.internal.*']
-                }
-            }
         }
     }
 
@@ -204,10 +149,7 @@ dependencies {
     implementation "com.github.Raizlabs.DBFlow:dbflow:$dbflow_version"
     implementation "com.github.Raizlabs.DBFlow:dbflow-kotlinextensions:$dbflow_version"
 
-    testImplementation 'junit:junit:4.13.2'
-    testImplementation "io.mockk:mockk:1.12.8"
-    testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3"
-    testImplementation "com.google.truth:truth:1.1.5"
+    testImplementation 'junit:junit:4.13'
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation 'com.jakewharton.timber:timber:4.7.1'
 

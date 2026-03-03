@@ -229,14 +229,6 @@ class PreferencesRepository(
         preferences.useDevServer = isEnabled
     }
 
-    fun getServerUrl(): String =
-        if (isDevServerEnabled()) DEV_URL else PROD_URL
-
-    companion object {
-        const val PROD_URL = "https://network.ruuvi.com/"
-        const val DEV_URL = "https://testnet.ruuvi.com/"
-    }
-
     fun getDarkMode(): DarkModeState = preferences.darkMode
 
     fun updateDarkMode(darkMode: DarkModeState) {

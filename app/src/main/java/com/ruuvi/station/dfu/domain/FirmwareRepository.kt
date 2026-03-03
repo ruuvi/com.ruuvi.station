@@ -1,7 +1,5 @@
 package com.ruuvi.station.dfu.domain
 
-import androidx.annotation.VisibleForTesting
-import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.dfu.data.FirmwareInfo
 import com.ruuvi.station.dfu.ui.FirmwareVersionOption
 import retrofit2.Retrofit
@@ -9,20 +7,13 @@ import retrofit2.converter.gson.GsonConverterFactory
 import timber.log.Timber
 import kotlin.String
 
-class FirmwareRepository
-    @VisibleForTesting internal constructor(
-        private val preferencesRepository: PreferencesRepository,
-        private var api: FirmwareApi
-    )
-{
-    constructor(preferencesRepository: PreferencesRepository) : this(
-        preferencesRepository,
-        buildRetrofit(preferencesRepository).create(FirmwareApi::class.java)
-    )
+class FirmwareRepository {
+    private val retrofit = Retrofit.Builder()
+        .baseUrl("https://network.ruuvi.com/") // base URL
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
 
-    fun reinitialize() {
-        api = buildRetrofit(preferencesRepository).create(FirmwareApi::class.java)
-    }
+    private val api = retrofit.create(FirmwareApi::class.java)
 
     suspend fun getLatest(): FirmwareInfo? {
         try {
@@ -101,13 +92,4 @@ class FirmwareRepository
     }
 
     suspend fun getFile(url: String) = api.getFile(url)
-
-    companion object {
-        private fun buildRetrofit(preferencesRepository: PreferencesRepository): Retrofit {
-            return Retrofit.Builder()
-                .baseUrl(preferencesRepository.getServerUrl())
-                .addConverterFactory(GsonConverterFactory.create())
-                .build()
-        }
-    }
 }

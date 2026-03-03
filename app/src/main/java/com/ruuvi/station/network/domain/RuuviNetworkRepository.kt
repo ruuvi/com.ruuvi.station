@@ -59,7 +59,7 @@ class RuuviNetworkRepository
     }
     private fun buildRetrofit(): Retrofit {
         return Retrofit.Builder()
-            .baseUrl(preferencesRepository.getServerUrl())
+            .baseUrl(if (preferencesRepository.isDevServerEnabled()) DEV_URL else BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .client(client)
             .build()
@@ -473,6 +473,8 @@ class RuuviNetworkRepository
     }
 
     companion object {
+        private const val BASE_URL = "https://network.ruuvi.com/" //production
+        private const val DEV_URL = "https://testnet.ruuvi.com/" //testing
         private const val USER_AGENT = "User-Agent"
         private const val USER_AGENT_TEMPLATE = "Station_Android"
         private const val USER_AGENT_DEBUG = "_Debug"
