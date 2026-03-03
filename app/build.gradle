@@ -150,7 +150,7 @@ dependencies {
     implementation "com.github.Raizlabs.DBFlow:dbflow-kotlinextensions:$dbflow_version"
 
     testImplementation 'junit:junit:4.13'
-    testImplementation "io.mockk:mockk:1.12.8"
+    testImplementation "io.mockk:mockk:1.13.13"
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation 'com.jakewharton.timber:timber:4.7.1'
 
