@@ -75,26 +75,6 @@
         android:layout_height="wrap_content"
         style="@style/Title"/>
 
-        <Button
-            android:id="@+id/buySensorsButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/menu_buy_sensors"
-            android:layout_marginTop="@dimen/button_bottom_padding"
-            android:layout_gravity="center"
-            style="@style/RoundButton" />
-
     </LinearLayout>
-
-    <Button
-        android:id="@+id/buySensorsButton2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/menu_buy_sensors"
-        android:layout_marginBottom="@dimen/button_bottom_padding"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        style="@style/RoundButton" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

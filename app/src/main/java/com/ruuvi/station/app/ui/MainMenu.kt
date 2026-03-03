@@ -93,10 +93,6 @@ fun DashboardMainMenu(
                 R.string.menu_what_to_measure,
                 stringResource(id = R.string.menu_what_to_measure)
             ),
-            MenuItem(
-                R.string.menu_buy_sensors,
-                stringResource(id = R.string.menu_buy_sensors)
-            ),
             if (signedIn) {
                 MenuItem(
                     R.string.my_ruuvi_account,
@@ -116,7 +112,6 @@ fun DashboardMainMenu(
                 R.string.menu_about_help -> AboutActivity.start(context)
                 R.string.menu_send_feedback -> context.sendFeedback()
                 R.string.menu_what_to_measure -> context.openUrl(context.getString(R.string.what_to_measure_link))
-                R.string.menu_buy_sensors -> context.openUrl(context.getString(R.string.buy_sensors_menu_link))
                 R.string.my_ruuvi_account -> MyAccountActivity.start(context)
                 R.string.sign_in -> SignInActivity.start(context)
             }

@@ -39,13 +39,6 @@
                 android:title="@string/menu_what_to_measure" />
         </group>
         <group
-            android:id="@+id/getMoreSensorsGroup"
-            android:checkableBehavior="none">
-            <item
-                android:id="@+id/getMoreSensorsMenuItem"
-                android:title="@string/menu_buy_sensors" />
-        </group>
-        <group
             android:id="@+id/getGatewayGroup"
             android:checkableBehavior="none">
             <item

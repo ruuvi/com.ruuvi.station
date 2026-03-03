@@ -25,7 +25,6 @@ import com.ruuvi.station.databinding.ActivityAddTagBinding
 import com.ruuvi.station.nfc.NfcScanReciever
 import com.ruuvi.station.tagdetails.ui.SensorCardActivity
 import com.ruuvi.station.util.base.NfcActivity
-import com.ruuvi.station.util.extensions.openUrl
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
@@ -92,7 +91,6 @@ class AddTagActivity : NfcActivity(R.layout.activity_add_tag), KodeinAware {
                 tags.clear()
                 tags.addAll(ruuviTags)
                 binding.content.noSensorsLayout.isVisible = tags.isEmpty()
-                binding.content.buySensorsButton2.isVisible = tags.isNotEmpty()
                 adapter.notifyDataSetChanged()
             }
         }
@@ -130,14 +128,6 @@ class AddTagActivity : NfcActivity(R.layout.activity_add_tag), KodeinAware {
             }
             viewModel.makeSensorFavorite(tag)
             TagSettingsActivity.startAfterAddingNewSensor(this, tag.id)
-        }
-
-        binding.content.buySensorsButton.setOnClickListener {
-            openUrl(getString(R.string.buy_sensors_link))
-        }
-
-        binding.content.buySensorsButton2.setOnClickListener {
-            openUrl(getString(R.string.buy_sensors_link))
         }
 
         binding.content.nfcHintTextView.isVisible = viewModel.nfcSupported
