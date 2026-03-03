@@ -32,6 +32,7 @@ class SensorSettingsRepository {
     fun updateSensorName(sensorId: String, sensorName: String?) {
         var settings = getSensorSettingsOrCreate(sensorId)
         settings.name = sensorName
+        settings.lastUpdated = Date().time / 1000
         settings.update()
     }
 
@@ -39,6 +40,7 @@ class SensorSettingsRepository {
         var settings = getSensorSettingsOrCreate(sensorId)
         settings.temperatureOffset = temperatureOffset
         settings.temperatureOffsetDate = Date()
+        settings.lastUpdated = Date().time / 1000
         settings.update()
     }
 
@@ -47,6 +49,7 @@ class SensorSettingsRepository {
         settings?.let {
             it.temperatureOffset = null
             it.temperatureOffsetDate = null
+            settings.lastUpdated = Date().time / 1000
             it.update()
         }
     }
@@ -55,6 +58,7 @@ class SensorSettingsRepository {
         var settings = getSensorSettingsOrCreate(sensorId)
         settings.pressureOffset = offset
         settings.pressureOffsetDate = Date()
+        settings.lastUpdated = Date().time / 1000
         settings.update()
     }
 
@@ -63,6 +67,7 @@ class SensorSettingsRepository {
         settings?.let {
             it.pressureOffset = null
             it.pressureOffsetDate = null
+            it.lastUpdated = Date().time / 1000
             it.update()
         }
     }
@@ -71,6 +76,7 @@ class SensorSettingsRepository {
         val settings = getSensorSettingsOrCreate(sensorId)
         settings.humidityOffset = offset
         settings.humidityOffsetDate = Date()
+        settings.lastUpdated = Date().time / 1000
         settings.update()
     }
 
@@ -79,6 +85,7 @@ class SensorSettingsRepository {
         settings?.let {
             it.humidityOffset = null
             it.humidityOffsetDate = null
+            it.lastUpdated = Date().time / 1000
             it.update()
         }
     }
@@ -154,17 +161,23 @@ class SensorSettingsRepository {
         }
     }
 
-    fun updateUseDefaultSensorOrder(sensorId: String, enabled: Boolean) {
+    fun updateUseDefaultSensorOrder(sensorId: String, enabled: Boolean, timestamp: Long) {
         getSensorSettings(sensorId)?.let { settings ->
-            settings.defaultDisplayOrder = enabled
-            settings.update()
+            if (timestamp > settings.defaultDisplayOrderTimestamp) {
+                settings.defaultDisplayOrder = enabled
+                settings.defaultDisplayOrderTimestamp = timestamp
+                settings.update()
+            }
         }
     }
 
-    fun newDisplayOrder(sensorId: String, displayOrder: String) {
+    fun newDisplayOrder(sensorId: String, displayOrder: String, timestamp: Long) {
         getSensorSettings(sensorId)?.let { settings ->
-            settings.displayOrder = displayOrder
-            settings.update()
+            if (timestamp > settings.displayOrderTimestamp) {
+                settings.displayOrder = displayOrder
+                settings.displayOrderTimestamp = timestamp
+                settings.update()
+            }
         }
     }
 }

@@ -17,6 +17,8 @@ import com.ruuvi.station.bluetooth.model.SyncProgress
 import com.ruuvi.station.database.domain.AlarmRepository
 import com.ruuvi.station.database.domain.SensorHistoryRepository
 import com.ruuvi.station.database.tables.TagSensorReading
+import com.ruuvi.station.export.CsvExporter
+import com.ruuvi.station.export.XlsxExporter
 import com.ruuvi.station.graph.model.ChartContainer
 import com.ruuvi.station.network.domain.NetworkDataSyncInteractor
 import com.ruuvi.station.nfc.domain.NfcResultInteractor
@@ -24,8 +26,6 @@ import com.ruuvi.station.settings.domain.AppSettingsInteractor
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tag.domain.TagInteractor
 import com.ruuvi.station.tagdetails.domain.TagDetailsInteractor
-import com.ruuvi.station.tagsettings.domain.CsvExporter
-import com.ruuvi.station.tagsettings.domain.XlsxExporter
 import com.ruuvi.station.units.domain.UnitsConverter
 import com.ruuvi.station.units.domain.aqi.AQI
 import com.ruuvi.station.units.model.UnitType

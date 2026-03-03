@@ -2,7 +2,13 @@ package com.ruuvi.station.network.ui
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
 import android.os.Bundle
+import android.view.ViewGroup
+import android.webkit.WebResourceRequest
+import android.webkit.WebSettings.LOAD_DEFAULT
+import android.webkit.WebView
+import android.webkit.WebViewClient
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.Arrangement
@@ -43,12 +49,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.view.WindowCompat
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.ruuvi.station.R
 import com.ruuvi.station.app.ui.RuuviTopAppBar
 import com.ruuvi.station.app.ui.UiEvent
 import com.ruuvi.station.app.ui.components.DividerRuuvi
+import com.ruuvi.station.app.ui.components.PageSurface
 import com.ruuvi.station.app.ui.components.Paragraph
 import com.ruuvi.station.app.ui.components.ParagraphWithPadding
 import com.ruuvi.station.app.ui.components.RuuviButton
@@ -58,6 +66,7 @@ import com.ruuvi.station.app.ui.components.SubtitleWithPadding
 import com.ruuvi.station.app.ui.components.TextFieldRuuvi
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.RuuviTheme
+import com.ruuvi.station.settings.ui.DeveloperSettingsViewModel
 import com.ruuvi.station.util.extensions.viewModel
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
@@ -83,16 +92,32 @@ class ShareSensorActivity : AppCompatActivity() , KodeinAware {
             RuuviTheme {
                 val canShare by viewModel.canShareObserve.observeAsState(true)
                 val emails by viewModel.emailsObserve.observeAsState(emptyList())
+                val useWebShare by viewModel.useWebShare.observeAsState(false)
+                val token = viewModel.getWebViewToken()
+                val url = viewModel.getUrl()
                 val scaffoldState = rememberScaffoldState()
 
                 StatusBarFill {
-                    ShareBody(
-                        scaffoldState = scaffoldState,
-                        canShare = canShare,
-                        emails = emails,
-                        shareToUser = viewModel::shareTag,
-                        unshare = viewModel::unshareTag
-                    )
+                    if (useWebShare) {
+                        Scaffold(
+                            modifier = Modifier
+                                .systemBarsPadding()
+                                .fillMaxSize(),
+                            backgroundColor = RuuviStationTheme.colors.background,
+                            topBar = { RuuviTopAppBar(title = stringResource(id = R.string.share_sensor_title)) },
+                            scaffoldState = scaffoldState
+                        ) { paddingValues ->
+                            SharingWebView(scaffoldState, token, url)
+                        }
+                    } else {
+                        ShareBody(
+                            scaffoldState = scaffoldState,
+                            canShare = canShare,
+                            emails = emails,
+                            shareToUser = viewModel::shareTag,
+                            unshare = viewModel::unshareTag
+                        )
+                    }
                 }
 
                 LaunchedEffect(null) {
@@ -262,6 +287,76 @@ fun SharedEmailItem(
             negativeButtonText = stringResource(id = R.string.no)
         ) {
             Paragraph(text = stringResource(id = R.string.share_sensor_unshare_confirm, email))
+        }
+    }
+}
+
+@Composable
+fun SharingWebView(
+    scaffoldState: ScaffoldState,
+    userToken: String?,
+    url: String
+) {
+    val script = "window.localStorage.setItem('user','$userToken')"
+    var webView: WebView? = null
+    PageSurface {
+        Column(modifier = Modifier.fillMaxSize()) {
+            AndroidView(
+                modifier = Modifier.fillMaxSize(),
+                factory = { context ->
+                    WebView(context).apply {
+                        layoutParams = ViewGroup.LayoutParams(
+                            ViewGroup.LayoutParams.MATCH_PARENT,
+                            ViewGroup.LayoutParams.MATCH_PARENT,
+                        )
+                        settings.javaScriptEnabled = true
+                        settings.allowContentAccess = true
+                        settings.allowFileAccess = true
+                        settings.domStorageEnabled = true
+                        settings.databaseEnabled = true
+                        settings.cacheMode = LOAD_DEFAULT
+                        setWebViewClient(object: WebViewClient() {
+                            override fun shouldOverrideUrlLoading(
+                                view: WebView?,
+                                url: String?
+                            ): Boolean {
+                                return false
+                            }
+
+                            override fun shouldOverrideUrlLoading(
+                                view: WebView?,
+                                request: WebResourceRequest?
+                            ): Boolean {
+                                return false
+                            }
+
+                            override fun onPageStarted(
+                                view: WebView?,
+                                url: String?,
+                                favicon: Bitmap?
+                            ) {
+                                super.onPageStarted(view, url, favicon)
+                                evaluateJavascript(script) {
+                                    Timber.d("evaluateJavascript $script RESULT $it")
+                                }
+
+                            }
+
+                            override fun onPageFinished(view: WebView?, url: String?) {
+                                super.onPageFinished(view, url)
+                                evaluateJavascript(script) {
+                                    Timber.d("evaluateJavascript $script RESULT $it")
+                                }
+                            }
+                        })
+
+                        loadUrl(url)
+
+                        webView = this
+                    }
+                }, update = {
+                    webView = it
+                })
         }
     }
 }

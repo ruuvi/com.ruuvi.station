@@ -56,6 +56,12 @@ data class SensorSettings(
     var defaultDisplayOrder: Boolean = true,
     @Column
     var displayOrder: String? = null,
+    @Column
+    var lastUpdated: Long = 0L,
+    @Column
+    var defaultDisplayOrderTimestamp: Long = 0L,
+    @Column
+    var displayOrderTimestamp: Long = 0L,
 ): BaseModel() {
     val displayName get() = if (name.isNullOrEmpty()) id else name.toString()
 
@@ -68,6 +74,7 @@ data class SensorSettings(
         temperatureOffset = sensor.offsetTemperature
         networkSensor = true
         subscriptionName = sensor.subscription?.subscriptionName
+        lastUpdated = sensor.lastUpdated
         update()
     }
 }

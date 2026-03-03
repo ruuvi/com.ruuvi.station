@@ -260,7 +260,8 @@ class AlarmsInteractor(
             type = state.type.value,
             enabled = state.isEnabled.value,
             description = state.customDescription,
-            mutedTill = state.mutedTill
+            mutedTill = state.mutedTill,
+            timestamp = null
         )
         return networkInteractor.setAlert(alarm)
     }

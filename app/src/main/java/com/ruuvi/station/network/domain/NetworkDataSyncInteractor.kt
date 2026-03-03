@@ -162,7 +162,7 @@ class NetworkDataSyncInteractor (
 
                 val benchUpdate1 = Date()
                 Timber.d("updateSensors")
-                updateSensors(sensorsInfo.data)
+                val sensorForBackgroundUpdate = updateSensors(sensorsInfo.data)
                 updateSensorSettings(sensorsInfo.data)
                 sendSyncEvent(NetworkSyncEvent.SensorsSynced)
                 firebaseInteractor.logSync(userEmail, sensorsInfo.data)
@@ -173,7 +173,7 @@ class NetworkDataSyncInteractor (
                 syncForPeriod(sensorsInfo.data, GlobalSettings.historyLengthHours)
                 val benchSync2 = Date()
                 Timber.d("benchmark-syncForPeriod-finish - ${benchSync2.time - benchSync1.time} ms")
-                updateBackgrounds(sensorsInfo.data)
+                updateBackgrounds(sensorForBackgroundUpdate)
                 networkAlertsSyncInteractor.updateAlertsFromNetwork(sensorsInfo)
                 networkShareListInteractor.updateSharingInfo(sensorsInfo)
                 networkRequestExecutor.executeScheduledRequests()
@@ -257,7 +257,7 @@ class NetworkDataSyncInteractor (
                     if (maxTimestamp != null) {
                         maxTimestamp++
                         since = Date(maxTimestamp * 1000)
-                        if (since.diffGreaterThan(60*1000)) {
+                        if (since.diffGreaterThan(60*1000) && data.size > 1) {
                             result = getSince(sensorId, since, 5000)
                             count++
                         }
@@ -323,11 +323,18 @@ class NetworkDataSyncInteractor (
         }
     }
 
-    private suspend fun updateSensors(userInfoData: SensorsDenseResponseBody) {
+    // returns list of sensors that _may_ require background image update (from the cloud)
+    private fun updateSensors(userInfoData: SensorsDenseResponseBody): List<SensorsDenseInfo> {
+        val sensorsResult = mutableListOf<SensorsDenseInfo>()
         userInfoData.sensors.forEach { sensor ->
             Timber.d("updateTags: $sensor")
             val sensorSettings = sensorSettingsRepository.getSensorSettingsOrCreate(sensor.sensor)
-            sensorSettings.updateFromNetwork(sensor)
+            if (sensor.lastUpdated > sensorSettings.lastUpdated) {
+                sensorSettings.updateFromNetwork(sensor)
+                sensorsResult.add(sensor)
+            } else if (sensor.lastUpdated < sensorSettings.lastUpdated) {
+                networkInteractor.updateSensorToCloud(sensor.sensor)
+            }
 
             val tagEntry = tagRepository.getTagById(sensor.sensor)
             if (tagEntry?.favorite == false) {
@@ -351,6 +358,7 @@ class NetworkDataSyncInteractor (
                 tagRepository.deleteSensorAndRelatives(sensor.id)
             }
         }
+        return sensorsResult
     }
 
     private fun updateSensorSettings(userInfoData: SensorsDenseResponseBody) {
@@ -358,16 +366,16 @@ class NetworkDataSyncInteractor (
             Timber.d("updateSensorSettings: $sensor displayOrder = ${sensor.settings?.displayOrder} defaultDisplayOrder = ${sensor.settings?.defaultDisplayOrder}")
 
             sensor.settings?.displayOrder?.let { displayOrder ->
-                sensorSettingsRepository.newDisplayOrder(sensor.sensor, displayOrder)
+                sensorSettingsRepository.newDisplayOrder(sensor.sensor, displayOrder, sensor.settings.displayOrder_lastUpdated ?: 0)
             }
             sensor.settings?.defaultDisplayOrder?.let { defaultDisplayOrder ->
-                sensorSettingsRepository.updateUseDefaultSensorOrder(sensor.sensor, defaultDisplayOrder.toBooleanExtra())
+                sensorSettingsRepository.updateUseDefaultSensorOrder(sensor.sensor, defaultDisplayOrder.toBooleanExtra(), sensor.settings.defaultDisplayOrder_lastUpdated ?: 0)
             }
         }
     }
 
-    private suspend fun updateBackgrounds(userInfoData: SensorsDenseResponseBody) {
-        userInfoData.sensors.forEach { sensor ->
+    private suspend fun updateBackgrounds(sensors: List<SensorsDenseInfo>) {
+        sensors.forEach { sensor ->
             val sensorSettings = sensorSettingsRepository.getSensorSettings(sensor.sensor)
 
             if (sensorSettings != null) {

@@ -4,13 +4,17 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.gson.Gson
 import com.ruuvi.station.R
+import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.app.ui.UiEvent
 import com.ruuvi.station.app.ui.UiText
 import com.ruuvi.station.database.domain.SensorSettingsRepository
 import com.ruuvi.station.database.domain.SensorShareListRepository
 import com.ruuvi.station.network.data.request.SensorDenseRequest
+import com.ruuvi.station.network.data.response.UserVerifyResponseBody
 import com.ruuvi.station.network.domain.NetworkShareListInteractor
+import com.ruuvi.station.network.domain.NetworkTokenRepository
 import com.ruuvi.station.network.domain.RuuviNetworkInteractor
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -22,7 +26,9 @@ class ShareSensorViewModel (
     val ruuviNetworkInteractor: RuuviNetworkInteractor,
     val networkShareListInteractor: NetworkShareListInteractor,
     val sensorShareListRepository: SensorShareListRepository,
-    val sensorSettingsRepository: SensorSettingsRepository
+    val sensorSettingsRepository: SensorSettingsRepository,
+    val preferencesRepository: PreferencesRepository,
+    val networkTokenRepository: NetworkTokenRepository
 ) : ViewModel() {
 
     private val emails = MutableLiveData<List<String>>()
@@ -33,6 +39,8 @@ class ShareSensorViewModel (
 
     private val _uiEvent = MutableSharedFlow<UiEvent> ()
     val uiEvent: SharedFlow<UiEvent> = _uiEvent
+
+    val useWebShare: LiveData<Boolean> = MutableLiveData<Boolean> (preferencesRepository.getUseWebShare())
 
     private val handler = CoroutineExceptionHandler { _, exception ->
         CoroutineScope(Dispatchers.Main).launch {
@@ -69,6 +77,20 @@ class ShareSensorViewModel (
         }
     }
 
+    fun getWebViewToken(): String? {
+        val tokenInfo = networkTokenRepository.getTokenInfo()
+        if (tokenInfo != null) {
+            val userRegisterResponse = UserVerifyResponseBody(tokenInfo.email, tokenInfo.token, false)
+            return Gson().toJson(userRegisterResponse)
+        } else {
+            return null
+        }
+
+    }
+
+    fun getUrl(): String {
+        return "https://station.ruuvi.com/shares?sensor=$sensorId&minimalMode=true"
+    }
     private fun setEmailsFromRepository() {
         emails.value = sensorShareListRepository.getShareListForSensor(sensorId).map { it.userEmail }
     }

@@ -207,17 +207,6 @@ class SettingsActivity : AppCompatActivity(), KodeinAware {
                                     viewModel = developerSettingsViewModel
                                 )
                             }
-                            composable(
-                                SettingsRoutes.SHARINGWEB,
-                                enterTransition = enterTransition,
-                                exitTransition = exitTransition
-                            ) {
-                                val developerSettingsViewModel: DeveloperSettingsViewModel by viewModel()
-                                SharingWebView(
-                                    scaffoldState = scaffoldState,
-                                    viewModel = developerSettingsViewModel
-                                )
-                            }
                         }
                     }
                 }

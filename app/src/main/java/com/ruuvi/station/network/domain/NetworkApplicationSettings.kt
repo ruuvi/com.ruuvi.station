@@ -400,7 +400,7 @@ class NetworkApplicationSettings (
             val marketingPermission = preferencesRepository.getMarketingPermission()
             Timber.d("NetworkApplicationSettings-updateMarketingPermission: $marketingPermission")
             networkInteractor.updateUserSetting(
-                MARKTING_PERMISSION,
+                TIPS_ALLOWED,
                 marketingPermission.toInt().toString()
             )
         }
@@ -447,6 +447,6 @@ class NetworkApplicationSettings (
         val DISABLE_EMAIL_NOTIFICATIONS = "DISABLE_EMAIL_NOTIFICATIONS"
         val DISABLE_PUSH_NOTIFICATIONS = "DISABLE_PUSH_NOTIFICATIONS"
         val DISABLE_TELEGRAM_NOTIFICATIONS = "DISABLE_TELEGRAM_NOTIFICATIONS"
-        val MARKTING_PERMISSION = "MARKTING_PERMISSION"
+        val TIPS_ALLOWED = "TIPS_ALLOWED"
     }
 }
