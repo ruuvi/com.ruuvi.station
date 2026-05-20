@@ -33,7 +33,7 @@ xmlns:tools="http://schemas.android.com/tools">
         <action android:name="android.media.action.IMAGE_CAPTURE" />
     </intent>
 </queries>
-
+    <!-- usesCleartextTraffic set to true for data forwarding -->
 <application
     android:name=".app.RuuviScannerApplication"
     android:allowBackup="false"
@@ -43,7 +43,8 @@ xmlns:tools="http://schemas.android.com/tools">
     android:localeConfig="@xml/locales_config"
     android:supportsRtl="true"
     android:theme="@style/AppTheme"
-    tools:replace="android:allowBackup">
+    tools:replace="android:allowBackup"
+    android:usesCleartextTraffic="true" >
 
     <activity
         android:name=".startup.ui.StartupActivity"
