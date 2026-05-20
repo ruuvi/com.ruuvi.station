@@ -442,7 +442,7 @@ private fun addDataToChart(
         if (Date(timestamp).isStartOfTheDay()) {
             DateUtils.formatDateTime(context, timestamp, dateFlags)
         } else {
-            timeFormat.format(timestamp).replace(" ", "")
+            timeFormat.format(Date(timestamp)).replace(" ", "")
         }
     }
     setLabelCount(context, chart)
