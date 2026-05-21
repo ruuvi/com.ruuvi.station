@@ -50,7 +50,6 @@ jobs:
         packageName: com.ruuvi.station
         releaseFiles: ${{steps.sign_bundle.outputs.signedFile}}
         track: internal
-        changesNotSentForReview: true
 
     - name: Upload bundle
       uses: actions/upload-artifact@v4.6.0
