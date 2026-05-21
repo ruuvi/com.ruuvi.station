@@ -7,6 +7,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import com.ruuvi.station.bluetooth.model.DeviceInfo
+import com.ruuvi.station.util.extensions.registerReceiverCompat
 import timber.log.Timber
 
 class BluetoothDevicesInteractor(
@@ -34,7 +35,7 @@ class BluetoothDevicesInteractor(
     }
 
     init {
-        context.registerReceiver(receiver, IntentFilter(BluetoothDevice.ACTION_FOUND))
+        context.registerReceiverCompat(receiver, IntentFilter(BluetoothDevice.ACTION_FOUND))
     }
 
     fun discoverDevices(discoveredCallback: (DeviceInfo) -> Unit) {

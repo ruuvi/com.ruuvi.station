@@ -313,7 +313,6 @@ fun SharingWebView(
                         settings.allowContentAccess = true
                         settings.allowFileAccess = true
                         settings.domStorageEnabled = true
-                        settings.databaseEnabled = true
                         settings.cacheMode = LOAD_DEFAULT
                         setWebViewClient(object: WebViewClient() {
                             override fun shouldOverrideUrlLoading(

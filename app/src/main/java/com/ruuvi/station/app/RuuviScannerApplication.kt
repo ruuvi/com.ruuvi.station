@@ -22,6 +22,7 @@ import com.ruuvi.station.network.domain.RuuviNetworkInteractor
 import com.ruuvi.station.util.Foreground
 import com.ruuvi.station.util.ForegroundListener
 import com.ruuvi.station.util.ReleaseTree
+import com.ruuvi.station.util.extensions.registerReceiverCompat
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.conf.ConfigurableKodein
@@ -81,7 +82,7 @@ class RuuviScannerApplication : Application(), KodeinAware {
         version3MigrationInteractor.migrate()
         visibleMeasurementsMigrationInteractor.migrate()
 
-        registerReceiver(bluetoothReceiver, IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED))
+        registerReceiverCompat(bluetoothReceiver, IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED))
 
         defaultOnTagFoundListener.isForeground = isInForeground
         foreground.addListener(listener)

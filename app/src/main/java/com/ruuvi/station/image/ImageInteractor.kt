@@ -52,7 +52,11 @@ class ImageInteractor (
     )
 
     private fun getExternalFilesDir() =
-        context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+        requireNotNull(
+            context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+        ) {
+            "External files directory unavailable"
+        }
 
     suspend fun downloadImage(filename: String, url: String): File {
         return suspendCoroutine { continuation ->
