@@ -80,7 +80,7 @@ android {
         }
         release {
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
 
@@ -130,7 +130,7 @@ android {
 dependencies {
     implementation project(":MPChartLib")
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation files('..\\Xlsx\\xlsx-writer.jar')
+    implementation files('../Xlsx/xlsx-writer.jar')
     androidTestImplementation('androidx.test.espresso:espresso-core:3.1.0', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })

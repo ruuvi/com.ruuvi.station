@@ -14,12 +14,6 @@ class SensorsSortingInteractor (
     fun sortSensors(sensors: List<RuuviTag>): List<RuuviTag> {
         val sortingOrder = getListOfSortedSensors()
 
-        for (sens in sortingOrder) {
-            Timber.d("sortedResult $sens")
-        }
-        Timber.d("sortedResult =========================")
-
-
         if (sortingOrder.isEmpty()) return sensors
 
         val originalList = sensors.toMutableList()
@@ -39,10 +33,6 @@ class SensorsSortingInteractor (
 
     fun newOrder(sensorIds: List<String>) {
         saveListOfSortedSensors(sensorIds)
-        for (sens in sensorIds) {
-            Timber.d("dragGestureHandler - newOrder $sens")
-        }
-        Timber.d("dragGestureHandler - newOrder =========================")
     }
 
     fun getListOfSortedSensors(): List<String> {

@@ -92,7 +92,9 @@ class ComplexWidgetConfigureActivity : AppCompatActivity(), KodeinAware {
         val updateIntent = Intent(this, ComplexWidgetProvider::class.java).apply {
             action = ACTION_APPWIDGET_UPDATE
             putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, intArrayOf(appWidgetId))
+            `package` = packageName
         }
+
         sendBroadcast(updateIntent)
 
         val resultValue =

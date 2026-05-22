@@ -15,15 +15,19 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Completable;
 import io.reactivex.schedulers.Schedulers;
 import timber.log.Timber;
 
+@SuppressLint("LogNotTimber")
 public class ReleaseTree extends Timber.Tree {
 
     private final SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss", Locale.UK);
+    private final ExecutorService logExecutor = Executors.newSingleThreadExecutor();
 
     public ReleaseTree() {
         timeFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
@@ -32,7 +36,7 @@ public class ReleaseTree extends Timber.Tree {
 
     @Override
     protected void log(int priority, @Nullable String tag, @NotNull String message, @Nullable Throwable throwable) {
-        writeLogToFile(tag, message, throwable);
+        logExecutor.execute(() -> writeLogToFile(tag, message, throwable));
     }
 
     @SuppressLint("CheckResult")
@@ -58,7 +62,7 @@ public class ReleaseTree extends Timber.Tree {
                 .subscribe(
                         () -> {
                         },
-                        Throwable::printStackTrace
+                        throwable -> android.util.Log.e("ReleaseTree", "deleteOldLogs failed", throwable)
                 );
     }
 
@@ -69,18 +73,17 @@ public class ReleaseTree extends Timber.Tree {
     }
 
     private void writeLogToFile(String tag, String message, Throwable throwable) {
-
         String fileName = getFileName();
         File filePath = getDirectoryPath();
         File file = new File(filePath, fileName);
-        try {
 
-            PrintWriter printWriter = new PrintWriter(new OutputStreamWriter(new FileOutputStream(file, true)));
+        if (!filePath.exists() && !filePath.mkdirs()) {
+            android.util.Log.e("ReleaseTree", "Failed to create directory: " + filePath);
+            return;
+        }
 
-            String tagString = "";
-            if (tag != null) {
-                tagString = " " + tag + " :";
-            }
+        try (PrintWriter printWriter = new PrintWriter(new OutputStreamWriter(new FileOutputStream(file, true)))) {
+            String tagString = (tag != null) ? " " + tag + " :" : "";
             printWriter.write("[" + getCurrentTimeString() + "]" + tagString + " " + message);
             if (throwable != null) {
                 throwable.printStackTrace(printWriter);
@@ -88,10 +91,8 @@ public class ReleaseTree extends Timber.Tree {
             printWriter.println();
             printWriter.println();
 
-            printWriter.close();
         } catch (Throwable e) {
-            e.printStackTrace();
-            e.printStackTrace();
+            android.util.Log.e("ReleaseTree", "Failed to write log to file", e);
         }
     }
 
@@ -128,7 +129,7 @@ public class ReleaseTree extends Timber.Tree {
 
             return calendar;
         } catch (Throwable throwable) {
-            throwable.printStackTrace();
+            android.util.Log.e("ReleaseTree", "getDateFromFileName failed for: " + fileName, throwable);
         }
         return null;
     }
