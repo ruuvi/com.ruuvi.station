@@ -63,6 +63,7 @@ We would love you for the contribution to **Ruuvi Station**, check the ``LICENSE
 7. Now you can run project on emulator or phone
 
 ### Push Notifications Setup (Firebase)
+
 To receive Cloud Push Notifications during development, you must register your local debug SHA-1 fingerprint:
 
 1. **Get your SHA-1 Fingerprint:**
