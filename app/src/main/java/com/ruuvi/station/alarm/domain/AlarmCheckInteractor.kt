@@ -77,13 +77,13 @@ class AlarmCheckInteractor(
         alarmRepository.getForSensor(ruuviTag.id).filter { it.enabled }
 
     private fun canNotify(alarm: Alarm): Boolean {
+        val pushNotificationsDisabled = preferencesRepository.isDisablePushNotifications()
         val dosingAlert = alarm.latestTriggered?.diffGreaterThan(NOTIFICATION_THRESHOLD_DOSING) == false
         val limitLocalAlerts = preferencesRepository.getLimitLocalAlerts() &&
                 alarm.latestTriggered?.diffGreaterThan(LIMIT_LOCAL_ALERTS_THRESHOLD) == false
         val mutedAlarm = alarm.mutedTill?.let { it > Date()} ?: false
 
-        Timber.d("canNotify mutedAlarm = $mutedAlarm limitLocalAlerts = $limitLocalAlerts dosingAlert = $dosingAlert ${alarm.latestTriggered}")
-        return !(mutedAlarm || limitLocalAlerts || dosingAlert)
+        return !(mutedAlarm || limitLocalAlerts || dosingAlert || pushNotificationsDisabled)
     }
 
     private fun sendAlert(checker: AlarmChecker) {
