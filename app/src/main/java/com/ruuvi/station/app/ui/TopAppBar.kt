@@ -131,83 +131,86 @@ fun DashboardTopAppBar(
                     )
                 }
 
-                DropdownMenu(
-                    modifier = Modifier
-                        .background(color = RuuviStationTheme.colors.background)
-                        .padding(all = RuuviStationTheme.dimensions.medium),
-                    expanded = dashboardTypeMenuExpanded,
-                    onDismissRequest = { dashboardTypeMenuExpanded = false }) {
-
-                    Subtitle(
-                        modifier = Modifier.padding(
-                            horizontal = RuuviStationTheme.dimensions.mediumPlus,
-                            vertical = RuuviStationTheme.dimensions.medium
-                        ),
-                        text = stringResource(id = R.string.card_type)
-                    )
-
-                    RadioButtonRuuvi(
-                        text = stringResource(id = R.string.image_cards),
-                        isSelected = dashboardType == DashboardType.IMAGE_VIEW,
-                        onClick = {
-                            changeDashboardType.invoke(DashboardType.IMAGE_VIEW)
-                        }
-                    )
-
-                    RadioButtonRuuvi(
-                        text = stringResource(id = R.string.simple_cards),
-                        isSelected = dashboardType == DashboardType.SIMPLE_VIEW,
-                        onClick = {
-                            changeDashboardType.invoke(DashboardType.SIMPLE_VIEW)
-                        }
-                    )
-
-                    Subtitle(
-                        modifier = Modifier.padding(
-                            horizontal = RuuviStationTheme.dimensions.mediumPlus,
-                            vertical = RuuviStationTheme.dimensions.medium
-                        ),
-                        text = stringResource(id = R.string.card_action)
-                    )
-
-                    RadioButtonRuuvi(
-                        text = stringResource(id = R.string.open_sensor_view),
-                        isSelected = dashboardTapAction == DashboardTapAction.OPEN_CARD,
-                        onClick = {
-                            changeDashboardTapAction.invoke(DashboardTapAction.OPEN_CARD)
-                        }
-                    )
-
-                    RadioButtonRuuvi(
-                        text = stringResource(id = R.string.open_history_view),
-                        isSelected = dashboardTapAction == DashboardTapAction.SHOW_CHART,
-                        onClick = {
-                            changeDashboardTapAction.invoke(DashboardTapAction.SHOW_CHART)
-                        }
-                    )
-
-                    if (isCustomOrderEnabled()) {
-                        Subtitle(
-                            modifier = Modifier.padding(
-                                horizontal = RuuviStationTheme.dimensions.mediumPlus,
-                                vertical = RuuviStationTheme.dimensions.medium
-                            ),
-                            text = stringResource(id = R.string.ordering)
-                        )
-                        
-                        Paragraph(
+                CompositionLocalProvider(LocalElevationOverlay provides null) {
+                    MaterialTheme(colors = MaterialTheme.colors.copy(surface = RuuviStationTheme.colors.background)) {
+                        DropdownMenu(
                             modifier = Modifier
-                                .padding(
+                                .padding(all = RuuviStationTheme.dimensions.medium),
+                            expanded = dashboardTypeMenuExpanded,
+                            onDismissRequest = { dashboardTypeMenuExpanded = false }) {
+
+                            Subtitle(
+                                modifier = Modifier.padding(
                                     horizontal = RuuviStationTheme.dimensions.mediumPlus,
                                     vertical = RuuviStationTheme.dimensions.medium
+                                ),
+                                text = stringResource(id = R.string.card_type)
+                            )
+
+                            RadioButtonRuuvi(
+                                text = stringResource(id = R.string.image_cards),
+                                isSelected = dashboardType == DashboardType.IMAGE_VIEW,
+                                onClick = {
+                                    changeDashboardType.invoke(DashboardType.IMAGE_VIEW)
+                                }
+                            )
+
+                            RadioButtonRuuvi(
+                                text = stringResource(id = R.string.simple_cards),
+                                isSelected = dashboardType == DashboardType.SIMPLE_VIEW,
+                                onClick = {
+                                    changeDashboardType.invoke(DashboardType.SIMPLE_VIEW)
+                                }
+                            )
+
+                            Subtitle(
+                                modifier = Modifier.padding(
+                                    horizontal = RuuviStationTheme.dimensions.mediumPlus,
+                                    vertical = RuuviStationTheme.dimensions.medium
+                                ),
+                                text = stringResource(id = R.string.card_action)
+                            )
+
+                            RadioButtonRuuvi(
+                                text = stringResource(id = R.string.open_sensor_view),
+                                isSelected = dashboardTapAction == DashboardTapAction.OPEN_CARD,
+                                onClick = {
+                                    changeDashboardTapAction.invoke(DashboardTapAction.OPEN_CARD)
+                                }
+                            )
+
+                            RadioButtonRuuvi(
+                                text = stringResource(id = R.string.open_history_view),
+                                isSelected = dashboardTapAction == DashboardTapAction.SHOW_CHART,
+                                onClick = {
+                                    changeDashboardTapAction.invoke(DashboardTapAction.SHOW_CHART)
+                                }
+                            )
+
+                            if (isCustomOrderEnabled()) {
+                                Subtitle(
+                                    modifier = Modifier.padding(
+                                        horizontal = RuuviStationTheme.dimensions.mediumPlus,
+                                        vertical = RuuviStationTheme.dimensions.medium
+                                    ),
+                                    text = stringResource(id = R.string.ordering)
                                 )
-                                .clickableSingle {
-                                    resetSensorsOrderDialog = true
-                                },
-                            text = stringResource(id = R.string.reset_order)
-                        )
+
+                                Paragraph(
+                                    modifier = Modifier
+                                        .padding(
+                                            horizontal = RuuviStationTheme.dimensions.mediumPlus,
+                                            vertical = RuuviStationTheme.dimensions.medium
+                                        )
+                                        .clickableSingle {
+                                            resetSensorsOrderDialog = true
+                                        },
+                                    text = stringResource(id = R.string.reset_order)
+                                )
+                            }
+                        }
                     }
-                }
+                    }
             }
         },
         backgroundColor = RuuviStationTheme.colors.dashboardBackground,
