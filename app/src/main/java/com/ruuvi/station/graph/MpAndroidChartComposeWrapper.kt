@@ -208,8 +208,6 @@ fun ChartViewPrototype(
                 chart
             },
             update = { view ->
-                Timber.d("ChartView AndroidView - update $from pointsCount = ${chartData.size}")
-
                 if (view.data == null || view.highestVisibleX >= view.data.xMax) {
                     addDataToChart(context, chartData, view, "", graphDrawDots, limits, from, to)
                     (view.marker as ChartMarkerView).getFrom = { from }
@@ -419,8 +417,9 @@ private fun addDataToChart(
         chart.axisLeft,
         chart.getTransformer(YAxis.AxisDependency.LEFT)
     )
+
     chart.xAxis.axisMaximum = (to - from).toFloat()
-    chart.xAxis.axisMinimum = 0f
+    chart.xAxis.axisMinimum = 60000f
 
     chart.axisLeft.removeAllLimitLines()
     if (limits != null) {
@@ -432,23 +431,19 @@ private fun addDataToChart(
     chart.axisLeft.axisMinimum = set.yMin - 1f
     chart.axisLeft.axisMaximum = set.yMax + 1f
     chart.axisLeft.setDrawTopYLabelEntry(false)
-    chart.axisLeft.valueFormatter = object : IAxisValueFormatter {
-        override fun getFormattedValue(p0: Double, p1: AxisBase?): String {
-            return formatDoubleToString(p0)
-        }
-    }
+    chart.axisLeft.valueFormatter = IAxisValueFormatter { p0, _ -> formatDoubleToString(p0) }
 
     chart.data = LineData(set)
     chart.data.isHighlightEnabled = true
-    chart.xAxis.valueFormatter = object : IAxisValueFormatter {
-        override fun getFormattedValue(value: Double, p1: AxisBase?): String {
-            val date = Date(value.toLong() + from)
-            return if (date.isStartOfTheDay()) {
-                val flags: Int = DateUtils.FORMAT_SHOW_DATE or DateUtils.FORMAT_NO_YEAR or DateUtils.FORMAT_NUMERIC_DATE
-                DateUtils.formatDateTime(context, date.time, flags)
-            } else {
-                DateFormat.getTimeInstance(DateFormat.SHORT).format(date).replace(" ","")
-            }
+    val timeFormat = DateFormat.getTimeInstance(DateFormat.SHORT)
+    val dateFlags = DateUtils.FORMAT_SHOW_DATE or DateUtils.FORMAT_NO_YEAR or DateUtils.FORMAT_NUMERIC_DATE
+
+    chart.xAxis.valueFormatter = IAxisValueFormatter { value, _ ->
+        val timestamp = value.toLong() + from
+        if (Date(timestamp).isStartOfTheDay()) {
+            DateUtils.formatDateTime(context, timestamp, dateFlags)
+        } else {
+            timeFormat.format(Date(timestamp)).replace(" ", "")
         }
     }
     setLabelCount(context, chart)
