@@ -262,43 +262,45 @@ fun ViewPeriodMenu(
                 tint = RuuviStationTheme.colors.accent
             )
         }
-        DropdownMenu(
-            modifier = Modifier
-                .background(color = RuuviStationTheme.colors.background),
-            expanded = daysMenuExpanded,
-            onDismissRequest = { daysMenuExpanded = false }) {
-            val periodOptions = listOf(
-                Period.All,
-                Period.Hour1,
-                Period.Hour2,
-                Period.Hour3,
-                Period.Hour6,
-                Period.Hour12,
-                Period.Day1,
-                Period.Day2,
-                Period.Day3,
-                Period.Day4,
-                Period.Day5,
-                Period.Day6,
-                Period.Day7,
-                Period.Day8,
-                Period.Day9,
-                Period.Day10,
-            )
-            for (day in periodOptions) {
-                DropdownMenuItem(onClick = {
-                    setViewPeriod.invoke(day.value)
-                    daysMenuExpanded = false
-                }) {
-                    Paragraph(text = stringResource(id = day.stringResourceId))
-                }
-            }
+        CompositionLocalProvider(LocalElevationOverlay provides null) {
+            MaterialTheme(colors = MaterialTheme.colors.copy(surface = RuuviStationTheme.colors.background)) {
+                DropdownMenu(
+                    expanded = daysMenuExpanded,
+                    onDismissRequest = { daysMenuExpanded = false }) {
+                    val periodOptions = listOf(
+                        Period.All,
+                        Period.Hour1,
+                        Period.Hour2,
+                        Period.Hour3,
+                        Period.Hour6,
+                        Period.Hour12,
+                        Period.Day1,
+                        Period.Day2,
+                        Period.Day3,
+                        Period.Day4,
+                        Period.Day5,
+                        Period.Day6,
+                        Period.Day7,
+                        Period.Day8,
+                        Period.Day9,
+                        Period.Day10,
+                    )
+                    for (day in periodOptions) {
+                        DropdownMenuItem(onClick = {
+                            setViewPeriod.invoke(day.value)
+                            daysMenuExpanded = false
+                        }) {
+                            Paragraph(text = stringResource(id = day.stringResourceId))
+                        }
+                    }
 
-            DropdownMenuItem(onClick = {
-                showMoreDialog = true
-                daysMenuExpanded = false
-            }) {
-                Paragraph(text = stringResource(id = R.string.more))
+                    DropdownMenuItem(onClick = {
+                        showMoreDialog = true
+                        daysMenuExpanded = false
+                    }) {
+                        Paragraph(text = stringResource(id = R.string.more))
+                    }
+                }
             }
         }
     }
@@ -345,61 +347,64 @@ fun ThreeDotsMenu(
             )
         }
 
-        DropdownMenu(
-            modifier = Modifier.background(color = RuuviStationTheme.colors.background),
-            expanded = threeDotsMenuExpanded,
-            onDismissRequest = { threeDotsMenuExpanded = false }
-        ) {
-            DropdownMenuItem(onClick = {
-                val uri = exportToCsv.invoke()
-                if (uri != null) {
-                    sendCsv(sensorId, uri, context)
-                }
-                threeDotsMenuExpanded = false
-            }) {
-                Paragraph(text = stringResource(id = R.string.export_history))
-            }
-            DropdownMenuItem(onClick = {
-                if (VERSION.SDK_INT < 26) {
-                    android26RequiredDialog = true
-                } else {
-                    val uri = exportToXlsx.invoke()
-                    if (uri != null) {
-                        sendXlsx(sensorId, uri, context)
+        CompositionLocalProvider(LocalElevationOverlay provides null) {
+            MaterialTheme(colors = MaterialTheme.colors.copy(surface = RuuviStationTheme.colors.background)) {
+                DropdownMenu(
+                    expanded = threeDotsMenuExpanded,
+                    onDismissRequest = { threeDotsMenuExpanded = false }
+                ) {
+                    DropdownMenuItem(onClick = {
+                        val uri = exportToCsv.invoke()
+                        if (uri != null) {
+                            sendCsv(sensorId, uri, context)
+                        }
+                        threeDotsMenuExpanded = false
+                    }) {
+                        Paragraph(text = stringResource(id = R.string.export_history))
                     }
-                    threeDotsMenuExpanded = false
-                }
-            }) {
-                Paragraph(text = stringResource(id = R.string.export_history_xlsx))
-            }
-            DropdownMenuItem(onClick = {
-                clearConfirmOpened = true
-                threeDotsMenuExpanded = false
-            }) {
-                Paragraph(text = stringResource(id = R.string.clear_view))
-            }
-            DropdownMenuItem(onClick = {
-                threeDotsMenuExpanded = false
-                changeShowStats()
-            }) {
-                val caption = if (showChartStats) {
-                    stringResource(id = R.string.chart_stat_hide)
-                } else {
-                    stringResource(id = R.string.chart_stat_show)
-                }
-                Paragraph(text = caption)
-            }
-            if (!hideIncreaseChartSize) {
-                DropdownMenuItem(onClick = {
-                    threeDotsMenuExpanded = false
-                    changeIncreasedChartSize()
-                }) {
-                    val caption = if (increasedChartSize) {
-                        stringResource(id = R.string.decrease_graph_size)
-                    } else {
-                        stringResource(id = R.string.increase_graph_size)
+                    DropdownMenuItem(onClick = {
+                        if (VERSION.SDK_INT < 26) {
+                            android26RequiredDialog = true
+                        } else {
+                            val uri = exportToXlsx.invoke()
+                            if (uri != null) {
+                                sendXlsx(sensorId, uri, context)
+                            }
+                            threeDotsMenuExpanded = false
+                        }
+                    }) {
+                        Paragraph(text = stringResource(id = R.string.export_history_xlsx))
                     }
-                    Paragraph(text = caption)
+                    DropdownMenuItem(onClick = {
+                        clearConfirmOpened = true
+                        threeDotsMenuExpanded = false
+                    }) {
+                        Paragraph(text = stringResource(id = R.string.clear_view))
+                    }
+                    DropdownMenuItem(onClick = {
+                        threeDotsMenuExpanded = false
+                        changeShowStats()
+                    }) {
+                        val caption = if (showChartStats) {
+                            stringResource(id = R.string.chart_stat_hide)
+                        } else {
+                            stringResource(id = R.string.chart_stat_show)
+                        }
+                        Paragraph(text = caption)
+                    }
+                    if (!hideIncreaseChartSize) {
+                        DropdownMenuItem(onClick = {
+                            threeDotsMenuExpanded = false
+                            changeIncreasedChartSize()
+                        }) {
+                            val caption = if (increasedChartSize) {
+                                stringResource(id = R.string.decrease_graph_size)
+                            } else {
+                                stringResource(id = R.string.increase_graph_size)
+                            }
+                            Paragraph(text = caption)
+                        }
+                    }
                 }
             }
         }

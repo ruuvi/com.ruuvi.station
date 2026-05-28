@@ -1085,111 +1085,130 @@ fun DashboardItemDropdownMenu(
             )
         }
 
-        DropdownMenu(
-            modifier = Modifier.background(color = RuuviStationTheme.colors.background),
-            expanded = threeDotsMenuExpanded,
-            onDismissRequest = { threeDotsMenuExpanded = false }
-        ) {
-            DropdownMenuItem(onClick = {
-                SensorCardActivity.start(context, sensor.id, SensorCardOpenType.CARD)
-                threeDotsMenuExpanded = false
-            }) {
-                Paragraph(text = stringResource(
-                    id = R.string.full_image_view
-                ))
-            }
-
-            DropdownMenuItem(onClick = {
-                SensorCardActivity.start(context, sensor.id, SensorCardOpenType.HISTORY)
-                threeDotsMenuExpanded = false
-            }) {
-                Paragraph(text = stringResource(
-                    id = R.string.history_view
-                ))
-            }
-            DropdownMenuItem(onClick = {
-                TagSettingsActivity.start(context, sensor.id)
-                threeDotsMenuExpanded = false
-            }) {
-                Paragraph(text = stringResource(
-                    id = R.string.settings_and_alerts
-                ))
-            }
-            DropdownMenuItem(onClick = {
-                BackgroundActivity.start(context, sensor.id)
-                threeDotsMenuExpanded = false
-            }) {
-                Paragraph(text = stringResource(
-                    id = R.string.change_background
-                ))
-            }
-
-            DropdownMenuItem(onClick = {
-                setNameDialog = true
-                threeDotsMenuExpanded = false
-            }) {
-                Paragraph(text = stringResource(
-                    id = R.string.rename
-                ))
-            }
-
-            if (itemIndex != 0) {
-                DropdownMenuItem(onClick = {
-                    var newIndex = itemIndex - 1
-                    moveItem(itemIndex, newIndex, true)
-                    if (newIndex < 0) newIndex = 0
-                    threeDotsMenuExpanded = false
-                    coroutineScope.launch {
-                        lazyGridState.requestScrollToItem(newIndex)
+        CompositionLocalProvider(LocalElevationOverlay provides null) {
+            MaterialTheme(colors = MaterialTheme.colors.copy(surface = RuuviStationTheme.colors.background)) {
+                DropdownMenu(
+                    expanded = threeDotsMenuExpanded,
+                    onDismissRequest = { threeDotsMenuExpanded = false }
+                ) {
+                    DropdownMenuItem(onClick = {
+                        SensorCardActivity.start(context, sensor.id, SensorCardOpenType.CARD)
+                        threeDotsMenuExpanded = false
+                    }) {
+                        Paragraph(
+                            text = stringResource(
+                                id = R.string.full_image_view
+                            )
+                        )
                     }
-                }) {
-                    Paragraph(text = stringResource(id = R.string.move_up))
-                }
-            }
 
-            if (itemIndex != lazyGridState.layoutInfo.totalItemsCount - 2) {
-                DropdownMenuItem(onClick = {
-                    var newIndex = itemIndex + 1
-                    moveItem(itemIndex, newIndex, true)
-                    if (newIndex >= lazyGridState.layoutInfo.totalItemsCount) {
-                        newIndex = lazyGridState.layoutInfo.totalItemsCount - 2
+                    DropdownMenuItem(onClick = {
+                        SensorCardActivity.start(context, sensor.id, SensorCardOpenType.HISTORY)
+                        threeDotsMenuExpanded = false
+                    }) {
+                        Paragraph(
+                            text = stringResource(
+                                id = R.string.history_view
+                            )
+                        )
                     }
-                    threeDotsMenuExpanded = false
-                    coroutineScope.launch {
-                        lazyGridState.requestScrollToItem(newIndex)
+                    DropdownMenuItem(onClick = {
+                        TagSettingsActivity.start(context, sensor.id)
+                        threeDotsMenuExpanded = false
+                    }) {
+                        Paragraph(
+                            text = stringResource(
+                                id = R.string.settings_and_alerts
+                            )
+                        )
                     }
-                }) {
-                    Paragraph(text = stringResource(id = R.string.move_down))
-                }
-            }
+                    DropdownMenuItem(onClick = {
+                        BackgroundActivity.start(context, sensor.id)
+                        threeDotsMenuExpanded = false
+                    }) {
+                        Paragraph(
+                            text = stringResource(
+                                id = R.string.change_background
+                            )
+                        )
+                    }
 
-            if (canBeClaimed) {
-                DropdownMenuItem(onClick = {
-                    ClaimSensorActivity.start(context, sensor.id)
-                    threeDotsMenuExpanded = false
-                }) {
-                    Paragraph(text = stringResource(
-                        id = R.string.claim_sensor
-                    ))
-                }
-            } else if (canBeShared) {
-                DropdownMenuItem(onClick = {
-                    ShareSensorActivity.start(context, sensor.id)
-                    threeDotsMenuExpanded = false
-                }) {
-                    Paragraph(text = stringResource(
-                        id = R.string.share
-                    ))
-                }
-            }
+                    DropdownMenuItem(onClick = {
+                        setNameDialog = true
+                        threeDotsMenuExpanded = false
+                    }) {
+                        Paragraph(
+                            text = stringResource(
+                                id = R.string.rename
+                            )
+                        )
+                    }
 
-            DropdownMenuItem(onClick = {
-                TagSettingsActivity.startToRemove(context, sensor.id)
-                threeDotsMenuExpanded = false
-            }) {
-                Paragraph(text = stringResource(
-                    id = R.string.remove
-                ))
+                    if (itemIndex != 0) {
+                        DropdownMenuItem(onClick = {
+                            var newIndex = itemIndex - 1
+                            moveItem(itemIndex, newIndex, true)
+                            if (newIndex < 0) newIndex = 0
+                            threeDotsMenuExpanded = false
+                            coroutineScope.launch {
+                                lazyGridState.requestScrollToItem(newIndex)
+                            }
+                        }) {
+                            Paragraph(text = stringResource(id = R.string.move_up))
+                        }
+                    }
+
+                    if (itemIndex != lazyGridState.layoutInfo.totalItemsCount - 2) {
+                        DropdownMenuItem(onClick = {
+                            var newIndex = itemIndex + 1
+                            moveItem(itemIndex, newIndex, true)
+                            if (newIndex >= lazyGridState.layoutInfo.totalItemsCount) {
+                                newIndex = lazyGridState.layoutInfo.totalItemsCount - 2
+                            }
+                            threeDotsMenuExpanded = false
+                            coroutineScope.launch {
+                                lazyGridState.requestScrollToItem(newIndex)
+                            }
+                        }) {
+                            Paragraph(text = stringResource(id = R.string.move_down))
+                        }
+                    }
+
+                    if (canBeClaimed) {
+                        DropdownMenuItem(onClick = {
+                            ClaimSensorActivity.start(context, sensor.id)
+                            threeDotsMenuExpanded = false
+                        }) {
+                            Paragraph(
+                                text = stringResource(
+                                    id = R.string.claim_sensor
+                                )
+                            )
+                        }
+                    } else if (canBeShared) {
+                        DropdownMenuItem(onClick = {
+                            ShareSensorActivity.start(context, sensor.id)
+                            threeDotsMenuExpanded = false
+                        }) {
+                            Paragraph(
+                                text = stringResource(
+                                    id = R.string.share
+                                )
+                            )
+                        }
+                    }
+
+                    DropdownMenuItem(onClick = {
+                        TagSettingsActivity.startToRemove(context, sensor.id)
+                        threeDotsMenuExpanded = false
+                    }) {
+                        Paragraph(
+                            text = stringResource(
+                                id = R.string.remove
+                            )
+                        )
+                    }
+                }
             }
         }
     }
