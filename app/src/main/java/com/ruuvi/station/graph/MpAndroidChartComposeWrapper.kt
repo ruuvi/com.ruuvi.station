@@ -417,8 +417,9 @@ private fun addDataToChart(
         chart.axisLeft,
         chart.getTransformer(YAxis.AxisDependency.LEFT)
     )
-    chart.xAxis.axisMinimum = data.firstOrNull()?.x ?: 0f
-    chart.xAxis.axisMaximum = data.lastOrNull()?.x ?: (to - from).toFloat()
+
+    chart.xAxis.axisMaximum = (to - from).toFloat()
+    chart.xAxis.axisMinimum = 60000f
 
     chart.axisLeft.removeAllLimitLines()
     if (limits != null) {
