@@ -419,7 +419,8 @@ private fun addDataToChart(
     )
 
     chart.xAxis.axisMaximum = (to - from).toFloat()
-    chart.xAxis.axisMinimum = 60000f
+    val firstX = data.firstOrNull()?.x ?: 0f
+    chart.xAxis.axisMinimum = if (firstX < 60_000f) firstX else 60_000f
 
     chart.axisLeft.removeAllLimitLines()
     if (limits != null) {

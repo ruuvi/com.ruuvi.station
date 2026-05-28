@@ -92,13 +92,10 @@ fun ChartsView(
                 chartsInitialized = false
             }
 
-            for (newContainer in data) {
-                var uiComponent = chartUIComponents.get(newContainer.unitType)
-                if (uiComponent == null) {
-                    uiComponent = LineChart(context)
-                    chartUIComponents.put(newContainer.unitType, uiComponent)
+            data.forEach { container ->
+                container.uiComponent = chartUIComponents.getOrPut(container.unitType) {
+                    LineChart(context)
                 }
-                newContainer.uiComponent = uiComponent
             }
             chartContainers = data
 
