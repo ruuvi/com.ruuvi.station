@@ -95,6 +95,9 @@ for lang in $languages; do
 
   if [ -s "$previous_file" ]; then
     while IFS= read -r line; do
+      if [[ "$line" != *"<string name=\""* ]]; then
+        continue
+      fi
       ident=$(echo "$line" | sed -n 's/.*<string name="\([^"]*\)".*/\1/p')
       if [ -n "$ident" ] && ! grep -q "name=\"$ident\"" "$filename"; then
         echo "$line" >> "$filename"
