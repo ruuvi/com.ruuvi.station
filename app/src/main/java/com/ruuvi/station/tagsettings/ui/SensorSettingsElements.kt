@@ -1,6 +1,5 @@
 package com.ruuvi.station.tagsettings.ui
 
-import android.net.Uri
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
