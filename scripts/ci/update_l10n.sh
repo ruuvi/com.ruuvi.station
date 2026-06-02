@@ -94,11 +94,12 @@ for lang in $languages; do
   fi
 
   if [ -s "$previous_file" ]; then
+    string_regex='^[[:space:]]*<string[[:space:]]+name="([^"]+)"[^>]*>.*</string>[[:space:]]*$'
     while IFS= read -r line; do
-      if [[ "$line" != *"<string name=\""* ]]; then
+      if [[ ! "$line" =~ $string_regex ]]; then
         continue
       fi
-      ident=$(echo "$line" | sed -n 's/.*<string name="\([^"]*\)".*/\1/p')
+      ident="${BASH_REMATCH[1]}"
       if [ -n "$ident" ] && ! grep -q "name=\"$ident\"" "$filename"; then
         echo "$line" >> "$filename"
       fi
