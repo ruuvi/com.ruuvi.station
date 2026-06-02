@@ -79,16 +79,6 @@ data class SensorSettings(
         networkSensor = true
         subscriptionName = sensor.subscription?.subscriptionName
         lastUpdated = sensor.lastUpdated
-//        sensor.settings?.let {
-//            if ((it.displayOrder_lastUpdated ?: 0) > displayOrderTimestamp) {
-//                displayOrder = it.displayOrder
-//                displayOrderTimestamp = it.displayOrder_lastUpdated ?: 0
-//            }
-//            if ((it.description_lastUpdated ?: 0) > descriptionTimestamp) {
-//                description = it.description
-//                descriptionTimestamp = it.description_lastUpdated ?: 0
-//            }
-//        }
         update()
     }
 }
