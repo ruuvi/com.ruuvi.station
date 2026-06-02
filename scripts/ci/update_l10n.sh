@@ -62,6 +62,12 @@ for lang in $languages; do
     filename="app/src/main/res/values-${lang}/strings.xml"
   fi
 
+  # Preserve previous file to keep local strings that are not yet in station.localization
+  previous_file=$(mktemp)
+  if [ -f "$filename" ]; then
+    cp "$filename" "$previous_file"
+  fi
+
   # Create a new file and write the XML header
   echo '<?xml version="1.0" encoding="utf-8"?>' > "$filename"
   echo '<resources>' >> "$filename"
@@ -85,8 +91,19 @@ for lang in $languages; do
 
       append_xml "$filename" "$ident" "$text"
     done
-    echo '</resources>' >> "$filename"
   fi
+
+  if [ -s "$previous_file" ]; then
+    while IFS= read -r line; do
+      ident=$(echo "$line" | sed -n 's/.*<string name="\([^"]*\)".*/\1/p')
+      if [ -n "$ident" ] && ! grep -q "name=\"$ident\"" "$filename"; then
+        echo "$line" >> "$filename"
+      fi
+    done < "$previous_file"
+  fi
+
+  rm -f "$previous_file"
+  echo '</resources>' >> "$filename"
 done
 
 rm -r -f station.localization
