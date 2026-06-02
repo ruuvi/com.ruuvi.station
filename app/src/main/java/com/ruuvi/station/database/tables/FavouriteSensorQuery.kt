@@ -49,6 +49,8 @@ data class FavouriteSensorQuery(
     var defaultDisplayOrder: Boolean = true,
     @Column
     var displayOrder: String? = null,
+    @Column
+    var description: String? = null,
     // RuuviTagEntity
     @Column
     var latestId: String? = null,
@@ -123,6 +125,7 @@ data class FavouriteSensorQuery(
             SensorSettings_Table.firmware.withTable(),
             SensorSettings_Table.defaultDisplayOrder.withTable(),
             SensorSettings_Table.displayOrder.withTable(),
+            SensorSettings_Table.description.withTable(),
             RuuviTagEntity_Table.id.withTable().`as`("latestId"),
             RuuviTagEntity_Table.rssi.withTable(),
             RuuviTagEntity_Table.temperature.withTable(),

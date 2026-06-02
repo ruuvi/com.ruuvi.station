@@ -35,6 +35,8 @@ import com.ruuvi.station.tagsettings.di.RemoveSensorViewModelArgs
 import com.ruuvi.station.tagsettings.di.TagSettingsViewModelArgs
 import com.ruuvi.station.tagsettings.ui.led_control.LedControlScreen
 import com.ruuvi.station.tagsettings.ui.led_control.LedControlViewModel
+import com.ruuvi.station.tagsettings.ui.notes.Notes
+import com.ruuvi.station.tagsettings.ui.notes.NotesViewModel
 import com.ruuvi.station.tagsettings.ui.visible_measurements.VisibleMeasurements
 import com.ruuvi.station.tagsettings.ui.visible_measurements.VisibleMeasurementsViewModel
 import com.ruuvi.station.util.extensions.viewModel
@@ -200,6 +202,25 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
                                 }
                                 LedControlScreen(
                                     viewModel = ledControlViewModel
+                                )
+                            }
+
+                            composable(
+                                route = SensorSettingsRoutes.NOTES,
+                                enterTransition = enterTransition,
+                                exitTransition = exitTransition
+                            ) {
+                                val notesViewModel: NotesViewModel by viewModel() {
+                                    intent.getStringExtra(TAG_ID)?.let {
+                                        it
+                                    }
+                                }
+                                val note by notesViewModel.note.collectAsStateWithLifecycle()
+                                Notes(
+                                    note = note,
+                                    onAction = notesViewModel::onAction,
+                                    effects = notesViewModel.effects,
+                                    onNavigateBack = { navController.popBackStack() }
                                 )
                             }
                         }

@@ -1,6 +1,7 @@
 package com.ruuvi.station.tagsettings.ui
 
 import android.net.Uri
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardActions
@@ -25,6 +26,7 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
@@ -35,6 +37,7 @@ import com.ruuvi.station.app.ui.UiText
 import com.ruuvi.station.app.ui.components.*
 import com.ruuvi.station.app.ui.components.dialog.CustomContentDialog
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
+import com.ruuvi.station.app.ui.theme.RuuviTheme
 import com.ruuvi.station.calibration.ui.CalibrationSettingsGroup
 import com.ruuvi.station.dfu.ui.FirmwareGroup
 import com.ruuvi.station.network.ui.claim.ClaimSensorActivity
@@ -45,6 +48,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import okhttp3.internal.toHexString
 import timber.log.Timber
+import androidx.core.net.toUri
 
 @Composable
 fun SensorSettings(
@@ -91,6 +95,26 @@ fun SensorSettings(
                 onNavigate.invoke(SensorSettingsRoutes.VISIBLE_MEASUREMENTS)
             }
         }
+
+        if (userLoggedIn) {
+            DividerRuuvi()
+
+            TextEditWithCaptionButton(
+                title = stringResource(R.string.notes),
+                icon = if (sensorOwnedByUser) painterResource(id = R.drawable.edit_20) else null,
+                tint = RuuviStationTheme.colors.accent
+            ) {
+                if (sensorOwnedByUser) {
+                    onNavigate.invoke(SensorSettingsRoutes.NOTES)
+                }
+            }
+
+            sensorState.description?.takeIf { it.isNotEmpty() }?.let {
+                DividerRuuvi()
+                NotesGroup(sensorState = sensorState)
+            }
+        }
+
         if (sensorState.isAir()) {
             DividerRuuvi()
 
@@ -177,7 +201,7 @@ fun SensorSettingsImage(
         Timber.d("Image path ${sensorState.userBackground} ")
 
         if (sensorState.userBackground != null) {
-            val uri = Uri.parse(sensorState.userBackground)
+            val uri = sensorState.userBackground.toUri()
 
             if (uri.path != null) {
                 AsyncImage(
@@ -510,17 +534,64 @@ fun BatteryInfoItem (
 }
 
 @Composable
-@Preview
-fun preview() {
-    Column() {
-        MoreInfoItem(
-            title = stringResource(id = R.string.mac_address),
-            value = "sensorState.id"
+@Preview(showBackground = true)
+fun SensorSettingsPreview() {
+    RuuviTheme {
+        Column {
+            MoreInfoItem(
+                title = stringResource(id = R.string.mac_address),
+                value = "sensorState.id"
+            )
+            MoreInfoItem(
+                title = stringResource(id = R.string.mac_address),
+                value = "fasfasasdafs"
+            )
+        }
+    }
+}
+
+@Composable
+fun NotesGroup(sensorState: RuuviTag) {
+    var expanded by remember { mutableStateOf(false) }
+    var hasOverflow by remember { mutableStateOf(false) }
+    val notes = sensorState.description ?: ""
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = RuuviStationTheme.dimensions.screenPadding)
+            .animateContentSize()
+    ) {
+        Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.medium))
+
+        Text(
+            text = notes,
+            style = RuuviStationTheme.typography.paragraph,
+            maxLines = if (expanded) Int.MAX_VALUE else 3,
+            overflow = TextOverflow.Ellipsis,
+            onTextLayout = { textLayoutResult ->
+                if (!expanded) {
+                    hasOverflow = textLayoutResult.hasVisualOverflow || textLayoutResult.lineCount > 3
+                }
+            }
         )
-        MoreInfoItem(
-            title = stringResource(id = R.string.mac_address),
-            value = "fasfasasdafs"
-        )
+
+        if (hasOverflow) {
+            Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.medium))
+
+            Box(
+                modifier = Modifier.fillMaxWidth(),
+                contentAlignment = Alignment.Center
+            ) {
+                RuuviSecondaryButton(
+                    text = if (expanded) stringResource(R.string.show_less) else stringResource(id = R.string.show_more),
+                ) {
+                    expanded = !expanded
+                }
+            }
+        }
+
+        Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.mediumPlus))
     }
 }
 

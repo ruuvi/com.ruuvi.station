@@ -84,7 +84,7 @@ fun applyStyleToDecimals(
 fun TextEditWithCaptionButton(
     value: String? = null,
     title: String,
-    icon: Painter,
+    icon: Painter? = null,
     tint: Color,
     editAction: () -> Unit
 ) {
@@ -107,12 +107,14 @@ fun TextEditWithCaptionButton(
             style = RuuviStationTheme.typography.paragraph,
             textAlign = TextAlign.End,
             text = value ?: "")
-        Icon(
-            modifier = Modifier.padding(horizontal = RuuviStationTheme.dimensions.screenPadding),
-            painter = icon,
-            tint = tint,
-            contentDescription = ""
-        )
+        if (icon != null) {
+            Icon(
+                modifier = Modifier.padding(horizontal = RuuviStationTheme.dimensions.screenPadding),
+                painter = icon,
+                tint = tint,
+                contentDescription = ""
+            )
+        }
     }
 }
 

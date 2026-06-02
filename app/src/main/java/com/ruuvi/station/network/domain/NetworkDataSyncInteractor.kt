@@ -363,13 +363,16 @@ class NetworkDataSyncInteractor (
 
     private fun updateSensorSettings(userInfoData: SensorsDenseResponseBody) {
         userInfoData.sensors.forEach { sensor ->
-            Timber.d("updateSensorSettings: $sensor displayOrder = ${sensor.settings?.displayOrder} defaultDisplayOrder = ${sensor.settings?.defaultDisplayOrder}")
+            Timber.d("updateSensorSettings: $sensor displayOrder = ${sensor.settings?.displayOrder} defaultDisplayOrder = ${sensor.settings?.defaultDisplayOrder} description = ${sensor.settings?.description}")
 
             sensor.settings?.displayOrder?.let { displayOrder ->
                 sensorSettingsRepository.newDisplayOrder(sensor.sensor, displayOrder, sensor.settings.displayOrder_lastUpdated ?: 0)
             }
             sensor.settings?.defaultDisplayOrder?.let { defaultDisplayOrder ->
                 sensorSettingsRepository.updateUseDefaultSensorOrder(sensor.sensor, defaultDisplayOrder.toBooleanExtra(), sensor.settings.defaultDisplayOrder_lastUpdated ?: 0)
+            }
+            sensor.settings?.description?.let { description ->
+                sensorSettingsRepository.newDescription(sensor.sensor, description, sensor.settings.description_lastUpdated ?: 0)
             }
         }
     }

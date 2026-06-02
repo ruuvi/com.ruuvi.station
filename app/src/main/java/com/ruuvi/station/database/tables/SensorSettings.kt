@@ -62,6 +62,10 @@ data class SensorSettings(
     var defaultDisplayOrderTimestamp: Long = 0L,
     @Column
     var displayOrderTimestamp: Long = 0L,
+    @Column
+    var description: String? = null,
+    @Column
+    var descriptionTimestamp: Long = 0L,
 ): BaseModel() {
     val displayName get() = if (name.isNullOrEmpty()) id else name.toString()
 
@@ -75,6 +79,16 @@ data class SensorSettings(
         networkSensor = true
         subscriptionName = sensor.subscription?.subscriptionName
         lastUpdated = sensor.lastUpdated
+//        sensor.settings?.let {
+//            if ((it.displayOrder_lastUpdated ?: 0) > displayOrderTimestamp) {
+//                displayOrder = it.displayOrder
+//                displayOrderTimestamp = it.displayOrder_lastUpdated ?: 0
+//            }
+//            if ((it.description_lastUpdated ?: 0) > descriptionTimestamp) {
+//                description = it.description
+//                descriptionTimestamp = it.description_lastUpdated ?: 0
+//            }
+//        }
         update()
     }
 }

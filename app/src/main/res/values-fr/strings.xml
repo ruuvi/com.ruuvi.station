@@ -824,6 +824,10 @@
     <string name="visible_measurements_description">Ici, vous pouvez choisir quelles mesures afficher et dans quel ordre. Désactivez l’option « Utiliser par défaut » pour personnaliser les paramètres.</string>
     <string name="visible_measurements_last_element_message">La dernière mesure visible ne peut pas être supprimée. Gardez au moins une mesure dans la liste des mesures visibles.</string>
     <string name="visible_measurements_use_default">Utiliser par défaut</string>
+    <string name="notes">Notes</string>
+    <string name="show_more">Afficher plus</string>
+    <string name="show_less">Afficher moins</string>
+    <string name="update">Mettre à jour</string>
     <string name="voc_index">Indice COV</string>
     <string name="voc_with_unit">Indice COV (%1$s)</string>
     <string name="volatile_organic_compounds">Indice des composés organiques volatils</string>
