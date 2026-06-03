@@ -21,7 +21,7 @@ class BackgroundViewModel(
 
     lateinit var cameraFile: Pair<File, Uri>
 
-    private val _uiEvent = MutableSharedFlow<UiEvent> (1)
+    private val _uiEvent = MutableSharedFlow<UiEvent> (0, 1)
     val uiEvent: SharedFlow<UiEvent> = _uiEvent
 
     fun getDefaultImages(): List<Int> = tagSettingsInteractor.getDefaultImages()

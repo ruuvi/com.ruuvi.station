@@ -24,7 +24,7 @@ class ClaimSensorViewModel (
     private val sensorClaimInteractor: SensorClaimInteractor,
     ): ViewModel() {
 
-    private val _uiEvent = MutableSharedFlow<UiEvent> (1)
+    private val _uiEvent = MutableSharedFlow<UiEvent> (0, 1)
     val uiEvent: SharedFlow<UiEvent> = _uiEvent
 
     val isAir = interactor.getTagById(sensorId)?.isAir()

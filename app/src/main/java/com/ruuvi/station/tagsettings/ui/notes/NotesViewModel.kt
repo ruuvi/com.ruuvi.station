@@ -56,7 +56,9 @@ class NotesViewModel(
             processStatus(
                 status = it,
                 uiEventFlow = _uiEvent,
-                onSuccess = ::emitNoteUpdated,
+                onSuccess = {
+                    emitNoteUpdated(500)
+                },
                 onFail = {
                     emitNoteUpdated(1000)
                 }
