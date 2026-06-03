@@ -1,6 +1,5 @@
 package com.ruuvi.station.tagsettings.ui
 
-import android.net.Uri
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
@@ -96,6 +95,18 @@ fun SensorSettings(
             }
         }
 
+        if (sensorState.isAir()) {
+            DividerRuuvi()
+
+            TextEditWithCaptionButton(
+                title = stringResource(R.string.led_brightness_control),
+                icon = painterResource(id = R.drawable.arrow_forward_16),
+                tint = RuuviStationTheme.colors.trackInactive
+            ) {
+                onNavigate.invoke(SensorSettingsRoutes.LED_CONTROL)
+            }
+        }
+
         if (userLoggedIn) {
             DividerRuuvi()
 
@@ -115,17 +126,6 @@ fun SensorSettings(
             }
         }
 
-        if (sensorState.isAir()) {
-            DividerRuuvi()
-
-            TextEditWithCaptionButton(
-                title = stringResource(R.string.led_brightness_control),
-                icon = painterResource(id = R.drawable.arrow_forward_16),
-                tint = RuuviStationTheme.colors.trackInactive
-            ) {
-                onNavigate.invoke(SensorSettingsRoutes.LED_CONTROL)
-            }
-        }
         AlarmsGroup(
             scaffoldState,
             alarmsViewModel

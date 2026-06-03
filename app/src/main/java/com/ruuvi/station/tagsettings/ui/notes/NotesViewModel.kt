@@ -2,9 +2,13 @@ package com.ruuvi.station.tagsettings.ui.notes
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.ruuvi.station.app.ui.UiEvent
 import com.ruuvi.station.tagsettings.domain.TagSettingsInteractor
+import com.ruuvi.station.util.extensions.processStatus
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
@@ -22,6 +26,9 @@ class NotesViewModel(
     private val _effects = MutableSharedFlow<NotesEffect>(extraBufferCapacity = 1)
     val effects = _effects.asSharedFlow()
 
+    private val _uiEvent = MutableSharedFlow<UiEvent>(extraBufferCapacity = 1)
+    val uiEvent: SharedFlow<UiEvent> = _uiEvent
+
     fun onAction(action: NotesActions) {
         when (action) {
             is NotesActions.EditNote -> editNote(action.note)
@@ -36,9 +43,24 @@ class NotesViewModel(
     }
 
     private fun updateNote() {
-        interactor.updateDescription(sensorId, _note.value)
-        viewModelScope.launch {
-            _effects.emit(NotesEffect.NoteUpdated)
+        val status = interactor.updateDescriptionWithStatus(sensorId, _note.value)
+
+        fun emitNoteUpdated(delayMillis: Long = 0) {
+            viewModelScope.launch {
+                if (delayMillis > 0) delay(delayMillis)
+                _effects.emit(NotesEffect.NoteUpdated)
+            }
         }
+
+        status?.let {
+            processStatus(
+                status = it,
+                uiEventFlow = _uiEvent,
+                onSuccess = ::emitNoteUpdated,
+                onFail = {
+                    emitNoteUpdated(1000)
+                }
+            )
+        } ?: emitNoteUpdated()
     }
 }

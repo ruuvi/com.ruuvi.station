@@ -217,9 +217,11 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
                                 }
                                 val note by notesViewModel.note.collectAsStateWithLifecycle()
                                 Notes(
+                                    scaffoldState = scaffoldState,
                                     note = note,
                                     onAction = notesViewModel::onAction,
                                     effects = notesViewModel.effects,
+                                    uiEvent = notesViewModel.uiEvent,
                                     onNavigateBack = { navController.popBackStack() }
                                 )
                             }
