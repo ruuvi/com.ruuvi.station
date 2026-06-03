@@ -52,7 +52,7 @@ class DfuAirUpdateViewModel(
 
     var fwFiles: MutableList<File> = mutableListOf()
 
-    private val _uiEvent = MutableSharedFlow<UiEvent> (0, 1)
+    private val _uiEvent = MutableSharedFlow<UiEvent> (1)
     val uiEvent: SharedFlow<UiEvent> = _uiEvent
 
     @Volatile
