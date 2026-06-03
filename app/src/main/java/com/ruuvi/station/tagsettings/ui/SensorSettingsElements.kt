@@ -554,7 +554,7 @@ fun SensorSettingsPreview() {
 fun NotesGroup(sensorState: RuuviTag) {
     var expanded by remember { mutableStateOf(false) }
     var hasOverflow by remember { mutableStateOf(false) }
-    val notes = sensorState.description ?: ""
+    val notes = sensorState.description?.trimEnd('\n', '\r') ?: ""
 
     Column(
         modifier = Modifier

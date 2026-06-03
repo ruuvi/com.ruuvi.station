@@ -371,9 +371,11 @@ class NetworkDataSyncInteractor (
             sensor.settings?.defaultDisplayOrder?.let { defaultDisplayOrder ->
                 sensorSettingsRepository.updateUseDefaultSensorOrder(sensor.sensor, defaultDisplayOrder.toBooleanExtra(), sensor.settings.defaultDisplayOrder_lastUpdated ?: 0)
             }
-            sensor.settings?.description?.let { description ->
-                sensorSettingsRepository.newDescription(sensor.sensor, description, sensor.settings.description_lastUpdated ?: 0)
-            }
+            sensorSettingsRepository.newDescription(
+                sensor.sensor,
+                sensor.settings?.description ?: "",
+                sensor.settings?.description_lastUpdated ?: Date().time
+            )
         }
     }
 
