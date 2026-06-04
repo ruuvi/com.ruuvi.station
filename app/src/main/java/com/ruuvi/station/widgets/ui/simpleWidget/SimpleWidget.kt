@@ -7,6 +7,11 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.widget.RemoteViews
+import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.glance.action.ActionParameters
+import androidx.glance.action.actionParametersOf
+import androidx.glance.appwidget.GlanceAppWidgetManager
+import androidx.glance.appwidget.state.updateAppWidgetState
 import com.ruuvi.station.R
 import com.ruuvi.station.tagdetails.ui.SensorCardActivity
 import com.ruuvi.station.widgets.domain.WidgetInteractor
@@ -18,6 +23,7 @@ import org.kodein.di.Kodein
 import org.kodein.di.android.kodein
 import org.kodein.di.generic.instance
 import timber.log.Timber
+import kotlin.to
 
 class SimpleWidget: AppWidgetProvider() {
 
@@ -64,6 +70,8 @@ class SimpleWidget: AppWidgetProvider() {
 
     companion object {
         private const val MANUAL_REFRESH = "com.ruuvi.station.widgets.ui.simpleWidget.MANUAL_REFRESH"
+        private val SENSOR_ID_KEY = ActionParameters.Key<String>("sensor_id")
+        private val APP_WIDGET_ID_KEY = ActionParameters.Key<Int>("app_widget_id")
 
         fun updateSimpleWidget(context: Context, appWidgetManager: AppWidgetManager, appWidgetId: Int) {
             val kodein: Kodein by kodein(context)
@@ -75,29 +83,28 @@ class SimpleWidget: AppWidgetProvider() {
             val widgetType = preferences.getSimpleWidgetType(appWidgetId)
 
             if (!sensorId.isNullOrEmpty()) {
-                val views = RemoteViews(context.packageName, R.layout.widget_simple)
                 CoroutineScope(Dispatchers.Main).launch {
                     val widgetData = widgetInteractor.getSimpleWidgetData(
                         sensorId = sensorId,
                         widgetType = widgetType
                     )
-                    if (widgetData != null) {
-                        views.setTextViewText(R.id.sensorNameTextView, widgetData.displayName)
-                        views.setTextViewText(R.id.unitTextView, widgetData.unit)
-                        views.setTextViewText(R.id.sensorValueTextView, widgetData.sensorValue)
-                        views.setTextViewText(R.id.updateTextView, widgetData.updated)
+
+                    val glanceId = GlanceAppWidgetManager(context)
+                        .getGlanceIdBy(appWidgetId)
+
+                    updateAppWidgetState(context, glanceId) { prefs ->
+                        prefs[stringPreferencesKey("sensor_id")] = sensorId
+                        prefs[stringPreferencesKey("display_name")] =
+                            widgetData?.displayName.orEmpty()
+                        prefs[stringPreferencesKey("sensor_value")] =
+                            widgetData?.sensorValue.orEmpty()
+                        prefs[stringPreferencesKey("unit")] =
+                            widgetData?.unit.orEmpty()
+                        prefs[stringPreferencesKey("updated")] =
+                            widgetData?.updated.orEmpty()
                     }
 
-                    views.setOnClickPendingIntent(
-                        R.id.simpleWidgetLayout,
-                        SensorCardActivity.createPendingIntent(context, sensorId, appWidgetId)
-                    )
-                    views.setOnClickPendingIntent(
-                        R.id.refreshButton,
-                        getUpdatePendingIntent(context, appWidgetId)
-                    )
-
-                    appWidgetManager.updateAppWidget(appWidgetId, views)
+                    SimpleWidgetGlanceWidget.update(context, glanceId)
                 }
             }
         }
@@ -128,5 +135,17 @@ class SimpleWidget: AppWidgetProvider() {
 
             return appWidgetManager.getAppWidgetIds(ComponentName(context, SimpleWidget::class.java.name ))
         }
+
+        fun openSensorActionParameters(sensorId: String, appWidgetId: Int): ActionParameters {
+            return actionParametersOf(
+                SENSOR_ID_KEY to sensorId,
+                APP_WIDGET_ID_KEY to appWidgetId
+            )
+        }
+
+        fun sensorIdFromParameters(parameters: ActionParameters): String? = parameters[SENSOR_ID_KEY]
+
+        fun appWidgetIdFromParameters(parameters: ActionParameters): Int =
+            parameters[APP_WIDGET_ID_KEY] ?: AppWidgetManager.INVALID_APPWIDGET_ID
     }
 }
