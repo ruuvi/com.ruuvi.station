@@ -6,14 +6,11 @@ import android.appwidget.AppWidgetProvider
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
-import android.widget.RemoteViews
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.glance.action.ActionParameters
 import androidx.glance.action.actionParametersOf
 import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.glance.appwidget.state.updateAppWidgetState
-import com.ruuvi.station.R
-import com.ruuvi.station.tagdetails.ui.SensorCardActivity
 import com.ruuvi.station.widgets.domain.WidgetInteractor
 import com.ruuvi.station.widgets.domain.WidgetPreferencesInteractor
 import kotlinx.coroutines.CoroutineScope
@@ -23,7 +20,6 @@ import org.kodein.di.Kodein
 import org.kodein.di.android.kodein
 import org.kodein.di.generic.instance
 import timber.log.Timber
-import kotlin.to
 
 class SimpleWidget: AppWidgetProvider() {
 
@@ -34,7 +30,7 @@ class SimpleWidget: AppWidgetProvider() {
     ) {
         super.onUpdate(context, appWidgetManager, appWidgetIds)
         for (appWidgetId in appWidgetIds) {
-            updateSimpleWidget(context, appWidgetManager, appWidgetId)
+            updateSimpleWidget(context, appWidgetId)
         }
     }
 
@@ -73,7 +69,7 @@ class SimpleWidget: AppWidgetProvider() {
         private val SENSOR_ID_KEY = ActionParameters.Key<String>("sensor_id")
         private val APP_WIDGET_ID_KEY = ActionParameters.Key<Int>("app_widget_id")
 
-        fun updateSimpleWidget(context: Context, appWidgetManager: AppWidgetManager, appWidgetId: Int) {
+        fun updateSimpleWidget(context: Context, appWidgetId: Int) {
             val kodein: Kodein by kodein(context)
 
             val preferences: WidgetPreferencesInteractor by kodein.instance()
@@ -117,16 +113,6 @@ class SimpleWidget: AppWidgetProvider() {
             return PendingIntent.getBroadcast(context, appWidgetId, updateIntent,
                 PendingIntent.FLAG_IMMUTABLE
             )
-        }
-
-        fun updateAll(context: Context) {
-            val ids = getSimpleWidgetsIds(context)
-            val appWidgetManager =
-                AppWidgetManager.getInstance(context)
-
-            for (appWidgetId in ids) {
-                updateSimpleWidget(context, appWidgetManager, appWidgetId)
-            }
         }
 
         fun getSimpleWidgetsIds(context: Context): IntArray {

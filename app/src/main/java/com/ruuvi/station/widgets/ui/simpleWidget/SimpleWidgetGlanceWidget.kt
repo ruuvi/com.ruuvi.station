@@ -1,6 +1,5 @@
 package com.ruuvi.station.widgets.ui.simpleWidget
 
-import android.appwidget.AppWidgetManager
 import android.content.Context
 import androidx.glance.state.PreferencesGlanceStateDefinition
 import androidx.compose.runtime.Composable
@@ -85,7 +84,7 @@ class RefreshSimpleWidgetAction : ActionCallback {
         parameters: ActionParameters
     ) {
         val appWidgetId = GlanceAppWidgetManager(context).getAppWidgetId(glanceId)
-        SimpleWidget.updateSimpleWidget(context, AppWidgetManager.getInstance(context), appWidgetId)
+        SimpleWidget.updateSimpleWidget(context, appWidgetId)
     }
 }
 
@@ -203,8 +202,8 @@ private fun SimpleWidgetContent(
                 provider = ImageProvider(R.drawable.ic_widget_d_update),
                 contentDescription = null,
                 modifier = GlanceModifier
-                    .width(24.dp)
-                    .height(24.dp)
+                    .width(16.dp)
+                    .height(16.dp)
                     .clickable(actionRunCallback<RefreshSimpleWidgetAction>()),
                 colorFilter = ColorFilter.tint(secondaryColor)
             )
