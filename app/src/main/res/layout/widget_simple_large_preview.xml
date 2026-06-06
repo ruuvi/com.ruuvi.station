@@ -3,7 +3,7 @@
     android:theme="@style/AppTheme.AppWidgetContainer"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    tools:layout_height="70dp"
+    tools:layout_height="110dp"
     tools:layout_width="130dp">
 
     <RelativeLayout
@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:padding="12dp"
-        tools:layout_height="100dp"
+        tools:layout_height="110dp"
         tools:layout_width="130dp">
 
         <ImageView
@@ -39,50 +39,65 @@
             android:textSize="10sp"
             android:text="@string/widgets_preview_time" />
 
-        <TextView
-            android:id="@+id/sensorNameTextView"
+        <LinearLayout
+            android:id="@+id/namesContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_above="@+id/sensorValueTextView"
             android:layout_below="@+id/logoImageView"
-            android:fontFamily="@font/mulish_regular"
-            android:gravity="bottom"
-            android:lines="2"
-            android:maxLines="2"
-            android:text="@string/widgets_preview_sensor_name"
-            android:textColor="?attr/colorOnSecondary"
-            android:textSize="12sp"
-            android:textStyle="bold" />
+            android:layout_marginTop="4dp"
+            android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/sensorValueTextView"
+            <TextView
+                android:id="@+id/sensorNameTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/mulish_bold"
+                android:text="@string/widgets_preview_sensor_name"
+                android:textColor="?attr/colorOnSecondary"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/measurementNameTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/mulish_regular"
+                android:text="@string/temperature"
+                android:textColor="?attr/colorOnSecondary"
+                android:textSize="10sp" />
+        </LinearLayout>
+
+        <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
-            android:layout_alignParentBottom="true"
-            android:layout_marginTop="4dp"
-            android:fontFamily="@font/oswald_bold_ttf"
-            android:gravity="top"
-            android:includeFontPadding="false"
-            android:lineSpacingExtra="0dp"
-            android:lineSpacingMultiplier="1"
-            android:text="@string/widgets_preview_sensor_value"
-            android:textColor="?attr/colorOnSurface"
-            android:textSize="24sp"
-            android:textStyle="bold" />
+            android:layout_alignParentBottom="true">
 
-        <TextView
-            android:id="@+id/unitTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignTop="@+id/sensorValueTextView"
-            android:layout_toEndOf="@+id/sensorValueTextView"
-            android:fontFamily="@font/oswald_light_ttf"
-            android:includeFontPadding="false"
-            android:paddingStart="2dp"
-            android:textColor="?attr/colorOnSecondary"
-            android:textSize="10sp"
-            android:text="@string/temperature_celsius_unit" />
+            <TextView
+                android:id="@+id/sensorValueTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:fontFamily="@font/oswald_bold_ttf"
+                android:includeFontPadding="false"
+                android:text="@string/widgets_preview_sensor_value"
+                android:textColor="?attr/colorOnSurface"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/unitTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@+id/sensorValueTextView"
+                android:layout_marginStart="2dp"
+                android:fontFamily="@font/oswald_light_ttf"
+                android:includeFontPadding="false"
+                android:paddingTop="4dp"
+                android:textColor="?attr/colorOnSecondary"
+                android:textSize="10sp"
+                android:text="@string/temperature_celsius_unit" />
+        </RelativeLayout>
 
     </RelativeLayout>
 

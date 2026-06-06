@@ -96,6 +96,8 @@ class SimpleWidget: AppWidgetProvider() {
                             widgetData?.sensorValue.orEmpty()
                         prefs[stringPreferencesKey("unit")] =
                             widgetData?.unit.orEmpty()
+                        prefs[stringPreferencesKey("measurement_name")] =
+                            widgetData?.measurementName.orEmpty()
                         prefs[stringPreferencesKey("updated")] =
                             widgetData?.updated.orEmpty()
                     }
