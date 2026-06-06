@@ -4,7 +4,6 @@ import android.content.Context
 import androidx.glance.state.PreferencesGlanceStateDefinition
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.glance.ColorFilter
 import androidx.glance.GlanceId
@@ -19,8 +18,8 @@ import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.glance.appwidget.action.ActionCallback
 import androidx.glance.appwidget.action.actionRunCallback
 import androidx.glance.appwidget.provideContent
+import androidx.glance.LocalSize
 import androidx.glance.background
-import androidx.glance.color.ColorProvider
 import androidx.glance.currentState
 import androidx.glance.layout.Alignment
 import androidx.glance.layout.Box
@@ -32,15 +31,14 @@ import androidx.glance.layout.fillMaxWidth
 import androidx.glance.layout.height
 import androidx.glance.layout.padding
 import androidx.glance.layout.width
-import androidx.glance.text.FontWeight
-import androidx.glance.text.Text
-import androidx.glance.text.TextStyle
 import com.ruuvi.station.R
 import androidx.datastore.preferences.core.Preferences
-import com.ruuvi.station.app.ui.theme.darkPalette
-import com.ruuvi.station.app.ui.theme.lightPalette
 import com.ruuvi.station.dashboard.ui.DashboardActivity
 import com.ruuvi.station.tagdetails.ui.SensorCardActivity
+import com.ruuvi.station.widgets.ui.glance.GlanceColors
+import com.ruuvi.station.widgets.ui.glance.CustomFontText
+import com.ruuvi.station.app.ui.theme.ruuviStationFonts
+import com.ruuvi.station.app.ui.theme.ruuviStationFontsSizes
 
 object SimpleWidgetGlanceWidget : GlanceAppWidget() {
 
@@ -50,6 +48,7 @@ object SimpleWidgetGlanceWidget : GlanceAppWidget() {
     private val DisplayNameKey = stringPreferencesKey("display_name")
     private val SensorValueKey = stringPreferencesKey("sensor_value")
     private val UnitKey = stringPreferencesKey("unit")
+    private val MeasurementNameKey = stringPreferencesKey("measurement_name")
     private val UpdatedKey = stringPreferencesKey("updated")
 
     override suspend fun provideGlance(context: Context, id: GlanceId) {
@@ -62,6 +61,7 @@ object SimpleWidgetGlanceWidget : GlanceAppWidget() {
             val displayName = prefs[DisplayNameKey]
             val sensorValue = prefs[SensorValueKey]
             val unit = prefs[UnitKey]
+            val measurementName = prefs[MeasurementNameKey]
             val updated = prefs[UpdatedKey]
 
             SimpleWidgetContent(
@@ -71,6 +71,7 @@ object SimpleWidgetGlanceWidget : GlanceAppWidget() {
                     ?: context.getString(R.string.widgets_loading),
                 sensorValue = sensorValue.orEmpty(),
                 unit = unit.orEmpty(),
+                measurementName = measurementName.orEmpty(),
                 updated = updated.orEmpty()
             )
         }
@@ -107,12 +108,9 @@ private fun SimpleWidgetContent(
     displayName: String,
     sensorValue: String,
     unit: String,
+    measurementName: String,
     updated: String
 ) {
-    val surfaceColor = ColorProvider(day = lightPalette.background, night = darkPalette.background)
-    val valueColor = ColorProvider(day = lightPalette.dashboardValue, night = darkPalette.dashboardValue)
-    val secondaryColor = ColorProvider(day = lightPalette.secondaryTextColor, night = darkPalette.secondaryTextColor)
-    val dashboardIconsColor = ColorProvider(day = lightPalette.dashboardIcons, night = darkPalette.dashboardIcons)
 
     val openAction = if (!sensorId.isNullOrEmpty()) {
         actionRunCallback<OpenSimpleWidgetSensorAction>(
@@ -122,10 +120,13 @@ private fun SimpleWidgetContent(
         actionStartActivity<DashboardActivity>()
     }
 
+    val size = LocalSize.current
+    val showMeasurementName = size.height >= 100.dp
+
     Box(
         modifier = GlanceModifier
             .fillMaxSize()
-            .background(surfaceColor)
+            .background(GlanceColors.background)
             .padding(8.dp)
             .clickable(openAction)
     ) {
@@ -140,54 +141,58 @@ private fun SimpleWidgetContent(
                     provider = ImageProvider(R.drawable.logo_2021),
                     contentDescription = null,
                     modifier = GlanceModifier.width(44.dp),
-                    colorFilter = ColorFilter.tint(dashboardIconsColor)
+                    colorFilter = ColorFilter.tint(GlanceColors.logoColor)
                 )
 
                 Spacer(modifier = GlanceModifier.defaultWeight())
 
-                Text(
+                CustomFontText(
                     text = updated,
-                    style = TextStyle(
-                        color = secondaryColor,
-                        fontSize = 12.sp
-                    )
+                    fontSize = ruuviStationFontsSizes.tiny2,
+                    colorProvider = GlanceColors.widgetSensorName,
+                    fontFamily = ruuviStationFonts.mulishRegular
                 )
             }
 
-            Spacer(modifier = GlanceModifier.height(4.dp))
+            Spacer(modifier = GlanceModifier.height(2.dp))
 
-            Text(
+            CustomFontText(
                 text = displayName,
-                maxLines = 1,
-                style = TextStyle(
-                    color = secondaryColor,
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Medium
-                )
+                fontSize = ruuviStationFontsSizes.normal,
+                colorProvider = GlanceColors.widgetSensorName,
+                fontFamily = ruuviStationFonts.mulishBold
             )
+
+            if (showMeasurementName) {
+                CustomFontText(
+                    text = measurementName,
+                    fontSize = ruuviStationFontsSizes.tiny2,
+                    colorProvider = GlanceColors.widgetSensorName,
+                    fontFamily = ruuviStationFonts.mulishRegular
+                )
+            }
 
             Spacer(modifier = GlanceModifier.defaultWeight())
 
             Row(
-                verticalAlignment = Alignment.Vertical.Bottom
+                modifier = GlanceModifier.fillMaxWidth(),
+                verticalAlignment = Alignment.Top
             ) {
-                Text(
+                CustomFontText(
                     text = sensorValue,
-                    style = TextStyle(
-                        color = valueColor,
-                        fontSize = 28.sp,
-                        fontWeight = FontWeight.Bold
-                    )
+                    fontSize = ruuviStationFontsSizes.bigger,
+                    colorProvider = GlanceColors.valueColor,
+                    fontFamily = ruuviStationFonts.oswaldBold
                 )
 
-                Spacer(modifier = GlanceModifier.width(4.dp))
+                Spacer(modifier = GlanceModifier.width(2.dp))
 
-                Text(
+                CustomFontText(
                     text = unit,
-                    style = TextStyle(
-                        color = secondaryColor,
-                        fontSize = 12.sp
-                    )
+                    fontSize = ruuviStationFontsSizes.tiny2,
+                    colorProvider = GlanceColors.widgetSensorName,
+                    fontFamily = ruuviStationFonts.oswaldLight,
+                    modifier = GlanceModifier.padding(top = 4.dp)
                 )
             }
         }
@@ -198,15 +203,23 @@ private fun SimpleWidgetContent(
                 .padding(2.dp),
             contentAlignment = Alignment.BottomEnd
         ) {
-            Image(
-                provider = ImageProvider(R.drawable.ic_widget_d_update),
-                contentDescription = null,
+            Box(
                 modifier = GlanceModifier
-                    .width(16.dp)
-                    .height(16.dp)
+                    .width(40.dp)
+                    .height(40.dp)
+                    .padding(bottom = 4.dp, end = 4.dp)
                     .clickable(actionRunCallback<RefreshSimpleWidgetAction>()),
-                colorFilter = ColorFilter.tint(secondaryColor)
-            )
+                contentAlignment = Alignment.BottomEnd
+            ) {
+                Image(
+                    provider = ImageProvider(R.drawable.ic_widget_d_update),
+                    contentDescription = null,
+                    modifier = GlanceModifier
+                        .width(16.dp)
+                        .height(16.dp),
+                    colorFilter = ColorFilter.tint(GlanceColors.refreshButtonColor)
+                )
+            }
         }
     }
 }

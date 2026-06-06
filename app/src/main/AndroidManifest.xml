@@ -192,7 +192,7 @@ xmlns:tools="http://schemas.android.com/tools">
     </receiver>
 
     <receiver
-        android:name=".widgets.ui.simpleWidget.SimpleWidget"
+        android:name=".widgets.ui.simpleWidget.SimpleWidgetReceiver"
         android:exported="false">
         <intent-filter>
             <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
@@ -201,6 +201,19 @@ xmlns:tools="http://schemas.android.com/tools">
         <meta-data
             android:name="android.appwidget.provider"
             android:resource="@xml/simple_widget_info" />
+    </receiver>
+
+    <receiver
+        android:name=".widgets.ui.simpleWidget.SimpleMediumWidgetReceiver"
+        android:label="Simple Widget (Large)"
+        android:exported="false">
+        <intent-filter>
+            <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+        </intent-filter>
+
+        <meta-data
+            android:name="android.appwidget.provider"
+            android:resource="@xml/simple_large_widget_info" />
     </receiver>
 
     <receiver
