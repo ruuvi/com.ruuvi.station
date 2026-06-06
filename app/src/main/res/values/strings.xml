@@ -828,6 +828,10 @@
     <string name="visible_measurements_description">Here, you can choose which measurements you\'d like to see and in what order. Switch the "Use default" toggle off to customise the settings.</string>
     <string name="visible_measurements_last_element_message">The last visible measurement cannot be removed. Keep at least one measurement in the Visible measurements list.</string>
     <string name="visible_measurements_use_default">Use default</string>
+    <string name="notes">Notes</string>
+    <string name="show_more">Show more</string>
+    <string name="show_less">Show less</string>
+    <string name="update">Update</string>
     <string name="voc_index">VOC index</string>
     <string name="voc_with_unit">VOC index (%1$s)</string>
     <string name="volatile_organic_compounds">Volatile organic compounds index</string>

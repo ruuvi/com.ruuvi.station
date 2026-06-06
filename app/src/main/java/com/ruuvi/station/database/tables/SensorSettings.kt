@@ -62,6 +62,10 @@ data class SensorSettings(
     var defaultDisplayOrderTimestamp: Long = 0L,
     @Column
     var displayOrderTimestamp: Long = 0L,
+    @Column
+    var description: String? = null,
+    @Column
+    var descriptionTimestamp: Long = 0L,
 ): BaseModel() {
     val displayName get() = if (name.isNullOrEmpty()) id else name.toString()
 

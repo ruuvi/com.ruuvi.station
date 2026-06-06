@@ -567,6 +567,10 @@
     <string name="visible_measurements_change_use_default_confirmation">Masz aktywne powiadomienie skonfigurowane dla %1$s. Jeśli zmienisz to ustawienie, zostanie ono dezaktywowane. Czy chcesz kontynuować?</string>
     <string name="visible_measurements_change_use_default_multiple_alerts_confirmation">Masz aktywne powiadomienia skonfigurowane dla %1$s. Jeśli zmienisz to ustawienie, zostaną one dezaktywowane. Czy chcesz kontynuować?</string>
     <string name="visible_measurements_last_element_message">Nie można usunąć ostatniego widocznego pomiaru. Pozostaw co najmniej jeden pomiar na liście widocznych pomiarów.</string>
+    <string name="notes">Notatki</string>
+    <string name="show_more">Pokaż więcej</string>
+    <string name="show_less">Pokaż mniej</string>
+    <string name="update">Aktualizuj</string>
     <string name="voc_index">Indeks LZO</string>
     <string name="voc_with_unit">Indeks LZO (%1$s)</string>
     <string name="volatile_organic_compounds">Indeks lotnych związków organicznych</string>

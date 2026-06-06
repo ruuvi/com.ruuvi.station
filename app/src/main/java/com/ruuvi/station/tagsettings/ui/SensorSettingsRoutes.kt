@@ -8,6 +8,7 @@ object SensorSettingsRoutes {
     const val SENSOR_REMOVE = "sensor_remove"
     const val VISIBLE_MEASUREMENTS = "visible_measurements"
     const val LED_CONTROL = "led_control"
+    const val NOTES = "notes"
 
 
     fun getTitleByRoute(context: Context, route: String): String {
@@ -16,6 +17,7 @@ object SensorSettingsRoutes {
             SENSOR_REMOVE -> context.getString(R.string.tagsettings_sensor_remove)
             VISIBLE_MEASUREMENTS -> context.getString(R.string.visible_measurements)
             LED_CONTROL -> context.getString(R.string.led_brightness_control)
+            NOTES -> context.getString(R.string.notes)
             else -> context.getString(R.string.sensor_settings)
         }
     }

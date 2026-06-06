@@ -819,6 +819,10 @@
     <string name="visible_measurements_description">Här kan du välja vilka mätvärden du vill se och i vilken ordning. Stäng av "Använd standard" för att anpassa inställningarna.</string>
     <string name="visible_measurements_last_element_message">Den sista synliga mätningen kan inte tas bort. Lämna minst en mätning i listan över synliga mätningar.</string>
     <string name="visible_measurements_use_default">Använd standard</string>
+    <string name="notes">Anteckningar</string>
+    <string name="show_more">Visa mer</string>
+    <string name="show_less">Visa mindre</string>
+    <string name="update">Uppdatera</string>
     <string name="voc_index">VOC-index</string>
     <string name="voc_with_unit">VOC-index (%1$s)</string>
     <string name="volatile_organic_compounds">Index för flyktiga organiska föreningar</string>
