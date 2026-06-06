@@ -204,7 +204,7 @@ xmlns:tools="http://schemas.android.com/tools">
     </receiver>
 
     <receiver
-        android:name=".widgets.ui.simpleWidget.SimpleMediumWidgetReceiver"
+        android:name=".widgets.ui.simpleWidget.SimpleLargeWidgetReceiver"
         android:label="Simple Widget (Large)"
         android:exported="false">
         <intent-filter>
