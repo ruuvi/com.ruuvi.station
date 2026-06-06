@@ -157,6 +157,8 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-compose-compiler-plugin-embeddable:$kotlin_version"
     implementation "androidx.constraintlayout:constraintlayout-compose:1.1.1"
     implementation "androidx.compose.runtime:runtime-livedata:1.8.2"
+    implementation "androidx.glance:glance:1.1.1"
+    implementation "androidx.glance:glance-appwidget:1.1.1"
     implementation "com.google.accompanist:accompanist-systemuicontroller:$accomponist_version"
     implementation "com.google.accompanist:accompanist-permissions:$accomponist_version"
     implementation "com.google.accompanist:accompanist-pager:$accomponist_version"
