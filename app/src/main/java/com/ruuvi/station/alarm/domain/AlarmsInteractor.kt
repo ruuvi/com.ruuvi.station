@@ -263,6 +263,6 @@ class AlarmsInteractor(
             mutedTill = state.mutedTill,
             timestamp = null
         )
-        return networkInteractor.setAlert(alarm)
+        return networkInteractor.setAlertWithStatus(alarm)
     }
 }
