@@ -30,7 +30,7 @@ class AlarmItemsViewModel(
     val tagSettingsInteractor: TagSettingsInteractor
 ): ViewModel() {
 
-    private val _uiEvent = MutableSharedFlow<UiEvent> (1)
+    private val _uiEvent = MutableSharedFlow<UiEvent> (0,1)
     val uiEvent: SharedFlow<UiEvent> = _uiEvent
 
     private val _alarms = mutableStateListOf<AlarmItemState>()
