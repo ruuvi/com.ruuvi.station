@@ -3,6 +3,7 @@ package com.ruuvi.station.widgets.ui.simpleWidget
 import android.content.Context
 import androidx.glance.state.PreferencesGlanceStateDefinition
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.glance.ColorFilter
@@ -33,12 +34,15 @@ import androidx.glance.layout.padding
 import androidx.glance.layout.width
 import com.ruuvi.station.R
 import androidx.datastore.preferences.core.Preferences
+import com.ruuvi.station.app.ui.theme.Red
+import com.ruuvi.station.app.ui.theme.White
 import com.ruuvi.station.dashboard.ui.DashboardActivity
 import com.ruuvi.station.tagdetails.ui.SensorCardActivity
 import com.ruuvi.station.widgets.ui.glance.GlanceColors
 import com.ruuvi.station.widgets.ui.glance.CustomFontText
 import com.ruuvi.station.app.ui.theme.ruuviStationFonts
 import com.ruuvi.station.app.ui.theme.ruuviStationFontsSizes
+import java.time.Year
 
 object SimpleWidgetGlanceWidget : GlanceAppWidget() {
 
@@ -120,14 +124,11 @@ private fun SimpleWidgetContent(
         actionStartActivity<DashboardActivity>()
     }
 
-    val size = LocalSize.current
-    val showMeasurementName = size.height >= 100.dp
-
     Box(
         modifier = GlanceModifier
             .fillMaxSize()
             .background(GlanceColors.background)
-            .padding(8.dp)
+            .padding(start = 8.dp, top = 2.dp, end = 8.dp, bottom = 2.dp)
             .clickable(openAction)
     ) {
         Column(
@@ -140,7 +141,7 @@ private fun SimpleWidgetContent(
                 Image(
                     provider = ImageProvider(R.drawable.logo_2021),
                     contentDescription = null,
-                    modifier = GlanceModifier.width(44.dp),
+                    modifier = GlanceModifier.width(36.dp),
                     colorFilter = ColorFilter.tint(GlanceColors.logoColor)
                 )
 
@@ -148,13 +149,11 @@ private fun SimpleWidgetContent(
 
                 CustomFontText(
                     text = updated,
-                    fontSize = ruuviStationFontsSizes.tiny2,
+                    fontSize = ruuviStationFontsSizes.tiny,
                     colorProvider = GlanceColors.widgetSensorName,
                     fontFamily = ruuviStationFonts.mulishRegular
                 )
             }
-
-            Spacer(modifier = GlanceModifier.height(2.dp))
 
             CustomFontText(
                 text = displayName,
@@ -163,16 +162,12 @@ private fun SimpleWidgetContent(
                 fontFamily = ruuviStationFonts.mulishBold
             )
 
-            if (showMeasurementName) {
-                CustomFontText(
-                    text = measurementName,
-                    fontSize = ruuviStationFontsSizes.tiny2,
-                    colorProvider = GlanceColors.widgetSensorName,
-                    fontFamily = ruuviStationFonts.mulishRegular
-                )
-            }
-
-            Spacer(modifier = GlanceModifier.defaultWeight())
+            CustomFontText(
+                text = measurementName,
+                fontSize = ruuviStationFontsSizes.tiny,
+                colorProvider = GlanceColors.widgetSensorName,
+                fontFamily = ruuviStationFonts.mulishRegular
+            )
 
             Row(
                 modifier = GlanceModifier.fillMaxWidth(),
@@ -189,7 +184,7 @@ private fun SimpleWidgetContent(
 
                 CustomFontText(
                     text = unit,
-                    fontSize = ruuviStationFontsSizes.tiny2,
+                    fontSize = ruuviStationFontsSizes.tiny,
                     colorProvider = GlanceColors.widgetSensorName,
                     fontFamily = ruuviStationFonts.oswaldLight,
                     modifier = GlanceModifier.padding(top = 4.dp)
