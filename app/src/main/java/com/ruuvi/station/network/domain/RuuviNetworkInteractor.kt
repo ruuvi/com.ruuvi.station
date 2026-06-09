@@ -270,18 +270,27 @@ class RuuviNetworkInteractor (
         networkRequestExecutor.registerRequest(networkRequest, true)
     }
 
-    fun setAlert(alarm: Alarm): Flow<OperationStatus>? {
-        if (shouldSendSensorDataToNetwork(alarm.ruuviTagId) && alarm.alarmType?.networkCode != null) {
-            val networkRequest = NetworkRequest(
+    fun setAlert(alarm: Alarm): Job? {
+        return getSetAlertRequest(alarm)?.let { networkRequest ->
+            networkRequestExecutor.registerRequest(networkRequest)
+        }
+    }
+
+    fun setAlertWithStatus(alarm: Alarm): Flow<OperationStatus>? {
+        return getSetAlertRequest(alarm)?.let { networkRequest ->
+            return networkRequestExecutor.registerRequestWithStatus(networkRequest)
+        }
+    }
+
+    private fun getSetAlertRequest(alarm: Alarm): NetworkRequest? {
+        if (shouldSendSensorDataToNetwork(alarm.ruuviTagId) && alarm.alarmType.networkCode != null) {
+            return NetworkRequest(
                 NetworkRequestType.SET_ALERT,
-                alarm.ruuviTagId + alarm.alarmType?.networkCode,
+                alarm.ruuviTagId + alarm.alarmType.networkCode,
                 SetAlertRequest.getAlarmRequest(alarm)
             )
-            Timber.d("setAlert $networkRequest")
-            return networkRequestExecutor.registerRequestWithStatus(networkRequest)
-        } else {
-            return null
         }
+        return null
     }
 
     fun requestDeleteAccount(onResult: (DeleteAccountResponse?) -> Unit) {

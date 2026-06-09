@@ -82,7 +82,6 @@ class AlarmCheckInteractor(
                 alarm.latestTriggered?.diffGreaterThan(LIMIT_LOCAL_ALERTS_THRESHOLD) == false
         val mutedAlarm = alarm.mutedTill?.let { it > Date()} ?: false
 
-        Timber.d("canNotify mutedAlarm = $mutedAlarm limitLocalAlerts = $limitLocalAlerts dosingAlert = $dosingAlert ${alarm.latestTriggered}")
         return !(mutedAlarm || limitLocalAlerts || dosingAlert)
     }
 

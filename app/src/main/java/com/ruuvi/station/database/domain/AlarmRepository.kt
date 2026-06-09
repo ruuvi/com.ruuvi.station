@@ -55,6 +55,7 @@ class AlarmRepository {
 
     fun disableAlarm(alarm: Alarm) {
         alarm.enabled = false
+        alarm.lastUpdated = Date().time / 1000
         alarm.update()
     }
 
