@@ -26,14 +26,11 @@ class NetworkRequestExecutor (
 ){
     private fun getToken() = tokenRepository.getTokenInfo()
 
-    fun registerRequest(networkRequest: NetworkRequest, executeNow: Boolean = true) {
-        Timber.d("registerRequest $networkRequest $executeNow")
-        CoroutineScope(Dispatchers.IO).launch {
+    fun registerRequest(networkRequest: NetworkRequest, executeNow: Boolean = true): Job {
+        return CoroutineScope(Dispatchers.IO).launch {
             disableSimilarRequest (networkRequest)
             networkRequestRepository.saveRequest(networkRequest)
-            Timber.d("request saved $networkRequest")
             if (executeNow) {
-                Timber.d("execute NOW $networkRequest")
                 delay(1000)
                 val request = networkRequestRepository.getById(networkRequest.id)
                 if (request != null && request.status == NetworkRequestStatus.READY) {

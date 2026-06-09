@@ -270,8 +270,8 @@ class RuuviNetworkInteractor (
         networkRequestExecutor.registerRequest(networkRequest, true)
     }
 
-    fun setAlert(alarm: Alarm) {
-        getSetAlertRequest(alarm)?.let { networkRequest ->
+    fun setAlert(alarm: Alarm): Job? {
+        return getSetAlertRequest(alarm)?.let { networkRequest ->
             networkRequestExecutor.registerRequest(networkRequest)
         }
     }
