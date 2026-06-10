@@ -15,9 +15,11 @@ import androidx.glance.GlanceModifier
 import androidx.glance.Image
 import androidx.glance.ImageProvider
 import androidx.glance.LocalContext
+import androidx.glance.background
 import androidx.glance.layout.Box
 import androidx.glance.unit.ColorProvider
 import com.ruuvi.station.R
+import com.ruuvi.station.app.ui.theme.Red
 import kotlin.math.ceil
 
 object GlanceFontUtils {
@@ -44,11 +46,11 @@ object GlanceFontUtils {
 
         paint.typeface = ResourcesCompat.getFont(context, fontResId)
 
-        val horizontalPadding = 2f
-        val verticalPadding = 2f
+        val horizontalPadding = 0f
+        val verticalPadding = 0f
         val metrics = paint.fontMetrics
         val width = ceil(paint.measureText(text) + (horizontalPadding * 2)).toInt()
-        val height = ceil((metrics.bottom - metrics.top) + (verticalPadding * 2)).toInt()
+        val height = ceil((metrics.descent - metrics.ascent) + (verticalPadding * 2)).toInt()
 
         if (width <= 0 || height <= 0) {
             return Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888)
@@ -56,7 +58,7 @@ object GlanceFontUtils {
 
         val image = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(image)
-        val baseline = verticalPadding - metrics.top
+        val baseline = verticalPadding - metrics.ascent
         canvas.drawText(text, horizontalPadding, baseline, paint)
         return image
     }
