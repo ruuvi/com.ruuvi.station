@@ -62,8 +62,7 @@ class VisibleMeasurementsMigrationInteractor(
                     AlarmType.PM10.value, AlarmType.PM40.value, AlarmType.PM100.value -> {
                         if (ruuviTag?.defaultDisplayOrder == true) {
                             alarmRepository.disableAlarm(alarm)
-                            val flow = networkInteractor.setAlertWithStatus(alarm)
-                            flow?.launchIn(CoroutineScope(Dispatchers.IO))
+                            networkInteractor.setAlert(alarm)
                         }
                     }
                 }

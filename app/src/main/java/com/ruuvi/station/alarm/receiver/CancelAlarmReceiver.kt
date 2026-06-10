@@ -7,6 +7,9 @@ import android.content.Intent
 import com.ruuvi.station.alarm.domain.AlarmCheckInteractor
 import com.ruuvi.station.database.domain.AlarmRepository
 import com.ruuvi.station.network.domain.RuuviNetworkInteractor
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.generic.instance
@@ -18,21 +21,29 @@ class CancelAlarmReceiver : BroadcastReceiver(), KodeinAware {
     private val networkInteractor: RuuviNetworkInteractor by instance()
 
     override fun onReceive(context: Context, intent: Intent) {
+        val pendingResult = goAsync()
         kodein = (context.applicationContext as KodeinAware).kodein
         val alarmCheckInteractor: AlarmCheckInteractor by kodein.instance()
 
         val alarmId = intent.getIntExtra("alarmId", DEFAULT_ID)
         val notificationId = intent.getIntExtra("notificationId", DEFAULT_ID)
-        if (alarmId != -1) {
-            val alarm = alarmRepository.getById(alarmId)
-            if (alarm != null) {
-                alarmRepository.disableAlarm(alarm)
-                if (networkInteractor.signedIn) {
-                    networkInteractor.setAlert(alarm)
+
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                if (alarmId != DEFAULT_ID) {
+                    val alarm = alarmRepository.getById(alarmId)
+                    if (alarm != null) {
+                        alarmRepository.disableAlarm(alarm)
+                        if (networkInteractor.signedIn) {
+                            networkInteractor.setAlert(alarm)?.join()
+                        }
+                    }
                 }
+                alarmCheckInteractor.removeNotificationById(notificationId)
+            } finally {
+                pendingResult.finish()
             }
         }
-        alarmCheckInteractor.removeNotificationById(notificationId)
     }
 
     companion object {
