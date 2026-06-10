@@ -62,6 +62,28 @@ We would love you for the contribution to **Ruuvi Station**, check the ``LICENSE
 6. Sync project with Gradle file
 7. Now you can run project on emulator or phone
 
+### Push Notifications Setup (Firebase)
+
+To receive Cloud Push Notifications during development, you must register your local debug SHA-1 fingerprint:
+
+1. **Get your SHA-1 Fingerprint:**
+   - Run `./gradlew signingReport` in the Android Studio terminal.
+   - Copy the SHA1 string from the `debug` variant.
+
+2. **Firebase Console:**
+   - Go to [Firebase Console](https://console.firebase.google.com/) -> Project Settings.
+   - Add your SHA-1 fingerprint to the Android app.
+   - Download the updated `google-services.json` and replace the one in your `/app/` folder.
+
+3. **Google Cloud Console:**
+   - Go to [Google Cloud Credentials](https://console.cloud.google.com/apis/credentials).
+   - Find the **Android key (auto created by Firebase)**.
+   - Ensure the **Firebase Installations API** is added to the list of allowed APIs for this key.
+   - Verify that the **Firebase Installations API** is enabled in the [API Library](https://console.cloud.google.com/apis/library).
+
+4. **Finalize:**
+   - Clean and Rebuild the project in Android Studio.
+
 Watch video showing build process:
 
 <a href="https://www.youtube.com/watch?v=1sXIASGXaaw"><img src="/docs/playvideo.png?raw=true" alt="Watch video" height="400"/></a>
