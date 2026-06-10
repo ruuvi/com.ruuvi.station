@@ -8,7 +8,6 @@ import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tag.domain.TagConverter
 import com.ruuvi.station.util.AlphabetNumberComparator
 import timber.log.Timber
-import java.text.Collator
 import java.util.*
 
 class TagRepository(
