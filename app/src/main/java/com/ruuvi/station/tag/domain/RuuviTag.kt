@@ -30,6 +30,7 @@ data class RuuviTag(
     var defaultDisplayOrder: Boolean,
     var displayOrder: List<UnitType>,
     var possibleDisplayOptions: List<UnitType>,
+    val description: String?,
     val valuesToDisplay: List<EnvironmentValue>,
     val latestMeasurement: SensorMeasurements?
 ) {
@@ -205,5 +206,6 @@ val ruuviTagPreview = RuuviTag(
     displayOrder = listOf(),
     valuesToDisplay = listOf(),
     possibleDisplayOptions = listOf(),
+    description = "",
     latestMeasurement = sensorMeasurementsPreview
 )

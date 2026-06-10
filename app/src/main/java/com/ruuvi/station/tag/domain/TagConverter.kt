@@ -40,6 +40,7 @@ class TagConverter(
             defaultDisplayOrder = sensorSettings.defaultDisplayOrder,
             displayOrder = listOf(),
             possibleDisplayOptions = listOf(),
+            description = sensorSettings.description,
             valuesToDisplay = listOf(),
             latestMeasurement = SensorMeasurements(
                 aqi = unitsConverter.getAqiEnviromentValue(AQI.getAQI(
@@ -261,6 +262,7 @@ class TagConverter(
             defaultDisplayOrder = entity.defaultDisplayOrder,
             displayOrder = displayOrder,
             possibleDisplayOptions = possibleOptionsFiltered,
+            description = entity.description,
             valuesToDisplay = valuesToDisplay,
             latestMeasurement = entity.latestId?.let {
                 SensorMeasurements(

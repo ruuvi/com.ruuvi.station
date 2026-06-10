@@ -270,6 +270,19 @@ class RuuviNetworkInteractor (
         networkRequestExecutor.registerRequest(networkRequest, true)
     }
 
+    fun updateSensorSettingWithStatus(sensorId: String, name: String, value: String, timestamp: Long): Flow<OperationStatus>? {
+        if (shouldSendSensorDataToNetwork(sensorId)) {
+            val networkRequest = NetworkRequest(
+                NetworkRequestType.SENSOR_SETTINGS,
+                sensorId + name,
+                UpdateSensorSettingRequest(sensorId, listOf(name), listOf(value), timestamp)
+            )
+            return networkRequestExecutor.registerRequestWithStatus(networkRequest)
+        } else {
+            return null
+        }
+    }
+
     fun setAlert(alarm: Alarm): Job? {
         return getSetAlertRequest(alarm)?.let { networkRequest ->
             networkRequestExecutor.registerRequest(networkRequest)

@@ -818,6 +818,10 @@
     <string name="visible_measurements_description">Tällä sivulla voit valita, mitkä mittaukset haluat nähdä ja missä järjestyksessä. Poista "Käytä oletusta" -valinta muokataksesi asetuksia.</string>
     <string name="visible_measurements_last_element_message">Viimeistä näkyvää mittausta ei voi poistaa. Jätä Näytettävät mittaukset -luetteloon vähintään yksi mittaus.</string>
     <string name="visible_measurements_use_default">Käytä oletusta</string>
+    <string name="notes">Muistiinpanot</string>
+    <string name="show_more">Näytä lisää</string>
+    <string name="show_less">Näytä vähemmän</string>
+    <string name="update">Päivitä</string>
     <string name="voc_index">VOC-indeksi</string>
     <string name="voc_with_unit">VOC-indeksi (%1$s)</string>
     <string name="volatile_organic_compounds">Haihtuvien orgaanisten yhdisteiden indeksi</string>

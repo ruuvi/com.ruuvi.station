@@ -1,10 +1,12 @@
 package com.ruuvi.station.app.ui.components
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
@@ -75,6 +77,42 @@ fun RuuviButton(
             Spacer(modifier = Modifier.width(RuuviStationTheme.dimensions.medium))
             LoadingStatus(color = RuuviStationTheme.colors.onInactive)
         }
+    }
+}
+
+@Composable
+fun RuuviSecondaryButton(
+    text: String,
+    modifier: Modifier = Modifier,
+    shape: Shape = RoundedCornerShape(50),
+    height: Dp = RuuviStationTheme.dimensions.buttonHeight,
+    enabled: Boolean = true,
+    onClick: () -> Unit
+) {
+    OutlinedButton(
+        modifier = modifier
+            .defaultMinSize(
+                minWidth = 150.dp,
+                minHeight = height
+            ),
+        enabled = enabled,
+        shape = shape,
+        colors = ButtonDefaults.outlinedButtonColors(
+            backgroundColor = Color.Transparent,
+            contentColor = RuuviStationTheme.colors.primary
+        ),
+        border = BorderStroke(
+            width = 2.dp,
+            color = RuuviStationTheme.colors.primary.copy(alpha = 0.35f)
+        ),
+        elevation = ruuviButtonElevation(),
+        contentPadding = PaddingValues(horizontal = RuuviStationTheme.dimensions.buttonInnerPadding),
+        onClick = { onClick() }) {
+        Text(
+            text = text,
+            style = RuuviStationTheme.typography.buttonText,
+            textAlign = TextAlign.Center
+        )
     }
 }
 

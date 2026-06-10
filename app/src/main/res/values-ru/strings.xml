@@ -629,6 +629,10 @@
     <string name="visible_measurements_description">Здесь вы можете выбрать, какие измерения отображать и в каком порядке. Отключите переключатель «Использовать по умолчанию», чтобы настроить параметры.</string>
     <string name="visible_measurements_last_element_message">Невозможно удалить последнюю видимую величину. Оставьте как минимум одно измерение в списке видимых измерений.</string>
     <string name="visible_measurements_use_default">Использовать по умолчанию</string>
+    <string name="notes">Заметки</string>
+    <string name="show_more">Показать больше</string>
+    <string name="show_less">Показать меньше</string>
+    <string name="update">Обновить</string>
     <string name="voc_index">Индекс ЛОС</string>
     <string name="voc_with_unit">Индекс ЛОС (%1$s)</string>
     <string name="volatile_organic_compounds">Индекс летучих органических соединений</string>

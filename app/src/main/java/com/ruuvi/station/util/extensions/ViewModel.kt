@@ -16,7 +16,9 @@ import java.util.Date
 const val DELAY_FOR_IN_PROGRESS = 500
 fun ViewModel.processStatus(
     status: Flow<OperationStatus>,
-    uiEventFlow: MutableSharedFlow<UiEvent>
+    uiEventFlow: MutableSharedFlow<UiEvent>,
+    onSuccess: (() -> Unit)? = null,
+    onFail: (() -> Unit)? = null
 ) {
     fun getDelay(inProgress: Long?): Long? {
         val delayTimeout = inProgress?.let { DELAY_FOR_IN_PROGRESS - (Date().time - it) }
@@ -43,6 +45,7 @@ fun ViewModel.processStatus(
                                 androidx.compose.material.SnackbarDuration.Short
                             )
                         )
+                        onSuccess?.invoke()
                     }
                 }
 
@@ -57,6 +60,7 @@ fun ViewModel.processStatus(
                                 androidx.compose.material.SnackbarDuration.Short
                             )
                         )
+                        onFail?.invoke()
                     }
                 }
 

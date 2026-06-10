@@ -37,7 +37,10 @@ data class SensorSettings(
     val defaultDisplayOrder: String?,
     val displayOrder_lastUpdated: Long?,
     val defaultDisplayOrder_lastUpdated: Long?,
+    val description: String? = null,
+    val description_lastUpdated: Long? = null
 )
 
 const val SensorSettings_displayOrder = "displayOrder"
 const val SensorSettings_defaultDisplayOrder = "defaultDisplayOrder"
+const val SensorSettings_description = "description"
