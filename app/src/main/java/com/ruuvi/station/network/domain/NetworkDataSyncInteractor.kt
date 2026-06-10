@@ -374,7 +374,7 @@ class NetworkDataSyncInteractor (
             sensorSettingsRepository.newDescription(
                 sensor.sensor,
                 sensor.settings?.description ?: "",
-                sensor.settings?.description_lastUpdated ?: Date().time
+                sensor.settings?.description_lastUpdated ?: (Date().time / 1000)
             )
         }
     }
