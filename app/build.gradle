@@ -51,8 +51,8 @@ android {
     defaultConfig {
         applicationId "com.ruuvi.station"
         minSdkVersion 23
-        targetSdkVersion 35
-        compileSdk 35
+        targetSdkVersion 36
+        compileSdk 36
         versionCode 305020
         versionName "3.5.20"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -65,6 +65,7 @@ android {
     }
     kotlinOptions {
         jvmTarget = '1.8'
+        freeCompilerArgs += ["-Xskip-prerelease-check"]
     }
 
     lintOptions {
@@ -135,15 +136,15 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     // https://mvnrepository.com/artifact/com.opencsv/opencsv
-    implementation 'com.opencsv:opencsv:3.10'
+    implementation 'com.opencsv:opencsv:5.12.0'
 
 
     implementation 'com.github.ruuvi:com.ruuvi.bluetooth.default:1.8.10'
     //implementation project(':default_bluetooth_library')
-    implementation 'no.nordicsemi.android:dfu:2.4.2'
-    implementation 'no.nordicsemi.android:ble-ktx:2.7.3'
-    implementation 'no.nordicsemi.android:mcumgr-core:2.7.4'
-    implementation 'no.nordicsemi.android:mcumgr-ble:2.7.4'
+    implementation 'no.nordicsemi.android:dfu:2.11.0'
+    implementation 'no.nordicsemi.android:ble-ktx:2.11.0'
+    implementation 'no.nordicsemi.android:mcumgr-core:2.8.0'
+    implementation 'no.nordicsemi.android:mcumgr-ble:2.8.0'
 
     // Compose
     implementation "androidx.compose.ui:ui:1.8.2"
