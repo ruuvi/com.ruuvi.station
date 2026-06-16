@@ -46,14 +46,6 @@ tasks.register('jacocoTestReport', JacocoReport) {
     ]))
 }
 
-// Work around AGP 9 + Sonar resolver ordering: Sonar reads Android source-set
-// directories that are produced by generate*ResValues tasks.
-tasks.matching { it.name == 'sonarResolver' }.configureEach {
-    dependsOn tasks.matching { task ->
-        task.name.startsWith('generate') && task.name.endsWith('ResValues')
-    }
-}
-
 android {
 
     defaultConfig {
@@ -61,8 +53,8 @@ android {
         minSdkVersion 23
         targetSdkVersion 37
         compileSdk 37
-        versionCode 305020
-        versionName "3.5.20"
+        versionCode 305025
+        versionName "3.5.25"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
     }
