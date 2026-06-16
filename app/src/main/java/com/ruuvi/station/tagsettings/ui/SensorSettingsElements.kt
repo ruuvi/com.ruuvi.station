@@ -45,7 +45,6 @@ import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tag.domain.isAir
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
-import okhttp3.internal.toHexString
 import timber.log.Timber
 import androidx.core.net.toUri
 

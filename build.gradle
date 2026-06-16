@@ -1,39 +1,27 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 buildscript {
-    ext {
-        kotlin_version = '2.4.0'
-        dbflow_version = "4.2.4"
-        kodein_version = "6.5.0"
-        coroutines_version = "1.4.0"
-        lifecycle_version = "2.8.7"
-        retrofit_version = "2.9.0"
-        navigation_version = '2.9.3'
-        compose_version = '1.5.15'
-        compose_compiler_version = '1.5.14'
-        accomponist_version = '0.31.6-rc'
-    }
     repositories {
         mavenCentral()
         google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.13.2'
-        classpath 'com.google.gms:google-services:4.4.4'
-        classpath 'com.google.firebase:firebase-crashlytics-gradle:3.0.7'
-        classpath "androidx.navigation:navigation-safe-args-gradle-plugin:$navigation_version"
+        classpath libs.gradle
+        classpath libs.google.services
+        classpath libs.firebase.crashlytics.gradle
+        classpath libs.navigation.safe.args.gradle.plugin
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath libs.kotlin.gradle.plugin
     }
 }
 
 plugins {
-    id "org.sonarqube" version "7.3.1.8318"
-    id 'org.jetbrains.kotlin.android' version '2.4.0' apply false
-    id 'org.jetbrains.kotlin.jvm' version '2.4.0'
-    id 'org.jetbrains.kotlin.plugin.serialization' version '2.4.0'
-    id 'org.jetbrains.kotlin.plugin.compose' version '2.4.0' apply false
+    alias libs.plugins.sonarqube
+    alias libs.plugins.jetbrains.kotlin.android apply false
+    alias libs.plugins.jetbrains.kotlin.jvm
+    alias libs.plugins.jetbrains.kotlin.plugin.serialization
+    alias libs.plugins.jetbrains.kotlin.plugin.compose apply false
     id 'jacoco'
 }
 

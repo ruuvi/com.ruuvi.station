@@ -2,7 +2,7 @@ package com.ruuvi.station.firebase.domain
 
 import android.content.Context
 import com.google.firebase.analytics.FirebaseAnalytics
-import com.google.firebase.analytics.ktx.logEvent
+import com.google.firebase.analytics.logEvent
 import com.google.firebase.analytics.setConsent
 import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.database.domain.AlarmRepository
