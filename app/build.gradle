@@ -46,6 +46,14 @@ tasks.register('jacocoTestReport', JacocoReport) {
     ]))
 }
 
+// Work around AGP 9 + Sonar resolver ordering: Sonar reads Android source-set
+// directories that are produced by generate*ResValues tasks.
+tasks.matching { it.name == 'sonarResolver' }.configureEach {
+    dependsOn tasks.matching { task ->
+        task.name.startsWith('generate') && task.name.endsWith('ResValues')
+    }
+}
+
 android {
 
     defaultConfig {
