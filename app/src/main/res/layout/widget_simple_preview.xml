@@ -2,101 +2,106 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:theme="@style/AppTheme.AppWidgetContainer"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    tools:layout_height="70dp"
-    tools:layout_width="130dp">
+    android:layout_height="match_parent"
+    android:minHeight="90dp"
+    tools:layout_width="140dp"
+    tools:layout_height="90dp">
 
     <RelativeLayout
         android:id="@+id/simpleWidgetLayout"
         style="@style/Widget.Comruuvistation.AppWidget.InnerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="12dp"
-        tools:layout_height="100dp"
-        tools:layout_width="130dp">
-
-        <ImageView
-            android:id="@+id/logoImageView"
-            android:layout_width="40dp"
-            android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:adjustViewBounds="true"
-            android:src="@drawable/logo_2021"
-            android:tint="?attr/colorPrimary"
-            android:tintMode="src_in"
-            tools:ignore="UseAppTint" />
-
-        <TextView
-            android:id="@+id/updateTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignTop="@+id/logoImageView"
-            android:layout_alignParentEnd="true"
-            android:fontFamily="@font/mulish_regular"
-            android:includeFontPadding="false"
-            android:textColor="?attr/colorOnSecondary"
-            android:textSize="10sp"
-            android:text="@string/widgets_preview_time" />
+        android:paddingStart="10dp"
+        android:paddingTop="12dp"
+        android:paddingEnd="10dp"
+        android:paddingBottom="12dp">
 
         <TextView
             android:id="@+id/sensorNameTextView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_above="@+id/sensorValueTextView"
-            android:layout_below="@+id/logoImageView"
-            android:fontFamily="@font/mulish_regular"
-            android:gravity="bottom"
-            android:lines="2"
-            android:maxLines="2"
+            android:ellipsize="end"
+            android:fontFamily="@font/mulish_bold"
+            android:includeFontPadding="false"
+            android:maxLines="1"
+            android:paddingTop="4dp"
             android:text="@string/widgets_preview_sensor_name"
             android:textColor="?attr/colorOnSecondary"
-            android:textSize="12sp"
-            android:textStyle="bold" />
+            android:textSize="11sp" />
 
-        <TextView
-            android:id="@+id/sensorValueTextView"
+        <RelativeLayout
+            android:id="@+id/mainContent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentBottom="true"
-            android:layout_marginTop="4dp"
-            android:fontFamily="@font/oswald_bold_ttf"
-            android:gravity="top"
-            android:includeFontPadding="false"
-            android:lineSpacingExtra="0dp"
-            android:lineSpacingMultiplier="1"
-            android:text="@string/widgets_preview_sensor_value"
-            android:textColor="?attr/colorOnSurface"
-            android:textSize="24sp"
-            android:textStyle="bold" />
+            android:layout_below="@id/sensorNameTextView"
+            android:layout_marginTop="3dp">
+
+            <TextView
+                android:id="@+id/sensorValueTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/oswald_bold_ttf"
+                android:includeFontPadding="false"
+                android:text="@string/widgets_preview_sensor_value"
+                android:textColor="?attr/colorOnSurface"
+                android:textSize="23sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/unitTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@id/sensorValueTextView"
+                android:layout_toEndOf="@id/sensorValueTextView"
+                android:fontFamily="@font/oswald_light_ttf"
+                android:includeFontPadding="false"
+                android:paddingStart="2dp"
+                android:paddingTop="3dp"
+                android:text="@string/temperature_celsius_unit"
+                android:textColor="?attr/colorOnSecondary"
+                android:textSize="9sp" />
+
+        </RelativeLayout>
 
         <TextView
-            android:id="@+id/unitTextView"
+            android:id="@+id/measurementNameTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignTop="@+id/sensorValueTextView"
-            android:layout_toEndOf="@+id/sensorValueTextView"
-            android:fontFamily="@font/oswald_light_ttf"
+            android:layout_below="@id/mainContent"
+            android:layout_marginTop="1dp"
+            android:fontFamily="@font/mulish_regular"
             android:includeFontPadding="false"
-            android:paddingStart="2dp"
+            android:text="@string/temperature"
             android:textColor="?attr/colorOnSecondary"
-            android:textSize="10sp"
-            android:text="@string/temperature_celsius_unit" />
+            android:textSize="9sp" />
+
+        <TextView
+            android:id="@+id/updateTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:fontFamily="@font/mulish_regular"
+            android:includeFontPadding="false"
+            android:layout_marginBottom="4dp"
+            android:text="@string/widgets_preview_time"
+            android:textColor="?attr/colorOnSecondary"
+            android:textSize="9sp" />
 
     </RelativeLayout>
 
     <ImageButton
         android:id="@+id/refreshButton"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
         android:background="@color/ap_transparent"
         android:padding="8dp"
-        android:scaleType="fitXY"
-        android:src="@drawable/icon_bg_refresh"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_widget_d_update"
         android:tint="?attr/colorOnSecondary"
         android:tintMode="src_in"
         tools:ignore="UseAppTint" />
+
 </RelativeLayout>
