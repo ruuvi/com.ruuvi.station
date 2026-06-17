@@ -19,7 +19,9 @@ import com.ruuvi.station.app.ui.components.scaleUpTo
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.RuuviTheme
 import com.ruuvi.station.units.domain.aqi.AQI
+import com.ruuvi.station.units.model.Accuracy
 import com.ruuvi.station.units.model.EnvironmentValue
+import com.ruuvi.station.units.model.UnitType
 
 @Composable
 fun CircularAQIDisplay(
@@ -63,13 +65,13 @@ fun CircularAQIDisplay(
 
 val environmentValue by lazy {
     EnvironmentValue(
-        original = TODO(),
-        value = TODO(),
-        accuracy = TODO(),
-        valueWithUnit = TODO(),
-        valueWithoutUnit = TODO(),
-        unitString = TODO(),
-        unitType = TODO()
+        original = 0.0,
+        value = 0.0,
+        accuracy = Accuracy.Accuracy0,
+        valueWithUnit = "0",
+        valueWithoutUnit = "0",
+        unitString = "AQI",
+        unitType = UnitType.AirQuality.AqiIndex
     )
 }
 
