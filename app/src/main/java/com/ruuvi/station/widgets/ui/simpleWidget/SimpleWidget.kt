@@ -100,6 +100,8 @@ class SimpleWidget: AppWidgetProvider() {
                             widgetData?.measurementName.orEmpty()
                         prefs[stringPreferencesKey("updated")] =
                             widgetData?.updated.orEmpty()
+                        prefs[stringPreferencesKey("measurement_type")] =
+                            widgetType.code.toString()
                     }
 
                     SimpleWidgetGlanceWidget.update(context, glanceId)
