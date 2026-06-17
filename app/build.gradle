@@ -149,7 +149,6 @@ dependencies {
     // Compose
     implementation libs.ui
     implementation libs.material
-    implementation(libs.material3)
     implementation libs.ui.tooling
     implementation libs.ui.tooling.preview
     implementation libs.activity.compose
