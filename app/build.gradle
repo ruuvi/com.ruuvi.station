@@ -51,36 +51,32 @@ android {
     defaultConfig {
         applicationId "com.ruuvi.station"
         minSdkVersion 23
-        targetSdkVersion 35
-        compileSdk 35
-        versionCode 305020
-        versionName "3.5.20"
+        targetSdkVersion 37
+        compileSdk 37
+        versionCode 305026
+        versionName "3.5.26"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = '1.8'
+        jvmTarget = '17'
+        freeCompilerArgs += ["-Xskip-prerelease-check"]
     }
 
-    lintOptions {
-        checkReleaseBuilds false
-        // Or, if you prefer, you can continue to check for errors in release builds,
-        //  but continue the build even when errors are found :
-        abortOnError false
-    }
 
     buildTypes {
-        debug {
-            testCoverageEnabled true
-        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            enableUnitTestCoverage true
+            enableAndroidTestCoverage true
         }
     }
 
@@ -100,6 +96,7 @@ android {
     buildFeatures {
         viewBinding true
         compose true
+        buildConfig true
     }
 
     flavorDimensions 'fileLogs'
@@ -125,6 +122,10 @@ android {
         }
     }
     namespace 'com.ruuvi.station'
+    lint {
+        abortOnError false
+        checkReleaseBuilds false
+    }
 }
 
 dependencies {
@@ -135,116 +136,116 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     // https://mvnrepository.com/artifact/com.opencsv/opencsv
-    implementation 'com.opencsv:opencsv:3.10'
+    implementation libs.opencsv
 
 
-    implementation 'com.github.ruuvi:com.ruuvi.bluetooth.default:1.8.10'
+    implementation(libs.com.ruuvi.bluetooth.default)
     //implementation project(':default_bluetooth_library')
-    implementation 'no.nordicsemi.android:dfu:2.4.2'
-    implementation 'no.nordicsemi.android:ble-ktx:2.7.3'
-    implementation 'no.nordicsemi.android:mcumgr-core:2.7.4'
-    implementation 'no.nordicsemi.android:mcumgr-ble:2.7.4'
+    implementation libs.dfu
+    implementation libs.ble.ktx
+    implementation libs.mcumgr.core
+    implementation libs.mcumgr.ble
 
     // Compose
-    implementation "androidx.compose.ui:ui:1.8.2"
-    implementation "androidx.compose.material:material:1.8.3"
-    implementation("androidx.compose.material3:material3:1.3.2")
-    implementation "androidx.compose.ui:ui-tooling:1.8.2"
-    implementation "androidx.compose.ui:ui-tooling-preview:1.8.2"
-    implementation "androidx.activity:activity-compose:1.10.1"
-    implementation("androidx.compose.material:material-icons-core:1.7.8")
-    implementation("androidx.compose.material:material-icons-extended:1.7.8")
-    implementation "org.jetbrains.kotlin:kotlin-compose-compiler-plugin-embeddable:$kotlin_version"
-    implementation "androidx.constraintlayout:constraintlayout-compose:1.1.1"
-    implementation "androidx.compose.runtime:runtime-livedata:1.8.2"
-    implementation "com.google.accompanist:accompanist-systemuicontroller:$accomponist_version"
-    implementation "com.google.accompanist:accompanist-permissions:$accomponist_version"
-    implementation "com.google.accompanist:accompanist-pager:$accomponist_version"
-    implementation "com.google.accompanist:accompanist-pager-indicators:$accomponist_version"
+    implementation libs.ui
+    implementation libs.material
+    implementation libs.ui.tooling
+    implementation libs.ui.tooling.preview
+    implementation libs.activity.compose
+    implementation(libs.material.icons.core)
+    implementation(libs.material.icons.extended)
+    implementation libs.kotlin.compose.compiler.plugin.embeddable
+    implementation libs.constraintlayout.compose
+    implementation libs.runtime.livedata
+    implementation libs.accompanist.systemuicontroller
+    implementation libs.accompanist.permissions
+    implementation libs.accompanist.pager
+    implementation libs.accompanist.pager.indicators
 
-    debugImplementation "androidx.compose.ui:ui-tooling:1.8.2"
+    debugImplementation libs.ui.tooling
 
     // https://mvnrepository.com/artifact/com.google.code.gson/gson
-    implementation 'com.google.code.gson:gson:2.10.1'
-    implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
-    implementation 'androidx.appcompat:appcompat:1.7.0'
-    implementation 'com.google.android.material:material:1.12.0'
-    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation 'androidx.vectordrawable:vectordrawable:1.1.0'
-    implementation 'androidx.gridlayout:gridlayout:1.0.0'
-    implementation 'androidx.preference:preference-ktx:1.1.1'
-    implementation 'org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3'
+    implementation libs.gson
+    implementation libs.constraintlayout
+    implementation libs.appcompat
+    implementation libs.google.material
+    implementation libs.legacy.support.v4
+    implementation libs.vectordrawable
+    implementation libs.gridlayout
+    implementation libs.preference.ktx
+    implementation libs.kotlinx.serialization.json
 
-    implementation 'androidx.datastore:datastore-core:1.1.7'
-    implementation("androidx.datastore:datastore-preferences:1.1.7")
-    implementation 'androidx.datastore:datastore-preferences-core:1.1.7'
+    implementation libs.datastore.core
+    implementation(libs.datastore.preferences)
+    implementation libs.datastore.preferences.core
 
     // Lifecycle
-    implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version"
-    implementation "androidx.lifecycle:lifecycle-service:$lifecycle_version"
-    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
-    implementation "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version"
-    implementation "androidx.lifecycle:lifecycle-extensions:2.2.0"
-    implementation "androidx.lifecycle:lifecycle-viewmodel-compose:$lifecycle_version"
-    implementation "androidx.lifecycle:lifecycle-runtime-compose:$lifecycle_version"
+    implementation libs.lifecycle.livedata.ktx
+    implementation libs.lifecycle.service
+    implementation libs.lifecycle.viewmodel.ktx
+    implementation libs.lifecycle.runtime.ktx
+    implementation libs.lifecycle.extensions1
+    implementation libs.lifecycle.viewmodel.compose
+    implementation libs.lifecycle.runtime.compose
 
-    implementation 'com.google.android.play:review-ktx:2.0.1'
+    implementation libs.review.ktx
 
-    implementation 'com.koushikdutta.ion:ion:3.1.0'
+    implementation libs.ion
 
-    implementation("androidx.work:work-runtime-ktx:2.10.1")
+    implementation(libs.work.runtime.ktx)
 
-    implementation 'net.swiftzer.semver:semver:1.1.1'
+    implementation libs.semver
 
-    implementation "io.reactivex.rxjava2:rxjava:2.2.19"
-    debugImplementation "androidx.compose.ui:ui-test-manifest:1.8.2"
+    implementation libs.rxjava
+    debugImplementation libs.ui.test.manifest
 
-    kapt "com.github.Raizlabs.DBFlow:dbflow-processor:$dbflow_version"
-    implementation "com.github.Raizlabs.DBFlow:dbflow-core:$dbflow_version"
-    implementation "com.github.Raizlabs.DBFlow:dbflow:$dbflow_version"
-    implementation "com.github.Raizlabs.DBFlow:dbflow-kotlinextensions:$dbflow_version"
+    kapt libs.dbflow.processor
+    implementation libs.dbflow.core
+    implementation libs.dbflow
+    implementation libs.dbflow.kotlinextensions
 
-    testImplementation 'junit:junit:4.13'
-    testImplementation "io.mockk:mockk:1.13.13"
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    implementation 'com.jakewharton.timber:timber:4.7.1'
+    testImplementation libs.junit
+    testImplementation libs.mockk
+    implementation libs.kotlin.stdlib
+    implementation libs.timber
 
     //DI
-    implementation "org.kodein.di:kodein-di-generic-jvm:$kodein_version"
-    implementation "org.kodein.di:kodein-di-conf-jvm:$kodein_version"
-    implementation "org.kodein.di:kodein-di-framework-android-x:$kodein_version"
+    implementation libs.kodein.di.generic.jvm
+    implementation libs.kodein.di.conf.jvm
+    implementation libs.kodein.di.framework.android.x
 
     //Android KTX
-    implementation "androidx.core:core-ktx:1.9.0"
-    implementation("androidx.compose.material3:material3:1.2.1") // or latest
+    implementation libs.core.ktx
+    implementation(libs.material3) // or latest
 
 
     // Firebase
-    implementation platform('com.google.firebase:firebase-bom:33.1.0')
-    implementation 'com.google.firebase:firebase-config-ktx'
-    implementation ('com.google.firebase:firebase-analytics-ktx')
-    implementation 'com.google.firebase:firebase-inappmessaging-display-ktx'
-    implementation 'com.google.firebase:firebase-messaging-ktx'
-    implementation 'com.google.firebase:firebase-crashlytics-ktx'
+    implementation platform(libs.firebase.bom)
+    implementation libs.firebase.analytics
+    implementation libs.firebase.messaging
+    implementation libs.firebase.config
+    implementation libs.firebase.crashlytics
+    implementation libs.firebase.inappmessaging
 
     // Retrofit2
-    implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
-    implementation "com.squareup.retrofit2:converter-gson:$retrofit_version"
-    implementation "com.squareup.okhttp3:logging-interceptor:4.10.0"
-    implementation "io.grpc:grpc-okhttp:1.51.0"
+    implementation libs.retrofit
+    implementation libs.converter.gson
+    implementation libs.logging.interceptor
+    implementation libs.grpc.okhttp
 
     // Navigation
-    implementation "androidx.navigation:navigation-fragment-ktx:$navigation_version"
-    implementation "androidx.navigation:navigation-ui-ktx:$navigation_version"
-    implementation "androidx.navigation:navigation-compose:$navigation_version"
-    implementation "com.google.accompanist:accompanist-navigation-animation:$accomponist_version"
+    implementation libs.navigation.fragment.ktx
+    implementation libs.navigation.ui.ktx
+    implementation libs.navigation.compose
+    implementation libs.accompanist.navigation.animation
 
-    implementation("io.coil-kt:coil:2.2.2")
-    implementation("io.coil-kt:coil-compose:2.2.2")
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2" // or latest stable
+    implementation(libs.coil)
+    implementation(libs.coil.compose)
+    implementation libs.kotlinx.coroutines.core // or latest stable
 
 
-    implementation("com.patrykandpatrick.vico:compose:2.1.3")
+    implementation(libs.compose)
+    implementation(libs.vico.core)
 
-    implementation 'com.github.bumptech.glide:glide:4.16.0'
+    implementation libs.glide
 }
