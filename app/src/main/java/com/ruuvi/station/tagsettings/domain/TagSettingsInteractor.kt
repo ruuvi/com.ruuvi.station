@@ -12,10 +12,13 @@ import com.ruuvi.station.image.ImageInteractor
 import com.ruuvi.station.image.ImageSource
 import com.ruuvi.station.network.data.response.SensorSettings_defaultDisplayOrder
 import com.ruuvi.station.network.data.response.SensorSettings_displayOrder
+import com.ruuvi.station.network.data.response.SensorSettings_description
 import com.ruuvi.station.network.domain.RuuviNetworkInteractor
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.units.model.UnitType.*
 import com.ruuvi.station.util.MacAddressUtils
+import com.ruuvi.station.network.domain.OperationStatus
+import kotlinx.coroutines.flow.Flow
 import timber.log.Timber
 import java.io.File
 import java.util.Date
@@ -191,6 +194,22 @@ class TagSettingsInteractor(
                 value = displayOrder,
                 timestamp = timestamp
             )
+        }
+    }
+
+    fun updateDescriptionWithStatus(sensorId: String, description: String?): Flow<OperationStatus>? {
+        val sensorSettings = getSensorSettings(sensorId)
+        val timestamp = Date().time/1000
+        sensorSettingsRepository.newDescription(sensorId, description, timestamp)
+        return if (sensorSettings?.networkSensor == true) {
+            networkInteractor.updateSensorSettingWithStatus(
+                sensorId = sensorId,
+                name = SensorSettings_description,
+                value = description ?: "",
+                timestamp = timestamp
+            )
+        } else {
+            null
         }
     }
 }

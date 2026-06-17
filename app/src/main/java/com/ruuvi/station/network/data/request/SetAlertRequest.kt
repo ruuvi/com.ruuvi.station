@@ -16,7 +16,7 @@ data class SetAlertRequest(
         fun getAlarmRequest(alarm: Alarm): SetAlertRequest {
             return SetAlertRequest(
                 sensor = alarm.ruuviTagId,
-                type = alarm.alarmType?.networkCode ?: throw IllegalArgumentException(),
+                type = alarm.alarmType.networkCode ?: throw IllegalArgumentException(),
                 min = alarm.min,
                 max = alarm.max,
                 enabled = alarm.enabled,

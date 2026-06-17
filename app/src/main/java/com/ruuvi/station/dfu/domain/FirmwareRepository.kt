@@ -1,5 +1,6 @@
 package com.ruuvi.station.dfu.domain
 
+import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.dfu.data.FirmwareInfo
 import com.ruuvi.station.dfu.ui.FirmwareVersionOption
 import retrofit2.Retrofit
@@ -7,9 +8,9 @@ import retrofit2.converter.gson.GsonConverterFactory
 import timber.log.Timber
 import kotlin.String
 
-class FirmwareRepository {
+class FirmwareRepository(private val preferencesRepository: PreferencesRepository) {
     private val retrofit = Retrofit.Builder()
-        .baseUrl("https://network.ruuvi.com/") // base URL
+        .baseUrl(if (preferencesRepository.isDevServerEnabled()) DEV_URL else BASE_URL)
         .addConverterFactory(GsonConverterFactory.create())
         .build()
 
@@ -92,4 +93,9 @@ class FirmwareRepository {
     }
 
     suspend fun getFile(url: String) = api.getFile(url)
+
+    companion object {
+        private const val BASE_URL = "https://network.ruuvi.com/" //production
+        private const val DEV_URL = "https://testnet.ruuvi.com/" //testing
+    }
 }

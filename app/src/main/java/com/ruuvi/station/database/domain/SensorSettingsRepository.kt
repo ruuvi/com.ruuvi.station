@@ -180,4 +180,14 @@ class SensorSettingsRepository {
             }
         }
     }
+
+    fun newDescription(sensorId: String, description: String?, timestamp: Long) {
+        getSensorSettings(sensorId)?.let { settings ->
+            if (timestamp > settings.descriptionTimestamp) {
+                settings.description = description
+                settings.descriptionTimestamp = timestamp
+                settings.update()
+            }
+        }
+    }
 }

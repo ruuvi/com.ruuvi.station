@@ -224,7 +224,7 @@ class DashboardActivity : NfcActivity(), KodeinAware {
                                 .fillMaxSize()
                                 .padding(paddingValues)
                         ) {
-                            sensors?.let {
+                            sensors.let {
                                 if (it.isEmpty()) {
                                     EmptyDashboard(
                                         signedIn,
@@ -869,7 +869,7 @@ fun ItemValues(
 ) {
     val valuesToDisplay =
         if (dropFirst) {
-            sensor.valuesToDisplay.subList(1, sensor.valuesToDisplay.size)
+            sensor.valuesToDisplay.drop(1)
         } else {
             sensor.valuesToDisplay
         }

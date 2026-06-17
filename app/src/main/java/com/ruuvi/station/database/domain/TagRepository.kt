@@ -6,9 +6,9 @@ import com.raizlabs.android.dbflow.sql.language.SQLite
 import com.ruuvi.station.database.tables.*
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tag.domain.TagConverter
+import com.ruuvi.station.util.AlphabetNumberComparator
 import timber.log.Timber
 import java.util.*
-import java.text.Collator
 
 class TagRepository(
     private val sensorSettingsRepository: SensorSettingsRepository,
@@ -56,7 +56,7 @@ class TagRepository(
             .on(SensorSettings_Table.id.withTable().eq(RuuviTagEntity_Table.id.withTable()))
             .queryCustomList(FavouriteSensorQuery::class.java)
             .map { tagConverter.fromDatabase(it) }
-            .sortedWith( compareBy(Collator.getInstance()) {it.displayName} )
+            .sortedWith( compareBy(AlphabetNumberComparator()) {it.displayName} )
     }
 
     fun getFavoriteSensorById(id: String): RuuviTag? {
