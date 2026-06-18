@@ -192,7 +192,7 @@ xmlns:tools="http://schemas.android.com/tools">
     </receiver>
 
     <receiver
-        android:name=".widgets.ui.simpleWidget.SimpleWidgetReceiver"
+        android:name=".widgets.ui.simpleWidget.SimpleWidget"
         android:exported="false">
         <intent-filter>
             <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
