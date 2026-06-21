@@ -1,0 +1,1 @@
+Mesurer la température, l'humidité de l'air, la pression atmosphérique et les mouvements.

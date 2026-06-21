@@ -1,0 +1,1 @@
+Zmierz temperaturę, wilgotność powietrza, ciśnienie powietrza i ruchy.

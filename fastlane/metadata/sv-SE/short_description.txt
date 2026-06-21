@@ -1,0 +1,1 @@
+Mät temperatur, luftfuktighet, lufttryck och rörelser.
