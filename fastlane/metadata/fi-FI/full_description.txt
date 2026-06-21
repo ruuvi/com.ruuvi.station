@@ -1,0 +1,15 @@
+Ruuvi Station on kätevä ja helppokäyttöinen sovellus, jonka avulla voit seurata Ruuvin anturien mittaustietoja.
+
+Sovelluksen avulla keräät anturien lähettämät tiedot, kuten lämpötilan, suhteellisen ilmankosteuden, ilmanpaineen ja liikkeen. Lisäksi sovellus mahdollistaa Ruuvin antureiden hallinnan, hälytysten määrittämisen, taustakuvien lisäämisen ja kerättyjen anturitietojen tarkastelun havainnollistavien historiagraafien avulla.
+
+Kuinka se toimii?
+
+Ruuvin anturit raportoivat keräämiään tietoja jatkuvasti ympärilleen Bluetooth-yhteyden kuuluvuusalueella. Nämä tiedot voidaan vastaanottaa lähietäisyydellä olevilla mobiililaitteilla tai antureille suunnitellulla Ruuvi Gateway -reitittimellä. Mobiililaitteilla voit lukea tietoja Ruuvin mobiilisovelluksella. Ruuvi Gateway puolestaan reitittää tiedot internetin yli mobiilisovelluksen lisäksi myös selainsovellukseen.
+
+Ruuvi Gateway reitittää anturien mittaustiedot suoraan Ruuvi Cloud -pilvipalveluun, joka mahdollistaa kokonaisen mittausjärjestelmän rakentamisen, sisältäen etämonitoroinnin ja hälytykset, mahdollisuuden jakaa antureita käyttäjien kesken, sekä historiatietojen tallentamisen pilvipalveluun. Kaiken tämän voit tehdä suoraan Ruuvin mobiilisovelluksesta. Ruuvin pilvipalvelun käyttäjille pidempi mittaushistoria on saatavilla selainsovelluksessa.
+
+Kustomoitavat widgetit laajentavat Ruuvin mobiilisovelluksen käytettävyyttä silloin, kun sinulla on tarve nähdä tiettyjen Ruuvi Cloud -pilvipalvelussa olevien anturien tiedot yhdellä silmäyksellä.
+
+Yllä olevat pilvitoiminnallisuudet ovat käytettävissä kaikille Ruuvi Gateway -asiakkaillemme tai jos olet saanut kutsun jaettuun anturiin ja luonut samalla ilmaisen Ruuvi-tilin.
+
+Löydä mittaustarpeisiisi sopivat Ruuvi-anturit virallisilta sivuiltamme: ruuvi.com
