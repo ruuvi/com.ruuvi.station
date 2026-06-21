@@ -12,6 +12,22 @@ jacoco {
     toolVersion = "0.8.11"
 }
 
+def releaseEnv = { name ->
+    def value = System.getenv(name)
+    if (value == null || value.toString().trim().isEmpty()) {
+        value = project.findProperty(name)
+    }
+    value?.toString()?.trim()
+}
+
+def releaseKeystorePath = releaseEnv("ANDROID_KEYSTORE_PATH")
+def releaseKeystorePassword = releaseEnv("KEY_STORE_PASSWORD")
+def releaseKeyAlias = releaseEnv("ALIAS")
+def releaseKeyPassword = releaseEnv("KEY_PASSWORD")
+def releaseSigningConfigured = [releaseKeystorePath, releaseKeystorePassword, releaseKeyAlias, releaseKeyPassword].every {
+    it != null && !it.toString().trim().isEmpty()
+}
+
 tasks.register('jacocoTestReport', JacocoReport) {
     dependsOn 'testWithoutFileLogsDebugUnitTest'
 
@@ -53,7 +69,7 @@ android {
         minSdkVersion 23
         targetSdkVersion 35
         compileSdk 35
-        versionCode 305020
+        versionCode = (releaseEnv("ANDROID_VERSION_CODE") ?: "1").toInteger()
         versionName "3.5.20"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
@@ -74,11 +90,25 @@ android {
         abortOnError false
     }
 
+    signingConfigs {
+        release {
+            if (releaseSigningConfigured) {
+                storeFile file(releaseKeystorePath)
+                storePassword releaseKeystorePassword
+                keyAlias releaseKeyAlias
+                keyPassword releaseKeyPassword
+            }
+        }
+    }
+
     buildTypes {
         debug {
             testCoverageEnabled true
         }
         release {
+            if (releaseSigningConfigured) {
+                signingConfig signingConfigs.release
+            }
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }

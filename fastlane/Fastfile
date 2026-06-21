@@ -1,0 +1,462 @@
+fastlane_require "base64"
+fastlane_require "fileutils"
+fastlane_require "json"
+fastlane_require "tmpdir"
+
+default_platform(:android)
+
+PACKAGE_NAME = "com.ruuvi.station"
+FASTLANE_DIR = __dir__
+PROJECT_ROOT = File.expand_path("..", FASTLANE_DIR)
+CI_LOGS_DIR = File.join(PROJECT_ROOT, "ci-logs")
+SECRET_TMP_DIR = if ENV["RUNNER_TEMP"].to_s.strip.empty?
+                   Dir.mktmpdir("ruuvi-android-release-")
+                 else
+                   File.join(ENV["RUNNER_TEMP"], "ruuvi-android-release")
+                 end
+PLAY_METADATA_PATH = File.join(FASTLANE_DIR, "metadata")
+PLAY_TRACKS = ["internal", "alpha", "beta", "production"]
+PLAY_RELEASE_STATUSES = ["completed", "draft", "halted", "inProgress"]
+
+SIGNING_LANES = [
+  :deploy_to_firebase,
+  :upload_to_play_internal
+]
+
+before_all do |lane|
+  configure_android_keystore if SIGNING_LANES.include?(lane.to_sym)
+end
+
+def project_path(*parts)
+  File.join(PROJECT_ROOT, *parts)
+end
+
+def fastlane_path(*parts)
+  File.join(FASTLANE_DIR, *parts)
+end
+
+def env_value(name)
+  ENV[name].to_s.strip
+end
+
+def required_env(name)
+  value = env_value(name)
+  UI.user_error!("#{name} environment variable is required") if value.empty?
+  value
+end
+
+def write_secret_file_from_env(path:, env_name:)
+  value = env_value(env_name)
+  return nil if value.empty?
+
+  FileUtils.mkdir_p(File.dirname(path))
+  FileUtils.rm_f(path)
+  File.open(path, File::WRONLY | File::CREAT | File::TRUNC, 0o600) do |file|
+    file.write(value)
+  end
+  FileUtils.chmod(0o600, path)
+  path
+end
+
+def positive_integer(value, name)
+  value = value.to_s.strip
+  UI.user_error!("#{name} must be a positive integer") unless value.match?(/\A[1-9]\d*\z/)
+  value.to_i
+end
+
+def android_version
+  build_gradle = File.read(project_path("app", "build.gradle"))
+  version_name = build_gradle[/versionName\s+"([^"]+)"/, 1]
+  version_code = env_value("ANDROID_VERSION_CODE")
+  UI.user_error!("Could not read Android versionName from app/build.gradle") if version_name.to_s.empty?
+  UI.user_error!("ANDROID_VERSION_CODE is required for release upload. GitHub Actions generates it automatically; locally, export ANDROID_VERSION_CODE=<positive integer> before running the lane.") if version_code.to_s.empty?
+
+  { name: version_name, code: positive_integer(version_code, "ANDROID_VERSION_CODE") }
+end
+
+def configure_android_keystore
+  keystore_path = env_value("ANDROID_KEYSTORE_PATH")
+  if keystore_path.empty? && !env_value("SIGNING_KEY").empty?
+    keystore_path = File.join(SECRET_TMP_DIR, "release.keystore")
+    FileUtils.mkdir_p(File.dirname(keystore_path))
+    FileUtils.rm_f(keystore_path)
+    File.open(keystore_path, File::WRONLY | File::CREAT | File::TRUNC, 0o600) do |file|
+      file.binmode
+      file.write(Base64.decode64(env_value("SIGNING_KEY")))
+    end
+    FileUtils.chmod(0o600, keystore_path)
+  end
+
+  UI.user_error!("Android release keystore is missing. Set SIGNING_KEY or ANDROID_KEYSTORE_PATH.") if keystore_path.empty?
+  UI.user_error!("Android release keystore file does not exist at #{keystore_path}. Check ANDROID_KEYSTORE_PATH or set SIGNING_KEY.") unless File.exist?(keystore_path)
+
+  ENV["ANDROID_KEYSTORE_PATH"] = keystore_path
+  required_env("KEY_STORE_PASSWORD")
+  required_env("ALIAS")
+  required_env("KEY_PASSWORD")
+end
+
+def google_play_json_key_path
+  written_path = write_secret_file_from_env(
+    path: File.join(SECRET_TMP_DIR, "google-play-service-account.json"),
+    env_name: "SERVICE_ACCOUNT_JSON"
+  ).to_s
+
+  UI.user_error!("Google Play service account JSON is required. Set SERVICE_ACCOUNT_JSON.") if written_path.empty?
+  written_path
+end
+
+def firebase_auth_options
+  service_credentials_path = write_secret_file_from_env(
+    path: File.join(SECRET_TMP_DIR, "firebase-service-account.json"),
+    env_name: "FIREBASE_SERVICE_ACCOUNT_JSON"
+  ).to_s
+
+  UI.user_error!("Firebase service account JSON is required. Set FIREBASE_SERVICE_ACCOUNT_JSON.") if service_credentials_path.empty?
+  { service_credentials_file: service_credentials_path }
+end
+
+def firebase_android_app_id
+  app_id = env_value("FIREBASE_ANDROID_APP_ID")
+  return app_id unless app_id.empty?
+
+  google_services_path = project_path("app", "google-services.json")
+  if File.exist?(google_services_path)
+    json = JSON.parse(File.read(google_services_path))
+    app_id = json.dig("client", 0, "client_info", "mobilesdk_app_id").to_s
+  end
+
+  UI.user_error!("FIREBASE_ANDROID_APP_ID is required when app/google-services.json does not contain mobilesdk_app_id") if app_id.empty?
+  app_id
+end
+
+def run_localization_update
+  Dir.chdir(PROJECT_ROOT) do
+    sh("bash", "scripts/ci/update_l10n.sh")
+  end
+end
+
+def newest_file(pattern)
+  files = Dir.glob(project_path(pattern)).select { |path| File.file?(path) }
+  UI.user_error!("No file matched #{pattern}") if files.empty?
+  files.max_by { |path| File.mtime(path) }
+end
+
+def build_android_release_apk
+  run_localization_update
+  gradle(task: "clean", project_dir: PROJECT_ROOT)
+  gradle(task: "assembleWithFileLogsRelease", project_dir: PROJECT_ROOT)
+  newest_file("app/build/outputs/apk/withFileLogs/release/*.apk")
+end
+
+def build_android_play_internal_artifacts
+  run_localization_update
+  gradle(task: "clean", project_dir: PROJECT_ROOT)
+  gradle(task: "assembleWithoutFileLogsRelease", project_dir: PROJECT_ROOT)
+  gradle(task: "bundleWithoutFileLogsRelease", project_dir: PROJECT_ROOT)
+
+  {
+    apk: newest_file("app/build/outputs/apk/withoutFileLogs/release/*.apk"),
+    aab: newest_file("app/build/outputs/bundle/withoutFileLogsRelease/*.aab")
+  }
+end
+
+def distribution_release_notes(options, env_name:)
+  release_notes = options[:release_notes].to_s.strip
+  release_notes = env_value(env_name) if release_notes.empty?
+  return release_notes unless release_notes.empty?
+
+  changelog = changelog_from_git_commits(
+    commits_count: 1,
+    pretty: "%s"
+  ).lines.first.to_s.strip
+  changelog = "No changelog found" if changelog.empty?
+
+  last_pr_number = changelog[/#(\d+)/, 1]
+  return changelog if last_pr_number.nil?
+
+  repository = env_value("GITHUB_REPOSITORY")
+  repository = "ruuvi/com.ruuvi.station" if repository.empty?
+
+  github_api_options = {
+    server_url: "https://api.github.com",
+    http_method: "GET",
+    path: "/repos/#{repository}/pulls/#{last_pr_number}"
+  }
+  github_api_options[:api_token] = ENV["GITHUB_TOKEN"] unless env_value("GITHUB_TOKEN").empty?
+
+  begin
+    result = github_api(github_api_options)
+    last_pr_title = result[:json]["title"].to_s.strip
+    last_pr_body = result[:json]["body"].to_s.strip
+    pr_release_notes = [last_pr_title, last_pr_body].reject(&:empty?).join("\n\n")
+    pr_release_notes.empty? ? changelog : pr_release_notes
+  rescue => error
+    UI.important("Could not fetch GitHub pull request ##{last_pr_number}; using commit changelog instead. #{error.message}")
+    changelog
+  end
+end
+
+def write_release_notes_artifact(release_notes)
+  return unless ENV["CI"].to_s == "true"
+
+  FileUtils.mkdir_p(CI_LOGS_DIR)
+  artifact_path = File.join(CI_LOGS_DIR, "release_notes.txt")
+  File.write(artifact_path, release_notes.to_s)
+  UI.message("Wrote release notes artifact to #{artifact_path}")
+end
+
+IGNORED_STORE_TEMPLATE_FILES = [
+  ".DS_Store",
+  ".gitkeep",
+  "README.md",
+  "README.txt"
+]
+
+def directory_has_files?(path)
+  return false unless Dir.exist?(path)
+
+  Dir.glob(File.join(path, "**", "*")).any? do |entry|
+    File.file?(entry) && !IGNORED_STORE_TEMPLATE_FILES.include?(File.basename(entry))
+  end
+end
+
+def metadata_has_play_images?
+  allowed_names = ["icon", "featureGraphic", "promoGraphic", "tvBanner"]
+  allowed_extensions = [".png", ".jpg", ".jpeg"]
+
+  Dir.glob(File.join(PLAY_METADATA_PATH, "*", "images", "*")).any? do |entry|
+    next false unless File.file?(entry)
+
+    allowed_names.include?(File.basename(entry, ".*")) &&
+      allowed_extensions.include?(File.extname(entry).downcase)
+  end
+end
+
+def metadata_has_play_screenshots?
+  screenshot_dirs = ["phoneScreenshots", "sevenInchScreenshots", "tenInchScreenshots", "tvScreenshots", "wearScreenshots"]
+
+  screenshot_dirs.any? do |directory|
+    Dir.glob(File.join(PLAY_METADATA_PATH, "*", "images", directory, "*")).any? do |entry|
+      File.file?(entry) && !IGNORED_STORE_TEMPLATE_FILES.include?(File.basename(entry))
+    end
+  end
+end
+
+def metadata_has_play_changelogs?
+  Dir.glob(File.join(PLAY_METADATA_PATH, "*", "changelogs", "*.txt")).any? do |entry|
+    File.file?(entry) && !IGNORED_STORE_TEMPLATE_FILES.include?(File.basename(entry))
+  end
+end
+
+def play_metadata_locales
+  locales = Dir.glob(File.join(PLAY_METADATA_PATH, "*")).select do |entry|
+    File.directory?(entry) && File.basename(entry).match?(/\A[a-z]{2}(?:-[A-Z]{2})?\z/)
+  end.map { |entry| File.basename(entry) }.sort
+  locales.empty? ? ["en-US"] : locales
+end
+
+def play_changelog_metadata_path(release_notes, version_code)
+  metadata_root = File.join(CI_LOGS_DIR, "play-changelog-metadata")
+  play_metadata_locales.each do |locale|
+    changelog_dir = File.join(metadata_root, locale, "changelogs")
+    FileUtils.mkdir_p(changelog_dir)
+    File.write(File.join(changelog_dir, "default.txt"), release_notes)
+    File.write(File.join(changelog_dir, "#{version_code}.txt"), release_notes)
+  end
+  metadata_root
+end
+
+def supply_base_options
+  {
+    package_name: PACKAGE_NAME,
+    json_key: google_play_json_key_path,
+    rescue_changes_not_sent_for_review: true,
+    timeout: 600
+  }
+end
+
+def promote_play_track(version_code:, from_track:, to_track:, release_status:, rollout: nil)
+  version_code = positive_integer(version_code, "version_code")
+  UI.user_error!("from_track must be one of: #{PLAY_TRACKS.join(', ')}") unless PLAY_TRACKS.include?(from_track)
+  UI.user_error!("to_track must be one of: #{PLAY_TRACKS.join(', ')}") unless PLAY_TRACKS.include?(to_track)
+  UI.user_error!("Cannot promote #{from_track} to itself") if from_track == to_track
+  UI.user_error!("release_status must be one of: #{PLAY_RELEASE_STATUSES.join(', ')}") unless PLAY_RELEASE_STATUSES.include?(release_status)
+
+  promote_options = supply_base_options.merge(
+    track: from_track,
+    track_promote_to: to_track,
+    track_promote_release_status: release_status,
+    version_code: version_code,
+    skip_upload_apk: true,
+    skip_upload_aab: true,
+    skip_upload_metadata: true,
+    skip_upload_changelogs: true,
+    skip_upload_images: true,
+    skip_upload_screenshots: true
+  )
+  promote_options[:rollout] = rollout if release_status == "inProgress" && !rollout.to_s.strip.empty?
+
+  upload_to_play_store(promote_options)
+end
+
+def metadata_sync_options(options)
+  sync_mode = (options[:sync_mode] || ENV["PLAY_METADATA_SYNC_MODE"] || "metadata").to_s.strip
+  allowed_modes = ["metadata", "changelogs", "images", "screenshots", "all"]
+  UI.user_error!("sync_mode must be one of: #{allowed_modes.join(', ')}") unless allowed_modes.include?(sync_mode)
+
+  skip_metadata = ["changelogs", "images", "screenshots"].include?(sync_mode)
+  skip_changelogs = ["images", "screenshots"].include?(sync_mode)
+  skip_images = ["metadata", "screenshots"].include?(sync_mode)
+  skip_images = true if sync_mode == "changelogs"
+  skip_screenshots = ["metadata", "images"].include?(sync_mode)
+  skip_screenshots = true if sync_mode == "changelogs"
+
+  UI.user_error!("No Google Play metadata files found at #{PLAY_METADATA_PATH}") if !skip_metadata && !directory_has_files?(PLAY_METADATA_PATH)
+  UI.user_error!("No Google Play changelog files found at #{PLAY_METADATA_PATH}") if !skip_changelogs && !metadata_has_play_changelogs?
+  UI.user_error!("No Google Play image files found at #{PLAY_METADATA_PATH}") if !skip_images && !metadata_has_play_images?
+  UI.user_error!("No Google Play screenshot files found at #{PLAY_METADATA_PATH}") if !skip_screenshots && !metadata_has_play_screenshots?
+
+  supply_options = supply_base_options.merge(
+    metadata_path: PLAY_METADATA_PATH,
+    skip_upload_apk: true,
+    skip_upload_aab: true,
+    skip_upload_metadata: skip_metadata,
+    skip_upload_changelogs: skip_changelogs,
+    skip_upload_images: skip_images,
+    skip_upload_screenshots: skip_screenshots,
+    sync_image_upload: true
+  )
+
+  version_code = (options[:version_code] || ENV["PLAY_METADATA_VERSION_CODE"]).to_s.strip
+  supply_options[:version_code] = positive_integer(version_code, "version_code") unless version_code.empty?
+  supply_options
+end
+
+def remove_artifacts
+  FileUtils.rm_rf(SECRET_TMP_DIR) unless SECRET_TMP_DIR.to_s.strip.empty?
+rescue => error
+  UI.important("Release cleanup failed: #{error.message}")
+end
+
+platform :android do
+  desc "Build signed with-file-logs APK and distribute it to Firebase App Distribution"
+  lane :deploy_to_firebase do |options|
+    apk_path = build_android_release_apk
+    release_notes = distribution_release_notes(options, env_name: "FIREBASE_RELEASE_NOTES")
+    write_release_notes_artifact(release_notes)
+
+    firebase_groups = options[:groups].to_s.strip
+    firebase_groups = env_value("FIREBASE_TESTERS_GROUP") if firebase_groups.empty?
+    UI.user_error!("Firebase tester group is required. Pass groups:<alias> or set FIREBASE_TESTERS_GROUP.") if firebase_groups.empty?
+
+    firebase_app_distribution(
+      {
+        app: firebase_android_app_id,
+        android_artifact_type: "APK",
+        android_artifact_path: apk_path,
+        release_notes: release_notes,
+        groups: firebase_groups
+      }.merge(firebase_auth_options)
+    )
+  end
+
+  desc "Build signed without-file-logs AAB and upload it to Google Play internal testing"
+  lane :upload_to_play_internal do |options|
+    artifacts = build_android_play_internal_artifacts
+    version = android_version
+    release_notes = distribution_release_notes(options, env_name: "PLAY_INTERNAL_RELEASE_NOTES")
+    write_release_notes_artifact(release_notes)
+
+    upload_to_play_store(
+      supply_base_options.merge(
+        track: "internal",
+        aab: artifacts[:aab],
+        metadata_path: play_changelog_metadata_path(release_notes, version[:code]),
+        version_name: version[:name],
+        release_status: "completed",
+        skip_upload_apk: true,
+        skip_upload_metadata: true,
+        skip_upload_changelogs: false,
+        skip_upload_images: true,
+        skip_upload_screenshots: true,
+        ack_bundle_installation_warning: true
+      )
+    )
+  end
+
+  desc "Upload Google Play metadata, images, and screenshots from fastlane/metadata"
+  lane :sync_play_store_metadata do |options|
+    upload_to_play_store(metadata_sync_options(options))
+  end
+
+  desc "Validate Google Play metadata upload without publishing changes"
+  lane :validate_play_store_metadata do |options|
+    upload_to_play_store(metadata_sync_options(options).merge(validate_only: true))
+  end
+
+  desc "Promote an internal testing release to Google Play alpha"
+  lane :promote_play_alpha do |options|
+    version_code = (options[:version_code] || ENV["PLAY_ALPHA_VERSION_CODE"]).to_s.strip
+    source_track = (options[:source_track] || ENV["PLAY_ALPHA_SOURCE_TRACK"] || "internal").to_s.strip
+    release_status = (options[:release_status] || ENV["PLAY_ALPHA_RELEASE_STATUS"] || "completed").to_s.strip
+
+    promote_play_track(
+      version_code: version_code,
+      from_track: source_track,
+      to_track: "alpha",
+      release_status: release_status
+    )
+  end
+
+  desc "Promote a Play testing release to public beta"
+  lane :promote_play_beta do |options|
+    version_code = (options[:version_code] || ENV["PLAY_BETA_VERSION_CODE"]).to_s.strip
+    source_track = (options[:source_track] || ENV["PLAY_BETA_SOURCE_TRACK"] || "alpha").to_s.strip
+    release_status = (options[:release_status] || ENV["PLAY_BETA_RELEASE_STATUS"] || "completed").to_s.strip
+
+    promote_play_track(
+      version_code: version_code,
+      from_track: source_track,
+      to_track: "beta",
+      release_status: release_status
+    )
+  end
+
+  desc "Promote a Play testing release to Google Play production"
+  lane :submit_play_production do |options|
+    confirmation = (options[:confirmation] || ENV["PLAY_PRODUCTION_CONFIRMATION"]).to_s.strip
+    UI.user_error!("Set confirmation to SUBMIT to start a Google Play production rollout") unless confirmation == "SUBMIT"
+
+    version_code = (options[:version_code] || ENV["PLAY_PRODUCTION_VERSION_CODE"]).to_s.strip
+    source_track = (options[:source_track] || ENV["PLAY_PRODUCTION_SOURCE_TRACK"] || "beta").to_s.strip
+
+    release_status = (options[:release_status] || ENV["PLAY_PRODUCTION_RELEASE_STATUS"] || "inProgress").to_s.strip
+    rollout = (options[:rollout] || ENV["PLAY_PRODUCTION_ROLLOUT"] || "0.05").to_s.strip
+
+    promote_play_track(
+      version_code: version_code,
+      from_track: source_track,
+      to_track: "production",
+      release_status: release_status,
+      rollout: rollout
+    )
+  end
+
+  desc "Download current Google Play metadata into fastlane/metadata"
+  lane :download_play_store_metadata do
+    download_from_play_store(
+      supply_base_options.merge(
+        metadata_path: PLAY_METADATA_PATH
+      )
+    )
+  end
+end
+
+after_all do
+  remove_artifacts
+end
+
+error do |_lane, _exception|
+  remove_artifacts
+end
