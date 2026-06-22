@@ -206,7 +206,7 @@ private fun GlanceAQIDisplay(
     sensorValue: String,
     measurementName: String
 ) {
-    val aqiText = sensorValue.substringBefore("/", missingDelimiterValue = "-")
+    val aqiText = sensorValue.substringBefore("/")
     val aqiValue = aqiText.toDoubleOrNull()
     val aqiColor = aqiValue?.let { AQI.CalculatedAQI(it).color } ?: Color.Gray
     val aqiColorProvider = ColorProvider(day = aqiColor, night = aqiColor)
