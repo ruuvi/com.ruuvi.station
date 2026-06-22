@@ -5,7 +5,6 @@ import androidx.glance.state.PreferencesGlanceStateDefinition
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.glance.ColorFilter
 import androidx.glance.GlanceId
 import androidx.glance.GlanceModifier
@@ -43,7 +42,6 @@ import com.ruuvi.station.dashboard.ui.DashboardActivity
 import com.ruuvi.station.tagdetails.ui.SensorCardActivity
 import com.ruuvi.station.widgets.ui.glance.GlanceColors
 import com.ruuvi.station.widgets.ui.glance.CustomFontText
-import com.ruuvi.station.app.ui.theme.ruuviStationFonts
 import com.ruuvi.station.app.ui.theme.ruuviStationFontsSizes
 
 object SimpleWidgetGlanceWidget : GlanceAppWidget() {
@@ -52,27 +50,19 @@ object SimpleWidgetGlanceWidget : GlanceAppWidget() {
 
     override val sizeMode = SizeMode.Exact
 
-    private val SensorIdKey = stringPreferencesKey("sensor_id")
-    private val DisplayNameKey = stringPreferencesKey("display_name")
-    private val SensorValueKey = stringPreferencesKey("sensor_value")
-    private val UnitKey = stringPreferencesKey("unit")
-    private val MeasurementNameKey = stringPreferencesKey("measurement_name")
-    private val UpdatedKey = stringPreferencesKey("updated")
-    private val MeasurementTypeKey = stringPreferencesKey("measurement_type")
-
     override suspend fun provideGlance(context: Context, id: GlanceId) {
         val appWidgetId = GlanceAppWidgetManager(context).getAppWidgetId(id)
 
         provideContent {
             val prefs = currentState<Preferences>()
 
-            val sensorId = prefs[SensorIdKey]
-            val displayName = prefs[DisplayNameKey]
-            val sensorValue = prefs[SensorValueKey]
-            val unit = prefs[UnitKey]
-            val measurementName = prefs[MeasurementNameKey]
-            val updated = prefs[UpdatedKey]
-            val measurementTypeCode = prefs[MeasurementTypeKey]
+            val sensorId = prefs[SimpleWidgetPrefKeys.sensorId]
+            val displayName = prefs[SimpleWidgetPrefKeys.displayName]
+            val sensorValue = prefs[SimpleWidgetPrefKeys.sensorValue]
+            val unit = prefs[SimpleWidgetPrefKeys.unit]
+            val measurementName = prefs[SimpleWidgetPrefKeys.measurementName]
+            val updated = prefs[SimpleWidgetPrefKeys.updated]
+            val measurementTypeCode = prefs[SimpleWidgetPrefKeys.measurementType]
 
             SimpleWidgetContent(
                 appWidgetId = appWidgetId,
@@ -131,6 +121,8 @@ private fun SimpleWidgetContent(
         actionStartActivity<DashboardActivity>()
     }
 
+    val availableWidth = LocalSize.current.width - 12.dp
+
     Box(
         modifier = GlanceModifier
             .fillMaxSize()
@@ -143,7 +135,8 @@ private fun SimpleWidgetContent(
                 text = displayName,
                 fontSize = ruuviStationFontsSizes.normal,
                 colorProvider = GlanceColors.widgetSensorName,
-                fontFamily = ruuviStationFonts.mulishBold
+                fontResId = R.font.mulish_bold,
+                maxWidth = availableWidth
             )
 
             if (measurementType == WidgetType.AIR_QUALITY) {
@@ -163,7 +156,8 @@ private fun SimpleWidgetContent(
                 text = updated,
                 fontSize = ruuviStationFontsSizes.tiny,
                 colorProvider = GlanceColors.widgetSensorName,
-                fontFamily = ruuviStationFonts.mulishRegular
+                fontResId = R.font.mulish_regular,
+                maxWidth = availableWidth
             )
         }
 
@@ -185,7 +179,7 @@ private fun GlanceMeasurementDisplay(
             text = sensorValue,
             fontSize = ruuviStationFontsSizes.bigger,
             colorProvider = GlanceColors.valueColor,
-            fontFamily = ruuviStationFonts.oswaldBold
+            fontResId = R.font.oswald_bold
         )
 
         Spacer(modifier = GlanceModifier.width(2.dp))
@@ -194,7 +188,7 @@ private fun GlanceMeasurementDisplay(
             text = unit,
             fontSize = ruuviStationFontsSizes.tiny,
             colorProvider = GlanceColors.widgetSensorName,
-            fontFamily = ruuviStationFonts.oswaldLight,
+            fontResId = R.font.oswald_light,
             modifier = GlanceModifier.padding(top = 4.dp)
         )
     }
@@ -203,7 +197,7 @@ private fun GlanceMeasurementDisplay(
         text = measurementName,
         fontSize = ruuviStationFontsSizes.tiny,
         colorProvider = GlanceColors.widgetSensorName,
-        fontFamily = ruuviStationFonts.mulishRegular
+        fontResId = R.font.mulish_regular
     )
 }
 
@@ -230,7 +224,7 @@ private fun GlanceAQIDisplay(
                 text = aqiText,
                 fontSize = ruuviStationFontsSizes.bigger,
                 colorProvider = GlanceColors.valueColor,
-                fontFamily = ruuviStationFonts.oswaldBold
+                fontResId = R.font.oswald_bold
             )
 
             Spacer(modifier = GlanceModifier.width(2.dp))
@@ -240,7 +234,7 @@ private fun GlanceAQIDisplay(
                     text = "/100",
                     fontSize = ruuviStationFontsSizes.miniature,
                     colorProvider = GlanceColors.valueColor,
-                    fontFamily = ruuviStationFonts.oswaldLight,
+                    fontResId = R.font.oswald_light,
                     modifier = GlanceModifier.padding(top = 4.dp)
                 )
 
@@ -252,7 +246,7 @@ private fun GlanceAQIDisplay(
                         text = measurementName,
                         fontSize = ruuviStationFontsSizes.tiny,
                         colorProvider = GlanceColors.widgetSensorName,
-                        fontFamily = ruuviStationFonts.mulishRegular,
+                        fontResId = R.font.mulish_regular,
                         modifier = GlanceModifier.padding(bottom = 2.dp)
                     )
                 }
