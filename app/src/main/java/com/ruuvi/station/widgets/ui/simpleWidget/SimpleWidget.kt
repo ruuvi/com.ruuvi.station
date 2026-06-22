@@ -6,7 +6,6 @@ import android.appwidget.AppWidgetProvider
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
-import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.glance.action.ActionParameters
 import androidx.glance.action.actionParametersOf
 import androidx.glance.appwidget.GlanceAppWidgetManager
@@ -89,18 +88,18 @@ class SimpleWidget: AppWidgetProvider() {
                         .getGlanceIdBy(appWidgetId)
 
                     updateAppWidgetState(context, glanceId) { prefs ->
-                        prefs[stringPreferencesKey("sensor_id")] = sensorId
-                        prefs[stringPreferencesKey("display_name")] =
+                        prefs[SimpleWidgetPrefKeys.sensorId] = sensorId
+                        prefs[SimpleWidgetPrefKeys.displayName] =
                             widgetData?.displayName.orEmpty()
-                        prefs[stringPreferencesKey("sensor_value")] =
+                        prefs[SimpleWidgetPrefKeys.sensorValue] =
                             widgetData?.sensorValue.orEmpty()
-                        prefs[stringPreferencesKey("unit")] =
+                        prefs[SimpleWidgetPrefKeys.unit] =
                             widgetData?.unit.orEmpty()
-                        prefs[stringPreferencesKey("measurement_name")] =
+                        prefs[SimpleWidgetPrefKeys.measurementName] =
                             widgetData?.measurementName.orEmpty()
-                        prefs[stringPreferencesKey("updated")] =
+                        prefs[SimpleWidgetPrefKeys.updated] =
                             widgetData?.updated.orEmpty()
-                        prefs[stringPreferencesKey("measurement_type")] =
+                        prefs[SimpleWidgetPrefKeys.measurementType] =
                             widgetType.code.toString()
                     }
 
