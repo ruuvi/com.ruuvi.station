@@ -204,19 +204,6 @@ xmlns:tools="http://schemas.android.com/tools">
     </receiver>
 
     <receiver
-        android:name=".widgets.ui.simpleWidget.SimpleLargeWidgetReceiver"
-        android:label="Simple Widget (Large)"
-        android:exported="false">
-        <intent-filter>
-            <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-        </intent-filter>
-
-        <meta-data
-            android:name="android.appwidget.provider"
-            android:resource="@xml/simple_large_widget_info" />
-    </receiver>
-
-    <receiver
         android:name="com.ruuvi.station.widgets.ui.complexWidget.ComplexWidgetProvider"
         android:exported="true">
         <intent-filter>
