@@ -12,10 +12,10 @@
         style="@style/Widget.Comruuvistation.AppWidget.InnerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingStart="10dp"
-        android:paddingTop="12dp"
-        android:paddingEnd="10dp"
-        android:paddingBottom="12dp">
+        android:paddingStart="12dp"
+        android:paddingTop="4dp"
+        android:paddingEnd="12dp"
+        android:paddingBottom="4dp">
 
         <TextView
             android:id="@+id/sensorNameTextView"
@@ -25,17 +25,15 @@
             android:fontFamily="@font/mulish_bold"
             android:includeFontPadding="false"
             android:maxLines="1"
-            android:paddingTop="4dp"
             android:text="@string/widgets_preview_sensor_name"
             android:textColor="?attr/colorOnSecondary"
-            android:textSize="11sp" />
+            android:textSize="16sp" />
 
         <RelativeLayout
             android:id="@+id/mainContent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/sensorNameTextView"
-            android:layout_marginTop="3dp">
+            android:layout_below="@id/sensorNameTextView">
 
             <TextView
                 android:id="@+id/sensorValueTextView"
@@ -45,7 +43,7 @@
                 android:includeFontPadding="false"
                 android:text="@string/widgets_preview_sensor_value"
                 android:textColor="?attr/colorOnSurface"
-                android:textSize="23sp"
+                android:textSize="24sp"
                 android:textStyle="bold" />
 
             <TextView
@@ -57,10 +55,10 @@
                 android:fontFamily="@font/oswald_light_ttf"
                 android:includeFontPadding="false"
                 android:paddingStart="2dp"
-                android:paddingTop="3dp"
+                android:paddingTop="4dp"
                 android:text="@string/temperature_celsius_unit"
                 android:textColor="?attr/colorOnSecondary"
-                android:textSize="9sp" />
+                android:textSize="9.5sp" />
 
         </RelativeLayout>
 
@@ -69,24 +67,23 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/mainContent"
-            android:layout_marginTop="1dp"
             android:fontFamily="@font/mulish_regular"
             android:includeFontPadding="false"
             android:text="@string/temperature"
             android:textColor="?attr/colorOnSecondary"
-            android:textSize="9sp" />
+            android:textSize="9.5sp" />
 
         <TextView
             android:id="@+id/updateTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
+            android:layout_below="@id/measurementNameTextView"
+            android:layout_marginTop="2dp"
             android:fontFamily="@font/mulish_regular"
             android:includeFontPadding="false"
-            android:layout_marginBottom="4dp"
             android:text="@string/widgets_preview_time"
             android:textColor="?attr/colorOnSecondary"
-            android:textSize="9sp" />
+            android:textSize="9.5sp" />
 
     </RelativeLayout>
 
@@ -96,11 +93,13 @@
         android:layout_height="30dp"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
+        android:layout_marginEnd="4dp"
+        android:layout_marginBottom="4dp"
         android:background="@color/ap_transparent"
         android:padding="8dp"
         android:scaleType="fitCenter"
         android:src="@drawable/ic_widget_d_update"
-        android:tint="?attr/colorOnSecondary"
+        android:tint="@color/titan70"
         android:tintMode="src_in"
         tools:ignore="UseAppTint" />
 
