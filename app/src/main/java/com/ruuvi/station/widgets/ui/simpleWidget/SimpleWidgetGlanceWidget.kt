@@ -19,6 +19,7 @@ import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.glance.appwidget.action.ActionCallback
 import androidx.glance.appwidget.action.actionRunCallback
 import androidx.glance.appwidget.provideContent
+import androidx.glance.appwidget.SizeMode
 import androidx.glance.background
 import androidx.glance.currentState
 import androidx.glance.layout.Alignment
@@ -31,6 +32,7 @@ import androidx.glance.layout.fillMaxWidth
 import androidx.glance.layout.height
 import androidx.glance.layout.padding
 import androidx.glance.layout.width
+import androidx.glance.LocalSize
 import com.ruuvi.station.R
 import androidx.datastore.preferences.core.Preferences
 import androidx.glance.color.ColorProvider
@@ -47,6 +49,8 @@ import com.ruuvi.station.app.ui.theme.ruuviStationFontsSizes
 object SimpleWidgetGlanceWidget : GlanceAppWidget() {
 
     override val stateDefinition = PreferencesGlanceStateDefinition
+
+    override val sizeMode = SizeMode.Exact
 
     private val SensorIdKey = stringPreferencesKey("sensor_id")
     private val DisplayNameKey = stringPreferencesKey("display_name")
@@ -131,7 +135,7 @@ private fun SimpleWidgetContent(
         modifier = GlanceModifier
             .fillMaxSize()
             .background(GlanceColors.background)
-            .padding(start = 12.dp, top = 4.dp, end = 12.dp, bottom = 4.dp)
+            .padding(start = 12.dp, top = 4.dp, bottom = 4.dp)
             .clickable(openAction)
     ) {
         Column(modifier = GlanceModifier.fillMaxSize()) {
@@ -213,6 +217,10 @@ private fun GlanceAQIDisplay(
     val aqiColor = aqiValue?.let { AQI.CalculatedAQI(it).color } ?: Color.Gray
     val aqiColorProvider = ColorProvider(day = aqiColor, night = aqiColor)
 
+    val widgetWidth = LocalSize.current.width
+    val availableWidth = widgetWidth - 52.dp // Total width - (start padding 12 + button width 40)
+    val progressBarWidth = if (availableWidth > 100.dp) 100.dp else availableWidth - 10.dp
+
     Column {
         Row(
             modifier = GlanceModifier.fillMaxWidth(),
@@ -259,8 +267,8 @@ private fun GlanceAQIDisplay(
                 night = aqiColor.copy(alpha = 0.2f)
             ),
             modifier = GlanceModifier
-                .padding(bottom = 2.dp)
-                .width(100.dp)
+                .padding(bottom = 2.dp),
+            totalWidth = progressBarWidth
         )
     }
 }
@@ -269,17 +277,15 @@ private fun GlanceAQIDisplay(
 private fun RefreshButton() {
     Box(
         modifier = GlanceModifier
-            .fillMaxSize()
-            .padding(2.dp),
+            .fillMaxSize(),
         contentAlignment = Alignment.BottomEnd
     ) {
         Box(
             modifier = GlanceModifier
                 .width(40.dp)
                 .height(40.dp)
-                .padding(bottom = 4.dp, end = 4.dp)
                 .clickable(actionRunCallback<RefreshSimpleWidgetAction>()),
-            contentAlignment = Alignment.BottomEnd
+            contentAlignment = Alignment.Center
         ) {
             Image(
                 provider = ImageProvider(R.drawable.ic_widget_d_update),
@@ -298,12 +304,12 @@ private fun GlanceProgressBarWithDot(
     progress: Float,
     activeColor: ColorProvider,
     backgroundColor: ColorProvider,
-    modifier: GlanceModifier = GlanceModifier
+    modifier: GlanceModifier = GlanceModifier,
+    totalWidth: androidx.compose.ui.unit.Dp = 100.dp
 ) {
     val safeProgress = progress.coerceIn(0f, 1f)
     val dotSize = 6.dp
     val glowSize = 14.dp
-    val totalWidth = 100.dp
 
     val progressPosition = totalWidth * safeProgress
 
