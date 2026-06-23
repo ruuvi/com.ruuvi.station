@@ -4,6 +4,7 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.sp
 
 data class RuuviStationFontSizes(
+    val micro: TextUnit = 7.sp,
     val tiny: TextUnit = 9.5.sp,
     val tiny2: TextUnit = 10.sp,
     val petite: TextUnit = 11.sp,
