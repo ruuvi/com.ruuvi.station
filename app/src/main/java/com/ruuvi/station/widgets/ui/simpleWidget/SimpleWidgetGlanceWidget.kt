@@ -34,6 +34,7 @@ import androidx.glance.layout.width
 import androidx.glance.layout.fillMaxHeight
 import androidx.glance.layout.size
 import androidx.glance.LocalSize
+import androidx.glance.LocalContext
 import com.ruuvi.station.R
 import androidx.datastore.preferences.core.Preferences
 import androidx.glance.color.ColorProvider
@@ -44,6 +45,8 @@ import com.ruuvi.station.dashboard.ui.DashboardActivity
 import com.ruuvi.station.tagdetails.ui.SensorCardActivity
 import com.ruuvi.station.widgets.ui.glance.GlanceColors
 import com.ruuvi.station.widgets.ui.glance.CustomFontText
+import com.ruuvi.station.widgets.ui.WidgetScreenSizeCategory
+import com.ruuvi.station.widgets.ui.resolveWidgetScreenSizeCategory
 
 object SimpleWidgetGlanceWidget : GlanceAppWidget() {
 
@@ -122,9 +125,19 @@ private fun SimpleWidgetContent(
         actionStartActivity<DashboardActivity>()
     }
 
+    val context = LocalContext.current
+    val screenSizeCategory = resolveWidgetScreenSizeCategory(context)
     val size = LocalSize.current
     val height = size.height
-    val config = SimpleWidgetLayoutConfig.fromHeight(height)
+    val fallbackHeight = when (screenSizeCategory) {
+        WidgetScreenSizeCategory.SMALL -> 65.dp
+        WidgetScreenSizeCategory.MEDIUM -> 80.dp
+        WidgetScreenSizeCategory.BIG -> 90.dp
+    }
+    val config = SimpleWidgetLayoutConfig.fromHeight(
+        if (height < 65.dp) fallbackHeight else height
+    )
+    
     val availableWidth = size.width - 12.dp
 
     Box(
