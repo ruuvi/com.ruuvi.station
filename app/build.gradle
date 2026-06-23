@@ -53,8 +53,8 @@ android {
         minSdkVersion 23
         targetSdkVersion 35
         compileSdk 35
-        versionCode 305020
-        versionName "3.5.20"
+        versionCode 305031
+        versionName "3.5.31"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
     }
@@ -157,6 +157,7 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-compose-compiler-plugin-embeddable:$kotlin_version"
     implementation "androidx.constraintlayout:constraintlayout-compose:1.1.1"
     implementation "androidx.compose.runtime:runtime-livedata:1.8.2"
+    implementation "androidx.glance:glance-appwidget:1.1.1"
     implementation "com.google.accompanist:accompanist-systemuicontroller:$accomponist_version"
     implementation "com.google.accompanist:accompanist-permissions:$accomponist_version"
     implementation "com.google.accompanist:accompanist-pager:$accomponist_version"

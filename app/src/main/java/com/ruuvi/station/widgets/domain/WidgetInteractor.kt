@@ -546,6 +546,7 @@ class WidgetInteractor (
                 displayName = tag.displayName,
                 sensorValue = sensorValue,
                 unit = unit,
+                measurementName = context.getString(widgetType.unitType.measurementName),
                 updated = updated
             )
         } else {
@@ -671,6 +672,7 @@ class WidgetInteractor (
                     displayName = tag.displayName,
                     sensorValue = sensorValue,
                     unit = unit,
+                    measurementName = context.getString(widgetType.unitType.measurementName),
                     updated = updated
                 )
             } else {
@@ -684,7 +686,7 @@ class WidgetInteractor (
 
     private fun emptyResult(sensorId: String): WidgetData = WidgetData(sensorId)
 
-    private fun emptySimpleResult(sensorId: String): SimpleWidgetData = SimpleWidgetData(sensorId, Date(0), context.getString(R.string.no_data), "", "", null)
+    private fun emptySimpleResult(sensorId: String): SimpleWidgetData = SimpleWidgetData(sensorId, Date(0), context.getString(R.string.no_data), "", "", "", null)
 
     fun emptyComplexResult(sensorId: String): ComplexWidgetData = ComplexWidgetData(sensorId, Date(0), context.getString(R.string.no_data), emptyList(), null)
 

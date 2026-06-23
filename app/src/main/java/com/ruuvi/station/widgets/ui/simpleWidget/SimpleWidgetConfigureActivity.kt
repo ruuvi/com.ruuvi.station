@@ -77,10 +77,7 @@ class SimpleWidgetConfigureActivity : AppCompatActivity(), KodeinAware {
     }
 
     private fun setupCompleted() {
-        val appWidgetManager =
-            AppWidgetManager.getInstance(this)
-
-        SimpleWidget.updateSimpleWidget(this, appWidgetManager, appWidgetId)
+        SimpleWidget.updateSimpleWidget(this, appWidgetId)
 
         val resultValue =
             Intent().putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
