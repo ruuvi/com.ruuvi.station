@@ -27,7 +27,7 @@
             android:maxLines="1"
             android:text="@string/widgets_preview_sensor_name"
             android:textColor="?attr/colorOnSecondary"
-            android:textSize="16sp" />
+            android:textSize="16dp" />
 
         <RelativeLayout
             android:id="@+id/mainContent"
@@ -43,7 +43,7 @@
                 android:includeFontPadding="false"
                 android:text="@string/widgets_preview_sensor_value"
                 android:textColor="?attr/colorOnSurface"
-                android:textSize="24sp"
+                android:textSize="24dp"
                 android:textStyle="bold" />
 
             <TextView
@@ -58,7 +58,7 @@
                 android:paddingTop="4dp"
                 android:text="@string/temperature_celsius_unit"
                 android:textColor="?attr/colorOnSecondary"
-                android:textSize="9.5sp" />
+                android:textSize="9.5dp" />
 
         </RelativeLayout>
 
@@ -71,7 +71,7 @@
             android:includeFontPadding="false"
             android:text="@string/temperature"
             android:textColor="?attr/colorOnSecondary"
-            android:textSize="9.5sp" />
+            android:textSize="9.5dp" />
 
         <TextView
             android:id="@+id/updateTextView"
@@ -83,7 +83,7 @@
             android:includeFontPadding="false"
             android:text="@string/widgets_preview_time"
             android:textColor="?attr/colorOnSecondary"
-            android:textSize="9.5sp" />
+            android:textSize="9.5dp" />
 
     </RelativeLayout>
 
