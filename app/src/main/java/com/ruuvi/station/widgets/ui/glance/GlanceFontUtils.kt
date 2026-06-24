@@ -35,7 +35,7 @@ object GlanceFontUtils {
         maxWidth: Int? = null
     ): Bitmap {
         val paint = TextPaint(Paint.ANTI_ALIAS_FLAG)
-        paint.textSize = fontSize.value * context.resources.displayMetrics.scaledDensity
+        paint.textSize = fontSize.value * context.resources.displayMetrics.density
         paint.color = color.toArgb()
         
         paint.typeface = getCachedTypeface(context, fontResId)
