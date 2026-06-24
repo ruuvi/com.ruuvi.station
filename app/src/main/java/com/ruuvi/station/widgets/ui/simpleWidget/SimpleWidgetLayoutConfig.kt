@@ -9,9 +9,9 @@ data class SimpleWidgetLayoutConfig(
     val displayNameFontSize: TextUnit,
     val valueFontSize: TextUnit,
     val secondaryFontSize: TextUnit,
-    val miniatureFontSize: TextUnit,
     val aqiBoxHeight: Dp,
     val unitPadding: Dp,
+    val aqiMeasurementPadding: Dp,
     val dotSize: Dp,
     val glowSize: Dp,
     val barHeight: Dp,
@@ -21,26 +21,26 @@ data class SimpleWidgetLayoutConfig(
     companion object {
         fun fromHeight(height: Dp): SimpleWidgetLayoutConfig {
             return when {
-                height >= 80.dp -> SimpleWidgetLayoutConfig(
+                height >= 90.dp -> SimpleWidgetLayoutConfig(
                     displayNameFontSize = ruuviStationFontsSizes.normal,
                     valueFontSize = ruuviStationFontsSizes.bigger,
                     secondaryFontSize = ruuviStationFontsSizes.tiny,
-                    miniatureFontSize = ruuviStationFontsSizes.petite,
                     aqiBoxHeight = 34.dp,
-                    unitPadding = 4.dp,
+                    unitPadding = 6.dp,
+                    aqiMeasurementPadding = 4.dp,
                     dotSize = 6.dp,
-                    glowSize = 14.dp,
+                    glowSize = 12.dp,
                     barHeight = 3.dp,
                     refreshButtonSize = 40.dp,
                     refreshIconSize = 16.dp
                 )
-                height >= 70.dp -> SimpleWidgetLayoutConfig(
+                height >= 75.dp -> SimpleWidgetLayoutConfig(
                     displayNameFontSize = ruuviStationFontsSizes.petite,
-                    valueFontSize = ruuviStationFontsSizes.extended,
+                    valueFontSize = ruuviStationFontsSizes.big,
                     secondaryFontSize = ruuviStationFontsSizes.tiny,
-                    miniatureFontSize = ruuviStationFontsSizes.tiny2,
                     aqiBoxHeight = 27.dp,
-                    unitPadding = 2.dp,
+                    unitPadding = 3.dp,
+                    aqiMeasurementPadding = 2.dp,
                     dotSize = 5.dp,
                     glowSize = 12.dp,
                     barHeight = 2.dp,
@@ -49,16 +49,16 @@ data class SimpleWidgetLayoutConfig(
                 )
                 else -> SimpleWidgetLayoutConfig(
                     displayNameFontSize = ruuviStationFontsSizes.tiny,
-                    valueFontSize = ruuviStationFontsSizes.compact,
-                    secondaryFontSize = ruuviStationFontsSizes.micro,
-                    miniatureFontSize = ruuviStationFontsSizes.micro,
-                    aqiBoxHeight = 20.dp,
-                    unitPadding = 0.dp,
-                    dotSize = 4.dp,
-                    glowSize = 10.dp,
-                    barHeight = 1.5.dp,
-                    refreshButtonSize = 30.dp,
-                    refreshIconSize = 13.dp
+                    valueFontSize = ruuviStationFontsSizes.miniature,
+                    secondaryFontSize = ruuviStationFontsSizes.nano,
+                    aqiBoxHeight = 18.dp,
+                    unitPadding = 3.dp,
+                    aqiMeasurementPadding = 3.dp,
+                    dotSize = 3.dp,
+                    glowSize = 8.dp,
+                    barHeight = 1.dp,
+                    refreshButtonSize = 28.dp,
+                    refreshIconSize = 12.dp
                 )
             }
         }

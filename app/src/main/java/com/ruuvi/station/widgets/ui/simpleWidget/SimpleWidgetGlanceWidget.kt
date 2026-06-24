@@ -37,8 +37,13 @@ import androidx.glance.LocalSize
 import androidx.glance.LocalContext
 import com.ruuvi.station.R
 import androidx.datastore.preferences.core.Preferences
+import androidx.glance.appwidget.background
 import androidx.glance.color.ColorProvider
 import androidx.glance.unit.ColorProvider
+import com.ruuvi.station.app.ui.theme.Orange
+import com.ruuvi.station.app.ui.theme.OrangeSolid2
+import com.ruuvi.station.app.ui.theme.Red
+import com.ruuvi.station.app.ui.theme.White
 import com.ruuvi.station.units.domain.aqi.AQI
 import com.ruuvi.station.widgets.data.WidgetType
 import com.ruuvi.station.dashboard.ui.DashboardActivity
@@ -144,7 +149,7 @@ private fun SimpleWidgetContent(
         modifier = GlanceModifier
             .fillMaxSize()
             .background(GlanceColors.background)
-            .padding(start = 12.dp, top = 4.dp, bottom = 4.dp)
+            .padding(start = 12.dp, top = 8.dp, bottom = 8.dp, end = 12.dp)
             .clickable(openAction)
     ) {
         Column(modifier = GlanceModifier.fillMaxSize()) {
@@ -179,9 +184,8 @@ private fun SimpleWidgetContent(
                 maxWidth = availableWidth
             )
         }
-
-        RefreshButton(config)
     }
+    RefreshButton(config)
 }
 
 @Composable
@@ -253,9 +257,10 @@ private fun GlanceAQIDisplay(
             Box(modifier = GlanceModifier.height(config.aqiBoxHeight)) {
                 CustomFontText(
                     text = "/100",
-                    fontSize = config.miniatureFontSize,
+                    fontSize = config.secondaryFontSize,
                     colorProvider = GlanceColors.valueColor,
-                    fontResId = R.font.oswald_light
+                    fontResId = R.font.oswald_light,
+                    modifier = GlanceModifier.padding(top = config.unitPadding)
                 )
 
                 Box(
@@ -266,7 +271,8 @@ private fun GlanceAQIDisplay(
                         text = measurementName,
                         fontSize = config.secondaryFontSize,
                         colorProvider = GlanceColors.widgetSensorName,
-                        fontResId = R.font.mulish_regular
+                        fontResId = R.font.mulish_regular,
+                        modifier = GlanceModifier.padding(bottom = config.aqiMeasurementPadding)
                     )
                 }
             }
@@ -296,8 +302,9 @@ private fun RefreshButton(config: SimpleWidgetLayoutConfig) {
         Box(
             modifier = GlanceModifier
                 .size(config.refreshButtonSize)
+                .padding(bottom = 12.dp, end = 12.dp)
                 .clickable(actionRunCallback<RefreshSimpleWidgetAction>()),
-            contentAlignment = Alignment.Center
+            contentAlignment = Alignment.BottomEnd
         ) {
             Image(
                 provider = ImageProvider(R.drawable.ic_widget_d_update),
