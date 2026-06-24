@@ -21,8 +21,8 @@ fun resolveWidgetScreenSizeCategory(context: Context): WidgetScreenSizeCategory 
     val screenHeightDp = screenHeightPx / density
 
     return when {
-        screenHeightDp >= 900f -> WidgetScreenSizeCategory.BIG
-        screenHeightDp >= 760f -> WidgetScreenSizeCategory.MEDIUM
+        screenHeightDp >= 750f -> WidgetScreenSizeCategory.BIG
+        screenHeightDp >= 660f -> WidgetScreenSizeCategory.MEDIUM
         else -> WidgetScreenSizeCategory.SMALL
     }
 }
