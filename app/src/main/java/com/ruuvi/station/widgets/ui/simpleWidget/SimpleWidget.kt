@@ -57,7 +57,6 @@ class SimpleWidget: AppWidgetProvider() {
         if (MANUAL_REFRESH == intent.action) {
             val appWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID)
             val appWidgetManager = AppWidgetManager.getInstance(context)
-            Timber.d("MANUAL_REFRESH $appWidgetId")
             onUpdate(context, appWidgetManager, getSimpleWidgetsIds(context))
         }
         super.onReceive(context, intent)

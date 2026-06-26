@@ -45,7 +45,7 @@ data class SimpleWidgetLayoutConfig(
                     glowSize = 12.dp,
                     barHeight = 2.dp,
                     refreshButtonSize = 36.dp,
-                    refreshIconSize = 15.dp
+                    refreshIconSize = 14.dp
                 )
                 else -> SimpleWidgetLayoutConfig(
                     displayNameFontSize = ruuviStationFontsSizes.tiny,

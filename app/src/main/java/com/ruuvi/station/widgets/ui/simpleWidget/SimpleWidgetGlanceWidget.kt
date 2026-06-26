@@ -37,19 +37,15 @@ import androidx.glance.LocalSize
 import androidx.glance.LocalContext
 import com.ruuvi.station.R
 import androidx.datastore.preferences.core.Preferences
-import androidx.glance.appwidget.background
 import androidx.glance.color.ColorProvider
 import androidx.glance.unit.ColorProvider
-import com.ruuvi.station.app.ui.theme.Orange
-import com.ruuvi.station.app.ui.theme.OrangeSolid2
-import com.ruuvi.station.app.ui.theme.Red
-import com.ruuvi.station.app.ui.theme.White
 import com.ruuvi.station.units.domain.aqi.AQI
 import com.ruuvi.station.widgets.data.WidgetType
 import com.ruuvi.station.dashboard.ui.DashboardActivity
 import com.ruuvi.station.tagdetails.ui.SensorCardActivity
 import com.ruuvi.station.widgets.ui.glance.GlanceColors
 import com.ruuvi.station.widgets.ui.glance.CustomFontText
+import com.ruuvi.station.widgets.ui.glance.RefreshButton
 import com.ruuvi.station.widgets.ui.WidgetScreenSizeCategory
 import com.ruuvi.station.widgets.ui.resolveWidgetScreenSizeCategory
 
@@ -176,16 +172,25 @@ private fun SimpleWidgetContent(
                 )
             }
 
-            CustomFontText(
-                text = updated,
-                fontSize = config.secondaryFontSize,
-                colorProvider = GlanceColors.widgetSensorName,
-                fontResId = R.font.mulish_regular,
-                maxWidth = availableWidth
-            )
+            Box(
+                modifier = GlanceModifier.fillMaxSize(),
+                contentAlignment = Alignment.BottomStart
+            ) {
+                CustomFontText(
+                    text = updated,
+                    fontSize = config.secondaryFontSize,
+                    colorProvider = GlanceColors.widgetSensorName,
+                    fontResId = R.font.mulish_regular
+                )
+            }
         }
     }
-    RefreshButton(config)
+    RefreshButton(
+        size = config.refreshButtonSize,
+        iconSize = config.refreshIconSize,
+        contentAlignment = Alignment.BottomEnd,
+        action = actionRunCallback<RefreshSimpleWidgetAction>()
+    )
 }
 
 @Composable
@@ -237,7 +242,7 @@ private fun GlanceAQIDisplay(
     val aqiColorProvider = ColorProvider(day = aqiColor, night = aqiColor)
 
     val widgetWidth = LocalSize.current.width
-    val availableWidth = widgetWidth - 52.dp // Total width - (start padding 12 + button width 40)
+    val availableWidth = widgetWidth - (config.refreshButtonSize + 12.dp) // Total width - (start padding 12 + button width 40)
     val progressBarWidth = if (availableWidth > 100.dp) 100.dp else availableWidth - 10.dp
 
     Column {
@@ -285,35 +290,10 @@ private fun GlanceAQIDisplay(
                 day = aqiColor.copy(alpha = 0.2f),
                 night = aqiColor.copy(alpha = 0.2f)
             ),
-            modifier = GlanceModifier.padding(bottom = 2.dp),
+            modifier = GlanceModifier.padding(start = 1.dp, bottom = 2.dp),
             totalWidth = progressBarWidth,
             config = config
         )
-    }
-}
-
-@Composable
-private fun RefreshButton(config: SimpleWidgetLayoutConfig) {
-    Box(
-        modifier = GlanceModifier
-            .fillMaxSize(),
-        contentAlignment = Alignment.BottomEnd
-    ) {
-        Box(
-            modifier = GlanceModifier
-                .size(config.refreshButtonSize)
-                .padding(bottom = 12.dp, end = 12.dp)
-                .clickable(actionRunCallback<RefreshSimpleWidgetAction>()),
-            contentAlignment = Alignment.BottomEnd
-        ) {
-            Image(
-                provider = ImageProvider(R.drawable.ic_widget_d_update),
-                contentDescription = null,
-                modifier = GlanceModifier
-                    .size(config.refreshIconSize),
-                colorFilter = ColorFilter.tint(GlanceColors.refreshButtonColor)
-            )
-        }
     }
 }
 
