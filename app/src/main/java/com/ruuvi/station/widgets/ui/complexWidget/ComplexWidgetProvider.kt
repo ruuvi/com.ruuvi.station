@@ -1,16 +1,22 @@
 package com.ruuvi.station.widgets.ui.complexWidget
 
 import android.app.PendingIntent
-import android.app.PendingIntent.*
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
-import android.widget.RemoteViews
-import com.ruuvi.station.R
-import com.ruuvi.station.tagdetails.ui.SensorCardActivity
+import androidx.glance.appwidget.GlanceAppWidgetManager
+import androidx.glance.appwidget.state.updateAppWidgetState
+import com.google.gson.Gson
+import com.ruuvi.station.widgets.domain.ComplexWidgetPreferencesInteractor
+import com.ruuvi.station.widgets.domain.WidgetInteractor
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import org.kodein.di.Kodein
+import org.kodein.di.android.kodein
+import org.kodein.di.generic.instance
 import timber.log.Timber
 
 class ComplexWidgetProvider: AppWidgetProvider() {
@@ -22,7 +28,7 @@ class ComplexWidgetProvider: AppWidgetProvider() {
     ) {
         Timber.d("onUpdate $appWidgetIds")
         appWidgetIds.forEach { appWidgetId ->
-            updateComplexWidget(context, appWidgetManager, appWidgetId)
+            updateComplexWidget(context, appWidgetId)
         }
     }
 
@@ -31,17 +37,11 @@ class ComplexWidgetProvider: AppWidgetProvider() {
         when (intent.action) {
             MANUAL_REFRESH -> {
                 val appWidgetId= intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID)
-                val appWidgetManager = AppWidgetManager.getInstance(context)
-                if (appWidgetId == 0) {
+                if (appWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID) {
                     updateAll(context)
                 } else {
-                    appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetId, R.id.sensorsListView)
+                    updateComplexWidget(context, appWidgetId)
                 }
-            }
-            ITEM_CLICK -> {
-                val sensorId = intent.getStringExtra(EXTRA_SENSOR_ID) ?: ""
-                val appWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID)
-                SensorCardActivity.createPendingIntent(context, sensorId, appWidgetId)?.send()
             }
             else -> super.onReceive(context, intent)
         }
@@ -49,29 +49,42 @@ class ComplexWidgetProvider: AppWidgetProvider() {
 
     companion object {
         const val MANUAL_REFRESH = "com.ruuvi.station.widgets.complexWidget.MANUAL_REFRESH"
-        const val ITEM_CLICK = "com.ruuvi.station.widgets.complexWidget.ITEM_CLICK"
-        const val EXTRA_SENSOR_ID = "EXTRA_SENSOR_ID"
 
-        private fun updateComplexWidget(
+        fun updateComplexWidget(
             context: Context,
-            appWidgetManager: AppWidgetManager,
             appWidgetId: Int
         ) {
-            val adapterIntent = Intent(context, ComplexWidgetService::class.java).apply {
-                putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
-                data = Uri.parse(toUri(Intent.URI_INTENT_SCHEME))
-            }
+            val kodein: Kodein by kodein(context)
+            val interactor: WidgetInteractor by kodein.instance()
+            val preferencesInteractor: ComplexWidgetPreferencesInteractor by kodein.instance()
 
-            val views = RemoteViews(context.packageName, R.layout.widget_complex).apply{
-                setRemoteAdapter(R.id.sensorsListView, adapterIntent)
-                setEmptyView(R.id.sensorsListView, R.id.emptyView)
-                setOnClickPendingIntent(R.id.refreshButton, getUpdatePendingIntent(context, appWidgetId))
-                setOnClickPendingIntent(R.id.addButton, ComplexWidgetConfigureActivity.createPendingIntent(context, appWidgetId))
-                setPendingIntentTemplate(R.id.sensorsListView, getPendingIntentTemplate(context, appWidgetId))
-            }
+            CoroutineScope(Dispatchers.Main).launch {
+                try {
+                    val widgetSettings = preferencesInteractor.getComplexWidgetSettings(appWidgetId)
+                    val cloudSensors = interactor.getCloudSensorsList()
+                        .filter { cloudSensor -> widgetSettings.any { it.sensorId == cloudSensor.id } }
+                    
+                    val sensorsData = cloudSensors.map { sensor ->
+                        val settings = widgetSettings.firstOrNull { it.sensorId == sensor.id }
+                        interactor.getComplexWidgetData(sensor.id, settings)
+                    }
 
-            appWidgetManager.updateAppWidget(appWidgetId, views)
-            appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetId, R.id.sensorsListView)
+                    val glanceId = try {
+                        GlanceAppWidgetManager(context).getGlanceIdBy(appWidgetId)
+                    } catch (e: Exception) {
+                        null
+                    }
+
+                    if (glanceId != null) {
+                        updateAppWidgetState(context, glanceId) { prefs ->
+                            prefs[ComplexWidgetPrefKeys.data] = Gson().toJson(sensorsData)
+                        }
+                        ComplexWidgetGlanceWidget.update(context, glanceId)
+                    }
+                } catch (e: Exception) {
+                    Timber.e(e, "updateComplexWidget failed for Id $appWidgetId")
+                }
+            }
         }
 
         fun getUpdatePendingIntent(context: Context, appWidgetId: Int): PendingIntent {
@@ -79,23 +92,15 @@ class ComplexWidgetProvider: AppWidgetProvider() {
                 action = MANUAL_REFRESH
                 putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
             }
-            return PendingIntent.getBroadcast(context, appWidgetId, updateIntent, FLAG_IMMUTABLE)
-        }
-
-        private fun getPendingIntentTemplate(context: Context, appWidgetId: Int): PendingIntent {
-            val itemClickIntent = Intent(context, ComplexWidgetProvider::class.java).apply {
-                action = ITEM_CLICK
-            }
-            return PendingIntent.getBroadcast(context, appWidgetId, itemClickIntent, FLAG_UPDATE_CURRENT or FLAG_MUTABLE)
+            return PendingIntent.getBroadcast(context, appWidgetId, updateIntent,
+                PendingIntent.FLAG_IMMUTABLE
+            )
         }
 
         fun updateAll(context: Context) {
             val ids = getWidgetsIds(context)
-            val appWidgetManager =
-                AppWidgetManager.getInstance(context)
-
             for (appWidgetId in ids) {
-                updateComplexWidget(context, appWidgetManager, appWidgetId)
+                updateComplexWidget(context, appWidgetId)
             }
         }
 

@@ -4,6 +4,7 @@
     android:minWidth="240dp"
     android:previewImage="@drawable/complex_widget_preview"
     android:previewLayout="@layout/widget_complex_preview"
+    android:initialLayout="@layout/widget_complex_preview"
     android:resizeMode="horizontal|vertical"
     android:targetCellHeight="1"
     android:targetCellWidth="4"
@@ -11,5 +12,5 @@
     android:widgetCategory="home_screen"
     android:configure="com.ruuvi.station.widgets.ui.complexWidget.ComplexWidgetConfigureActivity"
     android:widgetFeatures="reconfigurable"
-    android:initialKeyguardLayout="@layout/widget_complex"
+    android:initialKeyguardLayout="@layout/widget_complex_preview"
 />
