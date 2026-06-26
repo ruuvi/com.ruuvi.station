@@ -240,11 +240,6 @@ xmlns:tools="http://schemas.android.com/tools">
         android:foregroundServiceType="connectedDevice" />
 
     <service
-        android:name="com.ruuvi.station.widgets.ui.complexWidget.ComplexWidgetService"
-        android:exported="true"
-        android:permission="android.permission.BIND_REMOTEVIEWS" />
-
-    <service
         android:name="com.ruuvi.station.dfu.domain.DfuService"
         android:exported="false"
         android:label="Dfu Service">

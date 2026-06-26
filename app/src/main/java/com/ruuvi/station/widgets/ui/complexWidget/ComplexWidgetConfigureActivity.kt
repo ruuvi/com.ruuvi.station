@@ -1,10 +1,6 @@
 package com.ruuvi.station.widgets.ui.complexWidget
 
-import android.app.PendingIntent
-import android.app.PendingIntent.FLAG_IMMUTABLE
 import android.appwidget.AppWidgetManager
-import android.appwidget.AppWidgetManager.ACTION_APPWIDGET_UPDATE
-import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -89,26 +85,12 @@ class ComplexWidgetConfigureActivity : AppCompatActivity(), KodeinAware {
     }
 
     private fun setupCompleted() {
-        val updateIntent = Intent(this, ComplexWidgetProvider::class.java).apply {
-            action = ACTION_APPWIDGET_UPDATE
-            putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, intArrayOf(appWidgetId))
-            `package` = packageName
-        }
-
-        sendBroadcast(updateIntent)
+        ComplexWidgetProvider.updateAll(this)
 
         val resultValue =
             Intent().putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
         setResult(RESULT_OK, resultValue)
         finish()
-    }
-
-    companion object {
-        fun createPendingIntent(context: Context, appWidgetId: Int): PendingIntent? {
-            val intent = Intent(context, ComplexWidgetConfigureActivity::class.java)
-            intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
-            return PendingIntent.getActivity(context, appWidgetId, intent, FLAG_IMMUTABLE)
-        }
     }
 }
 
@@ -145,7 +127,7 @@ fun SelectSensorsScreen(viewModel: ComplexWidgetConfigureViewModel) {
             }
         }
 
-        if (sensors?.isNotEmpty() == true) {
+        if (sensors.isNotEmpty()) {
             itemsIndexed(items = sensors) { _, item ->
                 SensorSettingsCard(
                     viewModel = viewModel,
