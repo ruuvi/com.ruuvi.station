@@ -14,6 +14,7 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.core.view.WindowCompat
 import com.ruuvi.station.R
@@ -141,7 +142,6 @@ fun SelectSensorsScreen(viewModel: ComplexWidgetConfigureViewModel) {
 
 @Composable
 fun SensorSettingsCard(viewModel: ComplexWidgetConfigureViewModel, item: ComplexWidgetSensorItem) {
-    Timber.d("SensorSettingsCard $item")
     Column() {
         Box(
             modifier = Modifier
@@ -188,22 +188,24 @@ fun WidgetTypeList(viewModel: ComplexWidgetConfigureViewModel, item: ComplexWidg
 
 @Composable
 fun WidgetTypeItem (viewModel: ComplexWidgetConfigureViewModel, item: ComplexWidgetSensorItem, widgetType: WidgetType) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.wrapContentHeight()
-        )
-        {
-            Checkbox(
-                checked = item.getStateForType(widgetType),
-                colors = ruuviCheckboxColors(),
-                onCheckedChange = { checked -> viewModel.selectWidgetType(item, widgetType, checked) })
+    val context = LocalContext.current
 
-            Text(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable { viewModel.selectWidgetType(item, widgetType, item.getStateForType(widgetType)) },
-                text = stringResource(id = widgetType.titleResId),
-                style = RuuviStationTheme.typography.paragraph
-            )
-        }
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.wrapContentHeight()
+    )
+    {
+        Checkbox(
+            checked = item.getStateForType(widgetType),
+            colors = ruuviCheckboxColors(),
+            onCheckedChange = { checked -> viewModel.selectWidgetType(item, widgetType, checked) })
+
+        Text(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable { viewModel.selectWidgetType(item, widgetType, item.getStateForType(widgetType)) },
+            text = WidgetType.getTitle(context, widgetType, stringResource(widgetType.titleResId)),
+            style = RuuviStationTheme.typography.paragraph
+        )
+    }
 }
