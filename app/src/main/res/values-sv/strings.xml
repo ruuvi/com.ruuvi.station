@@ -744,6 +744,7 @@
     <string name="sound">Ljud</string>
     <string name="sound_average_with_unit">Ljud (medel) (%1$s)</string>
     <string name="sound_avg">Ljud (genomsnitt)</string>
+    <string name="sound_instant">Ljud (momentan)</string>
     <string name="sound_instant_with_unit">Ljud (momentan) (%1$s)</string>
     <string name="sound_peak">Ljud (topp)</string>
     <string name="sound_peak_with_unit">Ljud (topp) (%1$s)</string>

@@ -566,6 +566,7 @@
     <string name="sound">Звук</string>
     <string name="sound_average_with_unit">Звук (среднее) (%1$s)</string>
     <string name="sound_avg">Звук (среднее)</string>
+    <string name="sound_instant">Звук (мгновенный)</string>
     <string name="sound_instant_with_unit">Звук (мгновенный) (%1$s)</string>
     <string name="sound_peak">Звук (пик)</string>
     <string name="sound_peak_with_unit">Звук (пик) (%1$s)</string>

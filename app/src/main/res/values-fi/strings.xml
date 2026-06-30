@@ -743,6 +743,7 @@
     <string name="sound">Ääni</string>
     <string name="sound_average_with_unit">Ääni (keskiarvo) (%1$s)</string>
     <string name="sound_avg">Ääni (keskiarvo)</string>
+    <string name="sound_instant">Ääni (hetkellinen)</string>
     <string name="sound_instant_with_unit">Ääni (hetkellinen) (%1$s)</string>
     <string name="sound_peak">Ääni (huippu)</string>
     <string name="sound_peak_with_unit">Ääni (huippu) (%1$s)</string>

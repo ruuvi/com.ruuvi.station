@@ -749,6 +749,7 @@
     <string name="sound">Son</string>
     <string name="sound_average_with_unit">Son (moyenne) (%1$s)</string>
     <string name="sound_avg">Son (moyenne)</string>
+    <string name="sound_instant">Son (instantané)</string>
     <string name="sound_instant_with_unit">Son (instantané) (%1$s)</string>
     <string name="sound_peak">Son (pic)</string>
     <string name="sound_peak_with_unit">Son (pic) (%1$s)</string>

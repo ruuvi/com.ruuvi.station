@@ -511,6 +511,7 @@
     <string name="sound">Dźwięk</string>
     <string name="sound_average_with_unit">Dźwięk (średnia) (%1$s)</string>
     <string name="sound_avg">Dźwięk (średnia)</string>
+    <string name="sound_instant">Dźwięk (natychmiastowy)</string>
     <string name="sound_instant_with_unit">Dźwięk (natychmiastowy) (%1$s)</string>
     <string name="sound_peak">Dźwięk (szczyt)</string>
     <string name="sound_peak_with_unit">Dźwięk (szczyt) (%1$s)</string>

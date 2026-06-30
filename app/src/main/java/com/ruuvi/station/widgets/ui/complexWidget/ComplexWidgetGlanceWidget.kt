@@ -5,6 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.dp
 import androidx.datastore.preferences.core.Preferences
 import androidx.glance.*
+import androidx.glance.action.Action
 import androidx.glance.action.ActionParameters
 import androidx.glance.action.actionStartActivity
 import androidx.glance.action.clickable
@@ -73,8 +74,23 @@ private fun ComplexWidgetContent(sensors: List<ComplexWidgetData>) {
             }
         } else {
             LazyColumn(modifier = GlanceModifier.fillMaxSize()) {
-                items(sensors) { sensor ->
-                    SensorCard(sensor)
+                sensors.forEach { sensor ->
+                    val openAction = actionRunCallback<OpenComplexWidgetSensorAction>(
+                        SimpleWidget.openSensorActionParameters(sensor.sensorId, 0)
+                    )
+                    
+                    item {
+                        SensorHeader(sensor, openAction)
+                        Spacer(modifier = GlanceModifier.height(12.dp))
+                    }
+
+                    items(sensor.sensorValues.chunked(2)) { rowValues ->
+                        MeasurementRow(rowValues, openAction)
+                    }
+
+                    item {
+                        SensorFooter(sensor, openAction)
+                    }
                 }
             }
         }
@@ -84,46 +100,52 @@ private fun ComplexWidgetContent(sensors: List<ComplexWidgetData>) {
 }
 
 @Composable
-private fun SensorCard(sensor: ComplexWidgetData) {
-    val openAction = actionRunCallback<OpenComplexWidgetSensorAction>(
-        SimpleWidget.openSensorActionParameters(sensor.sensorId, 0)
-    )
+private fun SensorHeader(sensor: ComplexWidgetData, action: Action) {
+    Row(
+        modifier = GlanceModifier
+            .fillMaxWidth()
+            .padding(horizontal = 12.dp)
+            .padding(top = 12.dp)
+            .clickable(action),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        CustomFontText(
+            text = sensor.displayName,
+            fontSize = ruuviStationFontsSizes.normal,
+            colorProvider = GlanceColors.widgetSensorName,
+            fontResId = R.font.mulish_bold,
+            modifier = GlanceModifier.defaultWeight()
+        )
+    }
+}
 
+@Composable
+private fun MeasurementRow(rowValues: List<SensorValue>, action: Action) {
+    Row(
+        modifier = GlanceModifier
+            .fillMaxWidth()
+            .padding(horizontal = 12.dp, vertical = 3.dp)
+            .clickable(action)
+    ) {
+        rowValues.forEach { value ->
+            MeasurementItem(value, modifier = GlanceModifier.defaultWeight())
+        }
+        if (rowValues.size == 1) {
+            Spacer(modifier = GlanceModifier.defaultWeight())
+        }
+    }
+}
+
+@Composable
+private fun SensorFooter(sensor: ComplexWidgetData, action: Action) {
     Column(
         modifier = GlanceModifier
             .fillMaxWidth()
-            .padding(horizontal = 12.dp, vertical = 12.dp)
-            .clickable(openAction)
+            .padding(horizontal = 12.dp)
+            .padding(bottom = 12.dp)
+            .clickable(action)
     ) {
-        Row(
-            modifier = GlanceModifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            CustomFontText(
-                text = sensor.displayName,
-                fontSize = ruuviStationFontsSizes.normal,
-                colorProvider = GlanceColors.widgetSensorName,
-                fontResId = R.font.mulish_bold,
-                modifier = GlanceModifier.defaultWeight()
-            )
-        }
-
-        Spacer(modifier = GlanceModifier.height(12.dp))
-
-        val rows = sensor.sensorValues.chunked(2)
-        rows.forEach { rowValues ->
-            Row(modifier = GlanceModifier.fillMaxWidth().padding(vertical = 3.dp)) {
-                rowValues.forEach { value ->
-                    MeasurementItem(value, modifier = GlanceModifier.defaultWeight())
-                }
-                if (rowValues.size == 1) {
-                    Spacer(modifier = GlanceModifier.defaultWeight())
-                }
-            }
-        }
-
         Spacer(modifier = GlanceModifier.height(8.dp))
-
         Row(modifier = GlanceModifier.fillMaxWidth()) {
             CustomFontText(
                 text = sensor.updated ?: "",

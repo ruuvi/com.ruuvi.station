@@ -753,6 +753,7 @@
     <string name="sound">Sound</string>
     <string name="sound_average_with_unit">Sound average (%1$s)</string>
     <string name="sound_avg">Sound (average)</string>
+    <string name="sound_instant">Sound (instant)</string>
     <string name="sound_instant_with_unit">Sound (instant) (%1$s)</string>
     <string name="sound_peak">Sound (peak)</string>
     <string name="sound_peak_with_unit">Sound (peak) (%1$s)</string>

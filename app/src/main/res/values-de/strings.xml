@@ -754,6 +754,7 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="sound">Ton</string>
     <string name="sound_average_with_unit">Ton (durchschnitt) (%1$s)</string>
     <string name="sound_avg">Ton (durchschnitt)</string>
+    <string name="sound_instant">Ton (sofort)</string>
     <string name="sound_instant_with_unit">Ton (sofort) (%1$s)</string>
     <string name="sound_peak">Ton (spitze)</string>
     <string name="sound_peak_with_unit">Ton (spitze) (%1$s)</string>
