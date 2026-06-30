@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:theme="@style/AppTheme.AppWidgetContainer"
     android:background="?attr/colorSurface"
     tools:layout_height="300dp"
@@ -12,35 +12,389 @@
         android:id="@+id/complexWidgetLayout"
         style="@style/Widget.Comruuvistation.AppWidget.InnerView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        tools:layout_height="300dp"
+        tools:layout_width="350dp">
 
-        <TextView
-            android:id="@+id/loadingTextView"
-            android:layout_width="wrap_content"
+        <!-- Refresh Button -->
+        <ImageView
+            android:id="@+id/refreshButton"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:layout_margin="12dp"
+            android:padding="8dp"
+            android:src="@drawable/ic_widget_d_update"
+            android:tint="?attr/colorOnSecondary"
+            android:tintMode="src_in"
+            android:scaleType="centerInside"
+            tools:ignore="UseAppTint" />
+
+        <!-- Main Content -->
+        <LinearLayout
+            android:id="@+id/contentLayout"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_alignParentStart="true"
-            android:paddingStart="12dp"
-            android:fontFamily="@font/mulish_bold"
-            android:includeFontPadding="false"
-            android:text="@string/widgets_loading"
-            android:textColor="?attr/colorOnSecondary"
-            android:textSize="16sp" />
+            android:layout_alignParentTop="true"
+            android:layout_toStartOf="@+id/refreshButton"
+            android:orientation="vertical"
+            android:padding="12dp">
 
+            <!-- Bedroom Section -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingBottom="8dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif-medium"
+                    android:textColor="?attr/colorOnSecondary"
+                    android:textSize="14dp"
+                    android:text="Bedroom"
+                    android:paddingBottom="4dp" />
+
+                <!-- Bedroom Row 1 -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingVertical="2dp">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="horizontal"
+                        android:paddingEnd="4dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="sans-serif"
+                            android:textColor="?attr/colorOnSecondary"
+                            android:textSize="11dp"
+                            android:text="22.54" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="sans-serif"
+                            android:textColor="?attr/colorOnSecondary"
+                            android:textSize="10dp"
+                            android:paddingStart="2dp"
+                            android:text="℃" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="sans-serif"
+                            android:textColor="?attr/colorOnSecondary"
+                            android:textSize="9dp"
+                            android:paddingStart="2dp"
+                            android:text="Temp" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="sans-serif"
+                            android:textColor="?attr/colorOnSecondary"
+                            android:textSize="11dp"
+                            android:text="39.27" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="sans-serif"
+                            android:textColor="?attr/colorOnSecondary"
+                            android:textSize="10dp"
+                            android:paddingStart="2dp"
+                            android:text="%" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="sans-serif"
+                            android:textColor="?attr/colorOnSecondary"
+                            android:textSize="9dp"
+                            android:paddingStart="2dp"
+                            android:text="Humidity" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!-- Bedroom Row 2 -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingVertical="2dp">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="horizontal"
+                        android:paddingEnd="4dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="sans-serif"
+                            android:textColor="?attr/colorOnSecondary"
+                            android:textSize="11dp"
+                            android:text="1000.27" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="sans-serif"
+                            android:textColor="?attr/colorOnSecondary"
+                            android:textSize="10dp"
+                            android:paddingStart="2dp"
+                            android:text="hPa" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="sans-serif"
+                            android:textColor="?attr/colorOnSecondary"
+                            android:textSize="9dp"
+                            android:paddingStart="2dp"
+                            android:text="Pressure" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="sans-serif"
+                            android:textColor="?attr/colorOnSecondary"
+                            android:textSize="11dp"
+                            android:text="2.978" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="sans-serif"
+                            android:textColor="?attr/colorOnSecondary"
+                            android:textSize="10dp"
+                            android:paddingStart="2dp"
+                            android:text="V" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="sans-serif"
+                            android:textColor="?attr/colorOnSecondary"
+                            android:textSize="9dp"
+                            android:paddingStart="2dp"
+                            android:text="Voltage" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!-- Bedroom Timestamp -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif-condensed"
+                    android:textColor="?attr/colorOnSecondary"
+                    android:textSize="10dp"
+                    android:text="7:45"
+                    android:paddingTop="4dp" />
+            </LinearLayout>
+
+            <!-- Outside Section -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingTop="4dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif-medium"
+                    android:textColor="?attr/colorOnSecondary"
+                    android:textSize="14dp"
+                    android:text="Outside"
+                    android:paddingBottom="4dp" />
+
+                <!-- Outside Row 1 -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingVertical="2dp">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="horizontal"
+                        android:paddingEnd="4dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="sans-serif"
+                            android:textColor="?attr/colorOnSecondary"
+                            android:textSize="11dp"
+                            android:text="-10.54" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="sans-serif"
+                            android:textColor="?attr/colorOnSecondary"
+                            android:textSize="10dp"
+                            android:paddingStart="2dp"
+                            android:text="℃" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="sans-serif"
+                            android:textColor="?attr/colorOnSecondary"
+                            android:textSize="9dp"
+                            android:paddingStart="2dp"
+                            android:text="Temp" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="sans-serif"
+                            android:textColor="?attr/colorOnSecondary"
+                            android:textSize="11dp"
+                            android:text="19.14" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="sans-serif"
+                            android:textColor="?attr/colorOnSecondary"
+                            android:textSize="10dp"
+                            android:paddingStart="2dp"
+                            android:text="%" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="sans-serif"
+                            android:textColor="?attr/colorOnSecondary"
+                            android:textSize="9dp"
+                            android:paddingStart="2dp"
+                            android:text="Humidity" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!-- Outside Row 2 -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingVertical="2dp">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="horizontal"
+                        android:paddingEnd="4dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="sans-serif"
+                            android:textColor="?attr/colorOnSecondary"
+                            android:textSize="11dp"
+                            android:text="1000.56" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="sans-serif"
+                            android:textColor="?attr/colorOnSecondary"
+                            android:textSize="10dp"
+                            android:paddingStart="2dp"
+                            android:text="hPa" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="sans-serif"
+                            android:textColor="?attr/colorOnSecondary"
+                            android:textSize="9dp"
+                            android:paddingStart="2dp"
+                            android:text="Pressure" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="sans-serif"
+                            android:textColor="?attr/colorOnSecondary"
+                            android:textSize="11dp"
+                            android:text="2.788" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="sans-serif"
+                            android:textColor="?attr/colorOnSecondary"
+                            android:textSize="10dp"
+                            android:paddingStart="2dp"
+                            android:text="V" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="sans-serif"
+                            android:textColor="?attr/colorOnSecondary"
+                            android:textSize="9dp"
+                            android:paddingStart="2dp"
+                            android:text="Voltage" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!-- Outside Timestamp -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif-condensed"
+                    android:textColor="?attr/colorOnSecondary"
+                    android:textSize="10dp"
+                    android:text="7:45"
+                    android:paddingTop="4dp" />
+            </LinearLayout>
+        </LinearLayout>
     </RelativeLayout>
-
-    <ImageView
-        android:id="@+id/refreshButton"
-        android:layout_width="44dp"
-        android:layout_height="44dp"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:layout_margin="12dp"
-        android:padding="8dp"
-        android:src="@drawable/ic_widget_d_update"
-        android:tint="?attr/colorOnSecondary"
-        android:tintMode="src_in"
-        android:scaleType="centerInside"
-        tools:ignore="UseAppTint" />
 
 </RelativeLayout>
