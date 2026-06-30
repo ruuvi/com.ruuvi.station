@@ -9,6 +9,7 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import timber.log.Timber
 import java.lang.Exception
+import androidx.core.content.edit
 
 class ComplexWidgetPreferencesInteractor(val context: Context) {
     private val sharedPreferences: SharedPreferences by lazy { context.getSharedPreferences(
@@ -18,9 +19,9 @@ class ComplexWidgetPreferencesInteractor(val context: Context) {
         val list = items.filter { it.checked && it.anySensorChecked() }.map { ComplexWidgetPreferenceItem(it) }
         val serialized = Json.encodeToString(list)
         sharedPreferences
-            .edit()
-            .putString("$PREF_WIDGET_PREFIX$appWidgetId", serialized)
-            .apply()
+            .edit {
+                putString("$PREF_WIDGET_PREFIX$appWidgetId", serialized)
+            }
     }
 
     fun getComplexWidgetSettings(appWidgetId: Int): List<ComplexWidgetPreferenceItem> {
@@ -44,14 +45,27 @@ class ComplexWidgetPreferencesInteractor(val context: Context) {
 data class ComplexWidgetPreferenceItem(
     val sensorId: String,
     val checkedTemperature: Boolean,
+    val checkedTemperatureF: Boolean = false,
+    val checkedTemperatureK: Boolean = false,
     val checkedHumidity: Boolean,
+    val checkedHumidityAbsolute: Boolean = false,
+    val checkedDewPointC: Boolean = false,
+    val checkedDewPointF: Boolean = false,
+    val checkedDewPointK: Boolean = false,
     val checkedPressure: Boolean,
+    val checkedPressurePa: Boolean = false,
+    val checkedPressureMmHg: Boolean = false,
+    val checkedPressureInHg: Boolean = false,
     val checkedMovement: Boolean,
     val checkedVoltage: Boolean,
     val checkedSignalStrength: Boolean,
     val checkedAccelerationX: Boolean,
     val checkedAccelerationY: Boolean,
     val checkedAccelerationZ: Boolean,
+    val checkedSoundRealTime: Boolean = false,
+    val checkedSoundAverage: Boolean = false,
+    val checkedSoundPeak: Boolean = false,
+    val checkedMsn: Boolean = false,
     val checkedAQI: Boolean = false,
     val checkedLuminosity: Boolean = false,
     val checkedCO2: Boolean = false,
@@ -65,14 +79,27 @@ data class ComplexWidgetPreferenceItem(
     constructor(item: ComplexWidgetSensorItem): this (
         sensorId = item.sensor.id,
         checkedTemperature = item.checkedTemperature,
+        checkedTemperatureF = item.checkedTemperatureF,
+        checkedTemperatureK = item.checkedTemperatureK,
         checkedHumidity = item.checkedHumidity,
+        checkedHumidityAbsolute = item.checkedHumidityAbsolute,
+        checkedDewPointC = item.checkedDewPointC,
+        checkedDewPointF = item.checkedDewPointF,
+        checkedDewPointK = item.checkedDewPointK,
         checkedPressure = item.checkedPressure,
+        checkedPressurePa = item.checkedPressurePa,
+        checkedPressureMmHg = item.checkedPressureMmHg,
+        checkedPressureInHg = item.checkedPressureInHg,
         checkedMovement = item.checkedMovement,
         checkedVoltage = item.checkedVoltage,
         checkedSignalStrength = item.checkedSignalStrength,
         checkedAccelerationX = item.checkedAccelerationX,
         checkedAccelerationY = item.checkedAccelerationY,
         checkedAccelerationZ = item.checkedAccelerationZ,
+        checkedSoundRealTime = item.checkedSoundRealTime,
+        checkedSoundAverage = item.checkedSoundAverage,
+        checkedSoundPeak = item.checkedSoundPeak,
+        checkedMsn = item.checkedMsn,
         checkedAQI = item.checkedAQI,
         checkedLuminosity = item.checkedLuminosity,
         checkedCO2 = item.checkedCO2,
