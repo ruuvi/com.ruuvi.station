@@ -32,7 +32,7 @@ class PermissionsInteractor(private val activity: Activity) {
     private val requiredPermissionsApi31 = mutableListOf(
         BLUETOOTH_CONNECT,
         BLUETOOTH_SCAN).also {
-        if (BuildConfig.FILE_LOGS_ENABLED && Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+        if (BuildConfig.FILE_LOGS_ENABLED && Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
             it.add(WRITE_EXTERNAL_STORAGE)
         }
     }
