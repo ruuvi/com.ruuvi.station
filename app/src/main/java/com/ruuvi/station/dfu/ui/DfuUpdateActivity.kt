@@ -187,14 +187,19 @@ class DfuUpdateActivity : AppCompatActivity() , KodeinAware {
 
     override fun onResume() {
         super.onResume()
-        if (!viewModel.permissionsGranted) requestPermission()
+        when (viewModel.deviceType.value) {
+            DeviceType.AIR -> if (!viewModelAir.permissionsGranted) requestPermission()
+            DeviceType.TAG -> if (!viewModel.permissionsGranted) requestPermission()
+        }
     }
 
     private fun requestPermission() {
         permissionsInteractor.requestPermissions(false, true)
         val permissionsGranted = permissionsInteractor.arePermissionsGranted()
-        viewModel.permissionsChecked(permissionsGranted)
-        viewModelAir.permissionsChecked(permissionsGranted)
+        when (viewModel.deviceType.value) {
+            DeviceType.AIR -> viewModelAir.permissionsChecked(permissionsGranted)
+            DeviceType.TAG -> viewModel.permissionsChecked(permissionsGranted)
+        }
     }
 
     companion object {
