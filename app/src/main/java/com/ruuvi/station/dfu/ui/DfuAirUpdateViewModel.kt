@@ -57,6 +57,7 @@ class DfuAirUpdateViewModel(
 
     @Volatile
     private var getFwJob: Job? = null
+    var permissionsGranted: Boolean = false
 
     private val _sensorFwVersion = MutableStateFlow<SensorFirmwareResult?>(null)
     val sensorFwVersion: StateFlow<SensorFirmwareResult?> = _sensorFwVersion
@@ -299,6 +300,7 @@ class DfuAirUpdateViewModel(
     }.distinctUntilChanged()
 
     fun permissionsChecked(permissionsGranted: Boolean) {
+        this.permissionsGranted = permissionsGranted
         if (permissionsGranted) {
             getSensorFirmwareVersion()
         }
