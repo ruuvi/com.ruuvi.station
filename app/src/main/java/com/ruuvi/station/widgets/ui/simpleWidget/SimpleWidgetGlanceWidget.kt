@@ -72,12 +72,11 @@ object SimpleWidgetGlanceWidget : GlanceAppWidget() {
             SimpleWidgetContent(
                 appWidgetId = appWidgetId,
                 sensorId = sensorId,
-                displayName = displayName?.takeIf { it.isNotBlank() }
-                    ?: context.getString(R.string.widgets_loading),
-                sensorValue = sensorValue.orEmpty(),
-                unit = unit.orEmpty(),
-                measurementName = measurementName.orEmpty(),
-                updated = updated.orEmpty(),
+                displayName = displayName?.takeIf { it.isNotBlank() } ?: "-",
+                sensorValue = sensorValue?.takeIf { it.isNotBlank() } ?: "-",
+                unit = unit?.takeIf { it.isNotBlank() } ?: "-",
+                measurementName = measurementName?.takeIf { it.isNotBlank() } ?: "-",
+                updated = updated?.takeIf { it.isNotBlank() } ?: "-",
                 measurementType = measurementTypeCode?.toIntOrNull()?.let { WidgetType.getByCode(it) }
             )
         }

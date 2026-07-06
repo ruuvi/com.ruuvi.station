@@ -69,7 +69,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:orientation="horizontal"
-                        android:paddingEnd="4dp">
+                        android:paddingEnd="2dp">
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -94,15 +94,18 @@
                             android:fontFamily="sans-serif"
                             android:textColor="?attr/colorOnSecondary"
                             android:textSize="9dp"
-                            android:paddingStart="2dp"
-                            android:text="Temp" />
+                            android:paddingStart="4dp"
+                            android:maxLines="1"
+                            android:ellipsize="end"
+                            android:text="Temperature" />
                     </LinearLayout>
 
                     <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:orientation="horizontal">
+                        android:orientation="horizontal"
+                        android:paddingStart="32dp">
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -128,6 +131,8 @@
                             android:textColor="?attr/colorOnSecondary"
                             android:textSize="9dp"
                             android:paddingStart="2dp"
+                            android:maxLines="1"
+                            android:ellipsize="end"
                             android:text="Humidity" />
                     </LinearLayout>
                 </LinearLayout>
@@ -144,7 +149,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:orientation="horizontal"
-                        android:paddingEnd="4dp">
+                        android:paddingEnd="2dp">
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -152,7 +157,7 @@
                             android:fontFamily="sans-serif"
                             android:textColor="?attr/colorOnSecondary"
                             android:textSize="11dp"
-                            android:text="1000.27" />
+                            android:text="59.19" />
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -161,7 +166,7 @@
                             android:textColor="?attr/colorOnSecondary"
                             android:textSize="10dp"
                             android:paddingStart="2dp"
-                            android:text="hPa" />
+                            android:text="℉" />
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -170,14 +175,17 @@
                             android:textColor="?attr/colorOnSecondary"
                             android:textSize="9dp"
                             android:paddingStart="2dp"
-                            android:text="Pressure" />
+                            android:maxLines="1"
+                            android:ellipsize="end"
+                            android:text="Dew point" />
                     </LinearLayout>
 
                     <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:orientation="horizontal">
+                        android:orientation="horizontal"
+                        android:paddingStart="32dp">
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -185,7 +193,7 @@
                             android:fontFamily="sans-serif"
                             android:textColor="?attr/colorOnSecondary"
                             android:textSize="11dp"
-                            android:text="2.978" />
+                            android:text="2.97" />
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -203,6 +211,8 @@
                             android:textColor="?attr/colorOnSecondary"
                             android:textSize="9dp"
                             android:paddingStart="2dp"
+                            android:maxLines="1"
+                            android:ellipsize="end"
                             android:text="Voltage" />
                     </LinearLayout>
                 </LinearLayout>
@@ -246,7 +256,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:orientation="horizontal"
-                        android:paddingEnd="4dp">
+                        android:paddingEnd="2dp">
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -272,14 +282,17 @@
                             android:textColor="?attr/colorOnSecondary"
                             android:textSize="9dp"
                             android:paddingStart="2dp"
-                            android:text="Temp" />
+                            android:maxLines="1"
+                            android:ellipsize="end"
+                            android:text="Temperature" />
                     </LinearLayout>
 
                     <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:orientation="horizontal">
+                        android:orientation="horizontal"
+                        android:paddingStart="32dp">
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -305,6 +318,8 @@
                             android:textColor="?attr/colorOnSecondary"
                             android:textSize="9dp"
                             android:paddingStart="2dp"
+                            android:maxLines="1"
+                            android:ellipsize="end"
                             android:text="Humidity" />
                     </LinearLayout>
                 </LinearLayout>
@@ -321,7 +336,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:orientation="horizontal"
-                        android:paddingEnd="4dp">
+                        android:paddingEnd="2dp">
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -329,7 +344,7 @@
                             android:fontFamily="sans-serif"
                             android:textColor="?attr/colorOnSecondary"
                             android:textSize="11dp"
-                            android:text="1000.56" />
+                            android:text="35.56" />
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -338,7 +353,7 @@
                             android:textColor="?attr/colorOnSecondary"
                             android:textSize="10dp"
                             android:paddingStart="2dp"
-                            android:text="hPa" />
+                            android:text="℉" />
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -347,14 +362,17 @@
                             android:textColor="?attr/colorOnSecondary"
                             android:textSize="9dp"
                             android:paddingStart="2dp"
-                            android:text="Pressure" />
+                            android:maxLines="1"
+                            android:ellipsize="end"
+                            android:text="Dew point" />
                     </LinearLayout>
 
                     <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:orientation="horizontal">
+                        android:orientation="horizontal"
+                        android:paddingStart="32dp">
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -362,7 +380,7 @@
                             android:fontFamily="sans-serif"
                             android:textColor="?attr/colorOnSecondary"
                             android:textSize="11dp"
-                            android:text="2.788" />
+                            android:text="2.78" />
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -380,6 +398,8 @@
                             android:textColor="?attr/colorOnSecondary"
                             android:textSize="9dp"
                             android:paddingStart="2dp"
+                            android:maxLines="1"
+                            android:ellipsize="end"
                             android:text="Voltage" />
                     </LinearLayout>
                 </LinearLayout>
