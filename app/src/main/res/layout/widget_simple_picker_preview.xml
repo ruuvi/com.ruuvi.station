@@ -25,7 +25,7 @@
             android:fontFamily="@font/mulish_bold"
             android:includeFontPadding="false"
             android:maxLines="1"
-            android:text="-"
+            android:text="@string/widgets_preview_sensor_name"
             android:textColor="?attr/colorOnSecondary"
             android:textSize="16dp" />
 
@@ -41,7 +41,7 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/oswald_bold_ttf"
                 android:includeFontPadding="false"
-                android:text="-"
+                android:text="@string/widgets_preview_sensor_value"
                 android:textColor="?attr/colorOnSurface"
                 android:textSize="24dp"
                 android:textStyle="bold" />
@@ -56,7 +56,7 @@
                 android:includeFontPadding="false"
                 android:paddingStart="2dp"
                 android:paddingTop="4dp"
-                android:text=""
+                android:text="@string/temperature_celsius_unit"
                 android:textColor="?attr/colorOnSecondary"
                 android:textSize="9.5dp" />
 
@@ -69,7 +69,7 @@
             android:layout_below="@id/mainContent"
             android:fontFamily="@font/mulish_regular"
             android:includeFontPadding="false"
-            android:text="-"
+            android:text="@string/temperature"
             android:textColor="?attr/colorOnSecondary"
             android:textSize="9.5dp" />
 
@@ -81,7 +81,7 @@
             android:layout_marginTop="2dp"
             android:fontFamily="@font/mulish_regular"
             android:includeFontPadding="false"
-            android:text="-"
+            android:text="@string/widgets_preview_time"
             android:textColor="?attr/colorOnSecondary"
             android:textSize="9.5dp" />
 
