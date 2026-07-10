@@ -8,7 +8,7 @@
     android:resizeMode="none"
     android:widgetCategory="home_screen"
     android:configure="com.ruuvi.station.widgets.ui.simpleWidget.SimpleWidgetConfigureActivity"
-    android:previewLayout="@layout/widget_simple_preview"
+    android:previewLayout="@layout/widget_simple_picker_preview"
     android:targetCellHeight="1"
     android:targetCellWidth="2"
     android:widgetFeatures="reconfigurable"

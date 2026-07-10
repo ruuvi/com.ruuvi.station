@@ -168,23 +168,23 @@ private fun MeasurementItem(value: SensorValue, modifier: GlanceModifier) {
             text = value.sensorValue,
             fontSize = ruuviStationFontsSizes.compact,
             colorProvider = GlanceColors.valueColor,
-            fontResId = R.font.oswald_bold
+            fontResId = R.font.mulish_extrabold
         )
         
         if (value.unit.isNotEmpty()) {
             Spacer(modifier = GlanceModifier.width(2.dp))
             CustomFontText(
                 text = value.unit,
-                fontSize = ruuviStationFontsSizes.tiny,
+                fontSize = ruuviStationFontsSizes.petite,
                 colorProvider = GlanceColors.widgetSensorName,
-                fontResId = R.font.oswald_light
+                fontResId = R.font.mulish_bold
             )
         }
 
         Spacer(modifier = GlanceModifier.width(4.dp))
         CustomFontText(
             text = context.getString(value.type.unitType.measurementName),
-            fontSize = ruuviStationFontsSizes.tiny,
+            fontSize = ruuviStationFontsSizes.petite,
             colorProvider = GlanceColors.widgetSensorName,
             fontResId = R.font.mulish_regular
         )
