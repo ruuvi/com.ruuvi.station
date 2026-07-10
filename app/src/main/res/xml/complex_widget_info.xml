@@ -3,7 +3,7 @@
     android:minHeight="45dp"
     android:minWidth="280dp"
     android:previewImage="@drawable/complex_widget_preview"
-    android:previewLayout="@layout/widget_complex_preview"
+    android:previewLayout="@layout/widget_complex_picker_preview"
     android:initialLayout="@layout/widget_complex_preview"
     android:resizeMode="horizontal|vertical"
     android:targetCellHeight="1"
