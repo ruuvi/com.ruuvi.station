@@ -54,7 +54,7 @@
                     android:fontFamily="sans-serif-medium"
                     android:textColor="?attr/colorOnSecondary"
                     android:textSize="14dp"
-                    android:text="-"
+                    android:text="@string/widgets_loading"
                     android:paddingBottom="4dp" />
 
                 <!-- Row 1 -->
@@ -240,8 +240,8 @@
                     android:layout_height="wrap_content"
                     android:fontFamily="sans-serif-medium"
                     android:textColor="?attr/colorOnSecondary"
-                    android:textSize="14dp"
-                    android:text="-"
+                    android:textSize="14sp"
+                    android:text="@string/widgets_loading"
                     android:paddingBottom="4dp" />
 
                 <!-- Row 1 -->
@@ -263,7 +263,7 @@
                             android:layout_height="wrap_content"
                             android:fontFamily="sans-serif"
                             android:textColor="?attr/colorOnSecondary"
-                            android:textSize="11dp"
+                            android:textSize="11sp"
                             android:text="-" />
 
                         <TextView
@@ -271,7 +271,7 @@
                             android:layout_height="wrap_content"
                             android:fontFamily="sans-serif"
                             android:textColor="?attr/colorOnSecondary"
-                            android:textSize="10dp"
+                            android:textSize="10sp"
                             android:paddingStart="2dp"
                             android:text="" />
 
@@ -280,7 +280,7 @@
                             android:layout_height="wrap_content"
                             android:fontFamily="sans-serif"
                             android:textColor="?attr/colorOnSecondary"
-                            android:textSize="9dp"
+                            android:textSize="9sp"
                             android:paddingStart="2dp"
                             android:maxLines="1"
                             android:ellipsize="end"
@@ -299,7 +299,7 @@
                             android:layout_height="wrap_content"
                             android:fontFamily="sans-serif"
                             android:textColor="?attr/colorOnSecondary"
-                            android:textSize="11dp"
+                            android:textSize="11sp"
                             android:text="-" />
 
                         <TextView
@@ -316,7 +316,7 @@
                             android:layout_height="wrap_content"
                             android:fontFamily="sans-serif"
                             android:textColor="?attr/colorOnSecondary"
-                            android:textSize="9dp"
+                            android:textSize="9sp"
                             android:paddingStart="2dp"
                             android:maxLines="1"
                             android:ellipsize="end"
@@ -343,7 +343,7 @@
                             android:layout_height="wrap_content"
                             android:fontFamily="sans-serif"
                             android:textColor="?attr/colorOnSecondary"
-                            android:textSize="11dp"
+                            android:textSize="11sp"
                             android:text="-" />
 
                         <TextView
@@ -351,7 +351,7 @@
                             android:layout_height="wrap_content"
                             android:fontFamily="sans-serif"
                             android:textColor="?attr/colorOnSecondary"
-                            android:textSize="10dp"
+                            android:textSize="10sp"
                             android:paddingStart="2dp"
                             android:text="" />
 
@@ -360,7 +360,7 @@
                             android:layout_height="wrap_content"
                             android:fontFamily="sans-serif"
                             android:textColor="?attr/colorOnSecondary"
-                            android:textSize="9dp"
+                            android:textSize="9sp"
                             android:paddingStart="2dp"
                             android:maxLines="1"
                             android:ellipsize="end"
@@ -379,7 +379,7 @@
                             android:layout_height="wrap_content"
                             android:fontFamily="sans-serif"
                             android:textColor="?attr/colorOnSecondary"
-                            android:textSize="11dp"
+                            android:textSize="11sp"
                             android:text="-" />
 
                         <TextView
@@ -387,7 +387,7 @@
                             android:layout_height="wrap_content"
                             android:fontFamily="sans-serif"
                             android:textColor="?attr/colorOnSecondary"
-                            android:textSize="10dp"
+                            android:textSize="10sp"
                             android:paddingStart="2dp"
                             android:text="" />
 
@@ -396,7 +396,7 @@
                             android:layout_height="wrap_content"
                             android:fontFamily="sans-serif"
                             android:textColor="?attr/colorOnSecondary"
-                            android:textSize="9dp"
+                            android:textSize="9sp"
                             android:paddingStart="2dp"
                             android:maxLines="1"
                             android:ellipsize="end"
@@ -410,7 +410,7 @@
                     android:layout_height="wrap_content"
                     android:fontFamily="sans-serif-condensed"
                     android:textColor="?attr/colorOnSecondary"
-                    android:textSize="10dp"
+                    android:textSize="10sp"
                     android:text="-"
                     android:paddingTop="4dp" />
             </LinearLayout>
