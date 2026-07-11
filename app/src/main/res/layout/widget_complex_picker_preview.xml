@@ -51,9 +51,9 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:fontFamily="sans-serif-medium"
+                    android:fontFamily="@font/mulish_bold"
                     android:textColor="?attr/colorOnSecondary"
-                    android:textSize="14dp"
+                    android:textSize="14sp"
                     android:text="Bedroom"
                     android:paddingBottom="4dp" />
 
@@ -74,26 +74,26 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:fontFamily="sans-serif"
+                            android:fontFamily="@font/mulish_regular"
                             android:textColor="?attr/colorOnSecondary"
-                            android:textSize="11dp"
+                            android:textSize="11sp"
                             android:text="22.54" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:fontFamily="sans-serif"
+                            android:fontFamily="@font/mulish_regular"
                             android:textColor="?attr/colorOnSecondary"
-                            android:textSize="10dp"
+                            android:textSize="10sp"
                             android:paddingStart="2dp"
                             android:text="℃" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:fontFamily="sans-serif"
+                            android:fontFamily="@font/mulish_regular"
                             android:textColor="?attr/colorOnSecondary"
-                            android:textSize="9dp"
+                            android:textSize="9sp"
                             android:paddingStart="4dp"
                             android:maxLines="1"
                             android:ellipsize="end"
@@ -108,19 +108,19 @@
                         android:paddingStart="32dp">
 
                         <TextView
-                            android:layout_width="wrap_content"
+                            android:layout_width="33dp"
                             android:layout_height="wrap_content"
-                            android:fontFamily="sans-serif"
+                            android:fontFamily="@font/mulish_regular"
+                            android:text="39.27"
                             android:textColor="?attr/colorOnSecondary"
-                            android:textSize="11dp"
-                            android:text="39.27" />
+                            android:textSize="11sp" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:fontFamily="sans-serif"
+                            android:fontFamily="@font/mulish_regular"
                             android:textColor="?attr/colorOnSecondary"
-                            android:textSize="10dp"
+                            android:textSize="10sp"
                             android:paddingStart="2dp"
                             android:text="%" />
 
@@ -129,7 +129,7 @@
                             android:layout_height="wrap_content"
                             android:fontFamily="sans-serif"
                             android:textColor="?attr/colorOnSecondary"
-                            android:textSize="9dp"
+                            android:textSize="9sp"
                             android:paddingStart="2dp"
                             android:maxLines="1"
                             android:ellipsize="end"
@@ -154,9 +154,9 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:fontFamily="sans-serif"
+                            android:fontFamily="@font/mulish_regular"
                             android:textColor="?attr/colorOnSecondary"
-                            android:textSize="11dp"
+                            android:textSize="11sp"
                             android:text="59.19" />
 
                         <TextView
@@ -164,7 +164,7 @@
                             android:layout_height="wrap_content"
                             android:fontFamily="sans-serif"
                             android:textColor="?attr/colorOnSecondary"
-                            android:textSize="10dp"
+                            android:textSize="10sp"
                             android:paddingStart="2dp"
                             android:text="℉" />
 
@@ -173,7 +173,7 @@
                             android:layout_height="wrap_content"
                             android:fontFamily="sans-serif"
                             android:textColor="?attr/colorOnSecondary"
-                            android:textSize="9dp"
+                            android:textSize="9sp"
                             android:paddingStart="2dp"
                             android:maxLines="1"
                             android:ellipsize="end"
@@ -190,9 +190,9 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:fontFamily="sans-serif"
+                            android:fontFamily="@font/mulish_regular"
                             android:textColor="?attr/colorOnSecondary"
-                            android:textSize="11dp"
+                            android:textSize="11sp"
                             android:text="2.97" />
 
                         <TextView
@@ -200,7 +200,7 @@
                             android:layout_height="wrap_content"
                             android:fontFamily="sans-serif"
                             android:textColor="?attr/colorOnSecondary"
-                            android:textSize="10dp"
+                            android:textSize="10sp"
                             android:paddingStart="2dp"
                             android:text="V" />
 
@@ -209,7 +209,7 @@
                             android:layout_height="wrap_content"
                             android:fontFamily="sans-serif"
                             android:textColor="?attr/colorOnSecondary"
-                            android:textSize="9dp"
+                            android:textSize="9sp"
                             android:paddingStart="2dp"
                             android:maxLines="1"
                             android:ellipsize="end"
@@ -223,7 +223,7 @@
                     android:layout_height="wrap_content"
                     android:fontFamily="sans-serif-condensed"
                     android:textColor="?attr/colorOnSecondary"
-                    android:textSize="10dp"
+                    android:textSize="10sp"
                     android:text="7:45"
                     android:paddingTop="4dp" />
             </LinearLayout>
@@ -238,9 +238,9 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:fontFamily="sans-serif-medium"
+                    android:fontFamily="@font/mulish_bold"
                     android:textColor="?attr/colorOnSecondary"
-                    android:textSize="14dp"
+                    android:textSize="14sp"
                     android:text="Outside"
                     android:paddingBottom="4dp" />
 
@@ -261,26 +261,26 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:fontFamily="sans-serif"
+                            android:fontFamily="@font/mulish_regular"
                             android:textColor="?attr/colorOnSecondary"
-                            android:textSize="11dp"
+                            android:textSize="11sp"
                             android:text="-10.54" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:fontFamily="sans-serif"
+                            android:fontFamily="@font/mulish_regular"
                             android:textColor="?attr/colorOnSecondary"
-                            android:textSize="10dp"
+                            android:textSize="10sp"
                             android:paddingStart="2dp"
                             android:text="℃" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:fontFamily="sans-serif"
+                            android:fontFamily="@font/mulish_regular"
                             android:textColor="?attr/colorOnSecondary"
-                            android:textSize="9dp"
+                            android:textSize="9sp"
                             android:paddingStart="2dp"
                             android:maxLines="1"
                             android:ellipsize="end"
@@ -297,17 +297,17 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:fontFamily="sans-serif"
+                            android:fontFamily="@font/mulish_regular"
                             android:textColor="?attr/colorOnSecondary"
-                            android:textSize="11dp"
+                            android:textSize="11sp"
                             android:text="19.14" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:fontFamily="sans-serif"
+                            android:fontFamily="@font/mulish_regular"
                             android:textColor="?attr/colorOnSecondary"
-                            android:textSize="10dp"
+                            android:textSize="10sp"
                             android:paddingStart="2dp"
                             android:text="%" />
 
@@ -316,7 +316,7 @@
                             android:layout_height="wrap_content"
                             android:fontFamily="sans-serif"
                             android:textColor="?attr/colorOnSecondary"
-                            android:textSize="9dp"
+                            android:textSize="9sp"
                             android:paddingStart="2dp"
                             android:maxLines="1"
                             android:ellipsize="end"
@@ -341,17 +341,17 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:fontFamily="sans-serif"
+                            android:fontFamily="@font/mulish_regular"
                             android:textColor="?attr/colorOnSecondary"
-                            android:textSize="11dp"
+                            android:textSize="11sp"
                             android:text="35.56" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:fontFamily="sans-serif"
+                            android:fontFamily="@font/mulish_regular"
                             android:textColor="?attr/colorOnSecondary"
-                            android:textSize="10dp"
+                            android:textSize="10sp"
                             android:paddingStart="2dp"
                             android:text="℉" />
 
@@ -377,26 +377,26 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:fontFamily="sans-serif"
+                            android:fontFamily="@font/mulish_regular"
                             android:textColor="?attr/colorOnSecondary"
-                            android:textSize="11dp"
+                            android:textSize="11sp"
                             android:text="2.78" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:fontFamily="sans-serif"
+                            android:fontFamily="@font/mulish_regular"
                             android:textColor="?attr/colorOnSecondary"
-                            android:textSize="10dp"
+                            android:textSize="10sp"
                             android:paddingStart="2dp"
                             android:text="V" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:fontFamily="sans-serif"
+                            android:fontFamily="@font/mulish_regular"
                             android:textColor="?attr/colorOnSecondary"
-                            android:textSize="9dp"
+                            android:textSize="9sp"
                             android:paddingStart="2dp"
                             android:maxLines="1"
                             android:ellipsize="end"
@@ -408,9 +408,9 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:fontFamily="sans-serif-condensed"
+                    android:fontFamily="@font/mulish_regular"
                     android:textColor="?attr/colorOnSecondary"
-                    android:textSize="10dp"
+                    android:textSize="10sp"
                     android:text="7:45"
                     android:paddingTop="4dp" />
             </LinearLayout>
