@@ -25,9 +25,9 @@
             android:fontFamily="@font/mulish_bold"
             android:includeFontPadding="false"
             android:maxLines="1"
-            android:text="-"
+            android:text="@string/widgets_loading"
             android:textColor="?attr/colorOnSecondary"
-            android:textSize="16dp" />
+            android:textSize="16sp" />
 
         <RelativeLayout
             android:id="@+id/mainContent"
@@ -43,7 +43,7 @@
                 android:includeFontPadding="false"
                 android:text="-"
                 android:textColor="?attr/colorOnSurface"
-                android:textSize="24dp"
+                android:textSize="24sp"
                 android:textStyle="bold" />
 
             <TextView
@@ -58,7 +58,7 @@
                 android:paddingTop="4dp"
                 android:text=""
                 android:textColor="?attr/colorOnSecondary"
-                android:textSize="9.5dp" />
+                android:textSize="9.5sp" />
 
         </RelativeLayout>
 
@@ -71,7 +71,7 @@
             android:includeFontPadding="false"
             android:text="-"
             android:textColor="?attr/colorOnSecondary"
-            android:textSize="9.5dp" />
+            android:textSize="9.5sp" />
 
         <TextView
             android:id="@+id/updateTextView"
@@ -83,7 +83,7 @@
             android:includeFontPadding="false"
             android:text="-"
             android:textColor="?attr/colorOnSecondary"
-            android:textSize="9.5dp" />
+            android:textSize="9.5sp" />
 
     </RelativeLayout>
 
