@@ -74,7 +74,8 @@ class AboutActivity : AppCompatActivity(R.layout.activity_about), KodeinAware {
     private var counter: Int = 0
 
     private fun showAppStats(appStats: AppStats?) {
-        var debugText = getString(R.string.version, BuildConfig.VERSION_NAME) + " " +
+        val appVersion = "${BuildConfig.VERSION_NAME} (${BuildConfig.VERSION_CODE})"
+        var debugText = getString(R.string.version, appVersion) + " " +
                 getString(R.string.changelog)+ "\n"
 
         appStats?.let {

@@ -1,0 +1,6 @@
+* CSV and XLXS file exports now include all available measurements
+* Improved sync according last updated information
+* Fixed dew point in file exports
+* Fixed crash in offset settings when extreme value was used
+* Other minor bug fixes and improvements
+* Removed those links that forwarded to the website and caused confusion

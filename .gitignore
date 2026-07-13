@@ -37,3 +37,8 @@ obj/
 
 app/release/
 /app/withoutFileLogs/release/output.json
+
+# Release automation scratch files
+ci-logs/
+fastlane/.release-tmp/
+fastlane/report.xml

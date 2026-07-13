@@ -1,0 +1,147 @@
+name: Upload to Google Play Internal
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_notes:
+        description: 'Optional Google Play internal release notes'
+        required: false
+        default: ''
+  push:
+    branches:
+      - 'release/*'
+    paths-ignore:
+      - 'docs/**'
+      - 'fastlane/metadata/**'
+      - 'README.md'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'gradle'
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3'
+          bundler-cache: true
+
+      - name: Validate CI secrets
+        env:
+          SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
+          KEY_STORE_PASSWORD: ${{ secrets.KEY_STORE_PASSWORD }}
+          ALIAS: ${{ secrets.ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+          SERVICE_ACCOUNT_JSON: ${{ secrets.SERVICE_ACCOUNT_JSON }}
+        run: |
+          bash .github/scripts/validate_ci_secrets.sh \
+            SIGNING_KEY \
+            KEY_STORE_PASSWORD \
+            ALIAS \
+            KEY_PASSWORD \
+            SERVICE_ACCOUNT_JSON
+
+      - name: Set Android build metadata
+        run: bash .github/scripts/set_android_build_metadata.sh
+
+      - name: Run localization script
+        run: ./scripts/ci/update_l10n.sh
+
+      - name: Run unit tests
+        run: ./gradlew :app:testWithoutFileLogsDebugUnitTest
+
+      - name: Build and upload to Google Play internal
+        env:
+          SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
+          KEY_STORE_PASSWORD: ${{ secrets.KEY_STORE_PASSWORD }}
+          ALIAS: ${{ secrets.ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+          SERVICE_ACCOUNT_JSON: ${{ secrets.SERVICE_ACCOUNT_JSON }}
+          PLAY_INTERNAL_RELEASE_NOTES: ${{ github.event.inputs.release_notes }}
+          GITHUB_TOKEN: ${{ github.token }}
+        run: bundle exec fastlane android upload_to_play_internal
+
+      - name: Collect CI logs
+        if: ${{ always() }}
+        run: |
+          mkdir -p ci-logs
+          cp -f report.xml ci-logs/ 2>/dev/null || true
+          cp -f fastlane/report.xml ci-logs/fastlane-report.xml 2>/dev/null || true
+
+      - name: Upload AAB
+        if: ${{ success() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: ruuvi-station-android-play-internal-aab
+          path: app/build/outputs/bundle/withoutFileLogsRelease/*.aab
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Upload APK
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: ruuvi-station-android-play-internal-apk
+          path: app/build/outputs/apk/withoutFileLogs/release/*.apk
+          if-no-files-found: ignore
+          retention-days: 14
+
+      - name: Upload CI logs
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: ruuvi-station-android-play-internal-ci-logs
+          path: ci-logs/**
+          if-no-files-found: ignore
+          retention-days: 14
+
+      - name: Write workflow summary
+        if: ${{ always() }}
+        env:
+          DISTRIBUTION_CHANNEL: Google Play internal
+          JOB_STATUS: ${{ job.status }}
+          WORKFLOW_NAME: ${{ github.workflow }}
+          REPOSITORY: ${{ github.repository }}
+          BRANCH_NAME: ${{ github.ref_name }}
+          COMMIT_SHA: ${{ github.sha }}
+          ACTOR: ${{ github.actor }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: bash .github/scripts/write_ci_summary.sh
+
+      - name: Notify Telegram
+        if: ${{ success() }}
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          TELEGRAM_SUCCESS_MENTION: ${{ secrets.TELEGRAM_SUCCESS_MENTION }}
+          TELEGRAM_SUCCESS_TITLE: Google Play internal build uploaded
+          TELEGRAM_SUCCESS_VERSION: ${{ env.RUUVI_APP_VERSION }}
+          TELEGRAM_SUCCESS_BUILD: ${{ env.RUUVI_BUILD_NUMBER }}
+          DISTRIBUTION_CHANNEL: Google Play internal
+          JOB_STATUS: ${{ job.status }}
+          WORKFLOW_NAME: ${{ github.workflow }}
+          REPOSITORY: ${{ github.repository }}
+          BRANCH_NAME: ${{ github.ref_name }}
+          COMMIT_SHA: ${{ github.sha }}
+          ACTOR: ${{ github.actor }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: bash .github/scripts/notify_telegram.sh

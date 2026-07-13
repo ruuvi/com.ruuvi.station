@@ -147,13 +147,12 @@ fun CheckFirmwareVersion(
         if (sensorFW == null) {
             LoadingStatus(modifier = Modifier.padding(vertical = RuuviStationTheme.dimensions.textTopPadding))
         } else {
-            if (sensorFW?.isSuccess == true) {
-                ParagraphWithPadding("${sensorFW?.fw}")
+            if (sensorFW.isSuccess) {
+                ParagraphWithPadding(sensorFW.fw)
             } else {
                 ParagraphWithPadding(stringResource(id = R.string.old_sensor_fw))
             }
         }
-
     }
 }
 

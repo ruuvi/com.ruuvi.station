@@ -1,0 +1,1 @@
+Measure temperature, air humidity, air pressure and movements.

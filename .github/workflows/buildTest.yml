@@ -48,26 +48,12 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
-    - name: Build all artifacts
-      run: ./gradlew assembleRelease
+    - name: Build debug variants
+      run: ./gradlew assembleWithFileLogsDebug assembleWithoutFileLogsDebug
 
-    - name: Build release bundle
-      run: ./gradlew bundleRelease
-
-    - name: Upload with-file-logs APK
+    - name: Save downloadable APKs
       uses: actions/upload-artifact@v4.6.0
       with:
-        name: withFileLogsTestApk
-        path: app/build/outputs/apk/withFileLogs/release/*.apk
-
-    - name: Upload without-file-logs APK
-      uses: actions/upload-artifact@v4.6.0
-      with:
-        name: withoutFileLogsReleaseApk
-        path: app/build/outputs/apk/withoutFileLogs/release/*.apk
-
-    - name: Upload release bundle
-      uses: actions/upload-artifact@v4.6.0
-      with:
-        name: withoutFileLogsReleaseBundle
-        path: app/build/outputs/bundle/withoutFileLogsRelease/*.aab
+        name: ruuvi-station-android-pr-debug-apks
+        path: app/build/outputs/apk/*/debug/*.apk
+        if-no-files-found: error

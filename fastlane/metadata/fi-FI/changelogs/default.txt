@@ -1,0 +1,6 @@
+* CSV- ja XLXS-tiedostot sisältävät nyt kaikki saatavilla olevat mittaukset
+* Parannettu viimeksi päivitettyjen tietojen synkronointia
+* Korjattu kastepiste tiedostoon viennissä
+* Korjattu sovelluksen kaatuminen epärealistista kalibrointiarvoa käytettäessä
+* Muita pienempiä parannuksia ja bugikorjauksia
+* Poistettu niitä linkkejä, jotka ohjasivat kotisivulle ja aiheuttivat hämmennystä

@@ -32,7 +32,7 @@ object DfuInjectionModule {
         }
 
         bind<FirmwareRepository>() with singleton {
-            FirmwareRepository()
+            FirmwareRepository(instance())
         }
     }
 }

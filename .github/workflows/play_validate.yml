@@ -1,0 +1,98 @@
+name: Validate Google Play Metadata
+
+on:
+  workflow_dispatch:
+    inputs:
+      sync_mode:
+        description: 'What to validate against Google Play'
+        required: true
+        default: 'metadata'
+        type: choice
+        options:
+          - metadata
+          - changelogs
+          - images
+          - screenshots
+          - all
+      version_code:
+        description: 'Optional versionCode for changelogs, metadata, or screenshots'
+        required: false
+        default: ''
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3'
+          bundler-cache: true
+
+      - name: Validate CI secrets
+        env:
+          SERVICE_ACCOUNT_JSON: ${{ secrets.SERVICE_ACCOUNT_JSON }}
+        run: |
+          bash .github/scripts/validate_ci_secrets.sh SERVICE_ACCOUNT_JSON
+
+      - name: Validate Google Play metadata
+        env:
+          SERVICE_ACCOUNT_JSON: ${{ secrets.SERVICE_ACCOUNT_JSON }}
+          PLAY_METADATA_SYNC_MODE: ${{ github.event.inputs.sync_mode || 'metadata' }}
+          PLAY_METADATA_VERSION_CODE: ${{ github.event.inputs.version_code || '' }}
+        run: bundle exec fastlane android validate_play_store_metadata
+
+      - name: Collect CI logs
+        if: ${{ always() }}
+        run: |
+          mkdir -p ci-logs
+          cp -f report.xml ci-logs/ 2>/dev/null || true
+          cp -f fastlane/report.xml ci-logs/fastlane-report.xml 2>/dev/null || true
+
+      - name: Upload CI logs
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: google-play-validate-ci-logs-${{ github.run_id }}
+          path: ci-logs/**
+          if-no-files-found: ignore
+          retention-days: 14
+
+      - name: Write workflow summary
+        if: ${{ always() }}
+        env:
+          DISTRIBUTION_CHANNEL: Google Play validation
+          JOB_STATUS: ${{ job.status }}
+          WORKFLOW_NAME: ${{ github.workflow }}
+          REPOSITORY: ${{ github.repository }}
+          BRANCH_NAME: ${{ github.ref_name }}
+          COMMIT_SHA: ${{ github.sha }}
+          ACTOR: ${{ github.actor }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: bash .github/scripts/write_ci_summary.sh
+
+      - name: Notify Telegram
+        if: ${{ success() }}
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          TELEGRAM_SUCCESS_MENTION: ${{ secrets.TELEGRAM_SUCCESS_MENTION }}
+          TELEGRAM_SUCCESS_TITLE: Google Play metadata validation passed
+          DISTRIBUTION_CHANNEL: Google Play validation
+          JOB_STATUS: ${{ job.status }}
+          WORKFLOW_NAME: ${{ github.workflow }}
+          REPOSITORY: ${{ github.repository }}
+          BRANCH_NAME: ${{ github.ref_name }}
+          COMMIT_SHA: ${{ github.sha }}
+          ACTOR: ${{ github.actor }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: bash .github/scripts/notify_telegram.sh
