@@ -45,9 +45,12 @@ project(":app") {
     }
 }
 
-[project(":default_bluetooth_library"), project(":MPChartLib")].each { moduleProject ->
-    moduleProject.sonar {
-        skipProject = true
+[':default_bluetooth_library', ':MPChartLib'].each { projectPath ->
+    def proj = findProject(projectPath)
+    if (proj != null) {
+        proj.sonar {
+            skipProject = true
+        }
     }
 }
 
