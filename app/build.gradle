@@ -161,7 +161,7 @@ dependencies {
     implementation libs.accompanist.permissions
     implementation libs.accompanist.pager
     implementation libs.accompanist.pager.indicators
-
+    implementation(libs.material3)
     debugImplementation libs.ui.tooling
 
     // https://mvnrepository.com/artifact/com.google.code.gson/gson
@@ -216,8 +216,6 @@ dependencies {
 
     //Android KTX
     implementation libs.core.ktx
-    implementation(libs.material3) // or latest
-
 
     // Firebase
     implementation platform(libs.firebase.bom)
