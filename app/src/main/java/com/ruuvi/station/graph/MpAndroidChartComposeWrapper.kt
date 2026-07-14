@@ -10,20 +10,27 @@ import android.view.GestureDetector
 import android.view.HapticFeedbackConstants
 import android.view.MotionEvent
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
@@ -44,6 +51,7 @@ import com.github.mikephil.charting.listener.OnChartGestureListener
 import com.github.mikephil.charting.utils.Utils
 import com.ruuvi.station.R
 import com.ruuvi.station.app.ui.components.limitScaleTo
+import com.ruuvi.station.app.ui.components.scaleUpTo
 import com.ruuvi.station.app.ui.components.scaledToMax
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.White50
@@ -58,8 +66,38 @@ import timber.log.Timber
 import java.text.DateFormat
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
-import java.util.*
+import java.util.Date
 import kotlin.math.max
+
+private typealias RawValueFormatter = (Double) -> String
+
+private fun UnitsConverter.rawValueFormatter(unitType: UnitType): RawValueFormatter {
+    fun defaultFormatter(value: Double): String {
+        return getValueWithoutUnit(value, unitType.defaultAccuracy)
+    }
+
+    return when (unitType) {
+        is UnitType.TemperatureUnit -> { value -> getTemperatureRawWithoutUnitString(value, null) }
+        is UnitType.HumidityUnit -> { value -> getHumidityRawWithoutUnitString(value, null) }
+        is UnitType.PressureUnit -> { value -> getPressureRawWithoutUnitString(value, null) }
+        else -> ::defaultFormatter
+    }
+}
+
+private fun LineChart.highlightAtTouch(eventX: Float, eventY: Float, sharedX: MutableState<Float?>) {
+    getHighlightByTouchPoint(eventX, eventY)?.let { highlight ->
+        highlightValue(highlight, false)
+        sharedX.value = highlight.x
+    }
+}
+
+private fun LineChart.applySharedHighlight(x: Float?) {
+    if (x == null) {
+        highlightValue(null, false)
+    } else {
+        highlightValue(x, 0, false)
+    }
+}
 
 @SuppressLint("ClickableViewAccessibility")
 @Composable
@@ -77,9 +115,8 @@ fun ChartViewPrototype(
     sharedX: MutableState<Float?>,
 ) {
     val context = LocalContext.current
-    Timber.d("ChartView - ChartViewPrototype")
-
     val title = unitsConverter.getTitleForUnitType(unitType)
+    val icon = unitType.iconRes
     val offset = RuuviStationTheme.dimensions.extended
     val description = getPrototypeChartDescription(
         context,
@@ -88,30 +125,79 @@ fun ChartViewPrototype(
         unitsConverter,
         unitType
     )
+    val getRawValue = remember(unitsConverter, unitType) { unitsConverter.rawValueFormatter(unitType) }
+
+    val latestPoint = chartData.lastOrNull()
+    val latestValue =
+        if (latestPoint != null) getRawValue(latestPoint.y.toDouble()) else ""
 
     Column (
         modifier = modifier
     ){
-        Text(
-            modifier = Modifier.padding(start = offset, top = RuuviStationTheme.dimensions.medium),
-            fontFamily = ruuviStationFonts.mulishBold,
-            fontSize = RuuviStationTheme.fontSizes.small.scaledToMax(max = 20.sp),
-            text = title,
-            color = RuuviStationTheme.colors.buttonText
-        )
-        if (showChartStats) {
-            Text(
-                modifier = Modifier.padding(
-                    start = offset,
-                    top = RuuviStationTheme.dimensions.tiny,
-                    bottom = RuuviStationTheme.dimensions.small,
-                    end = RuuviStationTheme.dimensions.medium
-                ),
-                color = White50,
-                fontFamily = ruuviStationFonts.mulishRegular,
-                fontSize = ruuviStationFontsSizes.petite.limitScaleTo(1.5f),
-                text = description,
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = offset, top = RuuviStationTheme.dimensions.medium),
+            verticalAlignment = Alignment.Top
+        ) {
+            Icon(
+                painter = painterResource(id = icon),
+                contentDescription = null,
+                modifier = Modifier
+                    .height(20.dp.scaleUpTo(1.5f))
+                    .padding(end = RuuviStationTheme.dimensions.medium),
+                tint = RuuviStationTheme.colors.measurementIcon
             )
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = RuuviStationTheme.dimensions.small)
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.Bottom
+                ) {
+                    Text(
+                        modifier = Modifier.weight(1f),
+                        fontFamily = ruuviStationFonts.mulishBold,
+                        fontSize = RuuviStationTheme.fontSizes.small.scaledToMax(max = 20.sp),
+                        text = title,
+                        color = RuuviStationTheme.colors.buttonText
+                    )
+
+                    Text(
+                        fontFamily = ruuviStationFonts.mulishBold,
+                        fontSize = RuuviStationTheme.fontSizes.small.scaledToMax(max = 20.sp),
+                        text = if (unitType.measurementCode == "AQI") "$latestValue/100" else latestValue,
+                        color = RuuviStationTheme.colors.buttonText
+                    )
+
+                    Text(
+                        modifier = Modifier.padding(
+                            start = RuuviStationTheme.dimensions.small,
+                            end = RuuviStationTheme.dimensions.medium
+                        ),
+                        fontFamily = ruuviStationFonts.mulishBold,
+                        fontSize = RuuviStationTheme.fontSizes.small.scaledToMax(max = 20.sp),
+                        text = stringResource(unitType.unit),
+                        color = RuuviStationTheme.colors.buttonText
+                    )
+                }
+
+                if (showChartStats) {
+                    Text(
+                        modifier = Modifier.padding(
+                            top = RuuviStationTheme.dimensions.tiny,
+                            bottom = RuuviStationTheme.dimensions.small,
+                            end = RuuviStationTheme.dimensions.medium
+                        ),
+                        color = White50,
+                        fontFamily = ruuviStationFonts.mulishRegular,
+                        fontSize = ruuviStationFontsSizes.petite.limitScaleTo(1.5f),
+                        text = description,
+                    )
+                }
+            }
         }
 
         var chartTapped by rememberSaveable { mutableStateOf(false) }
@@ -237,34 +323,19 @@ fun getPrototypeChartDescription(
     unitType: UnitType,
 ): String {
     Timber.d("ChartView - getPrototypeChartDescription")
-
-    fun getSimpleValueDefaultAccuracy (value: Double, x: Int?): String {
-        return unitsConverter.getValueWithoutUnit(value, unitType.defaultAccuracy)
-    }
-
-    val getRawValue = when (unitType) {
-        is UnitType.TemperatureUnit -> unitsConverter::getTemperatureRawWithoutUnitString
-        is UnitType.HumidityUnit -> unitsConverter::getHumidityRawWithoutUnitString
-        is UnitType.PressureUnit -> unitsConverter::getPressureRawWithoutUnitString
-        else -> ::getSimpleValueDefaultAccuracy
-    }
-
-    val latestPoint = chartData.lastOrNull()
-    val latestValue =
-        if (latestPoint != null) getRawValue(latestPoint.y.toDouble(), null) else ""
+    val getRawValue = unitsConverter.rawValueFormatter(unitType)
 
     val lowestVisibleX = lineChart.lowestVisibleX
     val highestVisibleX = lineChart.highestVisibleX
     val visibleEntries = chartData.filter { it.x >= lowestVisibleX && it.x <= highestVisibleX }
-    Timber.d("calculateCaption low = $highestVisibleX high = $highestVisibleX count = ${visibleEntries.size}")
 
     if (visibleEntries.isEmpty())
-        return context.getString(R.string.chart_latest_min_max_avg, "", "", "", latestValue)
+        return context.getString(R.string.chart_latest_min_max_avg, "", "", "")
 
     var totalArea = 0.0
 
-    var min = visibleEntries[0].y
-    var max = visibleEntries[0].y
+    var min = visibleEntries.first().y
+    var max = visibleEntries.first().y
 
     for (i in 1 until visibleEntries.size) {
         val x1 = visibleEntries[i - 1].x
@@ -284,10 +355,9 @@ fun getPrototypeChartDescription(
 
     return context.getString(
         R.string.chart_latest_min_max_avg,
-        getRawValue(min.toDouble(), null),
-        getRawValue(max.toDouble(), null),
-        getRawValue(average.toDouble(), null),
-        latestValue
+        getRawValue(min.toDouble()),
+        getRawValue(max.toDouble()),
+        getRawValue(average.toDouble())
     )
 }
 
@@ -471,11 +541,12 @@ fun formatDoubleToString(value: Double): String {
 }
 
 private fun setLabelCount(context: Context, chart: LineChart) {
-    val timeText = DateFormat.getTimeInstance(DateFormat.SHORT).format(Date())
+    val now = Date()
+    val timeText = DateFormat.getTimeInstance(DateFormat.SHORT).format(now)
     val flags: Int = DateUtils.FORMAT_SHOW_DATE or DateUtils.FORMAT_NO_YEAR or DateUtils.FORMAT_NUMERIC_DATE
-    val dateText = DateUtils.formatDateTime(context, Date().time, flags)
+    val dateText = DateUtils.formatDateTime(context, now.time, flags)
 
-    val computePaint = Paint(1)
+    val computePaint = Paint(Paint.ANTI_ALIAS_FLAG)
     computePaint.typeface = chart.xAxis.typeface
     computePaint.textSize = chart.xAxis.textSize
     val computeSize = Utils.calcTextSize(computePaint, timeText)
@@ -493,6 +564,8 @@ private fun setLabelCount(context: Context, chart: LineChart) {
 
 // Manually setting offsets to be sure that all of the charts have equal offsets. This is needed for synchronous zoom and dragging.
 fun normalizeOffsets(charts: List<Pair<UnitType, LineChart>>) {
+    if (charts.isEmpty()) return
+
     val computePaint = Paint(1)
     computePaint.typeface = charts.first().second.axisLeft.typeface
     computePaint.textSize = charts.first().second.axisLeft.textSize

@@ -216,7 +216,7 @@
     <string name="change_background_message">Välj bakgrundsbild. Om du inte är inloggad kommer du att förlora bilden vid appominstallation.</string>
     <string name="changelog">(ändringslogg)</string>
     <string name="changelog_android_url">https://f.ruuvi.com/t/4262</string>
-    <string name="chart_latest_min_max_avg">Min: %1$s Max: %2$s Medelvärde %3$s Senast: %4$s</string>
+    <string name="chart_latest_min_max_avg">Min: %1$s Max: %2$s Medelvärde %3$s</string>
     <string name="chart_min_max_avg">Min: %1$,.2f Max: %2$,.2f Medelvärde: %3$,.2f</string>
     <string name="chart_stat_avg">Medelvärde</string>
     <string name="chart_stat_hide">Dölj min/max/genomsnitt</string>
