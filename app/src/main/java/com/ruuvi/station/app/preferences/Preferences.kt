@@ -546,6 +546,6 @@ class Preferences (val context: Context) {
         private const val DEFAULT_REQUEST_FOR_REVIEW_DATE = 0L
         private const val DEFAULT_REQUEST_FOR_APP_UPDATE_DATE = 0L
         private const val DEFAULT_DARKMODE = AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
-        private val SUPPORTED_LOCALES = listOf("en", "fi", "sv", "ru")
+        private val SUPPORTED_LOCALES = listOf("en", "fi", "sv", "pl")
     }
 }

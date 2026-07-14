@@ -51,6 +51,22 @@ languages=$(jq -r '.translations[0] | keys[]' "$json_file" | grep -v 'ident_')
 
 echo "Languages found:$languages"
 
+# Remove generated locale directories that are no longer present in station.localization.
+for dir in app/src/main/res/values-*; do
+  [ -d "$dir" ] || continue
+  base=$(basename "$dir")
+  case "$base" in
+    values-night|values-night-*|values-notnight|values-sw*|values-v*)
+      continue
+      ;;
+  esac
+
+  lang="${base#values-}"
+  if ! echo "$languages" | grep -qx "$lang"; then
+    rm -rf "$dir"
+  fi
+done
+
 # Generate XML files
 for lang in $languages; do
   echo "Processing language: $lang"
@@ -61,6 +77,8 @@ for lang in $languages; do
   else
     filename="app/src/main/res/values-${lang}/strings.xml"
   fi
+
+  mkdir -p "$(dirname "$filename")"
 
   # Create a new file and write the XML header
   echo '<?xml version="1.0" encoding="utf-8"?>' > "$filename"

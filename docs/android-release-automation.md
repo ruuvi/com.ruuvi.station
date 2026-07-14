@@ -151,7 +151,6 @@ sv-SE
 de-DE
 fr-FR
 pl-PL
-ru-RU
 ```
 
 Common files:
