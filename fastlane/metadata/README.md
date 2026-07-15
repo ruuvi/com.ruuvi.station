@@ -14,7 +14,6 @@ sv-SE
 de-DE
 fr-FR
 pl-PL
-ru-RU
 ```
 
 Text files usually live directly inside each locale folder:
