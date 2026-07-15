@@ -199,13 +199,6 @@ class PreferencesRepository(
 
     fun getDeveloperSettingsLiveData() = preferences.getDeveloperSettingsLiveData()
 
-    fun getLocale(): String =
-        preferences.locale
-
-    fun setLocale(locale: String) {
-        preferences.locale = locale
-    }
-
     fun getUserEmail() = preferences.networkEmail
 
     fun signedIn() = preferences.networkEmail.isNotEmpty() && preferences.networkToken.isNotEmpty()

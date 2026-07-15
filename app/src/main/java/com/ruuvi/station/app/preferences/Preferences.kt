@@ -10,7 +10,6 @@ import com.ruuvi.station.dashboard.DashboardType
 import com.ruuvi.station.units.model.Accuracy
 import com.ruuvi.station.units.model.UnitType.*
 import com.ruuvi.station.util.BackgroundScanModes
-import java.util.*
 
 class Preferences (val context: Context) {
 
@@ -211,26 +210,6 @@ class Preferences (val context: Context) {
         get() = sharedPreferences.getBoolean(PREF_GRAPH_DRAW_DOTS, DEFAULT_GRAPH_DRAW_DOTS)
         set(drawDots) {
             sharedPreferences.edit().putBoolean(PREF_GRAPH_DRAW_DOTS, drawDots).apply()
-        }
-
-    var locale: String
-        get() {
-            var preferenceLocale = sharedPreferences.getString(PREF_LOCALE, null)
-            if (preferenceLocale == null) {
-                val defaultLanguage = Locale.getDefault().language
-                if (SUPPORTED_LOCALES.contains(defaultLanguage)) {
-                    preferenceLocale = defaultLanguage
-                } else {
-                    preferenceLocale = DEFAULT_LOCALE
-                }
-                preferenceLocale?.let {
-                    locale = preferenceLocale
-                }
-            }
-            return preferenceLocale ?: DEFAULT_LOCALE
-        }
-        set(locale) {
-            sharedPreferences.edit().putString(PREF_LOCALE, locale).apply()
         }
 
     var networkEmail: String
@@ -497,7 +476,6 @@ class Preferences (val context: Context) {
         private const val PREF_GRAPH_VIEW_PERIOD_DAYS = "pref_graph_view_period_days"
         private const val PREF_GRAPH_SHOW_ALL_POINTS = "pref_graph_show_all_points"
         private const val PREF_GRAPH_DRAW_DOTS = "pref_graph_draw_dots"
-        private const val PREF_LOCALE = "pref_locale"
         private const val PREF_NETWORK_EMAIL = "pref_network_email"
         private const val PREF_NETWORK_TOKEN = "pref_network_token"
         private const val PREF_LAST_SYNC_DATE = "pref_last_sync_date"
@@ -541,11 +519,9 @@ class Preferences (val context: Context) {
         private const val DEFAULT_GRAPH_VIEW_PERIOD_DAYS = 0
         private const val DEFAULT_GRAPH_SHOW_ALL_POINTS = false
         private const val DEFAULT_GRAPH_DRAW_DOTS = false
-        private const val DEFAULT_LOCALE = "en"
         private const val DEFAULT_MAX_SHARES_PER_SENSOR = 10
         private const val DEFAULT_REQUEST_FOR_REVIEW_DATE = 0L
         private const val DEFAULT_REQUEST_FOR_APP_UPDATE_DATE = 0L
         private const val DEFAULT_DARKMODE = AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
-        private val SUPPORTED_LOCALES = listOf("en", "fi", "sv", "pl")
     }
 }

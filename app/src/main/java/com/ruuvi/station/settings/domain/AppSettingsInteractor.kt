@@ -3,7 +3,6 @@ package com.ruuvi.station.settings.domain
 import com.google.gson.JsonObject
 import com.koushikdutta.async.future.FutureCallback
 import com.koushikdutta.ion.Response
-import com.ruuvi.station.app.locale.LocaleType
 import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.app.ui.DarkModeState
 import com.ruuvi.station.database.domain.SensorSettingsRepository
@@ -190,8 +189,6 @@ class AppSettingsInteractor(
     fun getAllHumidityUnits(): List<HumidityUnit> = unitsConverter.getAllHumidityUnits()
 
     fun getAccuracyList(): Array<Accuracy> = Accuracy.values()
-
-    fun getAllLocales(): Array<LocaleType> = LocaleType.values()
 
     fun clearLastSync() = sensorSettingsRepository.clearLastSyncGatt()
 
