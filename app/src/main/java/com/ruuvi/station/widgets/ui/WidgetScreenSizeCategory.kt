@@ -3,6 +3,7 @@ package com.ruuvi.station.widgets.ui
 import android.content.Context
 import android.os.Build
 import android.view.WindowManager
+import androidx.annotation.RequiresApi
 
 enum class WidgetScreenSizeCategory {
     SMALL,
@@ -10,6 +11,7 @@ enum class WidgetScreenSizeCategory {
     BIG
 }
 
+@RequiresApi(Build.VERSION_CODES.N)
 fun resolveWidgetScreenSizeCategory(context: Context): WidgetScreenSizeCategory {
     val windowManager = context.getSystemService(WindowManager::class.java)
     val screenHeightPx = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && windowManager != null) {
@@ -17,8 +19,9 @@ fun resolveWidgetScreenSizeCategory(context: Context): WidgetScreenSizeCategory 
     } else {
         context.resources.displayMetrics.heightPixels
     }
-    val density = context.resources.displayMetrics.density
-    val screenHeightDp = screenHeightPx / density
+
+    val stableDensity = android.util.DisplayMetrics.DENSITY_DEVICE_STABLE / 160f
+    val screenHeightDp = screenHeightPx / stableDensity
 
     return when {
         screenHeightDp >= 750f -> WidgetScreenSizeCategory.BIG

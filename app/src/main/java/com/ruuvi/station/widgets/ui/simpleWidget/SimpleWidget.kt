@@ -6,12 +6,36 @@ import android.appwidget.AppWidgetProvider
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.glance.GlanceModifier
+import androidx.glance.LocalSize
 import androidx.glance.action.ActionParameters
 import androidx.glance.action.actionParametersOf
 import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.glance.appwidget.state.updateAppWidgetState
+import androidx.glance.color.ColorProvider
+import androidx.glance.layout.Alignment
+import androidx.glance.layout.Column
+import androidx.glance.layout.Row
+import androidx.glance.layout.Spacer
+import androidx.glance.layout.fillMaxSize
+import androidx.glance.layout.fillMaxWidth
+import androidx.glance.layout.height
+import androidx.glance.layout.padding
+import androidx.glance.layout.width
+import androidx.glance.text.FontFamily
+import androidx.glance.text.FontWeight
+import androidx.glance.text.Text
+import androidx.glance.text.TextStyle
+import com.ruuvi.station.units.domain.aqi.AQI
 import com.ruuvi.station.widgets.domain.WidgetInteractor
 import com.ruuvi.station.widgets.domain.WidgetPreferencesInteractor
+import com.ruuvi.station.widgets.ui.glance.GlanceColors
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -137,3 +161,139 @@ class SimpleWidget: AppWidgetProvider() {
             parameters[APP_WIDGET_ID_KEY] ?: AppWidgetManager.INVALID_APPWIDGET_ID
     }
 }
+
+
+//@Composable
+//private fun GlanceMeasurementDisplay(
+//    sensorValue: String,
+//    unit: String,
+//    measurementName: String,
+//    valueFontSize: TextUnit,
+//    secondaryFontSize: TextUnit
+//) {
+//    Column(modifier = GlanceModifier.fillMaxSize()) {
+//        Row(
+//            modifier = GlanceModifier.defaultWeight(),
+//            verticalAlignment = Alignment.Top,
+//        ) {
+//            Row {
+//                Text(
+//                    text = sensorValue,
+//                    style = TextStyle(
+//                        fontSize = valueFontSize,
+//                        color = GlanceColors.valueColor,
+//                        fontFamily = FontFamily.SansSerif,
+//                        fontWeight = FontWeight.Bold
+//                    ),
+//                    maxLines = 1
+//                )
+//            }
+//
+//            Spacer(modifier = GlanceModifier.width(2.dp.fixed()))
+//
+//            Row(modifier = GlanceModifier.padding(top = 2.dp.fixed())) {
+//                Text(
+//                    text = unit,
+//                    style = TextStyle(
+//                        fontSize = secondaryFontSize,
+//                        color = GlanceColors.widgetSensorName,
+//                        fontFamily = FontFamily.SansSerif,
+//                        fontWeight = FontWeight.Normal
+//                    ),
+//                    modifier = GlanceModifier.padding(top = 2.dp.fixed()),
+//                    maxLines = 1
+//                )
+//            }
+//        }
+//
+//        Text(
+//            text = measurementName,
+//            style = TextStyle(
+//                fontSize = secondaryFontSize,
+//                color = GlanceColors.widgetSensorName,
+//                fontFamily = FontFamily.SansSerif,
+//                fontWeight = FontWeight.Normal
+//            ),
+//            maxLines = 1
+//        )
+//    }
+//}
+
+//@Composable
+//private fun GlanceAQIDisplay(
+//    sensorValue: String,
+//    measurementName: String,
+//    valueFontSize: TextUnit,
+//    secondaryFontSize: TextUnit,
+//    refreshButtonSize: Dp
+//) {
+//    val aqiText = sensorValue.substringBefore("/")
+//    val aqiValue = aqiText.toDoubleOrNull()
+//    val aqiColor = aqiValue?.let { AQI.CalculatedAQI(it).color } ?: Color.Gray
+//    val aqiColorProvider = ColorProviderDayNight(day = aqiColor, night = aqiColor)
+//
+//    val widgetWidth = LocalSize.current.width
+//    val availableWidth = widgetWidth - (refreshButtonSize + 12.dp.fixed())
+//    val progressBarWidth = if (availableWidth > 100.dp.fixed()) 100.dp.fixed() else availableWidth - 10.dp.fixed()
+//
+//    Column(modifier = GlanceModifier.fillMaxSize()) {
+//        Row(
+//            modifier = GlanceModifier.fillMaxWidth(),
+//            verticalAlignment = Alignment.CenterVertically
+//        ) {
+//            Text(
+//                text = aqiText,
+//                style = TextStyle(
+//                    fontSize = valueFontSize,
+//                    color = GlanceColors.valueColor,
+//                    fontFamily = FontFamily.SansSerif,
+//                    fontWeight = FontWeight.Bold
+//                ),
+//                maxLines = 1
+//            )
+//
+//            Spacer(modifier = GlanceModifier.width(2.dp.fixed()))
+//
+//            Column(
+//                modifier = GlanceModifier.height(valueFontSize.value.dp),
+//                verticalAlignment = Alignment.CenterVertically
+//            ) {
+//                Text(
+//                    text = "/100",
+//                    style = TextStyle(
+//                        fontSize = secondaryFontSize,
+//                        color = GlanceColors.valueColor,
+//                        fontFamily = FontFamily.SansSerif,
+//                        fontWeight = FontWeight.Normal
+//                    ),
+//                    modifier = GlanceModifier.defaultWeight(),
+//                    maxLines = 1
+//                )
+//                Text(
+//                    text = measurementName,
+//                    style = TextStyle(
+//                        fontSize = secondaryFontSize,
+//                        color = GlanceColors.widgetSensorName,
+//                        fontFamily = FontFamily.SansSerif,
+//                        fontWeight = FontWeight.Normal
+//                    ),
+//                    modifier = GlanceModifier.defaultWeight(),
+//                    maxLines = 1
+//                )
+//            }
+//        }
+//
+//        Spacer(modifier = GlanceModifier.height(2.dp.fixed()))
+//
+//        GlanceProgressBarWithDot(
+//            progress = (aqiValue?.toFloat() ?: 0f) / 100f,
+//            activeColor = aqiColorProvider,
+//            backgroundColor = ColorProviderDayNight(
+//                day = aqiColor.copy(alpha = 0.2f),
+//                night = aqiColor.copy(alpha = 0.2f)
+//            ),
+//            modifier = GlanceModifier.padding(start = 1.dp.fixed(), bottom = 2.dp.fixed()),
+//            totalWidth = progressBarWidth
+//        )
+//    }
+//}
