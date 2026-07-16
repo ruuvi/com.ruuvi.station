@@ -330,7 +330,10 @@ fun getPrototypeChartDescription(
     val visibleEntries = chartData.filter { it.x >= lowestVisibleX && it.x <= highestVisibleX }
 
     if (visibleEntries.isEmpty())
-        return context.getString(R.string.chart_min_max_avg, "", "", "")
+        return context.getString(
+            R.string.chart_min_max_avg,
+            "", "", ""
+        )
 
     var totalArea = 0.0
 
