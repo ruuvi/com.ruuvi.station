@@ -145,13 +145,13 @@ fun ChartViewPrototype(
                 contentDescription = null,
                 modifier = Modifier
                     .height(20.dp.scaleUpTo(1.5f))
-                    .padding(end = RuuviStationTheme.dimensions.medium),
+                    .padding(top = RuuviStationTheme.dimensions.tiny, end = RuuviStationTheme.dimensions.medium),
                 tint = RuuviStationTheme.colors.measurementIcon
             )
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(start = RuuviStationTheme.dimensions.small)
+                    .padding(start = RuuviStationTheme.dimensions.tiny)
             ) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
