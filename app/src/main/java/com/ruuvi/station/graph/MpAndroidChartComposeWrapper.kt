@@ -354,7 +354,7 @@ fun getPrototypeChartDescription(
     val average = if (timespan != 0f) (totalArea / timespan).toFloat() else visibleEntries.first().y
 
     return context.getString(
-        R.string.chart_latest_min_max_avg,
+        R.string.chart_min_max_avg,
         getRawValue(min.toDouble()),
         getRawValue(max.toDouble()),
         getRawValue(average.toDouble())
