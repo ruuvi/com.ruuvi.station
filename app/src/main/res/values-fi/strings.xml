@@ -217,7 +217,7 @@
     <string name="changelog">(muutosloki)</string>
     <string name="changelog_android_url">https://f.ruuvi.com/t/4262</string>
     <string name="chart_latest_min_max_avg">Min: %1$s Max: %2$s Keskiarvo: %3$s</string>
-    <string name="chart_min_max_avg">Min: %1$,.2f Max: %2$,.2f Keskiarvo: %3$,.2f</string>
+    <string name="chart_min_max_avg">Min: %1$s Max: %2$s Keskiarvo: %3$s</string>
     <string name="chart_stat_avg">Keskiarvo</string>
     <string name="chart_stat_hide">Piilota min/max/ka</string>
     <string name="chart_stat_max">Max</string>
