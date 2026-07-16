@@ -46,10 +46,34 @@ append_xml() {
   printf "    <string name=\"%s\">%s</string>\n" "$ident_android" "$result" >> "$filename"
 }
 
-# Extract translations
-languages=$(jq -r '.translations[0] | keys[]' "$json_file" | grep -v 'ident_')
+append_required_language_strings() {
+  local filename=$1
+
+  if ! grep -q 'name="language_polish"' "$filename"; then
+    append_xml "$filename" "language_polish" "Polski"
+  fi
+}
+
+# Extract translations. Russian is intentionally not shipped by the Android app.
+languages=$(jq -r '.translations[0] | keys[]' "$json_file" | grep -v 'ident_' | grep -vx 'ru')
 
 echo "Languages found:$languages"
+
+# Remove generated locale directories that are no longer present in station.localization.
+for dir in app/src/main/res/values-*; do
+  [ -d "$dir" ] || continue
+  base=$(basename "$dir")
+  case "$base" in
+    values-night|values-night-*|values-notnight|values-sw*|values-v*)
+      continue
+      ;;
+  esac
+
+  lang="${base#values-}"
+  if ! echo "$languages" | grep -qx "$lang"; then
+    rm -rf "$dir"
+  fi
+done
 
 # Generate XML files
 for lang in $languages; do
@@ -62,11 +86,13 @@ for lang in $languages; do
     filename="app/src/main/res/values-${lang}/strings.xml"
   fi
 
+  mkdir -p "$(dirname "$filename")"
+
   # Create a new file and write the XML header
   echo '<?xml version="1.0" encoding="utf-8"?>' > "$filename"
   echo '<resources>' >> "$filename"
 
-  rows=$(jq -r --arg lang "$lang" '.translations[] | select(.ident_android != "") | @base64' "$json_file")
+  rows=$(jq -r --arg lang "$lang" '.translations[] | select(.ident_android != "" and .ident_android != "language_russian") | @base64' "$json_file")
 
   if [ -z "$rows" ]; then
     echo "No rows found for language $lang with non-empty ident_android"
@@ -85,8 +111,10 @@ for lang in $languages; do
 
       append_xml "$filename" "$ident" "$text"
     done
-    echo '</resources>' >> "$filename"
   fi
+
+  append_required_language_strings "$filename"
+  echo '</resources>' >> "$filename"
 done
 
 rm -r -f station.localization
