@@ -117,7 +117,6 @@ fun ChartViewPrototype(
     val context = LocalContext.current
     val title = unitsConverter.getTitleForUnitType(unitType)
     val icon = unitType.iconRes
-    val offset = RuuviStationTheme.dimensions.extended
     var description by remember(lineChart, unitsConverter, unitType) { mutableStateOf("") }
     val getRawValue = remember(unitsConverter, unitType) { unitsConverter.rawValueFormatter(unitType) }
 
@@ -131,7 +130,11 @@ fun ChartViewPrototype(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = offset, top = RuuviStationTheme.dimensions.medium),
+                .padding(
+                    start = RuuviStationTheme.dimensions.screenPadding,
+                    end = RuuviStationTheme.dimensions.screenPadding,
+                    top = RuuviStationTheme.dimensions.medium
+                ),
             verticalAlignment = Alignment.Top
         ) {
             Icon(
@@ -168,8 +171,7 @@ fun ChartViewPrototype(
 
                     Text(
                         modifier = Modifier.padding(
-                            start = RuuviStationTheme.dimensions.small,
-                            end = RuuviStationTheme.dimensions.medium
+                            start = RuuviStationTheme.dimensions.small
                         ),
                         fontFamily = ruuviStationFonts.mulishBold,
                         fontSize = RuuviStationTheme.fontSizes.small.scaledToMax(max = 20.sp),
@@ -182,8 +184,7 @@ fun ChartViewPrototype(
                     Text(
                         modifier = Modifier.padding(
                             top = RuuviStationTheme.dimensions.tiny,
-                            bottom = RuuviStationTheme.dimensions.small,
-                            end = RuuviStationTheme.dimensions.medium
+                            bottom = RuuviStationTheme.dimensions.small
                         ),
                         color = White50,
                         fontFamily = ruuviStationFonts.mulishRegular,
