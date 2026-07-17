@@ -684,7 +684,7 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="chart_stat_min">Min</string>
     <string name="chart_stat_max">Max</string>
     <string name="chart_stat_avg">Durchschnitt</string>
-    <string name="chart_min_max_avg">Min: %1$,.2f Max: %2$,.2f Durchschnitt: %3$,.2f</string>
+    <string name="chart_min_max_avg">Min: %1$s Max: %2$s Durchschnitt: %3$s</string>
     <string name="chart_latest_min_max_avg">Min: %1$s Max: %2$s Durchschnitt: %3$s Neueste: %4$s</string>
     <string name="shared_to_x">Freigegebene %1$,d/%2$,d</string>
     <string name="settings_alert_notifications">Alarmbenachrichtigungen</string>

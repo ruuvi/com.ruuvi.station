@@ -118,13 +118,7 @@ fun ChartViewPrototype(
     val title = unitsConverter.getTitleForUnitType(unitType)
     val icon = unitType.iconRes
     val offset = RuuviStationTheme.dimensions.extended
-    val description = getPrototypeChartDescription(
-        context,
-        lineChart,
-        chartData,
-        unitsConverter,
-        unitType
-    )
+    var description by remember(lineChart, unitsConverter, unitType) { mutableStateOf("") }
     val getRawValue = remember(unitsConverter, unitType) { unitsConverter.rawValueFormatter(unitType) }
 
     val latestPoint = chartData.lastOrNull()
@@ -214,6 +208,13 @@ fun ChartViewPrototype(
                 .onGloballyPositioned {
                     Timber.d("setLabelCount onGloballyPositioned")
                     setLabelCount(context, lineChart)
+                    description = getChartDescription(
+                        context,
+                        lineChart,
+                        chartData,
+                        unitsConverter,
+                        unitType
+                    )
                 }
                 .padding(horizontal = RuuviStationTheme.dimensions.medium),
             factory = { context ->
@@ -310,19 +311,29 @@ fun ChartViewPrototype(
                     }
                 }
 
+                view.post {
+                    description = getChartDescription(
+                        context,
+                        view,
+                        chartData,
+                        unitsConverter,
+                        unitType
+                    )
+                }
+
             }
         )
     }
 }
 
-fun getPrototypeChartDescription(
+fun getChartDescription(
     context: Context,
     lineChart: LineChart,
     chartData: MutableList<Entry>,
     unitsConverter: UnitsConverter,
     unitType: UnitType,
 ): String {
-    Timber.d("ChartView - getPrototypeChartDescription")
+    Timber.d("ChartView - getChartDescription")
     val getRawValue = unitsConverter.rawValueFormatter(unitType)
 
     val lowestVisibleX = lineChart.lowestVisibleX

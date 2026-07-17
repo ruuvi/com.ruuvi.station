@@ -673,7 +673,7 @@
     <string name="chart_stat_min">Min</string>
     <string name="chart_stat_max">Max</string>
     <string name="chart_stat_avg">Average</string>
-    <string name="chart_min_max_avg">Min: %1$,.2f Max: %2$,.2f Average: %3$,.2f</string>
+    <string name="chart_min_max_avg">Min: %1$s Max: %2$s Average: %3$s</string>
     <string name="chart_latest_min_max_avg">Min: %1$s Max: %2$s Average: %3$s Latest: %4$s</string>
     <string name="shared_to_x">Shared to %1$,d/%2$,d</string>
     <string name="settings_alert_notifications">Alert notifications</string>
