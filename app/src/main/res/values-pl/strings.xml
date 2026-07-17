@@ -673,7 +673,7 @@
     <string name="chart_stat_min">Min</string>
     <string name="chart_stat_max">Maks</string>
     <string name="chart_stat_avg">Średnia</string>
-    <string name="chart_min_max_avg">Min: %1$s Maks: %2$s Średnia: %3$s</string>
+    <string name="chart_min_max_avg">Min: %1$,.2f Max: %2$,.2f Średnia: %3$,.2f</string>
     <string name="chart_latest_min_max_avg">Min: %1$s Maks: %2$s Przeciętny: %3$s Najnowszy: %4$s</string>
     <string name="shared_to_x">Udostępniono %1$,d/%2$,d</string>
     <string name="settings_alert_notifications">Powiadomienia alertów</string>

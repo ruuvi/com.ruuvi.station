@@ -211,9 +211,7 @@ fun ChartViewPrototype(
                     description = getChartDescription(
                         context,
                         lineChart,
-                        chartData,
-                        unitsConverter,
-                        unitType
+                        chartData
                     )
                 }
                 .padding(horizontal = RuuviStationTheme.dimensions.medium),
@@ -315,9 +313,7 @@ fun ChartViewPrototype(
                     description = getChartDescription(
                         context,
                         view,
-                        chartData,
-                        unitsConverter,
-                        unitType
+                        chartData
                     )
                 }
 
@@ -329,13 +325,8 @@ fun ChartViewPrototype(
 fun getChartDescription(
     context: Context,
     lineChart: LineChart,
-    chartData: MutableList<Entry>,
-    unitsConverter: UnitsConverter,
-    unitType: UnitType,
+    chartData: MutableList<Entry>
 ): String {
-    Timber.d("ChartView - getChartDescription")
-    val getRawValue = unitsConverter.rawValueFormatter(unitType)
-
     val lowestVisibleX = lineChart.lowestVisibleX
     val highestVisibleX = lineChart.highestVisibleX
     val visibleEntries = chartData.filter { it.x >= lowestVisibleX && it.x <= highestVisibleX }
@@ -365,9 +356,9 @@ fun getChartDescription(
 
     return context.getString(
         R.string.chart_min_max_avg,
-        getRawValue(min.toDouble()),
-        getRawValue(max.toDouble()),
-        getRawValue(average.toDouble())
+        min,
+        max,
+        average
     )
 }
 
