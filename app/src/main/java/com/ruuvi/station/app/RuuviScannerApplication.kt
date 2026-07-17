@@ -4,8 +4,12 @@ import android.app.Application
 import android.bluetooth.BluetoothAdapter
 import android.content.Context
 import android.content.IntentFilter
+import android.content.res.Configuration
+import android.os.Build
 import android.os.PowerManager
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.glance.appwidget.GlanceAppWidgetManager
+import androidx.glance.appwidget.setWidgetPreviews
 import com.raizlabs.android.dbflow.config.FlowManager
 import com.ruuvi.station.BuildConfig
 import com.ruuvi.station.app.di.AppInjectionModules
@@ -23,6 +27,11 @@ import com.ruuvi.station.util.Foreground
 import com.ruuvi.station.util.ForegroundListener
 import com.ruuvi.station.util.ReleaseTree
 import com.ruuvi.station.util.extensions.registerReceiverCompat
+import com.ruuvi.station.widgets.ui.complexWidget.ComplexWidgetProvider
+import com.ruuvi.station.widgets.ui.simpleWidget.SimpleWidget
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.conf.ConfigurableKodein
@@ -30,6 +39,9 @@ import org.kodein.di.generic.bind
 import org.kodein.di.generic.instance
 import org.kodein.di.generic.singleton
 import timber.log.Timber
+
+private const val WIDGET_PREVIEW_PREFS = "widget_previews"
+private const val KEY_PREVIEW_VERSION = "published_version_code"
 
 class RuuviScannerApplication : Application(), KodeinAware {
     override val kodein = ConfigurableKodein()
@@ -48,6 +60,13 @@ class RuuviScannerApplication : Application(), KodeinAware {
 
 
     private var isInForeground: Boolean = false
+
+    // Widget text/padding is pre-rasterized to bitmaps at the density/font-scale seen at
+    // composition time (see GlanceFontUtils). Neither a "Display size" change nor a system
+    // font-size change reliably retriggers Glance's own recomposition, so we detect the
+    // config change here and force every live widget to redraw at the new values.
+    private var lastDensityDpi: Int = 0
+    private var lastFontScale: Float = 1f
 
     private val listener: ForegroundListener = object : ForegroundListener {
         override fun onBecameForeground() {
@@ -88,6 +107,49 @@ class RuuviScannerApplication : Application(), KodeinAware {
         foreground.addListener(listener)
 
         applyDarkModeSettings()
+
+        lastDensityDpi = resources.configuration.densityDpi
+        lastFontScale = resources.configuration.fontScale
+
+        publishWidgetPreviews()
+    }
+
+    // Android 15+ can render the widget-picker preview from GlanceAppWidget.providePreview
+    // instead of the static previewLayout/previewImage fallback, so it shows the real custom
+    // fonts. Republish once per app version rather than every launch, to stay well under the
+    // system's rate limit on this call.
+    private fun publishWidgetPreviews() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.VANILLA_ICE_CREAM) return
+
+        val prefs = getSharedPreferences(WIDGET_PREVIEW_PREFS, Context.MODE_PRIVATE)
+        if (prefs.getInt(KEY_PREVIEW_VERSION, -1) == BuildConfig.VERSION_CODE) return
+
+        CoroutineScope(Dispatchers.Default).launch {
+            val manager = GlanceAppWidgetManager(this@RuuviScannerApplication)
+            manager.setWidgetPreviews<SimpleWidget>()
+            manager.setWidgetPreviews<ComplexWidgetProvider>()
+            prefs.edit().putInt(KEY_PREVIEW_VERSION, BuildConfig.VERSION_CODE).apply()
+        }
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+
+        val densityChanged = newConfig.densityDpi != lastDensityDpi
+        val fontScaleChanged = newConfig.fontScale != lastFontScale
+        if (densityChanged || fontScaleChanged) {
+            Timber.d("Display config changed (density=$densityChanged, fontScale=$fontScaleChanged), refreshing widgets")
+            lastDensityDpi = newConfig.densityDpi
+            lastFontScale = newConfig.fontScale
+            refreshWidgetsForDisplayChange()
+        }
+    }
+
+    private fun refreshWidgetsForDisplayChange() {
+        for (appWidgetId in SimpleWidget.getSimpleWidgetsIds(this)) {
+            SimpleWidget.updateSimpleWidget(this, appWidgetId)
+        }
+        ComplexWidgetProvider.updateAll(this)
     }
 
     private fun setupDependencyInjection() {

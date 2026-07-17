@@ -15,6 +15,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.core.view.WindowCompat
 import com.ruuvi.station.R
@@ -77,10 +78,7 @@ class SimpleWidgetConfigureActivity : AppCompatActivity(), KodeinAware {
     }
 
     private fun setupCompleted() {
-        val appWidgetManager =
-            AppWidgetManager.getInstance(this)
-
-        SimpleWidget.updateSimpleWidget(this, appWidgetManager, appWidgetId)
+        SimpleWidget.updateSimpleWidget(this, appWidgetId)
 
         val resultValue =
             Intent().putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
@@ -187,6 +185,7 @@ fun WidgetTypeList(
 
 @Composable
 fun WidgetTypeItem (viewModel: SimpleWidgetConfigureViewModel, widgetType: WidgetType, isSelected: Boolean) {
+    val context = LocalContext.current
     Box (
         modifier = Modifier
             .fillMaxWidth()
@@ -201,7 +200,7 @@ fun WidgetTypeItem (viewModel: SimpleWidgetConfigureViewModel, widgetType: Widge
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable { viewModel.selectWidgetType(widgetType) },
-                text = stringResource(id = widgetType.titleResId),
+                text = WidgetType.getTitle(context, widgetType, stringResource(widgetType.titleResId)),
                 style = RuuviStationTheme.typography.paragraph)
         }
     }

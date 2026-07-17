@@ -8,5 +8,6 @@ data class SimpleWidgetData(
     val displayName: String,
     val sensorValue: String,
     val unit: String,
+    val measurementName: String,
     val updated: String?
 )
