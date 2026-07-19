@@ -502,7 +502,16 @@ fun SensorsPager(
                     SensorTitle(
                         sensor = it,
                         pagerState = pagerState,
-                        contentColor = if (showSensorBackground) Color.White else RuuviStationTheme.colors.settingsTitleText,
+                        subtitle = when (openType) {
+                            SensorCardOpenType.ALERTS -> stringResource(id = R.string.alerts)
+                            SensorCardOpenType.SETTINGS -> stringResource(id = R.string.settings)
+                            else -> null
+                        },
+                        modifier = if (showSensorBackground) {
+                            Modifier
+                        } else {
+                            Modifier.background(RuuviStationTheme.colors.topBar)
+                        },
                     )
                 }
             }
@@ -745,15 +754,19 @@ private fun SensorSettingsNestedScreen(
 fun SensorTitle(
     sensor: RuuviTag,
     pagerState: PagerState,
+    subtitle: String? = null,
+    modifier: Modifier = Modifier,
     contentColor: Color = Color.White,
 ) {
     val coroutineScope = rememberCoroutineScope()
 
     Box(
-        modifier = Modifier
-            .fillMaxWidth()) {
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(top = 8.dp, bottom = if (subtitle == null) 8.dp else 16.dp)
+    ) {
         Box(modifier = Modifier
-            .align(Alignment.TopStart)
+            .align(Alignment.CenterStart)
             .padding(start = 6.dp)
         ) {
             if (pagerState.canScrollBackward && pagerState.currentPage != 0) {
@@ -776,7 +789,7 @@ fun SensorTitle(
             modifier = Modifier
                 .padding(horizontal = RuuviStationTheme.dimensions.huge)
                 .align(Alignment.Center)
-                .width(IntrinsicSize.Max),
+                .fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
@@ -787,9 +800,20 @@ fun SensorTitle(
                 color = contentColor,
                 maxLines = 2
             )
+            subtitle?.let {
+                Text(
+                    modifier = Modifier.padding(top = 2.dp),
+                    fontSize = RuuviStationTheme.fontSizes.extended,
+                    fontFamily = RuuviStationTheme.fonts.mulishRegular,
+                    text = it,
+                    textAlign = TextAlign.Center,
+                    color = contentColor,
+                    maxLines = 1,
+                )
+            }
         }
         Box(modifier = Modifier
-            .align(Alignment.TopEnd)
+            .align(Alignment.CenterEnd)
             .padding(end = 6.dp)
         ) {
             if (pagerState.canScrollForward && pagerState.currentPage != pagerState.pageCount - 1) {
@@ -1110,9 +1134,29 @@ fun SensorCardTopAppBar(
                 }
             },
             actions = {
-                IconButton(
-                    enabled = openType != SensorCardOpenType.ALERTS,
-                    onClick = { alarmAction.invoke() },
+                SensorTopBarAction(
+                    active = openType == SensorCardOpenType.CARD,
+                    onClick = cardAction,
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.icon_menu_temperature),
+                        tint = iconColor,
+                        contentDescription = stringResource(id = R.string.full_image_view)
+                    )
+                }
+                SensorTopBarAction(
+                    active = openType == SensorCardOpenType.HISTORY,
+                    onClick = chartsAction,
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_ruuvi_graphs_icon),
+                        tint = iconColor,
+                        contentDescription = stringResource(id = R.string.history_view)
+                    )
+                }
+                SensorTopBarAction(
+                    active = openType == SensorCardOpenType.ALERTS,
+                    onClick = alarmAction,
                 ) {
                     when (alarmStatus) {
                         AlarmSensorStatus.NoAlarms ->
@@ -1135,30 +1179,9 @@ fun SensorCardTopAppBar(
                             }
                     }
                 }
-
-                IconButton(
-                    enabled = openType != SensorCardOpenType.CARD,
-                    onClick = { cardAction.invoke() },
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.icon_menu_temperature),
-                        tint = iconColor,
-                        contentDescription = stringResource(id = R.string.full_image_view)
-                    )
-                }
-                IconButton(
-                    enabled = openType != SensorCardOpenType.HISTORY,
-                    onClick = { chartsAction.invoke() },
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_ruuvi_graphs_icon),
-                        tint = iconColor,
-                        contentDescription = stringResource(id = R.string.history_view)
-                    )
-                }
-                IconButton(
-                    enabled = openType != SensorCardOpenType.SETTINGS,
-                    onClick = { settingsAction.invoke() },
+                SensorTopBarAction(
+                    active = openType == SensorCardOpenType.SETTINGS,
+                    onClick = settingsAction,
                 ) {
                     Icon(
                         painter = painterResource(id = R.drawable.ic_settings_24px),
@@ -1181,6 +1204,37 @@ fun SensorCardTopAppBar(
             ) {
                 CircularIndicator(color = Color.White.copy(alpha = 0.5f))
             }
+        }
+    }
+}
+
+@Composable
+private fun SensorTopBarAction(
+    active: Boolean,
+    onClick: () -> Unit,
+    content: @Composable () -> Unit,
+) {
+    Box(
+        modifier = Modifier
+            .width(48.dp)
+            .fillMaxHeight(),
+        contentAlignment = Alignment.Center,
+    ) {
+        IconButton(onClick = { if (!active) onClick() }) {
+            content()
+        }
+        if (active) {
+            Box(
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(bottom = 2.dp)
+                    .width(24.dp)
+                    .height(3.dp)
+                    .background(
+                        color = RuuviStationTheme.colors.topBarText,
+                        shape = RoundedCornerShape(2.dp),
+                    )
+            )
         }
     }
 }

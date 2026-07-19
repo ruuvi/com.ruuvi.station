@@ -46,7 +46,7 @@ fun SensorAlertsScreen(
         AlarmsGroup(
             scaffoldState = scaffoldState,
             viewModel = viewModel,
-            showTitle = true,
+            showTitle = false,
         )
     }
 }
