@@ -18,7 +18,6 @@ import com.ruuvi.station.util.extensions.viewModel
 import com.ruuvi.station.R
 import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.database.tables.RuuviTagEntity
-import com.ruuvi.station.tagsettings.ui.TagSettingsActivity
 import com.ruuvi.station.util.BackgroundScanModes
 import com.ruuvi.station.app.permissions.PermissionsInteractor
 import com.ruuvi.station.databinding.ActivityAddTagBinding
@@ -105,7 +104,7 @@ class AddTagActivity : NfcActivity(R.layout.activity_add_tag), KodeinAware {
                         SensorCardActivity.startWithDashboard(this@AddTagActivity, response.sensorId)
                     } else if (response.canBeAdded){
                         viewModel.addSensor(response.sensorId)
-                        TagSettingsActivity.startAfterAddingNewSensor(this@AddTagActivity, response.sensorId)
+                        SensorCardActivity.startAfterAddingNewSensor(this@AddTagActivity, response.sensorId)
                     } else {
                         Snackbar.make(this@AddTagActivity, binding.content.root, getText(R.string.nfc_enable_bt_to_add_sensor), LENGTH_LONG).show()
                     }
@@ -127,7 +126,7 @@ class AddTagActivity : NfcActivity(R.layout.activity_add_tag), KodeinAware {
                 return@OnItemClickListener
             }
             viewModel.makeSensorFavorite(tag)
-            TagSettingsActivity.startAfterAddingNewSensor(this, tag.id)
+            SensorCardActivity.startAfterAddingNewSensor(this, tag.id)
         }
 
         binding.content.nfcHintTextView.isVisible = viewModel.nfcSupported

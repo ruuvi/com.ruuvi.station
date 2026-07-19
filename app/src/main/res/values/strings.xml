@@ -581,7 +581,6 @@
     <string name="main_view">Main view</string>
     <string name="full_image_view">Full image view</string>
     <string name="history_view">History view</string>
-    <string name="settings_and_alerts">Settings \u0026 alerts</string>
     <string name="change_background">Change background</string>
     <string name="check_claim_state">Checking claim state</string>
     <string name="claim_in_progress">Claiming in progress</string>

@@ -30,8 +30,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.ruuvi.station.R
-import com.ruuvi.station.alarm.ui.AlarmsGroup
-import com.ruuvi.station.alarm.ui.AlarmItemsViewModel
 import com.ruuvi.station.app.ui.UiText
 import com.ruuvi.station.app.ui.components.*
 import com.ruuvi.station.app.ui.components.dialog.CustomContentDialog
@@ -54,7 +52,6 @@ fun SensorSettings(
     scaffoldState: ScaffoldState,
     onNavigate: (String) -> Unit,
     viewModel: TagSettingsViewModel,
-    alarmsViewModel: AlarmItemsViewModel
 ) {
     val context = LocalContext.current
     val sensorState by viewModel.sensorState.collectAsState()
@@ -126,10 +123,6 @@ fun SensorSettings(
             }
         }
 
-        AlarmsGroup(
-            scaffoldState,
-            alarmsViewModel
-        )
         if (sensorOwnedOrOffline && sensorState.latestMeasurement != null) {
             CalibrationSettingsGroup(
                 sensorState = sensorState,

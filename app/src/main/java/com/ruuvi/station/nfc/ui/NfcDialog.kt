@@ -31,7 +31,6 @@ import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.nfc.NfcScanReciever
 import com.ruuvi.station.nfc.domain.NfcScanResponse
 import com.ruuvi.station.tagdetails.ui.SensorCardActivity
-import com.ruuvi.station.tagsettings.ui.TagSettingsActivity
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -71,7 +70,7 @@ fun NfcInteractor(
                 sensorInfo = response,
                 addSensorAction = {
                     addSensor(response.sensorId)
-                    TagSettingsActivity.startAfterAddingNewSensor(context, response.sensorId)
+                    SensorCardActivity.startAfterAddingNewSensor(context, response.sensorId)
                 },
                 goToSensorAction = {
                     SensorCardActivity.startWithDashboard(context, response.sensorId)

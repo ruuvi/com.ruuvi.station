@@ -46,7 +46,8 @@ import kotlin.math.roundToInt
 @Composable
 fun AlarmsGroup(
     scaffoldState: ScaffoldState,
-    viewModel: AlarmItemsViewModel
+    viewModel: AlarmItemsViewModel,
+    showTitle: Boolean = true,
 ) {
     val notificationPermissionState = rememberPermissionState(
         android.Manifest.permission.POST_NOTIFICATIONS
@@ -79,7 +80,7 @@ fun AlarmsGroup(
     }
 
     Column {
-        if (alarms.isNotEmpty()) SensorSettingsTitle(title = stringResource(id = R.string.alerts))
+        if (showTitle && alarms.isNotEmpty()) SensorSettingsTitle(title = stringResource(id = R.string.alerts))
         for (itemState in alarms) {
             Timber.d("AlarmItem $itemState")
             val title = viewModel.getTitle(itemState.type)

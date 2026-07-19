@@ -16,11 +16,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import com.ruuvi.station.R
-import com.ruuvi.station.app.ui.UiEvent
 import com.ruuvi.station.app.ui.components.ExpandableContainer
 import com.ruuvi.station.app.ui.components.PageSurfaceWithPadding
 import com.ruuvi.station.app.ui.components.Paragraph
@@ -30,7 +28,6 @@ import com.ruuvi.station.app.ui.components.RuuviCheckbox
 import com.ruuvi.station.app.ui.components.dialog.CustomContentDialog
 import com.ruuvi.station.app.ui.components.TextEditWithCaptionButton
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
-import com.ruuvi.station.dashboard.ui.DashboardActivity
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -58,15 +55,13 @@ fun RemoveGroup(
 @Composable
 fun RemoveSensor(
     scaffoldState: ScaffoldState,
-    onNavigate: (UiEvent.Navigate) -> Unit,
     viewModel: RemoveSensorViewModel,
+    onRemoved: () -> Unit,
 ) {
     val sensorState by viewModel.sensorState.collectAsState()
     val sensorOwnedByUser by viewModel.sensorOwnedByUser.collectAsState(initial = false)
     val deleteDataEnabled = viewModel.removeWithCloudData.collectAsState()
     var removeDialog by remember { mutableStateOf(false) }
-    val context = LocalContext.current
-
     PageSurfaceWithPadding {
         Column {
             if (!sensorState.networkSensor) {
@@ -101,7 +96,7 @@ fun RemoveSensor(
             onDismissRequest = { removeDialog = false },
             onOkClickAction = {
                 viewModel.removeSensor()
-                DashboardActivity.start(context)
+                onRemoved()
             },
             positiveButtonText = stringResource(id = R.string.confirm)
         ) {

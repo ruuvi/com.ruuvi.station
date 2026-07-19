@@ -7,6 +7,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import androidx.activity.compose.setContent
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
@@ -23,6 +24,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Size
@@ -51,6 +53,8 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.ruuvi.gateway.tester.nfc.model.SensorNfсScanInfo
 import com.ruuvi.station.R
 import com.ruuvi.station.alarm.domain.AlarmSensorStatus
+import com.ruuvi.station.alarm.ui.AlarmItemsViewModel
+import com.ruuvi.station.app.ui.RuuviTopAppBar
 import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.app.ui.components.BlinkingEffect
 import com.ruuvi.station.app.ui.components.CircularIndicator
@@ -75,7 +79,20 @@ import com.ruuvi.station.tagdetails.ui.elements.CircularAQIDisplay
 import com.ruuvi.station.tagdetails.ui.elements.SensorCardLegacy
 import com.ruuvi.station.tagdetails.ui.elements.SensorValueItem
 import com.ruuvi.station.tagdetails.ui.popup.ValueBottomSheet
-import com.ruuvi.station.tagsettings.ui.TagSettingsActivity
+import com.ruuvi.station.tagsettings.di.RemoveSensorViewModelArgs
+import com.ruuvi.station.tagsettings.di.TagSettingsViewModelArgs
+import com.ruuvi.station.tagsettings.ui.RemoveSensor
+import com.ruuvi.station.tagsettings.ui.RemoveSensorViewModel
+import com.ruuvi.station.tagsettings.ui.SensorAlertsScreen
+import com.ruuvi.station.tagsettings.ui.SensorSettingsRootScreen
+import com.ruuvi.station.tagsettings.ui.SensorSettingsRoutes
+import com.ruuvi.station.tagsettings.ui.TagSettingsViewModel
+import com.ruuvi.station.tagsettings.ui.led_control.LedControlScreen
+import com.ruuvi.station.tagsettings.ui.led_control.LedControlViewModel
+import com.ruuvi.station.tagsettings.ui.notes.Notes
+import com.ruuvi.station.tagsettings.ui.notes.NotesViewModel
+import com.ruuvi.station.tagsettings.ui.visible_measurements.VisibleMeasurements
+import com.ruuvi.station.tagsettings.ui.visible_measurements.VisibleMeasurementsViewModel
 import com.ruuvi.station.units.domain.UnitsConverter
 import com.ruuvi.station.units.model.EnvironmentValue
 import com.ruuvi.station.units.model.UnitType
@@ -91,6 +108,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
 import org.kodein.di.generic.instance
+import org.kodein.di.direct
 import timber.log.Timber
 import kotlin.math.ceil
 import kotlin.math.floor
@@ -102,12 +120,60 @@ class SensorCardActivity : NfcActivity(), KodeinAware {
     private val unitsConverter: UnitsConverter by instance()
     private val runtimeBehavior: RuntimeBehavior by instance()
 
+    private inline fun <reified TViewModel : ViewModel, reified TArgument> keyedViewModel(
+        key: String,
+        argument: TArgument,
+    ): TViewModel = ViewModelProvider(
+        this,
+        object : ViewModelProvider.Factory {
+            @Suppress("UNCHECKED_CAST")
+            override fun <T : ViewModel> create(modelClass: Class<T>): T =
+                kodein.direct.instance<TArgument, TViewModel>(arg = argument) as T
+        }
+    )[key, TViewModel::class.java]
+
+    private fun tagSettingsViewModel(sensorId: String): TagSettingsViewModel = keyedViewModel(
+        key = "sensor-settings:$sensorId",
+        argument = TagSettingsViewModelArgs(
+            tagId = sensorId,
+            newSensor = intent.getBooleanExtra(ARGUMENT_NEW_SENSOR, false) &&
+                sensorId == intent.getStringExtra(ARGUMENT_SENSOR_ID),
+            openRemove = false,
+        )
+    )
+
+    private fun alarmsViewModel(sensorId: String): AlarmItemsViewModel = keyedViewModel(
+        key = "sensor-alerts:$sensorId",
+        argument = sensorId,
+    )
+
+    private fun removeSensorViewModel(sensorId: String): RemoveSensorViewModel = keyedViewModel(
+        key = "sensor-remove:$sensorId",
+        argument = RemoveSensorViewModelArgs(sensorId),
+    )
+
+    private fun visibleMeasurementsViewModel(sensorId: String): VisibleMeasurementsViewModel = keyedViewModel(
+        key = "visible-measurements:$sensorId",
+        argument = sensorId,
+    )
+
+    private fun ledControlViewModel(sensorId: String): LedControlViewModel = keyedViewModel(
+        key = "led-control:$sensorId",
+        argument = sensorId,
+    )
+
+    private fun notesViewModel(sensorId: String): NotesViewModel = keyedViewModel(
+        key = "notes:$sensorId",
+        argument = sensorId,
+    )
+
     private val viewModel: SensorCardViewModel by viewModel {
         val preferences: PreferencesRepository by kodein.instance()
         val showChart = when (intent.getSerializableExtra(ARGUMENT_OPEN_TYPE) as? SensorCardOpenType ?: SensorCardOpenType.DEFAULT) {
             SensorCardOpenType.DEFAULT -> preferences.getDashboardTapAction() == DashboardTapAction.SHOW_CHART
             SensorCardOpenType.CARD -> false
             SensorCardOpenType.HISTORY -> true
+            SensorCardOpenType.ALERTS, SensorCardOpenType.SETTINGS, SensorCardOpenType.REMOVE -> false
         }
 
         SensorCardViewModelArguments(
@@ -127,20 +193,46 @@ class SensorCardActivity : NfcActivity(), KodeinAware {
                 val sensors by viewModel.sensorsFlow.collectAsStateWithLifecycle(initialValue = listOf())
                 val selectedSensor by viewModel.selectedSensor.collectAsStateWithLifecycle()
                 val viewPeriod by viewModel.chartViewPeriod.collectAsStateWithLifecycle()
-                val showCharts by viewModel.showCharts.collectAsStateWithLifecycle(false)
                 val syncInProcess by viewModel.syncInProgress.collectAsStateWithLifecycle()
                 val showChartStats by viewModel.showChartStats.collectAsStateWithLifecycle()
                 val increasedChartSize by viewModel.increasedChartSize.collectAsStateWithLifecycle()
+
+                val requestedOpenType = intent.getSerializableExtra(ARGUMENT_OPEN_TYPE) as? SensorCardOpenType
+                    ?: SensorCardOpenType.DEFAULT
+                var openType by rememberSaveable {
+                    mutableStateOf(requestedOpenType.resolveRoot(viewModel.showCharts.value))
+                }
+                var settingsRoute by rememberSaveable {
+                    mutableStateOf(
+                        if (requestedOpenType == SensorCardOpenType.REMOVE) {
+                            SensorSettingsRoutes.SENSOR_REMOVE
+                        } else {
+                            SensorSettingsRoutes.SENSOR_SETTINGS_ROOT
+                        }
+                    )
+                }
+                val scaffoldState = rememberScaffoldState()
+
+                fun open(destination: SensorCardOpenType) {
+                    if (destination == openType) return
+                    settingsRoute = SensorSettingsRoutes.SENSOR_SETTINGS_ROOT
+                    when (destination) {
+                        SensorCardOpenType.CARD -> viewModel.setShowCharts(false)
+                        SensorCardOpenType.HISTORY -> viewModel.setShowCharts(true)
+                        else -> Unit
+                    }
+                    openType = destination
+                }
 
                 if (sensors.isNotEmpty()) {
                     SensorsPager(
                         selectedSensor = selectedSensor,
                         sensors = sensors,
-                        showCharts = showCharts,
+                        openType = openType,
                         showChartStats = showChartStats,
                         graphDrawDots = viewModel.graphDrawDots,
                         syncInProgress = syncInProcess,
-                        setShowCharts = viewModel::setShowCharts,
+                        open = ::open,
                         historyUpdater = viewModel::historyUpdater,
                         unitsConverter = unitsConverter,
                         viewPeriod = viewPeriod,
@@ -163,9 +255,21 @@ class SensorCardActivity : NfcActivity(), KodeinAware {
                         changeShowStats = viewModel::changeShowChartStats,
                         saveSelected = viewModel::saveSelected,
                         getIndex = viewModel::getIndex,
-                        scrollToChart = viewModel::scrollToChart,
+                        scrollToChart = {
+                            open(SensorCardOpenType.HISTORY)
+                            viewModel.scrollToChart(it)
+                        },
                         scrollToChartEvent = viewModel.scrollToChartEvent,
-                        getChartData = viewModel::getChartData
+                        getChartData = viewModel::getChartData,
+                        settingsRoute = settingsRoute,
+                        setSettingsRoute = { settingsRoute = it },
+                        scaffoldState = scaffoldState,
+                        getTagSettingsViewModel = ::tagSettingsViewModel,
+                        getAlarmsViewModel = ::alarmsViewModel,
+                        getRemoveSensorViewModel = ::removeSensorViewModel,
+                        getVisibleMeasurementsViewModel = ::visibleMeasurementsViewModel,
+                        getLedControlViewModel = ::ledControlViewModel,
+                        getNotesViewModel = ::notesViewModel,
                     )
                 }
             }
@@ -175,6 +279,7 @@ class SensorCardActivity : NfcActivity(), KodeinAware {
     companion object {
         const val ARGUMENT_SENSOR_ID = "ARGUMENT_SENSOR_ID"
         const val ARGUMENT_OPEN_TYPE = "ARGUMENT_OPEN_TYPE"
+        const val ARGUMENT_NEW_SENSOR = "ARGUMENT_NEW_SENSOR"
 
         fun start(
             context: Context,
@@ -185,6 +290,24 @@ class SensorCardActivity : NfcActivity(), KodeinAware {
             intent.putExtra(ARGUMENT_SENSOR_ID, sensorId)
             intent.putExtra(ARGUMENT_OPEN_TYPE, openType)
             context.startActivity(intent)
+        }
+
+        fun startAfterAddingNewSensor(context: Context, sensorId: String?) {
+            val dashboardIntent = Intent(context, DashboardActivity::class.java)
+            val sensorIntent = Intent(context, SensorCardActivity::class.java).apply {
+                putExtra(ARGUMENT_SENSOR_ID, sensorId)
+                putExtra(ARGUMENT_OPEN_TYPE, SensorCardOpenType.SETTINGS)
+                putExtra(ARGUMENT_NEW_SENSOR, true)
+            }
+
+            TaskStackBuilder.create(context)
+                .addNextIntent(dashboardIntent)
+                .addNextIntent(sensorIntent)
+                .startActivities()
+        }
+
+        fun startToRemove(context: Context, sensorId: String?) {
+            start(context, requireNotNull(sensorId), SensorCardOpenType.REMOVE)
         }
 
         fun startWithDashboard(
@@ -228,18 +351,29 @@ class SensorCardActivity : NfcActivity(), KodeinAware {
 enum class SensorCardOpenType {
     DEFAULT,
     CARD,
-    HISTORY
+    HISTORY,
+    ALERTS,
+    SETTINGS,
+    REMOVE,
 }
+
+internal fun SensorCardOpenType.resolveRoot(defaultShowsHistory: Boolean): SensorCardOpenType = when (this) {
+    SensorCardOpenType.DEFAULT -> if (defaultShowsHistory) SensorCardOpenType.HISTORY else SensorCardOpenType.CARD
+    SensorCardOpenType.REMOVE -> SensorCardOpenType.SETTINGS
+    else -> this
+}
+
+internal fun SensorCardOpenType.allowsSensorSwipe(): Boolean = this == SensorCardOpenType.CARD
 
 @Composable
 fun SensorsPager(
     selectedSensor: String?,
     sensors: List<RuuviTag>,
-    showCharts: Boolean,
+    openType: SensorCardOpenType,
     showChartStats: Boolean,
     syncInProgress: Boolean,
     graphDrawDots: Boolean,
-    setShowCharts: (Boolean) -> Unit,
+    open: (SensorCardOpenType) -> Unit,
     historyUpdater: (String) -> Flow<MutableList<ChartContainer>>,
     unitsConverter: UnitsConverter,
     viewPeriod: Period,
@@ -264,8 +398,19 @@ fun SensorsPager(
     getIndex: (String) -> Int,
     scrollToChart: (UnitType) -> Unit,
     scrollToChartEvent: Flow<UnitType>,
-    getChartData: (String, UnitType, Int) -> Flow<ChartData>
+    getChartData: (String, UnitType, Int) -> Flow<ChartData>,
+    settingsRoute: String,
+    setSettingsRoute: (String) -> Unit,
+    scaffoldState: ScaffoldState,
+    getTagSettingsViewModel: (String) -> TagSettingsViewModel,
+    getAlarmsViewModel: (String) -> AlarmItemsViewModel,
+    getRemoveSensorViewModel: (String) -> RemoveSensorViewModel,
+    getVisibleMeasurementsViewModel: (String) -> VisibleMeasurementsViewModel,
+    getLedControlViewModel: (String) -> LedControlViewModel,
+    getNotesViewModel: (String) -> NotesViewModel,
 ) {
+    val showCharts = openType == SensorCardOpenType.HISTORY
+    val showSensorBackground = openType == SensorCardOpenType.CARD || openType == SensorCardOpenType.HISTORY
     Timber.d("SensorsPager selected $selectedSensor sensors count ${sensors.size}")
     val systemUiController = rememberSystemUiController()
     val isDarkTheme = isSystemInDarkTheme()
@@ -284,7 +429,7 @@ fun SensorsPager(
     }
 
     Surface(
-        color = DefaultSensorBackgroundDark,
+        color = if (showSensorBackground) DefaultSensorBackgroundDark else RuuviStationTheme.colors.background,
         modifier = Modifier.fillMaxSize()
         ) {
 
@@ -301,11 +446,13 @@ fun SensorsPager(
 
     Timber.d("page sensor $pagerSensor bg= ${pagerSensor?.userBackground}")
 
-    pagerSensor?.let { sensor ->
-        if (sensor.userBackground != null) {
-            val uri = Uri.parse(sensor.userBackground)
-            if (uri.path != null) {
-                SensorCardImage(uri, showCharts)
+    if (showSensorBackground) {
+        pagerSensor?.let { sensor ->
+            if (sensor.userBackground != null) {
+                val uri = Uri.parse(sensor.userBackground)
+                if (uri.path != null) {
+                    SensorCardImage(uri, showCharts)
+                }
             }
         }
     }
@@ -315,47 +462,78 @@ fun SensorsPager(
         getNfcScanResponse = getNfcScanResponse
     )
 
+    BackHandler(
+        enabled = openType == SensorCardOpenType.SETTINGS &&
+            settingsRoute != SensorSettingsRoutes.SENSOR_SETTINGS_ROOT
+    ) {
+        setSettingsRoute(SensorSettingsRoutes.SENSOR_SETTINGS_ROOT)
+    }
+
     Box(modifier = Modifier.systemBarsPadding()) {
         Column() {
-            SensorCardTopAppBar(
-                navigationCallback = {
-                    (context as Activity).onBackPressed()
-                },
-                chartsEnabled = showCharts,
-                syncInProgress = syncInProgress,
-                alarmStatus = pagerSensor?.alarmSensorStatus ?: AlarmSensorStatus.NoAlarms,
-                alarmAction = {
-                    if (pagerSensor != null) {
-                        TagSettingsActivity.start(context, pagerSensor?.id)
-                    }
-                },
-                chartsAction = { setShowCharts(!showCharts) },
-                settingsAction = {
-                    if (pagerSensor != null) {
-                        TagSettingsActivity.start(context, pagerSensor?.id)
-                    }
-                }
-            )
+            val nestedSettings = openType == SensorCardOpenType.SETTINGS &&
+                settingsRoute != SensorSettingsRoutes.SENSOR_SETTINGS_ROOT
 
-            pagerSensor?.let {
-                SensorTitle(
-                    sensor = it,
-                    pagerState = pagerState
+            if (nestedSettings) {
+                RuuviTopAppBar(
+                    title = SensorSettingsRoutes.getTitleByRoute(context, settingsRoute),
+                    navigationAction = {
+                        setSettingsRoute(SensorSettingsRoutes.SENSOR_SETTINGS_ROOT)
+                    }
+                )
+            } else {
+                SensorCardTopAppBar(
+                    navigationCallback = {
+                        (context as Activity).onBackPressed()
+                    },
+                    openType = openType,
+                    syncInProgress = syncInProgress,
+                    alarmStatus = pagerSensor?.alarmSensorStatus ?: AlarmSensorStatus.NoAlarms,
+                    alarmAction = { open(SensorCardOpenType.ALERTS) },
+                    cardAction = { open(SensorCardOpenType.CARD) },
+                    chartsAction = { open(SensorCardOpenType.HISTORY) },
+                    settingsAction = { open(SensorCardOpenType.SETTINGS) },
+                    themed = !showSensorBackground,
                 )
             }
 
-            HorizontalPager(
-                modifier = Modifier.fillMaxSize(),
-                state = pagerState,
-                userScrollEnabled = !showCharts,
-            ) { page ->
-                val sensor = sensors.getOrNull(page)
-                if (sensor != null) {
-                    Column(
-                        modifier = Modifier.fillMaxSize(),
-                        verticalArrangement = Arrangement.Top
-                    ) {
-                        if (showCharts) {
+            if (!nestedSettings) {
+                pagerSensor?.let {
+                    SensorTitle(
+                        sensor = it,
+                        pagerState = pagerState,
+                        contentColor = if (showSensorBackground) Color.White else RuuviStationTheme.colors.settingsTitleText,
+                    )
+                }
+            }
+
+            if (nestedSettings) {
+                pagerSensor?.let { sensor ->
+                    SensorSettingsNestedScreen(
+                        sensorId = sensor.id,
+                        route = settingsRoute,
+                        scaffoldState = scaffoldState,
+                        setSettingsRoute = setSettingsRoute,
+                        getRemoveSensorViewModel = getRemoveSensorViewModel,
+                        getVisibleMeasurementsViewModel = getVisibleMeasurementsViewModel,
+                        getLedControlViewModel = getLedControlViewModel,
+                        getNotesViewModel = getNotesViewModel,
+                    )
+                }
+            } else {
+                HorizontalPager(
+                    modifier = Modifier.fillMaxSize(),
+                    state = pagerState,
+                    userScrollEnabled = openType.allowsSensorSwipe(),
+                ) { page ->
+                    val sensor = sensors.getOrNull(page)
+                    if (sensor != null) {
+                        Column(
+                            modifier = Modifier.fillMaxSize(),
+                            verticalArrangement = Arrangement.Top
+                        ) {
+                            when (openType) {
+                                SensorCardOpenType.HISTORY -> {
                             val hideIncreaseChartSize = sensor.latestMeasurement?.humidity == null || sensor.latestMeasurement.pressure == null
                             ChartControlElement2(
                                 sensorId = sensor.id,
@@ -396,7 +574,8 @@ fun SensorsPager(
                                 scrollToChartEvent = scrollToChartEvent,
                                 size = size
                             )
-                        } else {
+                                }
+                                SensorCardOpenType.CARD, SensorCardOpenType.DEFAULT -> {
                             if (newSensorCard) {
                                 SensorCard(
                                     sensor = sensor,
@@ -410,28 +589,50 @@ fun SensorsPager(
                                     modifier = Modifier.weight(1f)
                                 )
                             }
-                        }
+                                }
+                                SensorCardOpenType.ALERTS -> {
+                                    Box(modifier = Modifier.weight(1f)) {
+                                        SensorAlertsScreen(
+                                            scaffoldState = scaffoldState,
+                                            viewModel = getAlarmsViewModel(sensor.id),
+                                        )
+                                    }
+                                }
+                                SensorCardOpenType.SETTINGS, SensorCardOpenType.REMOVE -> {
+                                    Box(modifier = Modifier.weight(1f)) {
+                                        SensorSettingsRootScreen(
+                                            scaffoldState = scaffoldState,
+                                            viewModel = getTagSettingsViewModel(sensor.id),
+                                            onNavigate = setSettingsRoute,
+                                        )
+                                    }
+                                }
+                            }
 
-                        SensorCardBottom(
-                            sensor = sensor,
-                            modifier = Modifier
-                                .height(intrinsicSize = IntrinsicSize.Min)
-                        )
+                            if (openType == SensorCardOpenType.CARD || openType == SensorCardOpenType.HISTORY) {
+                                SensorCardBottom(
+                                    sensor = sensor,
+                                    modifier = Modifier.height(intrinsicSize = IntrinsicSize.Min)
+                                )
+                            }
+                        }
                     }
                 }
             }
         }
     }
 
+    val settingsSystemBarsColor = RuuviStationTheme.colors.systemBars
+    val settingsNavigationBarColor = RuuviStationTheme.colors.background
     SideEffect {
         systemUiController.setStatusBarColor(
-            color = Color.Transparent,
+            color = if (showSensorBackground) Color.Transparent else settingsSystemBarsColor,
             darkIcons = false
         )
         systemUiController.setNavigationBarColor(
-            color = Color.Transparent,
-            navigationBarContrastEnforced = false,
-            darkIcons = false
+            color = if (showSensorBackground) Color.Transparent else settingsNavigationBarColor,
+            navigationBarContrastEnforced = !showSensorBackground,
+            darkIcons = !showSensorBackground && !isDarkTheme,
         )
     }
 
@@ -478,9 +679,73 @@ fun SensorsPager(
 }
 
 @Composable
+private fun SensorSettingsNestedScreen(
+    sensorId: String,
+    route: String,
+    scaffoldState: ScaffoldState,
+    setSettingsRoute: (String) -> Unit,
+    getRemoveSensorViewModel: (String) -> RemoveSensorViewModel,
+    getVisibleMeasurementsViewModel: (String) -> VisibleMeasurementsViewModel,
+    getLedControlViewModel: (String) -> LedControlViewModel,
+    getNotesViewModel: (String) -> NotesViewModel,
+) {
+    val context = LocalContext.current
+    when (route) {
+        SensorSettingsRoutes.SENSOR_REMOVE -> {
+            RemoveSensor(
+                scaffoldState = scaffoldState,
+                viewModel = getRemoveSensorViewModel(sensorId),
+                onRemoved = {
+                    (context as Activity).finish()
+                },
+            )
+        }
+
+        SensorSettingsRoutes.VISIBLE_MEASUREMENTS -> {
+            val viewModel = getVisibleMeasurementsViewModel(sensorId)
+            val useDefault by viewModel.useDefaultOrder.collectAsStateWithLifecycle()
+            val sensorState by viewModel.sensorState.collectAsStateWithLifecycle()
+            val selected by viewModel.selected.collectAsStateWithLifecycle()
+            val possibleOptions by viewModel.possibleOptions.collectAsStateWithLifecycle()
+
+            VisibleMeasurements(
+                useDefault = useDefault,
+                sensorState = sensorState,
+                dashboardType = viewModel.dashBoardType,
+                onAction = viewModel::onAction,
+                effects = viewModel.effects,
+                getUnitName = viewModel::getUnitName,
+                selected = selected,
+                allOptions = possibleOptions,
+            )
+        }
+
+        SensorSettingsRoutes.LED_CONTROL -> {
+            LedControlScreen(viewModel = getLedControlViewModel(sensorId))
+        }
+
+        SensorSettingsRoutes.NOTES -> {
+            val viewModel = getNotesViewModel(sensorId)
+            val note by viewModel.note.collectAsStateWithLifecycle()
+            Notes(
+                scaffoldState = scaffoldState,
+                note = note,
+                onAction = viewModel::onAction,
+                effects = viewModel.effects,
+                uiEvent = viewModel.uiEvent,
+                onNavigateBack = {
+                    setSettingsRoute(SensorSettingsRoutes.SENSOR_SETTINGS_ROOT)
+                },
+            )
+        }
+    }
+}
+
+@Composable
 fun SensorTitle(
     sensor: RuuviTag,
-    pagerState: PagerState
+    pagerState: PagerState,
+    contentColor: Color = Color.White,
 ) {
     val coroutineScope = rememberCoroutineScope()
 
@@ -502,7 +767,7 @@ fun SensorTitle(
                     Icon(
                         painter = painterResource(id = R.drawable.arrow_back_16),
                         contentDescription = null,
-                        tint = Color.White
+                        tint = contentColor
                     )
                 }
             }
@@ -519,7 +784,7 @@ fun SensorTitle(
                 fontFamily = RuuviStationTheme.fonts.mulishExtraBold,
                 text = sensor.displayName,
                 textAlign = TextAlign.Center,
-                color = Color.White,
+                color = contentColor,
                 maxLines = 2
             )
         }
@@ -538,7 +803,7 @@ fun SensorTitle(
                     Icon(
                         painter = painterResource(id = R.drawable.arrow_forward_16),
                         contentDescription = null,
-                        tint = Color.White
+                        tint = contentColor
                     )
                 }
             }
@@ -817,13 +1082,16 @@ fun VerticalScrollbarOverlay(
 @Composable
 fun SensorCardTopAppBar(
     navigationCallback: () -> Unit,
-    chartsEnabled: Boolean,
+    openType: SensorCardOpenType,
     syncInProgress: Boolean,
     alarmStatus: AlarmSensorStatus = AlarmSensorStatus.NoAlarms,
     alarmAction: () -> Unit,
+    cardAction: () -> Unit,
     chartsAction: () -> Unit,
-    settingsAction: () -> Unit
+    settingsAction: () -> Unit,
+    themed: Boolean = false,
 ) {
+    val iconColor = RuuviStationTheme.colors.topBarText
     Box {
         TopAppBar(
             modifier = Modifier.height(RuuviStationTheme.dimensions.topAppBarHeight),
@@ -832,7 +1100,7 @@ fun SensorCardTopAppBar(
                     modifier = Modifier.height(40.dp),
                     painter = painterResource(id = R.drawable.logo_2021),
                     contentDescription = "",
-                    colorFilter = ColorFilter.tint(Color.White)
+                    colorFilter = ColorFilter.tint(iconColor)
                 )
             },
             navigationIcon = {
@@ -842,17 +1110,21 @@ fun SensorCardTopAppBar(
                 }
             },
             actions = {
-                IconButton(onClick = { alarmAction.invoke() }) {
+                IconButton(
+                    enabled = openType != SensorCardOpenType.ALERTS,
+                    onClick = { alarmAction.invoke() },
+                ) {
                     when (alarmStatus) {
                         AlarmSensorStatus.NoAlarms ->
                             Icon(
                                 painter = painterResource(id = R.drawable.ic_notifications_off_24px),
-                                contentDescription = "")
+                                tint = iconColor,
+                                contentDescription = stringResource(id = R.string.alerts))
                         AlarmSensorStatus.NotTriggered ->
                             Icon(
                                 painter = painterResource(id = R.drawable.ic_notifications_on_24px),
-                                tint = Color.White,
-                                contentDescription = "")
+                                tint = iconColor,
+                                contentDescription = stringResource(id = R.string.alerts))
                         is AlarmSensorStatus.Triggered ->
                             BlinkingEffect() {
                                 Icon(
@@ -864,28 +1136,39 @@ fun SensorCardTopAppBar(
                     }
                 }
 
-                IconButton(onClick = { chartsAction.invoke() }) {
-                    val chartIconRes = if (chartsEnabled) {
-                        R.drawable.icon_menu_temperature
-                    } else {
-                        R.drawable.ic_ruuvi_graphs_icon
-                    }
+                IconButton(
+                    enabled = openType != SensorCardOpenType.CARD,
+                    onClick = { cardAction.invoke() },
+                ) {
                     Icon(
-                        painter = painterResource(id = chartIconRes),
-                        tint = White,
-                        contentDescription = ""
+                        painter = painterResource(id = R.drawable.icon_menu_temperature),
+                        tint = iconColor,
+                        contentDescription = stringResource(id = R.string.full_image_view)
                     )
                 }
-                IconButton(onClick = { settingsAction.invoke() }) {
+                IconButton(
+                    enabled = openType != SensorCardOpenType.HISTORY,
+                    onClick = { chartsAction.invoke() },
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_ruuvi_graphs_icon),
+                        tint = iconColor,
+                        contentDescription = stringResource(id = R.string.history_view)
+                    )
+                }
+                IconButton(
+                    enabled = openType != SensorCardOpenType.SETTINGS,
+                    onClick = { settingsAction.invoke() },
+                ) {
                     Icon(
                         painter = painterResource(id = R.drawable.ic_settings_24px),
-                        tint = White,
+                        tint = iconColor,
                         contentDescription = stringResource(id = R.string.sensor_settings)
                     )
                 }
 
             },
-            backgroundColor = Color.Transparent,
+            backgroundColor = if (themed) RuuviStationTheme.colors.topBar else Color.Transparent,
             contentColor = RuuviStationTheme.colors.topBarText,
             elevation = 0.dp
         )

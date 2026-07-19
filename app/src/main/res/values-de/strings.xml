@@ -581,7 +581,6 @@
     <string name="main_view">Hauptansicht</string>
     <string name="full_image_view">Vollbildansicht</string>
     <string name="history_view">Ansicht Verlauf</string>
-    <string name="settings_and_alerts">Einstellungen \u0026 Benachrichtigungen</string>
     <string name="change_background">Hintergrundbild ändern</string>
     <string name="check_claim_state">Prüfung des Antragsstatus</string>
     <string name="claim_in_progress">Anspruchserhebung läuft</string>

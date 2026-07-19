@@ -581,7 +581,6 @@
     <string name="main_view">Huvudvy</string>
     <string name="full_image_view">Bildvy</string>
     <string name="history_view">Historikvy</string>
-    <string name="settings_and_alerts">Inställningar \u0026 alarm</string>
     <string name="change_background">Byt bakgrund</string>
     <string name="check_claim_state">Kontrollerar anspråkstillstånd</string>
     <string name="claim_in_progress">Anspråk pågår</string>

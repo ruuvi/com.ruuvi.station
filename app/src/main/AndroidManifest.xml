@@ -71,13 +71,6 @@ xmlns:tools="http://schemas.android.com/tools">
     <activity
         android:name="com.ruuvi.station.tagdetails.ui.SensorCardActivity"
         android:exported="false"
-        android:theme="@style/AppTheme.NoActionBar" />
-
-    <activity
-        android:name=".tagsettings.ui.TagSettingsActivity"
-        android:configChanges="orientation|screenSize|locale"
-        android:exported="false"
-        android:label="@string/sensor_settings"
         android:theme="@style/AppTheme.NoActionBar"
         android:windowSoftInputMode="adjustResize" />
 

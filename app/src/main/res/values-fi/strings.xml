@@ -581,7 +581,6 @@
     <string name="main_view">Päänäkymä</string>
     <string name="full_image_view">Anturikortti</string>
     <string name="history_view">Historianäkymä</string>
-    <string name="settings_and_alerts">Asetukset \u0026 hälytykset</string>
     <string name="change_background">Vaihda taustakuva</string>
     <string name="check_claim_state">Omistajuuden tilaa haetaan</string>
     <string name="claim_in_progress">Omistajuutta vaihdetaan</string>

@@ -581,7 +581,6 @@
     <string name="main_view">Widok główny</string>
     <string name="full_image_view">Widok pełnego obrazu</string>
     <string name="history_view">Widok historii</string>
-    <string name="settings_and_alerts">Ustawienia i alerty</string>
     <string name="change_background">Zmień tło</string>
     <string name="check_claim_state">Sprawdzanie stanu przejęcia</string>
     <string name="claim_in_progress">Przejmowanie w toku</string>

@@ -76,7 +76,7 @@ class SensorCardViewModel(
     private val chartCleared: SharedFlow<String> = _chartCleared
 
     private val _showCharts = MutableStateFlow<Boolean> (arguments.showChart)
-    val showCharts: SharedFlow<Boolean> = _showCharts
+    val showCharts: StateFlow<Boolean> = _showCharts
 
     val syncInProgress = networkDataSyncInteractor.syncInProgressFlow
 

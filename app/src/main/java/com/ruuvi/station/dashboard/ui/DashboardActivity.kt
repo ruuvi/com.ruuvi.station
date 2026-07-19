@@ -85,7 +85,6 @@ import com.ruuvi.station.tagdetails.ui.SensorCardActivity
 import com.ruuvi.station.tagdetails.ui.SensorCardOpenType
 import com.ruuvi.station.tagsettings.ui.BackgroundActivity
 import com.ruuvi.station.tagsettings.ui.SetSensorName
-import com.ruuvi.station.tagsettings.ui.TagSettingsActivity
 import com.ruuvi.station.units.domain.aqi.AQI
 import com.ruuvi.station.units.model.UnitType
 import com.ruuvi.station.util.base.NfcActivity
@@ -818,7 +817,7 @@ fun ItemButtons(
                     modifier = Modifier.size(RuuviStationTheme.dimensions.dashboardIconSize),
                     enabled = interactionEnabled,
                     onClick = {
-                        TagSettingsActivity.start(context, sensor.id)
+                        SensorCardActivity.start(context, sensor.id, SensorCardOpenType.ALERTS)
                     }
                 ) {
                     Icon(
@@ -833,7 +832,7 @@ fun ItemButtons(
                         modifier = Modifier.size(RuuviStationTheme.dimensions.dashboardIconSize),
                         enabled = interactionEnabled,
                         onClick = {
-                            TagSettingsActivity.start(context, sensor.id)
+                            SensorCardActivity.start(context, sensor.id, SensorCardOpenType.ALERTS)
                         }
                     ) {
                         Icon(
@@ -1113,12 +1112,22 @@ fun DashboardItemDropdownMenu(
                         )
                     }
                     DropdownMenuItem(onClick = {
-                        TagSettingsActivity.start(context, sensor.id)
+                        SensorCardActivity.start(context, sensor.id, SensorCardOpenType.ALERTS)
                         threeDotsMenuExpanded = false
                     }) {
                         Paragraph(
                             text = stringResource(
-                                id = R.string.settings_and_alerts
+                                id = R.string.alerts
+                            )
+                        )
+                    }
+                    DropdownMenuItem(onClick = {
+                        SensorCardActivity.start(context, sensor.id, SensorCardOpenType.SETTINGS)
+                        threeDotsMenuExpanded = false
+                    }) {
+                        Paragraph(
+                            text = stringResource(
+                                id = R.string.sensor_settings
                             )
                         )
                     }
@@ -1199,7 +1208,7 @@ fun DashboardItemDropdownMenu(
                     }
 
                     DropdownMenuItem(onClick = {
-                        TagSettingsActivity.startToRemove(context, sensor.id)
+                        SensorCardActivity.startToRemove(context, sensor.id)
                         threeDotsMenuExpanded = false
                     }) {
                         Paragraph(

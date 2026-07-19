@@ -581,7 +581,6 @@
     <string name="main_view">Vue principale</string>
     <string name="full_image_view">Vue d\'ensemble de l\'image</string>
     <string name="history_view">Vue de l\'histoire</string>
-    <string name="settings_and_alerts">Paramètres \u0026 alertes</string>
     <string name="change_background">Changer le fond d\'écran</string>
     <string name="check_claim_state">Vérification de l\'état de la demande</string>
     <string name="claim_in_progress">Réclamation en cours</string>
