@@ -9,11 +9,14 @@ import android.text.format.DateUtils
 import android.view.GestureDetector
 import android.view.HapticFeedbackConstants
 import android.view.MotionEvent
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
@@ -53,7 +56,9 @@ import com.ruuvi.station.R
 import com.ruuvi.station.app.ui.components.limitScaleTo
 import com.ruuvi.station.app.ui.components.scaleUpTo
 import com.ruuvi.station.app.ui.components.scaledToMax
+import com.ruuvi.station.app.ui.theme.Red
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
+import com.ruuvi.station.app.ui.theme.White
 import com.ruuvi.station.app.ui.theme.White50
 import com.ruuvi.station.app.ui.theme.ruuviStationFonts
 import com.ruuvi.station.app.ui.theme.ruuviStationFontsSizes
@@ -115,7 +120,7 @@ fun ChartViewPrototype(
     sharedX: MutableState<Float?>,
 ) {
     val context = LocalContext.current
-    val title = unitsConverter.getTitleForUnitType(unitType)
+    val title = stringResource(id = unitType.measurementName).substringBefore(" (")
     val icon = unitType.iconRes
     var description by remember(lineChart, unitsConverter, unitType) { mutableStateOf("") }
     val getRawValue = remember(unitsConverter, unitType) { unitsConverter.rawValueFormatter(unitType) }
