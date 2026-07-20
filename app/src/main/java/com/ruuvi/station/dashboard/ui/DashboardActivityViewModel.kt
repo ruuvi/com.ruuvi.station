@@ -35,6 +35,13 @@ class DashboardActivityViewModel(
 
     private val _sensorsList = MutableStateFlow(tagInteractor.getTags())
     val sensorsList: StateFlow<List<RuuviTag>> = _sensorsList
+    private var sensorListScrolling = false
+    private var sensorListDragging = false
+    private var sensorListOrderGeneration = 0
+    private var pendingSensorsList: List<RuuviTag>? = null
+
+    private val sensorUpdatesPaused: Boolean
+        get() = sensorListScrolling || sensorListDragging
 
     private var _dashBoardType =
         MutableStateFlow<DashboardType>(preferencesRepository.getDashboardType())
@@ -150,8 +157,54 @@ class DashboardActivityViewModel(
         networkInteractor.updateSensorName(sensorId)
     }
 
-    fun refreshSensors() {
-        _sensorsList.value = tagInteractor.getTags()
+    suspend fun refreshSensors() {
+        val orderGeneration = sensorListOrderGeneration
+        val refreshedSensors = withContext(Dispatchers.IO) {
+            tagInteractor.getTags()
+        }
+
+        if (orderGeneration != sensorListOrderGeneration) return
+
+        if (sensorUpdatesPaused) {
+            pendingSensorsList = refreshedSensors
+        } else {
+            pendingSensorsList = null
+            _sensorsList.value = refreshedSensors
+        }
+    }
+
+    fun setSensorListScrolling(scrolling: Boolean) {
+        sensorListScrolling = scrolling
+        publishPendingSensorsIfResumed()
+    }
+
+    fun setSensorListDragging(dragging: Boolean) {
+        val dragStarted = !sensorListDragging && dragging
+        val dragEnded = sensorListDragging && !dragging
+        sensorListDragging = dragging
+
+        if (dragStarted) {
+            sensorListOrderGeneration++
+        }
+
+        if (dragEnded) {
+            // Invalidate refreshes started during the drag so they cannot restore
+            // an order read before the final dragged order was persisted.
+            sensorListOrderGeneration++
+            // The pending list may contain the order from before the drag started.
+            pendingSensorsList = null
+        }
+
+        publishPendingSensorsIfResumed()
+    }
+
+    private fun publishPendingSensorsIfResumed() {
+        if (!sensorUpdatesPaused) {
+            pendingSensorsList?.let { sensors ->
+                pendingSensorsList = null
+                _sensorsList.value = sensors
+            }
+        }
     }
 
     fun isCustomOrderEnabled() = sortingInteractor.isCustomOrderEnabled()

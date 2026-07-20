@@ -86,7 +86,8 @@ class ItemStaggeredGridDragAndDropState(
     private var currentIndexOfDraggedItem by mutableIntStateOf(-1)
     private var overscrollJob by mutableStateOf<Job?>(null)
 
-    var isDragInProgress: Boolean = false
+    var isDragInProgress by mutableStateOf(false)
+        private set
 
     // Retrieve the currently dragged element's info
     private val currentElement: LazyStaggeredGridItemInfo?
