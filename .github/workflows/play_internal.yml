@@ -3,20 +3,22 @@ name: Upload to Google Play Internal
 on:
   workflow_dispatch:
     inputs:
+      firebase_run_id:
+        description: 'Firebase workflow run ID containing the tested AAB'
+        required: true
       release_notes:
         description: 'Optional Google Play internal release notes'
         required: false
         default: ''
-  push:
-    branches:
-      - 'release/*'
-    paths-ignore:
-      - 'docs/**'
-      - 'fastlane/metadata/**'
-      - 'README.md'
+      validation_only:
+        description: 'Validate the Firebase artifact without uploading it to Google Play'
+        required: false
+        default: false
+        type: boolean
 
 permissions:
   contents: read
+  actions: read
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -32,13 +34,6 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Set up JDK 17
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'temurin'
-          java-version: '17'
-          cache: 'gradle'
-
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
@@ -46,35 +41,61 @@ jobs:
           bundler-cache: true
 
       - name: Validate CI secrets
+        if: ${{ !inputs.validation_only }}
         env:
-          SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
-          KEY_STORE_PASSWORD: ${{ secrets.KEY_STORE_PASSWORD }}
-          ALIAS: ${{ secrets.ALIAS }}
-          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
           SERVICE_ACCOUNT_JSON: ${{ secrets.SERVICE_ACCOUNT_JSON }}
         run: |
-          bash .github/scripts/validate_ci_secrets.sh \
-            SIGNING_KEY \
-            KEY_STORE_PASSWORD \
-            ALIAS \
-            KEY_PASSWORD \
-            SERVICE_ACCOUNT_JSON
+          bash .github/scripts/validate_ci_secrets.sh SERVICE_ACCOUNT_JSON
 
-      - name: Set Android build metadata
-        run: bash .github/scripts/set_android_build_metadata.sh
+      - name: Download Firebase-tested AAB
+        uses: actions/download-artifact@v4
+        with:
+          name: ruuvi-station-android-firebase-aab
+          path: release-artifact
+          github-token: ${{ github.token }}
+          repository: ${{ github.repository }}
+          run-id: ${{ github.event.inputs.firebase_run_id }}
 
-      - name: Run localization script
-        run: ./scripts/ci/update_l10n.sh
+      - name: Load and validate tested build metadata
+        run: |
+          set -a
+          source release-artifact/build-metadata.env
+          set +a
 
-      - name: Run unit tests
-        run: ./gradlew :app:testWithoutFileLogsDebugUnitTest
+          if [[ "${FIREBASE_RUN_ID}" != "${{ github.event.inputs.firebase_run_id }}" ]]; then
+            echo "::error::Downloaded artifact metadata does not match the requested Firebase run."
+            exit 1
+          fi
 
-      - name: Build and upload to Google Play internal
+          if [[ ! "${ANDROID_VERSION_CODE}" =~ ^[1-9][0-9]*$ ]]; then
+            echo "::error::Invalid Android version code in the Firebase artifact."
+            exit 1
+          fi
+
+          aab_path="$(find release-artifact -maxdepth 1 -type f -name '*.aab' -print -quit)"
+          if [[ -z "${aab_path}" ]]; then
+            echo "::error::The Firebase artifact does not contain an AAB."
+            exit 1
+          fi
+
+          actual_sha256="$(sha256sum "${aab_path}" | cut -d ' ' -f 1)"
+          if [[ "${actual_sha256}" != "${AAB_SHA256}" ]]; then
+            echo "::error::The downloaded AAB checksum does not match the Firebase-tested artifact."
+            exit 1
+          fi
+
+          {
+            echo "ANDROID_VERSION_NAME=${ANDROID_VERSION_NAME}"
+            echo "ANDROID_VERSION_CODE=${ANDROID_VERSION_CODE}"
+            echo "RUUVI_APP_VERSION=${ANDROID_VERSION_NAME}"
+            echo "RUUVI_BUILD_NUMBER=${ANDROID_VERSION_CODE}"
+            echo "PLAY_INTERNAL_AAB_PATH=${GITHUB_WORKSPACE}/${aab_path}"
+            echo "TESTED_SOURCE_SHA=${SOURCE_SHA}"
+          } >> "${GITHUB_ENV}"
+
+      - name: Upload tested AAB to Google Play internal
+        if: ${{ !inputs.validation_only }}
         env:
-          SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
-          KEY_STORE_PASSWORD: ${{ secrets.KEY_STORE_PASSWORD }}
-          ALIAS: ${{ secrets.ALIAS }}
-          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
           SERVICE_ACCOUNT_JSON: ${{ secrets.SERVICE_ACCOUNT_JSON }}
           PLAY_INTERNAL_RELEASE_NOTES: ${{ github.event.inputs.release_notes }}
           GITHUB_TOKEN: ${{ github.token }}
@@ -92,17 +113,8 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ruuvi-station-android-play-internal-aab
-          path: app/build/outputs/bundle/withoutFileLogsRelease/*.aab
+          path: ${{ env.PLAY_INTERNAL_AAB_PATH }}
           if-no-files-found: error
-          retention-days: 14
-
-      - name: Upload APK
-        if: ${{ always() }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: ruuvi-station-android-play-internal-apk
-          path: app/build/outputs/apk/withoutFileLogs/release/*.apk
-          if-no-files-found: ignore
           retention-days: 14
 
       - name: Upload CI logs
@@ -117,7 +129,7 @@ jobs:
       - name: Write workflow summary
         if: ${{ always() }}
         env:
-          DISTRIBUTION_CHANNEL: Google Play internal
+          DISTRIBUTION_CHANNEL: ${{ inputs.validation_only && 'Firebase artifact validation' || 'Google Play internal' }}
           JOB_STATUS: ${{ job.status }}
           WORKFLOW_NAME: ${{ github.workflow }}
           REPOSITORY: ${{ github.repository }}
@@ -128,7 +140,7 @@ jobs:
         run: bash .github/scripts/write_ci_summary.sh
 
       - name: Notify Telegram
-        if: ${{ success() }}
+        if: ${{ success() && !inputs.validation_only }}
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}

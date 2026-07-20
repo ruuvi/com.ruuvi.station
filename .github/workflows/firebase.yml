@@ -84,7 +84,7 @@ jobs:
       - name: Run unit tests
         run: ./gradlew :app:testWithoutFileLogsDebugUnitTest
 
-      - name: Build and distribute to Firebase
+      - name: Build and distribute AAB to Firebase
         env:
           SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
           KEY_STORE_PASSWORD: ${{ secrets.KEY_STORE_PASSWORD }}
@@ -103,14 +103,37 @@ jobs:
           cp -f report.xml ci-logs/ 2>/dev/null || true
           cp -f fastlane/report.xml ci-logs/fastlane-report.xml 2>/dev/null || true
 
-      - name: Upload Firebase APK
+      - name: Stage tested release artifact
+        if: ${{ success() }}
+        run: |
+          mkdir -p release-artifact
+          cp app/build/outputs/bundle/withoutFileLogsRelease/*.aab release-artifact/
+          aab_path="$(find release-artifact -maxdepth 1 -type f -name '*.aab' -print -quit)"
+          {
+            echo "ANDROID_VERSION_NAME=${RUUVI_APP_VERSION}"
+            echo "ANDROID_VERSION_CODE=${RUUVI_BUILD_NUMBER}"
+            echo "SOURCE_SHA=${GITHUB_SHA}"
+            echo "FIREBASE_RUN_ID=${GITHUB_RUN_ID}"
+            echo "AAB_SHA256=$(sha256sum "${aab_path}" | cut -d ' ' -f 1)"
+          } > release-artifact/build-metadata.env
+
+      - name: Upload Firebase-tested AAB
+        if: ${{ success() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: ruuvi-station-android-firebase-aab
+          path: release-artifact/**
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Upload release APK
         if: ${{ success() }}
         uses: actions/upload-artifact@v4
         with:
           name: ruuvi-station-android-firebase-apk
-          path: app/build/outputs/apk/withFileLogs/release/*.apk
+          path: app/build/outputs/apk/withoutFileLogs/release/*.apk
           if-no-files-found: error
-          retention-days: 14
+          retention-days: 30
 
       - name: Upload CI logs
         if: ${{ always() }}

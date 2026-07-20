@@ -19,8 +19,7 @@ PLAY_TRACKS = ["internal", "alpha", "beta", "production"]
 PLAY_RELEASE_STATUSES = ["completed", "draft", "halted", "inProgress"]
 
 SIGNING_LANES = [
-  :deploy_to_firebase,
-  :upload_to_play_internal
+  :deploy_to_firebase
 ]
 
 before_all do |lane|
@@ -66,7 +65,8 @@ end
 
 def android_version
   build_gradle = File.read(project_path("app", "build.gradle"))
-  version_name = build_gradle[/versionName\s+"([^"]+)"/, 1]
+  version_name = env_value("ANDROID_VERSION_NAME")
+  version_name = build_gradle[/versionName\s+"([^"]+)"/, 1] if version_name.empty?
   version_code = env_value("ANDROID_VERSION_CODE")
   UI.user_error!("Could not read Android versionName from app/build.gradle") if version_name.to_s.empty?
   UI.user_error!("ANDROID_VERSION_CODE is required for release upload. GitHub Actions generates it automatically; locally, export ANDROID_VERSION_CODE=<positive integer> before running the lane.") if version_code.to_s.empty?
@@ -142,14 +142,7 @@ def newest_file(pattern)
   files.max_by { |path| File.mtime(path) }
 end
 
-def build_android_release_apk
-  run_localization_update
-  gradle(task: "clean", project_dir: PROJECT_ROOT)
-  gradle(task: "assembleWithFileLogsRelease", project_dir: PROJECT_ROOT)
-  newest_file("app/build/outputs/apk/withFileLogs/release/*.apk")
-end
-
-def build_android_play_internal_artifacts
+def build_android_release_artifacts
   run_localization_update
   gradle(task: "clean", project_dir: PROJECT_ROOT)
   gradle(task: "assembleWithoutFileLogsRelease", project_dir: PROJECT_ROOT)
@@ -340,9 +333,9 @@ rescue => error
 end
 
 platform :android do
-  desc "Build signed with-file-logs APK and distribute it to Firebase App Distribution"
+  desc "Build signed without-file-logs AAB and distribute it to Firebase App Distribution"
   lane :deploy_to_firebase do |options|
-    apk_path = build_android_release_apk
+    artifacts = build_android_release_artifacts
     release_notes = distribution_release_notes(options, env_name: "FIREBASE_RELEASE_NOTES")
     write_release_notes_artifact(release_notes)
 
@@ -353,17 +346,18 @@ platform :android do
     firebase_app_distribution(
       {
         app: firebase_android_app_id,
-        android_artifact_type: "APK",
-        android_artifact_path: apk_path,
+        android_artifact_type: "AAB",
+        android_artifact_path: artifacts[:aab],
         release_notes: release_notes,
         groups: firebase_groups
       }.merge(firebase_auth_options)
     )
   end
 
-  desc "Build signed without-file-logs AAB and upload it to Google Play internal testing"
+  desc "Upload the Firebase-tested AAB to Google Play internal testing without rebuilding"
   lane :upload_to_play_internal do |options|
-    artifacts = build_android_play_internal_artifacts
+    aab_path = required_env("PLAY_INTERNAL_AAB_PATH")
+    UI.user_error!("Firebase-tested AAB does not exist at #{aab_path}") unless File.file?(aab_path)
     version = android_version
     release_notes = distribution_release_notes(options, env_name: "PLAY_INTERNAL_RELEASE_NOTES")
     write_release_notes_artifact(release_notes)
@@ -371,7 +365,7 @@ platform :android do
     upload_to_play_store(
       supply_base_options.merge(
         track: "internal",
-        aab: artifacts[:aab],
+        aab: aab_path,
         metadata_path: play_changelog_metadata_path(release_notes, version[:code]),
         version_name: version[:name],
         release_status: "completed",
