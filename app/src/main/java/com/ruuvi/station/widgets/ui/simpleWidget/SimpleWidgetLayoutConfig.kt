@@ -21,7 +21,11 @@ data class SimpleWidgetLayoutConfig(
     val refreshIconSize: Dp
 ) {
     companion object {
-        fun fromHeight(height: Dp, measurementType: WidgetType?): SimpleWidgetLayoutConfig {
+        fun fromHeight(
+            height: Dp,
+            measurementType: WidgetType?,
+            zoomFactor: Float = 1f
+        ): SimpleWidgetLayoutConfig {
             val baseConfig = when {
                 height >= 90.dp -> SimpleWidgetLayoutConfig(
                     displayNameFontSize = ruuviStationFontsSizes.normal,
@@ -36,6 +40,7 @@ data class SimpleWidgetLayoutConfig(
                     refreshButtonSize = 40.dp,
                     refreshIconSize = 16.dp
                 )
+
                 height >= 75.dp -> SimpleWidgetLayoutConfig(
                     displayNameFontSize = ruuviStationFontsSizes.petite,
                     valueFontSize = ruuviStationFontsSizes.big,
@@ -49,6 +54,7 @@ data class SimpleWidgetLayoutConfig(
                     refreshButtonSize = 36.dp,
                     refreshIconSize = 14.dp
                 )
+
                 else -> SimpleWidgetLayoutConfig(
                     displayNameFontSize = ruuviStationFontsSizes.tiny,
                     valueFontSize = ruuviStationFontsSizes.miniature,
@@ -64,38 +70,22 @@ data class SimpleWidgetLayoutConfig(
                 )
             }
 
-            val resolvedValueFontSize = resolveValueFontSize(
-                height = height,
-                displayNameFontSize = baseConfig.displayNameFontSize,
-                secondaryFontSize = baseConfig.secondaryFontSize,
-                maxFontSize = baseConfig.valueFontSize,
-                measurementType = measurementType
-            )
+            val scaled = if (zoomFactor != 1f) {
+                baseConfig.copy(
+                    aqiBoxHeight = baseConfig.aqiBoxHeight / zoomFactor,
+                    unitPadding = baseConfig.unitPadding / zoomFactor,
+                    aqiMeasurementPadding = baseConfig.aqiMeasurementPadding / zoomFactor,
+                    dotSize = baseConfig.dotSize / zoomFactor,
+                    glowSize = baseConfig.glowSize / zoomFactor,
+                    barHeight = baseConfig.barHeight / zoomFactor,
+                    refreshButtonSize = baseConfig.refreshButtonSize / zoomFactor,
+                    refreshIconSize = baseConfig.refreshIconSize / zoomFactor
+                )
+            } else {
+                baseConfig
+            }
 
-            return baseConfig.copy(valueFontSize = resolvedValueFontSize)
-        }
-
-        private fun resolveValueFontSize(
-            height: Dp,
-            displayNameFontSize: TextUnit,
-            secondaryFontSize: TextUnit,
-            maxFontSize: TextUnit,
-            measurementType: WidgetType?
-        ): TextUnit {
-            val verticalWidgetPadding = 16.dp
-            val topAndBottomTextHeight =
-                displayNameFontSize.value.dp + secondaryFontSize.value.dp
-            val measurementLabelHeight = secondaryFontSize.value.dp
-            val aqiExtraHeight = if (measurementType == WidgetType.AIR_QUALITY) 14.dp else 0.dp
-            val reservedHeight =
-                verticalWidgetPadding + topAndBottomTextHeight + measurementLabelHeight + aqiExtraHeight
-
-            val sensorValueHeight =
-                (height - reservedHeight).coerceAtLeast(ruuviStationFontsSizes.miniature.value.dp)
-            val dynamicSensorValueSize = (sensorValueHeight.value * 0.9f)
-                .coerceIn(ruuviStationFontsSizes.miniature.value, maxFontSize.value)
-
-            return dynamicSensorValueSize.sp
+            return scaled
         }
     }
 }
