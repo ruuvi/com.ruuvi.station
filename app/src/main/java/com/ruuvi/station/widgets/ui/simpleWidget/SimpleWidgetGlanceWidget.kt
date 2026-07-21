@@ -144,7 +144,7 @@ private fun SimpleWidgetContent(
     }
     val config = SimpleWidgetLayoutConfig.fromHeight(
         height = if (height < 65.dp) fallbackHeight else height,
-        measurementType = measurementType
+        zoomFactor = zoomFactor
     )
     
     val availableWidth = size.width - 12.dp
