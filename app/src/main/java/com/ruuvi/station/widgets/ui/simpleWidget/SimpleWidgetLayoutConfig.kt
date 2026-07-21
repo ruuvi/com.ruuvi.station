@@ -3,9 +3,7 @@ package com.ruuvi.station.widgets.ui.simpleWidget
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.ruuvi.station.app.ui.theme.ruuviStationFontsSizes
-import com.ruuvi.station.widgets.data.WidgetType
 
 data class SimpleWidgetLayoutConfig(
     val displayNameFontSize: TextUnit,
