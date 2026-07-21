@@ -22,6 +22,9 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.repeatOnLifecycle
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
@@ -37,6 +40,7 @@ import com.ruuvi.station.tagsettings.ui.SensorSettingsTitle
 import com.ruuvi.station.units.domain.UnitsConverter
 import com.ruuvi.station.units.model.UnitType
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import timber.log.Timber
 import java.text.DateFormat
 import java.util.*
@@ -57,14 +61,17 @@ fun AlarmsGroup(
         mutableStateOf(false)
     }
 
-    LaunchedEffect(key1 = true) {
+    val lifecycleOwner = LocalLifecycleOwner.current
+    LaunchedEffect(viewModel, lifecycleOwner) {
         Timber.d("Alarms LaunchedEffect")
         viewModel.initAlarms()
-        while (true) {
-            Timber.d("AlarmItems refreshAlarmState ")
-            viewModel.refreshAlarmState()
-            viewModel.refreshSensorState()
-            delay(1000)
+        lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+            while (isActive) {
+                Timber.d("AlarmItems refreshAlarmState ")
+                viewModel.refreshAlarmState()
+                viewModel.refreshSensorState()
+                delay(1_000)
+            }
         }
     }
     Timber.d("AlarmItems refresh ")

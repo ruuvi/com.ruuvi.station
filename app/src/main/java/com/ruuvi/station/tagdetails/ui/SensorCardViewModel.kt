@@ -75,9 +75,6 @@ class SensorCardViewModel(
     private val _chartCleared = MutableSharedFlow<String>()
     private val chartCleared: SharedFlow<String> = _chartCleared
 
-    private val _showCharts = MutableStateFlow<Boolean> (arguments.showChart)
-    val showCharts: StateFlow<Boolean> = _showCharts
-
     val syncInProgress = networkDataSyncInteractor.syncInProgressFlow
 
     val graphDrawDots = preferencesRepository.graphDrawDots()
@@ -349,7 +346,6 @@ class SensorCardViewModel(
     }
 
     fun scrollToChart(type: UnitType) {
-        _showCharts.value = true
         viewModelScope.launch {
             _scrollToChartEvent.send(type)
         }
@@ -495,10 +491,6 @@ class SensorCardViewModel(
         preferencesRepository.setDontShowGattSync(true)
     }
 
-    fun setShowCharts(showCharts: Boolean) {
-        _showCharts.value = showCharts
-    }
-
     fun getNfcScanResponse(scanInfo: SensorNfсScanInfo) = nfcResultInteractor.getNfcScanResponse(scanInfo)
 
     fun addSensor(sensorId: String) {
@@ -509,12 +501,6 @@ class SensorCardViewModel(
 
     fun saveSelected(sensorId: String) {
         _selectedSensor.value = sensorId
-    }
-
-    fun getIndex(sensorId: String): Int {
-        val sensors = tagInteractor.getTags()
-        val index = sensors.indexOfFirst { it.id == sensorId }
-        return if (index == - 1) 0 else index
     }
 
     init {
@@ -528,7 +514,6 @@ class SensorCardViewModel(
 
 data class SensorCardViewModelArguments(
     val sensorId: String? = null,
-    val showChart: Boolean = false
 )
 
 data class SyncStatus (
