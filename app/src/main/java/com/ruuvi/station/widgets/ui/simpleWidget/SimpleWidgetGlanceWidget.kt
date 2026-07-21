@@ -35,7 +35,6 @@ import androidx.glance.layout.padding
 import androidx.glance.layout.width
 import androidx.glance.layout.fillMaxHeight
 import androidx.glance.layout.size
-import androidx.glance.layout.ContentScale
 import androidx.glance.LocalSize
 import androidx.glance.LocalContext
 import com.ruuvi.station.R
