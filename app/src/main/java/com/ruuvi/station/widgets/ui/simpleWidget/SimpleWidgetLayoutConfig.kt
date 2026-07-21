@@ -23,7 +23,6 @@ data class SimpleWidgetLayoutConfig(
     companion object {
         fun fromHeight(
             height: Dp,
-            measurementType: WidgetType?,
             zoomFactor: Float = 1f
         ): SimpleWidgetLayoutConfig {
             val baseConfig = when {
