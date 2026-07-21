@@ -6,7 +6,7 @@
     android:previewImage="@drawable/simple_widget_preview_new"
     android:previewLayout="@layout/simple_widget_preview_new"
     android:initialLayout="@layout/widget_simple_preview"
-    android:resizeMode="none"
+    android:resizeMode="vertical"
     android:widgetCategory="home_screen"
     android:configure="com.ruuvi.station.widgets.ui.simpleWidget.SimpleWidgetConfigureActivity"
     android:targetCellHeight="1"

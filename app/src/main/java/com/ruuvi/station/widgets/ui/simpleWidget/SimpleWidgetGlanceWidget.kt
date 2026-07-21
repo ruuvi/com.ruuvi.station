@@ -1,6 +1,8 @@
 package com.ruuvi.station.widgets.ui.simpleWidget
 
 import android.content.Context
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.glance.state.PreferencesGlanceStateDefinition
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
@@ -33,6 +35,7 @@ import androidx.glance.layout.padding
 import androidx.glance.layout.width
 import androidx.glance.layout.fillMaxHeight
 import androidx.glance.layout.size
+import androidx.glance.layout.ContentScale
 import androidx.glance.LocalSize
 import androidx.glance.LocalContext
 import com.ruuvi.station.R
@@ -46,6 +49,8 @@ import com.ruuvi.station.tagdetails.ui.SensorCardActivity
 import com.ruuvi.station.widgets.ui.glance.GlanceColors
 import com.ruuvi.station.widgets.ui.glance.CustomFontText
 import com.ruuvi.station.widgets.ui.glance.RefreshButton
+import com.ruuvi.station.widgets.ui.glance.getZoomFactor
+import com.ruuvi.station.widgets.ui.glance.toWidgetSp
 import com.ruuvi.station.widgets.ui.WidgetScreenSizeCategory
 import com.ruuvi.station.widgets.ui.resolveWidgetScreenSizeCategory
 
@@ -55,6 +60,7 @@ object SimpleWidgetGlanceWidget : GlanceAppWidget() {
 
     override val sizeMode = SizeMode.Exact
 
+    @RequiresApi(Build.VERSION_CODES.N)
     override suspend fun provideGlance(context: Context, id: GlanceId) {
         val appWidgetId = GlanceAppWidgetManager(context).getAppWidgetId(id)
 
@@ -106,6 +112,7 @@ class OpenSimpleWidgetSensorAction : ActionCallback {
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.N)
 @Composable
 private fun SimpleWidgetContent(
     appWidgetId: Int,
@@ -126,6 +133,7 @@ private fun SimpleWidgetContent(
     }
 
     val context = LocalContext.current
+    val zoomFactor = getZoomFactor(context)
     val screenSizeCategory = resolveWidgetScreenSizeCategory(context)
     val size = LocalSize.current
     val height = size.height
@@ -151,7 +159,7 @@ private fun SimpleWidgetContent(
         Column(modifier = GlanceModifier.fillMaxSize()) {
             CustomFontText(
                 text = displayName,
-                fontSize = config.displayNameFontSize,
+                fontSize = config.displayNameFontSize.toWidgetSp(context),
                 colorProvider = GlanceColors.widgetSensorName,
                 fontResId = R.font.mulish_bold,
                 maxWidth = availableWidth
@@ -178,7 +186,7 @@ private fun SimpleWidgetContent(
             ) {
                 CustomFontText(
                     text = updated,
-                    fontSize = config.secondaryFontSize,
+                    fontSize = config.secondaryFontSize.toWidgetSp(context),
                     colorProvider = GlanceColors.widgetSensorName,
                     fontResId = R.font.mulish_regular
                 )
@@ -200,13 +208,14 @@ private fun GlanceMeasurementDisplay(
     measurementName: String,
     config: SimpleWidgetLayoutConfig
 ) {
+    val context = LocalContext.current
     Row(
         modifier = GlanceModifier.fillMaxWidth(),
         verticalAlignment = Alignment.Top
     ) {
         CustomFontText(
             text = sensorValue,
-            fontSize = config.valueFontSize,
+            fontSize = config.valueFontSize.toWidgetSp(context),
             colorProvider = GlanceColors.valueColor,
             fontResId = R.font.oswald_bold
         )
@@ -215,7 +224,7 @@ private fun GlanceMeasurementDisplay(
 
         CustomFontText(
             text = unit,
-            fontSize = config.secondaryFontSize,
+            fontSize = config.secondaryFontSize.toWidgetSp(context),
             colorProvider = GlanceColors.widgetSensorName,
             fontResId = R.font.oswald_light,
             modifier = GlanceModifier.padding(top = config.unitPadding)
@@ -224,7 +233,7 @@ private fun GlanceMeasurementDisplay(
 
     CustomFontText(
         text = measurementName,
-        fontSize = config.secondaryFontSize,
+        fontSize = config.secondaryFontSize.toWidgetSp(context),
         colorProvider = GlanceColors.widgetSensorName,
         fontResId = R.font.mulish_regular
     )
@@ -236,6 +245,7 @@ private fun GlanceAQIDisplay(
     measurementName: String,
     config: SimpleWidgetLayoutConfig
 ) {
+    val context = LocalContext.current
     val aqiText = sensorValue.substringBefore("/")
     val aqiValue = aqiText.toDoubleOrNull()
     val aqiColor = aqiValue?.let { AQI.CalculatedAQI(it).color } ?: Color.Gray
@@ -252,7 +262,7 @@ private fun GlanceAQIDisplay(
         ) {
             CustomFontText(
                 text = aqiText,
-                fontSize = config.valueFontSize,
+                fontSize = config.valueFontSize.toWidgetSp(context),
                 colorProvider = GlanceColors.valueColor,
                 fontResId = R.font.oswald_bold
             )
@@ -262,7 +272,7 @@ private fun GlanceAQIDisplay(
             Box(modifier = GlanceModifier.height(config.aqiBoxHeight)) {
                 CustomFontText(
                     text = "/100",
-                    fontSize = config.secondaryFontSize,
+                    fontSize = config.secondaryFontSize.toWidgetSp(context),
                     colorProvider = GlanceColors.valueColor,
                     fontResId = R.font.oswald_light,
                     modifier = GlanceModifier.padding(top = config.unitPadding)
@@ -274,7 +284,7 @@ private fun GlanceAQIDisplay(
                 ) {
                     CustomFontText(
                         text = measurementName,
-                        fontSize = config.secondaryFontSize,
+                        fontSize = config.secondaryFontSize.toWidgetSp(context),
                         colorProvider = GlanceColors.widgetSensorName,
                         fontResId = R.font.mulish_regular,
                         modifier = GlanceModifier.padding(bottom = config.aqiMeasurementPadding)
