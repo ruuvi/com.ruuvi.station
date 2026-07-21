@@ -5,8 +5,8 @@ through Google Play tracks, or update the Play Store listing.
 
 The short version:
 
-- Use Firebase when QA needs an installable APK quickly.
-- Use Google Play internal when a candidate build should enter the Play Store release path.
+- Build the signed `withoutFileLogsRelease` AAB once and distribute it to QA through Firebase.
+- Upload that exact Firebase-tested AAB to Google Play internal without rebuilding it.
 - Promote the same tested build from internal to alpha, then beta, then production.
 - Edit `fastlane/metadata/` when Play Store text or screenshots need to change.
 
@@ -40,11 +40,19 @@ upload a new build number.
 
 ### Firebase Tester Build
 
-Use `Deploy to Firebase [Ruuvi Station Android]` when QA needs a signed APK from a branch.
+Use `Deploy to Firebase [Ruuvi Station Android]` to create a release candidate for QA.
 
-It runs tests, builds the `withFileLogsRelease` APK, uploads it to Firebase App Distribution, stores
-the APK as a downloadable Actions artifact, and sends a Telegram message after a successful upload
-when notifications are configured.
+It runs tests, builds and signs the `withoutFileLogsRelease` AAB, and uploads that AAB to Firebase
+App Distribution.
+
+The workflow also stores the signed AAB for 30 days as the
+`ruuvi-station-android-firebase-aab` GitHub Actions artifact. The artifact includes
+`build-metadata.env`, which records its version, source commit, Firebase workflow run ID, and SHA-256
+checksum. This artifact is the only release candidate that the Play Internal workflow accepts.
+
+For convenience, the workflow also builds the signed `withoutFileLogsRelease` APK and stores it for
+30 days as `ruuvi-station-android-firebase-apk`. This APK is useful for direct installation and
+troubleshooting, but Firebase distributes the AAB and only the AAB can be promoted to Play Internal.
 
 Manual run:
 
@@ -54,16 +62,19 @@ Manual run:
 4. Pick the branch.
 5. Add release notes if needed.
 6. Run it.
+7. After it succeeds, copy the numeric workflow run ID from the run URL. For example, the run ID in
+   `https://github.com/ruuvi/com.ruuvi.station/actions/runs/123456789` is `123456789`.
 
-Use this for quick QA testing. Do not treat a Firebase upload as a Play Store release candidate unless
-the same code will also go through the Play track.
+QA should approve or reject this Firebase release before it enters Google Play.
 
 ### Google Play Internal Testing
 
-Use `Upload to Google Play Internal` when a build is ready to start the Play Store testing path.
+Use `Upload to Google Play Internal` after QA approves a Firebase release candidate.
 
-It runs tests, builds the signed release AAB, uploads it to the internal testing track, and also stores
-a signed APK artifact for manual install testing.
+This workflow does not rebuild the application. It downloads
+`ruuvi-station-android-firebase-aab` from the selected Firebase workflow run, validates the embedded
+run ID and build metadata, recalculates the SHA-256 checksum, and uploads that exact AAB to the
+internal testing track. It stores the same AAB on the Play Internal workflow run for traceability.
 
 Manual run:
 
@@ -71,9 +82,17 @@ Manual run:
 2. Choose `Upload to Google Play Internal`.
 3. Click `Run workflow`.
 4. Pick the branch.
-5. Add release notes if needed.
-6. Run it.
-7. Check Play Console and copy the uploaded build number. You will need that number for promotions.
+5. Enter the approved Firebase workflow run ID.
+6. Add release notes if needed.
+7. Leave `validation_only` disabled to upload to Play.
+8. Run it.
+9. Check Play Console and copy the uploaded build number. You will need that number for promotions.
+
+To test only the artifact handoff, enable `validation_only`. The workflow will download and verify
+the Firebase AAB without uploading it to Google Play.
+
+Because Firebase artifacts are retained for 30 days, promote an approved candidate to Play Internal
+before its artifact expires.
 
 ### Google Play Alpha
 
@@ -115,7 +134,7 @@ Use `Submit Google Play Production` only after the same build number has already
 The normal path is:
 
 ```text
-internal -> alpha -> beta -> production
+Firebase AAB -> Play internal -> alpha -> beta -> production
 ```
 
 Alpha can be skipped when needed. Beta can also be skipped for small or urgent releases, but the
