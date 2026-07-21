@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:theme="@style/AppTheme.AppWidgetContainer"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:minHeight="90dp"
+    tools:layout_width="140dp"
+    tools:layout_height="90dp">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="fitXY"
+        android:src="@drawable/simple_widget_preview_new" />
+
+</RelativeLayout>
