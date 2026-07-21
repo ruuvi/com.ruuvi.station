@@ -6,6 +6,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -24,6 +25,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
@@ -57,31 +59,31 @@ fun AlarmsGroup(
         android.Manifest.permission.POST_NOTIFICATIONS
     )
 
-    var permissionAsked by remember {
+    var permissionAsked by rememberSaveable {
         mutableStateOf(false)
     }
 
     val lifecycleOwner = LocalLifecycleOwner.current
     LaunchedEffect(viewModel, lifecycleOwner) {
-        Timber.d("Alarms LaunchedEffect")
         viewModel.initAlarms()
         lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
             while (isActive) {
-                Timber.d("AlarmItems refreshAlarmState ")
                 viewModel.refreshAlarmState()
                 viewModel.refreshSensorState()
                 delay(1_000)
             }
         }
     }
-    Timber.d("AlarmItems refresh ")
     val alarms = viewModel.alarms
 
-    val sensorState by viewModel.sensorState.collectAsState()
+    val sensorState by viewModel.sensorState.collectAsStateWithLifecycle()
 
-    if (!notificationPermissionState.status.isGranted && !permissionAsked && alarms.any { it.isEnabled.value }) {
-        permissionAsked = true
-        LaunchedEffect(key1 = true) {
+    val shouldRequestNotificationPermission = !notificationPermissionState.status.isGranted &&
+        !permissionAsked &&
+        alarms.any { it.isEnabled.value }
+    LaunchedEffect(shouldRequestNotificationPermission) {
+        if (shouldRequestNotificationPermission) {
+            permissionAsked = true
             notificationPermissionState.launchPermissionRequest()
         }
     }
@@ -89,7 +91,6 @@ fun AlarmsGroup(
     Column {
         if (showTitle && alarms.isNotEmpty()) SensorSettingsTitle(title = stringResource(id = R.string.alerts))
         for (itemState in alarms) {
-            Timber.d("AlarmItem $itemState")
             val title = viewModel.getTitle(itemState.type)
             when (itemState.type) {
                 AlarmType.TEMPERATURE, AlarmType.HUMIDITY, AlarmType.PRESSURE, AlarmType.CO2,

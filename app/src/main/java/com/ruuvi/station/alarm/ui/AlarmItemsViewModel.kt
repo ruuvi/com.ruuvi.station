@@ -3,6 +3,7 @@ package com.ruuvi.station.alarm.ui
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.ruuvi.station.alarm.domain.AlarmItemState
 import com.ruuvi.station.alarm.domain.AlarmType
 import com.ruuvi.station.alarm.domain.AlarmsInteractor
@@ -14,7 +15,6 @@ import com.ruuvi.station.util.extensions.diff
 import com.ruuvi.station.util.extensions.equalsEpsilon
 import com.ruuvi.station.util.extensions.processStatus
 import com.ruuvi.station.util.extensions.round
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -214,8 +214,8 @@ class AlarmItemsViewModel(
     }
 
     fun refreshSensorState() {
-        Timber.d("getTagInfo")
-        CoroutineScope(Dispatchers.IO).launch {
+        Timber.d("refreshSensorState")
+        viewModelScope.launch(Dispatchers.IO) {
             val sensorState = tagSettingsInteractor.getFavouriteSensorById(sensorId)
             if (sensorState != null) {
                 _sensorState.value = sensorState

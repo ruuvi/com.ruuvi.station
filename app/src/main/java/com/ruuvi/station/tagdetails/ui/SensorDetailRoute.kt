@@ -1,6 +1,7 @@
 package com.ruuvi.station.tagdetails.ui
 
 import android.net.Uri
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
@@ -9,11 +10,13 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.ScaffoldState
+import androidx.compose.material.SnackbarHost
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -23,10 +26,12 @@ import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.SaveableStateHolder
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.saveable.rememberSaveableStateHolder
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
@@ -164,7 +169,11 @@ private fun SensorDetailScreen(
             }
     }
 
-    androidx.activity.compose.BackHandler(enabled = nestedSettings) {
+    LaunchedEffect(currentSensor?.id, destination) {
+        scaffoldState.snackbarHostState.currentSnackbarData?.dismiss()
+    }
+
+    BackHandler(enabled = nestedSettings) {
         onSettingsRouteSelected(SensorSettingsRoutes.SENSOR_SETTINGS_ROOT)
     }
 
@@ -204,7 +213,7 @@ private fun SensorDetailScreen(
                     destination = destination,
                     syncInProgress = syncInProgress,
                     alarmStatus = currentSensor?.alarmSensorStatus ?: AlarmSensorStatus.NoAlarms,
-                    themed = !destination.usesSensorBackground,
+                    useOpaqueBackground = !destination.usesSensorBackground,
                     onBack = onFinish,
                     onDestinationSelected = onDestinationSelected,
                 )
@@ -267,6 +276,13 @@ private fun SensorDetailScreen(
                 )
             }
         }
+
+        SnackbarHost(
+            hostState = scaffoldState.snackbarHostState,
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .navigationBarsPadding(),
+        )
     }
 }
 
@@ -284,13 +300,14 @@ private fun SensorRootPager(
     useNewSensorCard: Boolean,
     viewModel: SensorCardViewModel,
     viewModelProvider: SensorDetailViewModelProvider,
-    saveableStateHolder: androidx.compose.runtime.saveable.SaveableStateHolder,
+    saveableStateHolder: SaveableStateHolder,
     onDestinationSelected: (SensorDetailDestination) -> Unit,
     onSettingsRouteSelected: (String) -> Unit,
 ) {
     HorizontalPager(
         modifier = Modifier.fillMaxSize(),
         state = pagerState,
+        key = { page -> sensors[page].id },
         userScrollEnabled = destination.allowsSensorSwipe,
     ) { page ->
         sensors.getOrNull(page)?.let { sensor ->

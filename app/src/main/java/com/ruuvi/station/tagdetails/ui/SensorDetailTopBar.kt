@@ -38,7 +38,7 @@ internal fun SensorDetailTopAppBar(
     destination: SensorDetailDestination,
     syncInProgress: Boolean,
     alarmStatus: AlarmSensorStatus,
-    themed: Boolean,
+    useOpaqueBackground: Boolean,
     onBack: () -> Unit,
     onDestinationSelected: (SensorDetailDestination) -> Unit,
 ) {
@@ -104,7 +104,11 @@ internal fun SensorDetailTopAppBar(
                     )
                 }
             },
-            backgroundColor = if (themed) RuuviStationTheme.colors.topBar else Color.Transparent,
+            backgroundColor = if (useOpaqueBackground) {
+                RuuviStationTheme.colors.topBar
+            } else {
+                Color.Transparent
+            },
             contentColor = RuuviStationTheme.colors.topBarText,
             elevation = 0.dp,
         )
@@ -161,7 +165,10 @@ private fun DestinationAction(
             .fillMaxHeight(),
         contentAlignment = Alignment.Center,
     ) {
-        IconButton(onClick = { if (!selected) onClick() }) {
+        IconButton(
+            enabled = !selected,
+            onClick = onClick,
+        ) {
             content()
         }
         if (selected) {

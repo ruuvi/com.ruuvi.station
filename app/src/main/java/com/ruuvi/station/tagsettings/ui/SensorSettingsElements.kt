@@ -28,6 +28,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.ruuvi.station.R
 import com.ruuvi.station.app.ui.UiText
@@ -54,13 +55,17 @@ fun SensorSettings(
     viewModel: TagSettingsViewModel,
 ) {
     val context = LocalContext.current
-    val sensorState by viewModel.sensorState.collectAsState()
-    val userLoggedIn by viewModel.userLoggedIn.collectAsState()
-    val sensorOwnedByUser by viewModel.sensorOwnedByUser.collectAsState(initial = false)
-    val sensorIsShared by viewModel.sensorShared.collectAsState()
-    val sensorOwnedOrOffline by viewModel.sensorOwnedOrOffline.collectAsState(initial = false)
-    val isLowBattery by viewModel.isLowBattery.collectAsState(initial = false)
-    val firmware by viewModel.firmware.collectAsState(initial = null)
+    val sensorState by viewModel.sensorState.collectAsStateWithLifecycle()
+    val userLoggedIn by viewModel.userLoggedIn.collectAsStateWithLifecycle()
+    val sensorOwnedByUser by viewModel.sensorOwnedByUser.collectAsStateWithLifecycle(
+        initialValue = false,
+    )
+    val sensorIsShared by viewModel.sensorShared.collectAsStateWithLifecycle()
+    val sensorOwnedOrOffline by viewModel.sensorOwnedOrOffline.collectAsStateWithLifecycle(
+        initialValue = false,
+    )
+    val isLowBattery by viewModel.isLowBattery.collectAsStateWithLifecycle(initialValue = false)
+    val firmware by viewModel.firmware.collectAsStateWithLifecycle(initialValue = null)
     var showAskToClaimDialog by remember {
         mutableStateOf(false)
     }

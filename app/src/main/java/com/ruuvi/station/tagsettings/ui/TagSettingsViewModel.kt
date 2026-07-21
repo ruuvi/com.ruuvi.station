@@ -115,9 +115,9 @@ class TagSettingsViewModel(
         return firmware?.let { UiText.DynamicString(firmware) }
     }
 
-    fun getTagInfo() {
-        Timber.d("getTagInfo")
-        CoroutineScope(Dispatchers.IO).launch {
+    fun refreshTagInfo() {
+        Timber.d("refreshTagInfo")
+        viewModelScope.launch(Dispatchers.IO) {
             val sensorState = interactor.getFavouriteSensorById(sensorId)
             if (sensorState != null) {
                 _sensorState.value = sensorState
@@ -127,7 +127,7 @@ class TagSettingsViewModel(
 
     fun updateSensorFirmwareVersion() {
         Timber.d("updateSensorFirmwareVersion")
-        CoroutineScope(Dispatchers.IO).launch {
+        viewModelScope.launch(Dispatchers.IO) {
             if (sensorState.value.latestMeasurement?.connectable == true) {
                 val fwResult = sensorFwInteractor.getSensorFirmwareVersion(sensorId)
                 if (fwResult.isSuccess && fwResult.fw.isNotEmpty()) {
@@ -137,12 +137,14 @@ class TagSettingsViewModel(
         }
     }
 
-    fun checkIfSensorShared() {
-        Timber.d("checkIfSensorShared")
-        try {
-            getSensorSharedEmails()
-        } catch (e: Exception) {
-            Timber.e(e)
+    fun refreshSensorShareStatus() {
+        Timber.d("refreshSensorShareStatus")
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                getSensorSharedEmails()
+            } catch (e: Exception) {
+                Timber.e(e)
+            }
         }
     }
 
@@ -164,7 +166,7 @@ class TagSettingsViewModel(
     fun setName(name: String?) {
         Timber.d("setName")
         interactor.updateTagName(sensorId, name)
-        getTagInfo()
+        refreshTagInfo()
         val status = networkInteractor.updateSensorNameWithStatus(sensorId)
         status?.let {
             processStatus(it, _uiEvent)

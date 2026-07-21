@@ -24,10 +24,10 @@ fun SensorSettingsRootScreen(
 ) {
     val lifecycleOwner = LocalLifecycleOwner.current
     LaunchedEffect(viewModel, lifecycleOwner) {
-        viewModel.checkIfSensorShared()
+        viewModel.refreshSensorShareStatus()
         lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
             while (isActive) {
-                viewModel.getTagInfo()
+                viewModel.refreshTagInfo()
                 delay(1_000)
             }
         }
