@@ -195,7 +195,7 @@ val ruuviTagPreview = RuuviTag(
     defaultBackground = 0,
     userBackground = "",
     networkBackground = "",
-    alarmSensorStatus = AlarmSensorStatus.NotTriggered,
+    alarmSensorStatus = AlarmSensorStatus.NotTriggered(enabledCount = 1),
     lastSync = Date(),
     networkLastSync = Date(),
     networkSensor = true,

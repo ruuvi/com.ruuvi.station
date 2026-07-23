@@ -52,14 +52,13 @@ import coil.request.ImageRequest
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.ruuvi.station.R
 import com.ruuvi.station.addtag.ui.AddTagActivity
-import com.ruuvi.station.alarm.domain.AlarmSensorStatus
 import com.ruuvi.station.alarm.domain.AlarmType
 import com.ruuvi.station.app.permissions.BluetoothPermissions
 import com.ruuvi.station.app.permissions.NotificationPermission
 import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.app.ui.DashboardMainMenu
 import com.ruuvi.station.app.ui.DashboardTopAppBar
-import com.ruuvi.station.app.ui.components.BlinkingEffect
+import com.ruuvi.station.app.ui.components.AlertBadgeIcon
 import com.ruuvi.station.app.ui.components.Paragraph
 import com.ruuvi.station.app.ui.components.RuuviButton
 import com.ruuvi.station.app.ui.components.limitScaleTo
@@ -812,35 +811,20 @@ fun ItemButtons(
         horizontalArrangement = Arrangement.End,
     ) {
         CompositionLocalProvider(LocalMinimumInteractiveComponentEnforcement provides false) {
-            if (sensor.alarmSensorStatus is AlarmSensorStatus.NotTriggered) {
+            if (sensor.alarmSensorStatus.enabledCount > 0) {
                 IconButton(
                     modifier = Modifier.size(RuuviStationTheme.dimensions.dashboardIconSize),
                     enabled = interactionEnabled,
                     onClick = {
                         SensorCardActivity.start(context, sensor.id, SensorCardOpenType.ALERTS)
-                    }
+                    },
                 ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_notifications_on_24px),
-                        contentDescription = null,
-                        tint = RuuviStationTheme.colors.accent
+                    AlertBadgeIcon(
+                        alarmStatus = sensor.alarmSensorStatus,
+                        iconColor = Color.White,
+                        triggeredBadgeColor = RuuviStationTheme.colors.activeAlertThemed,
+                        contentDescription = stringResource(id = R.string.alerts),
                     )
-                }
-            } else if (sensor.alarmSensorStatus is AlarmSensorStatus.Triggered) {
-                BlinkingEffect() {
-                    IconButton(
-                        modifier = Modifier.size(RuuviStationTheme.dimensions.dashboardIconSize),
-                        enabled = interactionEnabled,
-                        onClick = {
-                            SensorCardActivity.start(context, sensor.id, SensorCardOpenType.ALERTS)
-                        }
-                    ) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_notifications_active_24px),
-                            contentDescription = null,
-                            tint = RuuviStationTheme.colors.activeAlertThemed
-                        )
-                    }
                 }
             } else {
                 Spacer(modifier = Modifier.size(RuuviStationTheme.dimensions.dashboardIconSize))

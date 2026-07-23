@@ -28,7 +28,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.ruuvi.station.R
 import com.ruuvi.station.alarm.domain.AlarmSensorStatus
-import com.ruuvi.station.app.ui.components.BlinkingEffect
+import com.ruuvi.station.app.ui.components.AlertBadgeIcon
 import com.ruuvi.station.app.ui.components.CircularIndicator
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.tag.domain.RuuviTag
@@ -88,9 +88,11 @@ internal fun SensorDetailTopAppBar(
                     selected = destination == SensorDetailDestination.ALERTS,
                     onClick = { onDestinationSelected(SensorDetailDestination.ALERTS) },
                 ) {
-                    AlertIcon(
+                    AlertBadgeIcon(
                         alarmStatus = alarmStatus,
-                        defaultColor = iconColor,
+                        iconColor = iconColor,
+                        triggeredBadgeColor = RuuviStationTheme.colors.activeAlert,
+                        contentDescription = stringResource(id = R.string.alerts),
                     )
                 }
                 DestinationAction(
@@ -122,33 +124,6 @@ internal fun SensorDetailTopAppBar(
             ) {
                 CircularIndicator(color = Color.White.copy(alpha = 0.5f))
             }
-        }
-    }
-}
-
-@Composable
-private fun AlertIcon(
-    alarmStatus: AlarmSensorStatus,
-    defaultColor: Color,
-) {
-    val contentDescription = stringResource(id = R.string.alerts)
-    when (alarmStatus) {
-        AlarmSensorStatus.NoAlarms -> Icon(
-            painter = painterResource(id = R.drawable.ic_notifications_off_24px),
-            tint = defaultColor,
-            contentDescription = contentDescription,
-        )
-        AlarmSensorStatus.NotTriggered -> Icon(
-            painter = painterResource(id = R.drawable.ic_notifications_on_24px),
-            tint = defaultColor,
-            contentDescription = contentDescription,
-        )
-        is AlarmSensorStatus.Triggered -> BlinkingEffect {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_notifications_active_24px),
-                tint = RuuviStationTheme.colors.activeAlert,
-                contentDescription = contentDescription,
-            )
         }
     }
 }

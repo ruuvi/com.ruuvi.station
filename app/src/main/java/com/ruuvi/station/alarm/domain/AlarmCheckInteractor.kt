@@ -51,9 +51,12 @@ class AlarmCheckInteractor(
                 }
             }
         if (triggeredTypes.isEmpty()) {
-            return AlarmSensorStatus.NotTriggered
+            return AlarmSensorStatus.NotTriggered(alarms.size)
         } else {
-            return AlarmSensorStatus.Triggered(triggeredTypes)
+            return AlarmSensorStatus.Triggered(
+                alarmTypes = triggeredTypes,
+                enabledCount = alarms.size,
+            )
         }
     }
 
@@ -418,10 +421,15 @@ enum class AlarmStatus {
     NO_ALARM
 }
 
-sealed class AlarmSensorStatus {
-    object NoAlarms: AlarmSensorStatus()
-    object NotTriggered: AlarmSensorStatus()
-    class Triggered(val alarmTypes: Set<AlarmType>): AlarmSensorStatus()
+sealed class AlarmSensorStatus(open val enabledCount: Int) {
+    object NoAlarms: AlarmSensorStatus(enabledCount = 0)
+    data class NotTriggered(
+        override val enabledCount: Int,
+    ): AlarmSensorStatus(enabledCount)
+    data class Triggered(
+        val alarmTypes: Set<AlarmType>,
+        override val enabledCount: Int,
+    ): AlarmSensorStatus(enabledCount)
 
     fun triggered(alarmType: AlarmType): Boolean {
         return if (this is Triggered) {
