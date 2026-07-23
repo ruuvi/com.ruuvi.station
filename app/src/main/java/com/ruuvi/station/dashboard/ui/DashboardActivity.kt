@@ -52,6 +52,7 @@ import coil.request.ImageRequest
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.ruuvi.station.R
 import com.ruuvi.station.addtag.ui.AddTagActivity
+import com.ruuvi.station.alarm.domain.AlarmSensorStatus
 import com.ruuvi.station.alarm.domain.AlarmType
 import com.ruuvi.station.app.permissions.BluetoothPermissions
 import com.ruuvi.station.app.permissions.NotificationPermission
@@ -811,7 +812,7 @@ fun ItemButtons(
         horizontalArrangement = Arrangement.End,
     ) {
         CompositionLocalProvider(LocalMinimumInteractiveComponentEnforcement provides false) {
-            if (sensor.alarmSensorStatus.enabledCount > 0) {
+            if (sensor.alarmSensorStatus != AlarmSensorStatus.NoAlarms) {
                 IconButton(
                     modifier = Modifier.size(RuuviStationTheme.dimensions.dashboardIconSize),
                     enabled = interactionEnabled,

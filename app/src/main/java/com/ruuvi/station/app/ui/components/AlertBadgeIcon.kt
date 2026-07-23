@@ -26,10 +26,10 @@ fun AlertBadgeIcon(
     modifier: Modifier = Modifier,
 ) {
     val triggered = alarmStatus is AlarmSensorStatus.Triggered
-    val badgeCount = if (triggered) {
-        alarmStatus.alarmTypes.size
-    } else {
-        alarmStatus.enabledCount
+    val badgeCount = when (alarmStatus) {
+        AlarmSensorStatus.NoAlarms -> 0
+        is AlarmSensorStatus.NotTriggered -> alarmStatus.enabledCount
+        is AlarmSensorStatus.Triggered -> alarmStatus.alarmTypes.size
     }
 
     Box(modifier = modifier.size(32.dp)) {
