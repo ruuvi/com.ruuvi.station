@@ -42,6 +42,8 @@
         <item name="colorOnSurface">@color/titan</item>
         <item name="colorOnSecondary">@color/titan70</item>
         <item name="colorControlHighlight">@color/grayNew30</item>
+        <item name="simpleWidgetPreview">@drawable/simple_widget_light</item>
+        <item name="complexWidgetPreview">@drawable/complex_widget_light</item>
     </style>
 
     <style name="AppTheme.AppWidgetContainer"

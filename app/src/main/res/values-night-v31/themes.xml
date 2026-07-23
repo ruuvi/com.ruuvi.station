@@ -13,5 +13,7 @@
         <item name="colorOnSurface">@color/white</item>
         <item name="colorOnSecondary">@color/grayNew</item>
         <item name="colorControlHighlight">@color/grayNew5</item>
+        <item name="simpleWidgetPreview">@drawable/simple_widget_preview_new</item>
+        <item name="complexWidgetPreview">@drawable/complex_widget_preview_new</item>
     </style>
 </resources>
