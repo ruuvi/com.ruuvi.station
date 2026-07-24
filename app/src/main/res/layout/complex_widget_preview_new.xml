@@ -1,18 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="350dp"
-    android:layout_height="wrap_content"
-    android:background="?attr/colorSurface"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/transparent"
     android:theme="@style/AppTheme.AppWidgetContainer"
     tools:layout_width="350dp"
     tools:layout_height="230dp">
 
     <ImageView
+        android:id="@+id/complexWidgetPreviewImage"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:adjustViewBounds="true"
+        android:layout_height="match_parent"
+        android:src="?attr/complexWidgetPreview"
         android:scaleType="fitCenter"
-        android:src="?attr/complexWidgetPreview" />
-</RelativeLayout>
+        android:adjustViewBounds="false"
+        android:contentDescription="@null" />
+
+</FrameLayout>
