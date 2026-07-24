@@ -209,10 +209,42 @@ class SensorCardActivity : NfcActivity(), KodeinAware {
             sensorId: String,
             requestCode: Int,
             openType: SensorCardOpenType = SensorCardOpenType.DEFAULT
+        ): PendingIntent? = createPendingIntent(
+            context = context,
+            sensorId = sensorId,
+            requestCode = requestCode,
+            openType = openType,
+            identity = null
+        )
+
+        fun createWidgetPendingIntent(
+            context: Context,
+            sensorId: String,
+            appWidgetId: Int
+        ): PendingIntent? = createPendingIntent(
+            context = context,
+            sensorId = sensorId,
+            requestCode = appWidgetId,
+            openType = SensorCardOpenType.DEFAULT,
+            identity = Uri.Builder()
+                .scheme("ruuvi-station")
+                .authority("widget")
+                .appendPath(appWidgetId.toString())
+                .appendPath(sensorId)
+                .build()
+        )
+
+        private fun createPendingIntent(
+            context: Context,
+            sensorId: String,
+            requestCode: Int,
+            openType: SensorCardOpenType,
+            identity: Uri?
         ): PendingIntent? {
             val intent = Intent(context, SensorCardActivity::class.java)
             intent.putExtra(ARGUMENT_SENSOR_ID, sensorId)
             intent.putExtra(ARGUMENT_OPEN_TYPE, openType)
+            intent.data = identity
 
             val stackBuilder = TaskStackBuilder.create(context)
             val intentDashboardActivity = Intent(context, DashboardActivity::class.java)

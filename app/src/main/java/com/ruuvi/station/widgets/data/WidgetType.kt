@@ -31,14 +31,13 @@ enum class WidgetType(val code: Int, val titleResId: Int, val unitType: UnitType
     AIR_QUALITY(21, R.string.air_quality, UnitType.AirQuality.AqiIndex),
     LUMINOSITY(22, R.string.luminosity, UnitType.Luminosity.Lux),
     CO2(23, R.string.co2, UnitType.CO2.Ppm),
-    VOC(24, R.string.voc_index, UnitType.VOC.VocIndex),
-    NOX(25, R.string.nox_index, UnitType.NOX.NoxIndex),
-    PM10(26, R.string.pm10, UnitType.PM.PM10),
-    PM25(27, R.string.pm25, UnitType.PM.PM25),
-    PM40(28, R.string.pm40, UnitType.PM.PM40),
-    PM100(29, R.string.pm100, UnitType.PM.PM100),
-    PRESSURE_INHG(30, R.string.air_pressure, UnitType.PressureUnit.InchHg),
-    SOUND_REAL_TIME(31, R.string.sound_instant, UnitType.SoundAvg.SoundDba);
+    NOX(24, R.string.nox_index, UnitType.NOX.NoxIndex),
+    PM10(25, R.string.pm10, UnitType.PM.PM10),
+    PM25(26, R.string.pm25, UnitType.PM.PM25),
+    PM40(27, R.string.pm40, UnitType.PM.PM40),
+    PM100(28, R.string.pm100, UnitType.PM.PM100),
+    VOC(29, R.string.voc_index, UnitType.VOC.VocIndex),
+    PRESSURE_INHG(30, R.string.air_pressure, UnitType.PressureUnit.InchHg);
 
     fun getTitle(context: Context): String {
         val title = context.getString(titleResId)
@@ -54,16 +53,16 @@ enum class WidgetType(val code: Int, val titleResId: Int, val unitType: UnitType
     }
 
     companion object {
-        fun getByCode(code: Int): WidgetType = when (code) {
-            1 -> TEMPERATURE
-            2 -> HUMIDITY
-            3 -> PRESSURE
-            else -> values().firstOrNull { it.code == code } ?: TEMPERATURE
-        }
+        fun getByCode(code: Int): WidgetType =
+            if (code == LEGACY_SOUND_REAL_TIME_CODE) {
+                SOUND_AVERAGE
+            } else {
+                entries.firstOrNull { it.code == code } ?: TEMPERATURE
+            }
 
         fun filterWidgetTypes(sensor: RuuviTag): List<WidgetType> {
             val supportedUnits = (sensor.displayOrder + sensor.possibleDisplayOptions).distinct()
-            return masterWidgetOrder.filter { widgetType ->
+            return displayOrder.filter { widgetType ->
                 when (widgetType) {
                     TEMPERATURE, TEMPERATURE_F, TEMPERATURE_K ->
                         supportedUnits.any { it is UnitType.TemperatureUnit }
@@ -73,7 +72,7 @@ enum class WidgetType(val code: Int, val titleResId: Int, val unitType: UnitType
                         supportedUnits.any { it is UnitType.HumidityUnit.DewPoint }
                     PRESSURE, PRESSURE_PA, PRESSURE_MMHG, PRESSURE_INHG ->
                         supportedUnits.any { it is UnitType.PressureUnit }
-                    SOUND_REAL_TIME, SOUND_AVERAGE ->
+                    SOUND_AVERAGE ->
                         supportedUnits.any { it is UnitType.SoundAvg }
                     else -> supportedUnits.any { it == widgetType.unitType }
                 }
@@ -111,7 +110,7 @@ enum class WidgetType(val code: Int, val titleResId: Int, val unitType: UnitType
             }
         }
 
-        private val masterWidgetOrder = listOf(
+        internal val displayOrder = listOf(
             AIR_QUALITY,
             CO2,
             PM10,
@@ -133,7 +132,6 @@ enum class WidgetType(val code: Int, val titleResId: Int, val unitType: UnitType
             PRESSURE_MMHG,
             PRESSURE_INHG,
             MOVEMENT,
-            SOUND_REAL_TIME,
             SOUND_AVERAGE,
             SOUND_PEAK,
             LUMINOSITY,
@@ -144,5 +142,7 @@ enum class WidgetType(val code: Int, val titleResId: Int, val unitType: UnitType
             SIGNAL_STRENGTH,
             MEASUREMENT_SEQUENCE_NUMBER,
         )
+
+        internal const val LEGACY_SOUND_REAL_TIME_CODE = 31
     }
 }

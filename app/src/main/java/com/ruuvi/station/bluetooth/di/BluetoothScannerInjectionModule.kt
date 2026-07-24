@@ -75,11 +75,11 @@ object BluetoothScannerInjectionModule {
                 }
 
                 override fun getSimpleWidgetUpdatePendingIntent(): PendingIntent? {
-                    return SimpleWidget.getUpdatePendingIntent(context, 0)
+                    return SimpleWidget.getRefreshAllPendingIntent(context)
                 }
 
                 override fun getComplexWidgetUpdatePendingIntent(): PendingIntent? {
-                    return ComplexWidgetProvider.getUpdatePendingIntent(context, 0)
+                    return ComplexWidgetProvider.getRefreshAllPendingIntent(context)
                 }
             }
         }

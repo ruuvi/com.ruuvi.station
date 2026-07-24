@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.core.view.WindowCompat
+import androidx.lifecycle.lifecycleScope
 import com.ruuvi.station.R
 import com.ruuvi.station.app.ui.components.Paragraph
 import com.ruuvi.station.app.ui.components.ruuviCheckboxColors
@@ -32,10 +33,13 @@ import com.ruuvi.station.widgets.ui.*
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.launch
 import timber.log.Timber
 
 class ComplexWidgetConfigureActivity : AppCompatActivity(), KodeinAware {
     private var appWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID
+    private var setupCompletionStarted = false
 
     override val kodein: Kodein by closestKodein()
 
@@ -86,12 +90,26 @@ class ComplexWidgetConfigureActivity : AppCompatActivity(), KodeinAware {
     }
 
     private fun setupCompleted() {
-        ComplexWidgetProvider.updateAll(this)
+        if (setupCompletionStarted) return
+        setupCompletionStarted = true
 
-        val resultValue =
-            Intent().putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
-        setResult(RESULT_OK, resultValue)
-        finish()
+        lifecycleScope.launch {
+            try {
+                ComplexWidgetProvider.updateComplexWidget(
+                    this@ComplexWidgetConfigureActivity,
+                    appWidgetId
+                )
+            } catch (cancellation: CancellationException) {
+                throw cancellation
+            } catch (error: Exception) {
+                Timber.e(error, "Unable to render configured complex widget $appWidgetId")
+            }
+
+            val resultValue =
+                Intent().putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
+            setResult(RESULT_OK, resultValue)
+            finish()
+        }
     }
 }
 
@@ -203,7 +221,13 @@ fun WidgetTypeItem (viewModel: ComplexWidgetConfigureViewModel, item: ComplexWid
         Text(
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable { viewModel.selectWidgetType(item, widgetType, item.getStateForType(widgetType)) },
+                .clickable {
+                    viewModel.selectWidgetType(
+                        item,
+                        widgetType,
+                        !item.getStateForType(widgetType)
+                    )
+                },
             text = WidgetType.getTitle(context, widgetType, stringResource(widgetType.titleResId)),
             style = RuuviStationTheme.typography.paragraph
         )

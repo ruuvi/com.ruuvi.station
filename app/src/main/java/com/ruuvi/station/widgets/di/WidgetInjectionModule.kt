@@ -16,9 +16,13 @@ object WidgetInjectionModule {
 
         bind<ComplexWidgetConfigureViewModel>() with factory { args: ComplexWidgetConfigureViewModelArgs -> ComplexWidgetConfigureViewModel(args.appWidgetId, instance(), instance(), instance(), instance()) }
 
-        bind<WidgetPreferencesInteractor>() with singleton { WidgetPreferencesInteractor(instance()) }
+        bind<WidgetPreferencesInteractor>() with singleton {
+            WidgetPreferencesInteractor(instance(), instance())
+        }
 
-        bind<ComplexWidgetPreferencesInteractor>() with singleton { ComplexWidgetPreferencesInteractor(instance()) }
+        bind<ComplexWidgetPreferencesInteractor>() with singleton {
+            ComplexWidgetPreferencesInteractor(instance(), instance())
+        }
 
         bind<WidgetInteractor>() with singleton { WidgetInteractor(instance(),instance(), instance(), instance(), instance()) }
     }

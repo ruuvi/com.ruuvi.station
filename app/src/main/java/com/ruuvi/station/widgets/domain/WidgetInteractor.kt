@@ -145,23 +145,21 @@ class WidgetInteractor (
 
                 val movementsValue = SensorValue(
                     type = WidgetType.MOVEMENT,
-                    sensorValue = lastMeasurement.movementCounter.toString(),
-                    unit = context.getString(R.string.movements)
+                    sensorValue = lastMeasurement.movementCounter?.toString() ?: UNDEFINED_VALUE,
+                    unit = context.getString(UnitType.MovementUnit.MovementsCount.unit)
                 )
 
                 val voltageValue = SensorValue(
                     type = WidgetType.VOLTAGE,
-                    sensorValue = context.getString(
-                        R.string.voltage_reading,
-                        lastMeasurement.voltage,
-                        ""
-                    ).trim(),
+                    sensorValue = lastMeasurement.voltage?.let {
+                        context.getString(R.string.voltage_reading, it, "").trim()
+                    } ?: UNDEFINED_VALUE,
                     unit = context.getString(R.string.voltage_unit)
                 )
 
                 val signalStrengthValue = SensorValue(
                     type = WidgetType.SIGNAL_STRENGTH,
-                    sensorValue = lastMeasurement.rssi.toString(),
+                    sensorValue = lastMeasurement.rssi?.toString() ?: UNDEFINED_VALUE,
                     unit = context.getString(R.string.signal_unit)
                 )
 
@@ -185,28 +183,19 @@ class WidgetInteractor (
 
                 val soundAverageValue = SensorValue(
                     type = WidgetType.SOUND_AVERAGE,
-                    sensorValue = sensorFav.latestMeasurement?.dBaAvg?.valueWithoutUnit ?: UNDEFINED_VALUE,
-                    unit = sensorFav.latestMeasurement?.dBaAvg?.unitString
-                        ?: context.getString(UnitType.SoundAvg.SoundDba.unit)
-                )
-
-                val soundRealTimeValue = SensorValue(
-                    type = WidgetType.SOUND_REAL_TIME,
-                    sensorValue = sensorFav.latestMeasurement?.dBaAvg?.valueWithoutUnit ?: UNDEFINED_VALUE,
-                    unit = sensorFav.latestMeasurement?.dBaAvg?.unitString
-                        ?: context.getString(UnitType.SoundAvg.SoundDba.unit)
+                    sensorValue = formatSound(lastMeasurement.dBaAvg, UnitType.SoundAvg.SoundDba),
+                    unit = context.getString(UnitType.SoundAvg.SoundDba.unit)
                 )
 
                 val soundPeakValue = SensorValue(
                     type = WidgetType.SOUND_PEAK,
-                    sensorValue = sensorFav.latestMeasurement?.dBaPeak?.valueWithoutUnit ?: UNDEFINED_VALUE,
-                    unit = sensorFav.latestMeasurement?.dBaPeak?.unitString
-                        ?: context.getString(UnitType.SoundPeak.SoundDba.unit)
+                    sensorValue = formatSound(lastMeasurement.dBaPeak, UnitType.SoundPeak.SoundDba),
+                    unit = context.getString(UnitType.SoundPeak.SoundDba.unit)
                 )
 
                 val msnValue = SensorValue(
                     type = WidgetType.MEASUREMENT_SEQUENCE_NUMBER,
-                    sensorValue = sensorFav.latestMeasurement?.measurementSequenceNumber?.toString() ?: UNDEFINED_VALUE,
+                    sensorValue = lastMeasurement.measurementSequenceNumber?.toString() ?: UNDEFINED_VALUE,
                     unit = ""
                 )
 
@@ -305,7 +294,6 @@ class WidgetInteractor (
                     WidgetType.ACCELERATION_X to accelerationXValue,
                     WidgetType.ACCELERATION_Y to accelerationYValue,
                     WidgetType.ACCELERATION_Z to accelerationZValue,
-                    WidgetType.SOUND_REAL_TIME to soundRealTimeValue,
                     WidgetType.SOUND_AVERAGE to soundAverageValue,
                     WidgetType.SOUND_PEAK to soundPeakValue,
                     WidgetType.MEASUREMENT_SEQUENCE_NUMBER to msnValue,
@@ -426,7 +414,7 @@ class WidgetInteractor (
             val movementsValue = SensorValue(
                 type = WidgetType.MOVEMENT,
                 sensorValue = lastMeasurement.movement?.valueWithoutUnit ?: UnitsConverter.NO_VALUE_AVAILABLE,
-                unit = lastMeasurement.movement?.unitString ?: context.getString(R.string.movements)
+                unit = context.getString(UnitType.MovementUnit.MovementsCount.unit)
             )
 
             val voltageValue = SensorValue(
@@ -461,12 +449,6 @@ class WidgetInteractor (
 
             val soundAverageValue = SensorValue(
                 type = WidgetType.SOUND_AVERAGE,
-                sensorValue = lastMeasurement.dBaAvg?.valueWithoutUnit ?: UNDEFINED_VALUE,
-                unit = lastMeasurement.dBaAvg?.unitString ?: context.getString(UnitType.SoundAvg.SoundDba.unit)
-            )
-
-            val soundRealTimeValue = SensorValue(
-                type = WidgetType.SOUND_REAL_TIME,
                 sensorValue = lastMeasurement.dBaAvg?.valueWithoutUnit ?: UNDEFINED_VALUE,
                 unit = lastMeasurement.dBaAvg?.unitString ?: context.getString(UnitType.SoundAvg.SoundDba.unit)
             )
@@ -577,7 +559,6 @@ class WidgetInteractor (
                 WidgetType.ACCELERATION_X to accelerationXValue,
                 WidgetType.ACCELERATION_Y to accelerationYValue,
                 WidgetType.ACCELERATION_Z to accelerationZValue,
-                WidgetType.SOUND_REAL_TIME to soundRealTimeValue,
                 WidgetType.SOUND_AVERAGE to soundAverageValue,
                 WidgetType.SOUND_PEAK to soundPeakValue,
                 WidgetType.MEASUREMENT_SEQUENCE_NUMBER to msnValue,
@@ -757,7 +738,7 @@ class WidgetInteractor (
                     )
                 }
                 WidgetType.MOVEMENT -> {
-                    unit = context.getString(R.string.movements)
+                    unit = context.getString(UnitType.MovementUnit.MovementsCount.unit)
                     sensorValue = tag.latestMeasurement.movement?.valueWithoutUnit ?: ""
                 }
                 WidgetType.VOLTAGE -> {
@@ -779,11 +760,6 @@ class WidgetInteractor (
                 WidgetType.ACCELERATION_Z -> {
                     unit = accelerationConverter.getAccelerationUnit(AccelerationAxis.AXIS_Z)
                     sensorValue = accelerationConverter.getAccelerationStringWithoutUnit(tag.latestMeasurement.accelerationZ)
-                }
-                WidgetType.SOUND_REAL_TIME -> {
-                    unit = tag.latestMeasurement.dBaAvg?.unitString
-                        ?: context.getString(UnitType.SoundAvg.SoundDba.unit)
-                    sensorValue = tag.latestMeasurement.dBaAvg?.valueWithoutUnit ?: UNDEFINED_VALUE
                 }
                 WidgetType.SOUND_AVERAGE -> {
                     unit = tag.latestMeasurement.dBaAvg?.unitString
@@ -949,18 +925,18 @@ class WidgetInteractor (
                         sensorValue = unitsConverter.getPressureStringWithoutUnit(decoded.pressure, UnitType.PressureUnit.InchHg)
                     }
                     WidgetType.MOVEMENT -> {
-                        unit = context.getString(R.string.movements)
-                        sensorValue = decoded.movementCounter.toString()
+                        unit = context.getString(UnitType.MovementUnit.MovementsCount.unit)
+                        sensorValue = decoded.movementCounter?.toString() ?: UNDEFINED_VALUE
                     }
                     WidgetType.VOLTAGE -> {
                         unit = context.getString(R.string.voltage_unit)
-                        sensorValue =
-                            context.getString(R.string.voltage_reading, decoded.voltage, "")
-                                .trim()
+                        sensorValue = decoded.voltage?.let {
+                            context.getString(R.string.voltage_reading, it, "").trim()
+                        } ?: UNDEFINED_VALUE
                     }
                     WidgetType.SIGNAL_STRENGTH -> {
                         unit = context.getString(R.string.signal_unit)
-                        sensorValue = decoded.rssi.toString()
+                        sensorValue = decoded.rssi?.toString() ?: UNDEFINED_VALUE
                     }
                     WidgetType.ACCELERATION_X -> {
                         unit = accelerationConverter.getAccelerationUnit(AccelerationAxis.AXIS_X)
@@ -974,24 +950,17 @@ class WidgetInteractor (
                         unit = accelerationConverter.getAccelerationUnit(AccelerationAxis.AXIS_Z)
                         sensorValue = accelerationConverter.getAccelerationStringWithoutUnit(decoded.accelZ)
                     }
-                    WidgetType.SOUND_REAL_TIME -> {
-                        unit = tag.latestMeasurement?.dBaAvg?.unitString
-                            ?: context.getString(UnitType.SoundAvg.SoundDba.unit)
-                        sensorValue = tag.latestMeasurement?.dBaAvg?.valueWithoutUnit ?: UNDEFINED_VALUE
-                    }
                     WidgetType.SOUND_AVERAGE -> {
-                        unit = tag.latestMeasurement?.dBaAvg?.unitString
-                            ?: context.getString(UnitType.SoundAvg.SoundDba.unit)
-                        sensorValue = tag.latestMeasurement?.dBaAvg?.valueWithoutUnit ?: UNDEFINED_VALUE
+                        unit = context.getString(UnitType.SoundAvg.SoundDba.unit)
+                        sensorValue = formatSound(decoded.dBaAvg, UnitType.SoundAvg.SoundDba)
                     }
                     WidgetType.SOUND_PEAK -> {
-                        unit = tag.latestMeasurement?.dBaPeak?.unitString
-                            ?: context.getString(UnitType.SoundPeak.SoundDba.unit)
-                        sensorValue = tag.latestMeasurement?.dBaPeak?.valueWithoutUnit ?: UNDEFINED_VALUE
+                        unit = context.getString(UnitType.SoundPeak.SoundDba.unit)
+                        sensorValue = formatSound(decoded.dBaPeak, UnitType.SoundPeak.SoundDba)
                     }
                     WidgetType.MEASUREMENT_SEQUENCE_NUMBER -> {
                         unit = ""
-                        sensorValue = tag.latestMeasurement?.measurementSequenceNumber?.toString() ?: UNDEFINED_VALUE
+                        sensorValue = decoded.measurementSequenceNumber?.toString() ?: UNDEFINED_VALUE
                     }
                     WidgetType.AIR_QUALITY -> {
                         unit = context.getString(UnitType.AirQuality.AqiIndex.unit)
@@ -999,35 +968,35 @@ class WidgetInteractor (
                     }
                     WidgetType.LUMINOSITY -> {
                         unit = context.getString(UnitType.Luminosity.Lux.unit)
-                        sensorValue = context.getString(UnitType.Luminosity.Lux.defaultAccuracy.nameTemplateId, decoded.luminosity, "");
+                        sensorValue = formatMeasurement(decoded.luminosity, UnitType.Luminosity.Lux)
                     }
                     WidgetType.CO2 -> {
                         unit = context.getString(UnitType.CO2.Ppm.unit)
-                        sensorValue = context.getString(UnitType.CO2.Ppm.defaultAccuracy.nameTemplateId, decoded.co2, "");
+                        sensorValue = formatMeasurement(decoded.co2?.toDouble(), UnitType.CO2.Ppm)
                     }
                     WidgetType.VOC -> {
                         unit = context.getString(UnitType.VOC.VocIndex.unit)
-                        sensorValue = context.getString(UnitType.VOC.VocIndex.defaultAccuracy.nameTemplateId, decoded.voc, "");
+                        sensorValue = formatMeasurement(decoded.voc?.toDouble(), UnitType.VOC.VocIndex)
                     }
                     WidgetType.NOX -> {
                         unit = context.getString(UnitType.NOX.NoxIndex.unit)
-                        sensorValue = context.getString(UnitType.NOX.NoxIndex.defaultAccuracy.nameTemplateId, decoded.nox, "");
+                        sensorValue = formatMeasurement(decoded.nox?.toDouble(), UnitType.NOX.NoxIndex)
                     }
                     WidgetType.PM10 -> {
                         unit = context.getString(UnitType.PM.PM10.unit)
-                        sensorValue = context.getString(UnitType.PM.PM10.defaultAccuracy.nameTemplateId, decoded.pm1, "");
+                        sensorValue = formatMeasurement(decoded.pm1, UnitType.PM.PM10)
                     }
                     WidgetType.PM25 -> {
                         unit = context.getString(UnitType.PM.PM25.unit)
-                        sensorValue = context.getString(UnitType.PM.PM25.defaultAccuracy.nameTemplateId, decoded.pm25, "");
+                        sensorValue = formatMeasurement(decoded.pm25, UnitType.PM.PM25)
                     }
                     WidgetType.PM40 -> {
                         unit = context.getString(UnitType.PM.PM40.unit)
-                        sensorValue = context.getString(UnitType.PM.PM40.defaultAccuracy.nameTemplateId, decoded.pm4, "");
+                        sensorValue = formatMeasurement(decoded.pm4, UnitType.PM.PM40)
                     }
                     WidgetType.PM100 -> {
                         unit = context.getString(UnitType.PM.PM100.unit)
-                        sensorValue = context.getString(UnitType.PM.PM100.defaultAccuracy.nameTemplateId, decoded.pm10, "");
+                        sensorValue = formatMeasurement(decoded.pm10, UnitType.PM.PM100)
                     }
                 }
 
@@ -1057,6 +1026,15 @@ class WidgetInteractor (
 
     private fun emptyResult(sensorId: String): WidgetData = WidgetData(sensorId)
 
+    private fun formatMeasurement(value: Double?, unitType: UnitType): String =
+        value?.let {
+            context.getString(unitType.defaultAccuracy.nameTemplateId, it, "").trim()
+        } ?: UNDEFINED_VALUE
+
+    private fun formatSound(value: Double?, unitType: UnitType): String =
+        value?.let { unitsConverter.getSoundEnvironmentValue(it, unitType).valueWithoutUnit }
+            ?: UNDEFINED_VALUE
+
     private fun formatDewPoint(
         humidity: Double?,
         temperature: Double?,
@@ -1065,7 +1043,7 @@ class WidgetInteractor (
         if (humidity == null || temperature == null || temperature !in -100.0..370.0) {
             return UNDEFINED_VALUE
         }
-        val converter = HumidityConverter(temperature, humidity / 100)
+        val converter = HumidityConverter(temperature, humidity)
         val dewCelsius = converter.toDewCelsius ?: return UNDEFINED_VALUE
         val converted = when (unit) {
             UnitType.TemperatureUnit.Celsius -> dewCelsius
@@ -1075,42 +1053,8 @@ class WidgetInteractor (
         return unitsConverter.getValueWithoutUnit(converted, unitsConverter.getHumidityAccuracy())
     }
 
-    private fun isTypeChecked(settings: ComplexWidgetPreferenceItem?, type: WidgetType): Boolean {
-        if (settings == null) return false
-        return when (type) {
-            WidgetType.TEMPERATURE -> settings.checkedTemperature
-            WidgetType.TEMPERATURE_F -> settings.checkedTemperatureF
-            WidgetType.TEMPERATURE_K -> settings.checkedTemperatureK
-            WidgetType.HUMIDITY -> settings.checkedHumidity
-            WidgetType.HUMIDITY_ABSOLUTE -> settings.checkedHumidityAbsolute
-            WidgetType.DEW_POINT_C -> settings.checkedDewPointC
-            WidgetType.DEW_POINT_F -> settings.checkedDewPointF
-            WidgetType.DEW_POINT_K -> settings.checkedDewPointK
-            WidgetType.PRESSURE -> settings.checkedPressure
-            WidgetType.PRESSURE_PA -> settings.checkedPressurePa
-            WidgetType.PRESSURE_MMHG -> settings.checkedPressureMmHg
-            WidgetType.PRESSURE_INHG -> settings.checkedPressureInHg
-            WidgetType.MOVEMENT -> settings.checkedMovement
-            WidgetType.VOLTAGE -> settings.checkedVoltage
-            WidgetType.SIGNAL_STRENGTH -> settings.checkedSignalStrength
-            WidgetType.ACCELERATION_X -> settings.checkedAccelerationX
-            WidgetType.ACCELERATION_Y -> settings.checkedAccelerationY
-            WidgetType.ACCELERATION_Z -> settings.checkedAccelerationZ
-            WidgetType.SOUND_REAL_TIME -> settings.checkedSoundRealTime
-            WidgetType.SOUND_AVERAGE -> settings.checkedSoundAverage
-            WidgetType.SOUND_PEAK -> settings.checkedSoundPeak
-            WidgetType.MEASUREMENT_SEQUENCE_NUMBER -> settings.checkedMsn
-            WidgetType.AIR_QUALITY -> settings.checkedAQI
-            WidgetType.LUMINOSITY -> settings.checkedLuminosity
-            WidgetType.CO2 -> settings.checkedCO2
-            WidgetType.VOC -> settings.checkedVOC
-            WidgetType.NOX -> settings.checkedNOX
-            WidgetType.PM10 -> settings.checkedPM10
-            WidgetType.PM25 -> settings.checkedPM25
-            WidgetType.PM40 -> settings.checkedPM40
-            WidgetType.PM100 -> settings.checkedPM100
-        }
-    }
+    private fun isTypeChecked(settings: ComplexWidgetPreferenceItem?, type: WidgetType): Boolean =
+        settings?.isChecked(type) ?: false
 
     private fun emptySimpleResult(sensorId: String): SimpleWidgetData = SimpleWidgetData(sensorId, Date(0), context.getString(R.string.no_data), "", "", "", null)
 

@@ -84,39 +84,7 @@ class ComplexWidgetConfigureViewModel(
 
     fun selectWidgetType(item: ComplexWidgetSensorItem, widgetType: WidgetType, checked: Boolean) {
         _widgetItems.value?.find { it.sensor.id == item.sensor.id }?.let {
-            when (widgetType) {
-                WidgetType.TEMPERATURE -> it.checkedTemperature = checked
-                WidgetType.TEMPERATURE_F -> it.checkedTemperatureF = checked
-                WidgetType.TEMPERATURE_K -> it.checkedTemperatureK = checked
-                WidgetType.HUMIDITY -> it.checkedHumidity = checked
-                WidgetType.HUMIDITY_ABSOLUTE -> it.checkedHumidityAbsolute = checked
-                WidgetType.DEW_POINT_C -> it.checkedDewPointC = checked
-                WidgetType.DEW_POINT_F -> it.checkedDewPointF = checked
-                WidgetType.DEW_POINT_K -> it.checkedDewPointK = checked
-                WidgetType.PRESSURE -> it.checkedPressure = checked
-                WidgetType.PRESSURE_PA -> it.checkedPressurePa = checked
-                WidgetType.PRESSURE_MMHG -> it.checkedPressureMmHg = checked
-                WidgetType.PRESSURE_INHG -> it.checkedPressureInHg = checked
-                WidgetType.MOVEMENT -> it.checkedMovement = checked
-                WidgetType.VOLTAGE -> it.checkedVoltage = checked
-                WidgetType.SIGNAL_STRENGTH -> it.checkedSignalStrength = checked
-                WidgetType.ACCELERATION_X -> it.checkedAccelerationX = checked
-                WidgetType.ACCELERATION_Y -> it.checkedAccelerationY = checked
-                WidgetType.ACCELERATION_Z -> it.checkedAccelerationZ = checked
-                WidgetType.SOUND_REAL_TIME -> it.checkedSoundRealTime = checked
-                WidgetType.SOUND_AVERAGE -> it.checkedSoundAverage = checked
-                WidgetType.SOUND_PEAK -> it.checkedSoundPeak = checked
-                WidgetType.MEASUREMENT_SEQUENCE_NUMBER -> it.checkedMsn = checked
-                WidgetType.AIR_QUALITY -> it.checkedAQI = checked
-                WidgetType.LUMINOSITY -> it.checkedLuminosity = checked
-                WidgetType.CO2 -> it.checkedCO2 = checked
-                WidgetType.VOC -> it.checkedVOC = checked
-                WidgetType.NOX -> it.checkedNOX = checked
-                WidgetType.PM10 -> it.checkedPM10 = checked
-                WidgetType.PM25 -> it.checkedPM25 = checked
-                WidgetType.PM40 -> it.checkedPM40 = checked
-                WidgetType.PM100 -> it.checkedPM100 = checked
-            }
+            it.setStateForType(widgetType, checked)
         }
         recalcCanBeSaved()
     }
@@ -154,7 +122,6 @@ class ComplexWidgetSensorItem(
     var checkedAccelerationX by mutableStateOf(false)
     var checkedAccelerationY by mutableStateOf(false)
     var checkedAccelerationZ by mutableStateOf(false)
-    var checkedSoundRealTime by mutableStateOf(false)
     var checkedSoundAverage by mutableStateOf(false)
     var checkedSoundPeak by mutableStateOf(false)
     var checkedMsn by mutableStateOf(false)
@@ -188,7 +155,6 @@ class ComplexWidgetSensorItem(
             WidgetType.ACCELERATION_X -> checkedAccelerationX
             WidgetType.ACCELERATION_Y -> checkedAccelerationY
             WidgetType.ACCELERATION_Z -> checkedAccelerationZ
-            WidgetType.SOUND_REAL_TIME -> checkedSoundRealTime
             WidgetType.SOUND_AVERAGE -> checkedSoundAverage
             WidgetType.SOUND_PEAK -> checkedSoundPeak
             WidgetType.MEASUREMENT_SEQUENCE_NUMBER -> checkedMsn
@@ -204,14 +170,43 @@ class ComplexWidgetSensorItem(
         }
     }
 
-    fun anySensorChecked(): Boolean = checkedTemperature || checkedTemperatureF || checkedTemperatureK ||
-            checkedHumidity || checkedHumidityAbsolute || checkedDewPointC || checkedDewPointF || checkedDewPointK ||
-            checkedPressure || checkedPressurePa || checkedPressureMmHg || checkedPressureInHg ||
-            checkedMovement || checkedVoltage || checkedSignalStrength ||
-            checkedAccelerationX || checkedAccelerationY || checkedAccelerationZ ||
-            checkedSoundRealTime || checkedSoundAverage || checkedSoundPeak || checkedMsn || checkedAQI ||
-            checkedLuminosity || checkedCO2 || checkedVOC || checkedNOX || checkedPM10 ||
-            checkedPM25 || checkedPM40 || checkedPM100
+    fun setStateForType(widgetType: WidgetType, checked: Boolean) {
+        when (widgetType) {
+            WidgetType.TEMPERATURE -> checkedTemperature = checked
+            WidgetType.TEMPERATURE_F -> checkedTemperatureF = checked
+            WidgetType.TEMPERATURE_K -> checkedTemperatureK = checked
+            WidgetType.HUMIDITY -> checkedHumidity = checked
+            WidgetType.HUMIDITY_ABSOLUTE -> checkedHumidityAbsolute = checked
+            WidgetType.DEW_POINT_C -> checkedDewPointC = checked
+            WidgetType.DEW_POINT_F -> checkedDewPointF = checked
+            WidgetType.DEW_POINT_K -> checkedDewPointK = checked
+            WidgetType.PRESSURE -> checkedPressure = checked
+            WidgetType.PRESSURE_PA -> checkedPressurePa = checked
+            WidgetType.PRESSURE_MMHG -> checkedPressureMmHg = checked
+            WidgetType.PRESSURE_INHG -> checkedPressureInHg = checked
+            WidgetType.MOVEMENT -> checkedMovement = checked
+            WidgetType.VOLTAGE -> checkedVoltage = checked
+            WidgetType.SIGNAL_STRENGTH -> checkedSignalStrength = checked
+            WidgetType.ACCELERATION_X -> checkedAccelerationX = checked
+            WidgetType.ACCELERATION_Y -> checkedAccelerationY = checked
+            WidgetType.ACCELERATION_Z -> checkedAccelerationZ = checked
+            WidgetType.SOUND_AVERAGE -> checkedSoundAverage = checked
+            WidgetType.SOUND_PEAK -> checkedSoundPeak = checked
+            WidgetType.MEASUREMENT_SEQUENCE_NUMBER -> checkedMsn = checked
+            WidgetType.AIR_QUALITY -> checkedAQI = checked
+            WidgetType.LUMINOSITY -> checkedLuminosity = checked
+            WidgetType.CO2 -> checkedCO2 = checked
+            WidgetType.VOC -> checkedVOC = checked
+            WidgetType.NOX -> checkedNOX = checked
+            WidgetType.PM10 -> checkedPM10 = checked
+            WidgetType.PM25 -> checkedPM25 = checked
+            WidgetType.PM40 -> checkedPM40 = checked
+            WidgetType.PM100 -> checkedPM100 = checked
+        }
+    }
+
+    fun anySensorChecked(): Boolean =
+        filterWidgetTypes(sensor).any(::getStateForType)
 
     fun restoreSettings(
         sensor: RuuviTag,
@@ -253,8 +248,6 @@ class ComplexWidgetSensorItem(
             ?: if (supportedType.any { it.unitType == UnitType.Acceleration.GForceY }) checkedAccelerationYDefault else false
         checkedAccelerationZ = savedState?.checkedAccelerationZ
             ?: if (supportedType.any { it.unitType == UnitType.Acceleration.GForceZ }) checkedAccelerationZDefault else false
-        checkedSoundRealTime = savedState?.checkedSoundRealTime
-            ?: if (supportedType.any { it == WidgetType.SOUND_REAL_TIME }) checkedSoundRealTimeDefault else false
         checkedSoundAverage = savedState?.checkedSoundAverage
             ?: if (supportedType.any { it.unitType == UnitType.SoundAvg.SoundDba }) checkedSoundAverageDefault else false
         checkedSoundPeak = savedState?.checkedSoundPeak
@@ -300,7 +293,6 @@ class ComplexWidgetSensorItem(
         const val checkedAccelerationXDefault = false
         const val checkedAccelerationYDefault = false
         const val checkedAccelerationZDefault = false
-        const val checkedSoundRealTimeDefault = false
         const val checkedSoundAverageDefault = false
         const val checkedSoundPeakDefault = false
         const val checkedMsnDefault = false

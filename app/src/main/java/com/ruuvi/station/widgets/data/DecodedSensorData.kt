@@ -27,6 +27,8 @@ data class DecodedSensorData(
     var voc: Int? = null,
     var nox: Int? = null,
     var luminosity: Double? = null,
+    var dBaAvg: Double? = null,
+    var dBaPeak: Double? = null,
 ) {
     constructor(foundRuuviTag: FoundRuuviTag, updatedAt: Date): this(
         id = foundRuuviTag.id,
@@ -51,6 +53,8 @@ data class DecodedSensorData(
         co2 = foundRuuviTag.co2,
         voc = foundRuuviTag.voc,
         nox = foundRuuviTag.nox,
-        luminosity = foundRuuviTag.luminosity
+        luminosity = foundRuuviTag.luminosity,
+        dBaAvg = foundRuuviTag.dBaAvg,
+        dBaPeak = foundRuuviTag.dBaPeak,
     )
 }

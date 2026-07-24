@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.core.view.WindowCompat
+import androidx.lifecycle.lifecycleScope
 import com.ruuvi.station.R
 import com.ruuvi.station.app.ui.components.Paragraph
 import com.ruuvi.station.app.ui.components.ruuviRadioButtonColors
@@ -33,10 +34,13 @@ import com.ruuvi.station.widgets.ui.WidgetConfigTopAppBar
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.launch
 import timber.log.Timber
 
 class SimpleWidgetConfigureActivity : AppCompatActivity(), KodeinAware {
     private var appWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID
+    private var setupCompletionStarted = false
 
     override val kodein: Kodein by closestKodein()
 
@@ -78,12 +82,23 @@ class SimpleWidgetConfigureActivity : AppCompatActivity(), KodeinAware {
     }
 
     private fun setupCompleted() {
-        SimpleWidget.updateSimpleWidget(this, appWidgetId)
+        if (setupCompletionStarted) return
+        setupCompletionStarted = true
 
-        val resultValue =
-            Intent().putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
-        setResult(RESULT_OK, resultValue)
-        finish()
+        lifecycleScope.launch {
+            try {
+                SimpleWidget.updateSimpleWidget(this@SimpleWidgetConfigureActivity, appWidgetId)
+            } catch (cancellation: CancellationException) {
+                throw cancellation
+            } catch (error: Exception) {
+                Timber.e(error, "Unable to render configured simple widget $appWidgetId")
+            }
+
+            val resultValue =
+                Intent().putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
+            setResult(RESULT_OK, resultValue)
+            finish()
+        }
     }
 }
 
