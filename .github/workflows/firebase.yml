@@ -37,6 +37,28 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Require manual branch builds to include current master
+        if: github.event_name == 'workflow_dispatch' && github.ref_name != 'master'
+        run: |
+          git fetch --no-tags origin master
+
+          if ! git merge-base --is-ancestor origin/master HEAD; then
+            echo "::error::Branch '${{ github.ref_name }}' is not rebased on top of the current master branch. Rebase it onto origin/master and run the workflow again."
+            exit 1
+          fi
+
+      - name: Set Firebase release notes branch
+        env:
+          DEPLOYMENT_BRANCH: ${{ github.ref_name }}
+        run: |
+          if [[ "$DEPLOYMENT_BRANCH" == "master" ]]; then
+            RELEASE_NOTES_BRANCH="Master"
+          else
+            RELEASE_NOTES_BRANCH="$DEPLOYMENT_BRANCH"
+          fi
+
+          echo "FIREBASE_RELEASE_NOTES_PREFIX=(Branch: $RELEASE_NOTES_BRANCH)" >> "$GITHUB_ENV"
+
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
