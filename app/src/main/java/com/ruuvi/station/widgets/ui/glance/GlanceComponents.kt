@@ -74,6 +74,12 @@ internal object WidgetRefreshButtonDefaults {
     val backingEndInset: Dp = backingSize + edgePadding
 }
 
+internal object WidgetContentPaddingDefaults {
+    val outerPadding: Dp = 4.dp
+    val innerPadding: Dp = 12.dp
+    val edgePadding: Dp = outerPadding + innerPadding
+}
+
 @Composable
 fun RefreshButton(
     modifier: GlanceModifier = GlanceModifier,

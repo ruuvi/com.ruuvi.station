@@ -48,6 +48,7 @@ import com.ruuvi.station.widgets.data.ComplexWidgetData
 import com.ruuvi.station.widgets.data.SensorValue
 import com.ruuvi.station.widgets.ui.glance.GlanceColors
 import com.ruuvi.station.widgets.ui.glance.RefreshButton
+import com.ruuvi.station.widgets.ui.glance.WidgetContentPaddingDefaults
 import com.ruuvi.station.widgets.ui.glance.WidgetRefreshButtonDefaults
 import com.ruuvi.station.widgets.ui.glance.getEffectiveFontScale
 import com.ruuvi.station.widgets.ui.glance.getZoomFactor
@@ -85,7 +86,7 @@ private fun ComplexWidgetContent(sensors: List<ComplexWidgetData>) {
     val layout = complexWidgetLayoutConfig(
         width = LocalSize.current.width,
         fontScale = measurementDescriptionFontScale,
-        zoomFactor = zoomFactor
+        maximumColumns = sensors.maxOfOrNull { it.sensorValues.size } ?: 1
     )
 
     Box(
@@ -328,60 +329,61 @@ private fun MeasurementItem(
     }
 }
 
-private val COMPLEX_WIDGET_OUTER_PADDING = 4.dp
-private val COMPLEX_WIDGET_HORIZONTAL_PADDING = 12.dp
+private val COMPLEX_WIDGET_OUTER_PADDING = WidgetContentPaddingDefaults.outerPadding
+private val COMPLEX_WIDGET_HORIZONTAL_PADDING = WidgetContentPaddingDefaults.innerPadding
 private val COMPLEX_WIDGET_COLUMN_SPACING = 12.dp
 private val COMPLEX_WIDGET_MEASUREMENT_UNIT_SPACING = 2.dp
 private val COMPLEX_WIDGET_MEASUREMENT_DESCRIPTION_SPACING = 4.dp
 private val COMPLEX_WIDGET_TWO_COLUMN_BASE_WIDTH = 180.dp
-private val COMPLEX_WIDGET_THREE_COLUMN_BASE_WIDTH = 324.dp
+private val COMPLEX_WIDGET_THREE_COLUMN_BASE_WIDTH = 316.dp
+private const val COMPLEX_WIDGET_MAX_COLUMNS = 6
 
 internal fun complexWidgetMeasurementColumns(
     width: Dp,
     fontScale: Float = 1f,
-    zoomFactor: Float = 1f
+    maximumColumns: Int = COMPLEX_WIDGET_MAX_COLUMNS
 ): Int {
     if (!width.value.isFinite()) return 1
 
-    return when {
-        width >= complexWidgetRequiredWidth(3, fontScale, zoomFactor) -> 3
-        width >= complexWidgetRequiredWidth(2, fontScale, zoomFactor) -> 2
-        else -> 1
+    val safeMaximumColumns = maximumColumns.coerceIn(1, COMPLEX_WIDGET_MAX_COLUMNS)
+    for (columnCount in safeMaximumColumns downTo 2) {
+        if (width >= complexWidgetRequiredWidth(columnCount, fontScale)) {
+            return columnCount
+        }
     }
+    return 1
 }
 
 internal fun complexWidgetRequiredWidth(
     columnCount: Int,
-    fontScale: Float,
-    zoomFactor: Float = 1f
+    fontScale: Float
 ): Dp {
-    require(columnCount == 2 || columnCount == 3)
+    require(columnCount in 2..COMPLEX_WIDGET_MAX_COLUMNS)
 
     val normalizedFontScale =
         fontScale.takeIf { it.isFinite() && it > 0f } ?: 1f
-    val normalizedZoomFactor =
-        zoomFactor.takeIf { it.isFinite() && it > 0f } ?: 1f
-    val baseWidth = when (columnCount) {
-        2 -> COMPLEX_WIDGET_TWO_COLUMN_BASE_WIDTH
-        else -> COMPLEX_WIDGET_THREE_COLUMN_BASE_WIDTH
-    }
     // Padding and gaps are fixed geometry. Only the text budget grows with the
     // system font setting, so larger text reduces columns without inflating gaps.
-    val fixedWidth =
-        (COMPLEX_WIDGET_OUTER_PADDING.value * 2f) +
-            (COMPLEX_WIDGET_HORIZONTAL_PADDING.value * 2f) +
-            (COMPLEX_WIDGET_COLUMN_SPACING.value * (columnCount - 1)) +
-            (
-                COMPLEX_WIDGET_MEASUREMENT_UNIT_SPACING.value +
-                    COMPLEX_WIDGET_MEASUREMENT_DESCRIPTION_SPACING.value
-                ) * columnCount
-    val fontSensitiveWidth = baseWidth.value - fixedWidth
+    val fixedWidth = complexWidgetFixedWidth(columnCount)
+    val fontSensitiveWidth = if (columnCount == 2) {
+        COMPLEX_WIDGET_TWO_COLUMN_BASE_WIDTH.value - fixedWidth
+    } else {
+        val threeColumnTextWidth =
+            COMPLEX_WIDGET_THREE_COLUMN_BASE_WIDTH.value - complexWidgetFixedWidth(3)
+        (threeColumnTextWidth / 3f) * columnCount
+    }
 
-    return (
-        (fixedWidth + (fontSensitiveWidth * normalizedFontScale)) /
-            normalizedZoomFactor
-    ).dp
+    return (fixedWidth + (fontSensitiveWidth * normalizedFontScale)).dp
 }
+
+private fun complexWidgetFixedWidth(columnCount: Int): Float =
+    (COMPLEX_WIDGET_OUTER_PADDING.value * 2f) +
+        (COMPLEX_WIDGET_HORIZONTAL_PADDING.value * 2f) +
+        (COMPLEX_WIDGET_COLUMN_SPACING.value * (columnCount - 1)) +
+        (
+            COMPLEX_WIDGET_MEASUREMENT_UNIT_SPACING.value +
+                COMPLEX_WIDGET_MEASUREMENT_DESCRIPTION_SPACING.value
+            ) * columnCount
 
 internal fun calculateComplexTimestampEndReservation(
     contentEndInset: Dp,
@@ -407,9 +409,9 @@ internal data class ComplexWidgetLayoutConfig(
 internal fun complexWidgetLayoutConfig(
     width: Dp,
     fontScale: Float = 1f,
-    zoomFactor: Float = 1f
+    maximumColumns: Int = COMPLEX_WIDGET_MAX_COLUMNS
 ) = ComplexWidgetLayoutConfig(
-    measurementColumns = complexWidgetMeasurementColumns(width, fontScale, zoomFactor),
+    measurementColumns = complexWidgetMeasurementColumns(width, fontScale, maximumColumns),
     outerPadding = COMPLEX_WIDGET_OUTER_PADDING,
     horizontalPadding = COMPLEX_WIDGET_HORIZONTAL_PADDING,
     headerTopPadding = 12.dp,

@@ -4,6 +4,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import com.ruuvi.station.app.ui.theme.ruuviStationFontsSizes
+import com.ruuvi.station.widgets.ui.glance.WidgetContentPaddingDefaults
 
 data class SimpleWidgetLayoutConfig(
     val displayNameFontSize: TextUnit,
@@ -29,8 +30,8 @@ data class SimpleWidgetLayoutConfig(
                     displayNameFontSize = ruuviStationFontsSizes.normal,
                     valueFontSize = ruuviStationFontsSizes.bigger,
                     secondaryFontSize = ruuviStationFontsSizes.tiny,
-                    horizontalPadding = 12.dp,
-                    verticalPadding = 8.dp,
+                    horizontalPadding = WidgetContentPaddingDefaults.edgePadding,
+                    verticalPadding = WidgetContentPaddingDefaults.edgePadding,
                     inlineSpacing = 2.dp,
                     aqiBoxHeight = 34.dp,
                     unitPadding = 6.dp,
@@ -44,8 +45,8 @@ data class SimpleWidgetLayoutConfig(
                     displayNameFontSize = ruuviStationFontsSizes.petite,
                     valueFontSize = ruuviStationFontsSizes.big,
                     secondaryFontSize = ruuviStationFontsSizes.tiny,
-                    horizontalPadding = 10.dp,
-                    verticalPadding = 6.dp,
+                    horizontalPadding = WidgetContentPaddingDefaults.edgePadding,
+                    verticalPadding = WidgetContentPaddingDefaults.edgePadding,
                     inlineSpacing = 2.dp,
                     aqiBoxHeight = 27.dp,
                     unitPadding = 3.dp,
@@ -59,8 +60,8 @@ data class SimpleWidgetLayoutConfig(
                     displayNameFontSize = ruuviStationFontsSizes.tiny,
                     valueFontSize = ruuviStationFontsSizes.miniature,
                     secondaryFontSize = ruuviStationFontsSizes.nano,
-                    horizontalPadding = 8.dp,
-                    verticalPadding = 4.dp,
+                    horizontalPadding = WidgetContentPaddingDefaults.edgePadding,
+                    verticalPadding = WidgetContentPaddingDefaults.edgePadding,
                     inlineSpacing = 1.dp,
                     aqiBoxHeight = 18.dp,
                     unitPadding = 3.dp,
@@ -91,3 +92,84 @@ data class SimpleWidgetLayoutConfig(
         }
     }
 }
+
+internal data class SimpleWidgetTextHeights(
+    val displayName: Dp,
+    val value: Dp,
+    val secondary: Dp
+)
+
+internal data class SimpleWidgetContentVisibility(
+    val showDisplayName: Boolean,
+    val showMeasurementDescription: Boolean,
+    val showAqiProgress: Boolean,
+    val showTimestamp: Boolean,
+    val aqiInfoHeight: Dp
+)
+
+internal fun calculateSimpleWidgetContentVisibility(
+    widgetHeight: Dp,
+    config: SimpleWidgetLayoutConfig,
+    textHeights: SimpleWidgetTextHeights,
+    hasUnit: Boolean,
+    isAirQuality: Boolean
+): SimpleWidgetContentVisibility {
+    val availableHeight =
+        (safeDpValue(widgetHeight) - (safeDpValue(config.verticalPadding) * 2f))
+            .coerceAtLeast(0f)
+    val displayNameHeight = safeDpValue(textHeights.displayName)
+    val valueHeight = safeDpValue(textHeights.value)
+    val secondaryHeight = safeDpValue(textHeights.secondary)
+    val unitHeight = if (hasUnit || isAirQuality) {
+        secondaryHeight + safeDpValue(config.unitPadding)
+    } else {
+        0f
+    }
+    val aqiInfoHeightWithoutDescription = unitHeight
+    val valueRowHeight = maxOf(valueHeight, unitHeight)
+
+    var usedHeight = valueRowHeight
+    val showDisplayName = usedHeight + displayNameHeight <= availableHeight
+    if (showDisplayName) usedHeight += displayNameHeight
+
+    val aqiInfoHeightWithDescription = maxOf(
+        safeDpValue(config.aqiBoxHeight),
+        secondaryHeight * 2f +
+            safeDpValue(config.unitPadding) +
+            safeDpValue(config.aqiMeasurementPadding)
+    )
+    val measurementDescriptionHeight = if (isAirQuality) {
+        maxOf(valueHeight, aqiInfoHeightWithDescription) - valueRowHeight
+    } else {
+        secondaryHeight
+    }
+    val showMeasurementDescription =
+        usedHeight + measurementDescriptionHeight <= availableHeight
+    if (showMeasurementDescription) usedHeight += measurementDescriptionHeight
+
+    val aqiProgressHeight =
+        safeDpValue(config.glowSize) + SIMPLE_WIDGET_AQI_PROGRESS_BOTTOM_PADDING.value
+    val showAqiProgress =
+        isAirQuality && usedHeight + aqiProgressHeight <= availableHeight
+    if (showAqiProgress) usedHeight += aqiProgressHeight
+
+    val showTimestamp = usedHeight + secondaryHeight <= availableHeight
+    val aqiInfoHeight = if (showMeasurementDescription) {
+        aqiInfoHeightWithDescription
+    } else {
+        aqiInfoHeightWithoutDescription
+    }
+
+    return SimpleWidgetContentVisibility(
+        showDisplayName = showDisplayName,
+        showMeasurementDescription = showMeasurementDescription,
+        showAqiProgress = showAqiProgress,
+        showTimestamp = showTimestamp,
+        aqiInfoHeight = aqiInfoHeight.dp
+    )
+}
+
+internal val SIMPLE_WIDGET_AQI_PROGRESS_BOTTOM_PADDING = 2.dp
+
+private fun safeDpValue(value: Dp): Float =
+    value.value.takeIf { it.isFinite() && it >= 0f } ?: 0f

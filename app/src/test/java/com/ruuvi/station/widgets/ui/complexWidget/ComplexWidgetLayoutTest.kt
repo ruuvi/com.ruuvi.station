@@ -10,33 +10,41 @@ class ComplexWidgetLayoutTest {
     @Test
     fun `narrow widget uses one measurement column`() {
         assertEquals(1, complexWidgetMeasurementColumns(40.dp))
-        assertEquals(1, complexWidgetMeasurementColumns(179.dp))
+        assertEquals(1, complexWidgetMeasurementColumns(110.dp, fontScale = 0.85f))
     }
 
     @Test
-    fun `medium widget uses two measurement columns`() {
+    fun `three cell widget uses two columns with small and normal fonts`() {
+        assertEquals(2, complexWidgetMeasurementColumns(180.dp, fontScale = 0.85f))
         assertEquals(2, complexWidgetMeasurementColumns(180.dp))
-        assertEquals(2, complexWidgetMeasurementColumns(279.dp))
+        assertEquals(1, complexWidgetMeasurementColumns(180.dp, fontScale = 1.15f))
     }
 
     @Test
-    fun `normal font uses two columns at four cells and three when wider`() {
+    fun `four cell widget uses three columns only with small font`() {
+        assertEquals(3, complexWidgetMeasurementColumns(280.dp, fontScale = 0.85f))
         assertEquals(2, complexWidgetMeasurementColumns(280.dp))
-        assertEquals(3, complexWidgetMeasurementColumns(324.dp))
-        assertEquals(3, complexWidgetMeasurementColumns(400.dp))
-    }
-
-    @Test
-    fun `small font allows three columns on a narrower widget`() {
-        assertEquals(2, complexWidgetMeasurementColumns(286.dp, fontScale = 0.85f))
-        assertEquals(3, complexWidgetMeasurementColumns(287.dp, fontScale = 0.85f))
-    }
-
-    @Test
-    fun `large font steps down at four and five cells`() {
         assertEquals(2, complexWidgetMeasurementColumns(280.dp, fontScale = 1.15f))
-        assertEquals(2, complexWidgetMeasurementColumns(360.dp, fontScale = 1.15f))
-        assertEquals(3, complexWidgetMeasurementColumns(362.dp, fontScale = 1.15f))
+    }
+
+    @Test
+    fun `five cell widget uses three columns with small and normal fonts`() {
+        assertEquals(3, complexWidgetMeasurementColumns(350.dp, fontScale = 0.85f))
+        assertEquals(3, complexWidgetMeasurementColumns(350.dp))
+        assertEquals(2, complexWidgetMeasurementColumns(350.dp, fontScale = 1.15f))
+    }
+
+    @Test
+    fun `wider widgets can add more than three columns`() {
+        assertEquals(4, complexWidgetMeasurementColumns(420.dp))
+        assertEquals(5, complexWidgetMeasurementColumns(520.dp))
+        assertEquals(6, complexWidgetMeasurementColumns(620.dp))
+    }
+
+    @Test
+    fun `column count does not exceed available measurements`() {
+        assertEquals(3, complexWidgetMeasurementColumns(620.dp, maximumColumns = 3))
+        assertEquals(1, complexWidgetMeasurementColumns(620.dp, maximumColumns = 1))
     }
 
     @Test
@@ -48,32 +56,14 @@ class ComplexWidgetLayoutTest {
     @Test
     fun `font adjusted breakpoints preserve fixed padding and gutters`() {
         assertEquals(217.2f, complexWidgetRequiredWidth(2, fontScale = 1.3f).value, 0.001f)
-        assertEquals(399f, complexWidgetRequiredWidth(3, fontScale = 1.3f).value, 0.001f)
-    }
-
-    @Test
-    fun `display zoom scales text and fixed geometry together`() {
-        assertEquals(
-            198.9583f,
-            complexWidgetRequiredWidth(
-                columnCount = 3,
-                fontScale = 0.85f,
-                zoomFactor = 1.44f
-            ).value,
-            0.001f
-        )
+        assertEquals(388.6f, complexWidgetRequiredWidth(3, fontScale = 1.3f).value, 0.001f)
+        assertEquals(511.4667f, complexWidgetRequiredWidth(4, fontScale = 1.3f).value, 0.001f)
     }
 
     @Test
     fun `invalid font scale falls back to normal layout`() {
-        assertEquals(3, complexWidgetMeasurementColumns(324.dp, fontScale = Float.NaN))
-        assertEquals(3, complexWidgetMeasurementColumns(324.dp, fontScale = 0f))
-    }
-
-    @Test
-    fun `invalid zoom factor falls back to normal layout`() {
-        assertEquals(2, complexWidgetMeasurementColumns(280.dp, zoomFactor = Float.NaN))
-        assertEquals(2, complexWidgetMeasurementColumns(280.dp, zoomFactor = 0f))
+        assertEquals(3, complexWidgetMeasurementColumns(316.dp, fontScale = Float.NaN))
+        assertEquals(3, complexWidgetMeasurementColumns(316.dp, fontScale = 0f))
     }
 
     @Test

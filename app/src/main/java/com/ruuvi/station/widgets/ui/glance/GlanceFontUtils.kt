@@ -9,10 +9,12 @@ import android.graphics.Typeface
 import android.text.TextPaint
 import android.text.TextUtils
 import android.util.LruCache
+import android.util.TypedValue
 import androidx.annotation.FontRes
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.unit.dp
 import androidx.core.content.res.ResourcesCompat
 import androidx.glance.ColorFilter
 import androidx.glance.GlanceModifier
@@ -39,10 +41,7 @@ object GlanceFontUtils {
     ): Bitmap {
         require(maxWidth > 0) { "Custom font text requires a positive maximum width" }
 
-        val paint = TextPaint(Paint.ANTI_ALIAS_FLAG)
-        paint.textSize = fontSize.value * context.resources.displayMetrics.scaledDensity
-        paint.color = Color.WHITE
-        paint.typeface = getCachedTypeface(context, fontResId)
+        val paint = createTextPaint(context, fontSize, fontResId)
 
         val metrics = paint.fontMetrics
         val height = ceil(metrics.descent - metrics.ascent).toInt().coerceAtLeast(1)
@@ -74,6 +73,31 @@ object GlanceFontUtils {
         canvas.scale(horizontalScale, 1f)
         canvas.drawText(textToDraw, 0f, -metrics.ascent, paint)
         return image
+    }
+
+    internal fun measureFontHeight(
+        context: Context,
+        fontSize: TextUnit,
+        @FontRes fontResId: Int
+    ): Dp {
+        val paint = createTextPaint(context, fontSize, fontResId)
+        val metrics = paint.fontMetrics
+        val heightPx = ceil(metrics.descent - metrics.ascent)
+        return (heightPx / context.resources.displayMetrics.density).dp
+    }
+
+    private fun createTextPaint(
+        context: Context,
+        fontSize: TextUnit,
+        @FontRes fontResId: Int
+    ) = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
+        textSize = TypedValue.applyDimension(
+            TypedValue.COMPLEX_UNIT_SP,
+            fontSize.value,
+            context.resources.displayMetrics
+        )
+        color = Color.WHITE
+        typeface = getCachedTypeface(context, fontResId)
     }
 
     private fun getCachedTypeface(context: Context, fontResId: Int): Typeface? {
