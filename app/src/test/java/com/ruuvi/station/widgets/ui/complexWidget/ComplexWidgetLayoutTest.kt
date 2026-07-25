@@ -20,9 +20,60 @@ class ComplexWidgetLayoutTest {
     }
 
     @Test
-    fun `four-cell widget uses three measurement columns`() {
-        assertEquals(3, complexWidgetMeasurementColumns(280.dp))
+    fun `normal font uses two columns at four cells and three when wider`() {
+        assertEquals(2, complexWidgetMeasurementColumns(280.dp))
+        assertEquals(3, complexWidgetMeasurementColumns(324.dp))
         assertEquals(3, complexWidgetMeasurementColumns(400.dp))
+    }
+
+    @Test
+    fun `small font allows three columns on a narrower widget`() {
+        assertEquals(2, complexWidgetMeasurementColumns(286.dp, fontScale = 0.85f))
+        assertEquals(3, complexWidgetMeasurementColumns(287.dp, fontScale = 0.85f))
+    }
+
+    @Test
+    fun `large font steps down at four and five cells`() {
+        assertEquals(2, complexWidgetMeasurementColumns(280.dp, fontScale = 1.15f))
+        assertEquals(2, complexWidgetMeasurementColumns(360.dp, fontScale = 1.15f))
+        assertEquals(3, complexWidgetMeasurementColumns(362.dp, fontScale = 1.15f))
+    }
+
+    @Test
+    fun `maximum accessibility font uses one or two columns`() {
+        assertEquals(1, complexWidgetMeasurementColumns(280.dp, fontScale = 2f))
+        assertEquals(2, complexWidgetMeasurementColumns(360.dp, fontScale = 2f))
+    }
+
+    @Test
+    fun `font adjusted breakpoints preserve fixed padding and gutters`() {
+        assertEquals(217.2f, complexWidgetRequiredWidth(2, fontScale = 1.3f).value, 0.001f)
+        assertEquals(399f, complexWidgetRequiredWidth(3, fontScale = 1.3f).value, 0.001f)
+    }
+
+    @Test
+    fun `display zoom scales text and fixed geometry together`() {
+        assertEquals(
+            198.9583f,
+            complexWidgetRequiredWidth(
+                columnCount = 3,
+                fontScale = 0.85f,
+                zoomFactor = 1.44f
+            ).value,
+            0.001f
+        )
+    }
+
+    @Test
+    fun `invalid font scale falls back to normal layout`() {
+        assertEquals(3, complexWidgetMeasurementColumns(324.dp, fontScale = Float.NaN))
+        assertEquals(3, complexWidgetMeasurementColumns(324.dp, fontScale = 0f))
+    }
+
+    @Test
+    fun `invalid zoom factor falls back to normal layout`() {
+        assertEquals(2, complexWidgetMeasurementColumns(280.dp, zoomFactor = Float.NaN))
+        assertEquals(2, complexWidgetMeasurementColumns(280.dp, zoomFactor = 0f))
     }
 
     @Test
@@ -58,7 +109,7 @@ class ComplexWidgetLayoutTest {
     @Test
     fun `only measurement column count changes with width`() {
         val layouts = listOf(40.dp, 100.dp, 180.dp, 280.dp)
-            .map(::complexWidgetLayoutConfig)
+            .map { complexWidgetLayoutConfig(it) }
         val normalizedLayouts = layouts.map { it.copy(measurementColumns = 0) }
 
         normalizedLayouts.drop(1).forEach {

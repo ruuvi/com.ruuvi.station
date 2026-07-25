@@ -3,6 +3,7 @@ package com.ruuvi.station.widgets.ui.glance
 import android.content.Context
 import android.os.Build
 import android.util.DisplayMetrics
+import android.util.TypedValue
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
@@ -37,6 +38,32 @@ fun TextUnit.toWidgetSp(context: Context): TextUnit {
 }
 
 fun Dp.toWidgetDp(context: Context): Dp = this / getZoomFactor(context)
+
+internal fun getEffectiveFontScale(
+    context: Context,
+    referenceFontSizeSp: Float
+): Float {
+    if (!referenceFontSizeSp.isFinite() || referenceFontSizeSp <= 0f) return 1f
+
+    val metrics = context.resources.displayMetrics
+    val scaledPixels = TypedValue.applyDimension(
+        TypedValue.COMPLEX_UNIT_SP,
+        referenceFontSizeSp,
+        metrics
+    )
+    val unscaledPixels = TypedValue.applyDimension(
+        TypedValue.COMPLEX_UNIT_DIP,
+        referenceFontSizeSp,
+        metrics
+    )
+    if (!scaledPixels.isFinite() || !unscaledPixels.isFinite() || unscaledPixels <= 0f) {
+        return 1f
+    }
+
+    return (scaledPixels / unscaledPixels)
+        .takeIf { it.isFinite() && it > 0f }
+        ?: 1f
+}
 
 internal object WidgetRefreshButtonDefaults {
     val touchTargetSize: Dp = 44.dp

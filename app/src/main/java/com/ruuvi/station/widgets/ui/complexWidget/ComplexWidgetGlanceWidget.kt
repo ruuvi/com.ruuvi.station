@@ -49,6 +49,7 @@ import com.ruuvi.station.widgets.data.SensorValue
 import com.ruuvi.station.widgets.ui.glance.GlanceColors
 import com.ruuvi.station.widgets.ui.glance.RefreshButton
 import com.ruuvi.station.widgets.ui.glance.WidgetRefreshButtonDefaults
+import com.ruuvi.station.widgets.ui.glance.getEffectiveFontScale
 import com.ruuvi.station.widgets.ui.glance.getZoomFactor
 import com.ruuvi.station.widgets.ui.glance.toWidgetSp
 import com.ruuvi.station.widgets.ui.simpleWidget.SimpleWidget
@@ -77,7 +78,15 @@ object ComplexWidgetGlanceWidget : GlanceAppWidget() {
 private fun ComplexWidgetContent(sensors: List<ComplexWidgetData>) {
     val context = LocalContext.current
     val zoomFactor = getZoomFactor(context)
-    val layout = complexWidgetLayoutConfig(LocalSize.current.width)
+    val measurementDescriptionFontScale = getEffectiveFontScale(
+        context = context,
+        referenceFontSizeSp = ruuviStationFontsSizes.petite.toWidgetSp(context).value
+    )
+    val layout = complexWidgetLayoutConfig(
+        width = LocalSize.current.width,
+        fontScale = measurementDescriptionFontScale,
+        zoomFactor = zoomFactor
+    )
 
     Box(
         modifier = GlanceModifier
@@ -319,11 +328,59 @@ private fun MeasurementItem(
     }
 }
 
-internal fun complexWidgetMeasurementColumns(width: Dp): Int = when {
-    !width.value.isFinite() -> 1
-    width >= 280.dp -> 3
-    width >= 180.dp -> 2
-    else -> 1
+private val COMPLEX_WIDGET_OUTER_PADDING = 4.dp
+private val COMPLEX_WIDGET_HORIZONTAL_PADDING = 12.dp
+private val COMPLEX_WIDGET_COLUMN_SPACING = 12.dp
+private val COMPLEX_WIDGET_MEASUREMENT_UNIT_SPACING = 2.dp
+private val COMPLEX_WIDGET_MEASUREMENT_DESCRIPTION_SPACING = 4.dp
+private val COMPLEX_WIDGET_TWO_COLUMN_BASE_WIDTH = 180.dp
+private val COMPLEX_WIDGET_THREE_COLUMN_BASE_WIDTH = 324.dp
+
+internal fun complexWidgetMeasurementColumns(
+    width: Dp,
+    fontScale: Float = 1f,
+    zoomFactor: Float = 1f
+): Int {
+    if (!width.value.isFinite()) return 1
+
+    return when {
+        width >= complexWidgetRequiredWidth(3, fontScale, zoomFactor) -> 3
+        width >= complexWidgetRequiredWidth(2, fontScale, zoomFactor) -> 2
+        else -> 1
+    }
+}
+
+internal fun complexWidgetRequiredWidth(
+    columnCount: Int,
+    fontScale: Float,
+    zoomFactor: Float = 1f
+): Dp {
+    require(columnCount == 2 || columnCount == 3)
+
+    val normalizedFontScale =
+        fontScale.takeIf { it.isFinite() && it > 0f } ?: 1f
+    val normalizedZoomFactor =
+        zoomFactor.takeIf { it.isFinite() && it > 0f } ?: 1f
+    val baseWidth = when (columnCount) {
+        2 -> COMPLEX_WIDGET_TWO_COLUMN_BASE_WIDTH
+        else -> COMPLEX_WIDGET_THREE_COLUMN_BASE_WIDTH
+    }
+    // Padding and gaps are fixed geometry. Only the text budget grows with the
+    // system font setting, so larger text reduces columns without inflating gaps.
+    val fixedWidth =
+        (COMPLEX_WIDGET_OUTER_PADDING.value * 2f) +
+            (COMPLEX_WIDGET_HORIZONTAL_PADDING.value * 2f) +
+            (COMPLEX_WIDGET_COLUMN_SPACING.value * (columnCount - 1)) +
+            (
+                COMPLEX_WIDGET_MEASUREMENT_UNIT_SPACING.value +
+                    COMPLEX_WIDGET_MEASUREMENT_DESCRIPTION_SPACING.value
+                ) * columnCount
+    val fontSensitiveWidth = baseWidth.value - fixedWidth
+
+    return (
+        (fixedWidth + (fontSensitiveWidth * normalizedFontScale)) /
+            normalizedZoomFactor
+    ).dp
 }
 
 internal fun calculateComplexTimestampEndReservation(
@@ -347,18 +404,22 @@ internal data class ComplexWidgetLayoutConfig(
     val measurementDescriptionSpacing: Dp
 )
 
-internal fun complexWidgetLayoutConfig(width: Dp) = ComplexWidgetLayoutConfig(
-    measurementColumns = complexWidgetMeasurementColumns(width),
-    outerPadding = 4.dp,
-    horizontalPadding = 12.dp,
+internal fun complexWidgetLayoutConfig(
+    width: Dp,
+    fontScale: Float = 1f,
+    zoomFactor: Float = 1f
+) = ComplexWidgetLayoutConfig(
+    measurementColumns = complexWidgetMeasurementColumns(width, fontScale, zoomFactor),
+    outerPadding = COMPLEX_WIDGET_OUTER_PADDING,
+    horizontalPadding = COMPLEX_WIDGET_HORIZONTAL_PADDING,
     headerTopPadding = 12.dp,
     headerBottomSpacing = 12.dp,
     rowVerticalPadding = 3.dp,
     footerTopSpacing = 8.dp,
     footerBottomPadding = 12.dp,
-    measurementColumnSpacing = 12.dp,
-    measurementUnitSpacing = 2.dp,
-    measurementDescriptionSpacing = 4.dp
+    measurementColumnSpacing = COMPLEX_WIDGET_COLUMN_SPACING,
+    measurementUnitSpacing = COMPLEX_WIDGET_MEASUREMENT_UNIT_SPACING,
+    measurementDescriptionSpacing = COMPLEX_WIDGET_MEASUREMENT_DESCRIPTION_SPACING
 )
 
 class RefreshComplexWidgetAction : ActionCallback {
