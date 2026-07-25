@@ -158,4 +158,26 @@ class ComplexWidgetLayoutTest {
             )
         )
     }
+
+    @Test
+    fun `smaller text receives padding needed to share reference baseline`() {
+        assertEquals(
+            4.dp,
+            calculateBaselineTopPadding(
+                referenceBaselineOffset = 16.dp,
+                textBaselineOffset = 12.dp
+            )
+        )
+    }
+
+    @Test
+    fun `text below reference baseline is not shifted upward`() {
+        assertEquals(
+            0.dp,
+            calculateBaselineTopPadding(
+                referenceBaselineOffset = 12.dp,
+                textBaselineOffset = 16.dp
+            )
+        )
+    }
 }

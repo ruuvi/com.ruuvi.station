@@ -38,6 +38,9 @@ import androidx.glance.layout.padding
 import androidx.glance.layout.size
 import androidx.glance.layout.width
 import androidx.glance.state.PreferencesGlanceStateDefinition
+import androidx.glance.text.FontWeight
+import androidx.glance.text.Text
+import androidx.glance.text.TextStyle
 import androidx.glance.unit.ColorProvider as GlanceColorProvider
 import com.ruuvi.station.dashboard.ui.DashboardActivity
 import com.ruuvi.station.tagdetails.ui.SensorCardActivity
@@ -140,28 +143,21 @@ private fun SimpleWidgetContent(
     val displayNameFontSize = config.displayNameFontSize.toWidgetSp(context)
     val valueFontSize = config.valueFontSize.toWidgetSp(context)
     val secondaryFontSize = config.secondaryFontSize.toWidgetSp(context)
-    val secondaryFontHeight = maxOf(
-        GlanceFontUtils.measureFontHeight(
-            context,
-            secondaryFontSize,
-            R.font.mulish_regular
-        ),
-        GlanceFontUtils.measureFontHeight(
-            context,
-            secondaryFontSize,
-            R.font.oswald_light
-        )
+    val secondaryFontHeight = GlanceFontUtils.measureSystemFontHeight(
+        context = context,
+        fontSize = secondaryFontSize,
+        bold = true
     )
     val visibility = calculateSimpleWidgetContentVisibility(
         widgetHeight = widgetHeight,
         config = config,
         textHeights = SimpleWidgetTextHeights(
-            displayName = GlanceFontUtils.measureFontHeight(
-                context,
-                displayNameFontSize,
-                R.font.mulish_bold
+            displayName = GlanceFontUtils.measureSystemFontHeight(
+                context = context,
+                fontSize = displayNameFontSize,
+                bold = true
             ),
-            value = GlanceFontUtils.measureFontHeight(
+            value = GlanceFontUtils.measureCustomFontHeight(
                 context,
                 valueFontSize,
                 R.font.oswald_bold
@@ -195,12 +191,15 @@ private fun SimpleWidgetContent(
                 )
         ) {
             if (visibility.showDisplayName) {
-                CustomFontText(
+                Text(
                     text = displayName,
-                    fontSize = displayNameFontSize,
-                    colorProvider = GlanceColors.widgetSensorName,
-                    fontResId = R.font.mulish_bold,
-                    maxWidth = availableWidth
+                    modifier = GlanceModifier.fillMaxWidth(),
+                    style = TextStyle(
+                        color = GlanceColors.widgetSensorName,
+                        fontSize = displayNameFontSize,
+                        fontWeight = FontWeight.Bold
+                    ),
+                    maxLines = 1
                 )
             }
 
@@ -230,12 +229,14 @@ private fun SimpleWidgetContent(
                         .defaultWeight(),
                     contentAlignment = Alignment.BottomStart
                 ) {
-                    CustomFontText(
+                    Text(
                         text = updated,
-                        fontSize = secondaryFontSize,
-                        colorProvider = GlanceColors.widgetSensorName,
-                        fontResId = R.font.mulish_regular,
-                        maxWidth = timestampMaxWidth
+                        modifier = GlanceModifier.width(timestampMaxWidth),
+                        style = TextStyle(
+                            color = GlanceColors.widgetSensorName,
+                            fontSize = secondaryFontSize
+                        ),
+                        maxLines = 1
                     )
                 }
             }
@@ -274,24 +275,30 @@ private fun GlanceMeasurementDisplay(
 
         if (unit.isNotBlank()) {
             Spacer(modifier = GlanceModifier.width(config.inlineSpacing))
-            CustomFontText(
+            Text(
                 text = unit,
-                fontSize = config.secondaryFontSize.toWidgetSp(context),
-                colorProvider = GlanceColors.widgetSensorName,
-                fontResId = R.font.oswald_light,
-                modifier = GlanceModifier.padding(top = config.unitPadding),
-                maxWidth = positiveDp(rowWidth * 0.3f)
+                modifier = GlanceModifier
+                    .defaultWeight()
+                    .padding(top = config.unitPadding),
+                style = TextStyle(
+                    color = GlanceColors.widgetSensorName,
+                    fontSize = config.secondaryFontSize.toWidgetSp(context),
+                    fontWeight = FontWeight.Bold
+                ),
+                maxLines = 1
             )
         }
     }
 
     if (showMeasurementDescription) {
-        CustomFontText(
+        Text(
             text = measurementName,
-            fontSize = config.secondaryFontSize.toWidgetSp(context),
-            colorProvider = GlanceColors.widgetSensorName,
-            fontResId = R.font.mulish_regular,
-            maxWidth = availableWidth
+            modifier = GlanceModifier.fillMaxWidth(),
+            style = TextStyle(
+                color = GlanceColors.widgetSensorName,
+                fontSize = config.secondaryFontSize.toWidgetSp(context)
+            ),
+            maxLines = 1
         )
     }
 }
@@ -331,14 +338,22 @@ private fun GlanceAQIDisplay(
 
             Spacer(modifier = GlanceModifier.width(config.inlineSpacing))
 
-            Box(modifier = GlanceModifier.height(visibility.aqiInfoHeight)) {
-                CustomFontText(
+            Box(
+                modifier = GlanceModifier
+                    .width(positiveDp(availableWidth * 0.4f))
+                    .height(visibility.aqiInfoHeight)
+            ) {
+                Text(
                     text = "/100",
-                    fontSize = config.secondaryFontSize.toWidgetSp(context),
-                    colorProvider = GlanceColors.valueColor,
-                    fontResId = R.font.oswald_light,
-                    modifier = GlanceModifier.padding(top = config.unitPadding),
-                    maxWidth = positiveDp(availableWidth * 0.25f)
+                    modifier = GlanceModifier
+                        .fillMaxWidth()
+                        .padding(top = config.unitPadding),
+                    style = TextStyle(
+                        color = GlanceColors.valueColor,
+                        fontSize = config.secondaryFontSize.toWidgetSp(context),
+                        fontWeight = FontWeight.Bold
+                    ),
+                    maxLines = 1
                 )
 
                 if (visibility.showMeasurementDescription) {
@@ -346,13 +361,16 @@ private fun GlanceAQIDisplay(
                         modifier = GlanceModifier.fillMaxSize(),
                         contentAlignment = Alignment.BottomStart
                     ) {
-                        CustomFontText(
+                        Text(
                             text = measurementName,
-                            fontSize = config.secondaryFontSize.toWidgetSp(context),
-                            colorProvider = GlanceColors.widgetSensorName,
-                            fontResId = R.font.mulish_regular,
-                            modifier = GlanceModifier.padding(bottom = config.aqiMeasurementPadding),
-                            maxWidth = positiveDp(availableWidth * 0.4f)
+                            modifier = GlanceModifier
+                                .fillMaxWidth()
+                                .padding(bottom = config.aqiMeasurementPadding),
+                            style = TextStyle(
+                                color = GlanceColors.widgetSensorName,
+                                fontSize = config.secondaryFontSize.toWidgetSp(context)
+                            ),
+                            maxLines = 1
                         )
                     }
                 }

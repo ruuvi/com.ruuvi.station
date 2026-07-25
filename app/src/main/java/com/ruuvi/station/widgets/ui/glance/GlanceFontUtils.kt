@@ -75,7 +75,7 @@ object GlanceFontUtils {
         return image
     }
 
-    internal fun measureFontHeight(
+    internal fun measureCustomFontHeight(
         context: Context,
         fontSize: TextUnit,
         @FontRes fontResId: Int
@@ -84,6 +84,39 @@ object GlanceFontUtils {
         val metrics = paint.fontMetrics
         val heightPx = ceil(metrics.descent - metrics.ascent)
         return (heightPx / context.resources.displayMetrics.density).dp
+    }
+
+    internal fun measureSystemFontHeight(
+        context: Context,
+        fontSize: TextUnit,
+        bold: Boolean
+    ): Dp {
+        val paint = createSystemTextPaint(context, fontSize, bold)
+        val metrics = paint.fontMetricsInt
+        val heightPx = (metrics.bottom - metrics.top).coerceAtLeast(1)
+        return (heightPx / context.resources.displayMetrics.density).dp
+    }
+
+    internal fun measureSystemFontBaselineOffset(
+        context: Context,
+        fontSize: TextUnit,
+        bold: Boolean
+    ): Dp {
+        val metrics = createSystemTextPaint(context, fontSize, bold).fontMetricsInt
+        return (-metrics.top / context.resources.displayMetrics.density).dp
+    }
+
+    private fun createSystemTextPaint(
+        context: Context,
+        fontSize: TextUnit,
+        bold: Boolean
+    ) = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
+        textSize = TypedValue.applyDimension(
+            TypedValue.COMPLEX_UNIT_SP,
+            fontSize.value,
+            context.resources.displayMetrics
+        )
+        typeface = if (bold) Typeface.DEFAULT_BOLD else Typeface.DEFAULT
     }
 
     private fun createTextPaint(

@@ -47,6 +47,7 @@ import com.ruuvi.station.tagdetails.ui.SensorCardActivity
 import com.ruuvi.station.widgets.data.ComplexWidgetData
 import com.ruuvi.station.widgets.data.SensorValue
 import com.ruuvi.station.widgets.ui.glance.GlanceColors
+import com.ruuvi.station.widgets.ui.glance.GlanceFontUtils
 import com.ruuvi.station.widgets.ui.glance.RefreshButton
 import com.ruuvi.station.widgets.ui.glance.WidgetContentPaddingDefaults
 import com.ruuvi.station.widgets.ui.glance.WidgetRefreshButtonDefaults
@@ -277,39 +278,59 @@ private fun MeasurementItem(
     zoomFactor: Float
 ) {
     val context = LocalContext.current
+    val valueFontSize = ruuviStationFontsSizes.compact.toWidgetSp(context)
+    val secondaryFontSize = ruuviStationFontsSizes.petite.toWidgetSp(context)
+    val valueBaselineOffset = GlanceFontUtils.measureSystemFontBaselineOffset(
+        context = context,
+        fontSize = valueFontSize,
+        bold = true
+    )
+    val unitTopPadding = calculateBaselineTopPadding(
+        referenceBaselineOffset = valueBaselineOffset,
+        textBaselineOffset = GlanceFontUtils.measureSystemFontBaselineOffset(
+            context = context,
+            fontSize = secondaryFontSize,
+            bold = true
+        )
+    )
+    val descriptionTopPadding = calculateBaselineTopPadding(
+        referenceBaselineOffset = valueBaselineOffset,
+        textBaselineOffset = GlanceFontUtils.measureSystemFontBaselineOffset(
+            context = context,
+            fontSize = secondaryFontSize,
+            bold = false
+        )
+    )
     Row(
         modifier = modifier,
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.Top
     ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically
-        ) {
+        Text(
+            text = value.sensorValue,
+            style = TextStyle(
+                color = GlanceColors.valueColor,
+                fontSize = valueFontSize,
+                fontWeight = FontWeight.Bold
+            ),
+            maxLines = 1
+        )
+
+        if (value.unit.isNotBlank()) {
+            Spacer(
+                modifier = GlanceModifier.width(
+                    layout.measurementUnitSpacing / zoomFactor
+                )
+            )
             Text(
-                text = value.sensorValue,
+                text = value.unit,
+                modifier = GlanceModifier.padding(top = unitTopPadding),
                 style = TextStyle(
-                    color = GlanceColors.valueColor,
-                    fontSize = ruuviStationFontsSizes.compact.toWidgetSp(context),
+                    color = GlanceColors.widgetSensorName,
+                    fontSize = secondaryFontSize,
                     fontWeight = FontWeight.Bold
                 ),
                 maxLines = 1
             )
-
-            if (value.unit.isNotBlank()) {
-                Spacer(
-                    modifier = GlanceModifier.width(
-                        layout.measurementUnitSpacing / zoomFactor
-                    )
-                )
-                Text(
-                    text = value.unit,
-                    style = TextStyle(
-                        color = GlanceColors.widgetSensorName,
-                        fontSize = ruuviStationFontsSizes.petite.toWidgetSp(context),
-                        fontWeight = FontWeight.Bold
-                    ),
-                    maxLines = 1
-                )
-            }
         }
 
         Spacer(
@@ -319,15 +340,24 @@ private fun MeasurementItem(
         )
         Text(
             text = context.getString(value.type.unitType.measurementName),
-            modifier = GlanceModifier.defaultWeight(),
+            modifier = GlanceModifier
+                .defaultWeight()
+                .padding(top = descriptionTopPadding),
             style = TextStyle(
                 color = GlanceColors.widgetSensorName,
-                fontSize = ruuviStationFontsSizes.petite.toWidgetSp(context)
+                fontSize = secondaryFontSize
             ),
             maxLines = 1
         )
     }
 }
+
+internal fun calculateBaselineTopPadding(
+    referenceBaselineOffset: Dp,
+    textBaselineOffset: Dp
+): Dp = (
+    referenceBaselineOffset.value - textBaselineOffset.value
+).coerceAtLeast(0f).dp
 
 private val COMPLEX_WIDGET_OUTER_PADDING = WidgetContentPaddingDefaults.outerPadding
 private val COMPLEX_WIDGET_HORIZONTAL_PADDING = WidgetContentPaddingDefaults.innerPadding
