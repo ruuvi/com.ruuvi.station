@@ -22,13 +22,12 @@ import androidx.glance.LocalContext
 import androidx.glance.layout.Box
 import androidx.glance.unit.ColorProvider
 import kotlin.math.ceil
-import kotlin.math.min
 
 private const val END_ELLIPSIS = "\u2026"
+private const val BITMAP_ROW_ALIGNMENT_BYTES = 4
 
 object GlanceFontUtils {
     internal const val MAX_BITMAP_BYTES = 96 * 1024
-    private const val BYTES_PER_PIXEL = 4
     private val typefaceCache = LruCache<Int, Typeface?>(6)
 
     fun createFontBitmap(
@@ -47,8 +46,10 @@ object GlanceFontUtils {
 
         val metrics = paint.fontMetrics
         val height = ceil(metrics.descent - metrics.ascent).toInt().coerceAtLeast(1)
-        val allocationSafeWidth = (MAX_BITMAP_BYTES / BYTES_PER_PIXEL / height).coerceAtLeast(1)
-        val bitmapMaxWidth = min(maxWidth, allocationSafeWidth)
+        val bitmapMaxWidth = calculateBitmapMaxWidth(
+            requestedWidth = maxWidth,
+            bitmapHeight = height
+        )
         val isTruncated = paint.measureText(text) > bitmapMaxWidth
         val platformEllipsizedText = TextUtils.ellipsize(
             text,
@@ -64,7 +65,9 @@ object GlanceFontUtils {
         val horizontalScale = (bitmapMaxWidth / measuredWidth).coerceAtMost(1f)
         val width = ceil(measuredWidth * horizontalScale).toInt().coerceIn(1, bitmapMaxWidth)
 
-        val image = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888).apply {
+        // Glance tints this glyph mask at render time. ALPHA_8 keeps the 96 KiB
+        // cap without freezing long titles at a narrow widget width.
+        val image = Bitmap.createBitmap(width, height, Bitmap.Config.ALPHA_8).apply {
             density = context.resources.displayMetrics.densityDpi
         }
         val canvas = Canvas(image)
@@ -84,6 +87,24 @@ object GlanceFontUtils {
         return typeface
     }
 }
+
+internal fun calculateAllocationSafeBitmapWidth(bitmapHeight: Int): Int {
+    val safeHeight = bitmapHeight.coerceAtLeast(1)
+    val maxRowBytes = (GlanceFontUtils.MAX_BITMAP_BYTES / safeHeight).coerceAtLeast(1)
+    return if (maxRowBytes < BITMAP_ROW_ALIGNMENT_BYTES) {
+        1
+    } else {
+        maxRowBytes - (maxRowBytes % BITMAP_ROW_ALIGNMENT_BYTES)
+    }
+}
+
+internal fun calculateBitmapMaxWidth(
+    requestedWidth: Int,
+    bitmapHeight: Int
+): Int = minOf(
+    requestedWidth.coerceAtLeast(1),
+    calculateAllocationSafeBitmapWidth(bitmapHeight)
+)
 
 internal fun ensureTrailingEllipsis(
     text: String,
