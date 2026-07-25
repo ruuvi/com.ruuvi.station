@@ -15,6 +15,4 @@
     <attr name="colorButtonPressed" format="color"/>
     <attr name="colorPrimaryText" format="color" />
     <attr name="colorSensorDefaultBackground" format="color" />
-    <attr name="simpleWidgetPreview" format="reference" />
-    <attr name="complexWidgetPreview" format="reference" />
 </resources>

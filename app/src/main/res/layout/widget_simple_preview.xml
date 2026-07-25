@@ -3,7 +3,6 @@
     android:theme="@style/AppTheme.AppWidgetContainer"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:minHeight="90dp"
     tools:layout_width="140dp"
     tools:layout_height="90dp">
 
@@ -28,20 +27,35 @@
 
     </RelativeLayout>
 
-    <ImageButton
+    <FrameLayout
         android:id="@+id/refreshButton"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
         android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginEnd="4dp"
-        android:layout_marginBottom="4dp"
-        android:background="@color/ap_transparent"
-        android:padding="8dp"
-        android:scaleType="fitCenter"
-        android:src="@drawable/ic_widget_d_update"
-        android:tint="@color/titan70"
-        android:tintMode="src_in"
-        tools:ignore="UseAppTint" />
+        android:layout_alignParentBottom="true">
+
+        <FrameLayout
+            android:layout_width="22dp"
+            android:layout_height="22dp"
+            android:layout_gravity="end|bottom"
+            android:layout_marginEnd="12dp"
+            android:layout_marginBottom="12dp"
+            android:background="?attr/colorSurface"
+            tools:ignore="UselessParent">
+
+            <ImageView
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:layout_gravity="end|bottom"
+                android:contentDescription="@null"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_widget_d_update"
+                android:tint="?attr/colorOnSecondary"
+                android:tintMode="src_in"
+                tools:ignore="UseAppTint" />
+
+        </FrameLayout>
+
+    </FrameLayout>
 
 </RelativeLayout>

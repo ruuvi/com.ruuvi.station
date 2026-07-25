@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="widget_preview_background">@color/dark</color>
+    <color name="widget_preview_value">@color/white80</color>
+    <color name="widget_preview_secondary">@color/grayNew</color>
+</resources>

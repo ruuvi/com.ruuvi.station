@@ -501,9 +501,6 @@
     <string name="widgets_gateway_only">Voit käyttää Ruuvin widgettejä mikäli anturisi ovat Ruuvi Gatewayn kuuluvuusalueella tai mikäli joku on jakanut sinulle Ruuvi-anturin.</string>
     <string name="widgets_missing_sensors">Etkö näe kaikkia antureitasi listassa? Varmista, että olet vahvistanut kaikkien anturiesi omistajuudet sovelluksessa ja että ne ovat Ruuvi Gateway -reitittimen kuuluvuusalueella.</string>
     <string name="widgets_loading">ladataan...</string>
-    <string name="widgets_preview_sensor_name">Sauna</string>
-    <string name="widgets_preview_sensor_value">69,50</string>
-    <string name="widgets_preview_time">19.45</string>
     <string name="widgets_select_sensor_value_type">Valitse widgetissä näytettävä anturityyppi</string>
     <string name="back">Takaisin</string>
     <string name="select_sensor">Valitse anturi</string>

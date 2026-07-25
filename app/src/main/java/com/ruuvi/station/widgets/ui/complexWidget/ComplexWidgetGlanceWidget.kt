@@ -3,7 +3,9 @@ package com.ruuvi.station.widgets.ui.complexWidget
 import android.content.Context
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
+import androidx.core.os.ConfigurationCompat
 import androidx.datastore.preferences.core.Preferences
 import androidx.glance.GlanceId
 import androidx.glance.GlanceModifier
@@ -15,6 +17,7 @@ import androidx.glance.action.actionStartActivity
 import androidx.glance.action.clickable
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.GlanceAppWidgetManager
+import androidx.glance.appwidget.PreviewSizeMode
 import androidx.glance.appwidget.SizeMode
 import androidx.glance.appwidget.action.ActionCallback
 import androidx.glance.appwidget.action.actionRunCallback
@@ -46,6 +49,7 @@ import com.ruuvi.station.dashboard.ui.DashboardActivity
 import com.ruuvi.station.tagdetails.ui.SensorCardActivity
 import com.ruuvi.station.widgets.data.ComplexWidgetData
 import com.ruuvi.station.widgets.data.SensorValue
+import com.ruuvi.station.widgets.data.WidgetType
 import com.ruuvi.station.widgets.ui.glance.GlanceColors
 import com.ruuvi.station.widgets.ui.glance.GlanceFontUtils
 import com.ruuvi.station.widgets.ui.glance.RefreshButton
@@ -53,13 +57,20 @@ import com.ruuvi.station.widgets.ui.glance.WidgetContentPaddingDefaults
 import com.ruuvi.station.widgets.ui.glance.WidgetRefreshButtonDefaults
 import com.ruuvi.station.widgets.ui.glance.getEffectiveFontScale
 import com.ruuvi.station.widgets.ui.glance.getZoomFactor
+import com.ruuvi.station.widgets.ui.glance.scaledBy
 import com.ruuvi.station.widgets.ui.glance.toWidgetSp
 import com.ruuvi.station.widgets.ui.simpleWidget.SimpleWidget
+import java.text.NumberFormat
+import java.util.Date
+import java.util.Locale
 
 object ComplexWidgetGlanceWidget : GlanceAppWidget() {
     override val stateDefinition = PreferencesGlanceStateDefinition
 
     override val sizeMode = SizeMode.Exact
+
+    override val previewSizeMode: PreviewSizeMode =
+        SizeMode.Responsive(setOf(DpSize(360.dp, 220.dp)))
 
     override suspend fun provideGlance(context: Context, id: GlanceId) {
         provideContent {
@@ -74,15 +85,45 @@ object ComplexWidgetGlanceWidget : GlanceAppWidget() {
             ComplexWidgetContent(sensors)
         }
     }
+
+    override suspend fun providePreview(context: Context, widgetCategory: Int) {
+        val previewValues = listOf(
+            previewSensorValue(WidgetType.TEMPERATURE, 21.5, 1, context),
+            previewSensorValue(WidgetType.HUMIDITY, 45.0, 0, context),
+            previewSensorValue(WidgetType.PRESSURE, 1000.0, 0, context),
+            previewSensorValue(WidgetType.VOLTAGE, 2.96, 2, context)
+        )
+        val previewSensor = ComplexWidgetData(
+            sensorId = "preview",
+            timestamp = Date(0),
+            displayName = context.getString(R.string.widget_preview_sensor_name),
+            sensorValues = previewValues,
+            updated = "12:34"
+        )
+
+        provideContent {
+            ComplexWidgetContent(
+                sensors = listOf(previewSensor),
+                isPreview = true
+            )
+        }
+    }
 }
 
 @Composable
-private fun ComplexWidgetContent(sensors: List<ComplexWidgetData>) {
+private fun ComplexWidgetContent(
+    sensors: List<ComplexWidgetData>,
+    isPreview: Boolean = false
+) {
     val context = LocalContext.current
     val zoomFactor = getZoomFactor(context)
+    val typographyScale = if (isPreview) GENERATED_PREVIEW_TYPOGRAPHY_SCALE else 1f
     val measurementDescriptionFontScale = getEffectiveFontScale(
         context = context,
-        referenceFontSizeSp = ruuviStationFontsSizes.petite.toWidgetSp(context).value
+        referenceFontSizeSp = ruuviStationFontsSizes.petite
+            .scaledBy(typographyScale)
+            .toWidgetSp(context)
+            .value
     )
     val layout = complexWidgetLayoutConfig(
         width = LocalSize.current.width,
@@ -119,6 +160,13 @@ private fun ComplexWidgetContent(sensors: List<ComplexWidgetData>) {
                         maxLines = 1
                     )
                 }
+            } else if (isPreview) {
+                PreviewSensorContent(
+                    sensor = sensors.first(),
+                    layout = layout,
+                    zoomFactor = zoomFactor,
+                    typographyScale = typographyScale
+                )
             } else {
                 LazyColumn(modifier = GlanceModifier.fillMaxSize()) {
                     sensors.forEach { sensor ->
@@ -127,7 +175,13 @@ private fun ComplexWidgetContent(sensors: List<ComplexWidgetData>) {
                         )
 
                         item {
-                            SensorHeader(sensor, openAction, layout, zoomFactor)
+                            SensorHeader(
+                                sensor,
+                                openAction,
+                                layout,
+                                zoomFactor,
+                                typographyScale
+                            )
                             Spacer(
                                 modifier = GlanceModifier.height(
                                     layout.headerBottomSpacing / zoomFactor
@@ -143,12 +197,19 @@ private fun ComplexWidgetContent(sensors: List<ComplexWidgetData>) {
                                 columnCount = layout.measurementColumns,
                                 action = openAction,
                                 layout = layout,
-                                zoomFactor = zoomFactor
+                                zoomFactor = zoomFactor,
+                                typographyScale = typographyScale
                             )
                         }
 
                         item {
-                            SensorFooter(sensor, openAction, layout, zoomFactor)
+                            SensorFooter(
+                                sensor,
+                                openAction,
+                                layout,
+                                zoomFactor,
+                                typographyScale
+                            )
                         }
                     }
                 }
@@ -163,11 +224,61 @@ private fun ComplexWidgetContent(sensors: List<ComplexWidgetData>) {
 }
 
 @Composable
+private fun PreviewSensorContent(
+    sensor: ComplexWidgetData,
+    layout: ComplexWidgetLayoutConfig,
+    zoomFactor: Float,
+    typographyScale: Float
+) {
+    val openAction = actionStartActivity<DashboardActivity>()
+    Column(modifier = GlanceModifier.fillMaxSize()) {
+        SensorHeader(sensor, openAction, layout, zoomFactor, typographyScale)
+        Spacer(
+            modifier = GlanceModifier.height(
+                layout.headerBottomSpacing / zoomFactor
+            )
+        )
+        sensor.sensorValues.chunked(layout.measurementColumns).forEach { rowValues ->
+            MeasurementRow(
+                rowValues = rowValues,
+                columnCount = layout.measurementColumns,
+                action = openAction,
+                layout = layout,
+                zoomFactor = zoomFactor,
+                typographyScale = typographyScale
+            )
+        }
+        SensorFooter(sensor, openAction, layout, zoomFactor, typographyScale)
+    }
+}
+
+private fun previewSensorValue(
+    type: WidgetType,
+    value: Double,
+    fractionDigits: Int,
+    context: Context
+): SensorValue {
+    val locale = ConfigurationCompat.getLocales(context.resources.configuration)[0]
+        ?: Locale.getDefault()
+    val formattedValue = NumberFormat.getNumberInstance(locale).run {
+        minimumFractionDigits = fractionDigits
+        maximumFractionDigits = fractionDigits
+        format(value)
+    }
+    return SensorValue(
+        type = type,
+        sensorValue = formattedValue,
+        unit = context.getString(type.unitType.unit)
+    )
+}
+
+@Composable
 private fun SensorHeader(
     sensor: ComplexWidgetData,
     action: Action,
     layout: ComplexWidgetLayoutConfig,
-    zoomFactor: Float
+    zoomFactor: Float,
+    typographyScale: Float
 ) {
     val context = LocalContext.current
     Row(
@@ -183,7 +294,9 @@ private fun SensorHeader(
             modifier = GlanceModifier.defaultWeight(),
             style = TextStyle(
                 color = GlanceColors.widgetSensorName,
-                fontSize = ruuviStationFontsSizes.normal.toWidgetSp(context),
+                fontSize = ruuviStationFontsSizes.normal
+                    .scaledBy(typographyScale)
+                    .toWidgetSp(context),
                 fontWeight = FontWeight.Bold
             ),
             maxLines = 1
@@ -197,7 +310,8 @@ private fun MeasurementRow(
     columnCount: Int,
     action: Action,
     layout: ComplexWidgetLayoutConfig,
-    zoomFactor: Float
+    zoomFactor: Float,
+    typographyScale: Float
 ) {
     Row(
         modifier = GlanceModifier
@@ -225,7 +339,8 @@ private fun MeasurementRow(
                     value = value,
                     modifier = GlanceModifier.defaultWeight(),
                     layout = layout,
-                    zoomFactor = zoomFactor
+                    zoomFactor = zoomFactor,
+                    typographyScale = typographyScale
                 )
             }
         }
@@ -237,7 +352,8 @@ private fun SensorFooter(
     sensor: ComplexWidgetData,
     action: Action,
     layout: ComplexWidgetLayoutConfig,
-    zoomFactor: Float
+    zoomFactor: Float,
+    typographyScale: Float
 ) {
     val context = LocalContext.current
     val contentEndInset = (layout.outerPadding + layout.horizontalPadding) / zoomFactor
@@ -259,7 +375,9 @@ private fun SensorFooter(
                 modifier = GlanceModifier.defaultWeight(),
                 style = TextStyle(
                     color = GlanceColors.widgetSensorName,
-                    fontSize = ruuviStationFontsSizes.tiny2.toWidgetSp(context)
+                    fontSize = ruuviStationFontsSizes.tiny2
+                        .scaledBy(typographyScale)
+                        .toWidgetSp(context)
                 ),
                 maxLines = 1
             )
@@ -275,11 +393,16 @@ private fun MeasurementItem(
     value: SensorValue,
     modifier: GlanceModifier,
     layout: ComplexWidgetLayoutConfig,
-    zoomFactor: Float
+    zoomFactor: Float,
+    typographyScale: Float
 ) {
     val context = LocalContext.current
-    val valueFontSize = ruuviStationFontsSizes.compact.toWidgetSp(context)
-    val secondaryFontSize = ruuviStationFontsSizes.petite.toWidgetSp(context)
+    val valueFontSize = ruuviStationFontsSizes.compact
+        .scaledBy(typographyScale)
+        .toWidgetSp(context)
+    val secondaryFontSize = ruuviStationFontsSizes.petite
+        .scaledBy(typographyScale)
+        .toWidgetSp(context)
     val valueBaselineOffset = GlanceFontUtils.measureSystemFontBaselineOffset(
         context = context,
         fontSize = valueFontSize,
@@ -367,6 +490,7 @@ private val COMPLEX_WIDGET_MEASUREMENT_DESCRIPTION_SPACING = 4.dp
 private val COMPLEX_WIDGET_TWO_COLUMN_BASE_WIDTH = 180.dp
 private val COMPLEX_WIDGET_THREE_COLUMN_BASE_WIDTH = 316.dp
 private const val COMPLEX_WIDGET_MAX_COLUMNS = 6
+private const val GENERATED_PREVIEW_TYPOGRAPHY_SCALE = 0.9f
 
 internal fun complexWidgetMeasurementColumns(
     width: Dp,

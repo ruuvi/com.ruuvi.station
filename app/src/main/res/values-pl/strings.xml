@@ -501,9 +501,6 @@
     <string name="widgets_gateway_only">Możesz używać widżetów Ruuvi, jeśli czujniki są w zasięgu Ruuvi Gateway albo ktoś udostępnił Ci czujnik Ruuvi.</string>
     <string name="widgets_missing_sensors">Nie widzisz wszystkich swoich czujników na liście? Upewnij się, że przejęto własność wszystkich czujników i że są one w zasięgu routera Ruuvi Gateway.</string>
     <string name="widgets_loading">ładowanie...</string>
-    <string name="widgets_preview_sensor_name">Sauna</string>
-    <string name="widgets_preview_sensor_value">69.50</string>
-    <string name="widgets_preview_time">7:45</string>
     <string name="widgets_select_sensor_value_type">Wybierz typ czujnika do wyświetlenia w widżecie</string>
     <string name="back">Wstecz</string>
     <string name="select_sensor">Wybierz czujnik</string>

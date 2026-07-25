@@ -37,17 +37,27 @@ object GlanceFontUtils {
         text: String,
         fontSize: TextUnit,
         @FontRes fontResId: Int,
-        maxWidth: Int
+        maxWidth: Int,
+        embeddedColor: Int? = null
     ): Bitmap {
         require(maxWidth > 0) { "Custom font text requires a positive maximum width" }
 
-        val paint = createTextPaint(context, fontSize, fontResId)
+        val paint = createTextPaint(context, fontSize, fontResId).apply {
+            embeddedColor?.let { color = it }
+        }
+        val bitmapConfig = if (embeddedColor == null) {
+            Bitmap.Config.ALPHA_8
+        } else {
+            Bitmap.Config.ARGB_8888
+        }
+        val bytesPerPixel = if (bitmapConfig == Bitmap.Config.ALPHA_8) 1 else 4
 
         val metrics = paint.fontMetrics
         val height = ceil(metrics.descent - metrics.ascent).toInt().coerceAtLeast(1)
         val bitmapMaxWidth = calculateBitmapMaxWidth(
             requestedWidth = maxWidth,
-            bitmapHeight = height
+            bitmapHeight = height,
+            bytesPerPixel = bytesPerPixel
         )
         val isTruncated = paint.measureText(text) > bitmapMaxWidth
         val platformEllipsizedText = TextUtils.ellipsize(
@@ -64,9 +74,10 @@ object GlanceFontUtils {
         val horizontalScale = (bitmapMaxWidth / measuredWidth).coerceAtMost(1f)
         val width = ceil(measuredWidth * horizontalScale).toInt().coerceIn(1, bitmapMaxWidth)
 
-        // Glance tints this glyph mask at render time. ALPHA_8 keeps the 96 KiB
-        // cap without freezing long titles at a narrow widget width.
-        val image = Bitmap.createBitmap(width, height, Bitmap.Config.ALPHA_8).apply {
+        // A supplied color produces a self-contained bitmap. This is required for
+        // Android versions that can drop a separate bitmap tint in widget content
+        // or while persisting a generated preview.
+        val image = Bitmap.createBitmap(width, height, bitmapConfig).apply {
             density = context.resources.displayMetrics.densityDpi
         }
         val canvas = Canvas(image)
@@ -145,22 +156,31 @@ object GlanceFontUtils {
     }
 }
 
-internal fun calculateAllocationSafeBitmapWidth(bitmapHeight: Int): Int {
+internal fun calculateAllocationSafeBitmapWidth(
+    bitmapHeight: Int,
+    bytesPerPixel: Int = 1
+): Int {
     val safeHeight = bitmapHeight.coerceAtLeast(1)
-    val maxRowBytes = (GlanceFontUtils.MAX_BITMAP_BYTES / safeHeight).coerceAtLeast(1)
-    return if (maxRowBytes < BITMAP_ROW_ALIGNMENT_BYTES) {
+    val safeBytesPerPixel = bytesPerPixel.coerceAtLeast(1)
+    val maxPixelsPerRow = (
+        GlanceFontUtils.MAX_BITMAP_BYTES / safeHeight / safeBytesPerPixel
+    ).coerceAtLeast(1)
+    return if (safeBytesPerPixel >= BITMAP_ROW_ALIGNMENT_BYTES) {
+        maxPixelsPerRow
+    } else if (maxPixelsPerRow < BITMAP_ROW_ALIGNMENT_BYTES) {
         1
     } else {
-        maxRowBytes - (maxRowBytes % BITMAP_ROW_ALIGNMENT_BYTES)
+        maxPixelsPerRow - (maxPixelsPerRow % BITMAP_ROW_ALIGNMENT_BYTES)
     }
 }
 
 internal fun calculateBitmapMaxWidth(
     requestedWidth: Int,
-    bitmapHeight: Int
+    bitmapHeight: Int,
+    bytesPerPixel: Int = 1
 ): Int = minOf(
     requestedWidth.coerceAtLeast(1),
-    calculateAllocationSafeBitmapWidth(bitmapHeight)
+    calculateAllocationSafeBitmapWidth(bitmapHeight, bytesPerPixel)
 )
 
 internal fun ensureTrailingEllipsis(
@@ -179,7 +199,8 @@ fun CustomFontText(
     colorProvider: ColorProvider,
     @FontRes fontResId: Int,
     modifier: GlanceModifier = GlanceModifier,
-    maxWidth: Dp
+    maxWidth: Dp,
+    embeddedColor: Int? = null
 ) {
     if (text.isEmpty()) return
     val context = LocalContext.current
@@ -191,13 +212,18 @@ fun CustomFontText(
         text = text,
         fontSize = fontSize,
         fontResId = fontResId,
-        maxWidth = maxWidthPx
+        maxWidth = maxWidthPx,
+        embeddedColor = embeddedColor
     )
     Box(modifier = modifier) {
         Image(
             provider = ImageProvider(bitmap),
             contentDescription = text,
-            colorFilter = ColorFilter.tint(colorProvider)
+            colorFilter = if (embeddedColor == null) {
+                ColorFilter.tint(colorProvider)
+            } else {
+                null
+            }
         )
     }
 }

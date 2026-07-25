@@ -24,6 +24,32 @@ class GlanceFontUtilsTest {
     }
 
     @Test
+    fun `colored preview bitmap accounts for four bytes per pixel`() {
+        val allocationSafeWidth = calculateAllocationSafeBitmapWidth(
+            bitmapHeight = 64,
+            bytesPerPixel = 4
+        )
+
+        assertEquals(384, allocationSafeWidth)
+        assertEquals(
+            300,
+            calculateBitmapMaxWidth(
+                requestedWidth = 300,
+                bitmapHeight = 64,
+                bytesPerPixel = 4
+            )
+        )
+        assertEquals(
+            allocationSafeWidth,
+            calculateBitmapMaxWidth(
+                requestedWidth = 600,
+                bitmapHeight = 64,
+                bytesPerPixel = 4
+            )
+        )
+    }
+
+    @Test
     fun `truncated text always ends with an ellipsis`() {
         assertEquals("Bedroom…", ensureTrailingEllipsis("Bedroom", isTruncated = true))
         assertEquals("Bedroom…", ensureTrailingEllipsis("Bedroom…", isTruncated = true))

@@ -37,6 +37,11 @@ fun TextUnit.toWidgetSp(context: Context): TextUnit {
     return (value / zoomFactor).sp
 }
 
+internal fun TextUnit.scaledBy(scale: Float): TextUnit {
+    val safeScale = scale.takeIf { it.isFinite() && it > 0f } ?: 1f
+    return (value * safeScale).sp
+}
+
 fun Dp.toWidgetDp(context: Context): Dp = this / getZoomFactor(context)
 
 internal fun getEffectiveFontScale(

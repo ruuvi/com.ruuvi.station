@@ -4,7 +4,9 @@ import android.content.Context
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
+import androidx.core.os.ConfigurationCompat
 import androidx.datastore.preferences.core.Preferences
 import androidx.glance.ColorFilter
 import androidx.glance.GlanceId
@@ -18,6 +20,7 @@ import androidx.glance.action.actionStartActivity
 import androidx.glance.action.clickable
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.GlanceAppWidgetManager
+import androidx.glance.appwidget.PreviewSizeMode
 import androidx.glance.appwidget.SizeMode
 import androidx.glance.appwidget.action.ActionCallback
 import androidx.glance.appwidget.action.actionRunCallback
@@ -53,13 +56,19 @@ import com.ruuvi.station.widgets.ui.glance.GlanceFontUtils
 import com.ruuvi.station.widgets.ui.glance.RefreshButton
 import com.ruuvi.station.widgets.ui.glance.WidgetRefreshButtonDefaults
 import com.ruuvi.station.widgets.ui.glance.getZoomFactor
+import com.ruuvi.station.widgets.ui.glance.scaledBy
 import com.ruuvi.station.widgets.ui.glance.toWidgetSp
+import java.text.NumberFormat
+import java.util.Locale
 
 object SimpleWidgetGlanceWidget : GlanceAppWidget() {
 
     override val stateDefinition = PreferencesGlanceStateDefinition
 
     override val sizeMode = SizeMode.Exact
+
+    override val previewSizeMode: PreviewSizeMode =
+        SizeMode.Responsive(setOf(DpSize(180.dp, 110.dp)))
 
     override suspend fun provideGlance(context: Context, id: GlanceId) {
         provideContent {
@@ -81,6 +90,29 @@ object SimpleWidgetGlanceWidget : GlanceAppWidget() {
                 measurementName = measurementName?.takeIf { it.isNotBlank() } ?: "-",
                 updated = updated?.takeIf { it.isNotBlank() } ?: "-",
                 measurementType = measurementTypeCode?.toIntOrNull()?.let { WidgetType.getByCode(it) }
+            )
+        }
+    }
+
+    override suspend fun providePreview(context: Context, widgetCategory: Int) {
+        val locale = ConfigurationCompat.getLocales(context.resources.configuration)[0]
+            ?: Locale.getDefault()
+        val previewValue = NumberFormat.getNumberInstance(locale).run {
+            minimumFractionDigits = 1
+            maximumFractionDigits = 1
+            format(21.5)
+        }
+
+        provideContent {
+            SimpleWidgetContent(
+                sensorId = null,
+                displayName = context.getString(R.string.widget_preview_sensor_name),
+                sensorValue = previewValue,
+                unit = context.getString(WidgetType.TEMPERATURE.unitType.unit),
+                measurementName = context.getString(R.string.temperature),
+                updated = "12:34",
+                measurementType = WidgetType.TEMPERATURE,
+                typographyScale = GENERATED_PREVIEW_TYPOGRAPHY_SCALE
             )
         }
     }
@@ -121,7 +153,8 @@ private fun SimpleWidgetContent(
     unit: String,
     measurementName: String,
     updated: String,
-    measurementType: WidgetType?
+    measurementType: WidgetType?,
+    typographyScale: Float = 1f
 ) {
     val openAction = if (!sensorId.isNullOrEmpty()) {
         actionRunCallback<OpenSimpleWidgetSensorAction>(
@@ -132,13 +165,20 @@ private fun SimpleWidgetContent(
     }
 
     val context = LocalContext.current
+    val embeddedValueColor = GlanceColors.resolvedValueColor(context)
+    val embeddedSecondaryColor = GlanceColors.resolvedWidgetSensorNameColor(context)
     val zoomFactor = getZoomFactor(context)
     val size = LocalSize.current
     val widgetWidth = validDimensionOrFallback(size.width, 110.dp)
     val widgetHeight = validDimensionOrFallback(size.height, 45.dp)
-    val config = SimpleWidgetLayoutConfig.fromHeight(
+    val baseConfig = SimpleWidgetLayoutConfig.fromHeight(
         height = widgetHeight,
         zoomFactor = zoomFactor
+    )
+    val config = baseConfig.copy(
+        displayNameFontSize = baseConfig.displayNameFontSize.scaledBy(typographyScale),
+        valueFontSize = baseConfig.valueFontSize.scaledBy(typographyScale),
+        secondaryFontSize = baseConfig.secondaryFontSize.scaledBy(typographyScale)
     )
     val displayNameFontSize = config.displayNameFontSize.toWidgetSp(context)
     val valueFontSize = config.valueFontSize.toWidgetSp(context)
@@ -209,7 +249,8 @@ private fun SimpleWidgetContent(
                     measurementName = measurementName,
                     config = config,
                     availableWidth = availableWidth,
-                    visibility = visibility
+                    visibility = visibility,
+                    embeddedValueColor = embeddedValueColor
                 )
             } else {
                 GlanceMeasurementDisplay(
@@ -218,7 +259,9 @@ private fun SimpleWidgetContent(
                     measurementName = measurementName,
                     config = config,
                     availableWidth = availableWidth,
-                    showMeasurementDescription = visibility.showMeasurementDescription
+                    showMeasurementDescription = visibility.showMeasurementDescription,
+                    embeddedValueColor = embeddedValueColor,
+                    embeddedUnitColor = embeddedSecondaryColor
                 )
             }
 
@@ -256,7 +299,9 @@ private fun GlanceMeasurementDisplay(
     measurementName: String,
     config: SimpleWidgetLayoutConfig,
     availableWidth: Dp,
-    showMeasurementDescription: Boolean
+    showMeasurementDescription: Boolean,
+    embeddedValueColor: Int?,
+    embeddedUnitColor: Int?
 ) {
     val context = LocalContext.current
     val rowWidth = positiveDp(availableWidth - config.inlineSpacing)
@@ -270,22 +315,21 @@ private fun GlanceMeasurementDisplay(
             fontSize = config.valueFontSize.toWidgetSp(context),
             colorProvider = GlanceColors.valueColor,
             fontResId = R.font.oswald_bold,
-            maxWidth = positiveDp(rowWidth * valueWidthFraction)
+            maxWidth = positiveDp(rowWidth * valueWidthFraction),
+            embeddedColor = embeddedValueColor
         )
 
         if (unit.isNotBlank()) {
             Spacer(modifier = GlanceModifier.width(config.inlineSpacing))
-            Text(
+            CustomFontText(
                 text = unit,
+                fontSize = config.secondaryFontSize.toWidgetSp(context),
+                colorProvider = GlanceColors.widgetSensorName,
+                fontResId = R.font.oswald_regular,
                 modifier = GlanceModifier
-                    .defaultWeight()
                     .padding(top = config.unitPadding),
-                style = TextStyle(
-                    color = GlanceColors.widgetSensorName,
-                    fontSize = config.secondaryFontSize.toWidgetSp(context),
-                    fontWeight = FontWeight.Bold
-                ),
-                maxLines = 1
+                maxWidth = positiveDp(rowWidth * (1f - valueWidthFraction)),
+                embeddedColor = embeddedUnitColor
             )
         }
     }
@@ -303,13 +347,16 @@ private fun GlanceMeasurementDisplay(
     }
 }
 
+private const val GENERATED_PREVIEW_TYPOGRAPHY_SCALE = 0.9f
+
 @Composable
 private fun GlanceAQIDisplay(
     sensorValue: String,
     measurementName: String,
     config: SimpleWidgetLayoutConfig,
     availableWidth: Dp,
-    visibility: SimpleWidgetContentVisibility
+    visibility: SimpleWidgetContentVisibility,
+    embeddedValueColor: Int?
 ) {
     val context = LocalContext.current
     val aqiText = sensorValue.substringBefore("/")
@@ -333,7 +380,8 @@ private fun GlanceAQIDisplay(
                 fontSize = config.valueFontSize.toWidgetSp(context),
                 colorProvider = GlanceColors.valueColor,
                 fontResId = R.font.oswald_bold,
-                maxWidth = positiveDp(availableWidth * 0.55f)
+                maxWidth = positiveDp(availableWidth * 0.55f),
+                embeddedColor = embeddedValueColor
             )
 
             Spacer(modifier = GlanceModifier.width(config.inlineSpacing))
