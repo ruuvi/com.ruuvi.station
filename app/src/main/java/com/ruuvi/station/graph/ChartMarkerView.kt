@@ -70,7 +70,7 @@ constructor(
         } else {
             unitType.defaultAccuracy
         }
-        val valueText = unitsConverter.getValue(e.y.toDouble(), accuracy, context.getString(unitType.unit))
+        val valueText = unitsConverter.getValue(e.y.toDouble(), accuracy, unitsConverter.getUnitStringForUnitType(unitType))
 
         tvContent.text ="$valueText\n$timeText\n$dateText"
 

@@ -26,6 +26,14 @@ class UnitsConverter (
         return name + unitString
     }
 
+//    fun getUnitStringForUnitType(unitType: UnitType): String {
+//        return if (unitType is UnitType.HumidityUnit.DewPoint) {
+//            context.getString(getTemperatureUnit().unit)
+//        } else {
+//            context.getString(unitType.unit)
+//        }
+//    }
+
     // AQI
     fun getAqiEnviromentValue(
         value: AQI
