@@ -237,6 +237,7 @@ dependencies {
 
     testImplementation 'junit:junit:4.13'
     testImplementation "io.mockk:mockk:1.13.13"
+    testImplementation "androidx.arch.core:core-testing:2.2.0"
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation 'com.jakewharton.timber:timber:4.7.1'
 
