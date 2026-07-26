@@ -1,9 +1,26 @@
 package com.ruuvi.station.widgets.ui.glance
 
+import android.graphics.Bitmap
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
 class GlanceFontUtilsTest {
+    @Test
+    fun `runtime text uses a one-byte alpha mask`() {
+        val format = fontBitmapFormat(embeddedColor = null)
+
+        assertEquals(Bitmap.Config.ALPHA_8, format.config)
+        assertEquals(1, format.bytesPerPixel)
+    }
+
+    @Test
+    fun `generated preview text embeds color in a four-byte bitmap`() {
+        val format = fontBitmapFormat(embeddedColor = 0x12345678)
+
+        assertEquals(Bitmap.Config.ARGB_8888, format.config)
+        assertEquals(4, format.bytesPerPixel)
+    }
+
     @Test
     fun `alpha mask keeps wider widget titles within the bitmap allocation cap`() {
         val allocationSafeWidth = calculateAllocationSafeBitmapWidth(bitmapHeight = 64)

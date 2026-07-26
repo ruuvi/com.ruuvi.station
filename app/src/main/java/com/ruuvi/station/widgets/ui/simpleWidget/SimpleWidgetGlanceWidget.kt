@@ -19,6 +19,7 @@ import androidx.glance.action.ActionParameters
 import androidx.glance.action.actionStartActivity
 import androidx.glance.action.clickable
 import androidx.glance.appwidget.GlanceAppWidget
+import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.glance.appwidget.PreviewSizeMode
 import androidx.glance.appwidget.SizeMode
 import androidx.glance.appwidget.action.ActionCallback
@@ -61,6 +62,8 @@ import com.ruuvi.station.widgets.update.WidgetRefreshScheduler
 import com.ruuvi.station.widgets.update.resolveAppWidgetId
 import java.text.NumberFormat
 import java.util.Locale
+import kotlinx.coroutines.CancellationException
+import timber.log.Timber
 
 object SimpleWidgetGlanceWidget : GlanceAppWidget() {
 
@@ -90,7 +93,8 @@ object SimpleWidgetGlanceWidget : GlanceAppWidget() {
                 unit = unit.orEmpty(),
                 measurementName = measurementName?.takeIf { it.isNotBlank() } ?: "-",
                 updated = updated?.takeIf { it.isNotBlank() } ?: "-",
-                measurementType = measurementTypeCode?.toIntOrNull()?.let { WidgetType.getByCode(it) }
+                measurementType = measurementTypeCode?.toIntOrNull()?.let { WidgetType.getByCode(it) },
+                renderingMode = SimpleWidgetRenderingMode.RUNTIME,
             )
         }
     }
@@ -113,8 +117,25 @@ object SimpleWidgetGlanceWidget : GlanceAppWidget() {
                 measurementName = context.getString(R.string.temperature),
                 updated = "12:34",
                 measurementType = WidgetType.TEMPERATURE,
-                typographyScale = GENERATED_PREVIEW_TYPOGRAPHY_SCALE
+                renderingMode = SimpleWidgetRenderingMode.GENERATED_PREVIEW,
+                typographyScale = GENERATED_PREVIEW_TYPOGRAPHY_SCALE,
             )
+        }
+    }
+
+    internal suspend fun rerenderAllFromState(context: Context) {
+        val applicationContext = context.applicationContext
+        val glanceIds = GlanceAppWidgetManager(applicationContext)
+            .getGlanceIds(SimpleWidgetGlanceWidget::class.java)
+
+        for (glanceId in glanceIds) {
+            try {
+                update(applicationContext, glanceId)
+            } catch (cancellation: CancellationException) {
+                throw cancellation
+            } catch (error: Exception) {
+                Timber.e(error, "Unable to rerender simple widget $glanceId")
+            }
         }
     }
 }
@@ -151,7 +172,8 @@ private fun SimpleWidgetContent(
     measurementName: String,
     updated: String,
     measurementType: WidgetType?,
-    typographyScale: Float = 1f
+    renderingMode: SimpleWidgetRenderingMode,
+    typographyScale: Float = 1f,
 ) {
     val openAction = if (!sensorId.isNullOrEmpty()) {
         actionRunCallback<OpenSimpleWidgetSensorAction>(
@@ -162,8 +184,11 @@ private fun SimpleWidgetContent(
     }
 
     val context = LocalContext.current
-    val embeddedValueColor = GlanceColors.resolvedValueColor(context)
-    val embeddedSecondaryColor = GlanceColors.resolvedWidgetSensorNameColor(context)
+    val embeddedColors = resolveSimpleWidgetEmbeddedColors(
+        renderingMode = renderingMode,
+        valueColor = { GlanceColors.resolvedValueColor(context) },
+        secondaryColor = { GlanceColors.resolvedWidgetSensorNameColor(context) },
+    )
     val zoomFactor = getZoomFactor(context)
     val size = LocalSize.current
     val widgetWidth = validDimensionOrFallback(size.width, 110.dp)
@@ -247,7 +272,7 @@ private fun SimpleWidgetContent(
                     config = config,
                     availableWidth = availableWidth,
                     visibility = visibility,
-                    embeddedValueColor = embeddedValueColor
+                    embeddedValueColor = embeddedColors.value,
                 )
             } else {
                 GlanceMeasurementDisplay(
@@ -257,8 +282,8 @@ private fun SimpleWidgetContent(
                     config = config,
                     availableWidth = availableWidth,
                     showMeasurementDescription = visibility.showMeasurementDescription,
-                    embeddedValueColor = embeddedValueColor,
-                    embeddedUnitColor = embeddedSecondaryColor
+                    embeddedValueColor = embeddedColors.value,
+                    embeddedUnitColor = embeddedColors.secondary,
                 )
             }
 
@@ -288,6 +313,32 @@ private fun SimpleWidgetContent(
         )
     }
 }
+
+internal enum class SimpleWidgetRenderingMode {
+    RUNTIME,
+    GENERATED_PREVIEW,
+}
+
+internal data class SimpleWidgetEmbeddedColors(
+    val value: Int?,
+    val secondary: Int?,
+)
+
+internal fun resolveSimpleWidgetEmbeddedColors(
+    renderingMode: SimpleWidgetRenderingMode,
+    valueColor: () -> Int,
+    secondaryColor: () -> Int,
+): SimpleWidgetEmbeddedColors =
+    when (renderingMode) {
+        SimpleWidgetRenderingMode.RUNTIME -> SimpleWidgetEmbeddedColors(
+            value = null,
+            secondary = null,
+        )
+        SimpleWidgetRenderingMode.GENERATED_PREVIEW -> SimpleWidgetEmbeddedColors(
+            value = valueColor(),
+            secondary = secondaryColor(),
+        )
+    }
 
 @Composable
 private fun GlanceMeasurementDisplay(

@@ -45,19 +45,14 @@ object GlanceFontUtils {
         val paint = createTextPaint(context, fontSize, fontResId).apply {
             embeddedColor?.let { color = it }
         }
-        val bitmapConfig = if (embeddedColor == null) {
-            Bitmap.Config.ALPHA_8
-        } else {
-            Bitmap.Config.ARGB_8888
-        }
-        val bytesPerPixel = if (bitmapConfig == Bitmap.Config.ALPHA_8) 1 else 4
+        val bitmapFormat = fontBitmapFormat(embeddedColor)
 
         val metrics = paint.fontMetrics
         val height = ceil(metrics.descent - metrics.ascent).toInt().coerceAtLeast(1)
         val bitmapMaxWidth = calculateBitmapMaxWidth(
             requestedWidth = maxWidth,
             bitmapHeight = height,
-            bytesPerPixel = bytesPerPixel
+            bytesPerPixel = bitmapFormat.bytesPerPixel,
         )
         val isTruncated = paint.measureText(text) > bitmapMaxWidth
         val platformEllipsizedText = TextUtils.ellipsize(
@@ -74,10 +69,10 @@ object GlanceFontUtils {
         val horizontalScale = (bitmapMaxWidth / measuredWidth).coerceAtMost(1f)
         val width = ceil(measuredWidth * horizontalScale).toInt().coerceIn(1, bitmapMaxWidth)
 
-        // A supplied color produces a self-contained bitmap. This is required for
-        // Android versions that can drop a separate bitmap tint in widget content
-        // or while persisting a generated preview.
-        val image = Bitmap.createBitmap(width, height, bitmapConfig).apply {
+        // Generated previews use a self-contained colored bitmap because widget
+        // hosts can drop a separate tint while persisting the preview. Placed
+        // widgets use a neutral alpha mask so their day/night tint stays dynamic.
+        val image = Bitmap.createBitmap(width, height, bitmapFormat.config).apply {
             density = context.resources.displayMetrics.densityDpi
         }
         val canvas = Canvas(image)
@@ -155,6 +150,24 @@ object GlanceFontUtils {
         return typeface
     }
 }
+
+internal data class FontBitmapFormat(
+    val config: Bitmap.Config,
+    val bytesPerPixel: Int,
+)
+
+internal fun fontBitmapFormat(embeddedColor: Int?): FontBitmapFormat =
+    if (embeddedColor == null) {
+        FontBitmapFormat(
+            config = Bitmap.Config.ALPHA_8,
+            bytesPerPixel = 1,
+        )
+    } else {
+        FontBitmapFormat(
+            config = Bitmap.Config.ARGB_8888,
+            bytesPerPixel = 4,
+        )
+    }
 
 internal fun calculateAllocationSafeBitmapWidth(
     bitmapHeight: Int,
