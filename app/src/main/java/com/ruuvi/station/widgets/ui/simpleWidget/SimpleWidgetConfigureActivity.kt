@@ -31,11 +31,13 @@ import com.ruuvi.station.widgets.data.WidgetType.Companion.filterWidgetTypes
 import com.ruuvi.station.widgets.ui.AddSensorsFirstScreen
 import com.ruuvi.station.widgets.ui.EnableBackgroundService
 import com.ruuvi.station.widgets.ui.WidgetConfigTopAppBar
+import com.ruuvi.station.widgets.update.WidgetUpdater
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.launch
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
-import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.launch
+import org.kodein.di.generic.instance
 import timber.log.Timber
 
 class SimpleWidgetConfigureActivity : AppCompatActivity(), KodeinAware {
@@ -45,6 +47,7 @@ class SimpleWidgetConfigureActivity : AppCompatActivity(), KodeinAware {
     override val kodein: Kodein by closestKodein()
 
     private val viewModel: SimpleWidgetConfigureViewModel by viewModel()
+    private val widgetUpdater: WidgetUpdater by instance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -87,7 +90,10 @@ class SimpleWidgetConfigureActivity : AppCompatActivity(), KodeinAware {
 
         lifecycleScope.launch {
             try {
-                SimpleWidget.updateSimpleWidget(this@SimpleWidgetConfigureActivity, appWidgetId)
+                widgetUpdater.updateSimpleWidget(
+                    this@SimpleWidgetConfigureActivity,
+                    appWidgetId,
+                )
             } catch (cancellation: CancellationException) {
                 throw cancellation
             } catch (error: Exception) {

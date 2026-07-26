@@ -19,7 +19,6 @@ import androidx.glance.action.ActionParameters
 import androidx.glance.action.actionStartActivity
 import androidx.glance.action.clickable
 import androidx.glance.appwidget.GlanceAppWidget
-import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.glance.appwidget.PreviewSizeMode
 import androidx.glance.appwidget.SizeMode
 import androidx.glance.appwidget.action.ActionCallback
@@ -58,6 +57,8 @@ import com.ruuvi.station.widgets.ui.glance.WidgetRefreshButtonDefaults
 import com.ruuvi.station.widgets.ui.glance.getZoomFactor
 import com.ruuvi.station.widgets.ui.glance.scaledBy
 import com.ruuvi.station.widgets.ui.glance.toWidgetSp
+import com.ruuvi.station.widgets.update.WidgetRefreshScheduler
+import com.ruuvi.station.widgets.update.resolveAppWidgetId
 import java.text.NumberFormat
 import java.util.Locale
 
@@ -124,10 +125,8 @@ class RefreshSimpleWidgetAction : ActionCallback {
         glanceId: GlanceId,
         parameters: ActionParameters
     ) {
-        val appWidgetId = runCatching {
-            GlanceAppWidgetManager(context).getAppWidgetId(glanceId)
-        }.getOrNull() ?: return
-        SimpleWidget.updateSimpleWidget(context, appWidgetId)
+        val appWidgetId = resolveAppWidgetId(context, glanceId, "Simple") ?: return
+        WidgetRefreshScheduler.enqueueSimpleRefresh(context, appWidgetId)
     }
 }
 
@@ -138,9 +137,7 @@ class OpenSimpleWidgetSensorAction : ActionCallback {
         parameters: ActionParameters
     ) {
         val sensorId = SimpleWidget.sensorIdFromParameters(parameters) ?: return
-        val appWidgetId = runCatching {
-            GlanceAppWidgetManager(context).getAppWidgetId(glanceId)
-        }.getOrNull() ?: return
+        val appWidgetId = resolveAppWidgetId(context, glanceId, "Simple") ?: return
         SensorCardActivity.createWidgetPendingIntent(context, sensorId, appWidgetId)?.send()
     }
 }

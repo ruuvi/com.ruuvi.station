@@ -30,11 +30,13 @@ import com.ruuvi.station.widgets.complexWidget.ComplexWidgetSensorItem
 import com.ruuvi.station.widgets.data.WidgetType
 import com.ruuvi.station.widgets.data.WidgetType.Companion.filterWidgetTypes
 import com.ruuvi.station.widgets.ui.*
+import com.ruuvi.station.widgets.update.WidgetUpdater
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.launch
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
-import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.launch
+import org.kodein.di.generic.instance
 import timber.log.Timber
 
 class ComplexWidgetConfigureActivity : AppCompatActivity(), KodeinAware {
@@ -42,6 +44,7 @@ class ComplexWidgetConfigureActivity : AppCompatActivity(), KodeinAware {
     private var setupCompletionStarted = false
 
     override val kodein: Kodein by closestKodein()
+    private val widgetUpdater: WidgetUpdater by instance()
 
     private val viewModel: ComplexWidgetConfigureViewModel by viewModel() {
         appWidgetId = intent.extras?.getInt(
@@ -95,9 +98,9 @@ class ComplexWidgetConfigureActivity : AppCompatActivity(), KodeinAware {
 
         lifecycleScope.launch {
             try {
-                ComplexWidgetProvider.updateComplexWidget(
+                widgetUpdater.updateComplexWidget(
                     this@ComplexWidgetConfigureActivity,
-                    appWidgetId
+                    appWidgetId,
                 )
             } catch (cancellation: CancellationException) {
                 throw cancellation

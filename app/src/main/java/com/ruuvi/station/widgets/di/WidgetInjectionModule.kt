@@ -6,6 +6,7 @@ import com.ruuvi.station.widgets.domain.ComplexWidgetPreferencesInteractor
 import com.ruuvi.station.widgets.domain.WidgetInteractor
 import com.ruuvi.station.widgets.domain.WidgetPreferencesInteractor
 import com.ruuvi.station.widgets.ui.simpleWidget.SimpleWidgetConfigureViewModel
+import com.ruuvi.station.widgets.update.WidgetUpdater
 import org.kodein.di.Kodein
 import org.kodein.di.generic.*
 
@@ -25,5 +26,9 @@ object WidgetInjectionModule {
         }
 
         bind<WidgetInteractor>() with singleton { WidgetInteractor(instance(),instance(), instance(), instance(), instance()) }
+
+        bind<WidgetUpdater>() with singleton {
+            WidgetUpdater(instance(), instance(), instance())
+        }
     }
 }

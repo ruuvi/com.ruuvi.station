@@ -16,7 +16,6 @@ import androidx.glance.action.ActionParameters
 import androidx.glance.action.actionStartActivity
 import androidx.glance.action.clickable
 import androidx.glance.appwidget.GlanceAppWidget
-import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.glance.appwidget.PreviewSizeMode
 import androidx.glance.appwidget.SizeMode
 import androidx.glance.appwidget.action.ActionCallback
@@ -60,6 +59,8 @@ import com.ruuvi.station.widgets.ui.glance.getZoomFactor
 import com.ruuvi.station.widgets.ui.glance.scaledBy
 import com.ruuvi.station.widgets.ui.glance.toWidgetSp
 import com.ruuvi.station.widgets.ui.simpleWidget.SimpleWidget
+import com.ruuvi.station.widgets.update.WidgetRefreshScheduler
+import com.ruuvi.station.widgets.update.resolveAppWidgetId
 import java.text.NumberFormat
 import java.util.Date
 import java.util.Locale
@@ -584,10 +585,8 @@ class RefreshComplexWidgetAction : ActionCallback {
         glanceId: GlanceId,
         parameters: ActionParameters
     ) {
-        val appWidgetId = runCatching {
-            GlanceAppWidgetManager(context).getAppWidgetId(glanceId)
-        }.getOrNull() ?: return
-        ComplexWidgetProvider.updateComplexWidget(context, appWidgetId)
+        val appWidgetId = resolveAppWidgetId(context, glanceId, "Complex") ?: return
+        WidgetRefreshScheduler.enqueueComplexRefresh(context, appWidgetId)
     }
 }
 
@@ -598,9 +597,7 @@ class OpenComplexWidgetSensorAction : ActionCallback {
         parameters: ActionParameters
     ) {
         val sensorId = SimpleWidget.sensorIdFromParameters(parameters) ?: return
-        val appWidgetId = runCatching {
-            GlanceAppWidgetManager(context).getAppWidgetId(glanceId)
-        }.getOrNull() ?: return
+        val appWidgetId = resolveAppWidgetId(context, glanceId, "Complex") ?: return
         SensorCardActivity.createWidgetPendingIntent(context, sensorId, appWidgetId)?.send()
     }
 }
