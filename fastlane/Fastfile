@@ -337,6 +337,8 @@ platform :android do
   lane :deploy_to_firebase do |options|
     artifacts = build_android_release_artifacts
     release_notes = distribution_release_notes(options, env_name: "FIREBASE_RELEASE_NOTES")
+    release_notes_prefix = ENV["FIREBASE_RELEASE_NOTES_PREFIX"].to_s.strip
+    release_notes = [release_notes_prefix, release_notes].reject(&:empty?).join("\n\n")
     write_release_notes_artifact(release_notes)
 
     firebase_groups = options[:groups].to_s.strip
