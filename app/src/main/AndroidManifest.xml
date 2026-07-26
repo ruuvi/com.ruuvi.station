@@ -205,7 +205,7 @@ xmlns:tools="http://schemas.android.com/tools">
 
     <receiver
         android:name="com.ruuvi.station.widgets.ui.complexWidget.ComplexWidgetProvider"
-        android:exported="true">
+        android:exported="false">
         <intent-filter>
             <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
         </intent-filter>
