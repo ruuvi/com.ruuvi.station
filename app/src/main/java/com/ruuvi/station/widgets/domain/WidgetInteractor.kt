@@ -1,6 +1,7 @@
 package com.ruuvi.station.widgets.domain
 
 import android.content.Context
+import android.os.SystemClock
 import com.ruuvi.station.R
 import com.ruuvi.station.bluetooth.BluetoothLibrary
 import com.ruuvi.station.database.domain.TagRepository
@@ -16,6 +17,7 @@ import com.ruuvi.station.units.domain.aqi.AQI
 import com.ruuvi.station.units.model.UnitType
 import com.ruuvi.station.util.extensions.*
 import com.ruuvi.station.widgets.data.*
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import timber.log.Timber
@@ -27,7 +29,8 @@ class WidgetInteractor (
     val tagRepository: TagRepository,
     val cloudInteractor: RuuviNetworkInteractor,
     val unitsConverter: UnitsConverter,
-    val accelerationConverter: AccelerationConverter
+    val accelerationConverter: AccelerationConverter,
+    private val monotonicTimeMillis: () -> Long = SystemClock::elapsedRealtime,
 ) {
     fun getCloudSensorsList() = tagRepository.getFavoriteSensors()
 
@@ -311,8 +314,10 @@ class WidgetInteractor (
                 .mapNotNull { sensorValuesByType[it] }
             }
             return result
-        } catch (e: Exception) {
-            Timber.e(e)
+        } catch (cancellation: CancellationException) {
+            throw cancellation
+        } catch (error: Exception) {
+            Timber.e(error)
             return emptyComplexResult(sensorId)
         }
     }
@@ -580,19 +585,24 @@ class WidgetInteractor (
 
 
     private var sensorDenseResponse: SensorDenseResponse? = null
-    private var lastSyncDate: Date? = null
+    private var lastCloudRequestAtMillis: Long? = null
     private val mutex = Mutex()
 
     private suspend fun getSensorDataFromCloud(): SensorDenseResponse? = mutex.withLock {
-        if (sensorDenseResponse == null ||
-            lastSyncDate == null ||
-            lastSyncDate?.diffGreaterThan(60 * 1000L) == true
-        ) {
+        val now = monotonicTimeMillis()
+        val lastRequestAt = lastCloudRequestAtMillis
+        val refreshNeeded = lastRequestAt == null ||
+            now - lastRequestAt >= CLOUD_DATA_REFRESH_INTERVAL_MILLIS
+
+        if (refreshNeeded) {
             try {
                 sensorDenseResponse = cloudInteractor.getSensorDenseLastData()
-                lastSyncDate = Date()
-            } catch (e: Exception) {
-                return sensorDenseResponse ?: throw e
+                lastCloudRequestAtMillis = monotonicTimeMillis()
+            } catch (cancellation: CancellationException) {
+                throw cancellation
+            } catch (error: Exception) {
+                lastCloudRequestAtMillis = monotonicTimeMillis()
+                return sensorDenseResponse ?: throw error
             }
         }
         sensorDenseResponse
@@ -1018,8 +1028,10 @@ class WidgetInteractor (
             } else {
                 return emptySimpleResult(sensorId)
             }
-        } catch (e: Exception) {
-            Timber.e(e, "Widget update exception")
+        } catch (cancellation: CancellationException) {
+            throw cancellation
+        } catch (error: Exception) {
+            Timber.e(error, "Widget update exception")
             return null
         }
     }
@@ -1064,5 +1076,6 @@ class WidgetInteractor (
 
     companion object {
         const val UNDEFINED_VALUE = "-"
+        private const val CLOUD_DATA_REFRESH_INTERVAL_MILLIS = 60_000L
     }
 }
