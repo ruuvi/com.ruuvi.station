@@ -1,7 +1,6 @@
 package com.ruuvi.station.widgets.ui.complexWidget
 
 import android.appwidget.AppWidgetManager
-import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.activity.compose.setContent
@@ -31,7 +30,6 @@ import com.ruuvi.station.widgets.data.WidgetType
 import com.ruuvi.station.widgets.data.WidgetType.Companion.filterWidgetTypes
 import com.ruuvi.station.widgets.ui.*
 import com.ruuvi.station.widgets.update.WidgetUpdater
-import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.launch
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
@@ -64,6 +62,7 @@ class ComplexWidgetConfigureActivity : AppCompatActivity(), KodeinAware {
             AppWidgetManager.INVALID_APPWIDGET_ID
         ) ?: AppWidgetManager.INVALID_APPWIDGET_ID
 
+        setResult(RESULT_CANCELED, widgetConfigurationResultIntent(appWidgetId))
         if (appWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID) {
             finish()
             return
@@ -97,20 +96,28 @@ class ComplexWidgetConfigureActivity : AppCompatActivity(), KodeinAware {
         setupCompletionStarted = true
 
         lifecycleScope.launch {
-            try {
-                widgetUpdater.updateComplexWidget(
-                    this@ComplexWidgetConfigureActivity,
-                    appWidgetId,
-                )
-            } catch (cancellation: CancellationException) {
-                throw cancellation
-            } catch (error: Exception) {
-                Timber.e(error, "Unable to render configured complex widget $appWidgetId")
+            val updateSucceeded = runInitialWidgetUpdate(
+                update = {
+                    widgetUpdater.updateComplexWidget(
+                        this@ComplexWidgetConfigureActivity,
+                        appWidgetId,
+                    )
+                },
+                onFailure = { error ->
+                    Timber.e(error, "Unable to render configured complex widget $appWidgetId")
+                },
+            )
+
+            if (isFinishing || isDestroyed || isChangingConfigurations) {
+                return@launch
             }
 
-            val resultValue =
-                Intent().putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
-            setResult(RESULT_OK, resultValue)
+            if (!updateSucceeded) {
+                finish()
+                return@launch
+            }
+
+            setResult(RESULT_OK, widgetConfigurationResultIntent(appWidgetId))
             finish()
         }
     }

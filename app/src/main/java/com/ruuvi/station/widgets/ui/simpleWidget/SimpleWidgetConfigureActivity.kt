@@ -1,7 +1,6 @@
 package com.ruuvi.station.widgets.ui.simpleWidget
 
 import android.appwidget.AppWidgetManager
-import android.content.Intent
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
@@ -31,8 +30,9 @@ import com.ruuvi.station.widgets.data.WidgetType.Companion.filterWidgetTypes
 import com.ruuvi.station.widgets.ui.AddSensorsFirstScreen
 import com.ruuvi.station.widgets.ui.EnableBackgroundService
 import com.ruuvi.station.widgets.ui.WidgetConfigTopAppBar
+import com.ruuvi.station.widgets.ui.runInitialWidgetUpdate
+import com.ruuvi.station.widgets.ui.widgetConfigurationResultIntent
 import com.ruuvi.station.widgets.update.WidgetUpdater
-import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.launch
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
@@ -58,6 +58,7 @@ class SimpleWidgetConfigureActivity : AppCompatActivity(), KodeinAware {
             AppWidgetManager.INVALID_APPWIDGET_ID
         ) ?: AppWidgetManager.INVALID_APPWIDGET_ID
 
+        setResult(RESULT_CANCELED, widgetConfigurationResultIntent(appWidgetId))
         if (appWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID) {
             finish()
             return
@@ -89,20 +90,28 @@ class SimpleWidgetConfigureActivity : AppCompatActivity(), KodeinAware {
         setupCompletionStarted = true
 
         lifecycleScope.launch {
-            try {
-                widgetUpdater.updateSimpleWidget(
-                    this@SimpleWidgetConfigureActivity,
-                    appWidgetId,
-                )
-            } catch (cancellation: CancellationException) {
-                throw cancellation
-            } catch (error: Exception) {
-                Timber.e(error, "Unable to render configured simple widget $appWidgetId")
+            val updateSucceeded = runInitialWidgetUpdate(
+                update = {
+                    widgetUpdater.updateSimpleWidget(
+                        this@SimpleWidgetConfigureActivity,
+                        appWidgetId,
+                    )
+                },
+                onFailure = { error ->
+                    Timber.e(error, "Unable to render configured simple widget $appWidgetId")
+                },
+            )
+
+            if (isFinishing || isDestroyed || isChangingConfigurations) {
+                return@launch
             }
 
-            val resultValue =
-                Intent().putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
-            setResult(RESULT_OK, resultValue)
+            if (!updateSucceeded) {
+                finish()
+                return@launch
+            }
+
+            setResult(RESULT_OK, widgetConfigurationResultIntent(appWidgetId))
             finish()
         }
     }
