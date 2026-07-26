@@ -3,18 +3,18 @@ package com.ruuvi.station.widgets.domain
 import android.content.Context
 import com.ruuvi.station.tag.domain.ruuviTagPreview
 import com.ruuvi.station.widgets.data.WidgetType
-import io.mockk.coEvery
-import io.mockk.every
-import io.mockk.mockk
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertThrows
 import org.junit.Test
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.whenever
 
 class WidgetInteractorCancellationTest {
-    private val context = mockk<Context>(relaxed = true)
-    private val snapshotProvider = mockk<WidgetSensorSnapshotProvider>()
-    private val measurementFormatter = mockk<WidgetMeasurementFormatterRegistry>()
+    private val context = mock<Context>()
+    private val snapshotProvider = mock<WidgetSensorSnapshotProvider>()
+    private val measurementFormatter = mock<WidgetMeasurementFormatterRegistry>()
+    private val timestampFormatter = mock<WidgetTimestampFormatter>()
     private val sensor = ruuviTagPreview.copy(
         id = SENSOR_ID,
         displayName = "Cloud sensor",
@@ -23,14 +23,16 @@ class WidgetInteractorCancellationTest {
         context = context,
         snapshotProvider = snapshotProvider,
         measurementFormatter = measurementFormatter,
+        timestampFormatter = timestampFormatter,
     )
 
     @Test
     fun `complex widget cancellation is propagated`() {
-        every { snapshotProvider.getFavoriteSensor(SENSOR_ID) } returns sensor
-        coEvery {
-            snapshotProvider.getLatestSnapshot(sensor)
-        } throws CancellationException("Cancelled")
+        whenever(snapshotProvider.getFavoriteSensor(SENSOR_ID)).thenReturn(sensor)
+        runBlocking {
+            whenever(snapshotProvider.getLatestSnapshot(sensor))
+                .thenThrow(CancellationException("Cancelled"))
+        }
 
         assertThrows(CancellationException::class.java) {
             runBlocking {
@@ -41,10 +43,11 @@ class WidgetInteractorCancellationTest {
 
     @Test
     fun `simple widget cancellation is propagated`() {
-        every { snapshotProvider.getFavoriteSensor(SENSOR_ID) } returns sensor
-        coEvery {
-            snapshotProvider.getLatestSnapshot(sensor)
-        } throws CancellationException("Cancelled")
+        whenever(snapshotProvider.getFavoriteSensor(SENSOR_ID)).thenReturn(sensor)
+        runBlocking {
+            whenever(snapshotProvider.getLatestSnapshot(sensor))
+                .thenThrow(CancellationException("Cancelled"))
+        }
 
         assertThrows(CancellationException::class.java) {
             runBlocking {

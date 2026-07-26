@@ -5,38 +5,39 @@ import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
 import androidx.work.workDataOf
-import io.mockk.mockk
-import io.mockk.verify
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertThrows
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import org.mockito.kotlin.any
+import org.mockito.kotlin.eq
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.times
+import org.mockito.kotlin.verify
 
 class WidgetRefreshSchedulerTest {
 
     @Test
     fun `repeated simple refreshes use one coalescing work name`() {
-        val workManager = mockk<WorkManager>(relaxed = true)
+        val workManager = mock<WorkManager>()
         val target = WidgetRefreshTarget(WidgetRefreshType.SIMPLE)
 
         repeat(2) {
             WidgetRefreshScheduler.enqueue(workManager, target)
         }
 
-        verify(exactly = 2) {
-            workManager.enqueueUniqueWork(
-                target.uniqueWorkName,
-                ExistingWorkPolicy.KEEP,
-                any<OneTimeWorkRequest>(),
-            )
-        }
+        verify(workManager, times(2)).enqueueUniqueWork(
+            eq(target.uniqueWorkName),
+            eq(ExistingWorkPolicy.KEEP),
+            any<OneTimeWorkRequest>(),
+        )
     }
 
     @Test
     fun `simple and complex refreshes use separate unique work`() {
-        val workManager = mockk<WorkManager>(relaxed = true)
+        val workManager = mock<WorkManager>()
         val simpleTarget = WidgetRefreshTarget(WidgetRefreshType.SIMPLE)
         val complexTarget = WidgetRefreshTarget(WidgetRefreshType.COMPLEX)
 
@@ -51,18 +52,16 @@ class WidgetRefreshSchedulerTest {
             WidgetRefreshType.SIMPLE.workTag,
             WidgetRefreshType.COMPLEX.workTag,
         )
-        verify {
-            workManager.enqueueUniqueWork(
-                simpleTarget.uniqueWorkName,
-                ExistingWorkPolicy.KEEP,
-                any<OneTimeWorkRequest>(),
-            )
-            workManager.enqueueUniqueWork(
-                complexTarget.uniqueWorkName,
-                ExistingWorkPolicy.KEEP,
-                any<OneTimeWorkRequest>(),
-            )
-        }
+        verify(workManager).enqueueUniqueWork(
+            eq(simpleTarget.uniqueWorkName),
+            eq(ExistingWorkPolicy.KEEP),
+            any<OneTimeWorkRequest>(),
+        )
+        verify(workManager).enqueueUniqueWork(
+            eq(complexTarget.uniqueWorkName),
+            eq(ExistingWorkPolicy.KEEP),
+            any<OneTimeWorkRequest>(),
+        )
     }
 
     @Test

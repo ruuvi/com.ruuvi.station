@@ -2,10 +2,6 @@ package com.ruuvi.station.widgets.domain
 
 import android.content.Context
 import com.ruuvi.station.R
-import com.ruuvi.station.util.extensions.diffGreaterThan
-import com.ruuvi.station.util.extensions.hours24
-import com.ruuvi.station.util.extensions.localizedDate
-import com.ruuvi.station.util.extensions.localizedTime
 import com.ruuvi.station.widgets.data.ComplexWidgetData
 import com.ruuvi.station.widgets.data.SimpleWidgetData
 import com.ruuvi.station.widgets.data.WidgetSensorSnapshot
@@ -16,6 +12,7 @@ class WidgetInteractor internal constructor(
     private val context: Context,
     private val snapshotProvider: WidgetSensorSnapshotProvider,
     private val measurementFormatter: WidgetMeasurementFormatterRegistry,
+    private val timestampFormatter: WidgetTimestampFormatter,
 ) {
     fun getCloudSensorsList() = snapshotProvider.getFavoriteSensors()
 
@@ -60,14 +57,8 @@ class WidgetInteractor internal constructor(
         )
     }
 
-    private fun WidgetSensorSnapshot.formattedTimestamp(): String {
-        val measuredAt = timestamp
-        return if (measuredAt.diffGreaterThan(hours24)) {
-            measuredAt.localizedDate(context)
-        } else {
-            measuredAt.localizedTime(context)
-        }
-    }
+    private fun WidgetSensorSnapshot.formattedTimestamp(): String =
+        timestampFormatter.format(timestampEpochMillis)
 
     private val WidgetSensorSnapshot.timestamp: Date
         get() = Date(timestampEpochMillis)

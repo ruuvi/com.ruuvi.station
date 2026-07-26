@@ -9,14 +9,19 @@ import com.ruuvi.station.units.model.EnvironmentValue
 import com.ruuvi.station.units.model.UnitType
 import com.ruuvi.station.widgets.data.WidgetSensorSnapshot
 import com.ruuvi.station.widgets.data.WidgetType
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.slot
-import io.mockk.verify
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
+import org.mockito.kotlin.any
+import org.mockito.kotlin.anyOrNull
+import org.mockito.kotlin.argumentCaptor
+import org.mockito.kotlin.eq
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.never
+import org.mockito.kotlin.times
+import org.mockito.kotlin.verify
+import org.mockito.kotlin.whenever
 
 class WidgetMeasurementFormatterRegistryTest {
     private lateinit var context: Context
@@ -26,13 +31,37 @@ class WidgetMeasurementFormatterRegistryTest {
 
     @Before
     fun setUp() {
-        context = mockk()
-        unitsConverter = mockk(relaxed = true)
-        accelerationConverter = mockk(relaxed = true)
-        every { context.getString(any()) } answers {
-            val resourceId = firstArg<Int>()
+        context = mock()
+        unitsConverter = mock()
+        accelerationConverter = mock()
+        whenever(context.getString(any<Int>())).thenAnswer {
+            val resourceId = it.getArgument<Int>(0)
             if (resourceId == R.string.empty) "" else "unit-$resourceId"
         }
+        whenever(unitsConverter.getTemperatureAccuracy()).thenReturn(Accuracy.Accuracy2)
+        whenever(unitsConverter.getPressureAccuracy()).thenReturn(Accuracy.Accuracy2)
+        whenever(unitsConverter.getHumidityAccuracy()).thenReturn(Accuracy.Accuracy2)
+        whenever(
+            unitsConverter.getTemperatureStringWithoutUnit(
+                anyOrNull(),
+                any(),
+                any(),
+            ),
+        ).thenReturn("-")
+        whenever(
+            unitsConverter.getHumidityStringWithoutUnit(
+                anyOrNull(),
+                anyOrNull(),
+                any(),
+            ),
+        ).thenReturn("-")
+        whenever(
+            unitsConverter.getPressureStringWithoutUnit(
+                anyOrNull(),
+                any(),
+                any(),
+            ),
+        ).thenReturn("-")
         registry = WidgetMeasurementFormatterRegistry(
             context = context,
             unitsConverter = unitsConverter,
@@ -173,20 +202,20 @@ class WidgetMeasurementFormatterRegistryTest {
 
     @Test
     fun `absolute humidity requires a temperature`() {
-        every {
+        whenever(
             unitsConverter.getHumidityStringWithoutUnit(
                 humidity = 50.0,
                 temperature = 20.0,
                 humidityUnit = UnitType.HumidityUnit.Absolute,
-            )
-        } returns " 8.64 "
-        every {
+            ),
+        ).thenReturn(" 8.64 ")
+        whenever(
             unitsConverter.getHumidityStringWithoutUnit(
                 humidity = 0.0,
                 temperature = 20.0,
                 humidityUnit = UnitType.HumidityUnit.Absolute,
-            )
-        } returns " 0.00 "
+            ),
+        ).thenReturn(" 0.00 ")
 
         val withoutTemperature = registry.format(
             WidgetType.HUMIDITY_ABSOLUTE,
@@ -220,20 +249,21 @@ class WidgetMeasurementFormatterRegistryTest {
         assertEquals("8.64", withTemperature.sensorValue)
         assertEquals("0.00", zeroHumidity.sensorValue)
         assertTrue(invalidHumidityValues.all { it.sensorValue == "-" })
-        verify(exactly = 1) {
-            unitsConverter.getHumidityStringWithoutUnit(
-                humidity = 50.0,
-                temperature = 20.0,
-                humidityUnit = UnitType.HumidityUnit.Absolute,
-            )
-        }
-        verify(exactly = 1) {
-            unitsConverter.getHumidityStringWithoutUnit(
-                humidity = 0.0,
-                temperature = 20.0,
-                humidityUnit = UnitType.HumidityUnit.Absolute,
-            )
-        }
+        verify(unitsConverter).getHumidityStringWithoutUnit(
+            humidity = 50.0,
+            temperature = 20.0,
+            humidityUnit = UnitType.HumidityUnit.Absolute,
+        )
+        verify(unitsConverter).getHumidityStringWithoutUnit(
+            humidity = 0.0,
+            temperature = 20.0,
+            humidityUnit = UnitType.HumidityUnit.Absolute,
+        )
+        verify(unitsConverter, times(2)).getHumidityStringWithoutUnit(
+            humidity = anyOrNull(),
+            temperature = anyOrNull(),
+            humidityUnit = eq(UnitType.HumidityUnit.Absolute),
+        )
     }
 
     @Test
@@ -260,18 +290,18 @@ class WidgetMeasurementFormatterRegistryTest {
                 ),
             ).sensorValue,
         )
-        verify(exactly = 0) {
-            unitsConverter.getValueWithoutUnit(any(), any())
-        }
+        verify(unitsConverter, never()).getValueWithoutUnit(anyOrNull(), any())
     }
 
     @Test
     fun `valid dew point is converted and trimmed`() {
-        val dewPoint = slot<Double>()
-        every { unitsConverter.getHumidityAccuracy() } returns Accuracy.Accuracy2
-        every {
-            unitsConverter.getValueWithoutUnit(capture(dewPoint), Accuracy.Accuracy2)
-        } returns " 9.26 "
+        val dewPoint = argumentCaptor<Double>()
+        whenever(
+            unitsConverter.getValueWithoutUnit(
+                anyOrNull(),
+                eq(Accuracy.Accuracy2),
+            ),
+        ).thenReturn(" 9.26 ")
 
         val formatted = registry.format(
             WidgetType.DEW_POINT_C,
@@ -282,24 +312,28 @@ class WidgetMeasurementFormatterRegistryTest {
         )
 
         assertEquals("9.26", formatted.sensorValue)
-        assertEquals(9.26, dewPoint.captured, 0.02)
+        verify(unitsConverter).getValueWithoutUnit(
+            dewPoint.capture(),
+            eq(Accuracy.Accuracy2),
+        )
+        assertEquals(9.26, dewPoint.firstValue, 0.02)
     }
 
     @Test
     fun `particulate widget types use their explicit persisted field mapping`() {
-        every { context.getString(UnitType.PM.PM10.unit) } returns " µg/m³ "
-        every {
+        whenever(context.getString(UnitType.PM.PM10.unit)).thenReturn(" µg/m³ ")
+        whenever(
             unitsConverter.getPmEnvironmentValue(1.0, UnitType.PM.PM10)
-        } returns environmentValue(" PM1 ", 1.0, UnitType.PM.PM10)
-        every {
+        ).thenReturn(environmentValue(" PM1 ", 1.0, UnitType.PM.PM10))
+        whenever(
             unitsConverter.getPmEnvironmentValue(2.5, UnitType.PM.PM25)
-        } returns environmentValue(" PM2.5 ", 2.5, UnitType.PM.PM25)
-        every {
+        ).thenReturn(environmentValue(" PM2.5 ", 2.5, UnitType.PM.PM25))
+        whenever(
             unitsConverter.getPmEnvironmentValue(4.0, UnitType.PM.PM40)
-        } returns environmentValue(" PM4 ", 4.0, UnitType.PM.PM40)
-        every {
+        ).thenReturn(environmentValue(" PM4 ", 4.0, UnitType.PM.PM40))
+        whenever(
             unitsConverter.getPmEnvironmentValue(10.0, UnitType.PM.PM100)
-        } returns environmentValue(" PM10 ", 10.0, UnitType.PM.PM100)
+        ).thenReturn(environmentValue(" PM10 ", 10.0, UnitType.PM.PM100))
 
         val formatted = registry.format(
             listOf(
@@ -321,12 +355,10 @@ class WidgetMeasurementFormatterRegistryTest {
             formatted.map { it.sensorValue },
         )
         assertTrue(formatted.all { it.unit == "µg/m³" })
-        verify(exactly = 1) {
-            unitsConverter.getPmEnvironmentValue(1.0, UnitType.PM.PM10)
-            unitsConverter.getPmEnvironmentValue(2.5, UnitType.PM.PM25)
-            unitsConverter.getPmEnvironmentValue(4.0, UnitType.PM.PM40)
-            unitsConverter.getPmEnvironmentValue(10.0, UnitType.PM.PM100)
-        }
+        verify(unitsConverter).getPmEnvironmentValue(1.0, UnitType.PM.PM10)
+        verify(unitsConverter).getPmEnvironmentValue(2.5, UnitType.PM.PM25)
+        verify(unitsConverter).getPmEnvironmentValue(4.0, UnitType.PM.PM40)
+        verify(unitsConverter).getPmEnvironmentValue(10.0, UnitType.PM.PM100)
     }
 
     private fun emptySnapshot(
@@ -377,124 +409,126 @@ class WidgetMeasurementFormatterRegistryTest {
     )
 
     private fun stubFullSnapshotFormatting() {
-        every {
+        whenever(
             unitsConverter.getTemperatureStringWithoutUnit(
                 20.0,
                 UnitType.TemperatureUnit.Celsius,
-                any(),
+                Accuracy.Accuracy2,
             )
-        } returns " temperature-c "
-        every {
+        ).thenReturn(" temperature-c ")
+        whenever(
             unitsConverter.getTemperatureStringWithoutUnit(
                 20.0,
                 UnitType.TemperatureUnit.Fahrenheit,
-                any(),
+                Accuracy.Accuracy2,
             )
-        } returns " temperature-f "
-        every {
+        ).thenReturn(" temperature-f ")
+        whenever(
             unitsConverter.getTemperatureStringWithoutUnit(
                 20.0,
                 UnitType.TemperatureUnit.Kelvin,
-                any(),
+                Accuracy.Accuracy2,
             )
-        } returns " temperature-k "
-        every {
+        ).thenReturn(" temperature-k ")
+        whenever(
             unitsConverter.getHumidityStringWithoutUnit(
                 50.0,
                 20.0,
                 UnitType.HumidityUnit.Relative,
             )
-        } returns " humidity-relative "
-        every {
+        ).thenReturn(" humidity-relative ")
+        whenever(
             unitsConverter.getHumidityStringWithoutUnit(
                 50.0,
                 20.0,
                 UnitType.HumidityUnit.Absolute,
             )
-        } returns " humidity-absolute "
-        every {
+        ).thenReturn(" humidity-absolute ")
+        whenever(
             unitsConverter.getPressureStringWithoutUnit(
                 100_000.0,
                 UnitType.PressureUnit.HectoPascal,
-                any(),
+                Accuracy.Accuracy2,
             )
-        } returns " pressure-hpa "
-        every {
+        ).thenReturn(" pressure-hpa ")
+        whenever(
             unitsConverter.getPressureStringWithoutUnit(
                 100_000.0,
                 UnitType.PressureUnit.Pascal,
-                any(),
+                Accuracy.Accuracy2,
             )
-        } returns " pressure-pa "
-        every {
+        ).thenReturn(" pressure-pa ")
+        whenever(
             unitsConverter.getPressureStringWithoutUnit(
                 100_000.0,
                 UnitType.PressureUnit.MmHg,
-                any(),
+                Accuracy.Accuracy2,
             )
-        } returns " pressure-mmhg "
-        every {
+        ).thenReturn(" pressure-mmhg ")
+        whenever(
             unitsConverter.getPressureStringWithoutUnit(
                 100_000.0,
                 UnitType.PressureUnit.InchHg,
-                any(),
+                Accuracy.Accuracy2,
             )
-        } returns " pressure-inhg "
-        every { unitsConverter.getHumidityAccuracy() } returns Accuracy.Accuracy2
-        every {
-            unitsConverter.getValueWithoutUnit(any(), Accuracy.Accuracy2)
-        } answers {
-            when (firstArg<Double>()) {
+        ).thenReturn(" pressure-inhg ")
+        whenever(
+            unitsConverter.getValueWithoutUnit(
+                anyOrNull(),
+                eq(Accuracy.Accuracy2),
+            ),
+        ).thenAnswer {
+            when (it.getArgument<Double>(0)) {
                 in 0.0..30.0 -> " dew-c "
                 in 30.0..100.0 -> " dew-f "
                 else -> " dew-k "
             }
         }
-        every {
+        whenever(
             unitsConverter.getVoltageEnvironmentValue(3.0)
-        } returns environmentValue(" voltage ", 3.0, UnitType.BatteryVoltageUnit.Volt)
-        every {
+        ).thenReturn(environmentValue(" voltage ", 3.0, UnitType.BatteryVoltageUnit.Volt))
+        whenever(
             unitsConverter.getSignalEnvironmentValue(-60)
-        } returns environmentValue(" signal ", -60.0, UnitType.SignalStrengthUnit.SignalDbm)
-        every {
+        ).thenReturn(environmentValue(" signal ", -60.0, UnitType.SignalStrengthUnit.SignalDbm))
+        whenever(
             accelerationConverter.getAccelerationStringWithoutUnit(0.1)
-        } returns " acceleration-x "
-        every {
+        ).thenReturn(" acceleration-x ")
+        whenever(
             accelerationConverter.getAccelerationStringWithoutUnit(0.2)
-        } returns " acceleration-y "
-        every {
+        ).thenReturn(" acceleration-y ")
+        whenever(
             accelerationConverter.getAccelerationStringWithoutUnit(0.3)
-        } returns " acceleration-z "
-        every {
+        ).thenReturn(" acceleration-z ")
+        whenever(
             unitsConverter.getSoundEnvironmentValue(40.0, UnitType.SoundAvg.SoundDba)
-        } returns environmentValue(" sound-average ", 40.0, UnitType.SoundAvg.SoundDba)
-        every {
+        ).thenReturn(environmentValue(" sound-average ", 40.0, UnitType.SoundAvg.SoundDba))
+        whenever(
             unitsConverter.getSoundEnvironmentValue(50.0, UnitType.SoundPeak.SoundDba)
-        } returns environmentValue(" sound-peak ", 50.0, UnitType.SoundPeak.SoundDba)
-        every {
+        ).thenReturn(environmentValue(" sound-peak ", 50.0, UnitType.SoundPeak.SoundDba))
+        whenever(
             unitsConverter.getLuminosityEnvironmentValue(123.0)
-        } returns environmentValue(" luminosity ", 123.0, UnitType.Luminosity.Lux)
-        every {
+        ).thenReturn(environmentValue(" luminosity ", 123.0, UnitType.Luminosity.Lux))
+        whenever(
             unitsConverter.getCo2EnvironmentValue(420)
-        } returns environmentValue(" co2 ", 420.0, UnitType.CO2.Ppm)
-        every {
+        ).thenReturn(environmentValue(" co2 ", 420.0, UnitType.CO2.Ppm))
+        whenever(
             unitsConverter.getVocEnvironmentValue(10)
-        } returns environmentValue(" voc ", 10.0, UnitType.VOC.VocIndex)
-        every {
+        ).thenReturn(environmentValue(" voc ", 10.0, UnitType.VOC.VocIndex))
+        whenever(
             unitsConverter.getNoxEnvironmentValue(20)
-        } returns environmentValue(" nox ", 20.0, UnitType.NOX.NoxIndex)
-        every {
+        ).thenReturn(environmentValue(" nox ", 20.0, UnitType.NOX.NoxIndex))
+        whenever(
             unitsConverter.getPmEnvironmentValue(1.0, UnitType.PM.PM10)
-        } returns environmentValue(" pm1 ", 1.0, UnitType.PM.PM10)
-        every {
+        ).thenReturn(environmentValue(" pm1 ", 1.0, UnitType.PM.PM10))
+        whenever(
             unitsConverter.getPmEnvironmentValue(2.5, UnitType.PM.PM25)
-        } returns environmentValue(" pm2.5 ", 2.5, UnitType.PM.PM25)
-        every {
+        ).thenReturn(environmentValue(" pm2.5 ", 2.5, UnitType.PM.PM25))
+        whenever(
             unitsConverter.getPmEnvironmentValue(4.0, UnitType.PM.PM40)
-        } returns environmentValue(" pm4 ", 4.0, UnitType.PM.PM40)
-        every {
+        ).thenReturn(environmentValue(" pm4 ", 4.0, UnitType.PM.PM40))
+        whenever(
             unitsConverter.getPmEnvironmentValue(10.0, UnitType.PM.PM100)
-        } returns environmentValue(" pm10 ", 10.0, UnitType.PM.PM100)
+        ).thenReturn(environmentValue(" pm10 ", 10.0, UnitType.PM.PM100))
     }
 
     private fun expectedUnit(type: WidgetType): String {

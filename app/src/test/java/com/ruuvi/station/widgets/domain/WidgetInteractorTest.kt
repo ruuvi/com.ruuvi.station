@@ -4,49 +4,35 @@ import android.content.Context
 import com.ruuvi.station.R
 import com.ruuvi.station.tag.domain.ruuviTagPreview
 import com.ruuvi.station.units.model.UnitType
-import com.ruuvi.station.util.extensions.diffGreaterThan
-import com.ruuvi.station.util.extensions.hours24
-import com.ruuvi.station.util.extensions.localizedDate
-import com.ruuvi.station.util.extensions.localizedTime
 import com.ruuvi.station.widgets.data.SensorValue
 import com.ruuvi.station.widgets.data.WidgetSensorSnapshot
 import com.ruuvi.station.widgets.data.WidgetType
-import io.mockk.coEvery
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.mockkStatic
-import io.mockk.unmockkStatic
-import io.mockk.verify
 import kotlinx.coroutines.runBlocking
-import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Before
 import org.junit.Test
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.verify
+import org.mockito.kotlin.whenever
 import java.util.Date
 
 class WidgetInteractorTest {
-    private val context = mockk<Context>()
-    private val snapshotProvider = mockk<WidgetSensorSnapshotProvider>()
-    private val measurementFormatter = mockk<WidgetMeasurementFormatterRegistry>()
+    private val context = mock<Context>()
+    private val snapshotProvider = mock<WidgetSensorSnapshotProvider>()
+    private val measurementFormatter = mock<WidgetMeasurementFormatterRegistry>()
+    private val timestampFormatter = mock<WidgetTimestampFormatter>()
     private val interactor = WidgetInteractor(
         context = context,
         snapshotProvider = snapshotProvider,
         measurementFormatter = measurementFormatter,
+        timestampFormatter = timestampFormatter,
     )
 
     @Before
     fun setUp() {
-        mockkStatic("com.ruuvi.station.util.extensions.DateKt")
-        every { any<Date>().diffGreaterThan(hours24) } returns false
-        every { any<Date>().localizedTime(context) } returns FORMATTED_TIME
-        every { any<Date>().localizedDate(context) } returns FORMATTED_DATE
-        every { context.getString(R.string.no_data) } returns NO_DATA
-    }
-
-    @After
-    fun tearDown() {
-        unmockkStatic("com.ruuvi.station.util.extensions.DateKt")
+        whenever(timestampFormatter.format(MEASURED_AT)).thenReturn(FORMATTED_TIME)
+        whenever(context.getString(R.string.no_data)).thenReturn(NO_DATA)
     }
 
     @Test
@@ -62,15 +48,13 @@ class WidgetInteractorTest {
             sensorId = SENSOR_ID,
             checkedTemperature = true,
         )
-        every { context.getString(WidgetType.TEMPERATURE.titleResId) } returns "Temperature"
-        every { snapshotProvider.getFavoriteSensor(SENSOR_ID) } returns sensor
-        coEvery { snapshotProvider.getLatestSnapshot(sensor) } returns snapshot
-        every {
-            measurementFormatter.format(WidgetType.TEMPERATURE, snapshot)
-        } returns value
-        every {
-            measurementFormatter.format(listOf(WidgetType.TEMPERATURE), snapshot)
-        } returns listOf(value)
+        whenever(context.getString(WidgetType.TEMPERATURE.titleResId)).thenReturn("Temperature")
+        whenever(snapshotProvider.getFavoriteSensor(SENSOR_ID)).thenReturn(sensor)
+        whenever(snapshotProvider.getLatestSnapshot(sensor)).thenReturn(snapshot)
+        whenever(measurementFormatter.format(WidgetType.TEMPERATURE, snapshot)).thenReturn(value)
+        whenever(
+            measurementFormatter.format(listOf(WidgetType.TEMPERATURE), snapshot),
+        ).thenReturn(listOf(value))
 
         val simple = interactor.getSimpleWidgetData(SENSOR_ID, WidgetType.TEMPERATURE)
         val complex = interactor.getComplexWidgetData(SENSOR_ID, settings)
@@ -107,11 +91,9 @@ class WidgetInteractorTest {
             checkedHumidity = true,
             checkedPM25 = true,
         )
-        every { snapshotProvider.getFavoriteSensor(SENSOR_ID) } returns sensor
-        coEvery { snapshotProvider.getLatestSnapshot(sensor) } returns snapshot
-        every {
-            measurementFormatter.format(expectedTypes, snapshot)
-        } returns expectedValues
+        whenever(snapshotProvider.getFavoriteSensor(SENSOR_ID)).thenReturn(sensor)
+        whenever(snapshotProvider.getLatestSnapshot(sensor)).thenReturn(snapshot)
+        whenever(measurementFormatter.format(expectedTypes, snapshot)).thenReturn(expectedValues)
 
         val result = interactor.getComplexWidgetData(SENSOR_ID, settings)
 
@@ -122,25 +104,22 @@ class WidgetInteractorTest {
     fun `null complex settings select no measurements`() = runBlocking {
         val sensor = sensorWithSupportedTypes(UnitType.TemperatureUnit.Celsius)
         val snapshot = snapshot()
-        every { snapshotProvider.getFavoriteSensor(SENSOR_ID) } returns sensor
-        coEvery { snapshotProvider.getLatestSnapshot(sensor) } returns snapshot
-        every {
-            measurementFormatter.format(emptyList(), snapshot)
-        } returns emptyList()
+        whenever(snapshotProvider.getFavoriteSensor(SENSOR_ID)).thenReturn(sensor)
+        whenever(snapshotProvider.getLatestSnapshot(sensor)).thenReturn(snapshot)
+        whenever(measurementFormatter.format(emptyList(), snapshot)).thenReturn(emptyList())
 
         val result = interactor.getComplexWidgetData(SENSOR_ID, settings = null)
 
         assertEquals(emptyList<SensorValue>(), result.sensorValues)
-        verify(exactly = 1) {
-            measurementFormatter.format(emptyList(), snapshot)
-        }
+        verify(measurementFormatter).format(emptyList(), snapshot)
+        Unit
     }
 
     @Test
     fun `existing sensor without measurements preserves complex sensor name`() = runBlocking {
         val sensor = sensorWithSupportedTypes(UnitType.TemperatureUnit.Celsius)
-        every { snapshotProvider.getFavoriteSensor(SENSOR_ID) } returns sensor
-        coEvery { snapshotProvider.getLatestSnapshot(sensor) } returns null
+        whenever(snapshotProvider.getFavoriteSensor(SENSOR_ID)).thenReturn(sensor)
+        whenever(snapshotProvider.getLatestSnapshot(sensor)).thenReturn(null)
 
         val result = interactor.getComplexWidgetData(SENSOR_ID, settings = null)
 
@@ -152,7 +131,7 @@ class WidgetInteractorTest {
 
     @Test
     fun `missing sensor retains existing no-data results`() = runBlocking {
-        every { snapshotProvider.getFavoriteSensor(SENSOR_ID) } returns null
+        whenever(snapshotProvider.getFavoriteSensor(SENSOR_ID)).thenReturn(null)
 
         val simple = interactor.getSimpleWidgetData(SENSOR_ID, WidgetType.TEMPERATURE)
         val complex = interactor.getComplexWidgetData(SENSOR_ID, settings = null)
@@ -164,21 +143,21 @@ class WidgetInteractorTest {
     }
 
     @Test
-    fun `measurements older than one day use localized date`() = runBlocking {
+    fun `simple widget uses timestamp formatter output`() = runBlocking {
         val sensor = sensorWithSupportedTypes(UnitType.TemperatureUnit.Celsius)
         val snapshot = snapshot()
         val value = SensorValue(WidgetType.TEMPERATURE, "21.5", "°C")
-        every { any<Date>().diffGreaterThan(hours24) } returns true
-        every { context.getString(WidgetType.TEMPERATURE.titleResId) } returns "Temperature"
-        every { snapshotProvider.getFavoriteSensor(SENSOR_ID) } returns sensor
-        coEvery { snapshotProvider.getLatestSnapshot(sensor) } returns snapshot
-        every {
-            measurementFormatter.format(WidgetType.TEMPERATURE, snapshot)
-        } returns value
+        whenever(timestampFormatter.format(MEASURED_AT)).thenReturn(FORMATTED_DATE)
+        whenever(context.getString(WidgetType.TEMPERATURE.titleResId)).thenReturn("Temperature")
+        whenever(snapshotProvider.getFavoriteSensor(SENSOR_ID)).thenReturn(sensor)
+        whenever(snapshotProvider.getLatestSnapshot(sensor)).thenReturn(snapshot)
+        whenever(measurementFormatter.format(WidgetType.TEMPERATURE, snapshot)).thenReturn(value)
 
         val result = interactor.getSimpleWidgetData(SENSOR_ID, WidgetType.TEMPERATURE)
 
         assertEquals(FORMATTED_DATE, result?.updated)
+        verify(timestampFormatter).format(MEASURED_AT)
+        Unit
     }
 
     private fun sensorWithSupportedTypes(vararg types: UnitType) =

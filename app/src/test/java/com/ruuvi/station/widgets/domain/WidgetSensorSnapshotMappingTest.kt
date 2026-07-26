@@ -2,6 +2,7 @@ package com.ruuvi.station.widgets.domain
 
 import com.ruuvi.station.bluetooth.contract.FoundRuuviTag
 import com.ruuvi.station.database.domain.TagRepository
+import com.ruuvi.station.network.data.response.SensorSubscription
 import com.ruuvi.station.network.data.response.SensorsDenseInfo
 import com.ruuvi.station.network.domain.RuuviNetworkInteractor
 import com.ruuvi.station.tag.domain.ruuviTagPreview
@@ -10,17 +11,16 @@ import com.ruuvi.station.units.model.Accuracy
 import com.ruuvi.station.units.model.EnvironmentValue
 import com.ruuvi.station.units.model.UnitType
 import com.ruuvi.station.widgets.data.WidgetSensorSnapshot
-import io.mockk.every
-import io.mockk.mockk
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Test
+import org.mockito.kotlin.mock
 import java.util.Date
 
 class WidgetSensorSnapshotMappingTest {
     private val provider = WidgetSensorSnapshotProvider(
-        tagRepository = mockk<TagRepository>(),
-        cloudInteractor = mockk<RuuviNetworkInteractor>(),
+        tagRepository = mock<TagRepository>(),
+        cloudInteractor = mock<RuuviNetworkInteractor>(),
         decoder = { _, _, _ -> error("Decoder is not used by mapping tests") },
         monotonicTimeMillis = { 0L },
     )
@@ -154,10 +154,11 @@ class WidgetSensorSnapshotMappingTest {
 
     @Test
     fun `cloud mapping applies offsets once and maps every raw field`() {
-        val sensorInfo = mockk<SensorsDenseInfo>()
-        every { sensorInfo.offsetTemperature } returns 1.5
-        every { sensorInfo.offsetHumidity } returns -2.0
-        every { sensorInfo.offsetPressure } returns 25.0
+        val sensorInfo = sensorInfo(
+            temperatureOffset = 1.5,
+            humidityOffset = -2.0,
+            pressureOffset = 25.0,
+        )
         val decoded = decodedSensor()
         val sensor = ruuviTagPreview.copy(
             id = SENSOR_ID,
@@ -201,26 +202,26 @@ class WidgetSensorSnapshotMappingTest {
 
     @Test
     fun `cloud mapping drops non-finite decoded values and offsets`() {
-        val sensorInfo = mockk<SensorsDenseInfo>()
-        every { sensorInfo.offsetTemperature } returns Double.NaN
-        every { sensorInfo.offsetHumidity } returns 0.0
-        every { sensorInfo.offsetPressure } returns Double.POSITIVE_INFINITY
-        val decoded = mockk<FoundRuuviTag>(relaxed = true) {
-            every { temperature } returns 20.0
-            every { humidity } returns Double.NaN
-            every { pressure } returns 100_000.0
-            every { voltage } returns Double.NaN
-            every { accelX } returns Double.NaN
-            every { accelY } returns Double.POSITIVE_INFINITY
-            every { accelZ } returns Double.NEGATIVE_INFINITY
-            every { dBaAvg } returns Double.NaN
-            every { dBaPeak } returns Double.POSITIVE_INFINITY
-            every { luminosity } returns Double.NEGATIVE_INFINITY
-            every { pm1 } returns Double.NaN
-            every { pm25 } returns Double.POSITIVE_INFINITY
-            every { pm4 } returns Double.NEGATIVE_INFINITY
-            every { pm10 } returns Double.NaN
-        }
+        val sensorInfo = sensorInfo(
+            temperatureOffset = Double.NaN,
+            pressureOffset = Double.POSITIVE_INFINITY,
+        )
+        val decoded = decodedSensor(
+            temperature = 20.0,
+            humidity = Double.NaN,
+            pressure = 100_000.0,
+            voltage = Double.NaN,
+            accelerationX = Double.NaN,
+            accelerationY = Double.POSITIVE_INFINITY,
+            accelerationZ = Double.NEGATIVE_INFINITY,
+            soundAverage = Double.NaN,
+            soundPeak = Double.POSITIVE_INFINITY,
+            luminosity = Double.NEGATIVE_INFINITY,
+            pm1 = Double.NaN,
+            pm2_5 = Double.POSITIVE_INFINITY,
+            pm4 = Double.NEGATIVE_INFINITY,
+            pm10 = Double.NaN,
+        )
 
         val snapshot = provider.mapCloudSnapshot(
             sensor = ruuviTagPreview,
@@ -255,28 +256,77 @@ class WidgetSensorSnapshotMappingTest {
         unitType = unitType,
     )
 
-    private fun decodedSensor() = mockk<FoundRuuviTag>(relaxed = true) {
-        every { temperature } returns 20.0
-        every { humidity } returns 50.0
-        every { pressure } returns 100_000.0
-        every { movementCounter } returns 8
-        every { voltage } returns 2.9
-        every { rssi } returns -55
-        every { measurementSequenceNumber } returns 42
-        every { accelX } returns 0.1
-        every { accelY } returns 0.2
-        every { accelZ } returns 0.3
-        every { dBaAvg } returns 40.5
-        every { dBaPeak } returns 70.5
-        every { luminosity } returns 100.0
-        every { co2 } returns 600
-        every { voc } returns 80
-        every { nox } returns 90
-        every { pm1 } returns 1.0
-        every { pm25 } returns 2.5
-        every { pm4 } returns 4.0
-        every { pm10 } returns 10.0
-    }
+    private fun sensorInfo(
+        temperatureOffset: Double = 0.0,
+        humidityOffset: Double = 0.0,
+        pressureOffset: Double = 0.0,
+    ) = SensorsDenseInfo(
+        sensor = SENSOR_ID,
+        owner = "",
+        name = "",
+        picture = "",
+        `public` = false,
+        canShare = false,
+        offsetTemperature = temperatureOffset,
+        offsetHumidity = humidityOffset,
+        offsetPressure = pressureOffset,
+        measurements = emptyList(),
+        alerts = emptyList(),
+        lastUpdated = 0L,
+        subscription = SensorSubscription(
+            maxHistoryDays = 0,
+            maxResolutionMinutes = 0,
+            emailAlertAllowed = false,
+            pushAlertAllowed = false,
+            subscriptionName = "",
+        ),
+        settings = null,
+        sharedTo = emptyList(),
+    )
+
+    private fun decodedSensor(
+        temperature: Double? = 20.0,
+        humidity: Double? = 50.0,
+        pressure: Double? = 100_000.0,
+        movementCounter: Int? = 8,
+        voltage: Double? = 2.9,
+        rssi: Int? = -55,
+        measurementSequenceNumber: Int? = 42,
+        accelerationX: Double? = 0.1,
+        accelerationY: Double? = 0.2,
+        accelerationZ: Double? = 0.3,
+        soundAverage: Double? = 40.5,
+        soundPeak: Double? = 70.5,
+        luminosity: Double? = 100.0,
+        co2: Int? = 600,
+        voc: Int? = 80,
+        nox: Int? = 90,
+        pm1: Double? = 1.0,
+        pm2_5: Double? = 2.5,
+        pm4: Double? = 4.0,
+        pm10: Double? = 10.0,
+    ) = FoundRuuviTag(
+        rssi = rssi,
+        temperature = temperature,
+        humidity = humidity,
+        pressure = pressure,
+        accelX = accelerationX,
+        accelY = accelerationY,
+        accelZ = accelerationZ,
+        voltage = voltage,
+        movementCounter = movementCounter,
+        measurementSequenceNumber = measurementSequenceNumber,
+        pm1 = pm1,
+        pm25 = pm2_5,
+        pm4 = pm4,
+        pm10 = pm10,
+        co2 = co2,
+        voc = voc,
+        nox = nox,
+        luminosity = luminosity,
+        dBaAvg = soundAverage,
+        dBaPeak = soundPeak,
+    )
 
     companion object {
         private const val SENSOR_ID = "AA:BB:CC:DD:EE:FF"
