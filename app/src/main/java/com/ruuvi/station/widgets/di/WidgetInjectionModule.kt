@@ -4,7 +4,9 @@ import com.ruuvi.station.widgets.complexWidget.ComplexWidgetConfigureViewModel
 import com.ruuvi.station.widgets.complexWidget.ComplexWidgetConfigureViewModelArgs
 import com.ruuvi.station.widgets.domain.ComplexWidgetPreferencesInteractor
 import com.ruuvi.station.widgets.domain.WidgetInteractor
+import com.ruuvi.station.widgets.domain.WidgetMeasurementFormatterRegistry
 import com.ruuvi.station.widgets.domain.WidgetPreferencesInteractor
+import com.ruuvi.station.widgets.domain.WidgetSensorSnapshotProvider
 import com.ruuvi.station.widgets.ui.simpleWidget.SimpleWidgetConfigureViewModel
 import com.ruuvi.station.widgets.update.WidgetUpdater
 import org.kodein.di.Kodein
@@ -25,7 +27,17 @@ object WidgetInjectionModule {
             ComplexWidgetPreferencesInteractor(instance(), instance())
         }
 
-        bind<WidgetInteractor>() with singleton { WidgetInteractor(instance(),instance(), instance(), instance(), instance()) }
+        bind<WidgetSensorSnapshotProvider>() with singleton {
+            WidgetSensorSnapshotProvider(instance(), instance())
+        }
+
+        bind<WidgetMeasurementFormatterRegistry>() with singleton {
+            WidgetMeasurementFormatterRegistry(instance(), instance(), instance())
+        }
+
+        bind<WidgetInteractor>() with singleton {
+            WidgetInteractor(instance(), instance(), instance())
+        }
 
         bind<WidgetUpdater>() with singleton {
             WidgetUpdater(instance(), instance(), instance())
