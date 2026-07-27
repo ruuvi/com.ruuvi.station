@@ -51,8 +51,9 @@ class TagConverter(
                 pressure = pressure?.let { unitsConverter.getPressureEnvironmentValue(it) },
                 humidity = humidity?.let {
                     unitsConverter.getHumidityEnvironmentValue(
-                        it,
-                        temperature
+                        humidity = it,
+                        temperature = temperature,
+                        humidityUnit = HumidityUnit.Relative
                     )
                 },
                 absoluteHumidity = humidity?.let {
@@ -277,7 +278,11 @@ class TagConverter(
                         unitsConverter.getPressureEnvironmentValue(it)
                     },
                     humidity = humidity?.let {
-                        unitsConverter.getHumidityEnvironmentValue(it, temperature)
+                        unitsConverter.getHumidityEnvironmentValue(
+                            humidity = it,
+                            temperature = temperature,
+                            humidityUnit = HumidityUnit.Relative
+                        )
                     },
                     absoluteHumidity = humidity?.let {
                         unitsConverter.getHumidityEnvironmentValue(
