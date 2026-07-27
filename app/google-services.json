@@ -3,7 +3,7 @@
     "project_number": "443545302471",
     "firebase_url": "https://ruuvi-station.firebaseio.com",
     "project_id": "ruuvi-station",
-    "storage_bucket": "ruuvi-station.appspot.com"
+    "storage_bucket": "ruuvi-station.firebasestorage.app"
   },
   "client": [
     {
@@ -21,10 +21,6 @@
             "package_name": "com.ruuvi.station",
             "certificate_hash": "5ebcf2a3bb636a0fe56d96b2cb508998c45b390e"
           }
-        },
-        {
-          "client_id": "443545302471-2hhu2ojg14co447fbveaq8b1hbnag2n8.apps.googleusercontent.com",
-          "client_type": 3
         }
       ],
       "api_key": [
@@ -34,20 +30,7 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "443545302471-2hhu2ojg14co447fbveaq8b1hbnag2n8.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "443545302471-ctu94f8ao0aabjg8alsa5ker1p2iuuvj.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.ruuvi.station",
-                "app_store_id": "1384475885"
-              }
-            }
-          ]
+          "other_platform_oauth_client": []
         }
       }
     }
