@@ -291,7 +291,10 @@ class DashboardActivity : NfcActivity(), KodeinAware {
                             }
 
                             while (true) {
-                                if (!dragDropListState.isDragInProgress) {
+                                if (
+                                    !dragDropListState.isDragInProgress &&
+                                    !dragDropListState.getLazyListState().isScrollInProgress
+                                ) {
                                     Timber.d("Refreshing dashboard")
                                     dashboardViewModel.refreshSensors()
                                 }
