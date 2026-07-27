@@ -18,7 +18,6 @@ import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tag.domain.TagInteractor
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
-import timber.log.Timber
 
 class DashboardActivityViewModel(
     private val tagInteractor: TagInteractor,
@@ -100,12 +99,6 @@ class DashboardActivityViewModel(
         _sensorsList.value = swapped
 
         if (save) networkApplicationSettings.updateSensorsOrder()
-        val sortingOrder = preferencesRepository.getSortedSensors()
-
-        for (sens in sortingOrder) {
-            Timber.d("dragGestureHandler - sortedResult $sens")
-        }
-        Timber.d("dragGestureHandler - sortedResult =========================")
     }
 
     fun onDoneDragging() {

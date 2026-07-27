@@ -95,7 +95,6 @@ import kotlinx.coroutines.launch
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
 import org.kodein.di.generic.instance
-import timber.log.Timber
 import kotlin.math.min
 
 class DashboardActivity : NfcActivity(), KodeinAware {
@@ -295,7 +294,6 @@ class DashboardActivity : NfcActivity(), KodeinAware {
                                     !dragDropListState.isDragInProgress &&
                                     !dragDropListState.getLazyListState().isScrollInProgress
                                 ) {
-                                    Timber.d("Refreshing dashboard")
                                     dashboardViewModel.refreshSensors()
                                 }
                                 delay(1000)
@@ -458,7 +456,6 @@ fun DashboardItems(
                 key = { _, sensor -> sensor.id },
             ) { index, sensor ->
                 val displacementOffset = if (index == dragDropListState.getCurrentIndexOfDraggedListItem()) {
-                    Timber.d("dragGestureHandler - elementDisplacement ${dragDropListState.elementDisplacement}")
                     dragDropListState.elementDisplacement.takeIf { it != IntOffset.Zero }
                 } else {
                     null
@@ -584,7 +581,6 @@ fun DashboardItem(
             .fillMaxWidth()
             .wrapContentHeight()
             .graphicsLayer {
-                Timber.d("dragGestureHandler - graphicsLayer $displacementOffset")
                 translationY = displacementOffset?.y?.toFloat() ?: 0f
                 translationX = displacementOffset?.x?.toFloat() ?: 0f
                 scaleX = if (itemIsDragged) 1.04f else 1f
@@ -610,8 +606,6 @@ fun DashboardItem(
                         .fillMaxHeight()
                         .background(color = RuuviStationTheme.colors.defaultSensorBackground),
                 ) {
-                    Timber.d("Image path ${sensor.userBackground} ")
-
                     sensor.userBackground?.let(Uri::parse)?.takeIf { it.path != null }?.let { uri ->
                         DashboardImage(uri)
                     }
@@ -716,7 +710,6 @@ fun DashboardItemSimple(
         modifier = modifier
             .fillMaxWidth()
             .graphicsLayer {
-                Timber.d("dragGestureHandler - graphicsLayer $displacementOffset")
                 translationY = displacementOffset?.y?.toFloat() ?: 0f
                 translationX = displacementOffset?.x?.toFloat() ?: 0f
                 scaleX = if (itemIsDragged) 1.04f else 1f

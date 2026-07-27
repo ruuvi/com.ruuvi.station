@@ -20,7 +20,6 @@ import androidx.compose.ui.unit.IntSize
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import timber.log.Timber
 import kotlin.math.abs
 
 fun Modifier.dragGestureHandler(
@@ -30,21 +29,17 @@ fun Modifier.dragGestureHandler(
 ): Modifier = this.pointerInput(Unit) {
     detectDragGesturesAfterLongPress(
         onDrag = { change, offset ->
-            Timber.d("dragGestureHandler - onDrag $offset")
             change.consume()
             itemStaggeredGridDragAndDropState.onDrag(offset)
             handleOverscrollJob(overscrollJob, scope, itemStaggeredGridDragAndDropState)
         },
         onDragStart = { offset ->
-            Timber.d("dragGestureHandler - onDragStart $offset")
             itemStaggeredGridDragAndDropState.onDragStart(offset)
                       },
         onDragEnd = {
-            Timber.d("dragGestureHandler - onDragEnd")
             itemStaggeredGridDragAndDropState.onDragInterrupted(false)
                     },
         onDragCancel = {
-            Timber.d("dragGestureHandler - onDragCancel")
             itemStaggeredGridDragAndDropState.onDragInterrupted(true)
                        },
     )
@@ -111,15 +106,11 @@ class ItemStaggeredGridDragAndDropState(
     fun onDragStart(offset: Offset) {
         isDragInProgress = true
         dragStartPoint = offset
-        for (item in lazyListState.layoutInfo.visibleItemsInfo) {
-            Timber.d("dragGestureHandler onDragStart - visible item ${item.offset} ${item.size}")
-        }
         lazyListState.layoutInfo.visibleItemsInfo
             .firstOrNull { item -> offset.y.toInt() in item.offset.y..(item.offset.y + item.size.height)
                     && offset.x.toInt() in item.offset.x..(item.offset.x + item.size.width)
             }
             ?.also {
-                Timber.d("dragGestureHandler onDragStart - currentIndexOfDraggedItem ${it.index}")
                 currentIndexOfDraggedItem = it.index
                 initiallyDraggedElement = it
             }
@@ -127,7 +118,6 @@ class ItemStaggeredGridDragAndDropState(
 
     fun onDrag(offset: Offset) {
         draggedDistance += offset
-        Timber.d("dragGestureHandler onDrag draggedDistance $draggedDistance")
         val initial = initialOffsets ?: return
         val (startOffset, endOffset) = calculateOffsets(initial)
 
@@ -155,7 +145,6 @@ class ItemStaggeredGridDragAndDropState(
             }
 
             if (targetItem != null) {
-                Timber.d("dragGestureHandler - onDrag targetItem $targetItem")
                 currentIndexOfDraggedItem.let { current ->
                     onMove.invoke(current, targetItem.index)
                     currentIndexOfDraggedItem = targetItem.index
@@ -166,7 +155,6 @@ class ItemStaggeredGridDragAndDropState(
 
     // Handle interrupted drag gesture
     fun onDragInterrupted(canceled: Boolean) {
-        Timber.d("dragGestureHandler - onDragInterrupted $canceled")
         isDragInProgress = false
         dragStartPoint = Offset.Unspecified
         draggedDistance = Offset.Zero
@@ -193,14 +181,11 @@ class ItemStaggeredGridDragAndDropState(
             val startOffset = it.offset.y + draggedDistance.y
             val endOffset = it.offset.y + it.size.height + draggedDistance.y
 
-            Timber.d("checkForOverScroll startOffset = $startOffset endOffset = $endOffset viewPortStart = ${lazyListState.layoutInfo.viewportStartOffset} viewPortEnd = ${lazyListState.layoutInfo.viewportEndOffset}")
             return@let when {
                 draggedDistance.y > 0 -> {
-                    Timber.d("checkForOverScroll draggedDistance.y > 0 ${endOffset - lazyListState.layoutInfo.viewportEndOffset}")
                     (endOffset - lazyListState.layoutInfo.viewportEndOffset).takeIf { diff -> diff > 0 }
                 }
                 draggedDistance.y < 0 -> {
-                    Timber.d("checkForOverScroll draggedDistance.y < 0 ${startOffset - lazyListState.layoutInfo.viewportStartOffset}")
                     (startOffset - lazyListState.layoutInfo.viewportStartOffset).takeIf { diff -> diff < 0 }
                 }
                 else -> null
