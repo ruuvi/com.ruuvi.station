@@ -35,14 +35,14 @@ class UnitsConverter (
     }
 
     // AQI
-    fun getAqiEnviromentValue(
+    fun getAqiEnvironmentValue(
         value: AQI
     ): EnvironmentValue {
         if (value.score != null) {
-            val aqi = getValueWithoutUnit(value.score.toDouble(), Accuracy.Accuracy0)
+            val aqi = getValueWithoutUnit(value.score, Accuracy.Accuracy0)
             return EnvironmentValue(
-                original = value.score.toDouble(),
-                value = value.score.toDouble(),
+                original = value.score,
+                value = value.score,
                 accuracy = Accuracy.Accuracy0,
                 valueWithUnit = "$aqi/100 ${context.getString(AirQuality.AqiIndex.unit)}",
                 valueWithoutUnit = "$aqi/100",
@@ -250,18 +250,19 @@ class UnitsConverter (
         temperature: Double?,
         humidityUnit: HumidityUnit = getHumidityUnit(),
         accuracy: Accuracy = getHumidityAccuracy()
-    ): EnvironmentValue? =
-        getHumidityValue(humidity, temperature, humidityUnit)?.let {
-            EnvironmentValue (
-                original = humidity,
-                value = it,
-                accuracy = accuracy,
-                valueWithUnit = getHumidityString(humidity, temperature, humidityUnit),
-                valueWithoutUnit = getHumidityStringWithoutUnit(humidity, temperature, humidityUnit),
-                unitString = getHumidityUnitString(humidityUnit),
-                unitType = humidityUnit
-            )
-        }
+    ): EnvironmentValue? {
+        val value = getHumidityValue(humidity, temperature, humidityUnit) ?: return null
+        val original = getHumidityOriginalValue(humidity, temperature, humidityUnit) ?: return null
+        return EnvironmentValue(
+            original = original,
+            value = value,
+            accuracy = accuracy,
+            valueWithUnit = getHumidityString(humidity, temperature, humidityUnit),
+            valueWithoutUnit = getHumidityStringWithoutUnit(humidity, temperature, humidityUnit),
+            unitString = getHumidityUnitString(humidityUnit),
+            unitType = humidityUnit
+        )
+    }
 
 
     fun getHumidityUnit(): HumidityUnit = preferences.getHumidityUnit()
@@ -291,7 +292,7 @@ class UnitsConverter (
 
         return when (humidityUnit) {
             HumidityUnit.Relative -> humidity.round(2)
-            HumidityUnit.Absolute-> converter?.let { it.absoluteHumidity.round(2) }
+            HumidityUnit.Absolute-> converter?.absoluteHumidity?.round(2)
             HumidityUnit.DewPoint -> {
                 converter?.let {
                     when (getTemperatureUnit()) {
@@ -301,6 +302,28 @@ class UnitsConverter (
                     }
                 }
             }
+        }
+    }
+
+    private fun getHumidityOriginalValue(
+        humidity: Double,
+        temperature: Double?,
+        humidityUnit: HumidityUnit
+    ): Double? {
+        if (humidityUnit == HumidityUnit.Relative) {
+            return humidity.round(2)
+        }
+        val converter = temperature?.let {
+            if (it !in -100.0..370.0) {
+                null
+            } else {
+                HumidityConverter(temperature, humidity / 100)
+            }
+        } ?: return null
+        return when (humidityUnit) {
+            HumidityUnit.Relative -> humidity.round(2)
+            HumidityUnit.Absolute -> converter.absoluteHumidity.round(2)
+            HumidityUnit.DewPoint -> converter.toDewCelsius?.round(2)
         }
     }
 
@@ -368,10 +391,10 @@ class UnitsConverter (
     }
 
     fun getDisplayValue(value: Float): String {
-        if (value.isInteger(0.009f)) {
-            return getDisplayApproximateValue(value)
+        return if (value.isInteger(0.009f)) {
+            getDisplayApproximateValue(value)
         } else {
-            return getDisplayPreciseValue(value)
+            getDisplayPreciseValue(value)
         }
     }
     fun getDisplayPreciseValue(value: Float): String {
