@@ -106,7 +106,7 @@ jobs:
       - name: Run unit tests
         run: ./gradlew :app:testWithoutFileLogsDebugUnitTest
 
-      - name: Build and distribute AAB to Firebase
+      - name: Build release artifacts and distribute APK to Firebase
         env:
           SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
           KEY_STORE_PASSWORD: ${{ secrets.KEY_STORE_PASSWORD }}
@@ -125,7 +125,7 @@ jobs:
           cp -f report.xml ci-logs/ 2>/dev/null || true
           cp -f fastlane/report.xml ci-logs/fastlane-report.xml 2>/dev/null || true
 
-      - name: Stage tested release artifact
+      - name: Stage release AAB from the same build
         if: ${{ success() }}
         run: |
           mkdir -p release-artifact
@@ -139,7 +139,7 @@ jobs:
             echo "AAB_SHA256=$(sha256sum "${aab_path}" | cut -d ' ' -f 1)"
           } > release-artifact/build-metadata.env
 
-      - name: Upload Firebase-tested AAB
+      - name: Upload release AAB
         if: ${{ success() }}
         uses: actions/upload-artifact@v4
         with:

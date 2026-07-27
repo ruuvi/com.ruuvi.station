@@ -333,7 +333,7 @@ rescue => error
 end
 
 platform :android do
-  desc "Build signed without-file-logs AAB and distribute it to Firebase App Distribution"
+  desc "Build signed without-file-logs artifacts and distribute the APK to Firebase App Distribution"
   lane :deploy_to_firebase do |options|
     artifacts = build_android_release_artifacts
     release_notes = distribution_release_notes(options, env_name: "FIREBASE_RELEASE_NOTES")
@@ -348,18 +348,18 @@ platform :android do
     firebase_app_distribution(
       {
         app: firebase_android_app_id,
-        android_artifact_type: "AAB",
-        android_artifact_path: artifacts[:aab],
+        android_artifact_type: "APK",
+        android_artifact_path: artifacts[:apk],
         release_notes: release_notes,
         groups: firebase_groups
       }.merge(firebase_auth_options)
     )
   end
 
-  desc "Upload the Firebase-tested AAB to Google Play internal testing without rebuilding"
+  desc "Upload the release AAB built alongside the Firebase-distributed APK to Google Play internal testing"
   lane :upload_to_play_internal do |options|
     aab_path = required_env("PLAY_INTERNAL_AAB_PATH")
-    UI.user_error!("Firebase-tested AAB does not exist at #{aab_path}") unless File.file?(aab_path)
+    UI.user_error!("Release AAB does not exist at #{aab_path}") unless File.file?(aab_path)
     version = android_version
     release_notes = distribution_release_notes(options, env_name: "PLAY_INTERNAL_RELEASE_NOTES")
     write_release_notes_artifact(release_notes)

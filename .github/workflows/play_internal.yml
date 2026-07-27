@@ -47,7 +47,7 @@ jobs:
         run: |
           bash .github/scripts/validate_ci_secrets.sh SERVICE_ACCOUNT_JSON
 
-      - name: Download Firebase-tested AAB
+      - name: Download release AAB from Firebase workflow
         uses: actions/download-artifact@v4
         with:
           name: ruuvi-station-android-firebase-aab
@@ -80,7 +80,7 @@ jobs:
 
           actual_sha256="$(sha256sum "${aab_path}" | cut -d ' ' -f 1)"
           if [[ "${actual_sha256}" != "${AAB_SHA256}" ]]; then
-            echo "::error::The downloaded AAB checksum does not match the Firebase-tested artifact."
+            echo "::error::The downloaded AAB checksum does not match the release artifact."
             exit 1
           fi
 
