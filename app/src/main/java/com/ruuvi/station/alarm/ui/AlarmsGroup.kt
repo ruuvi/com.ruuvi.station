@@ -292,7 +292,7 @@ fun AlertEditItem(
                     sensorState.latestMeasurement.temperature?.original,
                     UnitType.HumidityUnit.Relative
                 )
-AlarmType.ABSOLUTE_HUMIDITY -> sensorState.latestMeasurement.absoluteHumidity?.valueWithUnit
+                AlarmType.ABSOLUTE_HUMIDITY -> sensorState.latestMeasurement.absoluteHumidity?.valueWithUnit
                 AlarmType.DEW_POINT -> unitsConverter.getHumidityString(
                     sensorState.latestMeasurement.humidity?.original,
                     sensorState.latestMeasurement.temperature?.original,
