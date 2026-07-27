@@ -292,6 +292,16 @@ fun AlertEditItem(
                     sensorState.latestMeasurement.temperature?.original,
                     UnitType.HumidityUnit.Relative
                 )
+                AlarmType.ABSOLUTE_HUMIDITY -> unitsConverter.getHumidityString(
+                    sensorState.latestMeasurement.humidity?.original,
+                    sensorState.latestMeasurement.temperature?.original,
+                    UnitType.HumidityUnit.Absolute
+                )
+                AlarmType.DEW_POINT -> unitsConverter.getHumidityString(
+                    sensorState.latestMeasurement.humidity?.original,
+                    sensorState.latestMeasurement.temperature?.original,
+                    UnitType.HumidityUnit.DewPoint
+                )
                 AlarmType.PRESSURE -> sensorState.latestMeasurement.pressure?.valueWithUnit
                 AlarmType.CO2 -> sensorState.latestMeasurement.co2?.valueWithUnit
                 AlarmType.PM10 -> sensorState.latestMeasurement.pm10?.valueWithUnit
