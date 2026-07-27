@@ -43,7 +43,7 @@ class TagConverter(
             description = sensorSettings.description,
             valuesToDisplay = listOf(),
             latestMeasurement = SensorMeasurements(
-                aqi = unitsConverter.getAqiEnviromentValue(AQI.getAQI(
+                aqi = unitsConverter.getAqiEnvironmentValue(AQI.getAQI(
                     pm25 = entity.pm25,
                     co2 = entity.co2)
                 ),
@@ -178,7 +178,7 @@ class TagConverter(
                 }
                 AirQuality.AqiIndex -> {
                     valuesToDisplay.add(
-                        unitsConverter.getAqiEnviromentValue(AQI.getAQI(
+                        unitsConverter.getAqiEnvironmentValue(AQI.getAQI(
                             pm25 = entity.pm25,
                             co2 = entity.co2)
                         )
@@ -266,7 +266,7 @@ class TagConverter(
             valuesToDisplay = valuesToDisplay,
             latestMeasurement = entity.latestId?.let {
                 SensorMeasurements(
-                    aqi = unitsConverter.getAqiEnviromentValue(AQI.getAQI(
+                    aqi = unitsConverter.getAqiEnvironmentValue(AQI.getAQI(
                         pm25 = entity.pm25,
                         co2 = entity.co2)
                     ),
