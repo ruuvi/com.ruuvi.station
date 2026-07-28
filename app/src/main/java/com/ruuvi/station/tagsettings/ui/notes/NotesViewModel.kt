@@ -3,7 +3,6 @@ package com.ruuvi.station.tagsettings.ui.notes
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ruuvi.station.app.ui.UiEvent
-import com.ruuvi.station.network.domain.RuuviNetworkInteractor
 import com.ruuvi.station.tagsettings.domain.TagSettingsInteractor
 import com.ruuvi.station.util.extensions.processStatus
 import kotlinx.coroutines.delay
