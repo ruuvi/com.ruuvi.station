@@ -298,6 +298,7 @@ fun AlertEditItem(
                     sensorState.latestMeasurement.temperature?.original,
                     UnitType.HumidityUnit.DewPoint
                 )
+                AlarmType.BATTERY_VOLTAGE -> sensorState.latestMeasurement.voltage.valueWithUnit
                 AlarmType.PRESSURE -> sensorState.latestMeasurement.pressure?.valueWithUnit
                 AlarmType.CO2 -> sensorState.latestMeasurement.co2?.valueWithUnit
                 AlarmType.PM10 -> sensorState.latestMeasurement.pm10?.valueWithUnit
