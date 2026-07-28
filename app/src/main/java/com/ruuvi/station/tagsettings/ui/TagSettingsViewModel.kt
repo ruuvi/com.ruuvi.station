@@ -62,11 +62,11 @@ class TagSettingsViewModel(
         it.isLowBattery()
     }
 
-    val sensorOwnedByUser: Flow<Boolean> = sensorState.mapNotNull {
+    val sensorOwnedByUser: Flow<Boolean> = sensorState.map {
         it.owner?.isNotEmpty() == true && it.owner.equals(networkInteractor.getEmail(), true)
     }
 
-    val sensorOwnedOrOffline: Flow<Boolean> = sensorState.mapNotNull {
+    val sensorOwnedOrOffline: Flow<Boolean> = sensorState.map {
         !it.networkSensor || it.owner.isNullOrEmpty() || it.owner.equals(networkInteractor.getEmail(), true)
     }
 

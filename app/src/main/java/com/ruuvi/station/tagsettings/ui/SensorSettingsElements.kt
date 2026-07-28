@@ -107,23 +107,19 @@ fun SensorSettings(
             }
         }
 
-        if (userLoggedIn) {
+        DividerRuuvi()
+
+        TextEditWithCaptionButton(
+            title = stringResource(R.string.notes),
+            icon = if (sensorOwnedOrOffline) painterResource(id = R.drawable.edit_20) else null,
+            tint = RuuviStationTheme.colors.accent
+        ) {
+            if (sensorOwnedOrOffline) onNavigate.invoke(SensorSettingsRoutes.NOTES)
+        }
+
+        sensorState.description?.takeIf { it.isNotEmpty() }?.let {
             DividerRuuvi()
-
-            TextEditWithCaptionButton(
-                title = stringResource(R.string.notes),
-                icon = if (sensorOwnedByUser) painterResource(id = R.drawable.edit_20) else null,
-                tint = RuuviStationTheme.colors.accent
-            ) {
-                if (sensorOwnedByUser) {
-                    onNavigate.invoke(SensorSettingsRoutes.NOTES)
-                }
-            }
-
-            sensorState.description?.takeIf { it.isNotEmpty() }?.let {
-                DividerRuuvi()
-                NotesGroup(sensorState = sensorState)
-            }
+            NotesGroup(sensorState = sensorState)
         }
 
         AlarmsGroup(

@@ -3,6 +3,7 @@ package com.ruuvi.station.tagsettings.ui.notes
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ruuvi.station.app.ui.UiEvent
+import com.ruuvi.station.network.domain.RuuviNetworkInteractor
 import com.ruuvi.station.tagsettings.domain.TagSettingsInteractor
 import com.ruuvi.station.util.extensions.processStatus
 import kotlinx.coroutines.delay
@@ -18,8 +19,10 @@ class NotesViewModel(
     private val interactor: TagSettingsInteractor,
 ): ViewModel() {
 
+    private val sensor = interactor.getFavouriteSensorById(sensorId)
+
     private val _note = MutableStateFlow<String>(
-        interactor.getFavouriteSensorById(sensorId)?.description ?: ""
+        sensor?.description ?: ""
     )
     val note: StateFlow<String> = _note
 
