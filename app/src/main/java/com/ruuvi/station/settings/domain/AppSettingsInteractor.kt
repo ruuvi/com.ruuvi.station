@@ -1,11 +1,13 @@
 package com.ruuvi.station.settings.domain
 
+import androidx.lifecycle.LiveData
 import com.google.gson.JsonObject
 import com.koushikdutta.async.future.FutureCallback
 import com.koushikdutta.ion.Response
 import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.app.ui.DarkModeState
 import com.ruuvi.station.database.domain.SensorSettingsRepository
+import com.ruuvi.station.database.domain.TagRepository
 import com.ruuvi.station.dataforwarding.domain.DataForwardingSender
 import com.ruuvi.station.network.domain.NetworkApplicationSettings
 import com.ruuvi.station.units.domain.UnitsConverter
@@ -18,11 +20,15 @@ class AppSettingsInteractor(
     private val dataForwardingSender: DataForwardingSender,
     private val unitsConverter: UnitsConverter,
     private val networkApplicationSettings: NetworkApplicationSettings,
-    private val sensorSettingsRepository: SensorSettingsRepository
+    private val sensorSettingsRepository: SensorSettingsRepository,
+    private val tagRepository: TagRepository
 ) {
 
     fun getTemperatureUnit(): TemperatureUnit =
         preferencesRepository.getTemperatureUnit()
+
+    fun getTemperatureUnitLiveData() =
+        preferencesRepository.getTemperatureUnitLiveData()
 
     fun setTemperatureUnit(unit: TemperatureUnit) {
         preferencesRepository.setTemperatureUnit(unit)
@@ -32,6 +38,9 @@ class AppSettingsInteractor(
     fun getTemperatureAccuracy(): Accuracy =
         preferencesRepository.getTemperatureAccuracy()
 
+    fun getTemperatureAccuracyLiveData() =
+        preferencesRepository.getTemperatureAccuracyLiveData()
+
     fun setTemperatureAccuracy(accuracy: Accuracy) {
         preferencesRepository.setTemperatureAccuracy(accuracy)
         networkApplicationSettings.updateTemperatureAccuracy()
@@ -39,6 +48,9 @@ class AppSettingsInteractor(
 
     fun getHumidityUnit(): HumidityUnit =
         preferencesRepository.getHumidityUnit()
+
+    fun getHumidityUnitLiveData() =
+        preferencesRepository.getHumidityUnitLiveData()
 
     fun setHumidityUnit(unit: HumidityUnit) {
         preferencesRepository.setHumidityUnit(unit)
@@ -48,9 +60,48 @@ class AppSettingsInteractor(
     fun getHumidityAccuracy(): Accuracy =
         preferencesRepository.getHumidityAccuracy()
 
+    fun getHumidityAccuracyLiveData() =
+        preferencesRepository.getHumidityAccuracyLiveData()
+
     fun setHumidityAccuracy(accuracy: Accuracy) {
         preferencesRepository.setHumidityAccuracy(accuracy)
         networkApplicationSettings.updateHumidityAccuracy()
+        networkApplicationSettings.updateRelativeHumidityAccuracy()
+        networkApplicationSettings.updateAbsoluteHumidityAccuracy()
+        networkApplicationSettings.updateDewPointAccuracy()
+    }
+
+    fun getRelativeHumidityAccuracy(): Accuracy =
+        preferencesRepository.getRelativeHumidityAccuracy()
+
+    fun getRelativeHumidityAccuracyLiveData() =
+        preferencesRepository.getRelativeHumidityAccuracyLiveData()
+
+    fun setRelativeHumidityAccuracy(accuracy: Accuracy) {
+        preferencesRepository.setRelativeHumidityAccuracy(accuracy)
+        networkApplicationSettings.updateRelativeHumidityAccuracy()
+    }
+
+    fun getAbsoluteHumidityAccuracy(): Accuracy =
+        preferencesRepository.getAbsoluteHumidityAccuracy()
+
+    fun getAbsoluteHumidityAccuracyLiveData() =
+        preferencesRepository.getAbsoluteHumidityAccuracyLiveData()
+
+    fun setAbsoluteHumidityAccuracy(accuracy: Accuracy) {
+        preferencesRepository.setAbsoluteHumidityAccuracy(accuracy)
+        networkApplicationSettings.updateAbsoluteHumidityAccuracy()
+    }
+
+    fun getDewPointAccuracy(): Accuracy =
+        preferencesRepository.getDewPointAccuracy()
+
+    fun getDewPointAccuracyLiveData() =
+        preferencesRepository.getDewPointAccuracyLiveData()
+
+    fun setDewPointAccuracy(accuracy: Accuracy) {
+        preferencesRepository.setDewPointAccuracy(accuracy)
+        networkApplicationSettings.updateDewPointAccuracy()
     }
 
     fun getHumidityUnitString(): String = unitsConverter.getHumidityUnitString()
@@ -171,6 +222,9 @@ class AppSettingsInteractor(
 
     fun getPressureUnit(): PressureUnit = unitsConverter.getPressureUnit()
 
+    fun getPressureUnitLiveData() =
+        preferencesRepository.getPressureUnitLiveData()
+
     fun setPressureUnit(unit: PressureUnit) {
         preferencesRepository.setPressureUnit(unit)
         networkApplicationSettings.updatePressureUnit()
@@ -179,9 +233,45 @@ class AppSettingsInteractor(
     fun getPressureAccuracy(): Accuracy =
         preferencesRepository.getPressureAccuracy()
 
+    fun getPressureAccuracyLiveData() =
+        preferencesRepository.getPressureAccuracyLiveData()
+
     fun setPressureAccuracy(accuracy: Accuracy) {
         preferencesRepository.setPressureAccuracy(accuracy)
         networkApplicationSettings.updatePressureAccuracy()
+    }
+
+    fun getPmAccuracy(): Accuracy =
+        preferencesRepository.getPmAccuracy()
+
+    fun getPmAccuracyLiveData() =
+        preferencesRepository.getPmAccuracyLiveData()
+
+    fun setPmAccuracy(accuracy: Accuracy) {
+        preferencesRepository.setPmAccuracy(accuracy)
+        networkApplicationSettings.updatePmAccuracy()
+    }
+
+    fun getAccelerationAccuracy(): Accuracy =
+        preferencesRepository.getAccelerationAccuracy()
+
+    fun getAccelerationAccuracyLiveData() =
+        preferencesRepository.getAccelerationAccuracyLiveData()
+
+    fun setAccelerationAccuracy(accuracy: Accuracy) {
+        preferencesRepository.setAccelerationAccuracy(accuracy)
+        networkApplicationSettings.updateAccelerationAccuracy()
+    }
+
+    fun getVoltageAccuracy(): Accuracy =
+        preferencesRepository.getVoltageAccuracy()
+
+    fun getVoltageAccuracyLiveData() =
+        preferencesRepository.getVoltageAccuracyLiveData()
+
+    fun setVoltageAccuracy(accuracy: Accuracy) {
+        preferencesRepository.setVoltageAccuracy(accuracy)
+        networkApplicationSettings.updateVoltageAccuracy()
     }
 
     fun getAllTemperatureUnits(): List<TemperatureUnit> = unitsConverter.getAllTemperatureUnits()
@@ -189,6 +279,81 @@ class AppSettingsInteractor(
     fun getAllHumidityUnits(): List<HumidityUnit> = unitsConverter.getAllHumidityUnits()
 
     fun getAccuracyList(): Array<Accuracy> = Accuracy.values()
+
+    fun getAccuracy(target: ResolutionSettingsTarget): Accuracy =
+        when (target) {
+            ResolutionSettingsTarget.Temperature -> getTemperatureAccuracy()
+            ResolutionSettingsTarget.RelativeHumidity -> getRelativeHumidityAccuracy()
+            ResolutionSettingsTarget.AbsoluteHumidity -> getAbsoluteHumidityAccuracy()
+            ResolutionSettingsTarget.DewPoint -> getDewPointAccuracy()
+            ResolutionSettingsTarget.Pressure -> getPressureAccuracy()
+            ResolutionSettingsTarget.ParticulateMatter -> getPmAccuracy()
+            ResolutionSettingsTarget.Acceleration -> getAccelerationAccuracy()
+            ResolutionSettingsTarget.Voltage -> getVoltageAccuracy()
+        }
+
+    fun getAccuracyLiveData(target: ResolutionSettingsTarget): LiveData<Accuracy> =
+        when (target) {
+            ResolutionSettingsTarget.Temperature -> getTemperatureAccuracyLiveData()
+            ResolutionSettingsTarget.RelativeHumidity -> getRelativeHumidityAccuracyLiveData()
+            ResolutionSettingsTarget.AbsoluteHumidity -> getAbsoluteHumidityAccuracyLiveData()
+            ResolutionSettingsTarget.DewPoint -> getDewPointAccuracyLiveData()
+            ResolutionSettingsTarget.Pressure -> getPressureAccuracyLiveData()
+            ResolutionSettingsTarget.ParticulateMatter -> getPmAccuracyLiveData()
+            ResolutionSettingsTarget.Acceleration -> getAccelerationAccuracyLiveData()
+            ResolutionSettingsTarget.Voltage -> getVoltageAccuracyLiveData()
+        }
+
+    fun setAccuracy(target: ResolutionSettingsTarget, accuracy: Accuracy) {
+        when (target) {
+            ResolutionSettingsTarget.Temperature -> setTemperatureAccuracy(accuracy)
+            ResolutionSettingsTarget.RelativeHumidity -> setRelativeHumidityAccuracy(accuracy)
+            ResolutionSettingsTarget.AbsoluteHumidity -> setAbsoluteHumidityAccuracy(accuracy)
+            ResolutionSettingsTarget.DewPoint -> setDewPointAccuracy(accuracy)
+            ResolutionSettingsTarget.Pressure -> setPressureAccuracy(accuracy)
+            ResolutionSettingsTarget.ParticulateMatter -> setPmAccuracy(accuracy)
+            ResolutionSettingsTarget.Acceleration -> setAccelerationAccuracy(accuracy)
+            ResolutionSettingsTarget.Voltage -> setVoltageAccuracy(accuracy)
+        }
+    }
+
+    fun getResolutionTargets(): List<ResolutionSettingsTarget> {
+        val sensors = tagRepository.getFavoriteSensors()
+        if (sensors.isEmpty()) {
+            return emptyList()
+        }
+
+        val latestMeasurements = sensors.mapNotNull { it.latestMeasurement }
+        if (latestMeasurements.isEmpty()) {
+            return ResolutionSettingsTarget.values().toList()
+        }
+
+        val targets = mutableListOf<ResolutionSettingsTarget>()
+        if (latestMeasurements.any { it.temperature != null }) {
+            targets.add(ResolutionSettingsTarget.Temperature)
+        }
+        if (latestMeasurements.any { it.humidity != null }) {
+            targets.add(ResolutionSettingsTarget.RelativeHumidity)
+        }
+        if (latestMeasurements.any { it.humidity != null && it.temperature != null }) {
+            targets.add(ResolutionSettingsTarget.AbsoluteHumidity)
+            targets.add(ResolutionSettingsTarget.DewPoint)
+        }
+        if (latestMeasurements.any { it.pressure != null }) {
+            targets.add(ResolutionSettingsTarget.Pressure)
+        }
+        if (latestMeasurements.any { it.pm10 != null || it.pm25 != null || it.pm40 != null || it.pm100 != null }) {
+            targets.add(ResolutionSettingsTarget.ParticulateMatter)
+        }
+        if (latestMeasurements.any { it.accelerationX != null || it.accelerationY != null || it.accelerationZ != null }) {
+            targets.add(ResolutionSettingsTarget.Acceleration)
+        }
+        if (latestMeasurements.any { it.voltage.value > 0 }) {
+            targets.add(ResolutionSettingsTarget.Voltage)
+        }
+
+        return targets
+    }
 
     fun clearLastSync() = sensorSettingsRepository.clearLastSyncGatt()
 

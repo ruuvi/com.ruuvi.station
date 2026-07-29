@@ -12,7 +12,13 @@ data class NetworkUserSettings(
     val UNIT_PRESSURE: String?,
     val ACCURACY_TEMPERATURE: String?,
     val ACCURACY_HUMIDITY: String?,
+    val ACCURACY_HUMIDITY_RELATIVE: String?,
+    val ACCURACY_HUMIDITY_ABSOLUTE: String?,
+    val ACCURACY_HUMIDITY_DEW_POINT: String?,
     val ACCURACY_PRESSURE: String?,
+    val ACCURACY_PM: String?,
+    val ACCURACY_ACCELERATION: String?,
+    val ACCURACY_VOLTAGE: String?,
     val CLOUD_MODE_ENABLED: String?,
     val CHART_SHOW_ALL_POINTS: String?,
     val CHART_DRAW_DOTS: String?,
@@ -33,7 +39,13 @@ data class NetworkUserSettings(
                 UNIT_PRESSURE == null &&
                 ACCURACY_TEMPERATURE == null &&
                 ACCURACY_HUMIDITY == null &&
+                ACCURACY_HUMIDITY_RELATIVE == null &&
+                ACCURACY_HUMIDITY_ABSOLUTE == null &&
+                ACCURACY_HUMIDITY_DEW_POINT == null &&
                 ACCURACY_PRESSURE == null &&
+                ACCURACY_PM == null &&
+                ACCURACY_ACCELERATION == null &&
+                ACCURACY_VOLTAGE == null &&
                 DASHBOARD_TYPE == null &&
                 DASHBOARD_TAP_ACTION == null &&
                 CLOUD_MODE_ENABLED == null &&

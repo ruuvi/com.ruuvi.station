@@ -31,6 +31,7 @@
     <string name="pm10">PM1</string>
     <string name="particulate_matter_25">Feinstaub 2.5</string>
     <string name="pm25">PM2.5</string>
+    <string name="pm">PM</string>
     <string name="particulate_matter_40">Feinstaub 4</string>
     <string name="pm40">PM4</string>
     <string name="particulate_matter_100">Feinstaub 10</string>
@@ -256,6 +257,10 @@
     <string name="settings_gateway_details_link_url">https://docs.ruuvi.com/ruuvi-station-app/gateway</string>
     <string name="settings_gateway_device_identifier">Gerätekennung</string>
     <string name="settings_data_forwarding_test">Testdatenweiterleitung</string>
+    <string name="settings_global_units">Globale Einheiten</string>
+    <string name="settings_global_units_description">Diese Einstellungen legen die globalen Einheiten fest, die in Ruuvi Station verwendet werden, mit Ausnahme der Werte, die in den Einstellungen für sichtbare Messungen konfiguriert wurden. Der Taupunkt kann separat in den Einstellungen für sichtbare Messungen konfiguriert werden.</string>
+    <string name="settings_resolution">Auflösung</string>
+    <string name="settings_resolution_empty">Fügen Sie einen Sensor hinzu, um die verfügbaren Auflösungseinstellungen anzuzeigen</string>
     <string name="settings_humidity_unit">Feuchtigkeitseinheit</string>
     <string name="settings_temperature">Temperatur</string>
     <string name="settings_humidity">Feuchtigkeit</string>

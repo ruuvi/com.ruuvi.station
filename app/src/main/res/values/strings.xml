@@ -31,6 +31,7 @@
     <string name="pm10">PM1</string>
     <string name="particulate_matter_25">Particulate matter 2.5</string>
     <string name="pm25">PM2.5</string>
+    <string name="pm">PM</string>
     <string name="particulate_matter_40">Particulate matter 4</string>
     <string name="pm40">PM4</string>
     <string name="particulate_matter_100">Particulate matter 10</string>
@@ -256,6 +257,10 @@
     <string name="settings_gateway_details_link_url">https://docs.ruuvi.com/ruuvi-station-app/gateway</string>
     <string name="settings_gateway_device_identifier">Device identifier</string>
     <string name="settings_data_forwarding_test">Test data forwarding</string>
+    <string name="settings_global_units">Global Units</string>
+    <string name="settings_global_units_description">These settings define the global units used across Ruuvi Station, except for values configured in visible measurements settings. Dew point can be configured separately in visible measurements settings.</string>
+    <string name="settings_resolution">Resolution</string>
+    <string name="settings_resolution_empty">Add a sensor to see the available resolution settings</string>
     <string name="settings_humidity_unit">Humidity unit</string>
     <string name="settings_temperature">Temperature</string>
     <string name="settings_humidity">Humidity</string>

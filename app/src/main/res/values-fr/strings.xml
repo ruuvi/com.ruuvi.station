@@ -31,6 +31,7 @@
     <string name="pm10">PM1</string>
     <string name="particulate_matter_25">Matières particulaires 2.5</string>
     <string name="pm25">PM2.5</string>
+    <string name="pm">PM</string>
     <string name="particulate_matter_40">Matières particulaires 4</string>
     <string name="pm40">PM4</string>
     <string name="particulate_matter_100">Matières particulaires 10</string>
@@ -256,6 +257,10 @@
     <string name="settings_gateway_details_link_url">https://docs.ruuvi.com/ruuvi-station-app/gateway</string>
     <string name="settings_gateway_device_identifier">Identifiant de l\'appareil</string>
     <string name="settings_data_forwarding_test">Tester le routeur</string>
+    <string name="settings_global_units">Unités globales</string>
+    <string name="settings_global_units_description">Ces réglages définissent les unités globales utilisées dans Ruuvi Station, sauf pour les valeurs configurées dans les réglages des mesures visibles. Le point de rosée peut être configuré séparément dans les réglages des mesures visibles.</string>
+    <string name="settings_resolution">Résolution</string>
+    <string name="settings_resolution_empty">Ajoutez un capteur pour voir les paramètres de résolution disponibles</string>
     <string name="settings_humidity_unit">Unité d\'humidité</string>
     <string name="settings_temperature">Température</string>
     <string name="settings_humidity">Humidité</string>

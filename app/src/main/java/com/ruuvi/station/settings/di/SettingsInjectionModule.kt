@@ -11,7 +11,7 @@ object SettingsInjectionModule {
 
         bind<ChartSettingsViewModel>() with provider { ChartSettingsViewModel(instance()) }
 
-        bind<AppSettingsListViewModel>() with provider { AppSettingsListViewModel(instance(), instance()) }
+        bind<AppSettingsListViewModel>() with provider { AppSettingsListViewModel(instance(), instance(), instance()) }
 
         bind<DataForwardingSettingsViewModel>() with provider { DataForwardingSettingsViewModel(instance()) }
 
@@ -22,7 +22,7 @@ object SettingsInjectionModule {
         bind<AppSettingsHumidityViewModel>() with provider { AppSettingsHumidityViewModel(instance()) }
 
         bind<AppSettingsInteractor>() with singleton {
-            AppSettingsInteractor(instance(), instance(), instance(), instance(), instance())
+            AppSettingsInteractor(instance(), instance(), instance(), instance(), instance(), instance())
         }
 
         bind<AppearanceSettingsViewModel>() with provider { AppearanceSettingsViewModel(instance()) }
@@ -32,6 +32,8 @@ object SettingsInjectionModule {
         bind<HumiditySettingsViewModel>() with provider { HumiditySettingsViewModel(instance()) }
 
         bind<PressureSettingsViewModel>() with provider { PressureSettingsViewModel(instance()) }
+
+        bind<GlobalUnitsAndResolutionViewModel>() with provider { GlobalUnitsAndResolutionViewModel(instance()) }
 
         bind<CloudSettingsViewModel>() with provider { CloudSettingsViewModel(instance()) }
 

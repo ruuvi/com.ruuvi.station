@@ -4,4 +4,8 @@
         <key>android_network</key>
         <value>false</value>
     </entry>
+    <entry>
+        <key>android_global_units_settings</key>
+        <value>false</value>
+    </entry>
 </defaultsMap>

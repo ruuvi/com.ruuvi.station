@@ -13,8 +13,12 @@ class NetworkRequestRepository {
             .from(NetworkRequest::class.java)
             .where(NetworkRequest_Table.type.eq(networkRequest.type))
             .and(NetworkRequest_Table.key.eq(networkRequest.key))
-            .and(NetworkRequest_Table.status.eq(NetworkRequestStatus.READY).or(NetworkRequest_Table.status.eq(NetworkRequestStatus.EXECUTING)))
             .queryList()
+            .filter {
+                it.status == NetworkRequestStatus.READY ||
+                    it.status == NetworkRequestStatus.EXECUTING ||
+                    (networkRequest.type == NetworkRequestType.SETTINGS && it.status == NetworkRequestStatus.FAILED)
+            }
     }
 
     fun getActiveRequestsForKeyType(key: String, type: NetworkRequestType): List<NetworkRequest> {
@@ -72,25 +76,33 @@ class NetworkRequestRepository {
     }
 
     fun disableSimilar(networkRequest: NetworkRequest) {
-        SQLite.update(NetworkRequest::class.java)
-            .set(NetworkRequest_Table.status.eq(NetworkRequestStatus.OVERRIDDEN))
-            .where(NetworkRequest_Table.type.eq(networkRequest.type))
-            .and(NetworkRequest_Table.key.eq(networkRequest.key))
-            .and(NetworkRequest_Table.status.eq(NetworkRequestStatus.READY).or(NetworkRequest_Table.status.eq(NetworkRequestStatus.EXECUTING)))
-            .execute()
+        getSimilar(networkRequest).forEach { request ->
+            request.status = NetworkRequestStatus.OVERRIDDEN
+            saveRequest(request)
+        }
     }
 
     fun getScheduledRequests(): List<NetworkRequest> {
-        return SQLite.select()
+        val readyRequests = SQLite.select()
             .from(NetworkRequest::class.java)
             .where(NetworkRequest_Table.status.eq(NetworkRequestStatus.READY))
-            .orderBy(NetworkRequest_Table.requestDate, true)
             .queryList()
+
+        val failedSettingsRequests = SQLite.select()
+            .from(NetworkRequest::class.java)
+            .where(NetworkRequest_Table.type.eq(NetworkRequestType.SETTINGS))
+            .and(NetworkRequest_Table.status.eq(NetworkRequestStatus.FAILED))
+            .queryList()
+
+        return (readyRequests + failedSettingsRequests).sortedBy { it.requestDate }
     }
 
     fun startExecuting(networkRequest: NetworkRequest): Boolean {
         val request = getById(networkRequest.id)
-        if (request != null && request.status == NetworkRequestStatus.READY) {
+        if (request != null &&
+            (request.status == NetworkRequestStatus.READY ||
+                (request.type == NetworkRequestType.SETTINGS && request.status == NetworkRequestStatus.FAILED))
+        ) {
             request.status = NetworkRequestStatus.EXECUTING
             saveRequest(request)
             return true

@@ -1,5 +1,6 @@
 package com.ruuvi.station.app.preferences
 
+import androidx.lifecycle.map
 import com.ruuvi.station.BuildConfig
 import com.ruuvi.station.app.ui.DarkModeState
 import com.ruuvi.station.dashboard.DashboardTapAction
@@ -41,6 +42,27 @@ class PreferencesRepository(
         preferences.humidityAccuracy = accuracy
     }
 
+    fun getRelativeHumidityAccuracy(): Accuracy =
+        preferences.relativeHumidityAccuracy
+
+    fun setRelativeHumidityAccuracy(accuracy: Accuracy) {
+        preferences.relativeHumidityAccuracy = accuracy
+    }
+
+    fun getAbsoluteHumidityAccuracy(): Accuracy =
+        preferences.absoluteHumidityAccuracy
+
+    fun setAbsoluteHumidityAccuracy(accuracy: Accuracy) {
+        preferences.absoluteHumidityAccuracy = accuracy
+    }
+
+    fun getDewPointAccuracy(): Accuracy =
+        preferences.dewPointAccuracy
+
+    fun setDewPointAccuracy(accuracy: Accuracy) {
+        preferences.dewPointAccuracy = accuracy
+    }
+
     fun getPressureUnit(): PressureUnit =
         preferences.pressureUnit
 
@@ -53,6 +75,27 @@ class PreferencesRepository(
 
     fun setPressureAccuracy(accuracy: Accuracy) {
         preferences.pressureAccuracy = accuracy
+    }
+
+    fun getPmAccuracy(): Accuracy =
+        preferences.pmAccuracy
+
+    fun setPmAccuracy(accuracy: Accuracy) {
+        preferences.pmAccuracy = accuracy
+    }
+
+    fun getAccelerationAccuracy(): Accuracy =
+        preferences.accelerationAccuracy
+
+    fun setAccelerationAccuracy(accuracy: Accuracy) {
+        preferences.accelerationAccuracy = accuracy
+    }
+
+    fun getVoltageAccuracy(): Accuracy =
+        preferences.voltageAccuracy
+
+    fun setVoltageAccuracy(accuracy: Accuracy) {
+        preferences.voltageAccuracy = accuracy
     }
 
     fun getDataForwardingUrl(): String =
@@ -198,6 +241,42 @@ class PreferencesRepository(
     fun getExperimentalFeaturesLiveData() = preferences.getExperimentalFeaturesLiveData()
 
     fun getDeveloperSettingsLiveData() = preferences.getDeveloperSettingsLiveData()
+
+    fun getTemperatureUnitLiveData() =
+        preferences.getTemperatureUnitCodeLiveData().map { TemperatureUnit.getByCode(it) }
+
+    fun getHumidityUnitLiveData() =
+        preferences.getHumidityUnitCodeLiveData().map { HumidityUnit.getByCode(it.toString()) }
+
+    fun getPressureUnitLiveData() =
+        preferences.getPressureUnitCodeLiveData().map { PressureUnit.getByCode(it.toString()) }
+
+    fun getTemperatureAccuracyLiveData() =
+        preferences.getTemperatureAccuracyCodeLiveData().map { Accuracy.getByCode(it) ?: Accuracy.Accuracy2 }
+
+    fun getHumidityAccuracyLiveData() =
+        preferences.getHumidityAccuracyCodeLiveData().map { Accuracy.getByCode(it) ?: Accuracy.Accuracy2 }
+
+    fun getRelativeHumidityAccuracyLiveData() =
+        preferences.getRelativeHumidityAccuracyCodeLiveData().map { Accuracy.getByCode(it) ?: Accuracy.Accuracy2 }
+
+    fun getAbsoluteHumidityAccuracyLiveData() =
+        preferences.getAbsoluteHumidityAccuracyCodeLiveData().map { Accuracy.getByCode(it) ?: Accuracy.Accuracy2 }
+
+    fun getDewPointAccuracyLiveData() =
+        preferences.getDewPointAccuracyCodeLiveData().map { Accuracy.getByCode(it) ?: Accuracy.Accuracy2 }
+
+    fun getPressureAccuracyLiveData() =
+        preferences.getPressureAccuracyCodeLiveData().map { Accuracy.getByCode(it) ?: Accuracy.Accuracy2 }
+
+    fun getPmAccuracyLiveData() =
+        preferences.getPmAccuracyCodeLiveData().map { Accuracy.getByCode(it) ?: Accuracy.Accuracy1 }
+
+    fun getAccelerationAccuracyLiveData() =
+        preferences.getAccelerationAccuracyCodeLiveData().map { Accuracy.getByCode(it) ?: Accuracy.Accuracy2 }
+
+    fun getVoltageAccuracyLiveData() =
+        preferences.getVoltageAccuracyCodeLiveData().map { Accuracy.getByCode(it) ?: Accuracy.Accuracy2 }
 
     fun getUserEmail() = preferences.networkEmail
 

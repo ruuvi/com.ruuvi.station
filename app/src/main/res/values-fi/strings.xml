@@ -31,6 +31,7 @@
     <string name="pm10">PM1</string>
     <string name="particulate_matter_25">Pienhiukkaset 2.5</string>
     <string name="pm25">PM2.5</string>
+    <string name="pm">PM</string>
     <string name="particulate_matter_40">Pienhiukkaset 4</string>
     <string name="pm40">PM4</string>
     <string name="particulate_matter_100">Pienhiukkaset 10</string>
@@ -256,6 +257,10 @@
     <string name="settings_gateway_details_link_url">https://docs.ruuvi.com/ruuvi-station-app/gateway</string>
     <string name="settings_gateway_device_identifier">Laitteen tunniste</string>
     <string name="settings_data_forwarding_test">Testaa välityspalvelin</string>
+    <string name="settings_global_units">Yleiset yksiköt</string>
+    <string name="settings_global_units_description">Nämä asetukset määrittävät Ruuvi Stationissa käytettävät yleiset yksiköt lukuun ottamatta arvoja, jotka on määritetty näytettävien mittausten asetuksissa. Kastepisteen voi määrittää erikseen näytettävät mittaukset -sivulla.</string>
+    <string name="settings_resolution">Resoluutio</string>
+    <string name="settings_resolution_empty">Lisää anturi nähdäksesi käytettävissä olevat resoluutioasetukset</string>
     <string name="settings_humidity_unit">Kosteusyksikkö</string>
     <string name="settings_temperature">Lämpötila</string>
     <string name="settings_humidity">Kosteus</string>

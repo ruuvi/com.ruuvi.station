@@ -42,7 +42,13 @@ class NetworkApplicationSettings (
                     applyChartDrawDots(response.data.settings)
                     applyTemperatureAccuracy(response.data.settings)
                     applyHumidityAccuracy(response.data.settings)
+                    applyRelativeHumidityAccuracy(response.data.settings)
+                    applyAbsoluteHumidityAccuracy(response.data.settings)
+                    applyDewPointAccuracy(response.data.settings)
                     applyPressureAccuracy(response.data.settings)
+                    applyPmAccuracy(response.data.settings)
+                    applyAccelerationAccuracy(response.data.settings)
+                    applyVoltageAccuracy(response.data.settings)
                     applySensorsOrder(response.data.settings)
                     applyDisableEmailNotifications(response.data.settings)
                     applyDisablePushNotifications(response.data.settings)
@@ -70,7 +76,13 @@ class NetworkApplicationSettings (
             updateChartDrawDots()
             updateTemperatureAccuracy()
             updateHumidityAccuracy()
+            updateRelativeHumidityAccuracy()
+            updateAbsoluteHumidityAccuracy()
+            updateDewPointAccuracy()
             updatePressureAccuracy()
+            updatePmAccuracy()
+            updateAccelerationAccuracy()
+            updateVoltageAccuracy()
             updateSensorsOrder()
             updateDisableEmailNotifications()
             updateDisablePushNotifications()
@@ -189,12 +201,72 @@ class NetworkApplicationSettings (
         }
     }
 
+    private fun applyRelativeHumidityAccuracy(settings: NetworkUserSettings) {
+        settings.ACCURACY_HUMIDITY_RELATIVE?.toIntOrNull()?.let {
+            val accuracy = Accuracy.getByCode(it)
+            if (accuracy != null) {
+                Timber.d("NetworkApplicationSettings-applyRelativeHumidityAccuracy: $accuracy")
+                preferencesRepository.setRelativeHumidityAccuracy(accuracy)
+            }
+        }
+    }
+
+    private fun applyAbsoluteHumidityAccuracy(settings: NetworkUserSettings) {
+        settings.ACCURACY_HUMIDITY_ABSOLUTE?.toIntOrNull()?.let {
+            val accuracy = Accuracy.getByCode(it)
+            if (accuracy != null) {
+                Timber.d("NetworkApplicationSettings-applyAbsoluteHumidityAccuracy: $accuracy")
+                preferencesRepository.setAbsoluteHumidityAccuracy(accuracy)
+            }
+        }
+    }
+
+    private fun applyDewPointAccuracy(settings: NetworkUserSettings) {
+        settings.ACCURACY_HUMIDITY_DEW_POINT?.toIntOrNull()?.let {
+            val accuracy = Accuracy.getByCode(it)
+            if (accuracy != null) {
+                Timber.d("NetworkApplicationSettings-applyDewPointAccuracy: $accuracy")
+                preferencesRepository.setDewPointAccuracy(accuracy)
+            }
+        }
+    }
+
     private fun applyPressureAccuracy(settings: NetworkUserSettings) {
         settings.ACCURACY_PRESSURE?.toIntOrNull()?.let {
             val accuracy = Accuracy.getByCode(it)
             if (accuracy != null) {
                 Timber.d("NetworkApplicationSettings-applyPressureAccuracy: $accuracy")
                 preferencesRepository.setPressureAccuracy(accuracy)
+            }
+        }
+    }
+
+    private fun applyPmAccuracy(settings: NetworkUserSettings) {
+        settings.ACCURACY_PM?.toIntOrNull()?.let {
+            val accuracy = Accuracy.getByCode(it)
+            if (accuracy != null) {
+                Timber.d("NetworkApplicationSettings-applyPmAccuracy: $accuracy")
+                preferencesRepository.setPmAccuracy(accuracy)
+            }
+        }
+    }
+
+    private fun applyAccelerationAccuracy(settings: NetworkUserSettings) {
+        settings.ACCURACY_ACCELERATION?.toIntOrNull()?.let {
+            val accuracy = Accuracy.getByCode(it)
+            if (accuracy != null) {
+                Timber.d("NetworkApplicationSettings-applyAccelerationAccuracy: $accuracy")
+                preferencesRepository.setAccelerationAccuracy(accuracy)
+            }
+        }
+    }
+
+    private fun applyVoltageAccuracy(settings: NetworkUserSettings) {
+        settings.ACCURACY_VOLTAGE?.toIntOrNull()?.let {
+            val accuracy = Accuracy.getByCode(it)
+            if (accuracy != null) {
+                Timber.d("NetworkApplicationSettings-applyVoltageAccuracy: $accuracy")
+                preferencesRepository.setVoltageAccuracy(accuracy)
             }
         }
     }
@@ -280,6 +352,36 @@ class NetworkApplicationSettings (
         }
     }
 
+    fun updateRelativeHumidityAccuracy() {
+        if (networkInteractor.signedIn) {
+            Timber.d("NetworkApplicationSettings-updateRelativeHumidityAccuracy: ${preferencesRepository.getRelativeHumidityAccuracy().code}")
+            networkInteractor.updateUserSetting(
+                ACCURACY_HUMIDITY_RELATIVE,
+                preferencesRepository.getRelativeHumidityAccuracy().code.toString()
+            )
+        }
+    }
+
+    fun updateAbsoluteHumidityAccuracy() {
+        if (networkInteractor.signedIn) {
+            Timber.d("NetworkApplicationSettings-updateAbsoluteHumidityAccuracy: ${preferencesRepository.getAbsoluteHumidityAccuracy().code}")
+            networkInteractor.updateUserSetting(
+                ACCURACY_HUMIDITY_ABSOLUTE,
+                preferencesRepository.getAbsoluteHumidityAccuracy().code.toString()
+            )
+        }
+    }
+
+    fun updateDewPointAccuracy() {
+        if (networkInteractor.signedIn) {
+            Timber.d("NetworkApplicationSettings-updateDewPointAccuracy: ${preferencesRepository.getDewPointAccuracy().code}")
+            networkInteractor.updateUserSetting(
+                ACCURACY_HUMIDITY_DEW_POINT,
+                preferencesRepository.getDewPointAccuracy().code.toString()
+            )
+        }
+    }
+
     fun updateDashboardType() {
         if (networkInteractor.signedIn) {
             Timber.d("NetworkApplicationSettings-updateDashboardType: ${preferencesRepository.getDashboardType().code}")
@@ -346,6 +448,36 @@ class NetworkApplicationSettings (
             networkInteractor.updateUserSetting(
                 ACCURACY_PRESSURE,
                 preferencesRepository.getPressureAccuracy().code.toString()
+            )
+        }
+    }
+
+    fun updatePmAccuracy() {
+        if (networkInteractor.signedIn) {
+            Timber.d("NetworkApplicationSettings-updatePmAccuracy: ${preferencesRepository.getPmAccuracy().code}")
+            networkInteractor.updateUserSetting(
+                ACCURACY_PM,
+                preferencesRepository.getPmAccuracy().code.toString()
+            )
+        }
+    }
+
+    fun updateAccelerationAccuracy() {
+        if (networkInteractor.signedIn) {
+            Timber.d("NetworkApplicationSettings-updateAccelerationAccuracy: ${preferencesRepository.getAccelerationAccuracy().code}")
+            networkInteractor.updateUserSetting(
+                ACCURACY_ACCELERATION,
+                preferencesRepository.getAccelerationAccuracy().code.toString()
+            )
+        }
+    }
+
+    fun updateVoltageAccuracy() {
+        if (networkInteractor.signedIn) {
+            Timber.d("NetworkApplicationSettings-updateVoltageAccuracy: ${preferencesRepository.getVoltageAccuracy().code}")
+            networkInteractor.updateUserSetting(
+                ACCURACY_VOLTAGE,
+                preferencesRepository.getVoltageAccuracy().code.toString()
             )
         }
     }
@@ -436,7 +568,13 @@ class NetworkApplicationSettings (
         val UNIT_PRESSURE = "UNIT_PRESSURE"
         val ACCURACY_TEMPERATURE = "ACCURACY_TEMPERATURE"
         val ACCURACY_HUMIDITY = "ACCURACY_HUMIDITY"
+        val ACCURACY_HUMIDITY_RELATIVE = "ACCURACY_HUMIDITY_RELATIVE"
+        val ACCURACY_HUMIDITY_ABSOLUTE = "ACCURACY_HUMIDITY_ABSOLUTE"
+        val ACCURACY_HUMIDITY_DEW_POINT = "ACCURACY_HUMIDITY_DEW_POINT"
         val ACCURACY_PRESSURE = "ACCURACY_PRESSURE"
+        val ACCURACY_PM = "ACCURACY_PM"
+        val ACCURACY_ACCELERATION = "ACCURACY_ACCELERATION"
+        val ACCURACY_VOLTAGE = "ACCURACY_VOLTAGE"
         val DASHBOARD_TYPE = "DASHBOARD_TYPE"
         val DASHBOARD_TAP_ACTION = "DASHBOARD_TAP_ACTION"
         val PROFILE_LANGUAGE_CODE = "PROFILE_LANGUAGE_CODE"
