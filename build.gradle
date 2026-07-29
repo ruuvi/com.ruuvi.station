@@ -35,13 +35,19 @@ sonar {
 
 project(":app") {
     sonar {
+        androidVariant "withoutFileLogsDebug"
         properties {
-            property "sonar.sources", "src/main/java"
-            property "sonar.tests", "src/test/java"
             property "sonar.java.coveragePlugin", "jacoco"
             property "sonar.coverage.jacoco.xmlReportPaths", "${project.buildDir}/reports/jacoco/jacocoTestReport/jacocoTestReport.xml"
             property "sonar.junit.reportPaths", "${project.buildDir}/test-results/testWithoutFileLogsDebugUnitTest"
         }
+    }
+
+    tasks.named("sonarResolver") {
+        dependsOn(
+            "assembleWithoutFileLogsDebug",
+            "assembleWithoutFileLogsDebugAndroidTest"
+        )
     }
 }
 
