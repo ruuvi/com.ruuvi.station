@@ -130,17 +130,18 @@ fun ResolutionSettings(
     val temperatureUnit = viewModel.temperatureUnit.observeAsState(TemperatureUnit.Celsius)
     val pressureUnit = viewModel.pressureUnit.observeAsState(PressureUnit.HectoPascal)
     val accuracyValues = viewModel.accuracyValues.observeAsState(emptyMap())
-    val resolutionTargets = viewModel.getResolutionTargets()
+    val resolutionTargets = viewModel.resolutionTargets.observeAsState()
 
     LaunchedEffect(Unit) {
         viewModel.refresh()
+        viewModel.refreshResolutionTargets()
     }
 
     PageSurface {
         Column(modifier = Modifier.fillMaxWidth()) {
             ParagraphWithPadding(
                 text = stringResource(
-                    id = if (resolutionTargets.isEmpty()) {
+                    id = if (resolutionTargets.value?.isEmpty() == true) {
                         R.string.settings_resolution_empty
                     } else {
                         R.string.accuracy_description
@@ -149,7 +150,7 @@ fun ResolutionSettings(
                 modifier = Modifier.padding(horizontal = RuuviStationTheme.dimensions.screenPadding)
             )
 
-            for (target in resolutionTargets) {
+            for (target in resolutionTargets.value.orEmpty()) {
                 val enabled = isResolutionTargetEnabled(
                     target = target,
                     pressureUnit = pressureUnit.value

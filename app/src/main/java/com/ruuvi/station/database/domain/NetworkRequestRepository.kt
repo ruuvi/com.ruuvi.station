@@ -83,26 +83,16 @@ class NetworkRequestRepository {
     }
 
     fun getScheduledRequests(): List<NetworkRequest> {
-        val readyRequests = SQLite.select()
+        return SQLite.select()
             .from(NetworkRequest::class.java)
             .where(NetworkRequest_Table.status.eq(NetworkRequestStatus.READY))
+            .orderBy(NetworkRequest_Table.requestDate, true)
             .queryList()
-
-        val failedSettingsRequests = SQLite.select()
-            .from(NetworkRequest::class.java)
-            .where(NetworkRequest_Table.type.eq(NetworkRequestType.SETTINGS))
-            .and(NetworkRequest_Table.status.eq(NetworkRequestStatus.FAILED))
-            .queryList()
-
-        return (readyRequests + failedSettingsRequests).sortedBy { it.requestDate }
     }
 
     fun startExecuting(networkRequest: NetworkRequest): Boolean {
         val request = getById(networkRequest.id)
-        if (request != null &&
-            (request.status == NetworkRequestStatus.READY ||
-                (request.type == NetworkRequestType.SETTINGS && request.status == NetworkRequestStatus.FAILED))
-        ) {
+        if (request != null && request.status == NetworkRequestStatus.READY) {
             request.status = NetworkRequestStatus.EXECUTING
             saveRequest(request)
             return true

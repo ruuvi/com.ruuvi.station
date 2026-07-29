@@ -2,13 +2,17 @@ package com.ruuvi.station.settings.ui
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.ruuvi.station.settings.domain.AppSettingsInteractor
 import com.ruuvi.station.settings.domain.ResolutionSettingsTarget
 import com.ruuvi.station.units.model.Accuracy
 import com.ruuvi.station.units.model.UnitType.HumidityUnit
 import com.ruuvi.station.units.model.UnitType.PressureUnit
 import com.ruuvi.station.units.model.UnitType.TemperatureUnit
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class GlobalUnitsAndResolutionViewModel(
     private val appSettingsInteractor: AppSettingsInteractor
@@ -30,8 +34,17 @@ class GlobalUnitsAndResolutionViewModel(
     }
     val accuracyValues: LiveData<Map<ResolutionSettingsTarget, Accuracy>> = _accuracyValues
 
+    private val _resolutionTargets = MutableLiveData<List<ResolutionSettingsTarget>>()
+    val resolutionTargets: LiveData<List<ResolutionSettingsTarget>> = _resolutionTargets
+
     fun refresh() {
         _accuracyValues.value = currentAccuracyValues()
+    }
+
+    fun refreshResolutionTargets() {
+        viewModelScope.launch(Dispatchers.IO) {
+            _resolutionTargets.postValue(appSettingsInteractor.getResolutionTargets())
+        }
     }
 
     fun getAllTemperatureUnits(): List<TemperatureUnit> =
@@ -46,9 +59,6 @@ class GlobalUnitsAndResolutionViewModel(
 
     fun getAccuracyList(): Array<Accuracy> =
         appSettingsInteractor.getAccuracyList()
-
-    fun getResolutionTargets(): List<ResolutionSettingsTarget> =
-        appSettingsInteractor.getResolutionTargets()
 
     fun setTemperatureUnit(unit: TemperatureUnit) {
         appSettingsInteractor.setTemperatureUnit(unit)
