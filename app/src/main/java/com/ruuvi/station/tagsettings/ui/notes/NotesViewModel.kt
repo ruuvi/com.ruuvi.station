@@ -18,8 +18,10 @@ class NotesViewModel(
     private val interactor: TagSettingsInteractor,
 ): ViewModel() {
 
+    private val sensor = interactor.getFavouriteSensorById(sensorId)
+
     private val _note = MutableStateFlow<String>(
-        interactor.getFavouriteSensorById(sensorId)?.description ?: ""
+        sensor?.description ?: ""
     )
     val note: StateFlow<String> = _note
 
