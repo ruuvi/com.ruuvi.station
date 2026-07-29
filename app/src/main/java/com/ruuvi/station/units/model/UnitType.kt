@@ -70,6 +70,7 @@ sealed class UnitType(
         unit: Int,
         measurementTitle: Int,
         measurementName: Int,
+        alarmType: AlarmType = AlarmType.HUMIDITY
     ): UnitType(
         unitCode = code,
         unitTitle = unitTitle,
@@ -78,7 +79,7 @@ sealed class UnitType(
         measurementTitle = measurementTitle,
         measurementName = measurementName,
         iconRes = R.drawable.icon_humidity,
-        alarmType = AlarmType.HUMIDITY,
+        alarmType = alarmType,
         defaultAccuracy = Accuracy.Accuracy2
     ) {
         data object Relative: HumidityUnit(
@@ -86,21 +87,24 @@ sealed class UnitType(
             unitTitle = R.string.humidity_relative_name,
             unit = R.string.humidity_relative_unit,
             measurementTitle = R.string.relative_humidity,
-            measurementName = R.string.rel_humidity
+            measurementName = R.string.rel_humidity,
+            alarmType = AlarmType.HUMIDITY
         )
         data object Absolute: HumidityUnit(
             code = HUMIDITY_ABSOLUTE_CODE,
             unitTitle = R.string.humidity_absolute_name,
             unit = R.string.humidity_absolute_unit,
             measurementTitle = R.string.absolute_humidity,
-            measurementName = R.string.abs_humidity
+            measurementName = R.string.abs_humidity,
+            alarmType = AlarmType.ABSOLUTE_HUMIDITY
         )
         data object DewPoint: HumidityUnit(
             code = HUMIDITY_DEW_POINT_CODE,
             unitTitle = R.string.humidity_dew_point_name,
             unit = R.string.humidity_dew_point_unit,
             measurementTitle = R.string.dewpoint,
-            measurementName = R.string.dewpoint
+            measurementName = R.string.dewpoint,
+            alarmType = AlarmType.DEW_POINT
         )
 
         companion object {
