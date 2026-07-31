@@ -8,6 +8,12 @@ object SettingsRoutes {
     const val TEMPERATURE = "temperature"
     const val HUMIDITY = "humidity"
     const val PRESSURE = "pressure"
+    const val GLOBAL_UNITS = "global_units"
+    const val GLOBAL_UNIT_TYPE_ARG = "unitType"
+    const val GLOBAL_UNIT_SELECT = "global_unit_select/{$GLOBAL_UNIT_TYPE_ARG}"
+    const val RESOLUTION = "resolution"
+    const val RESOLUTION_TARGET_ARG = "resolutionTarget"
+    const val RESOLUTION_SELECT = "resolution_select/{$RESOLUTION_TARGET_ARG}"
     const val APPEARANCE = "appearance"
     const val ALERT_NOTIFICATIONS = "alert_notifications"
     const val BACKGROUNDSCAN = "backgroundscan"
@@ -21,6 +27,10 @@ object SettingsRoutes {
         return when (route) {
             APPEARANCE -> context.getString(R.string.settings_appearance)
             LIST -> context.getString(R.string.menu_app_settings)
+            GLOBAL_UNITS -> context.getString(R.string.settings_global_units)
+            GLOBAL_UNIT_SELECT -> context.getString(R.string.settings_global_units)
+            RESOLUTION -> context.getString(R.string.settings_resolution)
+            RESOLUTION_SELECT -> context.getString(R.string.settings_resolution)
             TEMPERATURE -> context.getString(R.string.settings_temperature)
             HUMIDITY -> context.getString(R.string.settings_humidity)
             PRESSURE -> context.getString(R.string.settings_pressure)
@@ -33,4 +43,10 @@ object SettingsRoutes {
             else -> context.getString(R.string.menu_app_settings)
         }
     }
+
+    fun globalUnitSelectRoute(unitType: String): String =
+        "global_unit_select/$unitType"
+
+    fun resolutionSelectRoute(target: String): String =
+        "resolution_select/$target"
 }

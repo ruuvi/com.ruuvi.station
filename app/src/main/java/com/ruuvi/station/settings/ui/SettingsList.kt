@@ -16,6 +16,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -61,6 +62,10 @@ fun SettingsList(
     }
 
     val developerSettings = viewModel.developerFeatures.observeAsState()
+    val temperatureUnit = viewModel.temperatureUnit.observeAsState(viewModel.getTemperatureUnit())
+    val humidityUnit = viewModel.humidityUnit.observeAsState(viewModel.getHumidityUnit())
+    val pressureUnit = viewModel.pressureUnit.observeAsState(viewModel.getPressureUnit())
+    val globalUnitsSettingsEnabled = viewModel.shouldShowGlobalUnitsSettings()
 
     LazyColumn(modifier = Modifier.fillMaxSize()) {
         if (shouldShowLanguageSelection()) {
@@ -105,28 +110,47 @@ fun SettingsList(
             )
         }
 
-        item {
-            SettingsElement(
-                name = stringResource(id = R.string.settings_temperature_unit),
-                value = stringResource(id = viewModel.getTemperatureUnit().unit),
-                onClick = { onNavigate.invoke(SettingsRoutes.TEMPERATURE) }
-            )
-        }
+        if (globalUnitsSettingsEnabled) {
+            item {
+                SettingsElement(
+                    name = stringResource(id = R.string.settings_global_units),
+                    value = null,
+                    onClick = { onNavigate.invoke(SettingsRoutes.GLOBAL_UNITS) }
+                )
+            }
 
-        item {
-            SettingsElement(
-                name = stringResource(id = R.string.settings_humidity_unit),
-                value = stringResource(id = viewModel.getHumidityUnit().unit),
-                onClick = { onNavigate.invoke(SettingsRoutes.HUMIDITY) }
-            )
-        }
+            item {
+                SettingsElement(
+                    name = stringResource(id = R.string.settings_resolution),
+                    value = null,
+                    onClick = { onNavigate.invoke(SettingsRoutes.RESOLUTION) }
+                )
+            }
+        } else {
+            // TODO: Remove these when global resolution and unit setting is in production.
+            item {
+                SettingsElement(
+                    name = stringResource(id = R.string.settings_temperature_unit),
+                    value = stringResource(id = temperatureUnit.value.unit),
+                    onClick = { onNavigate.invoke(SettingsRoutes.TEMPERATURE) }
+                )
+            }
 
-        item {
-            SettingsElement(
-                name = stringResource(id = R.string.settings_pressure_unit ),
-                value = stringResource(id = viewModel.getPressureUnit().unit),
-                onClick = { onNavigate.invoke(SettingsRoutes.PRESSURE) }
-            )
+            item {
+                SettingsElement(
+                    name = stringResource(id = R.string.settings_humidity_unit),
+                    value = stringResource(id = humidityUnit.value.unit),
+                    onClick = { onNavigate.invoke(SettingsRoutes.HUMIDITY) }
+                )
+            }
+
+            item {
+                SettingsElement(
+                    name = stringResource(id = R.string.settings_pressure_unit ),
+                    value = stringResource(id = pressureUnit.value.unit),
+                    onClick = { onNavigate.invoke(SettingsRoutes.PRESSURE) }
+                )
+            }
         }
 
         if (viewModel.shouldShowCloudMode()) {
@@ -173,6 +197,7 @@ fun SettingsElement(
     fixedHeight: Boolean = true,
     value: String? = null,
     description: String? = null,
+    enabled: Boolean = true,
     onClick: () -> Unit
 ) {
     Column(
@@ -187,11 +212,12 @@ fun SettingsElement(
 
         ConstraintLayout(modifier = modifier
             .fillMaxWidth()
+            .alpha(if (enabled) 1f else 0.4f)
             .padding(
                 vertical = RuuviStationTheme.dimensions.screenPadding,
                 horizontal = RuuviStationTheme.dimensions.screenPadding
             )
-            .clickable(role = Role.Button) { onClick.invoke() }
+            .clickable(enabled = enabled, role = Role.Button) { onClick.invoke() }
         ) {
             val (caption, descElement, arrow) = createRefs()
 

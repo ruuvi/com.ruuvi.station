@@ -19,9 +19,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.view.WindowCompat
 import androidx.navigation.NavBackStackEntry
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.ruuvi.station.app.ui.RuuviTopAppBar
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
@@ -77,18 +79,10 @@ class SettingsActivity : AppCompatActivity(), KodeinAware {
                         ) {
                             composable(
                                 SettingsRoutes.LIST,
-                                enterTransition = {
-                                    slideIntoContainer(
-                                        towards = AnimatedContentTransitionScope.SlideDirection.Right,
-                                        animationSpec = tween(600)
-                                    )
-                                },
-                                exitTransition = {
-                                    slideOutOfContainer(
-                                        towards = AnimatedContentTransitionScope.SlideDirection.Left,
-                                        animationSpec = tween(600)
-                                    )
-                                },
+                                enterTransition = pushEnterTransition,
+                                exitTransition = pushExitTransition,
+                                popEnterTransition = popEnterTransition,
+                                popExitTransition = popExitTransition
                             ) {
                                 SettingsList(
                                     scaffoldState = scaffoldState,
@@ -98,8 +92,10 @@ class SettingsActivity : AppCompatActivity(), KodeinAware {
                             }
                             composable(
                                 route = SettingsRoutes.APPEARANCE,
-                                enterTransition = enterTransition,
-                                exitTransition = exitTransition
+                                enterTransition = pushEnterTransition,
+                                exitTransition = pushExitTransition,
+                                popEnterTransition = popEnterTransition,
+                                popExitTransition = popExitTransition
                             ) {
                                 val appearanceSettingsViewModel: AppearanceSettingsViewModel by viewModel()
                                 AppearanceSettings(
@@ -109,8 +105,10 @@ class SettingsActivity : AppCompatActivity(), KodeinAware {
                             }
                             composable(
                                 route = SettingsRoutes.ALERT_NOTIFICATIONS,
-                                enterTransition = enterTransition,
-                                exitTransition = exitTransition
+                                enterTransition = pushEnterTransition,
+                                exitTransition = pushExitTransition,
+                                popEnterTransition = popEnterTransition,
+                                popExitTransition = popExitTransition
                             ) {
                                 val alertNotificationsSettingsViewModel: AlertNotificationsSettingsViewModel by viewModel()
                                 AlertNotificationsSettings(
@@ -120,8 +118,10 @@ class SettingsActivity : AppCompatActivity(), KodeinAware {
                             }
                             composable(
                                 SettingsRoutes.BACKGROUNDSCAN,
-                                enterTransition = enterTransition,
-                                exitTransition = exitTransition
+                                enterTransition = pushEnterTransition,
+                                exitTransition = pushExitTransition,
+                                popEnterTransition = popEnterTransition,
+                                popExitTransition = popExitTransition
                             ) {
                                 val backgroundScanSettingsViewModel: BackgroundScanSettingsViewModel by viewModel()
                                 BackgroundScanSettings(
@@ -131,8 +131,10 @@ class SettingsActivity : AppCompatActivity(), KodeinAware {
                             }
                             composable(
                                 SettingsRoutes.TEMPERATURE,
-                                enterTransition = enterTransition,
-                                exitTransition = exitTransition
+                                enterTransition = pushEnterTransition,
+                                exitTransition = pushExitTransition,
+                                popEnterTransition = popEnterTransition,
+                                popExitTransition = popExitTransition
                             ) {
                                 val temperatureSettingsViewModel: TemperatureSettingsViewModel by viewModel()
                                 TemperatureSettings(
@@ -142,8 +144,10 @@ class SettingsActivity : AppCompatActivity(), KodeinAware {
                             }
                             composable(
                                 SettingsRoutes.HUMIDITY,
-                                enterTransition = enterTransition,
-                                exitTransition = exitTransition
+                                enterTransition = pushEnterTransition,
+                                exitTransition = pushExitTransition,
+                                popEnterTransition = popEnterTransition,
+                                popExitTransition = popExitTransition
                             ) {
                                 val humiditySettingsViewModel: HumiditySettingsViewModel by viewModel()
                                 HumiditySettings(
@@ -153,8 +157,10 @@ class SettingsActivity : AppCompatActivity(), KodeinAware {
                             }
                             composable(
                                 SettingsRoutes.PRESSURE,
-                                enterTransition = enterTransition,
-                                exitTransition = exitTransition
+                                enterTransition = pushEnterTransition,
+                                exitTransition = pushExitTransition,
+                                popEnterTransition = popEnterTransition,
+                                popExitTransition = popExitTransition
                             ) {
                                 val pressureSettingsViewModel: PressureSettingsViewModel by viewModel()
                                 PressureSettings(
@@ -163,9 +169,81 @@ class SettingsActivity : AppCompatActivity(), KodeinAware {
                                 )
                             }
                             composable(
+                                SettingsRoutes.GLOBAL_UNITS,
+                                enterTransition = pushEnterTransition,
+                                exitTransition = pushExitTransition,
+                                popEnterTransition = popEnterTransition,
+                                popExitTransition = popExitTransition
+                            ) {
+                                val globalUnitsAndResolutionViewModel: GlobalUnitsAndResolutionViewModel by viewModel()
+                                GlobalUnitsSettings(
+                                    scaffoldState = scaffoldState,
+                                    onNavigate = navController::navigate,
+                                    viewModel = globalUnitsAndResolutionViewModel
+                                )
+                            }
+                            composable(
+                                route = SettingsRoutes.GLOBAL_UNIT_SELECT,
+                                arguments = listOf(
+                                    navArgument(SettingsRoutes.GLOBAL_UNIT_TYPE_ARG) {
+                                        type = NavType.StringType
+                                    }
+                                ),
+                                enterTransition = pushEnterTransition,
+                                exitTransition = pushExitTransition,
+                                popEnterTransition = popEnterTransition,
+                                popExitTransition = popExitTransition
+                            ) { backStackEntry ->
+                                val globalUnitsAndResolutionViewModel: GlobalUnitsAndResolutionViewModel by viewModel()
+                                GlobalUnitSelectionSettings(
+                                    scaffoldState = scaffoldState,
+                                    unitType = backStackEntry.arguments?.getString(
+                                        SettingsRoutes.GLOBAL_UNIT_TYPE_ARG
+                                    ),
+                                    viewModel = globalUnitsAndResolutionViewModel
+                                )
+                            }
+                            composable(
+                                SettingsRoutes.RESOLUTION,
+                                enterTransition = pushEnterTransition,
+                                exitTransition = pushExitTransition,
+                                popEnterTransition = popEnterTransition,
+                                popExitTransition = popExitTransition
+                            ) {
+                                val globalUnitsAndResolutionViewModel: GlobalUnitsAndResolutionViewModel by viewModel()
+                                ResolutionSettings(
+                                    scaffoldState = scaffoldState,
+                                    onNavigate = navController::navigate,
+                                    viewModel = globalUnitsAndResolutionViewModel
+                                )
+                            }
+                            composable(
+                                route = SettingsRoutes.RESOLUTION_SELECT,
+                                arguments = listOf(
+                                    navArgument(SettingsRoutes.RESOLUTION_TARGET_ARG) {
+                                        type = NavType.StringType
+                                    }
+                                ),
+                                enterTransition = pushEnterTransition,
+                                exitTransition = pushExitTransition,
+                                popEnterTransition = popEnterTransition,
+                                popExitTransition = popExitTransition
+                            ) { backStackEntry ->
+                                val globalUnitsAndResolutionViewModel: GlobalUnitsAndResolutionViewModel by viewModel()
+                                ResolutionSelectionSettings(
+                                    scaffoldState = scaffoldState,
+                                    target = backStackEntry.arguments?.getString(
+                                        SettingsRoutes.RESOLUTION_TARGET_ARG
+                                    ),
+                                    viewModel = globalUnitsAndResolutionViewModel
+                                )
+                            }
+                            composable(
                                 SettingsRoutes.CLOUD,
-                                enterTransition = enterTransition,
-                                exitTransition = exitTransition
+                                enterTransition = pushEnterTransition,
+                                exitTransition = pushExitTransition,
+                                popEnterTransition = popEnterTransition,
+                                popExitTransition = popExitTransition
                             ) {
                                 val cloudSettingsViewModel: CloudSettingsViewModel by viewModel()
                                 CloudSettings(
@@ -175,8 +253,10 @@ class SettingsActivity : AppCompatActivity(), KodeinAware {
                             }
                             composable(
                                 SettingsRoutes.CHARTS,
-                                enterTransition = enterTransition,
-                                exitTransition = exitTransition
+                                enterTransition = pushEnterTransition,
+                                exitTransition = pushExitTransition,
+                                popEnterTransition = popEnterTransition,
+                                popExitTransition = popExitTransition
                             ) {
                                 val chartSettingsViewModel: ChartSettingsViewModel by viewModel()
                                 ChartSettings(
@@ -186,8 +266,10 @@ class SettingsActivity : AppCompatActivity(), KodeinAware {
                             }
                             composable(
                                 SettingsRoutes.DATAFORWARDING,
-                                enterTransition = enterTransition,
-                                exitTransition = exitTransition
+                                enterTransition = pushEnterTransition,
+                                exitTransition = pushExitTransition,
+                                popEnterTransition = popEnterTransition,
+                                popExitTransition = popExitTransition
                             ) {
                                 val dataForwardingSettingsViewModel: DataForwardingSettingsViewModel by viewModel()
                                 DataForwardingSettings(
@@ -197,8 +279,10 @@ class SettingsActivity : AppCompatActivity(), KodeinAware {
                             }
                             composable(
                                 SettingsRoutes.DEVELOPER,
-                                enterTransition = enterTransition,
-                                exitTransition = exitTransition
+                                enterTransition = pushEnterTransition,
+                                exitTransition = pushExitTransition,
+                                popEnterTransition = popEnterTransition,
+                                popExitTransition = popExitTransition
                             ) {
                                 val developerSettingsViewModel: DeveloperSettingsViewModel by viewModel()
                                 DeveloperSettings(
@@ -222,12 +306,22 @@ class SettingsActivity : AppCompatActivity(), KodeinAware {
         }
     }
 
-    private val enterTransition: (AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition?) =
+    private val pushEnterTransition: (AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition?) =
         { slideIntoContainer(
             towards = AnimatedContentTransitionScope.SlideDirection.Left,
             animationSpec = tween(600)
         ) }
-    private val exitTransition:  (AnimatedContentTransitionScope<NavBackStackEntry>.() -> ExitTransition?) =
+    private val pushExitTransition:  (AnimatedContentTransitionScope<NavBackStackEntry>.() -> ExitTransition?) =
+        { slideOutOfContainer(
+            towards = AnimatedContentTransitionScope.SlideDirection.Left,
+            animationSpec = tween(600)
+        ) }
+    private val popEnterTransition: (AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition?) =
+        { slideIntoContainer(
+            towards = AnimatedContentTransitionScope.SlideDirection.Right,
+            animationSpec = tween(600)
+        ) }
+    private val popExitTransition:  (AnimatedContentTransitionScope<NavBackStackEntry>.() -> ExitTransition?) =
         { slideOutOfContainer(
             towards = AnimatedContentTransitionScope.SlideDirection.Right,
             animationSpec = tween(600)

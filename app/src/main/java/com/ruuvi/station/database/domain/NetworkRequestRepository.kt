@@ -13,8 +13,12 @@ class NetworkRequestRepository {
             .from(NetworkRequest::class.java)
             .where(NetworkRequest_Table.type.eq(networkRequest.type))
             .and(NetworkRequest_Table.key.eq(networkRequest.key))
-            .and(NetworkRequest_Table.status.eq(NetworkRequestStatus.READY).or(NetworkRequest_Table.status.eq(NetworkRequestStatus.EXECUTING)))
             .queryList()
+            .filter {
+                it.status == NetworkRequestStatus.READY ||
+                    it.status == NetworkRequestStatus.EXECUTING ||
+                    (networkRequest.type == NetworkRequestType.SETTINGS && it.status == NetworkRequestStatus.FAILED)
+            }
     }
 
     fun getActiveRequestsForKeyType(key: String, type: NetworkRequestType): List<NetworkRequest> {
@@ -72,12 +76,10 @@ class NetworkRequestRepository {
     }
 
     fun disableSimilar(networkRequest: NetworkRequest) {
-        SQLite.update(NetworkRequest::class.java)
-            .set(NetworkRequest_Table.status.eq(NetworkRequestStatus.OVERRIDDEN))
-            .where(NetworkRequest_Table.type.eq(networkRequest.type))
-            .and(NetworkRequest_Table.key.eq(networkRequest.key))
-            .and(NetworkRequest_Table.status.eq(NetworkRequestStatus.READY).or(NetworkRequest_Table.status.eq(NetworkRequestStatus.EXECUTING)))
-            .execute()
+        getSimilar(networkRequest).forEach { request ->
+            request.status = NetworkRequestStatus.OVERRIDDEN
+            saveRequest(request)
+        }
     }
 
     fun getScheduledRequests(): List<NetworkRequest> {

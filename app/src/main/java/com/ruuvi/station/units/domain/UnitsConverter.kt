@@ -249,7 +249,7 @@ class UnitsConverter (
         humidity: Double,
         temperature: Double?,
         humidityUnit: HumidityUnit = getHumidityUnit(),
-        accuracy: Accuracy = getHumidityAccuracy()
+        accuracy: Accuracy = getHumidityAccuracy(humidityUnit)
     ): EnvironmentValue? {
         val value = getHumidityValue(humidity, temperature, humidityUnit) ?: return null
         val original = getHumidityOriginalValue(humidity, temperature, humidityUnit) ?: return null
@@ -339,7 +339,7 @@ class UnitsConverter (
             if (humidityValue == null) {
                 NO_VALUE_AVAILABLE
             } else {
-                context.getString(getHumidityAccuracy().nameTemplateId, humidityValue, "").trim()
+                context.getString(getHumidityAccuracy(humidityUnit).nameTemplateId, humidityValue, "").trim()
             }
 
         }
@@ -364,7 +364,7 @@ class UnitsConverter (
     ): String {
         if (humidity == null)
             return NO_VALUE_AVAILABLE
-        val displayAccuracy = accuracy ?: getHumidityAccuracy()
+        val displayAccuracy = accuracy ?: getHumidityAccuracy(humidityUnit ?: getHumidityUnit())
         val humidityUnitString = humidityUnit?.let { getHumidityUnitString(humidityUnit) } ?: ""
         return context.getString(displayAccuracy.nameTemplateId, humidity, humidityUnitString).trim()
     }
@@ -377,7 +377,18 @@ class UnitsConverter (
         return context.getString(humidityAccuracy.nameTemplateId, hunidity, "").trim()
     }
 
-    fun getHumidityAccuracy() = preferences.getHumidityAccuracy()
+    fun getHumidityAccuracy(humidityUnit: HumidityUnit = getHumidityUnit()) =
+        when (humidityUnit) {
+            HumidityUnit.Relative -> preferences.getRelativeHumidityAccuracy()
+            HumidityUnit.Absolute -> preferences.getAbsoluteHumidityAccuracy()
+            HumidityUnit.DewPoint -> preferences.getDewPointAccuracy()
+        }
+
+    fun getPmAccuracy() = preferences.getPmAccuracy()
+
+    fun getAccelerationAccuracy() = preferences.getAccelerationAccuracy()
+
+    fun getVoltageAccuracy() = preferences.getVoltageAccuracy()
 
     fun getSignalString(rssi: Int): String =
         if (rssi != 0) {
@@ -431,29 +442,33 @@ class UnitsConverter (
     fun getVoltageEnvironmentValue(
         voltage: Double
     ): EnvironmentValue =
+        getVoltageAccuracy().let { accuracy ->
         EnvironmentValue (
             original = voltage,
             value = voltage,
-            accuracy = Accuracy.Accuracy2,
-            valueWithUnit = context.getString(R.string.voltage_reading, voltage, context.getString(R.string.voltage_unit)),
-            valueWithoutUnit = context.getString(R.string.voltage_reading, voltage, "").trim(),
+            accuracy = accuracy,
+            valueWithUnit = context.getString(accuracy.nameTemplateId, voltage, context.getString(R.string.voltage_unit)),
+            valueWithoutUnit = context.getString(accuracy.nameTemplateId, voltage, "").trim(),
             unitString = context.getString(R.string.voltage_unit),
             unitType = BatteryVoltageUnit.Volt
         )
+        }
 
     fun getAccelerationValue(
         value: Double,
         unit: Acceleration
     ): EnvironmentValue =
+        getAccelerationAccuracy().let { accuracy ->
         EnvironmentValue (
             original = value,
             value = value,
-            accuracy = Accuracy.Accuracy2,
-            valueWithUnit = context.getString(R.string.acceleration_reading, value, context.getString(unit.unit)),
-            valueWithoutUnit = context.getString(R.string.acceleration_reading, value, "").trim(),
+            accuracy = accuracy,
+            valueWithUnit = context.getString(accuracy.nameTemplateId, value, context.getString(unit.unit)),
+            valueWithoutUnit = context.getString(accuracy.nameTemplateId, value, "").trim(),
             unitString = context.getString(unit.unit),
             unitType = unit
         )
+        }
 
 
     fun getSignalEnvironmentValue(
@@ -470,15 +485,17 @@ class UnitsConverter (
         )
 
     fun getPmEnvironmentValue(pm: Double, unitType: UnitType): EnvironmentValue =
+        getPmAccuracy().let { accuracy ->
         EnvironmentValue(
             original = pm,
             value = pm,
-            accuracy = Accuracy.Accuracy1,
-            valueWithUnit = context.getString(Accuracy.Accuracy1.nameTemplateId, pm, context.getString(unitType.unit)),
-            valueWithoutUnit = context.getString(Accuracy.Accuracy1.nameTemplateId, pm, "").trim(),
+            accuracy = accuracy,
+            valueWithUnit = context.getString(accuracy.nameTemplateId, pm, context.getString(unitType.unit)),
+            valueWithoutUnit = context.getString(accuracy.nameTemplateId, pm, "").trim(),
             unitString = context.getString(unitType.unit),
             unitType = unitType
         )
+        }
 
     fun getCo2EnvironmentValue(co2: Int) =
         EnvironmentValue(

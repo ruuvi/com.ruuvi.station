@@ -7,5 +7,11 @@ enum class FeatureFlag (
     override val defaultValue: Boolean
 ) : Feature {
     VISIBLE_MEASUREMENTS("android_visible_measurements", "Visible Measurements", "Enable visible measurements", true),
-    NEW_SENSOR_CARD("android_new_sensor_card", "New sensor card UI", "Enable new sensor card UI", true)
+    NEW_SENSOR_CARD("android_new_sensor_card", "New sensor card UI", "Enable new sensor card UI", true),
+    GLOBAL_UNITS_SETTINGS(
+        "android_global_units_settings",
+        "Global Units and Resolution",
+        "Enable grouped global units and resolution settings",
+        false
+    )
 }

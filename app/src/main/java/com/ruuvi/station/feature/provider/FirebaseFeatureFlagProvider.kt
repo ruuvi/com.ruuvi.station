@@ -32,6 +32,7 @@ class FirebaseFeatureFlagProvider() : FeatureFlagProvider, RemoteFeatureFlagProv
         return when (feature) {
             FeatureFlag.NEW_SENSOR_CARD -> true
             FeatureFlag.VISIBLE_MEASUREMENTS -> true
+            FeatureFlag.GLOBAL_UNITS_SETTINGS -> true
             else -> false
         }
     }

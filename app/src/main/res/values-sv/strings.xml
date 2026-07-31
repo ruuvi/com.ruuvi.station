@@ -31,6 +31,7 @@
     <string name="pm10">PM1</string>
     <string name="particulate_matter_25">Partiklar 2.5</string>
     <string name="pm25">PM2.5</string>
+    <string name="pm">PM</string>
     <string name="particulate_matter_40">Partiklar 4</string>
     <string name="pm40">PM4</string>
     <string name="particulate_matter_100">Partiklar 10</string>
@@ -256,6 +257,10 @@
     <string name="settings_gateway_details_link_url">https://docs.ruuvi.com/ruuvi-station-app/gateway</string>
     <string name="settings_gateway_device_identifier">Enhetsidentifikation</string>
     <string name="settings_data_forwarding_test">Testa vidarebefordran av data</string>
+    <string name="settings_global_units">Globala enheter</string>
+    <string name="settings_global_units_description">Dessa inställningar definierar de globala enheter som används i Ruuvi Station, förutom värden som konfigureras i inställningarna för synliga mätningar. Daggpunkt kan konfigureras separat i inställningarna för synliga mätningar.</string>
+    <string name="settings_resolution">Upplösning</string>
+    <string name="settings_resolution_empty">Lägg till en sensor för att se tillgängliga upplösningsinställningar</string>
     <string name="settings_humidity_unit">Luftfuktighetsenhet</string>
     <string name="settings_temperature">Temperatur</string>
     <string name="settings_humidity">Fuktighet</string>

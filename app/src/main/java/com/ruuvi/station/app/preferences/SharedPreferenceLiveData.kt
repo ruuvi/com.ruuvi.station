@@ -9,7 +9,7 @@ abstract class SharedPreferenceLiveData<T>(val sharedPrefs: SharedPreferences,
 
     private val preferenceChangeListener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
         if (key == this.key) {
-            value = getValueFromPreferences(key, defValue)
+            postValue(getValueFromPreferences(key, defValue))
         }
     }
 

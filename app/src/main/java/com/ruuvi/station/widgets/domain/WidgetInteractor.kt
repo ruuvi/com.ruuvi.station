@@ -90,11 +90,10 @@ class WidgetInteractor (
 
                 val voltageValue = SensorValue(
                     type = WidgetType.VOLTAGE,
-                    sensorValue = context.getString(
-                        R.string.voltage_reading,
+                    sensorValue = unitsConverter.getValueWithoutUnit(
                         lastMeasurement.voltage,
-                        ""
-                    ).trim(),
+                        unitsConverter.getVoltageAccuracy()
+                    ),
                     unit = context.getString(R.string.voltage_unit)
                 )
 
@@ -106,19 +105,28 @@ class WidgetInteractor (
 
                 val accelerationXValue = SensorValue(
                     type = WidgetType.ACCELERATION_X,
-                    sensorValue = accelerationConverter.getAccelerationStringWithoutUnit(lastMeasurement.accelX),
+                    sensorValue = unitsConverter.getValueWithoutUnit(
+                        lastMeasurement.accelX,
+                        unitsConverter.getAccelerationAccuracy()
+                    ),
                     unit = accelerationConverter.getAccelerationUnit(AccelerationAxis.AXIS_X)
                 )
 
                 val accelerationYValue = SensorValue(
                     type = WidgetType.ACCELERATION_Y,
-                    sensorValue = accelerationConverter.getAccelerationStringWithoutUnit(lastMeasurement.accelY),
+                    sensorValue = unitsConverter.getValueWithoutUnit(
+                        lastMeasurement.accelY,
+                        unitsConverter.getAccelerationAccuracy()
+                    ),
                     unit = accelerationConverter.getAccelerationUnit(AccelerationAxis.AXIS_Y)
                 )
 
                 val accelerationZValue = SensorValue(
                     type = WidgetType.ACCELERATION_Z,
-                    sensorValue = accelerationConverter.getAccelerationStringWithoutUnit(lastMeasurement.accelZ),
+                    sensorValue = unitsConverter.getValueWithoutUnit(
+                        lastMeasurement.accelZ,
+                        unitsConverter.getAccelerationAccuracy()
+                    ),
                     unit = accelerationConverter.getAccelerationUnit(AccelerationAxis.AXIS_Z)
                 )
 
@@ -137,7 +145,7 @@ class WidgetInteractor (
                 val pm10Value = SensorValue(
                     type = WidgetType.PM10,
                     sensorValue = lastMeasurement.pm1?.let {
-                        context.getString(UnitType.PM.PM10.defaultAccuracy.nameTemplateId, it, "")
+                        unitsConverter.getValueWithoutUnit(it, unitsConverter.getPmAccuracy())
                     } ?: UNDEFINED_VALUE,
                     unit = context.getString(UnitType.PM.PM10.unit)
                 )
@@ -145,7 +153,7 @@ class WidgetInteractor (
                 val pm25Value = SensorValue(
                     type = WidgetType.PM25,
                     sensorValue = lastMeasurement.pm25?.let {
-                        context.getString(UnitType.PM.PM25.defaultAccuracy.nameTemplateId, it, "")
+                        unitsConverter.getValueWithoutUnit(it, unitsConverter.getPmAccuracy())
                     } ?: UNDEFINED_VALUE,
                     unit = context.getString(UnitType.PM.PM25.unit)
                 )
@@ -153,7 +161,7 @@ class WidgetInteractor (
                 val pm40Value = SensorValue(
                     type = WidgetType.PM40,
                     sensorValue = lastMeasurement.pm4?.let {
-                        context.getString(UnitType.PM.PM40.defaultAccuracy.nameTemplateId, it, "")
+                        unitsConverter.getValueWithoutUnit(it, unitsConverter.getPmAccuracy())
                     } ?: UNDEFINED_VALUE,
                     unit = context.getString(UnitType.PM.PM40.unit)
                 )
@@ -161,7 +169,7 @@ class WidgetInteractor (
                 val pm100Value = SensorValue(
                     type = WidgetType.PM100,
                     sensorValue = lastMeasurement.pm10?.let {
-                        context.getString(UnitType.PM.PM100.defaultAccuracy.nameTemplateId, it, "")
+                        unitsConverter.getValueWithoutUnit(it, unitsConverter.getPmAccuracy())
                     } ?: UNDEFINED_VALUE,
                     unit = context.getString(UnitType.PM.PM100.unit)
                 )
@@ -277,19 +285,28 @@ class WidgetInteractor (
 
             val accelerationXValue = SensorValue(
                 type = WidgetType.ACCELERATION_X,
-                sensorValue = accelerationConverter.getAccelerationStringWithoutUnit(lastMeasurement.accelerationX),
+                sensorValue = unitsConverter.getValueWithoutUnit(
+                    lastMeasurement.accelerationX,
+                    unitsConverter.getAccelerationAccuracy()
+                ),
                 unit = accelerationConverter.getAccelerationUnit(AccelerationAxis.AXIS_X)
             )
 
             val accelerationYValue = SensorValue(
                 type = WidgetType.ACCELERATION_Y,
-                sensorValue = accelerationConverter.getAccelerationStringWithoutUnit(lastMeasurement.accelerationY),
+                sensorValue = unitsConverter.getValueWithoutUnit(
+                    lastMeasurement.accelerationY,
+                    unitsConverter.getAccelerationAccuracy()
+                ),
                 unit = accelerationConverter.getAccelerationUnit(AccelerationAxis.AXIS_Y)
             )
 
             val accelerationZValue = SensorValue(
                 type = WidgetType.ACCELERATION_Z,
-                sensorValue = accelerationConverter.getAccelerationStringWithoutUnit(lastMeasurement.accelerationZ),
+                sensorValue = unitsConverter.getValueWithoutUnit(
+                    lastMeasurement.accelerationZ,
+                    unitsConverter.getAccelerationAccuracy()
+                ),
                 unit = accelerationConverter.getAccelerationUnit(AccelerationAxis.AXIS_Z)
             )
 
@@ -307,33 +324,25 @@ class WidgetInteractor (
 
             val pm10Value = SensorValue(
                 type = WidgetType.PM10,
-                sensorValue = lastMeasurement.pm10?.let {
-                    context.getString(UnitType.PM.PM10.defaultAccuracy.nameTemplateId, it.value, "")
-                } ?: UNDEFINED_VALUE,
+                sensorValue = lastMeasurement.pm10?.valueWithoutUnit ?: UNDEFINED_VALUE,
                 unit = context.getString(UnitType.PM.PM10.unit)
             )
 
             val pm25Value = SensorValue(
                 type = WidgetType.PM25,
-                sensorValue = lastMeasurement.pm25?.let {
-                    context.getString(UnitType.PM.PM25.defaultAccuracy.nameTemplateId, it.value, "")
-                } ?: UNDEFINED_VALUE,
+                sensorValue = lastMeasurement.pm25?.valueWithoutUnit ?: UNDEFINED_VALUE,
                 unit = context.getString(UnitType.PM.PM25.unit)
             )
 
             val pm40Value = SensorValue(
                 type = WidgetType.PM40,
-                sensorValue = lastMeasurement.pm40?.let {
-                    context.getString(UnitType.PM.PM40.defaultAccuracy.nameTemplateId, it.value, "")
-                } ?: UNDEFINED_VALUE,
+                sensorValue = lastMeasurement.pm40?.valueWithoutUnit ?: UNDEFINED_VALUE,
                 unit = context.getString(UnitType.PM.PM40.unit)
             )
 
             val pm100Value = SensorValue(
                 type = WidgetType.PM100,
-                sensorValue = lastMeasurement.pm100?.let {
-                    context.getString(UnitType.PM.PM100.defaultAccuracy.nameTemplateId, it.value, "")
-                } ?: UNDEFINED_VALUE,
+                sensorValue = lastMeasurement.pm100?.valueWithoutUnit ?: UNDEFINED_VALUE,
                 unit = context.getString(UnitType.PM.PM100.unit)
             )
 
@@ -487,15 +496,24 @@ class WidgetInteractor (
                 }
                 WidgetType.ACCELERATION_X -> {
                     unit = accelerationConverter.getAccelerationUnit(AccelerationAxis.AXIS_X)
-                    sensorValue = accelerationConverter.getAccelerationStringWithoutUnit(tag.latestMeasurement.accelerationX)
+                    sensorValue = unitsConverter.getValueWithoutUnit(
+                        tag.latestMeasurement.accelerationX,
+                        unitsConverter.getAccelerationAccuracy()
+                    )
                 }
                 WidgetType.ACCELERATION_Y -> {
                     unit = accelerationConverter.getAccelerationUnit(AccelerationAxis.AXIS_Y)
-                    sensorValue = accelerationConverter.getAccelerationStringWithoutUnit(tag.latestMeasurement.accelerationY)
+                    sensorValue = unitsConverter.getValueWithoutUnit(
+                        tag.latestMeasurement.accelerationY,
+                        unitsConverter.getAccelerationAccuracy()
+                    )
                 }
                 WidgetType.ACCELERATION_Z -> {
                     unit = accelerationConverter.getAccelerationUnit(AccelerationAxis.AXIS_Z)
-                    sensorValue = accelerationConverter.getAccelerationStringWithoutUnit(tag.latestMeasurement.accelerationZ)
+                    sensorValue = unitsConverter.getValueWithoutUnit(
+                        tag.latestMeasurement.accelerationZ,
+                        unitsConverter.getAccelerationAccuracy()
+                    )
                 }
                 WidgetType.AIR_QUALITY -> {
                     unit = tag.latestMeasurement.aqi?.unitString ?: ""
@@ -601,9 +619,10 @@ class WidgetInteractor (
                     }
                     WidgetType.VOLTAGE -> {
                         unit = context.getString(R.string.voltage_unit)
-                        sensorValue =
-                            context.getString(R.string.voltage_reading, decoded.voltage, "")
-                                .trim()
+                        sensorValue = unitsConverter.getValueWithoutUnit(
+                            decoded.voltage,
+                            unitsConverter.getVoltageAccuracy()
+                        )
                     }
                     WidgetType.SIGNAL_STRENGTH -> {
                         unit = context.getString(R.string.signal_unit)
@@ -611,15 +630,24 @@ class WidgetInteractor (
                     }
                     WidgetType.ACCELERATION_X -> {
                         unit = accelerationConverter.getAccelerationUnit(AccelerationAxis.AXIS_X)
-                        sensorValue = accelerationConverter.getAccelerationStringWithoutUnit(decoded.accelX)
+                        sensorValue = unitsConverter.getValueWithoutUnit(
+                            decoded.accelX,
+                            unitsConverter.getAccelerationAccuracy()
+                        )
                     }
                     WidgetType.ACCELERATION_Y -> {
                         unit = accelerationConverter.getAccelerationUnit(AccelerationAxis.AXIS_Y)
-                        sensorValue = accelerationConverter.getAccelerationStringWithoutUnit(decoded.accelY)
+                        sensorValue = unitsConverter.getValueWithoutUnit(
+                            decoded.accelY,
+                            unitsConverter.getAccelerationAccuracy()
+                        )
                     }
                     WidgetType.ACCELERATION_Z -> {
                         unit = accelerationConverter.getAccelerationUnit(AccelerationAxis.AXIS_Z)
-                        sensorValue = accelerationConverter.getAccelerationStringWithoutUnit(decoded.accelZ)
+                        sensorValue = unitsConverter.getValueWithoutUnit(
+                            decoded.accelZ,
+                            unitsConverter.getAccelerationAccuracy()
+                        )
                     }
                     WidgetType.AIR_QUALITY -> {
                         unit = context.getString(UnitType.AirQuality.AqiIndex.unit)
@@ -643,19 +671,31 @@ class WidgetInteractor (
                     }
                     WidgetType.PM10 -> {
                         unit = context.getString(UnitType.PM.PM10.unit)
-                        sensorValue = context.getString(UnitType.PM.PM10.defaultAccuracy.nameTemplateId, decoded.pm1, "");
+                        sensorValue = unitsConverter.getValueWithoutUnit(
+                            decoded.pm1,
+                            unitsConverter.getPmAccuracy()
+                        )
                     }
                     WidgetType.PM25 -> {
                         unit = context.getString(UnitType.PM.PM25.unit)
-                        sensorValue = context.getString(UnitType.PM.PM25.defaultAccuracy.nameTemplateId, decoded.pm25, "");
+                        sensorValue = unitsConverter.getValueWithoutUnit(
+                            decoded.pm25,
+                            unitsConverter.getPmAccuracy()
+                        )
                     }
                     WidgetType.PM40 -> {
                         unit = context.getString(UnitType.PM.PM40.unit)
-                        sensorValue = context.getString(UnitType.PM.PM40.defaultAccuracy.nameTemplateId, decoded.pm4, "");
+                        sensorValue = unitsConverter.getValueWithoutUnit(
+                            decoded.pm4,
+                            unitsConverter.getPmAccuracy()
+                        )
                     }
                     WidgetType.PM100 -> {
                         unit = context.getString(UnitType.PM.PM100.unit)
-                        sensorValue = context.getString(UnitType.PM.PM100.defaultAccuracy.nameTemplateId, decoded.pm10, "");
+                        sensorValue = unitsConverter.getValueWithoutUnit(
+                            decoded.pm10,
+                            unitsConverter.getPmAccuracy()
+                        )
                     }
                 }
 

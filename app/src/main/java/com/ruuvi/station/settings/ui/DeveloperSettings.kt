@@ -34,17 +34,12 @@ fun DeveloperSettings(
 
     PageSurfaceWithPadding {
         Column() {
-//            FeatureSwitch(
-//                feature = FeatureFlag.VISIBLE_MEASUREMENTS,
-//                checked = viewModel::getFeatureState,
-//                onCheckedChange = viewModel::setFeatureValue
-//            )
+            FeatureSwitch(
+                feature = FeatureFlag.GLOBAL_UNITS_SETTINGS,
+                checked = viewModel::getFeatureState,
+                onCheckedChange = viewModel::setFeatureValue
+            )
 
-//            FeatureSwitch(
-//                feature = FeatureFlag.NEW_SENSOR_CARD,
-//                checked = viewModel::getFeatureState,
-//                onCheckedChange = viewModel::setFeatureValue
-//            )
             SwitchIndicatorRuuvi(
                 text = "Use web version of share",
                 checked = useWebShare,

@@ -107,28 +107,59 @@ class Preferences (val context: Context) {
 
     var humidityAccuracy: Accuracy
         get() {
-            return when (sharedPreferences.getInt(PREF_ACCURACY_HUMIDITY, 2)) {
-                0 -> Accuracy.Accuracy0
-                1 -> Accuracy.Accuracy1
-                2 -> Accuracy.Accuracy2
-                else -> Accuracy.Accuracy2
-            }
+            return getAccuracy(PREF_ACCURACY_HUMIDITY, Accuracy.Accuracy2)
         }
         set(value) {
-            sharedPreferences.edit().putInt(PREF_ACCURACY_HUMIDITY, value.code).apply()
+            sharedPreferences.edit()
+                .putInt(PREF_ACCURACY_HUMIDITY, value.code)
+                .putInt(PREF_ACCURACY_HUMIDITY_RELATIVE, value.code)
+                .putInt(PREF_ACCURACY_HUMIDITY_ABSOLUTE, value.code)
+                .putInt(PREF_ACCURACY_HUMIDITY_DEW_POINT, value.code)
+                .apply()
         }
 
     var pressureAccuracy: Accuracy
         get() {
-            return when (sharedPreferences.getInt(PREF_ACCURACY_PRESSURE, 2)) {
-                0 -> Accuracy.Accuracy0
-                1 -> Accuracy.Accuracy1
-                2 -> Accuracy.Accuracy2
-                else -> Accuracy.Accuracy2
-            }
+            return getAccuracy(PREF_ACCURACY_PRESSURE, Accuracy.Accuracy2)
         }
         set(value) {
             sharedPreferences.edit().putInt(PREF_ACCURACY_PRESSURE, value.code).apply()
+        }
+
+    var relativeHumidityAccuracy: Accuracy
+        get() = getAccuracy(PREF_ACCURACY_HUMIDITY_RELATIVE, humidityAccuracy)
+        set(value) {
+            sharedPreferences.edit().putInt(PREF_ACCURACY_HUMIDITY_RELATIVE, value.code).apply()
+        }
+
+    var absoluteHumidityAccuracy: Accuracy
+        get() = getAccuracy(PREF_ACCURACY_HUMIDITY_ABSOLUTE, humidityAccuracy)
+        set(value) {
+            sharedPreferences.edit().putInt(PREF_ACCURACY_HUMIDITY_ABSOLUTE, value.code).apply()
+        }
+
+    var dewPointAccuracy: Accuracy
+        get() = getAccuracy(PREF_ACCURACY_HUMIDITY_DEW_POINT, humidityAccuracy)
+        set(value) {
+            sharedPreferences.edit().putInt(PREF_ACCURACY_HUMIDITY_DEW_POINT, value.code).apply()
+        }
+
+    var pmAccuracy: Accuracy
+        get() = getAccuracy(PREF_ACCURACY_PM, Accuracy.Accuracy1)
+        set(value) {
+            sharedPreferences.edit().putInt(PREF_ACCURACY_PM, value.code).apply()
+        }
+
+    var accelerationAccuracy: Accuracy
+        get() = getAccuracy(PREF_ACCURACY_ACCELERATION, Accuracy.Accuracy2)
+        set(value) {
+            sharedPreferences.edit().putInt(PREF_ACCURACY_ACCELERATION, value.code).apply()
+        }
+
+    var voltageAccuracy: Accuracy
+        get() = getAccuracy(PREF_ACCURACY_VOLTAGE, Accuracy.Accuracy2)
+        set(value) {
+            sharedPreferences.edit().putInt(PREF_ACCURACY_VOLTAGE, value.code).apply()
         }
 
     var dataForwardingUrl: String
@@ -452,6 +483,51 @@ class Preferences (val context: Context) {
     fun getDeveloperSettingsLiveData() =
         SharedPreferenceBooleanLiveData(sharedPreferences, PREF_DEVELOPER_SETTINGS, false)
 
+    fun getTemperatureUnitCodeLiveData() =
+        SharedPreferenceStringLiveData(sharedPreferences, PREF_TEMPERATURE_UNIT, DEFAULT_TEMPERATURE_UNIT)
+
+    fun getHumidityUnitCodeLiveData() =
+        SharedPreferenceIntLiveData(sharedPreferences, PREF_HUMIDITY_UNIT, 0)
+
+    fun getPressureUnitCodeLiveData() =
+        SharedPreferenceIntLiveData(sharedPreferences, PREF_PRESSURE_UNIT, 1)
+
+    fun getTemperatureAccuracyCodeLiveData() =
+        SharedPreferenceIntLiveData(sharedPreferences, PREF_ACCURACY_TEMPERATURE, Accuracy.Accuracy2.code)
+
+    fun getHumidityAccuracyCodeLiveData() =
+        SharedPreferenceIntLiveData(sharedPreferences, PREF_ACCURACY_HUMIDITY, Accuracy.Accuracy2.code)
+
+    fun getRelativeHumidityAccuracyCodeLiveData() =
+        SharedPreferenceIntLiveData(sharedPreferences, PREF_ACCURACY_HUMIDITY_RELATIVE, humidityAccuracy.code)
+
+    fun getAbsoluteHumidityAccuracyCodeLiveData() =
+        SharedPreferenceIntLiveData(sharedPreferences, PREF_ACCURACY_HUMIDITY_ABSOLUTE, humidityAccuracy.code)
+
+    fun getDewPointAccuracyCodeLiveData() =
+        SharedPreferenceIntLiveData(sharedPreferences, PREF_ACCURACY_HUMIDITY_DEW_POINT, humidityAccuracy.code)
+
+    fun getPressureAccuracyCodeLiveData() =
+        SharedPreferenceIntLiveData(sharedPreferences, PREF_ACCURACY_PRESSURE, Accuracy.Accuracy2.code)
+
+    fun getPmAccuracyCodeLiveData() =
+        SharedPreferenceIntLiveData(sharedPreferences, PREF_ACCURACY_PM, Accuracy.Accuracy1.code)
+
+    fun getAccelerationAccuracyCodeLiveData() =
+        SharedPreferenceIntLiveData(sharedPreferences, PREF_ACCURACY_ACCELERATION, Accuracy.Accuracy2.code)
+
+    fun getVoltageAccuracyCodeLiveData() =
+        SharedPreferenceIntLiveData(sharedPreferences, PREF_ACCURACY_VOLTAGE, Accuracy.Accuracy2.code)
+
+    private fun getAccuracy(key: String, fallback: Accuracy): Accuracy {
+        return when (sharedPreferences.getInt(key, fallback.code)) {
+            0 -> Accuracy.Accuracy0
+            1 -> Accuracy.Accuracy1
+            2 -> Accuracy.Accuracy2
+            else -> fallback
+        }
+    }
+
     companion object {
         private const val DEFAULT_SCAN_INTERVAL = 5 * 60
         private const val PREF_BACKGROUND_SCAN_INTERVAL = "pref_background_scan_interval"
@@ -464,6 +540,12 @@ class Preferences (val context: Context) {
         private const val PREF_ACCURACY_TEMPERATURE = "pref_accuracy_temperature"
         private const val PREF_ACCURACY_HUMIDITY = "pref_accuracy_humidity"
         private const val PREF_ACCURACY_PRESSURE = "pref_accuracy_pressure"
+        private const val PREF_ACCURACY_HUMIDITY_RELATIVE = "pref_accuracy_humidity_relative"
+        private const val PREF_ACCURACY_HUMIDITY_ABSOLUTE = "pref_accuracy_humidity_absolute"
+        private const val PREF_ACCURACY_HUMIDITY_DEW_POINT = "pref_accuracy_humidity_dew_point"
+        private const val PREF_ACCURACY_PM = "pref_accuracy_pm"
+        private const val PREF_ACCURACY_ACCELERATION = "pref_accuracy_acceleration"
+        private const val PREF_ACCURACY_VOLTAGE = "pref_accuracy_voltage"
         private const val PREF_BACKEND = "pref_backend"
         private const val PREF_BACKEND_LOCATION = "pref_backend_location"
         private const val PREF_BACKEND_FORWARDING_DURING_SYNC =
