@@ -297,9 +297,15 @@ class SensorCardViewModel(
                             }
                             is HumidityUnit.Relative -> alarms.firstOrNull { it.alarmType == AlarmType.HUMIDITY }
                                 ?.let { it.min to it.max }
+                            is HumidityUnit.Absolute -> alarms.firstOrNull { it.alarmType == AlarmType.ABSOLUTE_HUMIDITY }
+                                ?.let { it.min to it.max }
+                            is HumidityUnit.DewPoint -> alarms.firstOrNull { it.alarmType == AlarmType.DEW_POINT }
+                                ?.let {
+                                    unitsConverter.getTemperatureValue(it.min) to unitsConverter.getTemperatureValue(it.max)
+                                }
                             is PressureUnit -> alarms.firstOrNull { it.alarmType == AlarmType.PRESSURE }
                                 ?.let {
-                                    unitsConverter.getPressureValue(it.min) to unitsConverter.getPressureValue(it.max)
+                                    unitsConverter.getPressureValue(it.min, unit) to unitsConverter.getPressureValue(it.max, unit)
                                 }
                             is CO2 -> alarms.firstOrNull { it.alarmType == AlarmType.CO2 }
                                 ?.let { it.min to it.max }
@@ -318,6 +324,12 @@ class SensorCardViewModel(
                             is Luminosity -> alarms.firstOrNull { it.alarmType == AlarmType.LUMINOSITY }
                                 ?.let { it.min to it.max }
                             is SoundAvg -> alarms.firstOrNull { it.alarmType == AlarmType.SOUND }
+                                ?.let { it.min to it.max }
+                            is SignalStrengthUnit -> alarms.firstOrNull { it.alarmType == AlarmType.RSSI }
+                                ?.let { it.min to it.max }
+                            is AirQuality -> alarms.firstOrNull { it.alarmType == AlarmType.AQI }
+                                ?.let { it.min to it.max }
+                            is BatteryVoltageUnit -> alarms.firstOrNull { it.alarmType == AlarmType.BATTERY_VOLTAGE }
                                 ?.let { it.min to it.max }
                             else -> null
                         }
