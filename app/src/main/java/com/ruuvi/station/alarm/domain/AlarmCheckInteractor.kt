@@ -168,14 +168,16 @@ class AlarmCheckInteractor(
                     }
                     AlarmType.AQI -> {
                         val displayThreshold = unitsConverter.getDisplayValue(thresholdValue.toFloat())
-                        context.getString(resource, "$displayThreshold")
+                        context.getString(resource, displayThreshold)
                     }
                     AlarmType.ABSOLUTE_HUMIDITY -> {
                         val displayThreshold = unitsConverter.getDisplayValue(thresholdValue.toFloat())
                         context.getString(resource, "$displayThreshold ${context.getString(R.string.humidity_absolute_unit)}")
                     }
                     AlarmType.DEW_POINT -> {
-                        val displayThreshold = unitsConverter.getDisplayValue(thresholdValue.toFloat())
+                        val displayThreshold = unitsConverter.getDisplayValue(
+                            unitsConverter.getTemperatureValue(thresholdValue).toFloat()
+                        )
                         context.getString(resource, "$displayThreshold ${unitsConverter.getTemperatureUnitString()}")
                     }
                     AlarmType.BATTERY_VOLTAGE -> {
