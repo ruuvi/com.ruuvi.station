@@ -23,8 +23,8 @@ class SimpleWidgetConfigureViewModel(
 ): ViewModel(), ICloudWidgetViewModel {
     var appWidgetId: Int = AppWidgetManager.INVALID_APPWIDGET_ID
 
-    private val _allSensors = MutableLiveData<List<RuuviTag>> (tagRepository.getFavoriteSensors())
-    val allSensors = _allSensors
+    private val _allSensors = MutableLiveData<List<RuuviTag>>(tagRepository.getFavoriteSensors())
+    val allSensors: LiveData<List<RuuviTag>> = _allSensors
 
     val gotLocalSensors = _allSensors.map { allSensors ->
         allSensors.any { it.networkLastSync == null }
@@ -38,8 +38,8 @@ class SimpleWidgetConfigureViewModel(
     private val _sensorId = MutableLiveData<String?> (null)
     val sensorId: LiveData<String?> = _sensorId
 
-    private val _widgetType = MutableLiveData<WidgetType> (DEFAULT_WIDGET_TYPE)
-    val widgetType: LiveData<WidgetType> = _widgetType
+    private val _widgetType = MutableLiveData<WidgetType?>(null)
+    val widgetType: LiveData<WidgetType?> = _widgetType
 
     override val userHasCloudSensors: LiveData<Boolean> = allSensors.map { allSensors ->
         allSensors.any { it.networkLastSync != null }
@@ -50,31 +50,42 @@ class SimpleWidgetConfigureViewModel(
     private val _backgroundServiceEnabled: MutableLiveData<Boolean> = MutableLiveData<Boolean>(preferencesRepository.getBackgroundScanMode() == BackgroundScanModes.BACKGROUND)
     val backgroundServiceEnabled: LiveData<Boolean> = _backgroundServiceEnabled
 
-    override val canBeSaved: LiveData<Boolean> = _sensorId.map {
-        it != null
-    }
+    private val _canBeSaved = MutableLiveData(false)
+    override val canBeSaved: LiveData<Boolean> = _canBeSaved
 
     fun setWidgetId(appWidgetId: Int) {
         this.appWidgetId = appWidgetId
-        _sensorId.value = widgetPreferencesInteractor.getSimpleWidgetSensor(appWidgetId)
-        _widgetType.value = widgetPreferencesInteractor.getSimpleWidgetType(appWidgetId)
+        val sensorId = widgetPreferencesInteractor.getSimpleWidgetSensor(appWidgetId)
+        val widgetType = widgetPreferencesInteractor.getSimpleWidgetType(appWidgetId)
+        updateSelection(findSensor(sensorId), widgetType)
         Timber.d("setWidgetId $appWidgetId ${_sensorId.value} ${_widgetType.value}")
     }
 
     fun selectSensor(sensorId: String) {
-        _sensorId.value = sensorId
+        updateSelection(findSensor(sensorId), _widgetType.value)
     }
 
     fun selectWidgetType(widgetType: WidgetType) {
-        _widgetType.value = widgetType
+        val sensor = findSensor(_sensorId.value) ?: return
+        if (widgetType in WidgetType.filterWidgetTypes(sensor)) {
+            _widgetType.value = widgetType
+            updateCanBeSaved()
+        }
     }
 
     override fun save() {
-        val sensor = sensorId.value
-        if (!sensor.isNullOrEmpty()) {
-            widgetPreferencesInteractor.saveSimpleWidgetSettings(appWidgetId, sensor, _widgetType.value ?: DEFAULT_WIDGET_TYPE )
-            _setupComplete.value = true
+        val selection = getValidSelection()
+        if (selection == null) {
+            _canBeSaved.value = false
+            return
         }
+
+        widgetPreferencesInteractor.saveSimpleWidgetSettings(
+            appWidgetId,
+            selection.sensor.id,
+            selection.widgetType,
+        )
+        _setupComplete.value = true
     }
 
     fun enableBackgroundService() {
@@ -82,7 +93,44 @@ class SimpleWidgetConfigureViewModel(
         _backgroundServiceEnabled.value = preferencesRepository.getBackgroundScanMode() == BackgroundScanModes.BACKGROUND
     }
 
+    private fun updateSelection(sensor: RuuviTag?, preferredType: WidgetType?) {
+        val supportedTypes = sensor?.let(WidgetType::filterWidgetTypes).orEmpty()
+        _sensorId.value = sensor?.id
+        _widgetType.value = chooseSuitableWidgetType(preferredType, supportedTypes)
+        updateCanBeSaved()
+    }
+
+    private fun updateCanBeSaved() {
+        _canBeSaved.value = getValidSelection() != null
+    }
+
+    private fun getValidSelection(): ValidSelection? {
+        val sensor = findSensor(_sensorId.value) ?: return null
+        val widgetType = _widgetType.value ?: return null
+        return if (widgetType in WidgetType.filterWidgetTypes(sensor)) {
+            ValidSelection(sensor, widgetType)
+        } else {
+            null
+        }
+    }
+
+    private fun findSensor(sensorId: String?): RuuviTag? =
+        _allSensors.value.orEmpty().firstOrNull { it.id == sensorId }
+
     companion object {
         val DEFAULT_WIDGET_TYPE = WidgetType.TEMPERATURE
+
+        internal fun chooseSuitableWidgetType(
+            preferredType: WidgetType?,
+            supportedTypes: List<WidgetType>,
+        ): WidgetType? =
+            preferredType?.takeIf { it in supportedTypes }
+                ?: DEFAULT_WIDGET_TYPE.takeIf { it in supportedTypes }
+                ?: supportedTypes.firstOrNull()
     }
+
+    private data class ValidSelection(
+        val sensor: RuuviTag,
+        val widgetType: WidgetType,
+    )
 }

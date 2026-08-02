@@ -7,20 +7,26 @@ import kotlin.math.pow
 /***
  * @see https://doi.org/10.1063/1.1461829
  */
-data class HumidityConverter(val celsiusTemperature: Double, val rh: Double) {
+data class HumidityConverter(
+    val celsiusTemperature: Double,
+    val relativeHumidityPercent: Double,
+) {
 
     private val kelvinTemperature: Double = celsiusTemperature + 273.15 // kelvin K
+    private val relativeHumidityFraction: Double = relativeHumidityPercent / 100.0
     val fahrenheitTemperature: Double = (celsiusTemperature * 9.0 / 5.0) + 32.0 // fahrenheit °F
     val absoluteHumidity: Double by lazy { // absolute humidity g/m³
-        cgkJ * (rh * pws()) / kelvinTemperature
+        cgkJ * (relativeHumidityFraction * saturationPressurePascal()) / kelvinTemperature
     }
     val toDewCelsius: Double? by lazy { // dew point °C
         val m = m(c = celsiusTemperature)
         val a = a(c = celsiusTemperature)
         val tn = tn(c = celsiusTemperature)
-        val pw = pws() * rh / 100.0
+        // The equation's coefficient `a` is expressed in hPa while saturation pressure is in Pa.
+        val vaporPressureHectoPascal =
+            saturationPressurePascal() * relativeHumidityFraction / PASCALS_PER_HECTOPASCAL
         if (m != null && a != null && tn != null) {
-            tn / ((m / (log10(pw / a))) - 1.0)
+            tn / ((m / (log10(vaporPressureHectoPascal / a))) - 1.0)
         } else {
             null
         }
@@ -44,7 +50,7 @@ data class HumidityConverter(val celsiusTemperature: Double, val rh: Double) {
 
 
 
-    private fun pws(): Double {
+    private fun saturationPressurePascal(): Double {
         return if (celsiusTemperature > 0.01) { // estimate for 0°C-373°C
             val n = 1 - (kelvinTemperature / tc)
             val p = tc / kelvinTemperature * (c1 * n + c2 * n.pow(1.5) + c3 * n.pow(3) + c4 * n.pow(3.5) + c5 * n.pow(4) + c6 * n.pow(7.5))
@@ -110,5 +116,6 @@ data class HumidityConverter(val celsiusTemperature: Double, val rh: Double) {
         private const val a0: Double = -13.928169
         private const val a1: Double = 34.707823
         private const val pn: Double = 611.657 // Pa
+        private const val PASCALS_PER_HECTOPASCAL = 100.0
     }
 }

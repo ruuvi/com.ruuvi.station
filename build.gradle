@@ -37,14 +37,14 @@ plugins {
     id 'jacoco'
 }
 
-sonarqube {
+sonar {
     properties {
         property "sonar.projectKey", "ruuvi_com.ruuvi.station"
         property "sonar.organization", "ruuvi"
         property "sonar.host.url", "https://sonarcloud.io"
         property "sonar.sources", "app/src/main/java"
         property "sonar.tests", "app/src/test/java"
-        property "sonar.java.coveragePlugin", "jacoco"
+        property "sonar.coverage.exclusions", "app/src/main/java/**/di/**"
         property "sonar.coverage.jacoco.xmlReportPaths", "${project.projectDir}/app/build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml"
         property "sonar.junit.reportPaths", "${project.projectDir}/app/build/test-results/testWithoutFileLogsDebugUnitTest"
     }
