@@ -42,6 +42,7 @@ val OrangeSolid2 = Color(0xFFEB602B)
 val Orange2 = Color(0xFFF8B075)
 val Milky = Color(0xFFD6EAE7)
 val Milky2 = Color(0xFFEEF2F2)
+val MintMist70 = Color(0xB3D9EFEB)
 val DefaultSensorBackgroundDark = Color(0xFF2D605C)
 val DefaultSensorBackgroundLight = Color(0xFFD8EDEA)
 
@@ -89,7 +90,8 @@ data class RuuviStationColors(
     val chartLabel: Color,
     val chartAxisLine: Color,
     val chartGuideline: Color,
-    val measurementIcon: Color
+    val measurementIcon: Color,
+    val widgetSensorName: Color
 )
 
 val lightPalette = RuuviStationColors(
@@ -136,7 +138,8 @@ val lightPalette = RuuviStationColors(
     chartLabel = Titan,
     chartAxisLine = Gray30,
     chartGuideline = Gray30,
-    measurementIcon = KeppelLight
+    measurementIcon = KeppelLight,
+    widgetSensorName = Titan70
 )
 
 val darkPalette = RuuviStationColors(
@@ -183,5 +186,6 @@ val darkPalette = RuuviStationColors(
     chartLabel = White,
     chartAxisLine = White30,
     chartGuideline = White30,
-    measurementIcon = KeppelLight
+    measurementIcon = KeppelLight,
+    widgetSensorName = MintMist70
 )
