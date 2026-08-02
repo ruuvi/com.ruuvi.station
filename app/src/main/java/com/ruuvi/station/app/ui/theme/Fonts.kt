@@ -12,6 +12,7 @@ data class RuuviStationFonts constructor(
 
     val oswaldRegular: FontFamily = FontFamily(Font(R.font.oswald_regular)),
     val oswaldBold: FontFamily = FontFamily(Font(R.font.oswald_bold)),
+    val oswaldLight: FontFamily = FontFamily(Font(R.font.oswald_light)),
 
     val montserratBold: FontFamily = FontFamily(Font(R.font.montserrat_bold_ttf)),
     val montserratRegular: FontFamily = FontFamily(Font(R.font.montserrat_regular)),
