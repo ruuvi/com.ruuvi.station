@@ -4,6 +4,8 @@ import android.app.Application
 import android.bluetooth.BluetoothAdapter
 import android.content.Context
 import android.content.IntentFilter
+import android.content.res.Configuration
+import android.os.Build
 import android.os.PowerManager
 import androidx.appcompat.app.AppCompatDelegate
 import com.raizlabs.android.dbflow.config.FlowManager
@@ -23,6 +25,15 @@ import com.ruuvi.station.util.Foreground
 import com.ruuvi.station.util.ForegroundListener
 import com.ruuvi.station.util.ReleaseTree
 import com.ruuvi.station.util.extensions.registerReceiverCompat
+import com.ruuvi.station.widgets.ui.glance.WidgetPreviewPublisher
+import com.ruuvi.station.widgets.ui.simpleWidget.SimpleWidgetGlanceWidget
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.conf.ConfigurableKodein
@@ -30,6 +41,8 @@ import org.kodein.di.generic.bind
 import org.kodein.di.generic.instance
 import org.kodein.di.generic.singleton
 import timber.log.Timber
+
+private const val WIDGET_CONFIGURATION_SETTLE_DELAY_MILLIS = 750L
 
 class RuuviScannerApplication : Application(), KodeinAware {
     override val kodein = ConfigurableKodein()
@@ -46,8 +59,10 @@ class RuuviScannerApplication : Application(), KodeinAware {
     private val version3MigrationInteractor: Version3MigrationInteractor by instance()
     private val visibleMeasurementsMigrationInteractor: VisibleMeasurementsMigrationInteractor by instance()
 
-
     private var isInForeground: Boolean = false
+    private val widgetUpdateScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+    private var widgetPreviewPublishJob: Job? = null
+    private var simpleWidgetRerenderJob: Job? = null
 
     private val listener: ForegroundListener = object : ForegroundListener {
         override fun onBecameForeground() {
@@ -56,6 +71,7 @@ class RuuviScannerApplication : Application(), KodeinAware {
             defaultOnTagFoundListener.isForeground = true
             networkDataSyncInteractor.startAutoRefresh()
             runtimeBehavior.refreshFeatureFlags()
+            scheduleWidgetPreviewPublication()
         }
 
         override fun onBecameBackground() {
@@ -88,6 +104,14 @@ class RuuviScannerApplication : Application(), KodeinAware {
         foreground.addListener(listener)
 
         applyDarkModeSettings()
+        scheduleLegacySimpleWidgetRerender()
+        scheduleWidgetPreviewPublication()
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        scheduleLegacySimpleWidgetRerender()
+        scheduleWidgetPreviewPublication()
     }
 
     private fun setupDependencyInjection() {
@@ -106,5 +130,36 @@ class RuuviScannerApplication : Application(), KodeinAware {
     private fun applyDarkModeSettings() {
         val mode = preferencesRepository.getDarkMode()
         AppCompatDelegate.setDefaultNightMode(mode.code)
+    }
+
+    private fun scheduleWidgetPreviewPublication() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.VANILLA_ICE_CREAM) return
+
+        widgetPreviewPublishJob?.cancel()
+        widgetPreviewPublishJob = widgetUpdateScope.launch {
+            // Wait for consecutive night-mode, locale, and font-scale configuration changes to settle.
+            delay(WIDGET_CONFIGURATION_SETTLE_DELAY_MILLIS)
+            WidgetPreviewPublisher.publishIfNeeded(this@RuuviScannerApplication)
+        }
+    }
+
+    private fun scheduleLegacySimpleWidgetRerender() {
+        // Android 12+ can retain both day and night image tints in RemoteViews.
+        // Older hosts resolve the tint while composing, so they need a state-only rerender.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) return
+
+        simpleWidgetRerenderJob?.cancel()
+        simpleWidgetRerenderJob = widgetUpdateScope.launch {
+            delay(WIDGET_CONFIGURATION_SETTLE_DELAY_MILLIS)
+            try {
+                SimpleWidgetGlanceWidget.rerenderAllFromState(
+                    this@RuuviScannerApplication
+                )
+            } catch (cancellation: CancellationException) {
+                throw cancellation
+            } catch (error: Exception) {
+                Timber.e(error, "Unable to rerender simple widgets after configuration change")
+            }
+        }
     }
 }

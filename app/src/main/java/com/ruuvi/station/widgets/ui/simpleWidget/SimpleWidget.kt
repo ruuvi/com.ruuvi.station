@@ -2,24 +2,21 @@ package com.ruuvi.station.widgets.ui.simpleWidget
 
 import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
-import android.appwidget.AppWidgetProvider
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
-import android.widget.RemoteViews
-import com.ruuvi.station.R
-import com.ruuvi.station.tagdetails.ui.SensorCardActivity
-import com.ruuvi.station.widgets.domain.WidgetInteractor
+import androidx.glance.action.ActionParameters
+import androidx.glance.action.actionParametersOf
+import androidx.glance.appwidget.GlanceAppWidgetReceiver
 import com.ruuvi.station.widgets.domain.WidgetPreferencesInteractor
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import com.ruuvi.station.widgets.update.WidgetRefreshScheduler
 import org.kodein.di.Kodein
 import org.kodein.di.android.kodein
 import org.kodein.di.generic.instance
 import timber.log.Timber
 
-class SimpleWidget: AppWidgetProvider() {
+class SimpleWidget : GlanceAppWidgetReceiver() {
+    override val glanceAppWidget = SimpleWidgetGlanceWidget
 
     override fun onUpdate(
         context: Context,
@@ -27,17 +24,19 @@ class SimpleWidget: AppWidgetProvider() {
         appWidgetIds: IntArray
     ) {
         super.onUpdate(context, appWidgetManager, appWidgetIds)
-        for (appWidgetId in appWidgetIds) {
-            updateSimpleWidget(context, appWidgetManager, appWidgetId)
-        }
+        WidgetRefreshScheduler.enqueueSimpleRefreshAll(context)
     }
 
     override fun onDeleted(context: Context, appWidgetIds: IntArray) {
-        super.onDeleted(context, appWidgetIds)
-        val preferences = WidgetPreferencesInteractor(context)
-        for (appWidgetId in appWidgetIds) {
-            Timber.d("onDeleted Id $appWidgetId")
-            preferences.removeSimpleWidgetSettings(appWidgetId)
+        try {
+            val kodein: Kodein by kodein(context.applicationContext)
+            val preferences: WidgetPreferencesInteractor by kodein.instance()
+            for (appWidgetId in appWidgetIds) {
+                Timber.d("onDeleted Id $appWidgetId")
+                preferences.removeSimpleWidgetSettings(appWidgetId)
+            }
+        } finally {
+            super.onDeleted(context, appWidgetIds)
         }
     }
 
@@ -53,80 +52,43 @@ class SimpleWidget: AppWidgetProvider() {
 
     override fun onReceive(context: Context, intent: Intent) {
         Timber.d("onReceive $intent")
-        if (MANUAL_REFRESH == intent.action) {
-            val appWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID)
-            val appWidgetManager = AppWidgetManager.getInstance(context)
-            Timber.d("MANUAL_REFRESH $appWidgetId")
-            onUpdate(context, appWidgetManager, getSimpleWidgetsIds(context))
-        }
         super.onReceive(context, intent)
+        if (intent.action == REFRESH_ALL_WIDGETS) {
+            WidgetRefreshScheduler.enqueueSimpleRefreshAll(context)
+        }
     }
 
     companion object {
-        private const val MANUAL_REFRESH = "com.ruuvi.station.widgets.ui.simpleWidget.MANUAL_REFRESH"
+        private const val REFRESH_ALL_WIDGETS =
+            "com.ruuvi.station.widgets.ui.simpleWidget.REFRESH_ALL_WIDGETS"
+        private val SENSOR_ID_KEY = ActionParameters.Key<String>("sensor_id")
 
-        fun updateSimpleWidget(context: Context, appWidgetManager: AppWidgetManager, appWidgetId: Int) {
-            val kodein: Kodein by kodein(context)
-
-            val preferences: WidgetPreferencesInteractor by kodein.instance()
-            val widgetInteractor: WidgetInteractor by kodein.instance()
-
-            val sensorId = preferences.getSimpleWidgetSensor(appWidgetId)
-            val widgetType = preferences.getSimpleWidgetType(appWidgetId)
-
-            if (!sensorId.isNullOrEmpty()) {
-                val views = RemoteViews(context.packageName, R.layout.widget_simple)
-                CoroutineScope(Dispatchers.Main).launch {
-                    val widgetData = widgetInteractor.getSimpleWidgetData(
-                        sensorId = sensorId,
-                        widgetType = widgetType
-                    )
-                    if (widgetData != null) {
-                        views.setTextViewText(R.id.sensorNameTextView, widgetData.displayName)
-                        views.setTextViewText(R.id.unitTextView, widgetData.unit)
-                        views.setTextViewText(R.id.sensorValueTextView, widgetData.sensorValue)
-                        views.setTextViewText(R.id.updateTextView, widgetData.updated)
-                    }
-
-                    views.setOnClickPendingIntent(
-                        R.id.simpleWidgetLayout,
-                        SensorCardActivity.createPendingIntent(context, sensorId, appWidgetId)
-                    )
-                    views.setOnClickPendingIntent(
-                        R.id.refreshButton,
-                        getUpdatePendingIntent(context, appWidgetId)
-                    )
-
-                    appWidgetManager.updateAppWidget(appWidgetId, views)
-                }
-            }
-        }
-
-        fun getUpdatePendingIntent(context: Context, appWidgetId: Int): PendingIntent {
+        fun getRefreshAllPendingIntent(context: Context): PendingIntent {
             val updateIntent = Intent(context, SimpleWidget::class.java).apply {
-                action = MANUAL_REFRESH
-                putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
+                action = REFRESH_ALL_WIDGETS
             }
-            return PendingIntent.getBroadcast(context, appWidgetId, updateIntent,
-                PendingIntent.FLAG_IMMUTABLE
+            return PendingIntent.getBroadcast(
+                context,
+                REFRESH_ALL_REQUEST_CODE,
+                updateIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
             )
-        }
-
-        fun updateAll(context: Context) {
-            val ids = getSimpleWidgetsIds(context)
-            val appWidgetManager =
-                AppWidgetManager.getInstance(context)
-
-            for (appWidgetId in ids) {
-                updateSimpleWidget(context, appWidgetManager, appWidgetId)
-            }
         }
 
         fun getSimpleWidgetsIds(context: Context): IntArray {
             val appWidgetManager =
                 AppWidgetManager.getInstance(context)
 
-            return appWidgetManager.getAppWidgetIds(ComponentName(context, SimpleWidget::class.java.name ))
+            return appWidgetManager.getAppWidgetIds(
+                ComponentName(context, SimpleWidget::class.java.name)
+            )
         }
+
+        fun openSensorActionParameters(sensorId: String): ActionParameters =
+            actionParametersOf(SENSOR_ID_KEY to sensorId)
+
+        fun sensorIdFromParameters(parameters: ActionParameters): String? = parameters[SENSOR_ID_KEY]
+
+        private const val REFRESH_ALL_REQUEST_CODE = 1
     }
 }

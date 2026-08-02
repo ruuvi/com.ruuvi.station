@@ -1,7 +1,6 @@
 package com.ruuvi.station.widgets.ui.simpleWidget
 
 import android.appwidget.AppWidgetManager
-import android.content.Intent
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
@@ -15,8 +14,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.core.view.WindowCompat
+import androidx.lifecycle.lifecycleScope
 import com.ruuvi.station.R
 import com.ruuvi.station.app.ui.components.Paragraph
 import com.ruuvi.station.app.ui.components.ruuviRadioButtonColors
@@ -29,17 +30,24 @@ import com.ruuvi.station.widgets.data.WidgetType.Companion.filterWidgetTypes
 import com.ruuvi.station.widgets.ui.AddSensorsFirstScreen
 import com.ruuvi.station.widgets.ui.EnableBackgroundService
 import com.ruuvi.station.widgets.ui.WidgetConfigTopAppBar
+import com.ruuvi.station.widgets.ui.runInitialWidgetUpdate
+import com.ruuvi.station.widgets.ui.widgetConfigurationResultIntent
+import com.ruuvi.station.widgets.update.WidgetUpdater
+import kotlinx.coroutines.launch
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
+import org.kodein.di.generic.instance
 import timber.log.Timber
 
 class SimpleWidgetConfigureActivity : AppCompatActivity(), KodeinAware {
     private var appWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID
+    private var setupCompletionStarted = false
 
     override val kodein: Kodein by closestKodein()
 
     private val viewModel: SimpleWidgetConfigureViewModel by viewModel()
+    private val widgetUpdater: WidgetUpdater by instance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,6 +58,7 @@ class SimpleWidgetConfigureActivity : AppCompatActivity(), KodeinAware {
             AppWidgetManager.INVALID_APPWIDGET_ID
         ) ?: AppWidgetManager.INVALID_APPWIDGET_ID
 
+        setResult(RESULT_CANCELED, widgetConfigurationResultIntent(appWidgetId))
         if (appWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID) {
             finish()
             return
@@ -77,15 +86,34 @@ class SimpleWidgetConfigureActivity : AppCompatActivity(), KodeinAware {
     }
 
     private fun setupCompleted() {
-        val appWidgetManager =
-            AppWidgetManager.getInstance(this)
+        if (setupCompletionStarted) return
+        setupCompletionStarted = true
 
-        SimpleWidget.updateSimpleWidget(this, appWidgetManager, appWidgetId)
+        lifecycleScope.launch {
+            val updateSucceeded = runInitialWidgetUpdate(
+                update = {
+                    widgetUpdater.updateSimpleWidget(
+                        this@SimpleWidgetConfigureActivity,
+                        appWidgetId,
+                    )
+                },
+                onFailure = { error ->
+                    Timber.e(error, "Unable to render configured simple widget $appWidgetId")
+                },
+            )
 
-        val resultValue =
-            Intent().putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
-        setResult(RESULT_OK, resultValue)
-        finish()
+            if (isFinishing || isDestroyed || isChangingConfigurations) {
+                return@launch
+            }
+
+            if (!updateSucceeded) {
+                finish()
+                return@launch
+            }
+
+            setResult(RESULT_OK, widgetConfigurationResultIntent(appWidgetId))
+            finish()
+        }
     }
 }
 
@@ -187,6 +215,7 @@ fun WidgetTypeList(
 
 @Composable
 fun WidgetTypeItem (viewModel: SimpleWidgetConfigureViewModel, widgetType: WidgetType, isSelected: Boolean) {
+    val context = LocalContext.current
     Box (
         modifier = Modifier
             .fillMaxWidth()
@@ -201,7 +230,7 @@ fun WidgetTypeItem (viewModel: SimpleWidgetConfigureViewModel, widgetType: Widge
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable { viewModel.selectWidgetType(widgetType) },
-                text = stringResource(id = widgetType.titleResId),
+                text = WidgetType.getTitle(context, widgetType, stringResource(widgetType.titleResId)),
                 style = RuuviStationTheme.typography.paragraph)
         }
     }

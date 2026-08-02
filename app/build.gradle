@@ -1,3 +1,7 @@
+import org.gradle.api.file.ConfigurableFileCollection
+import org.gradle.api.tasks.Classpath
+import org.gradle.process.CommandLineArgumentProvider
+
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
@@ -9,7 +13,30 @@ apply plugin: "org.jetbrains.kotlin.plugin.compose"
 apply plugin: 'jacoco'
 
 jacoco {
-    toolVersion = "0.8.11"
+    toolVersion = "0.8.15"
+}
+
+def mockitoVersion = "5.23.0"
+def mockitoKotlinVersion = "6.3.0"
+
+abstract class MockitoAgentArgumentProvider implements CommandLineArgumentProvider {
+    @Classpath
+    abstract ConfigurableFileCollection getAgentClasspath()
+
+    @Override
+    Iterable<String> asArguments() {
+        ["-javaagent:${agentClasspath.singleFile.absolutePath}"]
+    }
+}
+
+configurations {
+    mockitoAgent
+}
+
+tasks.withType(Test).configureEach {
+    def mockitoAgentArgumentProvider = objects.newInstance(MockitoAgentArgumentProvider)
+    mockitoAgentArgumentProvider.agentClasspath.from(configurations.mockitoAgent)
+    jvmArgumentProviders.add(mockitoAgentArgumentProvider)
 }
 
 def releaseEnv = { name ->
@@ -51,11 +78,18 @@ tasks.register('jacocoTestReport', JacocoReport) {
         '**/*_MembersInjector.*'
     ]
 
-    def debugTree = fileTree(dir: "${buildDir}/tmp/kotlin-classes/withoutFileLogsDebug", excludes: fileFilter)
+    def kotlinDebugTree = fileTree(
+        dir: "${buildDir}/tmp/kotlin-classes/withoutFileLogsDebug",
+        excludes: fileFilter
+    )
+    def javaDebugTree = fileTree(
+        dir: "${buildDir}/intermediates/javac/withoutFileLogsDebug/compileWithoutFileLogsDebugJavaWithJavac/classes",
+        excludes: fileFilter
+    )
     def mainSrc = "${project.projectDir}/src/main/java"
 
     sourceDirectories.setFrom(files([mainSrc]))
-    classDirectories.setFrom(files([debugTree]))
+    classDirectories.setFrom(files([kotlinDebugTree, javaDebugTree]))
     executionData.setFrom(fileTree(dir: "$buildDir", includes: [
         "outputs/unit_test_code_coverage/withoutFileLogsDebugUnitTest/testWithoutFileLogsDebugUnitTest.exec",
         "jacoco/testWithoutFileLogsDebugUnitTest.exec"
@@ -76,11 +110,11 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
     }
     kotlinOptions {
-        jvmTarget = '1.8'
+        jvmTarget = '11'
     }
 
     lintOptions {
@@ -187,6 +221,7 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-compose-compiler-plugin-embeddable:$kotlin_version"
     implementation "androidx.constraintlayout:constraintlayout-compose:1.1.1"
     implementation "androidx.compose.runtime:runtime-livedata:1.8.2"
+    implementation "androidx.glance:glance-appwidget:1.2.0-rc01"
     implementation "com.google.accompanist:accompanist-systemuicontroller:$accomponist_version"
     implementation "com.google.accompanist:accompanist-permissions:$accomponist_version"
     implementation "com.google.accompanist:accompanist-pager:$accomponist_version"
@@ -236,6 +271,11 @@ dependencies {
 
     testImplementation 'junit:junit:4.13'
     testImplementation "io.mockk:mockk:1.13.13"
+    testImplementation "org.mockito.kotlin:mockito-kotlin:$mockitoKotlinVersion"
+    mockitoAgent("org.mockito:mockito-core:$mockitoVersion") {
+        transitive = false
+    }
+    testImplementation "androidx.arch.core:core-testing:2.2.0"
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation 'com.jakewharton.timber:timber:4.7.1'
 

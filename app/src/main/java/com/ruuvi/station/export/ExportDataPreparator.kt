@@ -169,7 +169,7 @@ class ExportDataPreparator(
 
             // Dew point
             if (tempC != null && relHumidity != null) {
-                val humidityConverter = HumidityConverter(tempC, relHumidity/100)
+                val humidityConverter = HumidityConverter(tempC, relHumidity)
                 row.add(humidityConverter.toDewCelsius?.roundHalfUp(2))
                 row.add(humidityConverter.toDewFahrenheit?.roundHalfUp(2))
                 row.add(humidityConverter.toDewKelvin?.roundHalfUp(2))
