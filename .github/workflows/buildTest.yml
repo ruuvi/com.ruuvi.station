@@ -12,18 +12,18 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v3.4.0
+      uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
       with:
         fetch-depth: 0  # Shallow clones should be disabled for better SonarCloud analysis
       
     - name: set up JDK 17
-      uses: actions/setup-java@v3.10.0
+      uses: actions/setup-java@e9fbacdec3bb3b6036605a3e6f7995d66773a8c6 # v3.14.2
       with:
         distribution: 'corretto'
         java-version: 17
 
     - name: Cache Gradle packages
-      uses: actions/cache@v3
+      uses: actions/cache@2f8e54208210a422b2efd51efaa6bd6d7ca8920f # v3.4.3
       with:
         path: |
           ~/.gradle/caches
@@ -52,7 +52,7 @@ jobs:
       run: ./gradlew assembleWithFileLogsDebug assembleWithoutFileLogsDebug
 
     - name: Save downloadable APKs
-      uses: actions/upload-artifact@v4.6.0
+      uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
       with:
         name: ruuvi-station-android-pr-debug-apks
         path: app/build/outputs/apk/*/debug/*.apk
