@@ -178,10 +178,10 @@ class TagSettingsViewModel(
     fun getPressureOffsetString(value: Double) =
         unitsConverter.getPressureString(value, accuracy = Accuracy.Accuracy2)
 
-    fun getAccelerationString(value: Double?, acceleration: Acceleration?) =
+    fun getAccelerationString(value: Double?, acceleration: Acceleration) =
         if (value == null) {
             UnitsConverter.NO_VALUE_AVAILABLE
         } else {
-            unitsConverter.getAccelerationValue(value, acceleration ?: Acceleration.GForceX).valueWithUnit
+            unitsConverter.getAccelerationValue(value, acceleration).valueWithUnit
         }
 }
