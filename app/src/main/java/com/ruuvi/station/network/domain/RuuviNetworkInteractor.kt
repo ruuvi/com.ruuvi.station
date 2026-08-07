@@ -250,13 +250,12 @@ class RuuviNetworkInteractor (
         }
     }
 
-    fun updateUserSetting(name: String, value: String) {
+    fun updateUserSetting(name: String, value: String, timestamp: Long = Date().time / 1000) {
         val networkRequest = NetworkRequest(
             NetworkRequestType.SETTINGS,
             name,
-            UpdateUserSettingRequest(name, value)
+            UpdateUserSettingRequest(name, value, timestamp)
         )
-        Timber.d("updateUserSetting $networkRequest")
         networkRequestExecutor.registerRequest(networkRequest, true)
     }
 
