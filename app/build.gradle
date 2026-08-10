@@ -70,7 +70,7 @@ android {
         targetSdkVersion 35
         compileSdk 35
         versionCode = (releaseEnv("ANDROID_VERSION_CODE") ?: "1").toInteger()
-        versionName "3.6.0"
+        versionName "3.7.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
     }
