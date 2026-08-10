@@ -127,7 +127,8 @@ fun ValueDisplaySimple(
             text = stringResource(value.unitType.measurementName),
             style = RuuviStationTheme.typography.dashboardValueTitle,
             fontSize = ruuviStationFontsSizes.petite.limitScaleTo(1.5f),
-            maxLines = 1
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
         )
     }
 }
