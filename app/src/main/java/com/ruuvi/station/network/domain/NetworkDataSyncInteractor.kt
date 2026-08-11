@@ -475,6 +475,23 @@ class NetworkDataSyncInteractor (
                     )
                 }
             )
+
+            syncBackgroundImage(sensor, localSettings)
+        }
+    }
+
+    private fun syncBackgroundImage(sensor: SensorsDenseInfo, localSettings: SensorSettings) {
+        if (sensor.lastUpdated > localSettings.lastUpdated && sensor.picture.isNotEmpty()) {
+            sensorSettingsRepository.updateNetworkBackground(
+                sensor.sensor,
+                File(URI(sensor.picture).path).nameWithoutExtension
+            )
+        } else if (localSettings.userBackground != null && sensor.lastUpdated <= localSettings.lastUpdated) {
+            networkInteractor.uploadImage(
+                sensorId = sensor.sensor,
+                filename = localSettings.userBackground!!,
+                uploadNow = true
+            )
         }
     }
 
