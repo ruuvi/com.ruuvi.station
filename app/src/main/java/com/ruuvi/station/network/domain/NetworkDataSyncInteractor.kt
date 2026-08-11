@@ -366,6 +366,8 @@ class NetworkDataSyncInteractor (
         sensor: SensorsDenseInfo,
         sensorSettings: SensorSettings
     ): Boolean {
+        if (!sensorSettings.networkSensor && sensorSettings.owner.isNullOrEmpty()) return false
+
         return when {
             sensor.lastUpdated < sensorSettings.lastUpdated -> true
             sensor.lastUpdated > sensorSettings.lastUpdated -> false
@@ -378,14 +380,7 @@ class NetworkDataSyncInteractor (
             val localSettings = sensorSettingsRepository.getSensorSettings(sensor.sensor)
             val networkSettings = sensor.settings
 
-            if (localSettings != null && localSettings.displayOrderTimestamp > (networkSettings?.displayOrder_lastUpdated ?: 0)) {
-                networkInteractor.updateSensorSetting(
-                    sensor.sensor,
-                    SensorSettings_displayOrder,
-                    localSettings.displayOrder ?: "",
-                    localSettings.displayOrderTimestamp
-                )
-            } else {
+            if (localSettings == null) {
                 networkSettings?.displayOrder?.let { displayOrder ->
                     sensorSettingsRepository.newDisplayOrder(
                         sensor.sensor,
@@ -393,16 +388,6 @@ class NetworkDataSyncInteractor (
                         networkSettings.displayOrder_lastUpdated ?: 0
                     )
                 }
-            }
-
-            if (localSettings != null && localSettings.defaultDisplayOrderTimestamp > (networkSettings?.defaultDisplayOrder_lastUpdated ?: 0)) {
-                networkInteractor.updateSensorSetting(
-                    sensor.sensor,
-                    SensorSettings_defaultDisplayOrder,
-                    localSettings.defaultDisplayOrder.toString(),
-                    localSettings.defaultDisplayOrderTimestamp
-                )
-            } else {
                 networkSettings?.defaultDisplayOrder?.let { defaultDisplayOrder ->
                     sensorSettingsRepository.updateUseDefaultSensorOrder(
                         sensor.sensor,
@@ -410,22 +395,86 @@ class NetworkDataSyncInteractor (
                         networkSettings.defaultDisplayOrder_lastUpdated ?: 0
                     )
                 }
-            }
-
-            if (localSettings != null && localSettings.descriptionTimestamp > (networkSettings?.description_lastUpdated ?: 0)) {
-                networkInteractor.updateSensorSetting(
-                    sensor.sensor,
-                    SensorSettings_description,
-                    localSettings.description ?: "",
-                    localSettings.descriptionTimestamp
-                )
-            } else {
                 sensorSettingsRepository.newDescription(
                     sensor.sensor,
                     networkSettings?.description ?: "",
                     networkSettings?.description_lastUpdated ?: 0
                 )
+                return@forEach
             }
+
+            fun syncSetting(
+                localTimestamp: Long,
+                networkTimestamp: Long,
+                uploadLocal: () -> Unit,
+                applyNetwork: () -> Unit
+            ) {
+                if (localTimestamp > networkTimestamp) uploadLocal() else applyNetwork()
+            }
+
+            syncSetting(
+                localTimestamp = localSettings.displayOrderTimestamp,
+                networkTimestamp = networkSettings?.displayOrder_lastUpdated ?: 0,
+                uploadLocal = {
+                    networkInteractor.updateSensorSetting(
+                        sensor.sensor,
+                        SensorSettings_displayOrder,
+                        localSettings.displayOrder ?: "",
+                        localSettings.displayOrderTimestamp
+                    )
+                },
+                applyNetwork = {
+                    networkSettings?.displayOrder?.let { displayOrder ->
+                        sensorSettingsRepository.newDisplayOrder(
+                            sensor.sensor,
+                            displayOrder,
+                            networkSettings.displayOrder_lastUpdated ?: 0
+                        )
+                    }
+                }
+            )
+
+            syncSetting(
+                localTimestamp = localSettings.defaultDisplayOrderTimestamp,
+                networkTimestamp = networkSettings?.defaultDisplayOrder_lastUpdated ?: 0,
+                uploadLocal = {
+                    networkInteractor.updateSensorSetting(
+                        sensor.sensor,
+                        SensorSettings_defaultDisplayOrder,
+                        localSettings.defaultDisplayOrder.toString(),
+                        localSettings.defaultDisplayOrderTimestamp
+                    )
+                },
+                applyNetwork = {
+                    networkSettings?.defaultDisplayOrder?.let { defaultDisplayOrder ->
+                        sensorSettingsRepository.updateUseDefaultSensorOrder(
+                            sensor.sensor,
+                            defaultDisplayOrder.toBooleanExtra(),
+                            networkSettings.defaultDisplayOrder_lastUpdated ?: 0
+                        )
+                    }
+                }
+            )
+
+            syncSetting(
+                localTimestamp = localSettings.descriptionTimestamp,
+                networkTimestamp = networkSettings?.description_lastUpdated ?: 0,
+                uploadLocal = {
+                    networkInteractor.updateSensorSetting(
+                        sensor.sensor,
+                        SensorSettings_description,
+                        localSettings.description ?: "",
+                        localSettings.descriptionTimestamp
+                    )
+                },
+                applyNetwork = {
+                    sensorSettingsRepository.newDescription(
+                        sensor.sensor,
+                        networkSettings?.description ?: "",
+                        networkSettings?.description_lastUpdated ?: 0
+                    )
+                }
+            )
         }
     }
 
