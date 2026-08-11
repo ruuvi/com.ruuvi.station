@@ -24,6 +24,7 @@ val Red = Color.Red
 val Inactive = Color(0xFFE7EBEB)
 val OnInactive = Color(0xFF8DA09F)
 val Keppel = Color(0xFF35AD9F)
+val KeppelLight = Color(0xFF5EBDB2)
 val Keppel15 = Color(0x2635AD9F)
 val Keppel30 = Color(0x4D35AD9F)
 val Keppel50 = Color(0x8035AD9F)
@@ -87,7 +88,8 @@ data class RuuviStationColors(
     val popupButtonBackground: Color,
     val chartLabel: Color,
     val chartAxisLine: Color,
-    val chartGuideline: Color
+    val chartGuideline: Color,
+    val measurementIcon: Color
 )
 
 val lightPalette = RuuviStationColors(
@@ -133,7 +135,8 @@ val lightPalette = RuuviStationColors(
     popupButtonBackground = Titan10,
     chartLabel = Titan,
     chartAxisLine = Gray30,
-    chartGuideline = Gray30
+    chartGuideline = Gray30,
+    measurementIcon = KeppelLight
 )
 
 val darkPalette = RuuviStationColors(
@@ -179,5 +182,6 @@ val darkPalette = RuuviStationColors(
     popupButtonBackground = White10,
     chartLabel = White,
     chartAxisLine = White30,
-    chartGuideline = White30
+    chartGuideline = White30,
+    measurementIcon = KeppelLight
 )
