@@ -366,14 +366,6 @@ class NetworkDataSyncInteractor (
         sensor: SensorsDenseInfo,
         sensorSettings: SensorSettings
     ): Boolean {
-
-        val shouldUploadUnownedSensor =
-            !sensorSettings.networkSensor &&
-                    sensorSettings.owner.isNullOrEmpty() &&
-                    sensorSettings.lastUpdated > 0
-
-        if (shouldUploadUnownedSensor) return true
-
         return when {
             sensor.lastUpdated < sensorSettings.lastUpdated -> true
             sensor.lastUpdated > sensorSettings.lastUpdated -> false
