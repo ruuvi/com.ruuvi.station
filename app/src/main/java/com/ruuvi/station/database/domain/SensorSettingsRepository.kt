@@ -92,25 +92,24 @@ class SensorSettingsRepository {
 
     fun updateSensorBackground(sensorId: String, userBackground: String?, defaultBackground: Int?, networkBackground: String?) {
         Timber.d("updateSensorBackground $sensorId $networkBackground")
-        SQLite.update(SensorSettings::class.java)
-            .set(
-                SensorSettings_Table.userBackground.eq(userBackground),
-                SensorSettings_Table.defaultBackground.eq(defaultBackground),
-                SensorSettings_Table.networkBackground.eq(networkBackground)
-            )
-            .where(SensorSettings_Table.id.eq(sensorId))
-            .execute()
+        val timestamp = Date().time / 1000
+        val settings = getSensorSettingsOrCreate(sensorId)
+        settings.userBackground = userBackground
+        settings.defaultBackground = defaultBackground ?: 0
+        settings.networkBackground = networkBackground
+        settings.backgroundTimestamp = timestamp
+        settings.lastUpdated = timestamp
+        settings.update()
     }
 
-    fun updateNetworkBackground(sensorId: String, networkBackground: String?) {
+    fun updateNetworkBackground(sensorId: String, networkBackground: String?, timestamp: Long? = null) {
         Timber.d("updateNetworkBackground $sensorId $networkBackground")
-        SQLite.update(SensorSettings::class.java)
-            .set(
-                SensorSettings_Table.networkBackground.eq(networkBackground)
-            )
-            .where(SensorSettings_Table.id.eq(sensorId))
-            .async()
-            .execute()
+        val settings = getSensorSettingsOrCreate(sensorId)
+        val updateTime = timestamp ?: (Date().time / 1000)
+        settings.networkBackground = networkBackground
+        settings.backgroundTimestamp = updateTime
+        settings.lastUpdated = updateTime
+        settings.update()
     }
 
     fun setSensorOwner(sensorId: String, owner: String?, isNetworkSensor: Boolean?) {

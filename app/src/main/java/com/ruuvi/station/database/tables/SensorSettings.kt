@@ -66,6 +66,8 @@ data class SensorSettings(
     var description: String? = null,
     @Column
     var descriptionTimestamp: Long = 0L,
+    @Column
+    var backgroundTimestamp: Long = 0L,
 ): BaseModel() {
     val displayName get() = if (name.isNullOrEmpty()) id else name.toString()
 
@@ -77,7 +79,7 @@ data class SensorSettings(
         pressureOffset = sensor.offsetPressure
         temperatureOffset = sensor.offsetTemperature
         networkSensor = true
-        subscriptionName = sensor.subscription?.subscriptionName
+        subscriptionName = sensor.subscription.subscriptionName
         lastUpdated = sensor.lastUpdated
         update()
     }

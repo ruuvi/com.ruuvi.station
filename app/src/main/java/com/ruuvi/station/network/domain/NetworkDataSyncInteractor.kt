@@ -323,11 +323,10 @@ class NetworkDataSyncInteractor (
         }
     }
 
-    // returns list of sensors that _may_ require background image update (from the cloud)
     private fun updateSensors(userInfoData: SensorsDenseResponseBody): List<SensorsDenseInfo> {
         val sensorsResult = mutableListOf<SensorsDenseInfo>()
         userInfoData.sensors.forEach { sensor ->
-            Timber.d("updateTags: $sensor")
+            val name = sensor.name
             val sensorSettings = sensorSettingsRepository.getSensorSettingsOrCreate(sensor.sensor)
             val shouldUpload = shouldUploadSensorToCloud(sensor, sensorSettings)
             if (shouldUpload) {
@@ -475,18 +474,15 @@ class NetworkDataSyncInteractor (
                     )
                 }
             )
-
-            syncBackgroundImage(sensor, localSettings)
+            //syncBackgroundImage(sensor, localSettings)
         }
     }
 
     private fun syncBackgroundImage(sensor: SensorsDenseInfo, localSettings: SensorSettings) {
-        if (sensor.lastUpdated > localSettings.lastUpdated && sensor.picture.isNotEmpty()) {
-            sensorSettingsRepository.updateNetworkBackground(
-                sensor.sensor,
-                File(URI(sensor.picture).path).nameWithoutExtension
-            )
-        } else if (localSettings.userBackground != null && sensor.lastUpdated <= localSettings.lastUpdated) {
+        val name = sensor.name
+        val sensorTime = sensor.lastUpdated
+        val localTime = localSettings.backgroundTimestamp
+        if (localSettings.userBackground != null && sensor.lastUpdated < localSettings.backgroundTimestamp) {
             networkInteractor.uploadImage(
                 sensorId = sensor.sensor,
                 filename = localSettings.userBackground!!,
