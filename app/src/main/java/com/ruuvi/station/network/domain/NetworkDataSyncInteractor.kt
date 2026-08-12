@@ -323,17 +323,16 @@ class NetworkDataSyncInteractor (
         }
     }
 
-    // returns list of sensors that _may_ require background image update (from the cloud)
     private fun updateSensors(userInfoData: SensorsDenseResponseBody): List<SensorsDenseInfo> {
         val sensorsResult = mutableListOf<SensorsDenseInfo>()
         userInfoData.sensors.forEach { sensor ->
-            Timber.d("updateTags: $sensor")
             val sensorSettings = sensorSettingsRepository.getSensorSettingsOrCreate(sensor.sensor)
-            if (sensor.lastUpdated > sensorSettings.lastUpdated) {
+            val shouldUpload = shouldUploadSensorToCloud(sensor, sensorSettings)
+            if (shouldUpload) {
+                networkInteractor.updateSensorToCloud(sensor.sensor)
+            } else if (sensor.lastUpdated > sensorSettings.lastUpdated) {
                 sensorSettings.updateFromNetwork(sensor)
                 sensorsResult.add(sensor)
-            } else if (sensor.lastUpdated < sensorSettings.lastUpdated) {
-                networkInteractor.updateSensorToCloud(sensor.sensor)
             }
 
             val tagEntry = tagRepository.getTagById(sensor.sensor)
@@ -361,20 +360,138 @@ class NetworkDataSyncInteractor (
         return sensorsResult
     }
 
+    private fun shouldUploadSensorToCloud(
+        sensor: SensorsDenseInfo,
+        sensorSettings: SensorSettings
+    ): Boolean {
+        if (!sensorSettings.networkSensor && sensorSettings.owner.isNullOrEmpty()) return false
+
+        return when {
+            sensor.lastUpdated < sensorSettings.lastUpdated -> true
+            sensor.lastUpdated > sensorSettings.lastUpdated -> false
+            else -> false
+        }
+    }
+
     private fun updateSensorSettings(userInfoData: SensorsDenseResponseBody) {
         userInfoData.sensors.forEach { sensor ->
-            Timber.d("updateSensorSettings: $sensor displayOrder = ${sensor.settings?.displayOrder} defaultDisplayOrder = ${sensor.settings?.defaultDisplayOrder} description = ${sensor.settings?.description}")
+            val localSettings = sensorSettingsRepository.getSensorSettings(sensor.sensor)
+            val networkSettings = sensor.settings
 
-            sensor.settings?.displayOrder?.let { displayOrder ->
-                sensorSettingsRepository.newDisplayOrder(sensor.sensor, displayOrder, sensor.settings.displayOrder_lastUpdated ?: 0)
+            if (localSettings == null) {
+                networkSettings?.displayOrder?.let { displayOrder ->
+                    sensorSettingsRepository.newDisplayOrder(
+                        sensor.sensor,
+                        displayOrder,
+                        networkSettings.displayOrder_lastUpdated ?: 0
+                    )
+                }
+                networkSettings?.defaultDisplayOrder?.let { defaultDisplayOrder ->
+                    sensorSettingsRepository.updateUseDefaultSensorOrder(
+                        sensor.sensor,
+                        defaultDisplayOrder.toBooleanExtra(),
+                        networkSettings.defaultDisplayOrder_lastUpdated ?: 0
+                    )
+                }
+                sensorSettingsRepository.newDescription(
+                    sensor.sensor,
+                    networkSettings?.description ?: "",
+                    networkSettings?.description_lastUpdated ?: 0
+                )
+                return@forEach
             }
-            sensor.settings?.defaultDisplayOrder?.let { defaultDisplayOrder ->
-                sensorSettingsRepository.updateUseDefaultSensorOrder(sensor.sensor, defaultDisplayOrder.toBooleanExtra(), sensor.settings.defaultDisplayOrder_lastUpdated ?: 0)
+
+            fun syncSetting(
+                localTimestamp: Long,
+                networkTimestamp: Long,
+                uploadLocal: () -> Unit,
+                applyNetwork: () -> Unit
+            ) {
+                if (localTimestamp > networkTimestamp) uploadLocal() else applyNetwork()
             }
-            sensorSettingsRepository.newDescription(
-                sensor.sensor,
-                sensor.settings?.description ?: "",
-                sensor.settings?.description_lastUpdated ?: (Date().time / 1000)
+
+            syncSetting(
+                localTimestamp = localSettings.displayOrderTimestamp,
+                networkTimestamp = networkSettings?.displayOrder_lastUpdated ?: 0,
+                uploadLocal = {
+                    networkInteractor.updateSensorSetting(
+                        sensor.sensor,
+                        SensorSettings_displayOrder,
+                        localSettings.displayOrder ?: "",
+                        localSettings.displayOrderTimestamp
+                    )
+                },
+                applyNetwork = {
+                    networkSettings?.displayOrder?.let { displayOrder ->
+                        sensorSettingsRepository.newDisplayOrder(
+                            sensor.sensor,
+                            displayOrder,
+                            networkSettings.displayOrder_lastUpdated ?: 0
+                        )
+                    }
+                }
+            )
+
+            syncSetting(
+                localTimestamp = localSettings.defaultDisplayOrderTimestamp,
+                networkTimestamp = networkSettings?.defaultDisplayOrder_lastUpdated ?: 0,
+                uploadLocal = {
+                    networkInteractor.updateSensorSetting(
+                        sensor.sensor,
+                        SensorSettings_defaultDisplayOrder,
+                        localSettings.defaultDisplayOrder.toString(),
+                        localSettings.defaultDisplayOrderTimestamp
+                    )
+                },
+                applyNetwork = {
+                    networkSettings?.defaultDisplayOrder?.let { defaultDisplayOrder ->
+                        sensorSettingsRepository.updateUseDefaultSensorOrder(
+                            sensor.sensor,
+                            defaultDisplayOrder.toBooleanExtra(),
+                            networkSettings.defaultDisplayOrder_lastUpdated ?: 0
+                        )
+                    }
+                }
+            )
+
+            syncSetting(
+                localTimestamp = localSettings.descriptionTimestamp,
+                networkTimestamp = networkSettings?.description_lastUpdated ?: 0,
+                uploadLocal = {
+                    networkInteractor.updateSensorSetting(
+                        sensor.sensor,
+                        SensorSettings_description,
+                        localSettings.description ?: "",
+                        localSettings.descriptionTimestamp
+                    )
+                },
+                applyNetwork = {
+                    sensorSettingsRepository.newDescription(
+                        sensor.sensor,
+                        networkSettings?.description ?: "",
+                        networkSettings?.description_lastUpdated ?: 0
+                    )
+                }
+            )
+            CoroutineScope(Dispatchers.IO).launch {
+                syncBackgroundImage(sensor, localSettings)
+            }
+        }
+    }
+
+    private fun syncBackgroundImage(sensor: SensorsDenseInfo, localSettings: SensorSettings) {
+        if (!localSettings.networkSensor) {
+            localSettings.networkSensor = true
+            localSettings.update()
+        }
+        val localtime = localSettings.backgroundTimestamp
+        val networktime = sensor.lastUpdated
+        if (localSettings.userBackground != null && sensor.lastUpdated < localSettings.backgroundTimestamp) {
+            networkInteractor.uploadImageToSyncWithCloud(
+                sensorId = sensor.sensor,
+                filename = localSettings.userBackground!!,
+                uploadNow = true,
+                sensorSettings = localSettings
             )
         }
     }
@@ -384,7 +501,7 @@ class NetworkDataSyncInteractor (
             val sensorSettings = sensorSettingsRepository.getSensorSettings(sensor.sensor)
 
             if (sensorSettings != null) {
-                if (sensor.picture.isNullOrEmpty()) {
+                if (sensor.picture.isEmpty()) {
                     tagSettingsInteractor.setDefaultBackgroundImageByResource(
                         sensorId = sensor.sensor,
                         defaultBackground = imageInteractor.getDefaultBackgroundById(sensorSettings.defaultBackground),

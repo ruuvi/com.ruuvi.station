@@ -63,6 +63,10 @@ class RuuviNetworkInteractor (
         return shouldSendDataToNetwork() && sensorSettings?.networkSensor == true
     }
 
+    fun shouldSendSensorDataToNetworkBy(sensorSettings: SensorSettings): Boolean {
+        return shouldSendDataToNetwork() && sensorSettings.networkSensor
+    }
+
     fun shouldSendSensorDataToNetworkForOwner(sensorId: String): Boolean {
         val sensorSettings = sensorSettingsRepository.getSensorSettings(sensorId)
         return shouldSendDataToNetwork() && sensorSettings?.owner == getToken()?.email
@@ -226,6 +230,13 @@ class RuuviNetworkInteractor (
         }
     }
 
+    fun uploadImageToSyncWithCloud(sensorId: String, filename: String, uploadNow: Boolean = false, sensorSettings: SensorSettings) {
+        if (shouldSendSensorDataToNetworkBy(sensorSettings)) {
+            val networkRequest = NetworkRequest(NetworkRequestType.UPLOAD_IMAGE, sensorId, UploadImageRequestWrapper(filename, UploadImageRequest(sensorId)))
+            networkRequestExecutor.registerRequest(networkRequest, uploadNow)
+        }
+    }
+
     suspend fun getSensorData(request: GetSensorDataRequest):GetSensorDataResponse? = withContext(Dispatchers.IO) {
         val token = getToken()?.token
         token?.let {
@@ -250,13 +261,12 @@ class RuuviNetworkInteractor (
         }
     }
 
-    fun updateUserSetting(name: String, value: String) {
+    fun updateUserSetting(name: String, value: String, timestamp: Long = Date().time / 1000) {
         val networkRequest = NetworkRequest(
             NetworkRequestType.SETTINGS,
             name,
-            UpdateUserSettingRequest(name, value)
+            UpdateUserSettingRequest(name, value, timestamp)
         )
-        Timber.d("updateUserSetting $networkRequest")
         networkRequestExecutor.registerRequest(networkRequest, true)
     }
 

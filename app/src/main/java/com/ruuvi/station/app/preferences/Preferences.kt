@@ -10,6 +10,7 @@ import com.ruuvi.station.dashboard.DashboardType
 import com.ruuvi.station.units.model.Accuracy
 import com.ruuvi.station.units.model.UnitType.*
 import com.ruuvi.station.util.BackgroundScanModes
+import androidx.core.content.edit
 
 class Preferences (val context: Context) {
 
@@ -471,6 +472,15 @@ class Preferences (val context: Context) {
             sharedPreferences.edit().putBoolean(PREF_BLUETOOTH_PERMISSION_REQUESTED, value).apply()
         }
 
+    fun getNetworkSettingLastUpdated(settingName: String): Long =
+        sharedPreferences.getLong("$PREF_NETWORK_SETTING_LAST_UPDATED_PREFIX$settingName", 0L)
+
+    fun setNetworkSettingLastUpdated(settingName: String, timestamp: Long) {
+        sharedPreferences.edit {
+            putLong("$PREF_NETWORK_SETTING_LAST_UPDATED_PREFIX$settingName", timestamp)
+        }
+    }
+
     fun getUserEmailLiveData() =
         SharedPreferenceStringLiveData(sharedPreferences, PREF_NETWORK_EMAIL, "")
 
@@ -591,6 +601,7 @@ class Preferences (val context: Context) {
         private const val PREF_BLUETOOTH_PERMISSION_REQUESTED = "pref_bluetooth_permission_requested"
         private const val PREF_SHOW_VISIBLE_MEASUREMENTS = "pref_show_visible_measurements"
         private const val PREF_MARKETING_PERMISSION = "pref_marketing_permission"
+        private const val PREF_NETWORK_SETTING_LAST_UPDATED_PREFIX = "pref_network_setting_last_updated_"
 
         private const val PREF_USE_WEB_SHARE = "pref_use_web_share"
 

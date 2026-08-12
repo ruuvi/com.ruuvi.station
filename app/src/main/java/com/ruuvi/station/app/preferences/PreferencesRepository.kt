@@ -459,4 +459,11 @@ class PreferencesRepository(
     fun bluetoothPermissionRequested() {
         preferences.bluetoothPermissionRequested = true
     }
+
+    fun getNetworkSettingLastUpdated(settingName: String): Long =
+        preferences.getNetworkSettingLastUpdated(settingName)
+
+    fun setNetworkSettingLastUpdated(settingName: String, timestamp: Long) {
+        preferences.setNetworkSettingLastUpdated(settingName, timestamp)
+    }
 }
