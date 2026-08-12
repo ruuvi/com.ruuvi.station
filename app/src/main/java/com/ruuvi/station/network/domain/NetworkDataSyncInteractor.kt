@@ -326,7 +326,6 @@ class NetworkDataSyncInteractor (
     private fun updateSensors(userInfoData: SensorsDenseResponseBody): List<SensorsDenseInfo> {
         val sensorsResult = mutableListOf<SensorsDenseInfo>()
         userInfoData.sensors.forEach { sensor ->
-            val name = sensor.name
             val sensorSettings = sensorSettingsRepository.getSensorSettingsOrCreate(sensor.sensor)
             val shouldUpload = shouldUploadSensorToCloud(sensor, sensorSettings)
             if (shouldUpload) {
@@ -474,19 +473,25 @@ class NetworkDataSyncInteractor (
                     )
                 }
             )
-            //syncBackgroundImage(sensor, localSettings)
+            CoroutineScope(Dispatchers.IO).launch {
+                syncBackgroundImage(sensor, localSettings)
+            }
         }
     }
 
     private fun syncBackgroundImage(sensor: SensorsDenseInfo, localSettings: SensorSettings) {
-        val name = sensor.name
-        val sensorTime = sensor.lastUpdated
-        val localTime = localSettings.backgroundTimestamp
+        if (!localSettings.networkSensor) {
+            localSettings.networkSensor = true
+            localSettings.update()
+        }
+        val localtime = localSettings.backgroundTimestamp
+        val networktime = sensor.lastUpdated
         if (localSettings.userBackground != null && sensor.lastUpdated < localSettings.backgroundTimestamp) {
-            networkInteractor.uploadImage(
+            networkInteractor.uploadImageToSyncWithCloud(
                 sensorId = sensor.sensor,
                 filename = localSettings.userBackground!!,
-                uploadNow = true
+                uploadNow = true,
+                sensorSettings = localSettings
             )
         }
     }

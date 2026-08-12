@@ -63,6 +63,10 @@ class RuuviNetworkInteractor (
         return shouldSendDataToNetwork() && sensorSettings?.networkSensor == true
     }
 
+    fun shouldSendSensorDataToNetworkBy(sensorSettings: SensorSettings): Boolean {
+        return shouldSendDataToNetwork() && sensorSettings.networkSensor
+    }
+
     fun shouldSendSensorDataToNetworkForOwner(sensorId: String): Boolean {
         val sensorSettings = sensorSettingsRepository.getSensorSettings(sensorId)
         return shouldSendDataToNetwork() && sensorSettings?.owner == getToken()?.email
@@ -222,6 +226,13 @@ class RuuviNetworkInteractor (
         if (shouldSendSensorDataToNetwork(sensorId)) {
             val networkRequest = NetworkRequest(NetworkRequestType.UPLOAD_IMAGE, sensorId, UploadImageRequestWrapper(filename, UploadImageRequest(sensorId)))
             Timber.d("uploadImage $networkRequest")
+            networkRequestExecutor.registerRequest(networkRequest, uploadNow)
+        }
+    }
+
+    fun uploadImageToSyncWithCloud(sensorId: String, filename: String, uploadNow: Boolean = false, sensorSettings: SensorSettings) {
+        if (shouldSendSensorDataToNetworkBy(sensorSettings)) {
+            val networkRequest = NetworkRequest(NetworkRequestType.UPLOAD_IMAGE, sensorId, UploadImageRequestWrapper(filename, UploadImageRequest(sensorId)))
             networkRequestExecutor.registerRequest(networkRequest, uploadNow)
         }
     }
