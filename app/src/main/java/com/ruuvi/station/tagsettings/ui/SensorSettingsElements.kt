@@ -43,10 +43,12 @@ import com.ruuvi.station.network.ui.claim.ClaimSensorActivity
 import com.ruuvi.station.network.ui.ShareSensorActivity
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tag.domain.isAir
+import com.ruuvi.station.units.model.EnvironmentValue
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import timber.log.Timber
 import androidx.core.net.toUri
+import com.ruuvi.station.units.model.UnitType.*
 
 @Composable
 fun SensorSettings(
@@ -137,8 +139,7 @@ fun SensorSettings(
         MoreInfoGroup(
             sensorState = sensorState,
             isLowBattery = isLowBattery,
-            getAccelerationString = viewModel::getAccelerationString,
-            getSignalString = viewModel::getSignalString
+            getAccelerationString = viewModel::getAccelerationString
         )
         DividerSurfaceColor()
         FirmwareGroup(
@@ -357,8 +358,7 @@ fun SetSensorName(
 fun MoreInfoGroup(
     sensorState: RuuviTag,
     isLowBattery: Boolean,
-    getAccelerationString: (Double?) -> String,
-    getSignalString: (Int) -> String
+    getAccelerationString: (Double?, Acceleration) -> String
 ) {
     ExpandableContainer(header = {
         Text(
@@ -387,7 +387,7 @@ fun MoreInfoGroup(
         )
 
         if (!sensorState.isAir()) {
-            sensorState.latestMeasurement?.voltage?.value?.let {
+            sensorState.latestMeasurement?.voltage?.let {
                 BatteryInfoItem(
                     voltage = it,
                     isLowBattery = isLowBattery
@@ -397,21 +397,21 @@ fun MoreInfoGroup(
             sensorState.latestMeasurement?.accelerationX?.let {
                 MoreInfoItem(
                     title = stringResource(id = R.string.acceleration_x),
-                    value = getAccelerationString(it)
+                    value = getAccelerationString(it, Acceleration.GForceX)
                 )
             }
 
             sensorState.latestMeasurement?.accelerationY?.let {
                 MoreInfoItem(
                     title = stringResource(id = R.string.acceleration_y),
-                    value = getAccelerationString(it)
+                    value = getAccelerationString(it, Acceleration.GForceY)
                 )
             }
 
             sensorState.latestMeasurement?.accelerationZ?.let {
                 MoreInfoItem(
                     title = stringResource(id = R.string.acceleration_z),
-                    value = getAccelerationString(it)
+                    value = getAccelerationString(it, Acceleration.GForceZ)
                 )
             }
 
@@ -480,11 +480,11 @@ fun MoreInfoItem (
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun BatteryInfoItem (
-    voltage: Double,
+    voltage: EnvironmentValue,
     isLowBattery: Boolean
 ) {
     val clipboardManager: ClipboardManager = LocalClipboardManager.current
-    val value = stringResource(id = R.string.voltage_reading, voltage, stringResource(id = R.string.voltage_unit)) 
+    val value = voltage.valueWithUnit
 
     Row(modifier = Modifier.padding(vertical = RuuviStationTheme.dimensions.small),
         verticalAlignment = Alignment.CenterVertically

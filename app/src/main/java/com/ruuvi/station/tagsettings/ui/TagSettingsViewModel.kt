@@ -11,7 +11,6 @@ import com.ruuvi.station.bluetooth.domain.SensorInfoInteractor
 import com.ruuvi.station.database.domain.AlarmRepository
 import com.ruuvi.station.database.domain.SensorShareListRepository
 import com.ruuvi.station.database.tables.RuuviTagEntity
-import com.ruuvi.station.feature.data.FeatureFlag
 import com.ruuvi.station.feature.domain.RuntimeBehavior
 import com.ruuvi.station.network.domain.RuuviNetworkInteractor
 import com.ruuvi.station.tag.domain.RuuviTag
@@ -179,8 +178,10 @@ class TagSettingsViewModel(
     fun getPressureOffsetString(value: Double) =
         unitsConverter.getPressureString(value, accuracy = Accuracy.Accuracy2)
 
-    fun getAccelerationString(value: Double?) =
-        accelerationConverter.getAccelerationString(value, null)
-
-    fun getSignalString(rssi: Int) = unitsConverter.getSignalString(rssi)
+    fun getAccelerationString(value: Double?, acceleration: Acceleration) =
+        if (value == null) {
+            UnitsConverter.NO_VALUE_AVAILABLE
+        } else {
+            unitsConverter.getAccelerationValue(value, acceleration).valueWithUnit
+        }
 }
