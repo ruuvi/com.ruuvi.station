@@ -786,7 +786,6 @@ class Preferences (val context: Context) {
         private const val PREF_TIPS_ALLOWED_LAST_UPDATED = "pref_tips_allowed_last_updated"
         private const val PREF_MARKETING_PERMISSION = "pref_marketing_permission"
         private const val PREF_MARKETING_PERMISSION_LAST_UPDATED = "pref_marketing_permission_last_updated"
-        private const val PREF_NETWORK_SETTING_PREFIX = "pref_network_setting_"
 
         private const val PREF_USE_WEB_SHARE = "pref_use_web_share"
 
