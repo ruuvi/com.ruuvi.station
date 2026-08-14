@@ -4,6 +4,7 @@ import com.google.common.reflect.TypeToken
 import com.google.gson.Gson
 import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.network.domain.NetworkApplicationSettings
+import com.ruuvi.station.network.domain.NetworkSettingNames
 import com.ruuvi.station.tag.domain.RuuviTag
 import timber.log.Timber
 
@@ -47,7 +48,7 @@ class SensorsSortingInteractor (
     }
 
     fun saveListOfSortedSensors(sortedSensors: List<String>) {
-        preferences.setSortedSensors(Gson().toJson(sortedSensors))
+        preferences.setNetworkSetting(NetworkSettingNames.SENSOR_ORDER, Gson().toJson(sortedSensors), System.currentTimeMillis() / 1000)
     }
 
     fun isCustomOrderEnabled(): Boolean {

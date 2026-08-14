@@ -8,6 +8,6 @@ enum class Accuracy (val code: Int, val nameTemplateId: Int, val value: Float) {
     Accuracy2 (2, R.string.accuracy2_template, 0.01f);
 
     companion object {
-        fun getByCode(code: Int) = values().firstOrNull{it.code == code}
+        fun getByCode(code: Int) = entries.firstOrNull{it.code == code}
     }
 }

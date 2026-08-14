@@ -10,6 +10,7 @@ import com.ruuvi.station.database.domain.SensorSettingsRepository
 import com.ruuvi.station.database.domain.TagRepository
 import com.ruuvi.station.dataforwarding.domain.DataForwardingSender
 import com.ruuvi.station.network.domain.NetworkApplicationSettings
+import com.ruuvi.station.network.domain.NetworkSettingNames
 import com.ruuvi.station.units.domain.UnitsConverter
 import com.ruuvi.station.units.model.Accuracy
 import com.ruuvi.station.units.model.UnitType.*
@@ -31,8 +32,9 @@ class AppSettingsInteractor(
         preferencesRepository.getTemperatureUnitLiveData()
 
     fun setTemperatureUnit(unit: TemperatureUnit) {
-        preferencesRepository.setTemperatureUnit(unit)
-        networkApplicationSettings.updateTemperatureUnit()
+        preferencesRepository.setNetworkSetting(NetworkSettingNames.UNIT_TEMPERATURE, unit.unitCode,
+            System.currentTimeMillis() / 1000)
+        networkApplicationSettings.updateNetworkSetting(NetworkSettingNames.UNIT_TEMPERATURE)
     }
 
     fun getTemperatureAccuracy(): Accuracy =
@@ -42,8 +44,9 @@ class AppSettingsInteractor(
         preferencesRepository.getTemperatureAccuracyLiveData()
 
     fun setTemperatureAccuracy(accuracy: Accuracy) {
-        preferencesRepository.setTemperatureAccuracy(accuracy)
-        networkApplicationSettings.updateTemperatureAccuracy()
+        preferencesRepository.setNetworkSetting(NetworkSettingNames.ACCURACY_TEMPERATURE, accuracy.code.toString(),
+            System.currentTimeMillis() / 1000)
+        networkApplicationSettings.updateNetworkSetting(NetworkSettingNames.ACCURACY_TEMPERATURE)
     }
 
     fun getHumidityUnit(): HumidityUnit =
@@ -53,8 +56,9 @@ class AppSettingsInteractor(
         preferencesRepository.getHumidityUnitLiveData()
 
     fun setHumidityUnit(unit: HumidityUnit) {
-        preferencesRepository.setHumidityUnit(unit)
-        networkApplicationSettings.updateHumidityUnit()
+        preferencesRepository.setNetworkSetting(NetworkSettingNames.UNIT_HUMIDITY, unit.unitCode,
+            System.currentTimeMillis() / 1000)
+        networkApplicationSettings.updateNetworkSetting(NetworkSettingNames.UNIT_HUMIDITY)
     }
 
     fun getHumidityAccuracy(): Accuracy =
@@ -64,11 +68,12 @@ class AppSettingsInteractor(
         preferencesRepository.getHumidityAccuracyLiveData()
 
     fun setHumidityAccuracy(accuracy: Accuracy) {
-        preferencesRepository.setHumidityAccuracy(accuracy)
-        networkApplicationSettings.updateHumidityAccuracy()
-        networkApplicationSettings.updateRelativeHumidityAccuracy()
-        networkApplicationSettings.updateAbsoluteHumidityAccuracy()
-        networkApplicationSettings.updateDewPointAccuracy()
+        preferencesRepository.setNetworkSetting(NetworkSettingNames.ACCURACY_HUMIDITY, accuracy.code.toString(),
+            System.currentTimeMillis() / 1000)
+        networkApplicationSettings.updateNetworkSetting(NetworkSettingNames.ACCURACY_HUMIDITY)
+        networkApplicationSettings.updateNetworkSetting(NetworkSettingNames.ACCURACY_HUMIDITY_RELATIVE)
+        networkApplicationSettings.updateNetworkSetting(NetworkSettingNames.ACCURACY_HUMIDITY_ABSOLUTE)
+        networkApplicationSettings.updateNetworkSetting(NetworkSettingNames.ACCURACY_HUMIDITY_DEW_POINT)
     }
 
     fun getRelativeHumidityAccuracy(): Accuracy =
@@ -78,8 +83,9 @@ class AppSettingsInteractor(
         preferencesRepository.getRelativeHumidityAccuracyLiveData()
 
     fun setRelativeHumidityAccuracy(accuracy: Accuracy) {
-        preferencesRepository.setRelativeHumidityAccuracy(accuracy)
-        networkApplicationSettings.updateRelativeHumidityAccuracy()
+        preferencesRepository.setNetworkSetting(NetworkSettingNames.ACCURACY_HUMIDITY_RELATIVE, accuracy.code.toString(),
+            System.currentTimeMillis() / 1000)
+        networkApplicationSettings.updateNetworkSetting(NetworkSettingNames.ACCURACY_HUMIDITY_RELATIVE)
     }
 
     fun getAbsoluteHumidityAccuracy(): Accuracy =
@@ -89,8 +95,9 @@ class AppSettingsInteractor(
         preferencesRepository.getAbsoluteHumidityAccuracyLiveData()
 
     fun setAbsoluteHumidityAccuracy(accuracy: Accuracy) {
-        preferencesRepository.setAbsoluteHumidityAccuracy(accuracy)
-        networkApplicationSettings.updateAbsoluteHumidityAccuracy()
+        preferencesRepository.setNetworkSetting(NetworkSettingNames.ACCURACY_HUMIDITY_ABSOLUTE, accuracy.code.toString(),
+            System.currentTimeMillis() / 1000)
+        networkApplicationSettings.updateNetworkSetting(NetworkSettingNames.ACCURACY_HUMIDITY_ABSOLUTE)
     }
 
     fun getDewPointAccuracy(): Accuracy =
@@ -100,8 +107,9 @@ class AppSettingsInteractor(
         preferencesRepository.getDewPointAccuracyLiveData()
 
     fun setDewPointAccuracy(accuracy: Accuracy) {
-        preferencesRepository.setDewPointAccuracy(accuracy)
-        networkApplicationSettings.updateDewPointAccuracy()
+        preferencesRepository.setNetworkSetting(NetworkSettingNames.ACCURACY_HUMIDITY_DEW_POINT, accuracy.code.toString(),
+            System.currentTimeMillis() / 1000)
+        networkApplicationSettings.updateNetworkSetting(NetworkSettingNames.ACCURACY_HUMIDITY_DEW_POINT)
     }
 
     fun getHumidityUnitString(): String = unitsConverter.getHumidityUnitString()
@@ -148,8 +156,9 @@ class AppSettingsInteractor(
 
     fun setBackgroundScanMode(mode: BackgroundScanModes) {
         if (mode != preferencesRepository.getBackgroundScanMode()) {
-            preferencesRepository.setBackgroundScanMode(mode)
-            networkApplicationSettings.updateBackgroundScanMode()
+            preferencesRepository.setNetworkSetting(NetworkSettingNames.BACKGROUND_SCAN_MODE, mode.value.toString(),
+                System.currentTimeMillis() / 1000)
+            networkApplicationSettings.updateNetworkSetting(NetworkSettingNames.BACKGROUND_SCAN_MODE)
         }
     }
 
@@ -157,8 +166,9 @@ class AppSettingsInteractor(
         preferencesRepository.isCloudModeEnabled()
 
     fun setIsCloudModeEnabled(isEnabled: Boolean) {
-        preferencesRepository.setIsCloudModeEnabled(isEnabled)
-        networkApplicationSettings.updateCloudModeEnabled()
+        preferencesRepository.setNetworkSetting(NetworkSettingNames.CLOUD_MODE_ENABLED, isEnabled.toString(),
+            System.currentTimeMillis() / 1000)
+        networkApplicationSettings.updateNetworkSetting(NetworkSettingNames.CLOUD_MODE_ENABLED)
     }
 
     fun shouldShowCloudMode(): Boolean {
@@ -172,8 +182,9 @@ class AppSettingsInteractor(
 
     fun setBackgroundScanInterval(interval: Int) {
         if (interval != preferencesRepository.getBackgroundScanInterval()) {
-            preferencesRepository.setBackgroundScanInterval(interval)
-            networkApplicationSettings.updateBackgroundScanInterval()
+            preferencesRepository.setNetworkSetting(NetworkSettingNames.BACKGROUND_SCAN_INTERVAL, interval.toString(),
+                System.currentTimeMillis() / 1000)
+            networkApplicationSettings.updateNetworkSetting(NetworkSettingNames.BACKGROUND_SCAN_INTERVAL)
         }
     }
 
@@ -182,8 +193,9 @@ class AppSettingsInteractor(
 
     fun setIsShowAllGraphPoint(isShowAll: Boolean) {
         if (isShowAll != preferencesRepository.isShowAllGraphPoint()) {
-            preferencesRepository.setIsShowAllGraphPoint(isShowAll)
-            networkApplicationSettings.updateChartShowAllPoints()
+            preferencesRepository.setNetworkSetting(NetworkSettingNames.CHART_SHOW_ALL_POINTS, isShowAll.toString(),
+                System.currentTimeMillis() / 1000)
+            networkApplicationSettings.updateNetworkSetting(NetworkSettingNames.CHART_SHOW_ALL_POINTS)
         }
     }
 
@@ -192,8 +204,9 @@ class AppSettingsInteractor(
 
     fun setGraphDrawDots(isDrawDots: Boolean) {
         if (isDrawDots != preferencesRepository.graphDrawDots()) {
-            preferencesRepository.setGraphDrawDots(isDrawDots)
-            networkApplicationSettings.updateChartDrawDots()
+            preferencesRepository.setNetworkSetting(NetworkSettingNames.CHART_DRAW_DOTS, isDrawDots.toString(),
+                System.currentTimeMillis() / 1000)
+            networkApplicationSettings.updateNetworkSetting(NetworkSettingNames.CHART_DRAW_DOTS)
         }
     }
 
@@ -226,8 +239,9 @@ class AppSettingsInteractor(
         preferencesRepository.getPressureUnitLiveData()
 
     fun setPressureUnit(unit: PressureUnit) {
-        preferencesRepository.setPressureUnit(unit)
-        networkApplicationSettings.updatePressureUnit()
+        preferencesRepository.setNetworkSetting(NetworkSettingNames.UNIT_PRESSURE, unit.unitCode,
+            System.currentTimeMillis() / 1000)
+        networkApplicationSettings.updateNetworkSetting(NetworkSettingNames.UNIT_PRESSURE)
     }
 
     fun getPressureAccuracy(): Accuracy =
@@ -237,8 +251,9 @@ class AppSettingsInteractor(
         preferencesRepository.getPressureAccuracyLiveData()
 
     fun setPressureAccuracy(accuracy: Accuracy) {
-        preferencesRepository.setPressureAccuracy(accuracy)
-        networkApplicationSettings.updatePressureAccuracy()
+        preferencesRepository.setNetworkSetting(NetworkSettingNames.ACCURACY_PRESSURE, accuracy.code.toString(),
+            System.currentTimeMillis() / 1000)
+        networkApplicationSettings.updateNetworkSetting(NetworkSettingNames.ACCURACY_PRESSURE)
     }
 
     fun getPmAccuracy(): Accuracy =
@@ -248,8 +263,9 @@ class AppSettingsInteractor(
         preferencesRepository.getPmAccuracyLiveData()
 
     fun setPmAccuracy(accuracy: Accuracy) {
-        preferencesRepository.setPmAccuracy(accuracy)
-        networkApplicationSettings.updatePmAccuracy()
+        preferencesRepository.setNetworkSetting(NetworkSettingNames.ACCURACY_PM, accuracy.code.toString(),
+            System.currentTimeMillis() / 1000)
+        networkApplicationSettings.updateNetworkSetting(NetworkSettingNames.ACCURACY_PM)
     }
 
     fun getAccelerationAccuracy(): Accuracy =
@@ -259,8 +275,9 @@ class AppSettingsInteractor(
         preferencesRepository.getAccelerationAccuracyLiveData()
 
     fun setAccelerationAccuracy(accuracy: Accuracy) {
-        preferencesRepository.setAccelerationAccuracy(accuracy)
-        networkApplicationSettings.updateAccelerationAccuracy()
+        preferencesRepository.setNetworkSetting(NetworkSettingNames.ACCURACY_ACCELERATION, accuracy.code.toString(),
+            System.currentTimeMillis() / 1000)
+        networkApplicationSettings.updateNetworkSetting(NetworkSettingNames.ACCURACY_ACCELERATION)
     }
 
     fun getVoltageAccuracy(): Accuracy =
@@ -270,8 +287,9 @@ class AppSettingsInteractor(
         preferencesRepository.getVoltageAccuracyLiveData()
 
     fun setVoltageAccuracy(accuracy: Accuracy) {
-        preferencesRepository.setVoltageAccuracy(accuracy)
-        networkApplicationSettings.updateVoltageAccuracy()
+        preferencesRepository.setNetworkSetting(NetworkSettingNames.ACCURACY_VOLTAGE, accuracy.code.toString(),
+            System.currentTimeMillis() / 1000)
+        networkApplicationSettings.updateNetworkSetting(NetworkSettingNames.ACCURACY_VOLTAGE)
     }
 
     fun getAllTemperatureUnits(): List<TemperatureUnit> = unitsConverter.getAllTemperatureUnits()
@@ -325,7 +343,7 @@ class AppSettingsInteractor(
 
         val latestMeasurements = sensors.mapNotNull { it.latestMeasurement }
         if (latestMeasurements.isEmpty()) {
-            return ResolutionSettingsTarget.values().toList()
+            return ResolutionSettingsTarget.entries
         }
 
         val targets = mutableListOf<ResolutionSettingsTarget>()
@@ -373,21 +391,24 @@ class AppSettingsInteractor(
     fun isEmailAlerts(): Boolean = !preferencesRepository.isDisableEmailNotifications()
 
     fun setEmailAlerts(enabled: Boolean) {
-        preferencesRepository.setDisableEmailNotifications(!enabled)
-        networkApplicationSettings.updateDisableEmailNotifications()
+        preferencesRepository.setNetworkSetting(NetworkSettingNames.DISABLE_EMAIL_NOTIFICATIONS, (!enabled).toString(),
+            System.currentTimeMillis() / 1000)
+        networkApplicationSettings.updateNetworkSetting(NetworkSettingNames.DISABLE_EMAIL_NOTIFICATIONS)
     }
 
     fun getMarketingPermission(): Boolean = preferencesRepository.getMarketingPermission()
 
     fun setMarketingPermission(enabled: Boolean) {
-        preferencesRepository.setMarketingPermission(enabled)
-        networkApplicationSettings.updateMarketingPermission()
+        preferencesRepository.setNetworkSetting(NetworkSettingNames.MARKETING_PERMISSION, enabled.toString(),
+            System.currentTimeMillis() / 1000)
+        networkApplicationSettings.updateNetworkSetting(NetworkSettingNames.MARKETING_PERMISSION)
     }
 
     fun isPushAlerts(): Boolean = !preferencesRepository.isDisablePushNotifications()
 
     fun setPushAlerts(enabled: Boolean) {
-        preferencesRepository.setDisablePushNotifications(!enabled)
-        networkApplicationSettings.updateDisablePushNotifications()
+        preferencesRepository.setNetworkSetting(NetworkSettingNames.DISABLE_PUSH_NOTIFICATIONS, (!enabled).toString(),
+            System.currentTimeMillis() / 1000)
+        networkApplicationSettings.updateNetworkSetting(NetworkSettingNames.DISABLE_PUSH_NOTIFICATIONS)
     }
 }

@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.map
 import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.database.domain.TagRepository
+import com.ruuvi.station.network.domain.NetworkSettingNames
 import com.ruuvi.station.network.domain.RuuviNetworkInteractor
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.util.BackgroundScanModes
@@ -78,7 +79,7 @@ class SimpleWidgetConfigureViewModel(
     }
 
     fun enableBackgroundService() {
-        preferencesRepository.setBackgroundScanMode(BackgroundScanModes.BACKGROUND)
+        preferencesRepository.setNetworkSetting(NetworkSettingNames.BACKGROUND_SCAN_MODE, BackgroundScanModes.BACKGROUND.value.toString(), System.currentTimeMillis() / 1000)
         _backgroundServiceEnabled.value = preferencesRepository.getBackgroundScanMode() == BackgroundScanModes.BACKGROUND
     }
 
