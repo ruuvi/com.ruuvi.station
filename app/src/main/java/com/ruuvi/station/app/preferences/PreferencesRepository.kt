@@ -471,8 +471,9 @@ class PreferencesRepository(
                 preferences.graphDrawDotsLastUpdated = timestamp
             }
 
-            NetworkSettingNames.SENSOR_ORDER -> {
-                preferences.sortedSensors = value ?: ""
+NetworkSettingNames.SENSOR_ORDER -> {
+                val sensorsOrder = value?.takeIf { it.isNotBlank() } ?: return
+                preferences.sortedSensors = sensorsOrder
                 preferences.sensorsOrderLastUpdated = timestamp
             }
 
