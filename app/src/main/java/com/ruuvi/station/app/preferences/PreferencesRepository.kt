@@ -392,6 +392,9 @@ class PreferencesRepository(
                 val accuracy = value?.toIntOrNull()?.let(Accuracy::getByCode) ?: return
                 preferences.humidityAccuracy = accuracy
                 preferences.humidityAccuracyLastUpdated = timestamp
+                preferences.relativeHumidityAccuracyLastUpdated = timestamp
+                preferences.absoluteHumidityAccuracyLastUpdated = timestamp
+                preferences.dewPointAccuracyLastUpdated = timestamp
             }
 
             NetworkSettingNames.ACCURACY_HUMIDITY_RELATIVE -> {

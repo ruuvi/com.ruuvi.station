@@ -182,7 +182,7 @@ class Preferences (val context: Context) {
     var relativeHumidityAccuracy: Accuracy
         get() = getAccuracy(PREF_ACCURACY_HUMIDITY_RELATIVE, humidityAccuracy)
         set(value) {
-            sharedPreferences.edit().putInt(PREF_ACCURACY_HUMIDITY_RELATIVE, value.code).apply()
+            sharedPreferences.edit { putInt(PREF_ACCURACY_HUMIDITY_RELATIVE, value.code) }
         }
 
     var relativeHumidityAccuracyLastUpdated: Long
@@ -581,7 +581,7 @@ class Preferences (val context: Context) {
         }
 
     var tipsAllowed: Boolean
-        get() = sharedPreferences.getBoolean(PREF_TIPS_ALLOWED, true)
+        get() = sharedPreferences.getBoolean(PREF_TIPS_ALLOWED, false)
         set(value) {
             sharedPreferences.edit { putBoolean(PREF_TIPS_ALLOWED, value) }
         }
@@ -593,7 +593,7 @@ class Preferences (val context: Context) {
         }
 
     var marketingPermission: Boolean
-        get() = sharedPreferences.getBoolean(PREF_MARKETING_PERMISSION, true)
+        get() = sharedPreferences.getBoolean(PREF_MARKETING_PERMISSION, false)
         set(value) {
             sharedPreferences.edit { putBoolean(PREF_MARKETING_PERMISSION, value) }
         }
