@@ -54,7 +54,15 @@ class VisibleMeasurementsViewModel(
                 true
             )
 
-    private val _selected = MutableStateFlow<List<ListOption>>(listOf())
+    private val _selected = MutableStateFlow(
+        _sensorState.value.displayOrder.map { unitType ->
+            ListOption(
+                id = unitType.getCode(),
+                title = getUnitName(unitType),
+                unit = unitType,
+            )
+        }
+    )
     val selected: StateFlow<List<ListOption>> = _selected
 
     val possibleOptions: StateFlow<List<ListOption>> =
@@ -219,8 +227,12 @@ class VisibleMeasurementsViewModel(
 
     private fun onDoneDragging() {
         val displayOrder = _selected.value.map { it.id }
-        saveDisplayOrder(displayOrder)
+        val currentOrder = _sensorState.value.displayOrder.map { it.getCode() }
+        if (displayOrder != currentOrder) {
+            saveDisplayOrder(displayOrder)
+        }
     }
+
 
     private fun saveDisplayOrder(displayOrder: List<String>) {
         interactor.newDisplayOrder(sensorId, Gson().toJson(displayOrder))
