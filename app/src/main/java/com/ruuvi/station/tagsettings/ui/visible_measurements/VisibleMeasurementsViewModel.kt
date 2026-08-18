@@ -7,7 +7,7 @@ import com.ruuvi.station.alarm.domain.AlarmItemState
 import com.ruuvi.station.alarm.domain.AlarmType
 import com.ruuvi.station.alarm.domain.AlarmsInteractor
 import com.ruuvi.station.app.preferences.PreferencesRepository
-import com.ruuvi.station.dashboard.ui.swap
+import com.ruuvi.station.tagsettings.ui.move
 import com.ruuvi.station.database.domain.SensorSettingsRepository
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tag.domain.VisibleMeasurementsOrderInteractor
@@ -54,23 +54,16 @@ class VisibleMeasurementsViewModel(
                 true
             )
 
-    val selected: StateFlow<List<ListOption>> =
-        _sensorState
-            .mapNotNull {
-                it.displayOrder.mapNotNull { unitType ->
-                    Timber.d("selected $unitType")
-                    ListOption(
-                        id = unitType.getCode(),
-                        title = getUnitName(unitType),
-                        unit = unitType,
-                    )
-                }
-            }
-            .stateIn(
-                viewModelScope,
-                SharingStarted.WhileSubscribed(1000),
-                listOf()
+    private val _selected = MutableStateFlow(
+        _sensorState.value.displayOrder.map { unitType ->
+            ListOption(
+                id = unitType.getCode(),
+                title = getUnitName(unitType),
+                unit = unitType,
             )
+        }
+    )
+    val selected: StateFlow<List<ListOption>> = _selected
 
     val possibleOptions: StateFlow<List<ListOption>> =
         _sensorState
@@ -94,6 +87,20 @@ class VisibleMeasurementsViewModel(
     private val _effects = MutableSharedFlow<VisibleMeasurementsEffect>(extraBufferCapacity = 1)
     val effects = _effects.asSharedFlow()
 
+    init {
+        viewModelScope.launch {
+            _sensorState.collect { ruuviTag ->
+                _selected.value = ruuviTag.displayOrder.map { unitType ->
+                    ListOption(
+                        id = unitType.getCode(),
+                        title = getUnitName(unitType),
+                        unit = unitType,
+                    )
+                }
+            }
+        }
+    }
+
     fun onAction(action: VisibleMeasurementsActions) {
         when (action) {
             is VisibleMeasurementsActions.ChangeUseDefault ->
@@ -105,8 +112,11 @@ class VisibleMeasurementsViewModel(
             is VisibleMeasurementsActions.RemoveFromDisplayOrder ->
                 removeFromDisplayOrder(action.unit)
 
-            is VisibleMeasurementsActions.SwapDisplayOrderItems ->
-                swapDisplayOrderItems(action.from, action.to)
+            is VisibleMeasurementsActions.MoveDisplayOrderItem ->
+                moveDisplayOrderItem(action.from, action.to)
+
+            is VisibleMeasurementsActions.OnDoneDragging ->
+                onDoneDragging()
 
             is VisibleMeasurementsActions.RemoveFromDisplayOrderAndDisableAlert -> {
                 disableAlertAndRemove(action.unit)
@@ -124,11 +134,10 @@ class VisibleMeasurementsViewModel(
 
     private fun addToDisplayOrder(unit: UnitType) {
         val displayOrder = selected.value
-            .mapNotNull { it.id }
+            .map { it.id }
             .toMutableList()
         displayOrder.add(unit.getCode())
-        interactor.newDisplayOrder(sensorId, Gson().toJson(displayOrder))
-        _sensorState.update { requireNotNull(interactor.getFavouriteSensorById(sensorId)) }
+        saveDisplayOrder(displayOrder)
     }
 
     private fun removeFromDisplayOrder(unit: UnitType) {
@@ -202,21 +211,31 @@ class VisibleMeasurementsViewModel(
 
     private fun actualDelete(unit: UnitType) {
         val displayOrder = selected.value
-            .mapNotNull { it.id }
+            .map { it.id }
             .toMutableList()
         if (displayOrder.size > 1) {
             displayOrder.remove(unit.getCode())
-            interactor.newDisplayOrder(sensorId, Gson().toJson(displayOrder))
-            _sensorState.update { requireNotNull(interactor.getFavouriteSensorById(sensorId)) }
+            saveDisplayOrder(displayOrder)
         }
     }
 
-    private fun swapDisplayOrderItems(from: Int, to: Int) {
-        val displayOrder = selected.value
-            .mapNotNull { it.id }
-            .toMutableList()
-        val swapped = displayOrder.swap(from, to)
-        interactor.newDisplayOrder(sensorId, Gson().toJson(swapped))
+    private fun moveDisplayOrderItem(from: Int, to: Int) {
+        val currentList = _selected.value.toMutableList()
+        currentList.move(from, to)
+        _selected.value = currentList
+    }
+
+    private fun onDoneDragging() {
+        val displayOrder = _selected.value.map { it.id }
+        val currentOrder = _sensorState.value.displayOrder.map { it.getCode() }
+        if (displayOrder != currentOrder) {
+            saveDisplayOrder(displayOrder)
+        }
+    }
+
+
+    private fun saveDisplayOrder(displayOrder: List<String>) {
+        interactor.newDisplayOrder(sensorId, Gson().toJson(displayOrder))
         _sensorState.update { requireNotNull(interactor.getFavouriteSensorById(sensorId)) }
     }
 

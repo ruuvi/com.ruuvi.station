@@ -75,7 +75,7 @@ class ItemListDragAndDropState(
     private var currentIndexOfDraggedItem by mutableStateOf(-1)
     private var overscrollJob by mutableStateOf<Job?>(null)
 
-    var isDragInProgress: Boolean = false
+    var isDragInProgress by mutableStateOf(false)
 
     // Retrieve the currently dragged element's info
     private val currentElement: LazyListItemInfo?
@@ -102,15 +102,20 @@ class ItemListDragAndDropState(
             ?.also {
                 currentIndexOfDraggedItem = it.index
                 initiallyDraggedElement = it
+                isDragInProgress = true
             }
     }
 
     // Handle interrupted drag gesture
     fun onDragInterrupted() {
+        if (isDragInProgress) {
+            onDoneDragging.invoke()
+        }
         draggedDistance = 0f
         currentIndexOfDraggedItem = -1
         initiallyDraggedElement = null
         overscrollJob?.cancel()
+        isDragInProgress = false
     }
 
 

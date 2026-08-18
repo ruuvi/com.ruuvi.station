@@ -234,7 +234,10 @@ fun VisibleMeasurements(
                 selected = selected,
                 allOptions = allOptions,
                 onMove = { from, to ->
-                    onAction(VisibleMeasurementsActions.SwapDisplayOrderItems(from, to))
+                    onAction(VisibleMeasurementsActions.MoveDisplayOrderItem(from, to))
+                },
+                onDoneDragging = {
+                    onAction(VisibleMeasurementsActions.OnDoneDragging)
                 },
                 onAdd = { listOption ->
                     onAction(VisibleMeasurementsActions.AddToDisplayOrder(listOption.unit))
@@ -253,13 +256,14 @@ fun DragAndDropListEdit(
     selected: List<ListOption>,
     allOptions: List<ListOption>,
     onMove: (Int, Int) -> Unit,
+    onDoneDragging: () -> Unit,
     onAdd: (ListOption) -> Unit,
     onRemove: (ListOption) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val dragDropListState = rememberDragDropListState (
         onMove = onMove,
-        onDoneDragging = { }
+        onDoneDragging = onDoneDragging
     )
 
     val itemHeight = 48.dp * LocalDensity.current.fontScale
