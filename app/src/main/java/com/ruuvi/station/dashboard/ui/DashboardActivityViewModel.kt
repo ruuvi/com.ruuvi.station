@@ -7,10 +7,10 @@ import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.dashboard.DashboardTapAction
 import com.ruuvi.station.dashboard.DashboardType
 import com.ruuvi.station.dashboard.domain.SensorsSortingInteractor
-import com.ruuvi.station.feature.data.FeatureFlag
 import com.ruuvi.station.feature.domain.RuntimeBehavior
 import com.ruuvi.station.network.domain.NetworkApplicationSettings
 import com.ruuvi.station.network.domain.NetworkDataSyncInteractor
+import com.ruuvi.station.network.domain.NetworkSettingNames
 import com.ruuvi.station.network.domain.NetworkSignInInteractor
 import com.ruuvi.station.network.domain.RuuviNetworkInteractor
 import com.ruuvi.station.nfc.domain.NfcResultInteractor
@@ -128,13 +128,13 @@ class DashboardActivityViewModel(
 
     fun changeDashboardType(dashboardType: DashboardType) {
         preferencesRepository.updateDashboardType(dashboardType)
-        networkApplicationSettings.updateDashboardType()
+        networkApplicationSettings.updateNetworkSetting(NetworkSettingNames.DASHBOARD_TYPE)
         _dashBoardType.value = preferencesRepository.getDashboardType()
     }
 
     fun changeDashboardTapAction(dashboardTapAction: DashboardTapAction) {
         preferencesRepository.updateDashboardTapAction(dashboardTapAction)
-        networkApplicationSettings.updateDashboardTapAction()
+        networkApplicationSettings.updateNetworkSetting(NetworkSettingNames.DASHBOARD_TAP_ACTION)
         _dashBoardTapAction.value = preferencesRepository.getDashboardTapAction()
     }
 

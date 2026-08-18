@@ -7,6 +7,7 @@ import com.ruuvi.station.BuildConfig
 import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.dashboard.DashboardTapAction
 import com.ruuvi.station.network.domain.NetworkApplicationSettings
+import com.ruuvi.station.network.domain.NetworkSettingNames
 
 class Version3MigrationInteractor(
     val context: Context,
@@ -31,7 +32,7 @@ class Version3MigrationInteractor(
         if (isVersionSuitable() && !migrationDone) {
             migrationDone = true
             preferencesRepository.updateDashboardTapAction(DashboardTapAction.OPEN_CARD)
-            networkApplicationSettings.updateDashboardTapAction()
+            networkApplicationSettings.updateNetworkSetting(NetworkSettingNames.DASHBOARD_TAP_ACTION)
         }
     }
 
