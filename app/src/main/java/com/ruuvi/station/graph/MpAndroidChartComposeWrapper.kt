@@ -9,14 +9,11 @@ import android.text.format.DateUtils
 import android.view.GestureDetector
 import android.view.HapticFeedbackConstants
 import android.view.MotionEvent
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
@@ -56,9 +53,7 @@ import com.ruuvi.station.R
 import com.ruuvi.station.app.ui.components.limitScaleTo
 import com.ruuvi.station.app.ui.components.scaleUpTo
 import com.ruuvi.station.app.ui.components.scaledToMax
-import com.ruuvi.station.app.ui.theme.Red
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
-import com.ruuvi.station.app.ui.theme.White
 import com.ruuvi.station.app.ui.theme.White50
 import com.ruuvi.station.app.ui.theme.ruuviStationFonts
 import com.ruuvi.station.app.ui.theme.ruuviStationFontsSizes
@@ -77,15 +72,23 @@ import kotlin.math.max
 private typealias RawValueFormatter = (Double) -> String
 
 private fun UnitsConverter.rawValueFormatter(unitType: UnitType): RawValueFormatter {
-    fun defaultFormatter(value: Double): String {
-        return getValueWithoutUnit(value, unitType.defaultAccuracy)
-    }
-
     return when (unitType) {
         is UnitType.TemperatureUnit -> { value -> getTemperatureRawWithoutUnitString(value, null) }
-        is UnitType.HumidityUnit -> { value -> getHumidityRawWithoutUnitString(value, null) }
+        is UnitType.HumidityUnit -> { value -> getHumidityRawWithoutUnitString(value, getHumidityAccuracy(unitType)) }
         is UnitType.PressureUnit -> { value -> getPressureRawWithoutUnitString(value, null) }
-        else -> ::defaultFormatter
+        is UnitType.BatteryVoltageUnit -> { value -> getValueWithoutUnit(value, getVoltageAccuracy()) }
+        is UnitType.Acceleration -> { value -> getValueWithoutUnit(value, getAccelerationAccuracy()) }
+        is UnitType.PM -> { value -> getValueWithoutUnit(value, getPmAccuracy()) }
+        is UnitType.CO2 -> { value -> getValueWithoutUnit(value, unitType.defaultAccuracy) }
+        is UnitType.VOC -> { value -> getValueWithoutUnit(value, unitType.defaultAccuracy) }
+        is UnitType.NOX -> { value -> getValueWithoutUnit(value, unitType.defaultAccuracy) }
+        is UnitType.SignalStrengthUnit -> { value -> getValueWithoutUnit(value, unitType.defaultAccuracy) }
+        is UnitType.AirQuality -> { value -> getValueWithoutUnit(value, unitType.defaultAccuracy) }
+        is UnitType.Luminosity -> { value -> getValueWithoutUnit(value, unitType.defaultAccuracy) }
+        is UnitType.SoundAvg -> { value -> getValueWithoutUnit(value, unitType.defaultAccuracy) }
+        is UnitType.SoundPeak -> { value -> getValueWithoutUnit(value, unitType.defaultAccuracy) }
+        is UnitType.MovementUnit -> { value -> getValueWithoutUnit(value, unitType.defaultAccuracy) }
+        is UnitType.MsnUnit -> { value -> getValueWithoutUnit(value, unitType.defaultAccuracy) }
     }
 }
 
@@ -217,7 +220,9 @@ fun ChartViewPrototype(
                     description = getChartDescription(
                         context,
                         lineChart,
-                        chartData
+                        chartData,
+                        unitsConverter,
+                        unitType
                     )
                 }
                 .padding(horizontal = RuuviStationTheme.dimensions.medium),
@@ -319,7 +324,9 @@ fun ChartViewPrototype(
                     description = getChartDescription(
                         context,
                         view,
-                        chartData
+                        chartData,
+                        unitsConverter,
+                        unitType
                     )
                 }
 
@@ -331,7 +338,9 @@ fun ChartViewPrototype(
 fun getChartDescription(
     context: Context,
     lineChart: LineChart,
-    chartData: MutableList<Entry>
+    chartData: MutableList<Entry>,
+    unitsConverter: UnitsConverter,
+    unitType: UnitType
 ): String {
     val lowestVisibleX = lineChart.lowestVisibleX
     val highestVisibleX = lineChart.highestVisibleX
@@ -360,11 +369,16 @@ fun getChartDescription(
 
     val average = if (timespan != 0f) (totalArea / timespan).toFloat() else visibleEntries.first().y
 
+    val formatter = unitsConverter.rawValueFormatter(unitType)
+    val minFormatted = formatter(min.toDouble())
+    val maxFormatted = formatter(max.toDouble())
+    val averageFormatted = formatter(average.toDouble())
+
     return context.getString(
         R.string.chart_min_max_avg,
-        min,
-        max,
-        average
+        minFormatted,
+        maxFormatted,
+        averageFormatted
     )
 }
 
