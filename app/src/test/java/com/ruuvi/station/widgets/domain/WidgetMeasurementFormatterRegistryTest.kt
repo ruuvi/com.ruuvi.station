@@ -2,7 +2,6 @@ package com.ruuvi.station.widgets.domain
 
 import android.content.Context
 import com.ruuvi.station.R
-import com.ruuvi.station.units.domain.AccelerationConverter
 import com.ruuvi.station.units.domain.UnitsConverter
 import com.ruuvi.station.units.model.Accuracy
 import com.ruuvi.station.units.model.EnvironmentValue
@@ -26,14 +25,12 @@ import org.mockito.kotlin.whenever
 class WidgetMeasurementFormatterRegistryTest {
     private lateinit var context: Context
     private lateinit var unitsConverter: UnitsConverter
-    private lateinit var accelerationConverter: AccelerationConverter
     private lateinit var registry: WidgetMeasurementFormatterRegistry
 
     @Before
     fun setUp() {
         context = mock()
         unitsConverter = mock()
-        accelerationConverter = mock()
         whenever(context.getString(any<Int>())).thenAnswer {
             val resourceId = it.getArgument<Int>(0)
             if (resourceId == R.string.empty) "" else "unit-$resourceId"
@@ -65,7 +62,6 @@ class WidgetMeasurementFormatterRegistryTest {
         registry = WidgetMeasurementFormatterRegistry(
             context = context,
             unitsConverter = unitsConverter,
-            accelerationConverter = accelerationConverter,
         )
     }
 
@@ -491,14 +487,14 @@ class WidgetMeasurementFormatterRegistryTest {
             unitsConverter.getSignalEnvironmentValue(-60)
         ).thenReturn(environmentValue(" signal ", -60.0, UnitType.SignalStrengthUnit.SignalDbm))
         whenever(
-            accelerationConverter.getAccelerationStringWithoutUnit(0.1)
-        ).thenReturn(" acceleration-x ")
+            unitsConverter.getAccelerationValue(0.1, UnitType.Acceleration.GForceX)
+        ).thenReturn(environmentValue(" acceleration-x ", 0.1, UnitType.Acceleration.GForceX))
         whenever(
-            accelerationConverter.getAccelerationStringWithoutUnit(0.2)
-        ).thenReturn(" acceleration-y ")
+            unitsConverter.getAccelerationValue(0.2, UnitType.Acceleration.GForceY)
+        ).thenReturn(environmentValue(" acceleration-y ", 0.2, UnitType.Acceleration.GForceY))
         whenever(
-            accelerationConverter.getAccelerationStringWithoutUnit(0.3)
-        ).thenReturn(" acceleration-z ")
+            unitsConverter.getAccelerationValue(0.3, UnitType.Acceleration.GForceZ)
+        ).thenReturn(environmentValue(" acceleration-z ", 0.3, UnitType.Acceleration.GForceZ))
         whenever(
             unitsConverter.getSoundEnvironmentValue(40.0, UnitType.SoundAvg.SoundDba)
         ).thenReturn(environmentValue(" sound-average ", 40.0, UnitType.SoundAvg.SoundDba))

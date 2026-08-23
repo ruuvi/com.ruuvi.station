@@ -34,7 +34,7 @@ object WidgetInjectionModule {
         }
 
         bind<WidgetMeasurementFormatterRegistry>() with singleton {
-            WidgetMeasurementFormatterRegistry(instance(), instance(), instance())
+            WidgetMeasurementFormatterRegistry(instance(), instance())
         }
 
         bind<WidgetTimestampFormatter>() with singleton {
