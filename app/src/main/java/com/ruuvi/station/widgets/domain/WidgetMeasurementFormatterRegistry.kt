@@ -1,7 +1,6 @@
 package com.ruuvi.station.widgets.domain
 
 import android.content.Context
-import com.ruuvi.station.units.domain.AccelerationConverter
 import com.ruuvi.station.units.domain.HumidityConverter
 import com.ruuvi.station.units.domain.TemperatureConverter
 import com.ruuvi.station.units.domain.UnitsConverter
@@ -22,7 +21,6 @@ private typealias WidgetValueFormatter = (WidgetSensorSnapshot) -> String
 internal class WidgetMeasurementFormatterRegistry(
     private val context: Context,
     private val unitsConverter: UnitsConverter,
-    private val accelerationConverter: AccelerationConverter,
 ) {
     private val valueFormatters: Map<WidgetType, WidgetValueFormatter> = linkedMapOf(
         WidgetType.TEMPERATURE to temperatureFormatter(UnitType.TemperatureUnit.Celsius),
@@ -38,12 +36,15 @@ internal class WidgetMeasurementFormatterRegistry(
             format = { unitsConverter.getSignalEnvironmentValue(it).valueWithoutUnit },
         ),
         WidgetType.ACCELERATION_X to accelerationFormatter(
+            unit = UnitType.Acceleration.GForceX,
             value = { it.accelerationXG },
         ),
         WidgetType.ACCELERATION_Y to accelerationFormatter(
+            unit = UnitType.Acceleration.GForceY,
             value = { it.accelerationYG },
         ),
         WidgetType.ACCELERATION_Z to accelerationFormatter(
+            unit = UnitType.Acceleration.GForceZ,
             value = { it.accelerationZG },
         ),
         WidgetType.SOUND_AVERAGE to soundFormatter(
@@ -178,9 +179,10 @@ internal class WidgetMeasurementFormatterRegistry(
     }
 
     private fun accelerationFormatter(
+        unit: UnitType.Acceleration,
         value: (WidgetSensorSnapshot) -> Double?,
     ): WidgetValueFormatter = finiteValueFormatter(value) {
-        accelerationConverter.getAccelerationStringWithoutUnit(it)
+        unitsConverter.getAccelerationValue(it, unit).valueWithoutUnit
     }
 
     private fun soundFormatter(
