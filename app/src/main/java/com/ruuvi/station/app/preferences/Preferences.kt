@@ -502,6 +502,34 @@ class Preferences (val context: Context) {
             }
         }
 
+    var subscriptionMaxSharesTotal: Int
+        get() = sharedPreferences.getInt(
+            PREF_SUBSCRIPTION_MAX_SHARES_TOTAL,
+            DEFAULT_MAX_SHARES_TOTAL
+        )
+        set(maxShares) {
+            sharedPreferences.edit {
+                putInt(
+                    PREF_SUBSCRIPTION_MAX_SHARES_TOTAL,
+                    maxShares
+                )
+            }
+        }
+
+    var subscriptionUsedSharesTotal: Int
+        get() = sharedPreferences.getInt(
+            PREF_SUBSCRIPTION_USED_SHARES_TOTAL,
+            0
+        )
+        set(usedShares) {
+            sharedPreferences.edit {
+                putInt(
+                    PREF_SUBSCRIPTION_USED_SHARES_TOTAL,
+                    usedShares
+                )
+            }
+        }
+
     var dontShowGattSync: Boolean
         get() = sharedPreferences.getBoolean(PREF_DONT_SHOW_GATT_SYNC, false)
         set(value) {
@@ -762,6 +790,8 @@ class Preferences (val context: Context) {
         private const val PREF_DEVICE_TOKEN_REFRESH_DATE = "pref_device_token_refresh_date"
         private const val PREF_SUBSCRIPTION_REFRESH_DATE = "pref_subscription_refresh_date"
         private const val PREF_SUBSCRIPTION_MAX_SHARES_PER_SENSOR = "pref_subscription_maxSharesPerSensor"
+        private const val PREF_SUBSCRIPTION_MAX_SHARES_TOTAL = "pref_subscription_maxSharesTotal"
+        private const val PREF_SUBSCRIPTION_USED_SHARES_TOTAL = "pref_subscription_usedSharesTotal"
         private const val PREF_DONT_SHOW_GATT_SYNC = "pref_dont_show_gatt_sync"
         private const val PREF_NEW_CHARTS_UI = "pref_new_charts_ui"
         private const val PREF_USE_DEVSERVER = "pref_use_devserver"
@@ -797,6 +827,7 @@ class Preferences (val context: Context) {
         private const val DEFAULT_GRAPH_SHOW_ALL_POINTS = false
         private const val DEFAULT_GRAPH_DRAW_DOTS = false
         private const val DEFAULT_MAX_SHARES_PER_SENSOR = 10
+        private const val DEFAULT_MAX_SHARES_TOTAL = 100
         private const val DEFAULT_REQUEST_FOR_REVIEW_DATE = 0L
         private const val DEFAULT_REQUEST_FOR_APP_UPDATE_DATE = 0L
         private const val DEFAULT_DARKMODE = AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM

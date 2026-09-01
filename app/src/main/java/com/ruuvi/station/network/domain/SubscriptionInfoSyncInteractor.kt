@@ -31,6 +31,7 @@ class SubscriptionInfoSyncInteractor (
 
                         if (subscription != null) {
                             preferencesRepository.setSubscriptionMaxSharesPerSensor(subscription.maxSharesPerSensor)
+                            preferencesRepository.setSubscriptionMaxSharesTotal(subscription.maxShares)
                         }
                     }
                 }

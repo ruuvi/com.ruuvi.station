@@ -34,11 +34,18 @@ class ShareSensorViewModel (
     private val emails = MutableLiveData<List<String>>()
     val emailsObserve: LiveData<List<String>> = emails
 
+    private val pendingEmails = MutableLiveData<List<String>>()
+    val pendingEmailsObserve: LiveData<List<String>> = pendingEmails
+
     private val canShare = MutableLiveData<Boolean> (false)
     val canShareObserve: LiveData<Boolean> = canShare
 
     private val _uiEvent = MutableSharedFlow<UiEvent> ()
     val uiEvent: SharedFlow<UiEvent> = _uiEvent
+
+    val maxSharesPerSensor: MutableLiveData<Int> = MutableLiveData(preferencesRepository.getSubscriptionMaxSharesPerSensor())
+    val maxSharesTotal: MutableLiveData<Int> = MutableLiveData(preferencesRepository.getSubscriptionMaxSharesTotal())
+    val usedSharesTotal: MutableLiveData<Int> = MutableLiveData(preferencesRepository.getSubscriptionUsedSharesTotal())
 
     val useWebShare: LiveData<Boolean> = MutableLiveData<Boolean> (preferencesRepository.getUseWebShare())
 
@@ -92,7 +99,12 @@ class ShareSensorViewModel (
         return "https://station.ruuvi.com/shares?sensor=$sensorId&minimalMode=true"
     }
     private fun setEmailsFromRepository() {
-        emails.value = sensorShareListRepository.getShareListForSensor(sensorId).map { it.userEmail }
+        val shareList = sensorShareListRepository.getShareListForSensor(sensorId)
+        emails.value = shareList.filter { !it.pending }.map { it.userEmail }
+        pendingEmails.value = shareList.filter { it.pending }.map { it.userEmail }
+        maxSharesPerSensor.value = preferencesRepository.getSubscriptionMaxSharesPerSensor()
+        maxSharesTotal.value = preferencesRepository.getSubscriptionMaxSharesTotal()
+        usedSharesTotal.value = preferencesRepository.getSubscriptionUsedSharesTotal()
     }
 
     fun shareTag(email: String) {
@@ -106,11 +118,15 @@ class ShareSensorViewModel (
                     CoroutineScope(Dispatchers.Main).launch{
                         _uiEvent.emit(UiEvent.ShowSnackbar(UiText.StringResource(R.string.share_pending_message)))
                     }
+                    sensorShareListRepository.insertToShareList(sensorId, email, true)
+                    preferencesRepository.incrementUsedShares()
+                    setEmailsFromRepository()
                 } else {
                     CoroutineScope(Dispatchers.Main).launch{
                         _uiEvent.emit(UiEvent.ShowSnackbar(UiText.StringResource(R.string.successfully_shared)))
                     }
-                    sensorShareListRepository.insertToShareList(sensorId, email)
+                    sensorShareListRepository.insertToShareList(sensorId, email, false)
+                    preferencesRepository.incrementUsedShares()
                     setEmailsFromRepository()
                 }
             }
@@ -125,6 +141,7 @@ class ShareSensorViewModel (
                 }
             } else {
                 sensorShareListRepository.deleteFromShareList(sensorId, email)
+                preferencesRepository.decrementUsedShares()
                 setEmailsFromRepository()
             }
         }

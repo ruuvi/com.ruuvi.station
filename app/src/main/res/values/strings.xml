@@ -870,4 +870,8 @@
     <string name="notes">Notes</string>
     <string name="communication_channels">Communication channels</string>
     <string name="communication_channels_description">I may be sent tips and other useful information regarding Ruuvi products.</string>
+    <string name="share_active_access_section_title">Users with active access to this sensor:</string>
+    <string name="share_active_access_empty_value">Not shared to anyone yet</string>
+    <string name="share_sensor_shared_to_count_message">Used shares for this sensor: %1$,d/%2$,d\n\nTotal used shares for your account: %3$,d/%4$,d</string>
+    <string name="share_pending_section_title">The following users have been invited and the sensor has been shared with them, but access is still pending as they have not yet created a free Ruuvi account. Invitations have been sent, and access will be granted once their accounts are set up:</string>
 </resources>

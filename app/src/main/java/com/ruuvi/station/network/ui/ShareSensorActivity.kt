@@ -66,7 +66,6 @@ import com.ruuvi.station.app.ui.components.SubtitleWithPadding
 import com.ruuvi.station.app.ui.components.TextFieldRuuvi
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.RuuviTheme
-import com.ruuvi.station.settings.ui.DeveloperSettingsViewModel
 import com.ruuvi.station.util.extensions.viewModel
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
@@ -78,9 +77,7 @@ class ShareSensorActivity : AppCompatActivity() , KodeinAware {
     override val kodein: Kodein by closestKodein()
 
     private val viewModel: ShareSensorViewModel by viewModel {
-        intent.getStringExtra(TAG_ID)?.let {
-            it
-        }
+        intent.getStringExtra(TAG_ID).orEmpty()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -110,10 +107,19 @@ class ShareSensorActivity : AppCompatActivity() , KodeinAware {
                             SharingWebView(scaffoldState, token, url)
                         }
                     } else {
+                        val pendingEmails by viewModel.pendingEmailsObserve.observeAsState(emptyList())
+                        val usedSharesTotal by viewModel.usedSharesTotal.observeAsState(0)
+                        val maxSharesTotal by viewModel.maxSharesTotal.observeAsState(100)
+                        val maxSharesPerSensor by viewModel.maxSharesPerSensor.observeAsState(10)
+
                         ShareBody(
                             scaffoldState = scaffoldState,
                             canShare = canShare,
                             emails = emails,
+                            pendingEmails = pendingEmails,
+                            usedSharesTotal = usedSharesTotal,
+                            maxSharesTotal = maxSharesTotal,
+                            maxSharesPerSensor = maxSharesPerSensor,
                             shareToUser = viewModel::shareTag,
                             unshare = viewModel::unshareTag
                         )
@@ -155,6 +161,10 @@ fun ShareBody(
     scaffoldState: ScaffoldState,
     canShare: Boolean,
     emails: List<String>,
+    pendingEmails: List<String>,
+    usedSharesTotal: Int,
+    maxSharesTotal: Int,
+    maxSharesPerSensor: Int,
     shareToUser: (String) -> Unit,
     unshare: (String) -> Unit
 ) {
@@ -171,6 +181,7 @@ fun ShareBody(
     ) { paddingValues ->
         LazyColumn(
             modifier = Modifier
+                .padding(paddingValues)
                 .padding(RuuviStationTheme.dimensions.screenPadding)
         ) {
             if (canShare) {
@@ -178,22 +189,47 @@ fun ShareBody(
                     AddFriend(shareToUser = shareToUser)
                 }
             }
-            if (emails.size > 0) {
-                item {
-                    SubtitleWithPadding(
-                        text = stringResource(
-                            id = R.string.share_sensor_already_shared,
-                            emails.size,
-                            10
-                        )
+
+            item {
+                Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.big))
+                SubtitleWithPadding(
+                    text = stringResource(
+                        id = R.string.share_sensor_shared_to_count_message,
+                        emails.size + pendingEmails.size,
+                        maxSharesPerSensor,
+                        usedSharesTotal,
+                        maxSharesTotal
                     )
+                )
+            }
+
+            item {
+                Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extraBig))
+                SubtitleWithPadding(text = stringResource(id = R.string.share_active_access_section_title))
+            }
+
+            if (emails.isEmpty()) {
+                item {
+                    ParagraphWithPadding(text = stringResource(id = R.string.share_active_access_empty_value))
                 }
+            } else {
                 items(emails) { email ->
                     SharedEmailItem(email = email, unshare = unshare)
                 }
             }
 
+            if (pendingEmails.isNotEmpty()) {
+                item {
+                    Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extraBig))
+                    SubtitleWithPadding(text = stringResource(id = R.string.share_pending_section_title))
+                }
+                items(pendingEmails) { email ->
+                    SharedEmailItem(email = email, unshare = unshare)
+                }
+            }
+
             item {
+                Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extraBig))
                 ParagraphWithPadding(text = stringResource(id = R.string.share_sensor_description))
             }
         }
@@ -218,7 +254,7 @@ fun AddFriend(
     }
     TextFieldRuuvi(
         value = email,
-        hint = stringResource(id = R.string.email),
+        hint = stringResource(id = R.string.type_your_email),
         onValueChange = {
             if (it.text.length <= 64) email = it
         },

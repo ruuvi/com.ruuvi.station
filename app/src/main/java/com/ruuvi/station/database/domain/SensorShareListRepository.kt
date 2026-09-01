@@ -4,6 +4,8 @@ import com.raizlabs.android.dbflow.kotlinextensions.and
 import com.raizlabs.android.dbflow.sql.language.SQLite
 import com.ruuvi.station.database.tables.SensorsShareList
 import com.ruuvi.station.database.tables.SensorsShareList_Table
+import timber.log.Timber
+import java.util.Locale
 
 class SensorShareListRepository {
     fun getShareListForSensor(sensorId: String): List<SensorsShareList> =
@@ -17,40 +19,57 @@ class SensorShareListRepository {
             .delete()
             .from(SensorsShareList::class.java)
             .where(SensorsShareList_Table.sensorId.eq(sensorId))
-            .async()
             .execute()
     }
 
     fun deleteFromShareList(sensorId: String, userEmail: String) {
+        val normalizedEmail = userEmail.trim().lowercase(Locale.ROOT)
         SQLite
             .delete()
             .from(SensorsShareList::class.java)
-            .where(SensorsShareList_Table.sensorId.eq(sensorId).and(SensorsShareList_Table.userEmail.eq(userEmail)))
+            .where(SensorsShareList_Table.sensorId.eq(sensorId).and(SensorsShareList_Table.userEmail.eq(normalizedEmail)))
             .execute()
     }
 
-    fun insertToShareList(sensorId: String, userEmail: String) {
-        if (sensorId.isNotEmpty() && userEmail.isNotEmpty()) {
-            val newElement = SensorsShareList(sensorId, userEmail.lowercase())
-            newElement.insert()
+    fun insertToShareList(sensorId: String, userEmail: String, pending: Boolean = false) {
+        val normalizedSensorId = sensorId.trim()
+        val normalizedEmail = userEmail.trim().lowercase(Locale.ROOT)
+        Timber.d("insertToShareList $normalizedSensorId $normalizedEmail $pending")
+
+        if (normalizedSensorId.isNotEmpty() && normalizedEmail.isNotEmpty()) {
+            val newElement = SensorsShareList(normalizedSensorId, normalizedEmail, pending)
+            val result = newElement.save()
+            Timber.d("insertToShareList saved $result")
         }
     }
 
-    fun updateSharingList(sensorId: String, sharedTo: List<String>) {
-        if (sharedTo.isEmpty()) {
-            clearShareList(sensorId)
-        } else {
-            val savedList = getShareListForSensor(sensorId)
-            for (element in savedList) {
-                if (sharedTo.none { it == element.userEmail }) {
-                    deleteFromShareList(sensorId, element.userEmail)
-                }
-            }
+    fun updateSharingList(sensorId: String, sharedTo: List<String>, sharedToPending: List<String>) {
+        val savedList = getShareListForSensor(sensorId)
+        val allNetworkEmails = (sharedTo + sharedToPending).map { it.lowercase() }
 
-            for (userEmail in sharedTo) {
-                if (savedList.none { it.userEmail == userEmail }) {
-                    insertToShareList(sensorId, userEmail)
-                }
+        for (element in savedList) {
+            if (allNetworkEmails.none { it == element.userEmail }) {
+                deleteFromShareList(sensorId, element.userEmail)
+            }
+        }
+
+        for (userEmail in sharedTo) {
+            val savedElement = savedList.firstOrNull { it.userEmail == userEmail.lowercase() }
+            if (savedElement == null) {
+                insertToShareList(sensorId, userEmail, false)
+            } else if (savedElement.pending) {
+                savedElement.pending = false
+                savedElement.update()
+            }
+        }
+
+        for (userEmail in sharedToPending) {
+            val savedElement = savedList.firstOrNull { it.userEmail == userEmail.lowercase() }
+            if (savedElement == null) {
+                insertToShareList(sensorId, userEmail, true)
+            } else if (!savedElement.pending) {
+                savedElement.pending = true
+                savedElement.update()
             }
         }
     }

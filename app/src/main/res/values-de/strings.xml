@@ -882,4 +882,8 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="notes">Notizen</string>
     <string name="communication_channels">Kommunikationskanäle</string>
     <string name="communication_channels_description">Mir können Tipps und andere nützliche Informationen zu Ruuvi-Produkten zugesendet werden.</string>
+    <string name="share_active_access_section_title">Benutzer mit aktivem Zugriff auf diesen Sensor:</string>
+    <string name="share_active_access_empty_value">Noch mit niemandem geteilt</string>
+    <string name="share_sensor_shared_to_count_message">Verwendete Freigaben für diesen Sensor: %1$,d/%2$,d\n\nInsgesamt verwendete Freigaben für Ihr Konto: %3$,d/%4$,d</string>
+    <string name="share_pending_section_title">Die folgenden Benutzer wurden eingeladen und der Sensor wurde mit ihnen geteilt, aber der Zugriff steht noch aus, da sie noch kein kostenloses Ruuvi-Konto erstellt haben. Einladungen wurden versendet und der Zugriff wird gewährt, sobald ihre Konten eingerichtet sind:</string>
 </resources>

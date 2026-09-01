@@ -286,6 +286,28 @@ class PreferencesRepository(
         preferences.subscriptionMaxSharesPerSensor = maxShares
     }
 
+    fun getSubscriptionMaxSharesTotal(): Int =
+        preferences.subscriptionMaxSharesTotal
+
+    fun setSubscriptionMaxSharesTotal(maxShares: Int) {
+        preferences.subscriptionMaxSharesTotal = maxShares
+    }
+
+    fun getSubscriptionUsedSharesTotal(): Int =
+        preferences.subscriptionUsedSharesTotal
+
+    fun setSubscriptionUsedSharesTotal(usedShares: Int) {
+        preferences.subscriptionUsedSharesTotal = usedShares
+    }
+
+    fun incrementUsedShares() {
+        preferences.subscriptionUsedSharesTotal += 1
+    }
+
+    fun decrementUsedShares() {
+        preferences.subscriptionUsedSharesTotal -= 1
+    }
+
     fun getDontShowGattSync(): Boolean =
         preferences.dontShowGattSync
 
