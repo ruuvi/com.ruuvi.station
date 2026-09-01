@@ -96,17 +96,21 @@ fun TextEditWithCaptionButton(
     ) {
         Text(
             modifier = Modifier
+                .weight(1f)
                 .padding(horizontal = RuuviStationTheme.dimensions.screenPadding),
             style = RuuviStationTheme.typography.subtitle,
             textAlign = TextAlign.Start,
+            maxLines = 2,
             text = title)
+
         Text(
             modifier = Modifier
-                .weight(1f)
                 .padding(horizontal = RuuviStationTheme.dimensions.screenPadding),
             style = RuuviStationTheme.typography.paragraph,
             textAlign = TextAlign.End,
+            maxLines = 1,
             text = value ?: "")
+
         if (icon != null) {
             Icon(
                 modifier = Modifier.padding(horizontal = RuuviStationTheme.dimensions.screenPadding),
@@ -131,16 +135,21 @@ fun TextWithCaption(
     ) {
         Text(
             modifier = Modifier
+                .weight(1f)
                 .padding(horizontal = RuuviStationTheme.dimensions.screenPadding),
             style = RuuviStationTheme.typography.subtitle,
             textAlign = TextAlign.Start,
+            maxLines = 2,
             text = title)
-        Text(
-            modifier = Modifier
-                .weight(1f)
-                .padding(horizontal = RuuviStationTheme.dimensions.screenPadding),
-            style = RuuviStationTheme.typography.paragraph,
-            textAlign = TextAlign.End,
-            text = value ?: "")
+        if (!value.isNullOrEmpty()) {
+            Text(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(horizontal = RuuviStationTheme.dimensions.screenPadding),
+                style = RuuviStationTheme.typography.paragraph,
+                textAlign = TextAlign.End,
+                maxLines = 2,
+                text = value)
+        }
     }
 }
