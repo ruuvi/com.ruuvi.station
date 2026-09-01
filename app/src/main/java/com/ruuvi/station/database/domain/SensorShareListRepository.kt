@@ -34,12 +34,10 @@ class SensorShareListRepository {
     fun insertToShareList(sensorId: String, userEmail: String, pending: Boolean = false) {
         val normalizedSensorId = sensorId.trim()
         val normalizedEmail = userEmail.trim().lowercase(Locale.ROOT)
-        Timber.d("insertToShareList $normalizedSensorId $normalizedEmail $pending")
 
         if (normalizedSensorId.isNotEmpty() && normalizedEmail.isNotEmpty()) {
             val newElement = SensorsShareList(normalizedSensorId, normalizedEmail, pending)
-            val result = newElement.save()
-            Timber.d("insertToShareList saved $result")
+            newElement.save()
         }
     }
 
