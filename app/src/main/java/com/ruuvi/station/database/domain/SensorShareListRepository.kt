@@ -43,7 +43,7 @@ class SensorShareListRepository {
 
     fun updateSharingList(sensorId: String, sharedTo: List<String>, sharedToPending: List<String>) {
         val savedList = getShareListForSensor(sensorId)
-        val allNetworkEmails = (sharedTo + sharedToPending).map { it.lowercase() }
+        val allNetworkEmails = (sharedTo + sharedToPending).map { it.trim().lowercase(Locale.ROOT) }
 
         for (element in savedList) {
             if (allNetworkEmails.none { it == element.userEmail }) {
@@ -52,7 +52,7 @@ class SensorShareListRepository {
         }
 
         for (userEmail in sharedTo) {
-            val savedElement = savedList.firstOrNull { it.userEmail == userEmail.lowercase() }
+            val savedElement = savedList.firstOrNull { it.userEmail == userEmail.trim().lowercase(Locale.ROOT) }
             if (savedElement == null) {
                 insertToShareList(sensorId, userEmail, false)
             } else if (savedElement.pending) {
@@ -62,7 +62,7 @@ class SensorShareListRepository {
         }
 
         for (userEmail in sharedToPending) {
-            val savedElement = savedList.firstOrNull { it.userEmail == userEmail.lowercase() }
+            val savedElement = savedList.firstOrNull { it.userEmail == userEmail.trim().lowercase(Locale.ROOT) }
             if (savedElement == null) {
                 insertToShareList(sensorId, userEmail, true)
             } else if (!savedElement.pending) {
