@@ -9,7 +9,7 @@ import com.ruuvi.station.units.model.UnitType
 
 enum class WidgetType(val code: Int, val titleResId: Int, val unitType: UnitType) {
     TEMPERATURE(1, R.string.temperature, UnitType.TemperatureUnit.Celsius),
-    HUMIDITY(2, R.string.humidity, UnitType.HumidityUnit.Relative),
+    HUMIDITY(2, R.string.rel_humidity, UnitType.HumidityUnit.Relative),
     PRESSURE(3, R.string.air_pressure, UnitType.PressureUnit.HectoPascal),
     MOVEMENT(4, R.string.movement_counter, UnitType.MovementUnit.MovementsCount),
     VOLTAGE(5, R.string.battery_voltage, UnitType.BatteryVoltageUnit.Volt),
