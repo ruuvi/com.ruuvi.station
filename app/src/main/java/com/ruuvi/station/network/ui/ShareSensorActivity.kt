@@ -82,7 +82,13 @@ class ShareSensorActivity : AppCompatActivity() , KodeinAware {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        
+
+        val sensorId = intent.getStringExtra(TAG_ID)
+        if (sensorId.isNullOrEmpty()) {
+            finish()
+            return
+        }
+
         WindowCompat.setDecorFitsSystemWindows(window, true)
 
         setContent {
