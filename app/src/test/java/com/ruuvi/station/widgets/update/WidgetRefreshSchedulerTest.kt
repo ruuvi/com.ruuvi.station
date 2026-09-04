@@ -76,17 +76,23 @@ class WidgetRefreshSchedulerTest {
     @Test
     fun `all and widget-specific targets round trip through worker data`() {
         WidgetRefreshType.entries.forEach { refreshType ->
-            val refreshAll = WidgetRefreshTarget(refreshType)
-            val refreshOne = WidgetRefreshTarget(refreshType, appWidgetId = 42)
+            WidgetRefreshTrigger.entries.forEach { refreshTrigger ->
+                val refreshAll = WidgetRefreshTarget(refreshType, refreshTrigger = refreshTrigger)
+                val refreshOne = WidgetRefreshTarget(
+                    refreshType = refreshType,
+                    appWidgetId = 42,
+                    refreshTrigger = refreshTrigger,
+                )
 
-            assertEquals(
-                refreshAll,
-                WidgetRefreshTarget.fromInputData(refreshAll.toInputData()),
-            )
-            assertEquals(
-                refreshOne,
-                WidgetRefreshTarget.fromInputData(refreshOne.toInputData()),
-            )
+                assertEquals(
+                    refreshAll,
+                    WidgetRefreshTarget.fromInputData(refreshAll.toInputData()),
+                )
+                assertEquals(
+                    refreshOne,
+                    WidgetRefreshTarget.fromInputData(refreshOne.toInputData()),
+                )
+            }
         }
     }
 
@@ -131,6 +137,33 @@ class WidgetRefreshSchedulerTest {
                     WidgetRefreshScheduler.APP_WIDGET_ID_KEY to 0,
                 ),
             ),
+        )
+        assertNull(
+            WidgetRefreshTarget.fromInputData(
+                workDataOf(
+                    WidgetRefreshScheduler.WIDGET_REFRESH_TYPE_KEY to "simple",
+                    WidgetRefreshScheduler.WIDGET_REFRESH_SCOPE_KEY to "all",
+                    WidgetRefreshScheduler.WIDGET_REFRESH_TRIGGER_KEY to "invalid",
+                ),
+            ),
+        )
+    }
+
+    @Test
+    fun `missing worker trigger defaults to automatic`() {
+        val target = WidgetRefreshTarget.fromInputData(
+            workDataOf(
+                WidgetRefreshScheduler.WIDGET_REFRESH_TYPE_KEY to "simple",
+                WidgetRefreshScheduler.WIDGET_REFRESH_SCOPE_KEY to "all",
+            ),
+        )
+
+        assertEquals(
+            WidgetRefreshTarget(
+                refreshType = WidgetRefreshType.SIMPLE,
+                refreshTrigger = WidgetRefreshTrigger.AUTOMATIC,
+            ),
+            target,
         )
     }
 

@@ -36,12 +36,14 @@ class WidgetRefreshWorker(
             // Initial update with existing database data
             updateWidgets(widgetUpdater, target.refreshType, appWidgetIds)
 
-            // Bluetooth scan for fresh data
-            try {
-                bluetoothInteractor.startScan(true)
-                delay(SCAN_DURATION_MS)
-            } finally {
-                bluetoothInteractor.stopScanningFromBackground()
+            if (target.refreshTrigger == WidgetRefreshTrigger.MANUAL) {
+                // Bluetooth scan for fresh data
+                try {
+                    bluetoothInteractor.startScan(true)
+                    delay(SCAN_DURATION_MS)
+                } finally {
+                    bluetoothInteractor.stopScanningFromBackground()
+                }
             }
 
             // Final update with potentially new data
