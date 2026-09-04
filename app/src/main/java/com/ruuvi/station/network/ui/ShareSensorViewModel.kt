@@ -119,14 +119,12 @@ class ShareSensorViewModel (
                         _uiEvent.emit(UiEvent.ShowSnackbar(UiText.StringResource(R.string.share_pending_message)))
                     }
                     sensorShareListRepository.insertToShareList(sensorId, email, true)
-                    preferencesRepository.incrementUsedShares()
                     setEmailsFromRepository()
                 } else {
                     CoroutineScope(Dispatchers.Main).launch{
                         _uiEvent.emit(UiEvent.ShowSnackbar(UiText.StringResource(R.string.successfully_shared)))
                     }
                     sensorShareListRepository.insertToShareList(sensorId, email, false)
-                    preferencesRepository.incrementUsedShares()
                     setEmailsFromRepository()
                 }
             }
@@ -141,7 +139,6 @@ class ShareSensorViewModel (
                 }
             } else {
                 sensorShareListRepository.deleteFromShareList(sensorId, email)
-                preferencesRepository.decrementUsedShares()
                 setEmailsFromRepository()
             }
         }

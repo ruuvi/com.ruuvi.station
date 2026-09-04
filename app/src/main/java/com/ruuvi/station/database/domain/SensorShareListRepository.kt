@@ -8,6 +8,12 @@ import timber.log.Timber
 import java.util.Locale
 
 class SensorShareListRepository {
+    fun getUsedSharesTotal(): Int =
+        SQLite.selectCountOf()
+            .from(SensorsShareList::class.java)
+            .longValue()
+            .toInt()
+
     fun getShareListForSensor(sensorId: String): List<SensorsShareList> =
         SQLite.select()
             .from(SensorsShareList::class.java)

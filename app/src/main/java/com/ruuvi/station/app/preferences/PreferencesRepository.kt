@@ -3,6 +3,7 @@ package com.ruuvi.station.app.preferences
 import androidx.lifecycle.map
 import com.ruuvi.station.BuildConfig
 import com.ruuvi.station.app.ui.DarkModeState
+import com.ruuvi.station.database.domain.SensorShareListRepository
 import com.ruuvi.station.dashboard.DashboardTapAction
 import com.ruuvi.station.dashboard.DashboardType
 import com.ruuvi.station.network.domain.NetworkSettingNames
@@ -14,7 +15,8 @@ import com.ruuvi.station.util.extensions.toBooleanExtra
 import java.util.*
 
 class PreferencesRepository(
-    private val preferences: Preferences
+    private val preferences: Preferences,
+    private val sensorShareListRepository: SensorShareListRepository = SensorShareListRepository(),
     ) {
     fun getTemperatureUnit(): TemperatureUnit =
         preferences.temperatureUnit
@@ -294,19 +296,7 @@ class PreferencesRepository(
     }
 
     fun getSubscriptionUsedSharesTotal(): Int =
-        preferences.subscriptionUsedSharesTotal
-
-    fun setSubscriptionUsedSharesTotal(usedShares: Int) {
-        preferences.subscriptionUsedSharesTotal = usedShares
-    }
-
-    fun incrementUsedShares() {
-        preferences.subscriptionUsedSharesTotal += 1
-    }
-
-    fun decrementUsedShares() {
-        preferences.subscriptionUsedSharesTotal -= 1
-    }
+        sensorShareListRepository.getUsedSharesTotal()
 
     fun getDontShowGattSync(): Boolean =
         preferences.dontShowGattSync

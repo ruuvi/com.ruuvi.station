@@ -325,9 +325,7 @@ class NetworkDataSyncInteractor (
 
     private fun updateSensors(userInfoData: SensorsDenseResponseBody): List<SensorsDenseInfo> {
         val sensorsResult = mutableListOf<SensorsDenseInfo>()
-        var totalUsedShares = 0
         userInfoData.sensors.forEach { sensor ->
-            totalUsedShares += sensor.sharedTo.size + sensor.sharedToPending.size
             val sensorSettings = sensorSettingsRepository.getSensorSettingsOrCreate(sensor.sensor)
             val shouldUpload = shouldUploadSensorToCloud(sensor, sensorSettings)
             if (shouldUpload) {
@@ -352,7 +350,6 @@ class NetworkDataSyncInteractor (
                 )
             }
         }
-        preferencesRepository.setSubscriptionUsedSharesTotal(totalUsedShares)
 
         val sensors = sensorSettingsRepository.getSensorSettings()
         for (sensor in sensors) {
