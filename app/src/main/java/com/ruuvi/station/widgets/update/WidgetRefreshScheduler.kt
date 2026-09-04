@@ -113,22 +113,28 @@ internal data class WidgetRefreshTarget(
 }
 
 object WidgetRefreshScheduler {
-    fun enqueueSimpleRefreshAll(context: Context) {
+    internal fun enqueueSimpleRefreshAll(
+        context: Context,
+        refreshTrigger: WidgetRefreshTrigger = WidgetRefreshTrigger.AUTOMATIC,
+    ) {
         enqueue(
             WorkManager.getInstance(context.applicationContext),
             WidgetRefreshTarget(
                 refreshType = WidgetRefreshType.SIMPLE,
-                refreshTrigger = WidgetRefreshTrigger.AUTOMATIC,
+                refreshTrigger = refreshTrigger,
             ),
         )
     }
 
-    fun enqueueComplexRefreshAll(context: Context) {
+    internal fun enqueueComplexRefreshAll(
+        context: Context,
+        refreshTrigger: WidgetRefreshTrigger = WidgetRefreshTrigger.AUTOMATIC,
+    ) {
         enqueue(
             WorkManager.getInstance(context.applicationContext),
             WidgetRefreshTarget(
                 refreshType = WidgetRefreshType.COMPLEX,
-                refreshTrigger = WidgetRefreshTrigger.AUTOMATIC,
+                refreshTrigger = refreshTrigger,
             ),
         )
     }
