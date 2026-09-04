@@ -30,9 +30,20 @@ internal enum class WidgetRefreshType(
     }
 }
 
+internal enum class WidgetRefreshTrigger(val inputValue: String) {
+    AUTOMATIC("automatic"),
+    MANUAL("manual");
+
+    companion object {
+        fun fromInputValue(value: String?): WidgetRefreshTrigger? =
+            entries.firstOrNull { it.inputValue == value }
+    }
+}
+
 internal data class WidgetRefreshTarget(
     val refreshType: WidgetRefreshType,
     val appWidgetId: Int? = null,
+    val refreshTrigger: WidgetRefreshTrigger = WidgetRefreshTrigger.AUTOMATIC,
 ) {
     init {
         require(appWidgetId == null || appWidgetId > 0) {
@@ -57,6 +68,7 @@ internal data class WidgetRefreshTarget(
         } else {
             WIDGET_REFRESH_SCOPE_ALL
         },
+        WidgetRefreshScheduler.WIDGET_REFRESH_TRIGGER_KEY to refreshTrigger.inputValue,
         WidgetRefreshScheduler.APP_WIDGET_ID_KEY to appWidgetId,
     )
 
@@ -65,16 +77,27 @@ internal data class WidgetRefreshTarget(
             val refreshType = WidgetRefreshType.fromInputValue(
                 data.getString(WidgetRefreshScheduler.WIDGET_REFRESH_TYPE_KEY),
             ) ?: return null
+            val refreshTrigger = data.getString(
+                WidgetRefreshScheduler.WIDGET_REFRESH_TRIGGER_KEY,
+            )?.let { WidgetRefreshTrigger.fromInputValue(it) ?: return null }
+                ?: WidgetRefreshTrigger.AUTOMATIC
 
             return when (data.getString(WidgetRefreshScheduler.WIDGET_REFRESH_SCOPE_KEY)) {
-                WIDGET_REFRESH_SCOPE_ALL -> WidgetRefreshTarget(refreshType)
+                WIDGET_REFRESH_SCOPE_ALL -> WidgetRefreshTarget(
+                    refreshType = refreshType,
+                    refreshTrigger = refreshTrigger,
+                )
                 WIDGET_REFRESH_SCOPE_SINGLE -> {
                     val appWidgetId = data.getInt(
                         WidgetRefreshScheduler.APP_WIDGET_ID_KEY,
                         INVALID_APP_WIDGET_ID,
                     )
                     if (appWidgetId > 0) {
-                        WidgetRefreshTarget(refreshType, appWidgetId)
+                        WidgetRefreshTarget(
+                            refreshType = refreshType,
+                            appWidgetId = appWidgetId,
+                            refreshTrigger = refreshTrigger,
+                        )
                     } else {
                         null
                     }
@@ -93,28 +116,42 @@ object WidgetRefreshScheduler {
     fun enqueueSimpleRefreshAll(context: Context) {
         enqueue(
             WorkManager.getInstance(context.applicationContext),
-            WidgetRefreshTarget(WidgetRefreshType.SIMPLE),
+            WidgetRefreshTarget(
+                refreshType = WidgetRefreshType.SIMPLE,
+                refreshTrigger = WidgetRefreshTrigger.AUTOMATIC,
+            ),
         )
     }
 
     fun enqueueComplexRefreshAll(context: Context) {
         enqueue(
             WorkManager.getInstance(context.applicationContext),
-            WidgetRefreshTarget(WidgetRefreshType.COMPLEX),
+            WidgetRefreshTarget(
+                refreshType = WidgetRefreshType.COMPLEX,
+                refreshTrigger = WidgetRefreshTrigger.AUTOMATIC,
+            ),
         )
     }
 
     fun enqueueSimpleRefresh(context: Context, appWidgetId: Int) {
         enqueue(
             WorkManager.getInstance(context.applicationContext),
-            WidgetRefreshTarget(WidgetRefreshType.SIMPLE, appWidgetId),
+            WidgetRefreshTarget(
+                refreshType = WidgetRefreshType.SIMPLE,
+                appWidgetId = appWidgetId,
+                refreshTrigger = WidgetRefreshTrigger.MANUAL,
+            ),
         )
     }
 
     fun enqueueComplexRefresh(context: Context, appWidgetId: Int) {
         enqueue(
             WorkManager.getInstance(context.applicationContext),
-            WidgetRefreshTarget(WidgetRefreshType.COMPLEX, appWidgetId),
+            WidgetRefreshTarget(
+                refreshType = WidgetRefreshType.COMPLEX,
+                appWidgetId = appWidgetId,
+                refreshTrigger = WidgetRefreshTrigger.MANUAL,
+            ),
         )
     }
 
@@ -136,6 +173,7 @@ object WidgetRefreshScheduler {
 
     internal const val WIDGET_REFRESH_TYPE_KEY = "widget_refresh_type"
     internal const val WIDGET_REFRESH_SCOPE_KEY = "widget_refresh_scope"
+    internal const val WIDGET_REFRESH_TRIGGER_KEY = "widget_refresh_trigger"
     internal const val APP_WIDGET_ID_KEY = "app_widget_id"
     internal const val WIDGET_REFRESH_WORK_TAG = "widget-refresh"
 }
