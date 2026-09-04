@@ -109,12 +109,8 @@ class ShareSensorViewModel (
 
     fun shareTag(email: String) {
         ruuviNetworkInteractor.shareSensor(email, sensorId, handler) { response ->
-            if (response?.isError() == true) {
-                CoroutineScope(Dispatchers.Main).launch{
-                    _uiEvent.emit(UiEvent.ShowSnackbar(UiText.DynamicString(response.error)))
-                }
-            } else {
-                if (response?.data?.invited == true) {
+            if (response?.isSuccess() == true) {
+                if (response.data?.invited == true) {
                     CoroutineScope(Dispatchers.Main).launch{
                         _uiEvent.emit(UiEvent.ShowSnackbar(UiText.StringResource(R.string.share_pending_message)))
                     }
@@ -126,6 +122,11 @@ class ShareSensorViewModel (
                     }
                     sensorShareListRepository.insertToShareList(sensorId, email, false)
                     setEmailsFromRepository()
+                }
+            } else {
+                val error = response?.error ?: "Unknown error"
+                CoroutineScope(Dispatchers.Main).launch{
+                    _uiEvent.emit(UiEvent.ShowSnackbar(UiText.DynamicString(error)))
                 }
             }
         }
