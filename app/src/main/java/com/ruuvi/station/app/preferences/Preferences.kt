@@ -516,19 +516,14 @@ class Preferences (val context: Context) {
             }
         }
 
-    var subscriptionUsedSharesTotal: Int
-        get() = sharedPreferences.getInt(
-            PREF_SUBSCRIPTION_USED_SHARES_TOTAL,
-            0
-        )
-        set(usedShares) {
-            sharedPreferences.edit {
-                putInt(
-                    PREF_SUBSCRIPTION_USED_SHARES_TOTAL,
-                    usedShares
-                )
-            }
+    fun resetSubscriptionShareSettings() {
+        sharedPreferences.edit {
+            putInt(PREF_SUBSCRIPTION_MAX_SHARES_PER_SENSOR, DEFAULT_MAX_SHARES_PER_SENSOR)
+            putInt(PREF_SUBSCRIPTION_MAX_SHARES_TOTAL, DEFAULT_MAX_SHARES_TOTAL)
+            remove(PREF_SUBSCRIPTION_USED_SHARES_TOTAL)
+            putLong(PREF_SUBSCRIPTION_REFRESH_DATE, Long.MIN_VALUE)
         }
+    }
 
     var dontShowGattSync: Boolean
         get() = sharedPreferences.getBoolean(PREF_DONT_SHOW_GATT_SYNC, false)

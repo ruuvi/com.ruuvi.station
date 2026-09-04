@@ -298,6 +298,10 @@ class PreferencesRepository(
     fun getSubscriptionUsedSharesTotal(): Int =
         sensorShareListRepository.getUsedSharesTotal()
 
+    fun resetSubscriptionShareSettings() {
+        preferences.resetSubscriptionShareSettings()
+    }
+
     fun getDontShowGattSync(): Boolean =
         preferences.dontShowGattSync
 

@@ -17,7 +17,7 @@ object NetworkInjectionModule {
 
         bind<RuuviNetworkInteractor>() with singleton { RuuviNetworkInteractor(instance(), instance(), instance(), instance(), instance(), instance()) }
 
-        bind<NetworkSignInInteractor>() with singleton { NetworkSignInInteractor(instance(), instance(), instance(), instance(), instance(), instance()) }
+        bind<NetworkSignInInteractor>() with singleton { NetworkSignInInteractor(instance(), instance(), instance(), instance(), instance(), instance(), instance()) }
 
         bind<NetworkRequestExecutor.NetworkJobManager>() with singleton { NetworkRequestExecutor.NetworkJobManager() }
 
