@@ -14,6 +14,8 @@ import com.ruuvi.station.database.tables.TagSensorReading
 import com.ruuvi.station.database.tables.isAir
 import com.ruuvi.station.dataforwarding.domain.DataForwardingSender
 import com.ruuvi.station.util.extensions.logData
+import com.ruuvi.station.widgets.update.WidgetRefreshScheduler
+import android.content.Context
 import kotlinx.coroutines.*
 import timber.log.Timber
 import java.util.Calendar
@@ -22,6 +24,7 @@ import java.util.HashMap
 
 @Suppress("NAME_SHADOWING")
 class DefaultOnTagFoundListener(
+    private val context: Context,
     private val preferencesRepository: PreferencesRepository,
     private val dataForwardingSender: DataForwardingSender,
     private val repository: TagRepository,
@@ -78,6 +81,8 @@ class DefaultOnTagFoundListener(
                 val reading = TagSensorReading(ruuviTag)
                 reading.save()
                 dataForwardingSender.sendData(ruuviTag, sensorSettings)
+                WidgetRefreshScheduler.enqueueSimpleRefreshAll(context)
+                WidgetRefreshScheduler.enqueueComplexRefreshAll(context)
             } else {
                 Timber.d("saveFavoriteReading SKIPPED ${ruuviTag.id}")
             }
