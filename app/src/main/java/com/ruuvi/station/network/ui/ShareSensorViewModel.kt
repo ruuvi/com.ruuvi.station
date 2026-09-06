@@ -134,13 +134,14 @@ class ShareSensorViewModel (
 
     fun unshareTag(email: String) {
         ruuviNetworkInteractor.unshareSensor(email, sensorId, handler) { response ->
-            if (response?.isError() == true) {
-                CoroutineScope(Dispatchers.Main).launch{
-                    _uiEvent.emit(UiEvent.ShowSnackbar(UiText.DynamicString(response.error)))
-                }
-            } else {
+            if (response?.isSuccess() == true) {
                 sensorShareListRepository.deleteFromShareList(sensorId, email)
                 setEmailsFromRepository()
+            } else {
+                val error = response?.error ?: "Unknown error"
+                CoroutineScope(Dispatchers.Main).launch{
+                    _uiEvent.emit(UiEvent.ShowSnackbar(UiText.DynamicString(error)))
+                }
             }
         }
     }
