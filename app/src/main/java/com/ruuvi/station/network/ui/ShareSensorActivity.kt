@@ -115,8 +115,8 @@ class ShareSensorActivity : AppCompatActivity() , KodeinAware {
                     } else {
                         val pendingEmails by viewModel.pendingEmailsObserve.observeAsState(emptyList())
                         val usedSharesTotal by viewModel.usedSharesTotal.observeAsState(0)
-                        val maxSharesTotal by viewModel.maxSharesTotal.observeAsState(100)
-                        val maxSharesPerSensor by viewModel.maxSharesPerSensor.observeAsState(10)
+                        val maxSharesTotal by viewModel.maxSharesTotal.observeAsState(0)
+                        val maxSharesPerSensor by viewModel.maxSharesPerSensor.observeAsState(0)
 
                         ShareBody(
                             scaffoldState = scaffoldState,

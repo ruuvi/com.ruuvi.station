@@ -491,7 +491,7 @@ class Preferences (val context: Context) {
     var subscriptionMaxSharesPerSensor: Int
         get() = sharedPreferences.getInt(
             PREF_SUBSCRIPTION_MAX_SHARES_PER_SENSOR,
-            DEFAULT_MAX_SHARES_PER_SENSOR
+            0
         )
         set(maxShares) {
             sharedPreferences.edit {
@@ -505,7 +505,7 @@ class Preferences (val context: Context) {
     var subscriptionMaxSharesTotal: Int
         get() = sharedPreferences.getInt(
             PREF_SUBSCRIPTION_MAX_SHARES_TOTAL,
-            DEFAULT_MAX_SHARES_TOTAL
+            0
         )
         set(maxShares) {
             sharedPreferences.edit {
@@ -518,8 +518,8 @@ class Preferences (val context: Context) {
 
     fun resetSubscriptionShareSettings() {
         sharedPreferences.edit {
-            putInt(PREF_SUBSCRIPTION_MAX_SHARES_PER_SENSOR, DEFAULT_MAX_SHARES_PER_SENSOR)
-            putInt(PREF_SUBSCRIPTION_MAX_SHARES_TOTAL, DEFAULT_MAX_SHARES_TOTAL)
+            remove(PREF_SUBSCRIPTION_MAX_SHARES_PER_SENSOR)
+            remove(PREF_SUBSCRIPTION_MAX_SHARES_TOTAL)
             remove(PREF_SUBSCRIPTION_USED_SHARES_TOTAL)
             putLong(PREF_SUBSCRIPTION_REFRESH_DATE, Long.MIN_VALUE)
         }
@@ -821,8 +821,6 @@ class Preferences (val context: Context) {
         private const val DEFAULT_GRAPH_VIEW_PERIOD_DAYS = 0
         private const val DEFAULT_GRAPH_SHOW_ALL_POINTS = false
         private const val DEFAULT_GRAPH_DRAW_DOTS = false
-        private const val DEFAULT_MAX_SHARES_PER_SENSOR = 10
-        private const val DEFAULT_MAX_SHARES_TOTAL = 100
         private const val DEFAULT_REQUEST_FOR_REVIEW_DATE = 0L
         private const val DEFAULT_REQUEST_FOR_APP_UPDATE_DATE = 0L
         private const val DEFAULT_DARKMODE = AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
