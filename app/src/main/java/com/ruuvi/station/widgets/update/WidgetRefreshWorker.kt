@@ -40,22 +40,21 @@ class WidgetRefreshWorker(
 
             if (appWidgetIds.isEmpty()) return Result.success()
 
-            // Initial update with existing database data
-            updateWidgets(widgetUpdater, target.refreshType, appWidgetIds)
-
             if (target.refreshTrigger == WidgetRefreshTrigger.MANUAL) {
+                updateWidgets(widgetUpdater, target.refreshType, appWidgetIds)
                 scanUntilRelevantReadingsStoredOrTimeout(
                     bluetoothInteractor = bluetoothInteractor,
                     snapshotProvider = snapshotProvider,
                     simplePreferences = simplePreferences,
                     complexPreferences = complexPreferences,
                     refreshType = target.refreshType,
-                    appWidgetIds = appWidgetIds,
+                    appWidgetIds = appWidgetIds
                 )
-            }
 
-            // Final update with potentially new data
-            updateWidgets(widgetUpdater, target.refreshType, appWidgetIds)
+                updateWidgets(widgetUpdater, target.refreshType, appWidgetIds)
+            } else {
+                updateWidgets(widgetUpdater, target.refreshType, appWidgetIds)
+            }
 
             Result.success()
         } catch (cancellation: CancellationException) {
@@ -109,6 +108,8 @@ class WidgetRefreshWorker(
         ).associateWith { sensorId ->
             currentLocalReadingTimestampMillis(snapshotProvider, sensorId)
         }
+
+        if (trackedSensors.isEmpty()) return
 
         try {
             bluetoothInteractor.startScan(true)
