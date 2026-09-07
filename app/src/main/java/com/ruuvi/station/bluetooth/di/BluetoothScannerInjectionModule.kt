@@ -38,7 +38,7 @@ object BluetoothScannerInjectionModule {
         bind<IRuuviTagScanner.OnTagFoundListener>() with singleton { instance<DefaultOnTagFoundListener>() }
 
         bind<DefaultOnTagFoundListener>() with singleton {
-            DefaultOnTagFoundListener(instance(), instance(), instance(), instance(), instance(), instance())
+            DefaultOnTagFoundListener(instance(), instance(), instance(), instance(), instance(), instance(), instance())
         }
 
         bind<FakeScanResultsSender>() with singleton { FakeScanResultsSender(instance()) }
@@ -75,11 +75,11 @@ object BluetoothScannerInjectionModule {
                 }
 
                 override fun getSimpleWidgetUpdatePendingIntent(): PendingIntent? {
-                    return SimpleWidget.getUpdatePendingIntent(context, 0)
+                    return SimpleWidget.getRefreshAllPendingIntent(context)
                 }
 
                 override fun getComplexWidgetUpdatePendingIntent(): PendingIntent? {
-                    return ComplexWidgetProvider.getUpdatePendingIntent(context, 0)
+                    return ComplexWidgetProvider.getRefreshAllPendingIntent(context)
                 }
             }
         }

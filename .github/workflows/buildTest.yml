@@ -40,7 +40,9 @@ jobs:
 
     - name: Generate JaCoCo coverage report
       run: ./gradlew :app:jacocoTestReport
-      if: always()
+
+    - name: Verify JaCoCo coverage report
+      run: test -s app/build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml
 
     - name: SonarCloud Scan
       run: ./gradlew sonar

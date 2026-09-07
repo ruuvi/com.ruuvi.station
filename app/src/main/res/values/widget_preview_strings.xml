@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Kept outside strings.xml because the CI localization script regenerates that file. -->
+    <string name="widget_preview_sensor_name" translatable="false">Ruuvi Sensor</string>
+</resources>

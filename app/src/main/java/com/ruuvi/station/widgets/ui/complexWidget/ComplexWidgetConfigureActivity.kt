@@ -1,11 +1,6 @@
 package com.ruuvi.station.widgets.ui.complexWidget
 
-import android.app.PendingIntent
-import android.app.PendingIntent.FLAG_IMMUTABLE
 import android.appwidget.AppWidgetManager
-import android.appwidget.AppWidgetManager.ACTION_APPWIDGET_UPDATE
-import android.content.Context
-import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.activity.compose.setContent
@@ -18,8 +13,10 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.core.view.WindowCompat
+import androidx.lifecycle.lifecycleScope
 import com.ruuvi.station.R
 import com.ruuvi.station.app.ui.components.Paragraph
 import com.ruuvi.station.app.ui.components.ruuviCheckboxColors
@@ -32,15 +29,20 @@ import com.ruuvi.station.widgets.complexWidget.ComplexWidgetSensorItem
 import com.ruuvi.station.widgets.data.WidgetType
 import com.ruuvi.station.widgets.data.WidgetType.Companion.filterWidgetTypes
 import com.ruuvi.station.widgets.ui.*
+import com.ruuvi.station.widgets.update.WidgetUpdater
+import kotlinx.coroutines.launch
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
+import org.kodein.di.generic.instance
 import timber.log.Timber
 
 class ComplexWidgetConfigureActivity : AppCompatActivity(), KodeinAware {
     private var appWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID
+    private var setupCompletionStarted = false
 
     override val kodein: Kodein by closestKodein()
+    private val widgetUpdater: WidgetUpdater by instance()
 
     private val viewModel: ComplexWidgetConfigureViewModel by viewModel() {
         appWidgetId = intent.extras?.getInt(
@@ -60,6 +62,7 @@ class ComplexWidgetConfigureActivity : AppCompatActivity(), KodeinAware {
             AppWidgetManager.INVALID_APPWIDGET_ID
         ) ?: AppWidgetManager.INVALID_APPWIDGET_ID
 
+        setResult(RESULT_CANCELED, widgetConfigurationResultIntent(appWidgetId))
         if (appWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID) {
             finish()
             return
@@ -89,25 +92,33 @@ class ComplexWidgetConfigureActivity : AppCompatActivity(), KodeinAware {
     }
 
     private fun setupCompleted() {
-        val updateIntent = Intent(this, ComplexWidgetProvider::class.java).apply {
-            action = ACTION_APPWIDGET_UPDATE
-            putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, intArrayOf(appWidgetId))
-            `package` = packageName
-        }
+        if (setupCompletionStarted) return
+        setupCompletionStarted = true
 
-        sendBroadcast(updateIntent)
+        lifecycleScope.launch {
+            val updateSucceeded = runInitialWidgetUpdate(
+                update = {
+                    widgetUpdater.updateComplexWidget(
+                        this@ComplexWidgetConfigureActivity,
+                        appWidgetId,
+                    )
+                },
+                onFailure = { error ->
+                    Timber.e(error, "Unable to render configured complex widget $appWidgetId")
+                },
+            )
 
-        val resultValue =
-            Intent().putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
-        setResult(RESULT_OK, resultValue)
-        finish()
-    }
+            if (isFinishing || isDestroyed || isChangingConfigurations) {
+                return@launch
+            }
 
-    companion object {
-        fun createPendingIntent(context: Context, appWidgetId: Int): PendingIntent? {
-            val intent = Intent(context, ComplexWidgetConfigureActivity::class.java)
-            intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
-            return PendingIntent.getActivity(context, appWidgetId, intent, FLAG_IMMUTABLE)
+            if (!updateSucceeded) {
+                finish()
+                return@launch
+            }
+
+            setResult(RESULT_OK, widgetConfigurationResultIntent(appWidgetId))
+            finish()
         }
     }
 }
@@ -145,7 +156,7 @@ fun SelectSensorsScreen(viewModel: ComplexWidgetConfigureViewModel) {
             }
         }
 
-        if (sensors?.isNotEmpty() == true) {
+        if (sensors.isNotEmpty()) {
             itemsIndexed(items = sensors) { _, item ->
                 SensorSettingsCard(
                     viewModel = viewModel,
@@ -159,7 +170,6 @@ fun SelectSensorsScreen(viewModel: ComplexWidgetConfigureViewModel) {
 
 @Composable
 fun SensorSettingsCard(viewModel: ComplexWidgetConfigureViewModel, item: ComplexWidgetSensorItem) {
-    Timber.d("SensorSettingsCard $item")
     Column() {
         Box(
             modifier = Modifier
@@ -206,22 +216,30 @@ fun WidgetTypeList(viewModel: ComplexWidgetConfigureViewModel, item: ComplexWidg
 
 @Composable
 fun WidgetTypeItem (viewModel: ComplexWidgetConfigureViewModel, item: ComplexWidgetSensorItem, widgetType: WidgetType) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.wrapContentHeight()
-        )
-        {
-            Checkbox(
-                checked = item.getStateForType(widgetType),
-                colors = ruuviCheckboxColors(),
-                onCheckedChange = { checked -> viewModel.selectWidgetType(item, widgetType, checked) })
+    val context = LocalContext.current
 
-            Text(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable { viewModel.selectWidgetType(item, widgetType, item.getStateForType(widgetType)) },
-                text = stringResource(id = widgetType.titleResId),
-                style = RuuviStationTheme.typography.paragraph
-            )
-        }
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.wrapContentHeight()
+    )
+    {
+        Checkbox(
+            checked = item.getStateForType(widgetType),
+            colors = ruuviCheckboxColors(),
+            onCheckedChange = { checked -> viewModel.selectWidgetType(item, widgetType, checked) })
+
+        Text(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable {
+                    viewModel.selectWidgetType(
+                        item,
+                        widgetType,
+                        !item.getStateForType(widgetType)
+                    )
+                },
+            text = WidgetType.getTitle(context, widgetType, stringResource(widgetType.titleResId)),
+            style = RuuviStationTheme.typography.paragraph
+        )
+    }
 }

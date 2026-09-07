@@ -51,6 +51,9 @@
     <color name="ap_gray">#888</color>
     <color name="ap_transparent">#00000000</color>
     <color name="buttonInactive">#1A35AD9F</color>
+    <color name="widget_preview_background">@color/white</color>
+    <color name="widget_preview_value">@color/titan</color>
+    <color name="widget_preview_secondary">@color/titan70</color>
 
     <color name="chartLineColor">#34ad9f</color>
     <color name="chartFillColor">#4D46CAB9</color>
