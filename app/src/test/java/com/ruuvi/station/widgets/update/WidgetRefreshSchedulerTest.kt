@@ -16,6 +16,7 @@ import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
+import java.util.concurrent.TimeUnit
 
 class WidgetRefreshSchedulerTest {
 
@@ -175,5 +176,79 @@ class WidgetRefreshSchedulerTest {
         assertThrows(IllegalArgumentException::class.java) {
             WidgetRefreshTarget(WidgetRefreshType.SIMPLE, appWidgetId = -1)
         }
+    }
+
+    @Test
+    fun `automatic widget-specific refresh request is delayed for coalescing`() {
+        val target = WidgetRefreshTarget(
+            refreshType = WidgetRefreshType.SIMPLE,
+            appWidgetId = 42,
+            refreshTrigger = WidgetRefreshTrigger.AUTOMATIC,
+        )
+        val request = WidgetRefreshScheduler.createRequest(target)
+
+        assertEquals(
+            TimeUnit.SECONDS.toMillis(2),
+            request.workSpec.initialDelay,
+        )
+    }
+
+    @Test
+    fun `manual widget-specific refresh request does not use coalescing delay`() {
+        val target = WidgetRefreshTarget(
+            refreshType = WidgetRefreshType.SIMPLE,
+            appWidgetId = 42,
+            refreshTrigger = WidgetRefreshTrigger.MANUAL,
+        )
+        val request = WidgetRefreshScheduler.createRequest(target)
+
+        assertEquals(0L, request.workSpec.initialDelay)
+    }
+
+    @Test
+    fun `all-widget automatic refresh request does not use coalescing delay`() {
+        val target = WidgetRefreshTarget(
+            refreshType = WidgetRefreshType.SIMPLE,
+            refreshTrigger = WidgetRefreshTrigger.AUTOMATIC,
+        )
+        val request = WidgetRefreshScheduler.createRequest(target)
+
+        assertEquals(0L, request.workSpec.initialDelay)
+    }
+
+    @Test
+    fun `simple widget ids can be filtered by sensor id`() {
+        val matched = WidgetRefreshScheduler.matchingSimpleWidgetIdsBySensor(
+            appWidgetIds = intArrayOf(1, 2, 3, 4),
+            sensorId = "aa:bb:cc:dd",
+            sensorIdForWidget = { appWidgetId ->
+                when (appWidgetId) {
+                    1 -> "AA:BB:CC:DD"
+                    2 -> "11:22:33:44"
+                    3 -> " aa:bb:cc:dd "
+                    else -> null
+                }
+            },
+        )
+
+        assertTrue(matched.contentEquals(intArrayOf(1, 3)))
+    }
+
+    @Test
+    fun `complex widget ids can be filtered by sensor id`() {
+        val matched = WidgetRefreshScheduler.matchingComplexWidgetIdsBySensor(
+            appWidgetIds = intArrayOf(10, 11, 12),
+            sensorId = "sensor-b",
+            sensorIdsForWidget = { appWidgetId ->
+                when (appWidgetId) {
+                    10 -> listOf("sensor-a")
+                    11 -> listOf(" sensor-b ", "sensor-c")
+                    12 -> listOf("SENSOR-B")
+                    else -> emptyList()
+                }
+            },
+        )
+
+        assertTrue(matched.contentEquals(intArrayOf(11, 12)))
     }
 }

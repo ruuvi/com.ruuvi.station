@@ -1,5 +1,7 @@
 package com.ruuvi.station.widgets.update
 
+import android.appwidget.AppWidgetManager
+import android.content.ComponentName
 import android.content.Context
 import androidx.work.Data
 import androidx.work.ExistingWorkPolicy
@@ -7,6 +9,15 @@ import androidx.work.OneTimeWorkRequest
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.workDataOf
+import com.ruuvi.station.widgets.domain.ComplexWidgetPreferencesInteractor
+import com.ruuvi.station.widgets.domain.WidgetPreferencesInteractor
+import com.ruuvi.station.widgets.ui.complexWidget.ComplexWidgetProvider
+import com.ruuvi.station.widgets.ui.simpleWidget.SimpleWidget
+import org.kodein.di.Kodein
+import org.kodein.di.android.kodein
+import org.kodein.di.generic.instance
+import java.util.Locale
+import java.util.concurrent.TimeUnit
 
 internal enum class WidgetRefreshType(
     val inputValue: String,
@@ -139,6 +150,72 @@ object WidgetRefreshScheduler {
         )
     }
 
+    internal fun enqueueSimpleRefreshForSensor(
+        context: Context,
+        sensorId: String,
+        refreshTrigger: WidgetRefreshTrigger = WidgetRefreshTrigger.AUTOMATIC,
+    ) {
+        val normalizedSensorId = normalizeSensorId(sensorId) ?: return
+        val applicationContext = context.applicationContext
+        val appWidgetIds = installedWidgetIds(applicationContext, SimpleWidget::class.java)
+        if (appWidgetIds.isEmpty()) return
+
+        val kodein: Kodein by kodein(applicationContext)
+        val simplePreferences: WidgetPreferencesInteractor by kodein.instance()
+        val matchingWidgetIds = matchingSimpleWidgetIdsBySensor(
+            appWidgetIds = appWidgetIds,
+            sensorId = normalizedSensorId,
+            sensorIdForWidget = simplePreferences::getSimpleWidgetSensor,
+        )
+        if (matchingWidgetIds.isEmpty()) return
+
+        val workManager = WorkManager.getInstance(applicationContext)
+        matchingWidgetIds.forEach { appWidgetId ->
+            enqueue(
+                workManager,
+                WidgetRefreshTarget(
+                    refreshType = WidgetRefreshType.SIMPLE,
+                    appWidgetId = appWidgetId,
+                    refreshTrigger = refreshTrigger,
+                ),
+            )
+        }
+    }
+
+    internal fun enqueueComplexRefreshForSensor(
+        context: Context,
+        sensorId: String,
+        refreshTrigger: WidgetRefreshTrigger = WidgetRefreshTrigger.AUTOMATIC,
+    ) {
+        val normalizedSensorId = normalizeSensorId(sensorId) ?: return
+        val applicationContext = context.applicationContext
+        val appWidgetIds = installedWidgetIds(applicationContext, ComplexWidgetProvider::class.java)
+        if (appWidgetIds.isEmpty()) return
+
+        val kodein: Kodein by kodein(applicationContext)
+        val complexPreferences: ComplexWidgetPreferencesInteractor by kodein.instance()
+        val matchingWidgetIds = matchingComplexWidgetIdsBySensor(
+            appWidgetIds = appWidgetIds,
+            sensorId = normalizedSensorId,
+            sensorIdsForWidget = { appWidgetId ->
+                complexPreferences.getComplexWidgetSettings(appWidgetId).map { it.sensorId }
+            },
+        )
+        if (matchingWidgetIds.isEmpty()) return
+
+        val workManager = WorkManager.getInstance(applicationContext)
+        matchingWidgetIds.forEach { appWidgetId ->
+            enqueue(
+                workManager,
+                WidgetRefreshTarget(
+                    refreshType = WidgetRefreshType.COMPLEX,
+                    appWidgetId = appWidgetId,
+                    refreshTrigger = refreshTrigger,
+                ),
+            )
+        }
+    }
+
     fun enqueueSimpleRefresh(context: Context, appWidgetId: Int) {
         enqueue(
             WorkManager.getInstance(context.applicationContext),
@@ -170,16 +247,54 @@ object WidgetRefreshScheduler {
     }
 
     internal fun createRequest(target: WidgetRefreshTarget): OneTimeWorkRequest {
-        return OneTimeWorkRequestBuilder<WidgetRefreshWorker>()
+        val builder = OneTimeWorkRequestBuilder<WidgetRefreshWorker>()
             .setInputData(target.toInputData())
             .addTag(WIDGET_REFRESH_WORK_TAG)
             .addTag(target.refreshType.workTag)
-            .build()
+        if (target.refreshTrigger == WidgetRefreshTrigger.AUTOMATIC && target.isWidgetSpecific) {
+            builder.setInitialDelay(WIDGET_SPECIFIC_COALESCE_WINDOW_SECONDS, TimeUnit.SECONDS)
+        }
+        return builder.build()
     }
+
+    private fun installedWidgetIds(context: Context, widgetReceiver: Class<*>): IntArray =
+        AppWidgetManager.getInstance(context).getAppWidgetIds(
+            ComponentName(context, widgetReceiver),
+        )
+
+    internal fun matchingSimpleWidgetIdsBySensor(
+        appWidgetIds: IntArray,
+        sensorId: String,
+        sensorIdForWidget: (appWidgetId: Int) -> String?,
+    ): IntArray {
+        val normalizedSensorId = normalizeSensorId(sensorId) ?: return intArrayOf()
+        return appWidgetIds.filter { appWidgetId ->
+            normalizeSensorId(sensorIdForWidget(appWidgetId)) == normalizedSensorId
+        }.toIntArray()
+    }
+
+    internal fun matchingComplexWidgetIdsBySensor(
+        appWidgetIds: IntArray,
+        sensorId: String,
+        sensorIdsForWidget: (appWidgetId: Int) -> List<String>,
+    ): IntArray {
+        val normalizedSensorId = normalizeSensorId(sensorId) ?: return intArrayOf()
+        return appWidgetIds.filter { appWidgetId ->
+            sensorIdsForWidget(appWidgetId).any { configuredSensorId ->
+                normalizeSensorId(configuredSensorId) == normalizedSensorId
+            }
+        }.toIntArray()
+    }
+
+    private fun normalizeSensorId(sensorId: String?): String? =
+        sensorId?.trim()
+            ?.takeIf(String::isNotEmpty)
+            ?.lowercase(Locale.ROOT)
 
     internal const val WIDGET_REFRESH_TYPE_KEY = "widget_refresh_type"
     internal const val WIDGET_REFRESH_SCOPE_KEY = "widget_refresh_scope"
     internal const val WIDGET_REFRESH_TRIGGER_KEY = "widget_refresh_trigger"
     internal const val APP_WIDGET_ID_KEY = "app_widget_id"
     internal const val WIDGET_REFRESH_WORK_TAG = "widget-refresh"
+    private const val WIDGET_SPECIFIC_COALESCE_WINDOW_SECONDS = 2L
 }

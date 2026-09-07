@@ -81,8 +81,8 @@ class DefaultOnTagFoundListener(
                 val reading = TagSensorReading(ruuviTag)
                 reading.save()
                 dataForwardingSender.sendData(ruuviTag, sensorSettings)
-                WidgetRefreshScheduler.enqueueSimpleRefreshAll(context)
-                WidgetRefreshScheduler.enqueueComplexRefreshAll(context)
+                WidgetRefreshScheduler.enqueueSimpleRefreshForSensor(context, sensorId)
+                WidgetRefreshScheduler.enqueueComplexRefreshForSensor(context, sensorId)
             } else {
                 Timber.d("saveFavoriteReading SKIPPED ${ruuviTag.id}")
             }
