@@ -241,10 +241,17 @@ object WidgetRefreshScheduler {
     internal fun enqueue(workManager: WorkManager, target: WidgetRefreshTarget) {
         workManager.enqueueUniqueWork(
             target.uniqueWorkName,
-            ExistingWorkPolicy.KEEP,
+            existingWorkPolicy(target),
             createRequest(target),
         )
     }
+
+    private fun existingWorkPolicy(target: WidgetRefreshTarget): ExistingWorkPolicy =
+        if (target.refreshTrigger == WidgetRefreshTrigger.MANUAL) {
+            ExistingWorkPolicy.REPLACE
+        } else {
+            ExistingWorkPolicy.KEEP
+        }
 
     internal fun createRequest(target: WidgetRefreshTarget): OneTimeWorkRequest {
         val builder = OneTimeWorkRequestBuilder<WidgetRefreshWorker>()

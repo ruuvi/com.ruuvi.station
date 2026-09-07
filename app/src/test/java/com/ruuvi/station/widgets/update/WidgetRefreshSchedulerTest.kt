@@ -66,6 +66,24 @@ class WidgetRefreshSchedulerTest {
     }
 
     @Test
+    fun `manual refresh replaces pending work with same name`() {
+        val workManager = mock<WorkManager>()
+        val target = WidgetRefreshTarget(
+            refreshType = WidgetRefreshType.SIMPLE,
+            appWidgetId = 42,
+            refreshTrigger = WidgetRefreshTrigger.MANUAL,
+        )
+
+        WidgetRefreshScheduler.enqueue(workManager, target)
+
+        verify(workManager).enqueueUniqueWork(
+            eq(target.uniqueWorkName),
+            eq(ExistingWorkPolicy.REPLACE),
+            any<OneTimeWorkRequest>(),
+        )
+    }
+
+    @Test
     fun `refresh request has common and provider tags`() {
         val target = WidgetRefreshTarget(WidgetRefreshType.COMPLEX)
         val request = WidgetRefreshScheduler.createRequest(target)
