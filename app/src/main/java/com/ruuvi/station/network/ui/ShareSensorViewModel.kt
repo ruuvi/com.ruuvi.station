@@ -19,6 +19,8 @@ import com.ruuvi.station.network.domain.RuuviNetworkInteractor
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.filter
 import timber.log.Timber
 
 class ShareSensorViewModel (
@@ -56,6 +58,7 @@ class ShareSensorViewModel (
     }
 
     init {
+        observeShareListUpdates()
         val sensorSettings = sensorSettingsRepository.getSensorSettings(sensorId)
         if (sensorSettings?.canShare == null) {
             val coroutineExceptionHandler = CoroutineExceptionHandler { _, throwable ->
@@ -78,9 +81,20 @@ class ShareSensorViewModel (
                     setEmailsFromRepository()
                 }
             }
+
         } else {
             canShare.value = sensorSettings.canShare ?: false
             setEmailsFromRepository()
+        }
+    }
+
+    private fun observeShareListUpdates() {
+        viewModelScope.launch {
+            sensorShareListRepository.shareListUpdates
+                .filter { updatedSensorId -> updatedSensorId == sensorId }
+                .collect {
+                    setEmailsFromRepository()
+                }
         }
     }
 
