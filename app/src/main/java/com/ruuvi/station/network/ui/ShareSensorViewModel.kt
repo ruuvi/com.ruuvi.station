@@ -19,8 +19,6 @@ import com.ruuvi.station.network.domain.RuuviNetworkInteractor
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.filter
 import timber.log.Timber
 
 class ShareSensorViewModel (
@@ -91,9 +89,12 @@ class ShareSensorViewModel (
     private fun observeShareListUpdates() {
         viewModelScope.launch {
             sensorShareListRepository.shareListUpdates
-                .filter { updatedSensorId -> updatedSensorId == sensorId }
-                .collect {
-                    setEmailsFromRepository()
+                .collect { updatedSensorId ->
+                    if (updatedSensorId == sensorId) {
+                        setEmailsFromRepository()
+                    } else {
+                        updateSubscriptionShareLimits()
+                    }
                 }
         }
     }
@@ -116,6 +117,10 @@ class ShareSensorViewModel (
         val shareList = sensorShareListRepository.getShareListForSensor(sensorId)
         emails.value = shareList.filter { !it.pending }.map { it.userEmail }
         pendingEmails.value = shareList.filter { it.pending }.map { it.userEmail }
+        updateSubscriptionShareLimits()
+    }
+
+    private fun updateSubscriptionShareLimits() {
         maxSharesPerSensor.value = preferencesRepository.getSubscriptionMaxSharesPerSensor()
         maxSharesTotal.value = preferencesRepository.getSubscriptionMaxSharesTotal()
         usedSharesTotal.value = preferencesRepository.getSubscriptionUsedSharesTotal()
