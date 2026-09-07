@@ -22,6 +22,7 @@ data class SensorsDenseInfo (
     val subscription: SensorSubscription,
     val settings: SensorSettings?,
     val sharedTo: List<String>,
+    val sharedToPending: List<String>,
 )
 
 data class SensorSubscription(

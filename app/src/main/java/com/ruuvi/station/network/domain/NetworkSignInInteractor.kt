@@ -1,5 +1,6 @@
 package com.ruuvi.station.network.domain
 
+import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.database.domain.SensorSettingsRepository
 import com.ruuvi.station.database.domain.TagRepository
 import com.ruuvi.station.firebase.domain.PushRegisterInteractor
@@ -14,7 +15,8 @@ class NetworkSignInInteractor (
     private val networkDataSyncInteractor: NetworkDataSyncInteractor,
     private val networkTokenRepository: NetworkTokenRepository,
     private val sensorSettingsRepository: SensorSettingsRepository,
-    private val pushRegisterInteractor: PushRegisterInteractor
+    private val pushRegisterInteractor: PushRegisterInteractor,
+    private val preferencesRepository: PreferencesRepository,
 ) {
     fun signIn(token: String, response: (String) -> Unit) {
         networkInteractor.verifyUser(token) {response->
@@ -39,6 +41,7 @@ class NetworkSignInInteractor (
             stopJob.join()
 
             networkTokenRepository.clearTokenInfo()
+            preferencesRepository.resetSubscriptionShareSettings()
             pushRegisterInteractor.checkAndRegisterDeviceToken()
 
             val sensors = sensorSettingsRepository.getSensorSettings()

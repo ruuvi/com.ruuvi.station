@@ -16,5 +16,7 @@ data class SensorsShareList(
     var sensorId: String = "",
     @PrimaryKey
     @Column
-    var userEmail: String = ""
+    var userEmail: String = "",
+    @Column(name = "isPending")
+    var pending: Boolean = false
 ): BaseModel()

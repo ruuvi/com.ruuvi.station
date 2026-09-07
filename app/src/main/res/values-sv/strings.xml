@@ -872,4 +872,8 @@
     <string name="notes">Anteckningar</string>
     <string name="communication_channels">Kommunikationskanaler</string>
     <string name="communication_channels_description">Jag kan komma att få tips och annan användbar information om Ruuvi-produkter.</string>
+    <string name="share_active_access_section_title">Användare med aktiv åtkomst till denna sensor:</string>
+    <string name="share_active_access_empty_value">Inte delad med någon ännu</string>
+    <string name="share_sensor_shared_to_count_message">Använda delningar för denna sensor: %1$,d/%2$,d\n\nTotalt antal använda delningar för ditt konto: %3$,d/%4$,d</string>
+    <string name="share_pending_section_title">Följande användare har bjudits in och sensorn har delats med dem, men åtkomsten väntar fortfarande eftersom de ännu inte har skapat ett gratis Ruuvi-konto. Inbjudningar har skickats och åtkomst ges när deras konton har skapats:</string>
 </resources>

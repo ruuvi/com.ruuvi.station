@@ -877,4 +877,8 @@
     <string name="notes">Notes</string>
     <string name="communication_channels">Canaux de communication</string>
     <string name="communication_channels_description">Je peux recevoir des conseils et d\'autres informations utiles concernant les produits Ruuvi.</string>
+    <string name="share_active_access_section_title">Utilisateurs ayant un accès actif à ce capteur :</string>
+    <string name="share_active_access_empty_value">Pas encore partagé avec qui que ce soit</string>
+    <string name="share_sensor_shared_to_count_message">Partages utilisés pour ce capteur : %1$,d/%2$,d\n\nTotal des partages utilisés pour votre compte : %3$,d/%4$,d</string>
+    <string name="share_pending_section_title">Les utilisateurs suivants ont été invités et le capteur a été partagé avec eux, mais l\'accès est encore en attente car ils n\'ont pas encore créé de compte Ruuvi gratuit. Les invitations ont été envoyées et l\'accès leur sera accordé une fois leurs comptes créés :</string>
 </resources>

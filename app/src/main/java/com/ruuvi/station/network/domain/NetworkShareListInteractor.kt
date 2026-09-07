@@ -11,7 +11,7 @@ class NetworkShareListInteractor(
         try {
             if (sensorsInfo.data?.sensors != null) {
                 for (sensor in sensorsInfo.data.sensors) {
-                    sensorShareListRepository.updateSharingList(sensor.sensor, sensor.sharedTo)
+                    sensorShareListRepository.updateSharingList(sensor.sensor, sensor.sharedTo, sensor.sharedToPending)
                 }
             }
         } catch (e: Exception) {

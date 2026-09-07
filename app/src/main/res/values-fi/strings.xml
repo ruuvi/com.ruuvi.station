@@ -871,4 +871,8 @@
     <string name="notes">Muistiinpanot</string>
     <string name="communication_channels">Viestintäkanavat</string>
     <string name="communication_channels_description">Minulle voidaan lähettää vinkkejä ja muuta hyödyllistä tietoa Ruuvi-tuotteista.</string>
+    <string name="share_active_access_section_title">Käyttäjät, joilla on aktiivinen pääsy tähän anturiin:</string>
+    <string name="share_active_access_empty_value">Ei vielä jaettu kenellekään</string>
+    <string name="share_sensor_shared_to_count_message">Tälle anturille käytetyt jaot: %1$,d/%2$,d\n\nTilillesi käytetyt jaot yhteensä: %3$,d/%4$,d</string>
+    <string name="share_pending_section_title">Seuraavat käyttäjät on kutsuttu ja anturi on jaettu heille, mutta käyttöoikeus odottaa vielä, koska he eivät ole vielä luoneet ilmaista Ruuvi-tiliä. Kutsut on lähetetty, ja käyttöoikeus myönnetään, kun heidän tilinsä on luotu:</string>
 </resources>

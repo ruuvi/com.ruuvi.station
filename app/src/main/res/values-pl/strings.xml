@@ -874,4 +874,8 @@
     <string name="notes">Notatki</string>
     <string name="communication_channels">Kanały komunikacji</string>
     <string name="communication_channels_description">Mogę otrzymywać wskazówki i inne przydatne informacje dotyczące produktów Ruuvi.</string>
+    <string name="share_active_access_section_title">Użytkownicy z aktywnym dostępem do tego czujnika:</string>
+    <string name="share_active_access_empty_value">Jeszcze nikomu nie udostępniono</string>
+    <string name="share_sensor_shared_to_count_message">Wykorzystane udostępnienia dla tego czujnika: %1$,d/%2$,d\n\nŁączna liczba wykorzystanych udostępnień dla Twojego konta: %3$,d/%4$,d</string>
+    <string name="share_pending_section_title">Następujący użytkownicy zostali zaproszeni i czujnik został im udostępniony, ale dostęp nadal oczekuje, ponieważ nie utworzyli jeszcze bezpłatnego konta Ruuvi. Zaproszenia zostały wysłane, a dostęp zostanie przyznany po utworzeniu ich kont:</string>
 </resources>
