@@ -282,6 +282,7 @@ class WidgetSensorSnapshotMappingTest {
         ),
         settings = null,
         sharedTo = emptyList(),
+        sharedToPending = emptyList(),
     )
 
     private fun decodedSensor(
