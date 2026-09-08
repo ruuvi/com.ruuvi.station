@@ -86,7 +86,7 @@ jobs:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
           TELEGRAM_SUCCESS_MENTION: ${{ secrets.TELEGRAM_SUCCESS_MENTION }}
-          TELEGRAM_SUCCESS_TITLE: Google Play metadata updated
+          TELEGRAM_SUCCESS_TITLE: Google Play metadata was updated.
           TELEGRAM_SUCCESS_BUILD: ${{ github.event.inputs.version_code }}
           DISTRIBUTION_CHANNEL: Google Play metadata
           JOB_STATUS: ${{ job.status }}

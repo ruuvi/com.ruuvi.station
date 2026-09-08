@@ -145,7 +145,7 @@ jobs:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
           TELEGRAM_SUCCESS_MENTION: ${{ secrets.TELEGRAM_SUCCESS_MENTION }}
-          TELEGRAM_SUCCESS_TITLE: Google Play internal build uploaded
+          TELEGRAM_SUCCESS_TITLE: Android build is ready for internal testing.
           TELEGRAM_SUCCESS_VERSION: ${{ env.RUUVI_APP_VERSION }}
           TELEGRAM_SUCCESS_BUILD: ${{ env.RUUVI_BUILD_NUMBER }}
           DISTRIBUTION_CHANNEL: Google Play internal
