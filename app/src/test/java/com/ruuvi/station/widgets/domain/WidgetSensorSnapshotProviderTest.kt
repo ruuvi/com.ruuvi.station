@@ -419,6 +419,7 @@ class WidgetSensorSnapshotProviderTest {
         ),
         settings = null,
         sharedTo = emptyList(),
+        sharedToPending = emptyList(),
     )
 
     private fun decodedSensor() = FoundRuuviTag(
