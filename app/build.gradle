@@ -100,7 +100,7 @@ android {
 
     defaultConfig {
         applicationId "com.ruuvi.station"
-        minSdkVersion 23
+        minSdkVersion 24
         targetSdkVersion 37
         compileSdk 37
         versionCode = (releaseEnv("ANDROID_VERSION_CODE") ?: "1").toInteger()
