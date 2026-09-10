@@ -4,16 +4,16 @@ import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.google.gson.GsonBuilder
 import com.ruuvi.station.firebase.data.GcmMessage
-import org.kodein.di.Kodein
-import org.kodein.di.KodeinAware
-import org.kodein.di.android.kodein
-import org.kodein.di.generic.instance
+import org.kodein.di.DI
+import org.kodein.di.DIAware
+import org.kodein.di.android.closestDI
+import org.kodein.di.instance
 import timber.log.Timber
 import java.util.*
 
-class RuuviFirebaseMessagingService: FirebaseMessagingService(), KodeinAware {
+class RuuviFirebaseMessagingService: FirebaseMessagingService(), DIAware {
 
-    override val kodein: Kodein by kodein()
+    override val di: DI by closestDI()
 
     val pushAlertInteractor: PushAlertInteractor by instance()
     val pushRegisterInteractor: PushRegisterInteractor by instance()

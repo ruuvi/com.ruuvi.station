@@ -18,14 +18,14 @@ import com.ruuvi.station.util.TimeUtils
 import com.ruuvi.station.util.test.FakeScanResultsSender
 import com.ruuvi.station.widgets.ui.complexWidget.ComplexWidgetProvider
 import com.ruuvi.station.widgets.ui.simpleWidget.SimpleWidget
-import org.kodein.di.Kodein
-import org.kodein.di.generic.bind
-import org.kodein.di.generic.instance
-import org.kodein.di.generic.singleton
+import org.kodein.di.DI
+import org.kodein.di.bind
+import org.kodein.di.instance
+import org.kodein.di.singleton
 
 object BluetoothScannerInjectionModule {
 
-    val module = Kodein.Module(BluetoothScannerInjectionModule.javaClass.name) {
+    val module = DI.Module(BluetoothScannerInjectionModule.javaClass.name) {
 
         bind<BluetoothInteractor>() with singleton {
             BluetoothLibrary.getBluetoothInteractor(instance(), instance(), instance())

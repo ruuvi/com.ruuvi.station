@@ -19,14 +19,14 @@ import com.ruuvi.station.database.domain.LocalDatabase
 import com.ruuvi.station.databinding.ActivityAboutBinding
 import com.ruuvi.station.util.extensions.makeWebLinks
 import com.ruuvi.station.util.extensions.viewModel
-import org.kodein.di.Kodein
-import org.kodein.di.KodeinAware
-import org.kodein.di.android.closestKodein
+import org.kodein.di.DI
+import org.kodein.di.DIAware
+import org.kodein.di.android.closestDI
 import java.io.File
 
-class AboutActivity : AppCompatActivity(R.layout.activity_about), KodeinAware {
+class AboutActivity : AppCompatActivity(R.layout.activity_about), DIAware {
 
-    override val kodein: Kodein by closestKodein()
+    override val di: DI by closestDI()
 
     private val viewModel: AboutActivityViewModel by viewModel()
 
