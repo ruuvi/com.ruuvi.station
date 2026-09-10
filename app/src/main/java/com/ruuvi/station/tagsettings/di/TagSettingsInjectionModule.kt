@@ -7,14 +7,14 @@ import com.ruuvi.station.tagsettings.ui.TagSettingsViewModel
 import com.ruuvi.station.tagsettings.ui.led_control.LedControlViewModel
 import com.ruuvi.station.tagsettings.ui.notes.NotesViewModel
 import com.ruuvi.station.tagsettings.ui.visible_measurements.VisibleMeasurementsViewModel
-import org.kodein.di.Kodein
-import org.kodein.di.generic.bind
-import org.kodein.di.generic.factory
-import org.kodein.di.generic.instance
-import org.kodein.di.generic.singleton
+import org.kodein.di.DI
+import org.kodein.di.bind
+import org.kodein.di.factory
+import org.kodein.di.instance
+import org.kodein.di.singleton
 
 object TagSettingsInjectionModule {
-    val module = Kodein.Module(TagSettingsInjectionModule.javaClass.name) {
+    val module = DI.Module(TagSettingsInjectionModule.javaClass.name) {
 
         bind<TagSettingsInteractor>() with singleton {
             TagSettingsInteractor(instance(), instance(), instance(), instance(), instance())

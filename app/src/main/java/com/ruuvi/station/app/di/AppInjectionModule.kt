@@ -10,14 +10,15 @@ import com.ruuvi.station.app.permissions.PermissionLogicInteractor
 import com.ruuvi.station.app.review.ReviewManagerInteractor
 import com.ruuvi.station.app.ui.ViewModelFactory
 import com.ruuvi.station.util.Foreground
-import org.kodein.di.Kodein
-import org.kodein.di.generic.bind
-import org.kodein.di.generic.instance
-import org.kodein.di.generic.singleton
+import org.kodein.di.DI
+import org.kodein.di.bind
+import org.kodein.di.instance
+import org.kodein.di.singleton
+import org.kodein.di.direct
 
 object AppInjectionModule {
-    val module = Kodein.Module(AppInjectionModule.javaClass.name) {
-        bind<ViewModelProvider.Factory>() with singleton { ViewModelFactory(dkodein) }
+    val module = DI.Module(AppInjectionModule.javaClass.name) {
+        bind<ViewModelProvider.Factory>() with singleton { ViewModelFactory(this) }
 
         bind<Foreground>() with singleton { Foreground.createInstance(instance()) }
 

@@ -11,11 +11,15 @@ import com.ruuvi.station.widgets.domain.WidgetSensorSnapshotProvider
 import com.ruuvi.station.widgets.domain.WidgetTimestampFormatter
 import com.ruuvi.station.widgets.ui.simpleWidget.SimpleWidgetConfigureViewModel
 import com.ruuvi.station.widgets.update.WidgetUpdater
-import org.kodein.di.Kodein
-import org.kodein.di.generic.*
+import org.kodein.di.DI
+import org.kodein.di.bind
+import org.kodein.di.factory
+import org.kodein.di.instance
+import org.kodein.di.provider
+import org.kodein.di.singleton
 
 object WidgetInjectionModule {
-    val module = Kodein.Module(WidgetInjectionModule.javaClass.name) {
+    val module = DI.Module(WidgetInjectionModule.javaClass.name) {
 
         bind<SimpleWidgetConfigureViewModel>() with provider { SimpleWidgetConfigureViewModel(instance(), instance(), instance(), instance()) }
 

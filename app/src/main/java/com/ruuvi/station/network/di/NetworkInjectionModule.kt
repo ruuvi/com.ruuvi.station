@@ -4,11 +4,15 @@ import com.ruuvi.station.network.domain.*
 import com.ruuvi.station.network.ui.*
 import com.ruuvi.station.network.ui.claim.ClaimSensorViewModel
 import kotlinx.coroutines.Dispatchers
-import org.kodein.di.Kodein
-import org.kodein.di.generic.*
+import org.kodein.di.DI
+import org.kodein.di.bind
+import org.kodein.di.factory
+import org.kodein.di.instance
+import org.kodein.di.provider
+import org.kodein.di.singleton
 
 object NetworkInjectionModule {
-    val module = Kodein.Module(NetworkInjectionModule.javaClass.name) {
+    val module = DI.Module(NetworkInjectionModule.javaClass.name) {
         bind<RuuviNetworkRepository>() with singleton { RuuviNetworkRepository(Dispatchers.IO, instance(), instance()) }
 
         bind<SensorClaimInteractor>() with singleton { SensorClaimInteractor(instance(), instance(), instance(), instance(), instance(), instance()) }
