@@ -866,8 +866,14 @@
     <string name="update_now">Päivitä nyt</string>
     <string name="led_brightness_select_message">Valitse haluamasi LED-kirkkaustaso. Varmista, että olet Ruuvi Airin Bluetooth-kantaman sisällä.</string>
     <string name="notes">Muistiinpanot</string>
-    <string name="communication_channels">Viestintäkanavat</string>
-    <string name="communication_channels_description">Minulle voidaan lähettää vinkkejä ja muuta hyödyllistä tietoa Ruuvi-tuotteista.</string>
+    <string name="communication_channels">Ruuvin uutiskirje</string>
+    <string name="communication_channels_description">Saat hyödyllisiä Ruuvi-vinkkejä, tuotepäivityksiä, ominaisuusuutisia ja satunnaisia erikoistarjouksia suoraan sähköpostiisi.</string>
+    <string name="newsletter_subscription">Tilaus</string>
+    <string name="newsletter_subscription_confirmation">Vahvista uutiskirjeen tilaus sähköpostistasi.</string>
+    <string name="newsletter_card_title">Tilaa tarjoukset!</string>
+    <string name="newsletter_card_description">Tilaa Ruuvin uutiskirje ja hanki sensorit aina parhaaseen hintaan.</string>
+    <string name="newsletter_subscribe">Tilaa</string>
+    <string name="newsletter_url">https://ruuvi.com/fi/liity</string>
     <string name="share_active_access_section_title">Käyttäjät, joilla on aktiivinen pääsy tähän anturiin:</string>
     <string name="share_active_access_empty_value">Ei vielä jaettu kenellekään</string>
     <string name="share_sensor_shared_to_count_message">Tälle anturille käytetyt jaot: %1$,d/%2$,d\n\nTilillesi käytetyt jaot yhteensä: %3$,d/%4$,d</string>

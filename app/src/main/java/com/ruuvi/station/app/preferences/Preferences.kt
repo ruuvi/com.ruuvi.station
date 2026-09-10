@@ -615,16 +615,10 @@ class Preferences (val context: Context) {
             sharedPreferences.edit { putLong(PREF_TIPS_ALLOWED_LAST_UPDATED, value) }
         }
 
-    var marketingPermission: Boolean
-        get() = sharedPreferences.getBoolean(PREF_MARKETING_PERMISSION, false)
+    var marketingConsent: Boolean
+        get() = sharedPreferences.getBoolean(PREF_MARKETING_CONSENT, false)
         set(value) {
-            sharedPreferences.edit { putBoolean(PREF_MARKETING_PERMISSION, value) }
-        }
-
-    var marketingPermissionLastUpdated: Long
-        get() = sharedPreferences.getLong(PREF_MARKETING_PERMISSION_LAST_UPDATED, 0L)
-        set(value) {
-            sharedPreferences.edit { putLong(PREF_MARKETING_PERMISSION_LAST_UPDATED, value) }
+            sharedPreferences.edit { putBoolean(PREF_MARKETING_CONSENT, value) }
         }
 
     var disablePushNotifications: Boolean
@@ -674,6 +668,9 @@ class Preferences (val context: Context) {
 
     fun getDeveloperSettingsLiveData() =
         SharedPreferenceBooleanLiveData(sharedPreferences, PREF_DEVELOPER_SETTINGS, false)
+
+    fun getMarketingConsentLiveData() =
+        SharedPreferenceBooleanLiveData(sharedPreferences, PREF_MARKETING_CONSENT, false)
 
     fun getTemperatureUnitCodeLiveData() =
         SharedPreferenceStringLiveData(sharedPreferences, PREF_TEMPERATURE_UNIT, DEFAULT_TEMPERATURE_UNIT)
@@ -809,8 +806,7 @@ class Preferences (val context: Context) {
         private const val PREF_SHOW_VISIBLE_MEASUREMENTS = "pref_show_visible_measurements"
         private const val PREF_TIPS_ALLOWED = "pref_tips_allowed"
         private const val PREF_TIPS_ALLOWED_LAST_UPDATED = "pref_tips_allowed_last_updated"
-        private const val PREF_MARKETING_PERMISSION = "pref_marketing_permission"
-        private const val PREF_MARKETING_PERMISSION_LAST_UPDATED = "pref_marketing_permission_last_updated"
+        private const val PREF_MARKETING_CONSENT = "pref_marketing_consent"
 
         private const val PREF_USE_WEB_SHARE = "pref_use_web_share"
 

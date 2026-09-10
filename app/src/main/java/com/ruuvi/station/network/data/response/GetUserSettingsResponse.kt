@@ -1,6 +1,5 @@
 package com.ruuvi.station.network.data.response
 
-import com.google.gson.annotations.SerializedName
 import com.ruuvi.station.network.domain.NetworkSettingNames
 
 typealias GetUserSettingsResponse = RuuviNetworkResponse<GetUserSettingsResponseBody>
@@ -58,10 +57,6 @@ data class NetworkUserSettings(
     val DISABLE_TELEGRAM_NOTIFICATIONS_lastUpdated: Long?,
     val TIPS_ALLOWED: String?,
     val TIPS_ALLOWED_lastUpdated: Long?,
-    @SerializedName(value = "MARKTING_PERMISSION")
-    val MARKETING_PERMISSION: String?,
-    @SerializedName(value = "MARKTING_PERMISSION_lastUpdated")
-    val MARKETING_PERMISSION_lastUpdated: Long?,
 ) {
     fun isEmpty() =
                 BACKGROUND_SCAN_MODE == null &&
@@ -87,7 +82,6 @@ data class NetworkUserSettings(
                 DISABLE_EMAIL_NOTIFICATIONS == null &&
                 DISABLE_PUSH_NOTIFICATIONS == null &&
                 DISABLE_TELEGRAM_NOTIFICATIONS == null &&
-                MARKETING_PERMISSION == null &&
                 PROFILE_LANGUAGE_CODE == null &&
                 TIPS_ALLOWED == null
 
@@ -118,7 +112,6 @@ data class NetworkUserSettings(
             NetworkSettingNames.DISABLE_PUSH_NOTIFICATIONS -> DISABLE_PUSH_NOTIFICATIONS
             NetworkSettingNames.DISABLE_TELEGRAM_NOTIFICATIONS -> DISABLE_TELEGRAM_NOTIFICATIONS
             NetworkSettingNames.TIPS_ALLOWED -> TIPS_ALLOWED
-            NetworkSettingNames.MARKETING_PERMISSION -> MARKETING_PERMISSION
             else -> null
         }
     }
@@ -150,7 +143,6 @@ data class NetworkUserSettings(
             NetworkSettingNames.DISABLE_PUSH_NOTIFICATIONS -> DISABLE_PUSH_NOTIFICATIONS_lastUpdated
             NetworkSettingNames.DISABLE_TELEGRAM_NOTIFICATIONS -> DISABLE_TELEGRAM_NOTIFICATIONS_lastUpdated
             NetworkSettingNames.TIPS_ALLOWED -> TIPS_ALLOWED_lastUpdated
-            NetworkSettingNames.MARKETING_PERMISSION -> MARKETING_PERMISSION_lastUpdated
             else -> null
         } ?: 0L
     }

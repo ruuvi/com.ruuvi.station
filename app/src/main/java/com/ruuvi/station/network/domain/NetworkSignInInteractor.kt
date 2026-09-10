@@ -42,6 +42,7 @@ class NetworkSignInInteractor (
 
             networkTokenRepository.clearTokenInfo()
             preferencesRepository.resetSubscriptionShareSettings()
+            preferencesRepository.clearMarketingConsent()
             pushRegisterInteractor.checkAndRegisterDeviceToken()
 
             val sensors = sensorSettingsRepository.getSensorSettings()

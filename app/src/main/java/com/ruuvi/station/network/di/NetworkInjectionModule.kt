@@ -33,6 +33,10 @@ object NetworkInjectionModule {
             NetworkApplicationSettings(instance(), instance(), instance(), instance(), instance(), instance())
         }
 
+        bind<MarketingConsentInteractor>() with singleton {
+            MarketingConsentInteractor(instance(), instance(), instance(), instance())
+        }
+
         bind<NetworkAlertsSyncInteractor>() with  singleton {
             NetworkAlertsSyncInteractor(instance(), instance())
         }

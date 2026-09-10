@@ -75,11 +75,12 @@ fun SwitchIndicatorRuuvi (
     text: String,
     checked: Boolean,
     onCheckedChange: ((Boolean) -> Unit)?,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true
 ) {
     ConstraintLayout(modifier = modifier
         .fillMaxWidth()
-        .clickable(role = Role.Switch) { onCheckedChange?.invoke(!checked) }
+        .clickable(enabled = enabled, role = Role.Switch) { onCheckedChange?.invoke(!checked) }
         .defaultMinSize(minHeight = RuuviStationTheme.dimensions.sensorSettingTitleHeight)
     ) {
         val (caption, onOff, switch) = createRefs()
@@ -117,6 +118,7 @@ fun SwitchIndicatorRuuvi (
             Switch(
                 checked = checked,
                 onCheckedChange = onCheckedChange,
+                enabled = enabled,
                 colors = ruuviSwitchColors(),
                 modifier = Modifier.constrainAs(switch) {
                     end.linkTo(parent.end)
