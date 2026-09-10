@@ -2,14 +2,14 @@ package com.ruuvi.station.startup.di
 
 import com.ruuvi.station.startup.domain.StartupActivityInteractor
 import com.ruuvi.station.startup.ui.StartupActivityViewModel
-import org.kodein.di.Kodein
-import org.kodein.di.generic.bind
-import org.kodein.di.generic.instance
-import org.kodein.di.generic.provider
-import org.kodein.di.generic.singleton
+import org.kodein.di.DI
+import org.kodein.di.bind
+import org.kodein.di.instance
+import org.kodein.di.provider
+import org.kodein.di.singleton
 
 object StartupActivityInjectionModule {
-    val module = Kodein.Module(StartupActivityInjectionModule.javaClass.name) {
+    val module = DI.Module(StartupActivityInjectionModule.javaClass.name) {
         bind<StartupActivityViewModel>() with provider {
             StartupActivityViewModel(instance(), instance(), instance())
         }

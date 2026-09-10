@@ -25,16 +25,16 @@ import com.ruuvi.station.databinding.ActivityAddTagBinding
 import com.ruuvi.station.nfc.NfcScanReciever
 import com.ruuvi.station.tagdetails.ui.SensorCardActivity
 import com.ruuvi.station.util.base.NfcActivity
-import org.kodein.di.Kodein
-import org.kodein.di.KodeinAware
-import org.kodein.di.android.closestKodein
-import org.kodein.di.generic.instance
+import org.kodein.di.DI
+import org.kodein.di.DIAware
+import org.kodein.di.android.closestDI
+import org.kodein.di.instance
 import timber.log.Timber
 import java.util.*
 
-class AddTagActivity : NfcActivity(R.layout.activity_add_tag), KodeinAware {
+class AddTagActivity : NfcActivity(R.layout.activity_add_tag), DIAware {
 
-    override val kodein: Kodein by closestKodein()
+    override val di: DI by closestDI()
 
     private val viewModel: AddTagActivityViewModel by viewModel()
     private val preferencesRepository: PreferencesRepository by instance()

@@ -2,11 +2,14 @@ package com.ruuvi.station.settings.di
 
 import com.ruuvi.station.settings.domain.AppSettingsInteractor
 import com.ruuvi.station.settings.ui.*
-import org.kodein.di.Kodein
-import org.kodein.di.generic.*
+import org.kodein.di.DI
+import org.kodein.di.bind
+import org.kodein.di.instance
+import org.kodein.di.provider
+import org.kodein.di.singleton
 
 object SettingsInjectionModule {
-    val module = Kodein.Module(SettingsInjectionModule.javaClass.name) {
+    val module = DI.Module(SettingsInjectionModule.javaClass.name) {
         bind<BackgroundScanSettingsViewModel>() with provider { BackgroundScanSettingsViewModel(instance(), instance()) }
 
         bind<ChartSettingsViewModel>() with provider { ChartSettingsViewModel(instance()) }

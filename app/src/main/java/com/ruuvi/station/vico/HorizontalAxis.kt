@@ -2,10 +2,10 @@ package com.ruuvi.station.vico
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import com.patrykandpatrick.vico.core.cartesian.CartesianDrawingContext
-import com.patrykandpatrick.vico.core.cartesian.CartesianMeasuringContext
-import com.patrykandpatrick.vico.core.cartesian.axis.HorizontalAxis
-import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayerDimensions
+import com.patrykandpatrick.vico.compose.cartesian.CartesianDrawingContext
+import com.patrykandpatrick.vico.compose.cartesian.CartesianMeasuringContext
+import com.patrykandpatrick.vico.compose.cartesian.axis.HorizontalAxis
+import com.patrykandpatrick.vico.compose.cartesian.layer.CartesianLayerDimensions
 import timber.log.Timber
 import java.util.TimeZone
 import kotlin.math.abs
@@ -40,7 +40,7 @@ fun rememberItemPlacerHorizontal() =
             ): List<Double> {
                 Timber.d("getLabelValues $maxLabelWidth ${visibleXRange.start} ${visibleXRange.endInclusive}")
 
-                val labelsCount = ceil(context.layerBounds.width() / maxLabelWidth / 2)
+                val labelsCount = ceil(context.layerBounds.width / maxLabelWidth / 2)
                 val range = visibleXRange.endInclusive - visibleXRange.start
                 val rawInterval = range / labelsCount
                 val interval = getClosestPredefinedInterval(rawInterval.toDouble())
