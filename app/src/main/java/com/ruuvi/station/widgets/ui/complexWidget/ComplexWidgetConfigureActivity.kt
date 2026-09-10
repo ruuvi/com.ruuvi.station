@@ -31,17 +31,17 @@ import com.ruuvi.station.widgets.data.WidgetType.Companion.filterWidgetTypes
 import com.ruuvi.station.widgets.ui.*
 import com.ruuvi.station.widgets.update.WidgetUpdater
 import kotlinx.coroutines.launch
-import org.kodein.di.Kodein
-import org.kodein.di.KodeinAware
-import org.kodein.di.android.closestKodein
-import org.kodein.di.generic.instance
+import org.kodein.di.DI
+import org.kodein.di.DIAware
+import org.kodein.di.android.closestDI
+import org.kodein.di.instance
 import timber.log.Timber
 
-class ComplexWidgetConfigureActivity : AppCompatActivity(), KodeinAware {
+class ComplexWidgetConfigureActivity : AppCompatActivity(), DIAware {
     private var appWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID
     private var setupCompletionStarted = false
 
-    override val kodein: Kodein by closestKodein()
+    override val di: DI by closestDI()
     private val widgetUpdater: WidgetUpdater by instance()
 
     private val viewModel: ComplexWidgetConfigureViewModel by viewModel() {

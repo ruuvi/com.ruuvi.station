@@ -29,20 +29,18 @@ import com.ruuvi.station.app.ui.theme.RuuviTheme
 import com.ruuvi.station.network.ui.SignInActivity
 import com.ruuvi.station.util.base.NfcActivity
 import com.ruuvi.station.util.extensions.viewModel
-import org.kodein.di.Kodein
-import org.kodein.di.KodeinAware
-import org.kodein.di.android.closestKodein
+import org.kodein.di.DI
+import org.kodein.di.DIAware
+import org.kodein.di.android.closestDI
 import timber.log.Timber
 
 @OptIn(ExperimentalAnimationApi::class)
-class ClaimSensorActivity : NfcActivity(), KodeinAware {
+class ClaimSensorActivity : NfcActivity(), DIAware {
 
-    override val kodein: Kodein by closestKodein()
+    override val di: DI by closestDI()
 
     private val viewModel: ClaimSensorViewModel by viewModel {
-        intent.getStringExtra(SENSOR_ID)?.let {
-            it
-        }
+        intent.getStringExtra(SENSOR_ID) ?: ""
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

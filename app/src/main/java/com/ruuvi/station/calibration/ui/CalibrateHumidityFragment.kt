@@ -5,17 +5,15 @@ import com.ruuvi.station.R
 import com.ruuvi.station.calibration.domain.CalibrationViewModelArgs
 import com.ruuvi.station.calibration.model.CalibrationType
 import com.ruuvi.station.util.extensions.viewModel
-import org.kodein.di.Kodein
-import org.kodein.di.KodeinAware
-import org.kodein.di.android.x.closestKodein
+import org.kodein.di.DI
+import org.kodein.di.DIAware
+import org.kodein.di.android.x.closestDI
 
-class CalibrateHumidityFragment : CalibrationFragment(R.layout.fragment_calibrate), KodeinAware {
+class CalibrateHumidityFragment : CalibrationFragment(R.layout.fragment_calibrate), DIAware {
 
-    override val kodein: Kodein by closestKodein()
+    override val di: DI by closestDI()
     override val viewModel: CalibrateHumidityViewModel by viewModel {
-        arguments?.let {
-            CalibrationViewModelArgs(it.getString(SENSOR_ID, ""))
-        }
+        CalibrationViewModelArgs(arguments?.getString(SENSOR_ID, "") ?: "")
     }
 
     override val calibrationType: CalibrationType = CalibrationType.HUMIDITY

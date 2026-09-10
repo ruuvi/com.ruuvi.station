@@ -6,13 +6,13 @@ import com.google.firebase.Firebase
 import com.ruuvi.station.firebase.domain.FirebaseInteractor
 import com.ruuvi.station.firebase.domain.PushAlertInteractor
 import com.ruuvi.station.firebase.domain.PushRegisterInteractor
-import org.kodein.di.Kodein
-import org.kodein.di.generic.bind
-import org.kodein.di.generic.instance
-import org.kodein.di.generic.singleton
+import org.kodein.di.DI
+import org.kodein.di.bind
+import org.kodein.di.instance
+import org.kodein.di.singleton
 
 object FirebaseInjectionModule {
-    val module = Kodein.Module(FirebaseInjectionModule.javaClass.name) {
+    val module = DI.Module(FirebaseInjectionModule.javaClass.name) {
 
         bind<FirebaseAnalytics>() with singleton { Firebase.analytics }
 

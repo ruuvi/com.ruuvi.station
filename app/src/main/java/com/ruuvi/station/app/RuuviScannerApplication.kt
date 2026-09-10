@@ -34,18 +34,18 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import org.kodein.di.Kodein
-import org.kodein.di.KodeinAware
-import org.kodein.di.conf.ConfigurableKodein
-import org.kodein.di.generic.bind
-import org.kodein.di.generic.instance
-import org.kodein.di.generic.singleton
+import org.kodein.di.DI
+import org.kodein.di.DIAware
+import org.kodein.di.conf.ConfigurableDI
+import org.kodein.di.bind
+import org.kodein.di.instance
+import org.kodein.di.singleton
 import timber.log.Timber
 
 private const val WIDGET_CONFIGURATION_SETTLE_DELAY_MILLIS = 750L
 
-class RuuviScannerApplication : Application(), KodeinAware {
-    override val kodein = ConfigurableKodein()
+class RuuviScannerApplication : Application(), DIAware {
+    override val di = ConfigurableDI()
 
     val defaultOnTagFoundListener: DefaultOnTagFoundListener by instance()
     private val bluetoothReceiver: BluetoothStateReceiver by instance()
@@ -115,10 +115,10 @@ class RuuviScannerApplication : Application(), KodeinAware {
     }
 
     private fun setupDependencyInjection() {
-        kodein.apply {
+        di.apply {
             addImport(AppInjectionModules.module)
 
-            addImport(Kodein.Module(javaClass.name) {
+            addImport(DI.Module(javaClass.name) {
                 bind<Application>() with singleton { this@RuuviScannerApplication }
                 bind<PowerManager>() with singleton {
                     this@RuuviScannerApplication.getSystemService(Context.POWER_SERVICE) as PowerManager
