@@ -341,6 +341,37 @@ class RuuviNetworkRepository
         result
     }
 
+    suspend fun getMarketingConsent(token: String): MarketingConsentResponse? = withContext(dispatcher) {
+        val response = retrofitService.getMarketingConsent(getAuth(token))
+        if (response.isSuccessful) {
+            response.body()
+        } else {
+            parseMarketingConsentError(response.errorBody())
+        }
+    }
+
+    suspend fun setMarketingConsent(
+        token: String,
+        request: MarketingConsentRequest
+    ): MarketingConsentResponse? = withContext(dispatcher) {
+        val response = retrofitService.setMarketingConsent(getAuth(token), request)
+        if (response.isSuccessful) {
+            response.body()
+        } else {
+            parseMarketingConsentError(response.errorBody())
+        }
+    }
+
+    private fun parseMarketingConsentError(errorBody: ResponseBody?): MarketingConsentResponse? {
+        return try {
+            val type = object : TypeToken<MarketingConsentResponse>() {}.type
+            Gson().fromJson(errorBody?.charStream(), type)
+        } catch (exception: Exception) {
+            Timber.e(exception, "Unable to parse marketing consent error response")
+            null
+        }
+    }
+
     suspend fun setAlert(request: SetAlertRequest, token: String): SetAlertResponse? {
         val response = retrofitService.setAlert(getAuth(token), request)
         val result: SetAlertResponse?

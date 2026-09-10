@@ -51,7 +51,8 @@ class NetworkDataSyncInteractor (
     private val tagSettingsInteractor: TagSettingsInteractor,
     private val pushRegisterInteractor: PushRegisterInteractor,
     private val networkShareListInteractor: NetworkShareListInteractor,
-    private val subscriptionInfoSyncInteractor: SubscriptionInfoSyncInteractor
+    private val subscriptionInfoSyncInteractor: SubscriptionInfoSyncInteractor,
+    private val marketingConsentInteractor: MarketingConsentInteractor
 ) {
     @Volatile
     private var syncJob: Job = Job().also { it.complete() }
@@ -132,6 +133,16 @@ class NetworkDataSyncInteractor (
                 networkRequestExecutor.executeScheduledRequests()
 
                 subscriptionInfoSyncInteractor.syncSubscriptionInfo()
+
+                // Keep supplementary newsletter state in the sync cycle without delaying
+                // sensor synchronization when the consent service is slow or unavailable.
+                launch {
+                    try {
+                        marketingConsentInteractor.refresh()
+                    } catch (exception: Exception) {
+                        Timber.e(exception, "Unable to refresh marketing consent")
+                    }
+                }
 
                 if (!networkRequestExecutor.anySettingsRequests()) {
                     Timber.d("updateSettingsFromNetwork")

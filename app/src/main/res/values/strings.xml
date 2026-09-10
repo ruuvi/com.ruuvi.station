@@ -865,8 +865,14 @@
     <string name="update_now">Update now</string>
     <string name="led_brightness_select_message">Select your preferred LED brightness level. Make sure you are within the Bluetooth range of the Ruuvi Air.</string>
     <string name="notes">Notes</string>
-    <string name="communication_channels">Communication channels</string>
-    <string name="communication_channels_description">I may be sent tips and other useful information regarding Ruuvi products.</string>
+    <string name="communication_channels">Ruuvi newsletter</string>
+    <string name="communication_channels_description">Get useful Ruuvi tips, product updates, feature news, and occasional special offers straight to your inbox.</string>
+    <string name="newsletter_subscription">Subscription</string>
+    <string name="newsletter_subscription_confirmation">Check your email to confirm your newsletter subscription.</string>
+    <string name="newsletter_card_title">Subscribe for promotions!</string>
+    <string name="newsletter_card_description">Subscribe to Ruuvi’s newsletter and always get sensors at the best price.</string>
+    <string name="newsletter_subscribe">Subscribe</string>
+    <string name="newsletter_url">https://ruuvi.com/join</string>
     <string name="share_active_access_section_title">Users with active access to this sensor:</string>
     <string name="share_active_access_empty_value">Not shared to anyone yet</string>
     <string name="share_sensor_shared_to_count_message">Used shares for this sensor: %1$,d/%2$,d\n\nTotal used shares for your account: %3$,d/%4$,d</string>

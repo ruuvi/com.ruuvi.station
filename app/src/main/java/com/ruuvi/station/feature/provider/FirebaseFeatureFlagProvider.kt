@@ -33,6 +33,7 @@ class FirebaseFeatureFlagProvider() : FeatureFlagProvider, RemoteFeatureFlagProv
             FeatureFlag.NEW_SENSOR_CARD -> true
             FeatureFlag.VISIBLE_MEASUREMENTS -> true
             FeatureFlag.GLOBAL_UNITS_SETTINGS -> true
+            FeatureFlag.MARKETING_CONSENT -> true
             else -> false
         }
     }

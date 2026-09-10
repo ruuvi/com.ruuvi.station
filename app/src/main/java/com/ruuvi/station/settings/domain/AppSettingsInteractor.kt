@@ -401,7 +401,6 @@ class AppSettingsInteractor(
     fun setMarketingPermission(enabled: Boolean) {
         preferencesRepository.setNetworkSetting(NetworkSettingNames.MARKETING_PERMISSION, enabled.toString(),
             System.currentTimeMillis() / 1000)
-        networkApplicationSettings.updateNetworkSetting(NetworkSettingNames.MARKETING_PERMISSION)
     }
 
     fun isPushAlerts(): Boolean = !preferencesRepository.isDisablePushNotifications()

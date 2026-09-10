@@ -125,6 +125,7 @@ class DashboardActivity : NfcActivity(), KodeinAware {
                 val scope = rememberCoroutineScope()
                 val userEmail by dashboardViewModel.userEmail.observeAsState()
                 val signedIn = !userEmail.isNullOrEmpty()
+                val marketingPermission by dashboardViewModel.marketingPermission.observeAsState(false)
                 val signedInOnce by dashboardViewModel.signedInOnce.collectAsState(false)
                 val bannerDisabled by dashboardViewModel.bannerDisabled.collectAsState(false)
                 val sensors by dashboardViewModel.sensorsList.collectAsState()
@@ -210,7 +211,9 @@ class DashboardActivity : NfcActivity(), KodeinAware {
                         drawerContent = {
                             DashboardMainMenu(
                                 scaffoldState = scaffoldState,
-                                signedIn = signedIn
+                                signedIn = signedIn,
+                                showNewsletter = dashboardViewModel.isMarketingConsentEnabled() &&
+                                    (!signedIn || !marketingPermission)
                             )
                         },
                         drawerBackgroundColor = RuuviStationTheme.colors.background

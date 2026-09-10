@@ -87,7 +87,6 @@ data class NetworkUserSettings(
                 DISABLE_EMAIL_NOTIFICATIONS == null &&
                 DISABLE_PUSH_NOTIFICATIONS == null &&
                 DISABLE_TELEGRAM_NOTIFICATIONS == null &&
-                MARKETING_PERMISSION == null &&
                 PROFILE_LANGUAGE_CODE == null &&
                 TIPS_ALLOWED == null
 

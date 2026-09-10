@@ -365,6 +365,22 @@ class RuuviNetworkInteractor (
         }
         return null
     }
+
+    suspend fun getMarketingConsent(): MarketingConsentResponse? {
+        val token = getToken()?.token ?: return null
+        return networkRepository.getMarketingConsent(token)
+    }
+
+    suspend fun setMarketingConsent(consent: Boolean, language: String): MarketingConsentResponse? {
+        val token = getToken()?.token ?: return null
+        val request = MarketingConsentRequest(
+            consent = consent,
+            silent = true,
+            joiningSource = MarketingConsentRequest.JOINING_SOURCE,
+            language = MarketingConsentRequest.normalizeLanguage(language)
+        )
+        return networkRepository.setMarketingConsent(token, request)
+    }
 }
 
 sealed class OperationStatus {

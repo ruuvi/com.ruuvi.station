@@ -40,6 +40,12 @@ fun DeveloperSettings(
                 onCheckedChange = viewModel::setFeatureValue
             )
 
+            FeatureSwitch(
+                feature = FeatureFlag.MARKETING_CONSENT,
+                checked = viewModel::getFeatureState,
+                onCheckedChange = viewModel::setFeatureValue
+            )
+
             SwitchIndicatorRuuvi(
                 text = "Use web version of share",
                 checked = useWebShare,

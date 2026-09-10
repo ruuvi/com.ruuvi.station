@@ -7,7 +7,10 @@ import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.network.data.response.GetSubscriptionResponse
 import com.ruuvi.station.network.domain.NetworkDataSyncInteractor
 import com.ruuvi.station.network.domain.NetworkSignInInteractor
+import com.ruuvi.station.network.domain.MarketingConsentInteractor
 import com.ruuvi.station.network.domain.RuuviNetworkInteractor
+import com.ruuvi.station.network.data.response.MarketingConsentResponseBody
+import com.ruuvi.station.network.data.response.MarketingConsentStatus
 import com.ruuvi.station.settings.domain.AppSettingsInteractor
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,7 +25,8 @@ class MyAccountViewModel(
     private val preferencesRepository: PreferencesRepository,
     private val networkInteractor: RuuviNetworkInteractor,
     private val networkSignInInteractor: NetworkSignInInteractor,
-    private val appSettingsInteractor: AppSettingsInteractor
+    private val appSettingsInteractor: AppSettingsInteractor,
+    private val marketingConsentInteractor: MarketingConsentInteractor
 ): ViewModel() {
 
     val userEmail = preferencesRepository.getUserEmailLiveData()
@@ -33,8 +37,13 @@ class MyAccountViewModel(
     private val _subscription = MutableStateFlow<Subscription?>(null)
     val subscription: StateFlow<Subscription?> = _subscription
 
-    private var _marketingPermission = MutableStateFlow(appSettingsInteractor.getMarketingPermission())
-    val marketingPermission: StateFlow<Boolean> = _marketingPermission
+    private val _marketingConsent = MutableStateFlow(
+        MarketingConsentUiState(
+            checked = appSettingsInteractor.getMarketingPermission(),
+            isVisible = marketingConsentInteractor.isEnabled()
+        )
+    )
+    val marketingConsent: StateFlow<MarketingConsentUiState> = _marketingConsent
 
     private val _tokens = MutableStateFlow<List<Pair<Long,String>>?>(null)
     val tokens: StateFlow<List<Pair<Long,String>>?> = _tokens
@@ -45,6 +54,7 @@ class MyAccountViewModel(
             getSubscriptionInfo()
             getRegisteredTokens()
         }
+        refreshMarketingConsent()
     }
 
     fun signOut() {
@@ -93,8 +103,58 @@ class MyAccountViewModel(
     }
 
     fun setMarketingPermission(isEnabled: Boolean) {
-        appSettingsInteractor.setMarketingPermission(isEnabled)
-        _marketingPermission.value = appSettingsInteractor.getMarketingPermission()
+        val previousState = _marketingConsent.value
+        if (!previousState.isToggleEnabled) return
+
+        _marketingConsent.value = previousState.copy(
+            checked = isEnabled,
+            isToggleEnabled = false
+        )
+
+        viewModelScope.launch {
+            sendEvent(MyAccountEvent.Loading(true))
+            var showUnconfirmedDialog = false
+            try {
+                val consent = marketingConsentInteractor.update(isEnabled)
+                if (consent == null) {
+                    _marketingConsent.value = previousState
+                } else {
+                    applyMarketingConsent(consent)
+                    if (isEnabled && consent.consentStatus == MarketingConsentStatus.UNCONFIRMED) {
+                        showUnconfirmedDialog = true
+                    }
+                }
+            } catch (exception: Exception) {
+                Timber.e(exception, "Unable to update marketing consent")
+                _marketingConsent.value = previousState
+            } finally {
+                sendEvent(MyAccountEvent.Loading(false))
+            }
+            if (showUnconfirmedDialog) {
+                sendEvent(MyAccountEvent.MarketingConsentUnconfirmed)
+            }
+        }
+    }
+
+    private fun refreshMarketingConsent() {
+        viewModelScope.launch {
+            try {
+                marketingConsentInteractor.refresh()?.let(::applyMarketingConsent)
+            } catch (exception: Exception) {
+                // Marketing consent is supplementary account data. Its failure must not
+                // prevent sign-in or make the rest of the account page unavailable.
+                Timber.e(exception, "Unable to refresh marketing consent")
+            }
+        }
+    }
+
+    private fun applyMarketingConsent(consent: MarketingConsentResponseBody) {
+        _marketingConsent.value = MarketingConsentUiState(
+            checked = consent.consentStatus == MarketingConsentStatus.SUBSCRIBED,
+            status = consent.consentStatus,
+            isToggleEnabled = consent.consentStatus.isToggleEnabled,
+            isVisible = marketingConsentInteractor.isEnabled()
+        )
     }
 }
 
@@ -102,6 +162,17 @@ sealed class MyAccountEvent {
     object CloseActivity: MyAccountEvent()
     class Loading(val isLoading: Boolean): MyAccountEvent()
     object RequestRegistered: MyAccountEvent()
+    object MarketingConsentUnconfirmed: MyAccountEvent()
+}
+
+data class MarketingConsentUiState(
+    val checked: Boolean,
+    val status: MarketingConsentStatus? = null,
+    val isToggleEnabled: Boolean = false,
+    val isVisible: Boolean = false
+) {
+    val showConfirmationMessage: Boolean
+        get() = status == MarketingConsentStatus.UNCONFIRMED
 }
 
 data class Subscription (

@@ -24,13 +24,17 @@ object NetworkInjectionModule {
         bind<NetworkRequestExecutor>() with singleton { NetworkRequestExecutor(instance(), instance(), instance(), instance(), instance()) }
 
         bind<NetworkDataSyncInteractor>() with singleton {
-            NetworkDataSyncInteractor(instance(), instance(), instance(), instance(), instance(), instance(), instance(), instance(), instance(), instance(), instance(), instance(), instance(), instance(), instance())
+            NetworkDataSyncInteractor(instance(), instance(), instance(), instance(), instance(), instance(), instance(), instance(), instance(), instance(), instance(), instance(), instance(), instance(), instance(), instance())
         }
 
         bind<NetworkShareListInteractor>() with singleton { NetworkShareListInteractor(instance()) }
 
         bind<NetworkApplicationSettings>() with  singleton {
             NetworkApplicationSettings(instance(), instance(), instance(), instance(), instance(), instance())
+        }
+
+        bind<MarketingConsentInteractor>() with singleton {
+            MarketingConsentInteractor(instance(), instance(), instance(), instance())
         }
 
         bind<NetworkAlertsSyncInteractor>() with  singleton {
@@ -52,7 +56,7 @@ object NetworkInjectionModule {
         bind<NetworkResponseLocalizer>() with provider { NetworkResponseLocalizer(instance()) }
 
         bind<MyAccountViewModel>() with provider {
-            MyAccountViewModel(instance(), instance(), instance(), instance(), instance())
+            MyAccountViewModel(instance(), instance(), instance(), instance(), instance(), instance())
         }
 
         bind<SignInViewModel>() with provider {

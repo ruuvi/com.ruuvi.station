@@ -8,6 +8,7 @@ import com.ruuvi.station.dashboard.DashboardTapAction
 import com.ruuvi.station.dashboard.DashboardType
 import com.ruuvi.station.dashboard.domain.SensorsSortingInteractor
 import com.ruuvi.station.feature.domain.RuntimeBehavior
+import com.ruuvi.station.feature.data.FeatureFlag
 import com.ruuvi.station.network.domain.NetworkApplicationSettings
 import com.ruuvi.station.network.domain.NetworkDataSyncInteractor
 import com.ruuvi.station.network.domain.NetworkSettingNames
@@ -65,6 +66,10 @@ class DashboardActivityViewModel(
     val bannerDisabled: StateFlow<Boolean> = _bannerDisabled
 
     val userEmail = preferencesRepository.getUserEmailLiveData()
+    val marketingPermission = preferencesRepository.getMarketingPermissionLiveData()
+
+    fun isMarketingConsentEnabled(): Boolean =
+        runtimeBehavior.isFeatureEnabled(FeatureFlag.MARKETING_CONSENT)
 
     val _shouldAskNotificationPermission: MutableStateFlow<Boolean> = MutableStateFlow<Boolean>(permissionLogicInteractor.shouldAskNotificationPermission())
     val shouldAskNotificationPermission: StateFlow<Boolean> = _shouldAskNotificationPermission

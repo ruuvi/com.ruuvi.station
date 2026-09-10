@@ -872,8 +872,14 @@
     <string name="update_now">Mettre à jour maintenant</string>
     <string name="led_brightness_select_message">Sélectionnez le niveau de luminosité de la LED souhaité. Assurez-vous d’être à portée Bluetooth de votre Ruuvi Air.</string>
     <string name="notes">Notes</string>
-    <string name="communication_channels">Canaux de communication</string>
-    <string name="communication_channels_description">Je peux recevoir des conseils et d\'autres informations utiles concernant les produits Ruuvi.</string>
+    <string name="communication_channels">Newsletter Ruuvi</string>
+    <string name="communication_channels_description">Recevez des conseils Ruuvi utiles, des actualités sur les produits et les fonctionnalités, ainsi que des offres spéciales occasionnelles directement dans votre boîte de réception.</string>
+    <string name="newsletter_subscription">Abonnement</string>
+    <string name="newsletter_subscription_confirmation">Consultez votre messagerie pour confirmer votre abonnement à la newsletter.</string>
+    <string name="newsletter_card_title">Abonnez-vous aux promotions !</string>
+    <string name="newsletter_card_description">Abonnez-vous à la newsletter de Ruuvi et profitez toujours du meilleur prix sur les capteurs.</string>
+    <string name="newsletter_subscribe">S’abonner</string>
+    <string name="newsletter_url">https://ruuvi.com/join</string>
     <string name="share_active_access_section_title">Utilisateurs ayant un accès actif à ce capteur :</string>
     <string name="share_active_access_empty_value">Pas encore partagé avec qui que ce soit</string>
     <string name="share_sensor_shared_to_count_message">Partages utilisés pour ce capteur : %1$,d/%2$,d\n\nTotal des partages utilisés pour votre compte : %3$,d/%4$,d</string>

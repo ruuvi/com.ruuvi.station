@@ -175,6 +175,8 @@ class PreferencesRepository(
 
     fun getDeveloperSettingsLiveData() = preferences.getDeveloperSettingsLiveData()
 
+    fun getMarketingPermissionLiveData() = preferences.getMarketingPermissionLiveData()
+
     fun getTemperatureUnitLiveData() =
         preferences.getTemperatureUnitCodeLiveData().map { TemperatureUnit.getByCode(it) }
 

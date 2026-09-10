@@ -867,8 +867,14 @@
     <string name="update_now">Uppdatera nu</string>
     <string name="led_brightness_select_message">Välj önskad LED-ljusstyrka. Se till att du är inom Ruuvi Airs Bluetooth-räckvidd.</string>
     <string name="notes">Anteckningar</string>
-    <string name="communication_channels">Kommunikationskanaler</string>
-    <string name="communication_channels_description">Jag kan komma att få tips och annan användbar information om Ruuvi-produkter.</string>
+    <string name="communication_channels">Ruuvís nyhetsbrev</string>
+    <string name="communication_channels_description">Få användbara Ruuvi-tips, produktuppdateringar, funktionsnyheter och enstaka specialerbjudanden direkt till din inkorg.</string>
+    <string name="newsletter_subscription">Prenumeration</string>
+    <string name="newsletter_subscription_confirmation">Kontrollera din e-post för att bekräfta din prenumeration på nyhetsbrevet.</string>
+    <string name="newsletter_card_title">Prenumerera på erbjudanden!</string>
+    <string name="newsletter_card_description">Prenumerera på Ruuvís nyhetsbrev och få alltid sensorer till bästa pris.</string>
+    <string name="newsletter_subscribe">Prenumerera</string>
+    <string name="newsletter_url">https://ruuvi.com/join</string>
     <string name="share_active_access_section_title">Användare med aktiv åtkomst till denna sensor:</string>
     <string name="share_active_access_empty_value">Inte delad med någon ännu</string>
     <string name="share_sensor_shared_to_count_message">Använda delningar för denna sensor: %1$,d/%2$,d\n\nTotalt antal använda delningar för ditt konto: %3$,d/%4$,d</string>

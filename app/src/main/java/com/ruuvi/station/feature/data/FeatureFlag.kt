@@ -13,5 +13,11 @@ enum class FeatureFlag (
         "Global Units and Resolution",
         "Enable grouped global units and resolution settings",
         false
+    ),
+    MARKETING_CONSENT(
+        "android_marketing_consent",
+        "Marketing consent",
+        "Enable newsletter consent in My Ruuvi account",
+        false
     )
 }

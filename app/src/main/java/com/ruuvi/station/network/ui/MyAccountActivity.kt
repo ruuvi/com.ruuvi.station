@@ -3,7 +3,7 @@ package com.ruuvi.station.network.ui
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
- import android.text.format.DateUtils
+import android.text.format.DateUtils
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.background
@@ -67,7 +67,8 @@ class MyAccountActivity : AppCompatActivity(), KodeinAware {
             }
             val subscription by viewModel.subscription.collectAsState()
             val tokens by viewModel.tokens.collectAsState()
-            val marketingPermission by viewModel.marketingPermission.collectAsState()
+            val marketingConsent by viewModel.marketingConsent.collectAsState()
+            var marketingConsentDialog by remember { mutableStateOf(false) }
 
             LaunchedEffect(key1 = true) {
                 viewModel.events.collect() { event ->
@@ -75,6 +76,9 @@ class MyAccountActivity : AppCompatActivity(), KodeinAware {
                         is MyAccountEvent.Loading -> { isLoading = event.isLoading }
                         is MyAccountEvent.CloseActivity -> finish()
                         is MyAccountEvent.RequestRegistered -> { deleteAccountDialog = true }
+                        is MyAccountEvent.MarketingConsentUnconfirmed -> {
+                            marketingConsentDialog = true
+                        }
                         else -> {}
                     }
                 }
@@ -86,7 +90,7 @@ class MyAccountActivity : AppCompatActivity(), KodeinAware {
                 StatusBarFill {
                     MyAccountBody(
                         user = username,
-                        marketingPermission = marketingPermission,
+                        marketingConsent = marketingConsent,
                         setMarketingPermission = viewModel::setMarketingPermission,
                         signOut = viewModel::signOut,
                         deleteAccount = viewModel::removeAccount,
@@ -103,6 +107,14 @@ class MyAccountActivity : AppCompatActivity(), KodeinAware {
                     MessageDialog(
                         message = stringResource(id = R.string.account_delete_confirmation_description),
                         onDismissRequest = { deleteAccountDialog = false }
+                    )
+                }
+
+                if (marketingConsentDialog) {
+                    MessageDialog(
+                        title = stringResource(id = R.string.newsletter_subscription),
+                        message = stringResource(id = R.string.newsletter_subscription_confirmation),
+                        onDismissRequest = { marketingConsentDialog = false }
                     )
                 }
 
@@ -128,7 +140,7 @@ class MyAccountActivity : AppCompatActivity(), KodeinAware {
 @Composable
 fun MyAccountBody(
     user: String,
-    marketingPermission: Boolean,
+    marketingConsent: MarketingConsentUiState,
     setMarketingPermission: (Boolean) -> Unit,
     signOut: () -> Unit,
     deleteAccount: () -> Unit,
@@ -145,68 +157,100 @@ fun MyAccountBody(
         .background(RuuviStationTheme.colors.background)
     ) {
         RuuviTopAppBar(title = stringResource(id = R.string.my_ruuvi_account))
-        PageSurfaceWithPadding() {
-            Column() {
-                SubtitleWithPadding(text = stringResource(id = R.string.signed_in_user))
-                ParagraphWithPadding(text = user)
+        Box(modifier = Modifier.weight(1f)) {
+            PageSurfaceWithPadding() {
+                Column() {
+                    Subtitle(text = stringResource(id = R.string.signed_in_user))
+                    Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.small))
+                    Paragraph(text = user)
+                    Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.medium))
+                    ChangeEmailText()
 
-                // ISSUE 1258 Temporary disabled
-//                SwitchIndicatorRuuvi(
-//                    text = stringResource(id = R.string.communication_channels),
-//                    checked = marketingPermission,
-//                    onCheckedChange = setMarketingPermission
-//                )
-//                Paragraph(text = stringResource(id = R.string.communication_channels_description))
+                    if (marketingConsent.isVisible) {
+                        AccountSectionDivider()
 
-                Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extraBig))
+                        Subtitle(text = stringResource(id = R.string.communication_channels))
+                        Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.small))
+                        Paragraph(text = stringResource(id = R.string.communication_channels_description))
+                        Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.medium))
 
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically
+                        SwitchIndicatorRuuvi(
+                            text = stringResource(id = R.string.newsletter_subscription),
+                            checked = marketingConsent.checked,
+                            onCheckedChange = setMarketingPermission,
+                            enabled = marketingConsent.isToggleEnabled
+                        )
+
+                        if (marketingConsent.showConfirmationMessage) {
+                            Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.medium))
+                            Paragraph(text = stringResource(id = R.string.newsletter_subscription_confirmation))
+                        }
+
+                        AccountSectionDivider(
+                            topSpacing = if (marketingConsent.showConfirmationMessage) {
+                                RuuviStationTheme.dimensions.big
+                            } else {
+                                RuuviStationTheme.dimensions.medium
+                            }
+                        )
+                    }
+
+                    if (BuildConfig.DEBUG) {
+                        if (fcmToken != null) {
+                            MoreInfoItem(
+                                title = "",
+                                value = fcmToken.toString()
+                            )
+                            Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.big))
+                        }
+
+                        SubscriptionInfo(subscription = subscription)
+
+                        if (tokens != null) {
+                            ParagraphWithPadding(text = "Registered FCM tokens")
+                            for (token in tokens) {
+                                Paragraph(text = "${token.first} - ${token.second}")
+                            }
+                            Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.big))
+                        }
+                    }
+
+                    // Keep the end of the scrollable content clear of the pinned actions.
+                    Spacer(
+                        modifier = Modifier.height(
+                            RuuviStationTheme.dimensions.buttonHeight +
+                                RuuviStationTheme.dimensions.big * 2
+                        )
+                    )
+                }
+            }
+
+            Row(
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .fillMaxWidth()
+                    .background(RuuviStationTheme.colors.background)
+                    .padding(
+                        horizontal = RuuviStationTheme.dimensions.screenPadding,
+                        vertical = RuuviStationTheme.dimensions.big
+                    ),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                RuuviButton(
+                    modifier = Modifier.weight(1f),
+                    text = stringResource(id = R.string.delete_account),
+                    isWarning = true
                 ) {
-                    RuuviButton(
-                        modifier = Modifier.weight(1f),
-                        text = stringResource(id = R.string.delete_account),
-                        isWarning = true
-                    ) {
-                        deleteAccount.invoke()
-                    }
-
-                    Spacer(modifier = Modifier.width(RuuviStationTheme.dimensions.big))
-                    RuuviButton(
-                        modifier = Modifier.weight(1f),
-                        text = stringResource(id = R.string.sign_out)
-                    ) {
-                        signOutDialog = true
-                    }
+                    deleteAccount.invoke()
                 }
 
-                Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.big))
-
-                ChangeEmailText()
-
-                if (BuildConfig.DEBUG) {
-                    Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.big))
-
-                    if (fcmToken != null) {
-                        MoreInfoItem(
-                            title = "",
-                            value = fcmToken.toString()
-                        )
-                        Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.big))
-                    }
-
-                    SubscriptionInfo(subscription = subscription)
-
-                    if (tokens != null) {
-                        ParagraphWithPadding(text = "Registered FCM tokens")
-                        for (token in tokens) {
-                            Paragraph(text = "${token.first} - ${token.second}")
-                        }
-                        Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.big))
-
-                    }
+                Spacer(modifier = Modifier.width(RuuviStationTheme.dimensions.big))
+                RuuviButton(
+                    modifier = Modifier.weight(1f),
+                    text = stringResource(id = R.string.sign_out)
+                ) {
+                    signOutDialog = true
                 }
             }
         }
@@ -221,6 +265,15 @@ fun MyAccountBody(
             }
         }
     }
+}
+
+@Composable
+private fun AccountSectionDivider(
+    topSpacing: androidx.compose.ui.unit.Dp = RuuviStationTheme.dimensions.big
+) {
+    Spacer(modifier = Modifier.height(topSpacing))
+    DividerRuuvi()
+    Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.big))
 }
 
 @Composable

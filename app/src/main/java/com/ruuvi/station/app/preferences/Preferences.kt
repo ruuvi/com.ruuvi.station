@@ -675,6 +675,9 @@ class Preferences (val context: Context) {
     fun getDeveloperSettingsLiveData() =
         SharedPreferenceBooleanLiveData(sharedPreferences, PREF_DEVELOPER_SETTINGS, false)
 
+    fun getMarketingPermissionLiveData() =
+        SharedPreferenceBooleanLiveData(sharedPreferences, PREF_MARKETING_PERMISSION, false)
+
     fun getTemperatureUnitCodeLiveData() =
         SharedPreferenceStringLiveData(sharedPreferences, PREF_TEMPERATURE_UNIT, DEFAULT_TEMPERATURE_UNIT)
 

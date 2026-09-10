@@ -877,8 +877,14 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="update_now">Jetzt aktualisieren</string>
     <string name="led_brightness_select_message">Wählen Sie die gewünschte LED-Helligkeitsstufe. Stellen Sie sicher, dass Sie sich innerhalb der Bluetooth-Reichweite des Ruuvi Air befinden.</string>
     <string name="notes">Notizen</string>
-    <string name="communication_channels">Kommunikationskanäle</string>
-    <string name="communication_channels_description">Mir können Tipps und andere nützliche Informationen zu Ruuvi-Produkten zugesendet werden.</string>
+    <string name="communication_channels">Ruuvi-Newsletter</string>
+    <string name="communication_channels_description">Erhalte nützliche Ruuvi-Tipps, Produkt-Updates, Neuigkeiten zu Funktionen und gelegentliche Sonderangebote direkt in dein Postfach.</string>
+    <string name="newsletter_subscription">Abonnement</string>
+    <string name="newsletter_subscription_confirmation">Prüfe deine E-Mails, um dein Newsletter-Abonnement zu bestätigen.</string>
+    <string name="newsletter_card_title">Angebote abonnieren!</string>
+    <string name="newsletter_card_description">Abonniere den Ruuvi-Newsletter und erhalte Sensoren immer zum besten Preis.</string>
+    <string name="newsletter_subscribe">Abonnieren</string>
+    <string name="newsletter_url">https://ruuvi.com/de/beitreten</string>
     <string name="share_active_access_section_title">Benutzer mit aktivem Zugriff auf diesen Sensor:</string>
     <string name="share_active_access_empty_value">Noch mit niemandem geteilt</string>
     <string name="share_sensor_shared_to_count_message">Verwendete Freigaben für diesen Sensor: %1$,d/%2$,d\n\nInsgesamt verwendete Freigaben für Ihr Konto: %3$,d/%4$,d</string>
