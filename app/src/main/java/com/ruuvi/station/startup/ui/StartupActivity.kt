@@ -9,14 +9,15 @@ import com.ruuvi.station.R
 import com.ruuvi.station.dashboard.ui.DashboardActivity
 import com.ruuvi.station.firebase.domain.FirebaseInteractor
 import com.ruuvi.station.onboarding.ui.OnboardingActivity
-import org.kodein.di.KodeinAware
-import org.kodein.di.android.closestKodein
-import org.kodein.di.generic.instance
+import org.kodein.di.DI
+import org.kodein.di.DIAware
+import org.kodein.di.android.closestDI
+import org.kodein.di.instance
 import timber.log.Timber
 
-class StartupActivity : AppCompatActivity(), KodeinAware {
+class StartupActivity : AppCompatActivity(), DIAware {
 
-    override val kodein by closestKodein()
+    override val di by closestDI()
 
     private val viewModel: StartupActivityViewModel by viewModel()
     private val firebasePropertySaver: FirebaseInteractor by instance()

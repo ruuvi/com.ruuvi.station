@@ -83,6 +83,7 @@ import com.ruuvi.station.tagdetails.ui.SensorCardActivity
 import com.ruuvi.station.tagdetails.ui.SensorCardOpenType
 import com.ruuvi.station.tagsettings.ui.BackgroundActivity
 import com.ruuvi.station.tagsettings.ui.SetSensorName
+import com.ruuvi.station.tagsettings.ui.TagSettingsActivity
 import com.ruuvi.station.units.domain.aqi.AQI
 import com.ruuvi.station.units.model.UnitType
 import com.ruuvi.station.util.base.NfcActivity
@@ -91,16 +92,17 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
-import org.kodein.di.KodeinAware
-import org.kodein.di.android.closestKodein
-import org.kodein.di.generic.instance
+import org.kodein.di.DI
+import org.kodein.di.DIAware
+import org.kodein.di.android.closestDI
+import org.kodein.di.instance
 import kotlin.math.min
 
 private val DASHBOARD_ALERT_CONTAINER_SIZE = 36.dp
 
-class DashboardActivity : NfcActivity(), KodeinAware {
+class DashboardActivity : NfcActivity(), DIAware {
 
-    override val kodein by closestKodein()
+    override val di: DI by closestDI()
 
     private val dashboardViewModel: DashboardActivityViewModel by viewModel()
     private val preferencesRepository: PreferencesRepository by instance()
@@ -591,7 +593,7 @@ fun DashboardItem(
                 alpha = if (itemIsDragged) 0.7f else 1f
             }
             .clickableSingle(enabled = interactionEnabled) {
-                SensorCardActivity.start(
+                SensorCardActivity.star(
                     context,
                     sensor.id,
                     SensorCardOpenType.DEFAULT

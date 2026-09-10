@@ -2,55 +2,55 @@
 accompanist = "0.36.0"
 accompanistPermissions = "0.37.3"
 activityCompose = "1.13.0"
-nordicBle = "2.7.3"
-nordicDfu = "2.4.2"
-nordicMcuMgr = "2.7.4"
-appcompat = "1.7.1"
+nordicBle = "2.11.0"
+nordicDfu = "2.11.0"
+nordicMcuMgr = "3.4.1"
+appcompat = "1.8.0"
 coilKt = "2.7.0"
-comRuuviBluetoothDefault = "1.8.10"
-compose = "2.5.2"
-constraintlayout = "2.2.1"
-constraintlayoutCompose = "1.1.1"
+comRuuviBluetoothDefault = "b89babe8880c7f71cfca49b43f421581d0c94ec5"
+vico = "3.3.1"
+constraintlayout = "2.2.2"
+constraintlayoutCompose = "1.1.2"
 coreKtx = "1.19.0"
 datastore = "1.2.1"
 dbflow = "4.2.4"
-di = "6.5.5"
-firebaseBom = "34.16.0"
-firebaseCrashlyticsGradle = "3.0.7"
+di = "7.33.0"
+firebaseBom = "34.19.0"
+firebaseCrashlyticsGradle = "3.0.8"
 glide = "5.0.9"
 googleMaterial = "1.14.0"
 googleServices = "4.5.0"
 gradle = "9.2.1"
 gridlayout = "1.1.0"
-grpcOkhttp = "1.82.2"
+grpcOkhttp = "1.84.0"
 gson = "2.14.0"
 ion = "3.1.0"
-jetbrainsKotlinJvm = "2.4.0"
-jetbrainsKotlinPluginCompose = "2.4.0"
-jetbrainsKotlinPluginSerialization = "2.4.0"
+jetbrainsKotlinJvm = "2.4.20"
+jetbrainsKotlinPluginCompose = "2.4.20"
+jetbrainsKotlinPluginSerialization = "2.4.20"
 junit = "4.13.2"
-kotlin = "2.4.0"
-kotlinVersion = "2.4.0"
+kotlin = "2.4.20"
+kotlinVersion = "2.4.20"
 kotlinx = "1.11.0"
 legacySupportV4 = "1.0.0"
 lifecycle = "2.11.0"
 lifecycleExtensions = "2.2.0"
-loggingInterceptor = "5.4.0"
-material = "1.11.4"
+loggingInterceptor = "5.5.0"
+material = "1.12.1"
 material3 = "1.4.0"
 materialVersion = "1.7.8"
 mockk = "1.14.11"
-navigation = "2.9.8"
+navigation = "2.10.1"
 opencsv = "5.12.0"
 preferenceKtx = "1.2.1"
 retrofit2 = "3.0.0"
 reviewKtx = "2.0.2"
-runtimeLivedata = "1.11.4"
+runtimeLivedata = "1.12.1"
 rxjava = "2.2.21"
 semver = "2.1.0"
-sonarqube = "7.3.1.8318"
+sonarqube = "7.5.0.8588"
 timber = "5.0.1"
-ui = "1.11.4"
+ui = "1.12.1"
 vectordrawable = "1.2.0"
 workRuntimeKtx = "2.11.2"
 
@@ -66,8 +66,7 @@ ble-ktx = { group = "no.nordicsemi.android", name = "ble-ktx", version.ref = "no
 coil = { group = "io.coil-kt", name = "coil", version.ref = "coilKt" }
 coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coilKt" }
 com-ruuvi-bluetooth-default = { group = "com.github.ruuvi", name = "com.ruuvi.bluetooth.default", version.ref = "comRuuviBluetoothDefault" }
-compose = { group = "com.patrykandpatrick.vico", name = "compose", version.ref = "compose" }
-vico-core = { group = "com.patrykandpatrick.vico", name = "core", version.ref = "compose" }
+vico-compose = { group = "com.patrykandpatrick.vico", name = "compose", version.ref = "vico" }
 constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
 constraintlayout-compose = { group = "androidx.constraintlayout", name = "constraintlayout-compose", version.ref = "constraintlayoutCompose" }
 converter-gson = { group = "com.squareup.retrofit2", name = "converter-gson", version.ref = "retrofit2" }
@@ -98,7 +97,7 @@ ion = { group = "com.koushikdutta.ion", name = "ion", version.ref = "ion" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 kodein-di-conf-jvm = { group = "org.kodein.di", name = "kodein-di-conf-jvm", version.ref = "di" }
 kodein-di-framework-android-x = { group = "org.kodein.di", name = "kodein-di-framework-android-x", version.ref = "di" }
-kodein-di-generic-jvm = { group = "org.kodein.di", name = "kodein-di-generic-jvm", version.ref = "di" }
+kodein-di = { group = "org.kodein.di", name = "kodein-di", version.ref = "di" }
 kotlin-compose-compiler-plugin-embeddable = { group = "org.jetbrains.kotlin", name = "kotlin-compose-compiler-plugin-embeddable", version.ref = "kotlinVersion" }
 kotlin-gradle-plugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlinVersion" }
 kotlin-stdlib = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib", version.ref = "kotlinVersion" }

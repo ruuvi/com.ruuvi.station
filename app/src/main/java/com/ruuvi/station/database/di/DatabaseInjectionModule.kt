@@ -3,13 +3,13 @@ package com.ruuvi.station.database.di
 import com.raizlabs.android.dbflow.config.DatabaseDefinition
 import com.raizlabs.android.dbflow.config.FlowManager
 import com.ruuvi.station.database.domain.*
-import org.kodein.di.Kodein
-import org.kodein.di.generic.bind
-import org.kodein.di.generic.instance
-import org.kodein.di.generic.singleton
+import org.kodein.di.DI
+import org.kodein.di.bind
+import org.kodein.di.instance
+import org.kodein.di.singleton
 
 object DatabaseInjectionModule {
-    val module = Kodein.Module(DatabaseInjectionModule.javaClass.name){
+    val module = DI.Module(DatabaseInjectionModule.javaClass.name){
         bind<DatabaseDefinition>() with singleton {
             FlowManager.getDatabase(LocalDatabase::class.java)
         }
