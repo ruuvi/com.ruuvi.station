@@ -4,6 +4,7 @@ import androidx.lifecycle.*
 import com.ruuvi.gateway.tester.nfc.model.SensorNfсScanInfo
 import com.ruuvi.station.app.permissions.PermissionLogicInteractor
 import com.ruuvi.station.app.preferences.PreferencesRepository
+import com.ruuvi.station.bluetooth.BluetoothInteractor
 import com.ruuvi.station.dashboard.DashboardTapAction
 import com.ruuvi.station.dashboard.DashboardType
 import com.ruuvi.station.dashboard.domain.SensorsSortingInteractor
@@ -29,7 +30,8 @@ class DashboardActivityViewModel(
     private val networkSignInInteractor: NetworkSignInInteractor,
     private val nfcResultInteractor: NfcResultInteractor,
     private val sortingInteractor: SensorsSortingInteractor,
-    private val runtimeBehavior: RuntimeBehavior
+    private val runtimeBehavior: RuntimeBehavior,
+    private val bluetoothInteractor: BluetoothInteractor
 ) : ViewModel() {
 
     private val _sensorsList = MutableStateFlow(tagInteractor.getTags())
@@ -117,12 +119,22 @@ class DashboardActivityViewModel(
     fun syncCloud() {
         viewModelScope.launch {
             _dataRefreshing.value = true
-            val job = networkDataSyncInteractor.syncNetworkData()
-            job.invokeOnCompletion {
+
+            try {
+                if (bluetoothInteractor.canScan()) {
+                    bluetoothInteractor.startForegroundScanning()
+                }
+
+                if (preferencesRepository.signedIn()) {
+                    networkDataSyncInteractor.syncNetworkData().join()
+                } else {
+                    delay(1000)
+                }
+
+                refreshSensors()
+            } finally {
                 _dataRefreshing.value = false
             }
-            delay(200)
-            if (job.isActive) _dataRefreshing.value = false
         }
     }
 

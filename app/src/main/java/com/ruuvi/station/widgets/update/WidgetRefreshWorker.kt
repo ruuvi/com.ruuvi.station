@@ -14,9 +14,9 @@ import com.ruuvi.station.widgets.domain.WidgetPreferencesInteractor
 import com.ruuvi.station.widgets.domain.WidgetSensorSnapshotProvider
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.delay
-import org.kodein.di.Kodein
-import org.kodein.di.android.kodein
-import org.kodein.di.generic.instance
+import org.kodein.di.DI
+import org.kodein.di.android.closestDI
+import org.kodein.di.instance
 import timber.log.Timber
 
 class WidgetRefreshWorker(
@@ -28,12 +28,12 @@ class WidgetRefreshWorker(
         val target = WidgetRefreshTarget.fromInputData(inputData) ?: return Result.failure()
 
         return try {
-            val kodein: Kodein by kodein(applicationContext)
-            val widgetUpdater: WidgetUpdater by kodein.instance()
-            val bluetoothInteractor: BluetoothInteractor by kodein.instance()
-            val simplePreferences: WidgetPreferencesInteractor by kodein.instance()
-            val complexPreferences: ComplexWidgetPreferencesInteractor by kodein.instance()
-            val snapshotProvider: WidgetSensorSnapshotProvider by kodein.instance()
+            val di: DI by closestDI(applicationContext)
+            val widgetUpdater: WidgetUpdater by di.instance()
+            val bluetoothInteractor: BluetoothInteractor by di.instance()
+            val simplePreferences: WidgetPreferencesInteractor by di.instance()
+            val complexPreferences: ComplexWidgetPreferencesInteractor by di.instance()
+            val snapshotProvider: WidgetSensorSnapshotProvider by di.instance()
 
             val appWidgetIds = target.appWidgetId?.let { intArrayOf(it) }
                 ?: installedWidgetIds(target.refreshType)

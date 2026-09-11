@@ -27,17 +27,17 @@ import com.ruuvi.station.app.ui.components.dialog.MessageDialog
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.RuuviTheme
 import com.ruuvi.station.tagsettings.ui.MoreInfoItem
-import org.kodein.di.Kodein
-import org.kodein.di.KodeinAware
-import org.kodein.di.android.closestKodein
+import org.kodein.di.DI
+import org.kodein.di.DIAware
+import org.kodein.di.android.closestDI
 import com.ruuvi.station.util.extensions.viewModel
 import timber.log.Timber
 
 var fcmToken by mutableStateOf<String?>(null)// String? = null
 
-class MyAccountActivity : AppCompatActivity(), KodeinAware {
+class MyAccountActivity : AppCompatActivity(), DIAware {
 
-    override val kodein: Kodein by closestKodein()
+    override val di: DI by closestDI()
 
     private val viewModel: MyAccountViewModel by viewModel()
 

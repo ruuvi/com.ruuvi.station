@@ -6,19 +6,19 @@ import android.content.Context
 import android.content.Intent
 import com.ruuvi.station.alarm.domain.AlarmCheckInteractor
 import com.ruuvi.station.database.domain.AlarmRepository
-import org.kodein.di.Kodein
-import org.kodein.di.KodeinAware
-import org.kodein.di.generic.instance
+import org.kodein.di.DI
+import org.kodein.di.DIAware
+import org.kodein.di.instance
 import java.util.Calendar
 
-class MuteAlarmReceiver : BroadcastReceiver(), KodeinAware {
+class MuteAlarmReceiver : BroadcastReceiver(), DIAware {
 
-    override lateinit var kodein: Kodein
+    override lateinit var di: DI
     val alarmRepository: AlarmRepository by instance()
 
     override fun onReceive(context: Context, intent: Intent) {
-        kodein = (context.applicationContext as KodeinAware).kodein
-        val alarmCheckInteractor: AlarmCheckInteractor by kodein.instance()
+        di = (context.applicationContext as DIAware).di
+        val alarmCheckInteractor: AlarmCheckInteractor by di.instance()
 
         val notificationId = intent.getIntExtra("notificationId", DEFAULT_ID)
         val alarmId = intent.getIntExtra(ALARM_ID, DEFAULT_ID)

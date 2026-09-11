@@ -92,14 +92,15 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
-import org.kodein.di.KodeinAware
-import org.kodein.di.android.closestKodein
-import org.kodein.di.generic.instance
+import org.kodein.di.DI
+import org.kodein.di.DIAware
+import org.kodein.di.android.closestDI
+import org.kodein.di.instance
 import kotlin.math.min
 
-class DashboardActivity : NfcActivity(), KodeinAware {
+class DashboardActivity : NfcActivity(), DIAware {
 
-    override val kodein by closestKodein()
+    override val di: DI by closestDI()
 
     private val dashboardViewModel: DashboardActivityViewModel by viewModel()
     private val preferencesRepository: PreferencesRepository by instance()
@@ -430,11 +431,7 @@ fun DashboardItems(
     val coroutineScope = rememberCoroutineScope()
     val overscrollJob = remember { mutableStateOf<Job?>(null) }
 
-    val pullToRefreshModifier = if (userEmail.isNullOrEmpty()) {
-        Modifier
-    } else {
-        Modifier.pullRefresh(pullRefreshState)
-    }
+    val pullToRefreshModifier = Modifier.pullRefresh(pullRefreshState)
 
     Box(modifier = pullToRefreshModifier) {
         LazyVerticalStaggeredGrid(
