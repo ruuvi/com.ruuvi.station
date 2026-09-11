@@ -39,6 +39,10 @@ import timber.log.Timber
 import java.text.DecimalFormat
 import kotlin.math.min
 
+private const val CHART_SIZE_LEVEL_NORMAL = 1
+private const val CHART_SIZE_LEVEL_INCREASED = 2
+private const val CHART_SIZE_LEVEL_MAX = 3
+
 @Composable
 fun ChartsView(
     modifier: Modifier,
@@ -50,7 +54,7 @@ fun ChartsView(
     chartCleared: Flow<String>,
     viewPeriod: Period,
     size: Size,
-    increasedChartSize: Boolean,
+    chartSizeLevel: Int,
     scrollToChartEvent: Flow<UnitType>,
     historyUpdater: (String) -> Flow<MutableList<ChartContainer>>,
 ) {
@@ -117,11 +121,11 @@ fun ChartsView(
         }
     }
 
-    LaunchedEffect(key1 = chartContainers.size, increasedChartSize) {
-        chartsPerScreen = if (increasedChartSize) {
-            min(2, chartContainers.size)
-        } else {
-            min(3, chartContainers.size)
+    LaunchedEffect(key1 = chartContainers.size, chartSizeLevel) {
+        chartsPerScreen = when (chartSizeLevel) {
+            CHART_SIZE_LEVEL_MAX -> min(1, chartContainers.size)
+            CHART_SIZE_LEVEL_INCREASED -> min(2, chartContainers.size)
+            else -> min(3, chartContainers.size)
         }
         needsScroll = chartsPerScreen < chartContainers.size
     }

@@ -32,15 +32,19 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import timber.log.Timber
 
+private const val CHART_SIZE_LEVEL_NORMAL = 1
+private const val CHART_SIZE_LEVEL_MAX = 3
+
 @Composable
 fun ChartControlElement2(
     sensorId: String,
     viewPeriod: Period,
     showChartStats: Boolean,
     syncStatus: Flow<SyncStatus>,
-    increasedChartSize: Boolean,
+    chartSizeLevel: Int,
     hideIncreaseChartSize: Boolean,
-    changeIncreasedChartSize: () -> Unit,
+    increaseChartSize: () -> Unit,
+    decreaseChartSize: () -> Unit,
     disconnectGattAction: (String) -> Unit,
     shouldSkipGattSyncDialog: () -> Boolean,
     syncGatt: (String) -> Unit,
@@ -148,9 +152,10 @@ fun ChartControlElement2(
             ThreeDotsMenu(
                 sensorId = sensorId,
                 showChartStats = showChartStats,
-                increasedChartSize = increasedChartSize,
+                chartSizeLevel = chartSizeLevel,
                 hideIncreaseChartSize = hideIncreaseChartSize,
-                changeIncreasedChartSize = changeIncreasedChartSize,
+                increaseChartSize = increaseChartSize,
+                decreaseChartSize = decreaseChartSize,
                 exportToCsv = { exportToCsv(sensorId) },
                 exportToXlsx = { exportToXlsx(sensorId) },
                 clearHistory = { removeTagData(sensorId) },
@@ -319,9 +324,10 @@ fun ViewPeriodMenu(
 fun ThreeDotsMenu(
     sensorId: String,
     showChartStats: Boolean,
-    increasedChartSize: Boolean,
+    chartSizeLevel: Int,
     hideIncreaseChartSize: Boolean,
-    changeIncreasedChartSize: () -> Unit,
+    increaseChartSize: () -> Unit,
+    decreaseChartSize: () -> Unit,
     exportToCsv: () -> Uri?,
     exportToXlsx: () -> Uri?,
     clearHistory: () -> Unit,
@@ -392,17 +398,20 @@ fun ThreeDotsMenu(
                         }
                         Paragraph(text = caption)
                     }
-                    if (!hideIncreaseChartSize) {
+                    if (!hideIncreaseChartSize && chartSizeLevel < CHART_SIZE_LEVEL_MAX) {
                         DropdownMenuItem(onClick = {
                             threeDotsMenuExpanded = false
-                            changeIncreasedChartSize()
+                            increaseChartSize()
                         }) {
-                            val caption = if (increasedChartSize) {
-                                stringResource(id = R.string.decrease_graph_size)
-                            } else {
-                                stringResource(id = R.string.increase_graph_size)
-                            }
-                            Paragraph(text = caption)
+                            Paragraph(text = stringResource(id = R.string.increase_graph_size))
+                        }
+                    }
+                    if (!hideIncreaseChartSize && chartSizeLevel > CHART_SIZE_LEVEL_NORMAL) {
+                        DropdownMenuItem(onClick = {
+                            threeDotsMenuExpanded = false
+                            decreaseChartSize()
+                        }) {
+                            Paragraph(text = stringResource(id = R.string.decrease_graph_size))
                         }
                     }
                 }
