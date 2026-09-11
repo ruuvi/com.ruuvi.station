@@ -651,10 +651,31 @@ class Preferences (val context: Context) {
             sharedPreferences.edit { putLong(PREF_DISABLE_TELEGRAM_NOTIFICATIONS_LAST_UPDATED, value) }
         }
 
-    var increasedChartSize: Boolean
-        get() = sharedPreferences.getBoolean(PREF_INCREASED_CHART_SIZE, false)
+    var chartSizeLevel: Int
+        get() {
+            if (sharedPreferences.contains(PREF_CHART_SIZE_LEVEL)) {
+                return sharedPreferences.getInt(PREF_CHART_SIZE_LEVEL, CHART_SIZE_LEVEL_NORMAL)
+                    .coerceIn(CHART_SIZE_LEVEL_NORMAL, CHART_SIZE_LEVEL_MAX)
+            }
+
+            return if (sharedPreferences.getBoolean(PREF_INCREASED_CHART_SIZE, false)) {
+                CHART_SIZE_LEVEL_INCREASED
+            } else {
+                CHART_SIZE_LEVEL_NORMAL
+            }
+        }
         set(value) {
-            sharedPreferences.edit().putBoolean(PREF_INCREASED_CHART_SIZE, value).apply()
+            val normalizedValue = value.coerceIn(CHART_SIZE_LEVEL_NORMAL, CHART_SIZE_LEVEL_MAX)
+            sharedPreferences.edit()
+                .putInt(PREF_CHART_SIZE_LEVEL, normalizedValue)
+                .putBoolean(PREF_INCREASED_CHART_SIZE, normalizedValue > CHART_SIZE_LEVEL_NORMAL)
+                .apply()
+        }
+
+    var increasedChartSize: Boolean
+        get() = chartSizeLevel > CHART_SIZE_LEVEL_NORMAL
+        set(value) {
+            chartSizeLevel = if (value) CHART_SIZE_LEVEL_INCREASED else CHART_SIZE_LEVEL_NORMAL
         }
 
     var bluetoothPermissionRequested: Boolean
@@ -805,6 +826,7 @@ class Preferences (val context: Context) {
         private const val PREF_DISABLE_TELEGRAM_NOTIFICATIONS_LAST_UPDATED = "pref_disable_telegram_notifications_last_updated"
         private const val PREF_BANNER_DISABLED_FOR_VERSION = "pref_banner_disabled_for_version"
         private const val PREF_INCREASED_CHART_SIZE = "pref_increased_chart_size"
+        private const val PREF_CHART_SIZE_LEVEL = "pref_chart_size_level"
         private const val PREF_BLUETOOTH_PERMISSION_REQUESTED = "pref_bluetooth_permission_requested"
         private const val PREF_SHOW_VISIBLE_MEASUREMENTS = "pref_show_visible_measurements"
         private const val PREF_TIPS_ALLOWED = "pref_tips_allowed"
@@ -824,5 +846,8 @@ class Preferences (val context: Context) {
         private const val DEFAULT_REQUEST_FOR_REVIEW_DATE = 0L
         private const val DEFAULT_REQUEST_FOR_APP_UPDATE_DATE = 0L
         private const val DEFAULT_DARKMODE = AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
+        private const val CHART_SIZE_LEVEL_NORMAL = 1
+        private const val CHART_SIZE_LEVEL_INCREASED = 2
+        private const val CHART_SIZE_LEVEL_MAX = 3
     }
 }

@@ -88,8 +88,8 @@ class SensorCardViewModel(
     private val _newChartsUI = MutableStateFlow<Boolean>(preferencesRepository.isNewChartsUI())
     val newChartsUI: StateFlow<Boolean> = _newChartsUI
 
-    private val _increasedChartSize = MutableStateFlow<Boolean>(preferencesRepository.isIncreasedChartSize())
-    val increasedChartSize: StateFlow<Boolean> = _increasedChartSize
+    private val _chartSizeLevel = MutableStateFlow<Int>(preferencesRepository.getChartSizeLevel())
+    val chartSizeLevel: StateFlow<Int> = _chartSizeLevel
 
     private val _scrollToChartEvent = Channel<UnitType>(Channel.BUFFERED)
     val scrollToChartEvent = _scrollToChartEvent.receiveAsFlow()
@@ -367,9 +367,24 @@ class SensorCardViewModel(
         }
     }
 
-    fun changeIncreaseChartSize() {
-        preferencesRepository.setIncreasedChartSize(!preferencesRepository.isIncreasedChartSize())
-        _increasedChartSize.value = preferencesRepository.isIncreasedChartSize()
+    fun increaseChartSize() {
+        val nextLevel = when (preferencesRepository.getChartSizeLevel()) {
+            PreferencesRepository.CHART_SIZE_LEVEL_NORMAL -> PreferencesRepository.CHART_SIZE_LEVEL_INCREASED
+            PreferencesRepository.CHART_SIZE_LEVEL_INCREASED -> PreferencesRepository.CHART_SIZE_LEVEL_MAX
+            else -> PreferencesRepository.CHART_SIZE_LEVEL_MAX
+        }
+        preferencesRepository.setChartSizeLevel(nextLevel)
+        _chartSizeLevel.value = nextLevel
+    }
+
+    fun decreaseChartSize() {
+        val nextLevel = when (preferencesRepository.getChartSizeLevel()) {
+            PreferencesRepository.CHART_SIZE_LEVEL_MAX -> PreferencesRepository.CHART_SIZE_LEVEL_INCREASED
+            PreferencesRepository.CHART_SIZE_LEVEL_INCREASED -> PreferencesRepository.CHART_SIZE_LEVEL_NORMAL
+            else -> PreferencesRepository.CHART_SIZE_LEVEL_NORMAL
+        }
+        preferencesRepository.setChartSizeLevel(nextLevel)
+        _chartSizeLevel.value = nextLevel
     }
 
     fun getGattEvents(sensorId: String): Flow<SyncStatus> = flow{

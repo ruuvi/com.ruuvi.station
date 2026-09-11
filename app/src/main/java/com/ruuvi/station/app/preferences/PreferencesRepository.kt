@@ -18,6 +18,12 @@ class PreferencesRepository(
     private val preferences: Preferences,
     private val sensorShareListRepository: SensorShareListRepository = SensorShareListRepository(),
     ) {
+    companion object {
+        const val CHART_SIZE_LEVEL_NORMAL = 1
+        const val CHART_SIZE_LEVEL_INCREASED = 2
+        const val CHART_SIZE_LEVEL_MAX = 3
+    }
+
     fun getTemperatureUnit(): TemperatureUnit =
         preferences.temperatureUnit
 
@@ -344,10 +350,21 @@ class PreferencesRepository(
     }
 
     fun isIncreasedChartSize(): Boolean =
-        preferences.increasedChartSize
+        preferences.chartSizeLevel > CHART_SIZE_LEVEL_NORMAL
 
     fun setIncreasedChartSize(increasedChartSize: Boolean) {
-        preferences.increasedChartSize = increasedChartSize
+        preferences.chartSizeLevel = if (increasedChartSize) {
+            CHART_SIZE_LEVEL_INCREASED
+        } else {
+            CHART_SIZE_LEVEL_NORMAL
+        }
+    }
+
+    fun getChartSizeLevel(): Int =
+        preferences.chartSizeLevel
+
+    fun setChartSizeLevel(chartSizeLevel: Int) {
+        preferences.chartSizeLevel = chartSizeLevel
     }
 
     fun isFirebaseConsent(): Boolean =
