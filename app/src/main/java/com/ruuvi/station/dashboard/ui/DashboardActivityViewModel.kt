@@ -122,8 +122,6 @@ class DashboardActivityViewModel(
 
             try {
                 if (bluetoothInteractor.canScan()) {
-                    bluetoothInteractor.stopForegroundService()
-                    delay(200)
                     bluetoothInteractor.startForegroundScanning()
                 }
 
