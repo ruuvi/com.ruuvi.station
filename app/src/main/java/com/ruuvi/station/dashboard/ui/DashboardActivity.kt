@@ -431,11 +431,7 @@ fun DashboardItems(
     val coroutineScope = rememberCoroutineScope()
     val overscrollJob = remember { mutableStateOf<Job?>(null) }
 
-    val pullToRefreshModifier = if (userEmail.isNullOrEmpty()) {
-        Modifier
-    } else {
-        Modifier.pullRefresh(pullRefreshState)
-    }
+    val pullToRefreshModifier = Modifier.pullRefresh(pullRefreshState)
 
     Box(modifier = pullToRefreshModifier) {
         LazyVerticalStaggeredGrid(
