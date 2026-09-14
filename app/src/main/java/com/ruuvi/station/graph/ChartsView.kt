@@ -18,6 +18,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.AxisBase
 import com.github.mikephil.charting.formatter.IAxisValueFormatter
@@ -37,7 +38,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import timber.log.Timber
 import java.text.DecimalFormat
-import kotlin.math.min
 
 private const val CHART_SIZE_LEVEL_NORMAL = 1
 private const val CHART_SIZE_LEVEL_INCREASED = 2
@@ -122,10 +122,14 @@ fun ChartsView(
     }
 
     LaunchedEffect(key1 = chartContainers.size, chartSizeLevel) {
-        chartsPerScreen = when (chartSizeLevel) {
-            CHART_SIZE_LEVEL_MAX -> min(1, chartContainers.size)
-            CHART_SIZE_LEVEL_INCREASED -> min(2, chartContainers.size)
-            else -> min(3, chartContainers.size)
+        if (chartContainers.size < 3) {
+            chartsPerScreen = chartContainers.size
+        } else {
+            chartsPerScreen = when (chartSizeLevel) {
+                CHART_SIZE_LEVEL_MAX -> 1
+                CHART_SIZE_LEVEL_INCREASED -> 2
+                else -> 3
+            }
         }
         needsScroll = chartsPerScreen < chartContainers.size
     }
@@ -173,7 +177,7 @@ fun ChartsView(
             )
         } else {
             Box (modifier = modifier.fillMaxSize()) {
-                val height = (size.height / chartsPerScreen).pxToDp()
+                val height = if (chartsPerScreen > 0) (size.height / chartsPerScreen).pxToDp() else 0.dp
 
                 if (!size.isEmpty())
                     VerticalChartsPrototype(

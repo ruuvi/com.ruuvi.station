@@ -2,9 +2,9 @@ package com.ruuvi.station.graph
 
 import android.content.Context
 import android.content.Intent
+import android.content.res.Configuration
 import android.net.Uri
 import android.os.Build.VERSION
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -12,6 +12,7 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
@@ -398,7 +399,8 @@ fun ThreeDotsMenu(
                         }
                         Paragraph(text = caption)
                     }
-                    if (!hideIncreaseChartSize && chartSizeLevel < CHART_SIZE_LEVEL_MAX) {
+                    if (LocalConfiguration.current.orientation == Configuration.ORIENTATION_PORTRAIT &&
+                        !hideIncreaseChartSize && chartSizeLevel < CHART_SIZE_LEVEL_MAX) {
                         DropdownMenuItem(onClick = {
                             threeDotsMenuExpanded = false
                             increaseChartSize()
@@ -406,7 +408,8 @@ fun ThreeDotsMenu(
                             Paragraph(text = stringResource(id = R.string.increase_graph_size))
                         }
                     }
-                    if (!hideIncreaseChartSize && chartSizeLevel > CHART_SIZE_LEVEL_NORMAL) {
+                    if (LocalConfiguration.current.orientation == Configuration.ORIENTATION_PORTRAIT &&
+                        !hideIncreaseChartSize && chartSizeLevel > CHART_SIZE_LEVEL_NORMAL) {
                         DropdownMenuItem(onClick = {
                             threeDotsMenuExpanded = false
                             decreaseChartSize()
