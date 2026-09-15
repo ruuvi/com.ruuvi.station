@@ -108,6 +108,19 @@ interface RuuviNetworkApi{
     ): Response<GetUserSettingsResponse>
 
     @Headers("Content-Type: application/json")
+    @GET("marketing-consent")
+    suspend fun getMarketingConsent(
+        @Header("Authorization") auth: String
+    ): Response<MarketingConsentResponse>
+
+    @Headers("Content-Type: application/json")
+    @POST("marketing-consent")
+    suspend fun setMarketingConsent(
+        @Header("Authorization") auth: String,
+        @Body request: MarketingConsentRequest
+    ): Response<MarketingConsentResponse>
+
+    @Headers("Content-Type: application/json")
     @POST("alerts")
     suspend fun setAlert(
         @Header("Authorization")auth: String,
