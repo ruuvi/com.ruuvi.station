@@ -250,7 +250,7 @@
     <string name="settings_chart_interval">Diagrammintervall</string>
     <string name="settings_chart_interval_description">Stellen Sie das Intervall zwischen den Punkten für das Diagramm von 1 bis 60 Minuten ein. Kleinere Werte bedeuten ein genaueres Diagramm, aber auch einen höheren Leistungsbedarf für Ihr Gerät.</string>
     <string name="settings_chart_view_period">Anzeigezeitraum des Diagrammverlaufs</string>
-    <string name="settings_chart_view_period_description">Konfigurieren Sie den Zeitraum, der im Diagramm angezeigt werden soll, von 1 bis 10 Tagen.</string>
+    <string name="settings_chart_view_period_description">Konfigurieren Sie den Zeitraum, der im Diagramm angezeigt werden soll, von 1 bis 100 Tagen.</string>
     <string name="settings_data_forwarding">Datenweiterleitung</string>
     <string name="settings_gateway_details">Wenn Sie hier eine URL hinzufügen, führt die App beim Hintergrundscannen einen HTTP POST mit den verknüpften Sensoren aus. Weitere Informationen finden Sie in der Dokumentation.</string>
     <string name="settings_gateway_details_link">dokumentation.</string>
@@ -568,7 +568,7 @@
     <string name="more">Mehr...</string>
     <string name="all">Alle</string>
     <string name="longer_history_title">Längere Geschichte</string>
-    <string name="longer_history_message">Die Ruuvi Station Mobile App unterstützt maximal 10 Tage Historie. Ruuvi-Cloud-Abonnenten können mit der Web-App unter ruuvi.com/station (erfordert Ruuvi-Gateway-Router) bis zu 3 Jahre historische Daten anzeigen.</string>
+    <string name="longer_history_message">Die Ruuvi Station Mobile App unterstützt maximal 100 Tage Historie. Ruuvi-Cloud-Abonnenten können mit der Web-App unter ruuvi.com/station (erfordert Ruuvi-Gateway-Router) bis zu 3 Jahre historische Daten anzeigen.</string>
     <string name="reading_history_x">Bluetooth-Sync: %1$s</string>
     <string name="muted_till">Stummgeschaltet bis %1$s</string>
     <string name="rssi_alert_description">Beachten Sie, dass die von Ruuvi-Sensoren gesendeten Daten mit mobilen Geräten oder Ruuvi-Gateway-Routern empfangen werden können. Die empfangene Signalstärke ist je nach Empfangsgerät unterschiedlich und beeinflusst den Wert, der zur Auslösung des RSSI-Alarms verwendet wird. Verwenden Sie den Modus Bluetooth deaktivieren, wenn Sie Daten zur Signalstärke nur über das Ruuvi Gateway aufzeichnen möchten.</string>
@@ -697,7 +697,6 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="settings_push_alerts">Push-Benachrichtigungen</string>
     <string name="settings_push_alerts_description">Wenn Sie Ruuvi Cloud und Ruuvi Gateway verwenden, können Sie Push-Benachrichtigungen erhalten, indem Sie diese aktivieren.</string>
     <string name="synchronisation">Synchronisation</string>
-    <string name="gatt_sync_description">Ruuvi Station lädt den internen Verlauf des Sensors für die letzten 10 Tage herunter, wenn der Messverlauf verfügbar ist.\n\nDer Verlauf wird über eine Bluetooth-Verbindung heruntergeladen. Stellen Sie sicher, dass Sie sich in der Nähe des Sensors befinden.</string>
     <string name="do_not_show_again">Zeige das nicht noch einmal</string>
     <string name="sign_in_continue">Weitermachen</string>
     <string name="signing_in_is_optional">(Die Anmeldung ist optional)</string>

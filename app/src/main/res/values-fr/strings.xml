@@ -250,7 +250,7 @@
     <string name="settings_chart_interval">Précision de l\'histogramme</string>
     <string name="settings_chart_interval_description">Définir l\'intervalle de l\'histogramme 1 - 60 minutes. Un intervalle plus faible permet une analyse plus précise mais utilise d\'avantage les ressources de votre appareil.</string>
     <string name="settings_chart_view_period">Période de l\'histogramme</string>
-    <string name="settings_chart_view_period_description">Définir la période de l\'histogramme 1 - 10 jours</string>
+    <string name="settings_chart_view_period_description">Définir la période de l\'histogramme 1 - 100 jours</string>
     <string name="settings_data_forwarding">Paramètres du routeur</string>
     <string name="settings_gateway_details">L\'application envoie les données du capteur via la fonction HTTP POST à une adresse de routage définie pendant le balayage en arrière-plan\n\nPour plus d\'informations, consultez la page de support.</string>
     <string name="settings_gateway_details_link">page de support.</string>
@@ -568,7 +568,7 @@
     <string name="more">Plus...</string>
     <string name="all">Tout</string>
     <string name="longer_history_title">Une histoire plus longue</string>
-    <string name="longer_history_message">L\'application mobile Ruuvi Station prend en charge un maximum de 10 jours d\'historique. Les abonnés à Ruuvi Cloud peuvent consulter jusqu\'à 3 ans d\'historique en utilisant l\'application web à ruuvi.com/station (nécessite le routeur Ruuvi Gateway).</string>
+    <string name="longer_history_message">L\'application mobile Ruuvi Station prend en charge un maximum de 100 jours d\'historique. Les abonnés à Ruuvi Cloud peuvent consulter jusqu\'à 3 ans d\'historique en utilisant l\'application web à ruuvi.com/station (nécessite le routeur Ruuvi Gateway).</string>
     <string name="reading_history_x">Bluetooth sync: %1$s</string>
     <string name="muted_till">Muet jusqu\'à %1$s</string>
     <string name="rssi_alert_description">Notez que les données envoyées par les capteurs Ruuvi peuvent être reçues par des appareils mobiles ou des routeurs Ruuvi Gateway. L\'intensité du signal reçu sera différente selon l\'appareil récepteur et affectera la valeur utilisée pour déclencher l\'alerte RSSI. Utilisez le mode Désactiver Bluetooth si vous souhaitez enregistrer des données sur la force du signal uniquement via Ruuvi Gateway.</string>
@@ -691,7 +691,6 @@
     <string name="settings_push_alerts">Alertes push</string>
     <string name="settings_push_alerts_description">Si vous utilisez Ruuvi Cloud et Ruuvi Gateway, vous pourrez recevoir des alertes push en activant ceci.</string>
     <string name="synchronisation">Synchronisation</string>
-    <string name="gatt_sync_description">Ruuvi Station télécharge l\'historique interne du capteur pour les 10 derniers jours si l\'historique des mesures est disponible.\n\nL\'historique est téléchargé à l\'aide d\'une connexion Bluetooth. Assurez-vous d\'être à proximité du capteur.</string>
     <string name="do_not_show_again">Ne plus afficher ça</string>
     <string name="sign_in_continue">Continuer</string>
     <string name="signing_in_is_optional">(La connexion est facultative)</string>

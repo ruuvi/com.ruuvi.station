@@ -63,6 +63,10 @@ import com.ruuvi.station.dashboard.ui.DashboardActivity
 import com.ruuvi.station.feature.data.FeatureFlag
 import com.ruuvi.station.feature.domain.RuntimeBehavior
 import com.ruuvi.station.graph.ChartControlElement2
+import com.ruuvi.station.graph.CloudHistoryStatus
+import com.ruuvi.station.graph.VisibleHistorySync
+import com.ruuvi.station.history.HistorySelection
+import com.ruuvi.station.network.domain.HistorySyncState
 import com.ruuvi.station.graph.ChartsView
 import com.ruuvi.station.graph.model.ChartContainer
 import com.ruuvi.station.nfc.domain.NfcScanResponse
@@ -126,6 +130,8 @@ class SensorCardActivity : NfcActivity(), KodeinAware {
             RuuviTheme {
                 val sensors by viewModel.sensorsFlow.collectAsStateWithLifecycle(initialValue = listOf())
                 val selectedSensor by viewModel.selectedSensor.collectAsStateWithLifecycle()
+                val historySelection by viewModel.historySelection.collectAsStateWithLifecycle()
+                val historySyncState by viewModel.historySyncState.collectAsStateWithLifecycle()
                 val viewPeriod by viewModel.chartViewPeriod.collectAsStateWithLifecycle()
                 val showCharts by viewModel.showCharts.collectAsStateWithLifecycle(false)
                 val syncInProcess by viewModel.syncInProgress.collectAsStateWithLifecycle()
@@ -166,7 +172,12 @@ class SensorCardActivity : NfcActivity(), KodeinAware {
                         getIndex = viewModel::getIndex,
                         scrollToChart = viewModel::scrollToChart,
                         scrollToChartEvent = viewModel.scrollToChartEvent,
-                        getChartData = viewModel::getChartData
+                        getChartData = viewModel::getChartData,
+                        historySelection = historySelection,
+                        setHistoryDates = viewModel::setHistoryDates,
+                        observeHistory = viewModel::observeHistory,
+                        historySyncState = historySyncState,
+                        retryCloudHistory = viewModel::retryCloudHistory
                     )
                 }
             }
@@ -298,7 +309,12 @@ fun SensorsPager(
     getIndex: (String) -> Int,
     scrollToChart: (UnitType) -> Unit,
     scrollToChartEvent: Flow<UnitType>,
-    getChartData: (String, UnitType, Int) -> Flow<ChartData>
+    getChartData: (String, UnitType, Int) -> Flow<ChartData>,
+    historySelection: HistorySelection,
+    setHistoryDates: (Long, Long) -> Unit,
+    observeHistory: suspend (String) -> Unit,
+    historySyncState: HistorySyncState,
+    retryCloudHistory: () -> Unit
 ) {
     Timber.d("SensorsPager selected $selectedSensor sensors count ${sensors.size}")
     val systemUiController = rememberSystemUiController()
@@ -332,6 +348,10 @@ fun SensorsPager(
             pagerSensor = sensors.getOrNull(page)
         }
     }
+
+    val lifecycleOwner = LocalLifecycleOwner.current
+    val activeHistorySensor = if (showCharts) sensors.getOrNull(pagerState.settledPage)?.id else null
+    VisibleHistorySync(activeHistorySensor, observeHistory)
 
     Timber.d("page sensor $pagerSensor bg= ${pagerSensor?.userBackground}")
 
@@ -410,8 +430,13 @@ fun SensorsPager(
                                 chartSizeLevel = chartSizeLevel,
                                 hideIncreaseChartSize = hideIncreaseChartSize,
                                 increaseChartSize = increaseChartSize,
-                                decreaseChartSize = decreaseChartSize
+                                decreaseChartSize = decreaseChartSize,
+                                historySelection = historySelection,
+                                setHistoryDates = setHistoryDates
                             )
+                            if (activeHistorySensor == sensor.id && historySyncState.sensorId == sensor.id) {
+                                CloudHistoryStatus(historySyncState, retryCloudHistory)
+                            }
                             var size by remember { mutableStateOf(Size.Zero)}
                             ChartsView(
                                 modifier = Modifier
@@ -423,7 +448,8 @@ fun SensorsPager(
                                 sensor = sensor,
                                 unitsConverter = unitsConverter,
                                 graphDrawDots = graphDrawDots,
-                                selected = pagerSensor?.id == sensor.id,
+                                selected = activeHistorySensor == sensor.id,
+                                historySelection = historySelection,
                                 viewPeriod = viewPeriod,
                                 chartCleared = getChartClearedFlow(sensor.id),
                                 showChartStats = showChartStats,
@@ -474,7 +500,6 @@ fun SensorsPager(
         )
     }
 
-    val lifecycleOwner: LifecycleOwner = LocalLifecycleOwner.current
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
             when (event) {
@@ -1077,7 +1102,7 @@ fun SensorCardBottom(
                 color = White50,
                 fontSize = RuuviStationTheme.fontSizes.compact,
                 textAlign = TextAlign.Center,
-                text = stringResource(id = R.string.no_data_10_days),
+                text = stringResource(id = R.string.no_measurement_data),
             )
         }
     }

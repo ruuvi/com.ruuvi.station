@@ -250,7 +250,7 @@
     <string name="settings_chart_interval">Historikens noggrannhet</string>
     <string name="settings_chart_interval_description">Ställ in intervallet för datapunkter i graferna från 1 till 60 minuter. Ett tätare intervall gör det möjligt att visa mer exakt historikinformation, men detta använder mer enhetsresurser.</string>
     <string name="settings_chart_view_period">Historik</string>
-    <string name="settings_chart_view_period_description">Ange hur långt bak historiken skall visas, mellan 1 - 10 dagar.</string>
+    <string name="settings_chart_view_period_description">Ange hur långt bak historiken skall visas, mellan 1 - 100 dagar.</string>
     <string name="settings_data_forwarding">Vidarebefordran av data</string>
     <string name="settings_gateway_details">När du anger en URL så kommer appen att skicka sensordata genom HTTP POST när den gör bakgrundsskanning. \n\nFör mer information, läs dokumentationen.</string>
     <string name="settings_gateway_details_link">läs dokumentationen.</string>
@@ -568,7 +568,7 @@
     <string name="more">Mer...</string>
     <string name="all">Allt</string>
     <string name="longer_history_title">Längre historik</string>
-    <string name="longer_history_message">Ruuvi Station mobilapp stöder högst 10 dagars historik. Ruuvi Cloud-prenumeranter kan se upp till 3 års historisk data med hjälp av webbappen på ruuvi.com/station (kräver Ruuvi Gateway-router).</string>
+    <string name="longer_history_message">Ruuvi Station mobilapp stöder högst 100 dagars historik. Ruuvi Cloud-prenumeranter kan se upp till 3 års historisk data med hjälp av webbappen på ruuvi.com/station (kräver Ruuvi Gateway-router).</string>
     <string name="reading_history_x">Läser Bluetooth: %1$s</string>
     <string name="muted_till">Avstängd till %1$s</string>
     <string name="rssi_alert_description">Observera att data som skickas från Ruuvi-sensorer kan tas emot med mobila enheter eller Ruuvi Gateway-routrar. Den mottagna signalstyrkan kommer att vara olika beroende på den mottagande enheten och det kommer att påverka värdet som används för att utlösa RSSI-varning. Använd läget Inaktivera Bluetooth när du bara vill spela in signalstyrka via Ruuvi Gateway.</string>
@@ -686,7 +686,6 @@
     <string name="settings_push_alerts">Push-varningar</string>
     <string name="settings_push_alerts_description">Om du använder Ruuvi Cloud och Ruuvi Gateway kommer du att kunna ta emot push-varningar genom att aktivera detta.</string>
     <string name="synchronisation">Synkronisering</string>
-    <string name="gatt_sync_description">Ruuvi Station laddar ner sensorns interna historik för de senaste 10 dagarna om mäthistoriken är tillgänglig.\n\nHistorien laddas ner med en Bluetooth-anslutning. Se till att du är nära sensorn.</string>
     <string name="do_not_show_again">Visa inte detta igen</string>
     <string name="sign_in_continue">Fortsätta</string>
     <string name="signing_in_is_optional">(Inloggning är inte obligatoriskt)</string>

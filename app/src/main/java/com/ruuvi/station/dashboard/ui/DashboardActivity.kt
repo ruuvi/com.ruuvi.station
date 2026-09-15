@@ -958,7 +958,7 @@ fun ItemBottomNoData(
             style = RuuviStationTheme.typography.dashboardSecondary,
             fontSize = ruuviStationFontsSizes.petite.limitScaleTo(1.5f),
             textAlign = TextAlign.Center,
-            text = stringResource(id = R.string.no_data_10_days),
+            text = stringResource(id = R.string.no_measurement_data),
         )
     }
 }

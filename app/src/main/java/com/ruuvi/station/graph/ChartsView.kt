@@ -32,6 +32,10 @@ import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.units.domain.UnitsConverter
 import com.ruuvi.station.units.model.UnitType
 import com.ruuvi.station.util.Period
+import com.ruuvi.station.history.HistorySelection
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.repeatOnLifecycle
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import com.ruuvi.station.util.ui.pxToDp
 import com.ruuvi.station.util.ui.scrollbar
 import kotlinx.coroutines.flow.Flow
@@ -53,6 +57,7 @@ fun ChartsView(
     showChartStats: Boolean,
     chartCleared: Flow<String>,
     viewPeriod: Period,
+    historySelection: HistorySelection,
     size: Size,
     chartSizeLevel: Int,
     scrollToChartEvent: Flow<UnitType>,
@@ -86,42 +91,47 @@ fun ChartsView(
 
     val sharedX = rememberSaveable { mutableStateOf<Float?>(null) }
 
-    LaunchedEffect(key1 = sensor.id) {
-        Timber.d("ChartView - chart containers fill ${sensor.id}")
-        chartsInitialized = false
+    val lifecycleOwner = LocalLifecycleOwner.current
+    LaunchedEffect(sensor.id, selected, lifecycleOwner) {
+        if (!selected) return@LaunchedEffect
+        lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
+            Timber.d("ChartView - chart containers fill ${sensor.id}")
+            chartsInitialized = false
 
-        historyUpdater(sensor.id).collectLatest { data ->
-            Timber.d("ChartView - new data collected ${data.size}")
-            if (chartUIComponents.size != data.size) {
-                chartUIComponents.clear()
-                chartsInitialized = false
-            }
-
-            for (newContainer in data) {
-                var uiComponent = chartUIComponents.get(newContainer.unitType)
-                if (uiComponent == null) {
-                    uiComponent = LineChart(context)
-                    chartUIComponents.put(newContainer.unitType, uiComponent)
+            historyUpdater(sensor.id).collectLatest { data ->
+                Timber.d("ChartView - new data collected ${data.size}")
+                if (chartUIComponents.size != data.size) {
+                    chartUIComponents.clear()
+                    chartsInitialized = false
                 }
-                newContainer.uiComponent = uiComponent
-            }
-            chartContainers = data
-            onChartCountChanged?.invoke(data.size)
 
-            if (!chartsInitialized) {
-                Timber.d("ChartView - initial setup ${sensor.id}")
-                if (chartContainers.isNotEmpty()) {
-                    chartsInitialSetup(
-                        charts = chartContainers.mapNotNull { container -> container.uiComponent?.let { container.unitType to it } },
-                        unitsConverter = unitsConverter,
-                        context = context
-                    )
-                    chartsInitialized = true
+                for (newContainer in data) {
+                    var uiComponent = chartUIComponents.get(newContainer.unitType)
+                    if (uiComponent == null) {
+                        uiComponent = LineChart(context)
+                        chartUIComponents.put(newContainer.unitType, uiComponent)
+                    }
+                    newContainer.uiComponent = uiComponent
                 }
-                isLoading = false
+                chartContainers = data
+                onChartCountChanged?.invoke(data.size)
+
+                if (!chartsInitialized) {
+                    Timber.d("ChartView - initial setup ${sensor.id}")
+                    if (chartContainers.isNotEmpty()) {
+                        chartsInitialSetup(
+                            charts = chartContainers.mapNotNull { container -> container.uiComponent?.let { container.unitType to it } },
+                            unitsConverter = unitsConverter,
+                            context = context
+                        )
+                        chartsInitialized = true
+                    }
+                    isLoading = false
+                }
             }
         }
     }
+
 
     LaunchedEffect(key1 = chartContainers.size, chartSizeLevel) {
         if (chartContainers.size < 3) {
@@ -147,7 +157,7 @@ fun ChartsView(
         }
     }
 
-    LaunchedEffect(key1 = viewPeriod) {
+    LaunchedEffect(key1 = historySelection) {
         Timber.d("ChartView - viewPeriod changed ${sensor.id} $viewPeriod")
         sharedX.value = null
         for (container in chartContainers) {

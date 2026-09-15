@@ -17,6 +17,7 @@ class NetworkSignInInteractor (
     private val sensorSettingsRepository: SensorSettingsRepository,
     private val pushRegisterInteractor: PushRegisterInteractor,
     private val preferencesRepository: PreferencesRepository,
+    private val sensorHistoryRepository: com.ruuvi.station.database.domain.SensorHistoryRepository,
 ) {
     fun signIn(token: String, response: (String) -> Unit) {
         networkInteractor.verifyUser(token) {response->
@@ -39,6 +40,7 @@ class NetworkSignInInteractor (
         CoroutineScope(Dispatchers.IO).launch {
             val stopJob = networkDataSyncInteractor.stopSync()
             stopJob.join()
+            sensorHistoryRepository.clearCloudCoverage()
 
             networkTokenRepository.clearTokenInfo()
             preferencesRepository.resetSubscriptionShareSettings()

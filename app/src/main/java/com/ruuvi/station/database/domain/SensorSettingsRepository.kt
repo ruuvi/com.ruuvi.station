@@ -147,6 +147,13 @@ class SensorSettingsRepository {
         settings.update()
     }
 
+    fun updateCloudHistoryDays(sensorId: String, days: Int) {
+        SQLite.update(SensorSettings::class.java)
+            .set(SensorSettings_Table.cloudHistoryDays.eq(days))
+            .where(SensorSettings_Table.id.eq(sensorId))
+            .execute()
+    }
+
     fun clearLastSyncGatt() {
         SQLite.update(SensorSettings::class.java)
             .set(SensorSettings_Table.lastSync.eq(null))

@@ -250,7 +250,7 @@
     <string name="settings_chart_interval">Odstęp czasu na wykresie</string>
     <string name="settings_chart_interval_description">Ustaw odstęp czasu pomiędzy punktami między 1-60 minut. Mniejsze wartości pozwalają wygenerować dokładniejszy wykres, ale wymagają też większej wydajności urządzenia</string>
     <string name="settings_chart_view_period">Okres wyświetlania historii wykresu</string>
-    <string name="settings_chart_view_period_description">Konfiguruj wyświetlanie historii wykresu na okres od 1 do 10 dni</string>
+    <string name="settings_chart_view_period_description">Konfiguruj wyświetlanie historii wykresu na okres od 1 do 100 dni</string>
     <string name="settings_data_forwarding">Ustawienia przesyłania danych</string>
     <string name="settings_gateway_details">Kiedy wstawisz tutaj URL, aplikacja wyśle żądanie HTTP do połączonych czujników podczas skanowania w tle. \n\nW celu uzyskania dalszych informacji zapoznaj się z dołączonymi instrukcjami.</string>
     <string name="settings_gateway_details_link">dołączonymi instrukcjami</string>
@@ -568,7 +568,7 @@
     <string name="more">Więcej...</string>
     <string name="all">Wszystko</string>
     <string name="longer_history_title">Dłuższa historia</string>
-    <string name="longer_history_message">Aplikacja mobilna Ruuvi Station obsługuje maksymalnie 10 dni historii. Subskrybenci Ruuvi Cloud mogą wyświetlać do 3 lat danych historycznych w aplikacji internetowej na ruuvi.com/station (wymaga routera Ruuvi Gateway).</string>
+    <string name="longer_history_message">Aplikacja mobilna Ruuvi Station obsługuje maksymalnie 100 dni historii. Subskrybenci Ruuvi Cloud mogą wyświetlać do 3 lat danych historycznych w aplikacji internetowej na ruuvi.com/station (wymaga routera Ruuvi Gateway).</string>
     <string name="reading_history_x">Odczyt Bluetooth: %1$s</string>
     <string name="muted_till">Wyciszone do %1$s</string>
     <string name="rssi_alert_description">Należy pamiętać, że dane wysyłane przez czujniki Ruuvi mogą być odbierane za pomocą urządzeń mobilnych lub routerów Ruuvi Gateway. Siła odbieranego sygnału będzie różna w zależności od urządzenia odbierającego i wpłynie na wartość używaną do wyzwalania alertu RSSI. Użyj trybu Wyłącz Bluetooth, jeśli chcesz rejestrować dane o sile sygnału tylko za pośrednictwem bramy Ruuvi Gateway.</string>
@@ -686,7 +686,6 @@
     <string name="settings_push_alerts">Alerty push</string>
     <string name="settings_push_alerts_description">Jeśli używasz Ruuvi Cloud i Ruuvi Gateway, po włączeniu tej opcji będziesz otrzymywać alerty push.</string>
     <string name="synchronisation">Synchronizacja</string>
-    <string name="gatt_sync_description">Ruuvi Station pobiera wewnętrzną historię czujnika z ostatnich 10 dni, jeśli historia pomiarów jest dostępna.\n\nHistoria jest pobierana przez połączenie Bluetooth. Upewnij się, że jesteś blisko czujnika.</string>
     <string name="do_not_show_again">Nie pokazuj ponownie</string>
     <string name="sign_in_continue">Kontynuuj</string>
     <string name="signing_in_is_optional">(Logowanie jest opcjonalne)</string>

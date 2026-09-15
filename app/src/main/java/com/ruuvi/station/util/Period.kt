@@ -19,6 +19,9 @@ sealed class Period(val value: Int, val stringResourceId: Int, val shouldPassVal
     data object Day8: Period(8 * 24, R.string.day_8)
     data object Day9: Period(9 * 24, R.string.day_9)
     data object Day10: Period(10 * 24, R.string.day_10)
+    data object Day30: Period(30 * 24, R.string.day_30)
+    data object Day60: Period(60 * 24, R.string.day_60)
+    data object Day100: Period(100 * 24, R.string.day_100)
     class HourX(value: Int): Period(value, R.string.hour_x, true)
 
     companion object {
@@ -40,6 +43,9 @@ sealed class Period(val value: Int, val stringResourceId: Int, val shouldPassVal
                 8 * 24 -> Day8
                 9 * 24 -> Day9
                 10 * 24 -> Day10
+                30 * 24 -> Day30
+                60 * 24 -> Day60
+                100 * 24 -> Day100
                 else -> HourX(value)
             }
     }

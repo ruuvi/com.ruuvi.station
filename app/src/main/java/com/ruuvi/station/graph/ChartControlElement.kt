@@ -29,6 +29,7 @@ import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.bluetooth.model.SyncProgress
 import com.ruuvi.station.tagdetails.ui.SyncStatus
 import com.ruuvi.station.util.Period
+import com.ruuvi.station.history.HistorySelection
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import timber.log.Timber
@@ -55,7 +56,9 @@ fun ChartControlElement2(
     removeTagData: (String) -> Unit,
     refreshStatus: () -> Unit,
     dontShowGattSyncDescription: () -> Unit,
-    changeShowStats: () -> Unit
+    changeShowStats: () -> Unit,
+    historySelection: HistorySelection,
+    setHistoryDates: (Long, Long) -> Unit
 ) {
     val lifecycleOwner = LocalLifecycleOwner.current
 
@@ -147,8 +150,10 @@ fun ChartControlElement2(
         ) {
             ViewPeriodMenu(
                 viewPeriod = viewPeriod,
-                setViewPeriod = setViewPeriod
+                setViewPeriod = setViewPeriod,
+                custom = historySelection is HistorySelection.Custom
             )
+            HistoryCalendarControl(historySelection, setHistoryDates)
 
             ThreeDotsMenu(
                 sensorId = sensorId,
@@ -164,6 +169,8 @@ fun ChartControlElement2(
             )
         }
     }
+
+    HistoryRangeCaption(historySelection)
 
     DisposableEffect( key1 = lifecycleOwner ) {
         val observer = LifecycleEventObserver { _, event ->
@@ -239,19 +246,16 @@ fun ChartControlElement2(
 @Composable
 fun ViewPeriodMenu(
     viewPeriod: Period,
-    setViewPeriod: (Int) -> Unit
+    setViewPeriod: (Int) -> Unit,
+    custom: Boolean = false
 ) {
     var daysMenuExpanded by remember {
         mutableStateOf(false)
     }
 
-    var showMoreDialog by remember {
-        mutableStateOf(false)
-    }
-
     Box(modifier = Modifier.clickable { daysMenuExpanded = true }) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            val daysText = if (viewPeriod.shouldPassValue) {
+            val daysText = if (custom) stringResource(R.string.history_custom) else if (viewPeriod.shouldPassValue) {
                 stringResource(id = viewPeriod.stringResourceId, viewPeriod.value)
             } else {
                 stringResource(id = viewPeriod.stringResourceId)
@@ -290,6 +294,9 @@ fun ViewPeriodMenu(
                         Period.Day8,
                         Period.Day9,
                         Period.Day10,
+                        Period.Day30,
+                        Period.Day60,
+                        Period.Day100,
                     )
                     for (day in periodOptions) {
                         DropdownMenuItem(onClick = {
@@ -300,25 +307,13 @@ fun ViewPeriodMenu(
                         }
                     }
 
-                    DropdownMenuItem(onClick = {
-                        showMoreDialog = true
-                        daysMenuExpanded = false
-                    }) {
-                        Paragraph(text = stringResource(id = R.string.more))
-                    }
+
                 }
             }
         }
     }
     
-    if (showMoreDialog) {
-        MessageDialog(
-            title = stringResource(id = R.string.longer_history_title),
-            message = stringResource(id = R.string.longer_history_message)
-        ) {
-            showMoreDialog = false
-        }
-    }
+
 }
 
 @Composable

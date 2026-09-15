@@ -250,7 +250,7 @@
     <string name="settings_chart_interval">Chart interval</string>
     <string name="settings_chart_interval_description">Set interval between points for chart from 1 to 60 minutes. Smaller values mean a more accurate chart, but also a higher performance requirement for your device.</string>
     <string name="settings_chart_view_period">Chart history view period</string>
-    <string name="settings_chart_view_period_description">Configure the period of history to be shown on chart from 1 to 10 days.</string>
+    <string name="settings_chart_view_period_description">Configure the period of history to be shown on chart up to 100 days.</string>
     <string name="settings_data_forwarding">Data forwarding</string>
     <string name="settings_gateway_details">When you add a URL here, the app will execute an HTTP POST with the linked sensors when it does background scanning. \n\nFor more info, check the documentation.</string>
     <string name="settings_gateway_details_link">check the documentation.</string>
@@ -568,7 +568,7 @@
     <string name="more">More...</string>
     <string name="all">All</string>
     <string name="longer_history_title">Longer history</string>
-    <string name="longer_history_message">Ruuvi Station mobile app supports maximum 10 days of history. Ruuvi Cloud subscribers are able to view up to 3 years of historical data using web app at ruuvi.com/station (requires Ruuvi Gateway router).</string>
+    <string name="longer_history_message">Ruuvi Station mobile app supports maximum 100 days of history. Ruuvi Cloud subscribers are able to view up to 3 years of historical data using web app at ruuvi.com/station (requires Ruuvi Gateway router).</string>
     <string name="reading_history_x">Reading Bluetooth: %1$s</string>
     <string name="muted_till">Muted till %1$s</string>
     <string name="rssi_alert_description">Notice that data sent by Ruuvi sensors can be received using mobile devices or Ruuvi Gateway routers. The received signal strength will be different depending on the receiving device and it will affect the value being used to trigger RSSI alert. Use Disable Bluetooth -mode when you want to record signal strength data only via Ruuvi Gateway.</string>
@@ -686,7 +686,7 @@
     <string name="settings_push_alerts">Push alerts</string>
     <string name="settings_push_alerts_description">If you are using Ruuvi Cloud and Ruuvi Gateway, you will be able to receive push alerts by enabling this.</string>
     <string name="synchronisation">Synchronisation</string>
-    <string name="gatt_sync_description">Ruuvi Station downloads the internal history of the sensor for the last 10 days if the measurement history is available.\n\nThe history is downloaded using a Bluetooth connection. Make sure you are near the sensor.</string>
+    <string name="gatt_sync_description">Ruuvi Station downloads the available internal history of the sensor and stores up to 100 days locally. The amount of internal history available depends on the sensor.\n\nThe history is downloaded using a Bluetooth connection. Make sure you are near the sensor.</string>
     <string name="do_not_show_again">Don\'t show this again</string>
     <string name="sign_in_continue">Continue</string>
     <string name="signing_in_is_optional">(Signing in is optional)</string>
@@ -877,4 +877,16 @@
     <string name="share_active_access_empty_value">Not shared to anyone yet</string>
     <string name="share_sensor_shared_to_count_message">Used shares for this sensor: %1$,d/%2$,d\n\nTotal used shares for your account: %3$,d/%4$,d</string>
     <string name="share_pending_section_title">The following users have been invited and the sensor has been shared with them, but access is still pending as they have not yet created a free Ruuvi account. Invitations have been sent, and access will be granted once their accounts are set up:</string>
+    <string name="no_measurement_data">No measurement data available</string>
+    <string name="day_30">30 days</string>
+    <string name="day_60">60 days</string>
+    <string name="day_100">100 days</string>
+    <string name="history_custom">Custom</string>
+    <string name="history_select_dates">Select history dates</string>
+    <string name="history_apply">Apply</string>
+    <string name="history_selected_dates">%1$s – %2$s</string>
+    <string name="history_cloud_loading">Loading cloud history…</string>
+    <string name="history_cloud_error">Could not load cloud history. Available local data is shown.</string>
+    <string name="history_cloud_unavailable">Cloud history is unavailable for this sensor. Available local data is shown.</string>
+    <string name="history_cloud_limited">Cloud history is available for the last %1$d days. Older local data is still shown.</string>
 </resources>

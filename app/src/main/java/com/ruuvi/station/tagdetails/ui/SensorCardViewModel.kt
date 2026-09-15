@@ -20,6 +20,9 @@ import com.ruuvi.station.database.tables.TagSensorReading
 import com.ruuvi.station.export.CsvExporter
 import com.ruuvi.station.export.XlsxExporter
 import com.ruuvi.station.graph.model.ChartContainer
+import com.ruuvi.station.history.HistorySelection
+import com.ruuvi.station.history.HistoryRange
+import com.ruuvi.station.network.domain.NetworkHistoryInteractor
 import com.ruuvi.station.network.domain.NetworkDataSyncInteractor
 import com.ruuvi.station.nfc.domain.NfcResultInteractor
 import com.ruuvi.station.settings.domain.AppSettingsInteractor
@@ -34,7 +37,7 @@ import com.ruuvi.station.util.Period
 import com.ruuvi.station.vico.model.ChartData
 import com.ruuvi.station.vico.model.Segment
 import com.ruuvi.station.vico.model.SegmentType
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
@@ -56,7 +59,8 @@ class SensorCardViewModel(
     private val xlsxExporter: XlsxExporter,
     private val nfcResultInteractor: NfcResultInteractor,
     private val alarmRepository: AlarmRepository,
-    private val unitsConverter: UnitsConverter
+    private val unitsConverter: UnitsConverter,
+    private val networkHistoryInteractor: NetworkHistoryInteractor
     ): ViewModel() {
 
     val sensorsFlow: Flow<List<RuuviTag>> = flow {
@@ -71,6 +75,53 @@ class SensorCardViewModel(
 
     private val _chartViewPeriod = MutableStateFlow<Period>(getGraphViewPeriod())
     val chartViewPeriod: StateFlow<Period> = _chartViewPeriod
+
+    private val _historySelection = MutableStateFlow<HistorySelection>(HistorySelection.Rolling(_chartViewPeriod.value.value))
+    val historySelection = _historySelection.asStateFlow()
+    private val resolvedWindow = MutableStateFlow(_historySelection.value to _historySelection.value.resolve(System.currentTimeMillis()))
+    val historySyncState = networkHistoryInteractor.state
+    private val retryHistory = MutableStateFlow(0)
+    private var visibleHistoryJob: Job? = null
+
+    /** The pager owns this collection and runs it only while the selected history view is resumed. */
+    suspend fun observeHistory(sensorId: String) {
+        var lastRetry = retryHistory.value
+        combine(_historySelection, retryHistory) { selection, retry -> selection to retry }
+            .collectLatest { (selection, retry) ->
+                val force = retry != lastRetry
+                lastRetry = retry
+                coroutineScope {
+                    visibleHistoryJob = currentCoroutineContext().job
+                    val now = System.currentTimeMillis()
+                    val initial = selection.resolve(now)
+                    resolvedWindow.value = selection to initial
+                    val live = initial.endExclusiveMillis == now
+                    launch {
+                        var first = true
+                        do {
+                            networkHistoryInteractor.syncHistory(sensorId, resolvedWindow.value.second, force && first, revalidateHistorical = first)
+                            first = false
+                            if (live) delay(NetworkHistoryInteractor.LIVE_REFRESH_MILLIS)
+                        } while (live && isActive)
+                    }
+                    if (live) {
+                        while (isActive) {
+                            delay(1000)
+                            resolvedWindow.value = selection to selection.resolve(System.currentTimeMillis())
+                        }
+                    } else {
+                        awaitCancellation()
+                    }
+                }
+            }
+    }
+
+    fun setHistoryDates(startDateUtc: Long, endDateUtc: Long) {
+        _historySelection.value = HistorySelection.Custom(startDateUtc, endDateUtc)
+    }
+
+    fun retryCloudHistory() { retryHistory.value += 1 }
+
 
     private val _chartCleared = MutableSharedFlow<String>()
     private val chartCleared: SharedFlow<String> = _chartCleared
@@ -210,8 +261,18 @@ class SensorCardViewModel(
     fun historyUpdater(sensorId: String): Flow<MutableList<ChartContainer>> =
         flow<MutableList<ChartContainer>> {
             delay(200)
+            var previousKey: Any? = null
+            var cachedHistory = emptyList<TagSensorReading>()
             while (true) {
-                val history = tagDetailsInteractor.getTagReadings(sensorId)
+                val window = resolvedWindow.value
+                val range = window.second
+                val key = Triple(window.first, sensorHistoryRepository.revision(sensorId), tagDetailsInteractor.readingOptions(sensorId))
+                if (key != previousKey) {
+                    cachedHistory = tagDetailsInteractor.getTagReadings(sensorId, range)
+                    previousKey = key
+                }
+                if (resolvedWindow.value.first != window.first) continue
+                val history = cachedHistory.filter { it.createdAt.time >= range.startMillis && it.createdAt.time < range.endExclusiveMillis }
 
                 val ruuviTag = tagDetailsInteractor.getTagById(sensorId)
 
@@ -222,13 +283,8 @@ class SensorCardViewModel(
                     continue
                 }
 
-                val from = if (chartViewPeriod.value is Period.All) {
-                    history[0].createdAt.time
-                } else {
-                    Date().time - chartViewPeriod.value.value * 60 * 60 * 1000
-                }
-                Timber.d("historyUpdater $from")
-                val to = Date().time
+                val from = range.startMillis
+                val to = range.endExclusiveMillis
                 val alarms = getActiveAlarms(sensorId)
 
 //            if (history.isEmpty() ||
@@ -483,7 +539,7 @@ class SensorCardViewModel(
         val sensor = tagDetailsInteractor.getTagById(sensorId)
         sensor?.let { sensor ->
             var syncFrom = sensor.lastSync
-            val historyLength = Date(Date().time - 1000 * 60 * 60 * 24 * GlobalSettings.historyLengthDays)
+            val historyLength = Date(Date().time - GlobalSettings.historyLengthMillis)
             if (syncFrom == null || syncFrom.before(historyLength)) {
                 syncFrom = historyLength
             }
@@ -495,6 +551,7 @@ class SensorCardViewModel(
     fun setViewPeriod(periodDays: Int) {
         appSettingsInteractor.setGraphViewPeriod(periodDays)
         _chartViewPeriod.value = Period.getInstance(periodDays)
+        _historySelection.value = HistorySelection.Rolling(periodDays)
     }
 
     fun exportToCsv(sensorId: String): Uri? = csvExporter.toCsv(sensorId)
@@ -506,9 +563,12 @@ class SensorCardViewModel(
     fun shouldSkipGattSyncDialog() = preferencesRepository.getDontShowGattSync()
 
     fun removeTagData(sensorId: String) {
-        sensorHistoryRepository.removeForSensor(sensorId)
-        tagDetailsInteractor.clearLastSync(sensorId)
         viewModelScope.launch {
+            visibleHistoryJob?.cancelAndJoin()
+            withContext(Dispatchers.IO) {
+                sensorHistoryRepository.removeForSensor(sensorId)
+                tagDetailsInteractor.clearLastSync(sensorId)
+            }
             _chartCleared.emit(sensorId)
         }
     }
@@ -516,6 +576,9 @@ class SensorCardViewModel(
     fun refreshStatus() {
         Timber.d("refreshStatus")
         _chartViewPeriod.value = getGraphViewPeriod()
+        if (_historySelection.value is HistorySelection.Rolling) {
+            _historySelection.value = HistorySelection.Rolling(_chartViewPeriod.value.value)
+        }
     }
 
     fun dontShowGattSyncDescription() {

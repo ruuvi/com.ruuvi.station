@@ -59,6 +59,8 @@ class RuuviScannerApplication : Application(), KodeinAware {
     private val version3MigrationInteractor: Version3MigrationInteractor by instance()
     private val visibleMeasurementsMigrationInteractor: VisibleMeasurementsMigrationInteractor by instance()
 
+    private val sensorHistoryRepository: com.ruuvi.station.database.domain.SensorHistoryRepository by instance()
+
     private var isInForeground: Boolean = false
     private val widgetUpdateScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
     private var widgetPreviewPublishJob: Job? = null
@@ -69,6 +71,7 @@ class RuuviScannerApplication : Application(), KodeinAware {
             Timber.d("onBecameForeground")
             isInForeground = true
             defaultOnTagFoundListener.isForeground = true
+            widgetUpdateScope.launch { sensorHistoryRepository.cleanup(force = true) }
             networkDataSyncInteractor.startAutoRefresh()
             runtimeBehavior.refreshFeatureFlags()
             scheduleWidgetPreviewPublication()
@@ -93,6 +96,7 @@ class RuuviScannerApplication : Application(), KodeinAware {
         setupDependencyInjection()
 
         FlowManager.init(this)
+        widgetUpdateScope.launch { sensorHistoryRepository.cleanup(force = true) }
 
         imageMigrationInteractor.migrateDefaultImages()
         version3MigrationInteractor.migrate()

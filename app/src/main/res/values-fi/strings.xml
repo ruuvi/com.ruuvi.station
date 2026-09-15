@@ -250,7 +250,7 @@
     <string name="settings_chart_interval">Historian tarkkuus</string>
     <string name="settings_chart_interval_description">Aseta historian tallennusväli 1 - 60 minuuttia. Tiheämpi tallennusväli mahdollistaa tarkempien historiatietojen esittämisen, mutta tämä käyttää enemmän laitteen resursseja.</string>
     <string name="settings_chart_view_period">Historian tarkastelujakso</string>
-    <string name="settings_chart_view_period_description">Määritä historian tarkastelujakso 1 - 10 päivää.</string>
+    <string name="settings_chart_view_period_description">Määritä historian tarkastelujakso 1 - 100 päivää.</string>
     <string name="settings_data_forwarding">Välityspalvelimen asetukset</string>
     <string name="settings_gateway_details">Sovellus lähettää anturitiedot HTTP POST -toiminnolla määritettyyn välityspalvelinosoitteeseen taustaskannauksen yhteydessä. \n\nLue lisää ohjesivulta.</string>
     <string name="settings_gateway_details_link">ohjesivulta.</string>
@@ -568,7 +568,7 @@
     <string name="more">Lisää...</string>
     <string name="all">Kaikki</string>
     <string name="longer_history_title">Pidempi historia</string>
-    <string name="longer_history_message">Ruuvi Station -mobiilisovellus tukee maksimissaan 10 päivän historiaa. Ruuvi Cloud -tilaajat voivat tarkastella historiatietoja jopa 3 vuoden ajalta web-sovelluksessa osoitteessa ruuvi.com/fi/station (vaatii Ruuvi Gateway -reitittimen).</string>
+    <string name="longer_history_message">Ruuvi Station -mobiilisovellus tukee maksimissaan 100 päivän historiaa. Ruuvi Cloud -tilaajat voivat tarkastella historiatietoja jopa 3 vuoden ajalta web-sovelluksessa osoitteessa ruuvi.com/fi/station (vaatii Ruuvi Gateway -reitittimen).</string>
     <string name="reading_history_x">Bluetooth-lataus: %1$s</string>
     <string name="muted_till">Poissa käytöstä %1$s saakka</string>
     <string name="rssi_alert_description">Huomaathan, että anturin lähettämät tiedot voidaan vastaanottaa mobiililaitteilla tai Ruuvi Gateway -reitittimillä. Signaalinvoimakkuuden lukemat poikkeavat toisistaan riippuen siitä, mikä laite tiedon vastaanotti ja tämä vaikuttaa RSSI-hälytyksessä käytettävään arvoon. Käytä Hylkää Bluetooth-viestit -tilaa, mikäli haluat signaalinvoimakkuustiedon päivittyvän ainoastaan Ruuvi Gatewayn kautta.</string>
@@ -686,7 +686,6 @@
     <string name="settings_push_alerts">Push-hälytykset</string>
     <string name="settings_push_alerts_description">Jos olet Ruuvi Cloud ja Ruuvi Gateway -käyttäjä, voit vastaanottaa push-hälytyksiä ottamalla tämän käyttöön.</string>
     <string name="synchronisation">Synkronointi</string>
-    <string name="gatt_sync_description">Ruuvi Station lataa anturin sisäisen historian viimeiseltä 10 päivältä, jos historia on saatavilla.\n\nMittaushistoria ladataan Bluetooth-yhteydellä. Varmista, että olet anturin läheisyydessä.</string>
     <string name="do_not_show_again">Älä näytä tätä uudestaan</string>
     <string name="sign_in_continue">Jatka</string>
     <string name="signing_in_is_optional">(Kirjautuminen ei ole pakollista)</string>

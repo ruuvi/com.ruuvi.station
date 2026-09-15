@@ -17,15 +17,17 @@ object NetworkInjectionModule {
 
         bind<RuuviNetworkInteractor>() with singleton { RuuviNetworkInteractor(instance(), instance(), instance(), instance(), instance(), instance()) }
 
-        bind<NetworkSignInInteractor>() with singleton { NetworkSignInInteractor(instance(), instance(), instance(), instance(), instance(), instance(), instance()) }
+        bind<NetworkSignInInteractor>() with singleton { NetworkSignInInteractor(instance(), instance(), instance(), instance(), instance(), instance(), instance(), instance()) }
 
         bind<NetworkRequestExecutor.NetworkJobManager>() with singleton { NetworkRequestExecutor.NetworkJobManager() }
 
         bind<NetworkRequestExecutor>() with singleton { NetworkRequestExecutor(instance(), instance(), instance(), instance(), instance()) }
 
         bind<NetworkDataSyncInteractor>() with singleton {
-            NetworkDataSyncInteractor(instance(), instance(), instance(), instance(), instance(), instance(), instance(), instance(), instance(), instance(), instance(), instance(), instance(), instance(), instance())
+            NetworkDataSyncInteractor(instance(), instance(), instance(), instance(), instance(), instance(), instance(), instance(), instance(), instance(), instance(), instance(), instance(), instance(), instance(), instance())
         }
+
+        bind<NetworkHistoryInteractor>() with singleton { NetworkHistoryInteractor(instance(), instance(), instance(), instance()) }
 
         bind<NetworkShareListInteractor>() with singleton { NetworkShareListInteractor(instance()) }
 

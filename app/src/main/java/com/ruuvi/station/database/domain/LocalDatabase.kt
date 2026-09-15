@@ -13,7 +13,20 @@ import com.ruuvi.station.database.tables.*
 class LocalDatabase {
     companion object {
         const val NAME = "LocalDatabase"
-        const val VERSION = 42
+        const val VERSION = 43
+    }
+
+    @Migration(version = 43, database = LocalDatabase::class)
+    class Migration43 : BaseMigration() {
+        override fun migrate(database: DatabaseWrapper) {
+            database.execSQL("ALTER TABLE SensorSettings ADD COLUMN cloudHistoryDays INTEGER")
+            database.execSQL("CREATE INDEX IF NOT EXISTS HistoryTimestamp ON TagSensorReading(createdAt)")
+            database.execSQL("""CREATE TABLE IF NOT EXISTS HistoryCoverage (
+                id INTEGER PRIMARY KEY AUTOINCREMENT, sensorId TEXT, account TEXT, backend TEXT,
+                startMillis INTEGER NOT NULL, endExclusiveMillis INTEGER NOT NULL, fetchedAt INTEGER NOT NULL
+            )""")
+            database.execSQL("CREATE INDEX IF NOT EXISTS HistoryCoverageSensor ON HistoryCoverage(sensorId)")
+        }
     }
 
     @Migration(version = 42, database = LocalDatabase::class)

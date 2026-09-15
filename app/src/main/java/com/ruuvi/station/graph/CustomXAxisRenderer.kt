@@ -27,6 +27,7 @@ class CustomXAxisRenderer(
             mAxis.mEntries = doubleArrayOf()
             mAxis.mCenteredEntries = floatArrayOf()
             mAxis.mEntryCount = 0
+            return
         }
 
         val rawInterval = range / labelCount
@@ -35,8 +36,8 @@ class CustomXAxisRenderer(
         val interval = getClosestPredefinedInterval(rawInterval)
         Timber.d("computeAxisValues interval $interval")
 
-        var firstPoint = ((from + min).toLong() / interval) * interval - from  - 2 * interval
-        var lastPoint =  (ceil((from + max).toDouble() / interval).toLong()) * interval - from  + 2 * interval
+        var firstPoint = ((from + min.toLong()) / interval) * interval - from  - 2 * interval
+        var lastPoint =  (ceil((from.toDouble() + max.toDouble()) / interval).toLong()) * interval - from  + 2 * interval
         Timber.d("computeAxisValues firstPoint $firstPoint lastPoint $lastPoint")
 
         if (range < interval) {
@@ -87,6 +88,8 @@ class CustomXAxisRenderer(
             172800000,  // 2d
             345600000,  // 4d
             691200000,  // 8d
+            1209600000, // 14d
+            2592000000, // 30d
         )
     }
 }
