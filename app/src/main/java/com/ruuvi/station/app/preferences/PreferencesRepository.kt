@@ -175,6 +175,8 @@ class PreferencesRepository(
 
     fun getDeveloperSettingsLiveData() = preferences.getDeveloperSettingsLiveData()
 
+    fun getMarketingConsentLiveData() = preferences.getMarketingConsentLiveData()
+
     fun getTemperatureUnitLiveData() =
         preferences.getTemperatureUnitCodeLiveData().map { TemperatureUnit.getByCode(it) }
 
@@ -363,8 +365,15 @@ class PreferencesRepository(
     fun isDisableEmailNotifications(): Boolean =
         preferences.disableEmailNotifications
 
-    fun getMarketingPermission(): Boolean =
-        preferences.marketingPermission
+    fun getMarketingConsent(): Boolean = preferences.marketingConsent
+
+    fun setMarketingConsent(consent: Boolean) {
+        preferences.marketingConsent = consent
+    }
+
+    fun clearMarketingConsent() {
+        preferences.marketingConsent = false
+    }
 
     fun setNetworkSetting(settingName: String, value: String?, timestamp: Long) {
         when (settingName) {
@@ -517,12 +526,6 @@ NetworkSettingNames.SENSOR_ORDER -> {
                 preferences.tipsAllowedLastUpdated = timestamp
             }
 
-            NetworkSettingNames.MARKETING_PERMISSION -> {
-                val isAllowed = value?.toBooleanExtra() ?: return
-                preferences.marketingPermission = isAllowed
-                preferences.marketingPermissionLastUpdated = timestamp
-            }
-
             else -> Unit
         }
     }
@@ -553,7 +556,6 @@ NetworkSettingNames.SENSOR_ORDER -> {
             NetworkSettingNames.DISABLE_PUSH_NOTIFICATIONS -> if (preferences.disablePushNotifications) "1" else "0"
             NetworkSettingNames.DISABLE_TELEGRAM_NOTIFICATIONS -> if (preferences.disableTelegramNotifications) "1" else "0"
             NetworkSettingNames.TIPS_ALLOWED -> if (preferences.tipsAllowed) "1" else "0"
-            NetworkSettingNames.MARKETING_PERMISSION -> if (preferences.marketingPermission) "1" else "0"
             else -> null
         }
     }
@@ -584,7 +586,6 @@ NetworkSettingNames.SENSOR_ORDER -> {
             NetworkSettingNames.DISABLE_PUSH_NOTIFICATIONS -> preferences.disablePushNotificationsLastUpdated
             NetworkSettingNames.DISABLE_TELEGRAM_NOTIFICATIONS -> preferences.disableTelegramNotificationsLastUpdated
             NetworkSettingNames.TIPS_ALLOWED -> preferences.tipsAllowedLastUpdated
-            NetworkSettingNames.MARKETING_PERMISSION -> preferences.marketingPermissionLastUpdated
             else -> 0L
         }
     }

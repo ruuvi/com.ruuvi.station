@@ -8,16 +8,19 @@ import com.ruuvi.station.dashboard.DashboardTapAction
 import com.ruuvi.station.dashboard.DashboardType
 import com.ruuvi.station.dashboard.domain.SensorsSortingInteractor
 import com.ruuvi.station.feature.domain.RuntimeBehavior
+import com.ruuvi.station.feature.data.FeatureFlag
 import com.ruuvi.station.network.domain.NetworkApplicationSettings
 import com.ruuvi.station.network.domain.NetworkDataSyncInteractor
 import com.ruuvi.station.network.domain.NetworkSettingNames
 import com.ruuvi.station.network.domain.NetworkSignInInteractor
 import com.ruuvi.station.network.domain.RuuviNetworkInteractor
+import com.ruuvi.station.network.domain.MarketingConsentInteractor
 import com.ruuvi.station.nfc.domain.NfcResultInteractor
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tag.domain.TagInteractor
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
+import timber.log.Timber
 
 class DashboardActivityViewModel(
     private val tagInteractor: TagInteractor,
@@ -29,7 +32,8 @@ class DashboardActivityViewModel(
     private val networkSignInInteractor: NetworkSignInInteractor,
     private val nfcResultInteractor: NfcResultInteractor,
     private val sortingInteractor: SensorsSortingInteractor,
-    private val runtimeBehavior: RuntimeBehavior
+    private val runtimeBehavior: RuntimeBehavior,
+    private val marketingConsentInteractor: MarketingConsentInteractor
 ) : ViewModel() {
 
     private val _sensorsList = MutableStateFlow(tagInteractor.getTags())
@@ -65,6 +69,22 @@ class DashboardActivityViewModel(
     val bannerDisabled: StateFlow<Boolean> = _bannerDisabled
 
     val userEmail = preferencesRepository.getUserEmailLiveData()
+    val marketingConsent = preferencesRepository.getMarketingConsentLiveData()
+
+    init {
+        if (networkInteractor.signedIn && marketingConsentInteractor.isEnabled()) {
+            viewModelScope.launch {
+                try {
+                    marketingConsentInteractor.refresh()
+                } catch (exception: Exception) {
+                    Timber.e(exception, "Unable to refresh marketing consent")
+                }
+            }
+        }
+    }
+
+    fun isMarketingConsentEnabled(): Boolean =
+        runtimeBehavior.isFeatureEnabled(FeatureFlag.MARKETING_CONSENT)
 
     val _shouldAskNotificationPermission: MutableStateFlow<Boolean> = MutableStateFlow<Boolean>(permissionLogicInteractor.shouldAskNotificationPermission())
     val shouldAskNotificationPermission: StateFlow<Boolean> = _shouldAskNotificationPermission

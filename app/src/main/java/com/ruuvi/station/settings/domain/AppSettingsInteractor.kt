@@ -396,14 +396,6 @@ class AppSettingsInteractor(
         networkApplicationSettings.updateNetworkSetting(NetworkSettingNames.DISABLE_EMAIL_NOTIFICATIONS)
     }
 
-    fun getMarketingPermission(): Boolean = preferencesRepository.getMarketingPermission()
-
-    fun setMarketingPermission(enabled: Boolean) {
-        preferencesRepository.setNetworkSetting(NetworkSettingNames.MARKETING_PERMISSION, enabled.toString(),
-            System.currentTimeMillis() / 1000)
-        networkApplicationSettings.updateNetworkSetting(NetworkSettingNames.MARKETING_PERMISSION)
-    }
-
     fun isPushAlerts(): Boolean = !preferencesRepository.isDisablePushNotifications()
 
     fun setPushAlerts(enabled: Boolean) {
