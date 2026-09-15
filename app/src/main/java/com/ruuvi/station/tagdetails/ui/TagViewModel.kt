@@ -168,7 +168,7 @@ class TagViewModel(
     fun syncGatt() {
         tagEntry.value?.let { tag ->
             var syncFrom = tag.lastSync
-            val historyLength = Date(Date().time - 1000 * 60 * 60 * 24 * GlobalSettings.historyLengthDays)
+            val historyLength = Date(Date().time - GlobalSettings.historyLengthMillis)
             if (syncFrom == null || syncFrom.before(historyLength)) {
                 syncFrom = historyLength
             }

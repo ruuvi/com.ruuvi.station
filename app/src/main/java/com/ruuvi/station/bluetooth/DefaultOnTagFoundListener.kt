@@ -1,7 +1,6 @@
 package com.ruuvi.station.bluetooth
 
 import com.ruuvi.station.alarm.domain.AlarmCheckInteractor
-import com.ruuvi.station.app.preferences.GlobalSettings
 import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.bluetooth.contract.FoundRuuviTag
 import com.ruuvi.station.bluetooth.contract.IRuuviTagScanner
@@ -36,13 +35,11 @@ class DefaultOnTagFoundListener(
     var isForeground = false
 
     private var lastLogged: MutableMap<String, Long> = HashMap()
-    private var lastCleanedDate: Long = Date().time
     private val ioScope = CoroutineScope(Dispatchers.IO)
 
     override fun onTagFound(tag: FoundRuuviTag) {
         Timber.d("onTagFound: ${tag.logData()}")
         saveReading(RuuviTagEntity(tag))
-        cleanUpOldData()
     }
 
     private fun saveReading(ruuviTag: RuuviTagEntity) {
@@ -79,7 +76,7 @@ class DefaultOnTagFoundListener(
             if (shouldSaveReading(sensorId)) {
                 Timber.d("saveFavoriteReading actual SAVING for ${ruuviTag.id}")
                 val reading = TagSensorReading(ruuviTag)
-                reading.save()
+                sensorHistoryRepository.insertPoint(reading)
                 dataForwardingSender.sendData(ruuviTag, sensorSettings)
                 WidgetRefreshScheduler.enqueueSimpleRefreshForSensor(context, sensorId)
                 WidgetRefreshScheduler.enqueueComplexRefreshForSensor(context, sensorId)
@@ -103,17 +100,6 @@ class DefaultOnTagFoundListener(
         val shouldSave = lastLoggedDate == null || lastLoggedDate < loggingThreshold
         if (shouldSave) lastLogged[sensorId] = Date().time
         return shouldSave
-    }
-
-    private fun cleanUpOldData() {
-        val calendar = Calendar.getInstance()
-        calendar.add(Calendar.MINUTE, -10)
-        val cleaningThreshold = calendar.time.time
-        if (lastCleanedDate < cleaningThreshold) {
-            Timber.d("Cleaning DB from old tag readings")
-            sensorHistoryRepository.removeOlderThan(GlobalSettings.historyLengthHours)
-            lastCleanedDate = Date().time
-        }
     }
 
     private fun shouldSkipForCloudMode(sensorSettings: SensorSettings?): Boolean {

@@ -71,7 +71,8 @@ class TagRepository(
         return if (queryResult != null) tagConverter.fromDatabase(queryResult) else null
     }
 
-    fun deleteSensorAndRelatives(sensorId: String) {
+    fun deleteSensorAndRelatives(sensorId: String) = synchronized(SensorHistoryRepository.historyLock) {
+        SensorHistoryRepository().removeForSensor(sensorId)
         SQLite.delete(Alarm::class.java)
             .where(Alarm_Table.ruuviTagId.eq(sensorId))
             .execute()

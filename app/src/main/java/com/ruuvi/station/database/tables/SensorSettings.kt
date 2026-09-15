@@ -53,6 +53,8 @@ data class SensorSettings(
     @Column
     var networkHistoryLastSync: Date? = null,
     @Column
+    var cloudHistoryDays: Int? = null,
+    @Column
     var canShare: Boolean? = null,
     @Column
     var defaultDisplayOrder: Boolean = true,
@@ -82,6 +84,7 @@ data class SensorSettings(
         temperatureOffset = sensor.offsetTemperature
         networkSensor = true
         subscriptionName = sensor.subscription.subscriptionName
+        cloudHistoryDays = sensor.subscription.maxHistoryDays
         lastUpdated = sensor.lastUpdated
         update()
     }

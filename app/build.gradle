@@ -269,6 +269,9 @@ dependencies {
     implementation libs.dbflow
     implementation libs.dbflow.kotlinextensions
 
+    testImplementation 'org.robolectric:robolectric:4.16.1'
+    testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:${libs.versions.kotlinx.get()}"
+    testImplementation "androidx.compose.ui:ui-test-junit4:${libs.versions.ui.get()}"
     testImplementation libs.junit
     testImplementation libs.mockk
     testImplementation "org.mockito.kotlin:mockito-kotlin:$mockitoKotlinVersion"

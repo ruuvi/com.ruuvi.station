@@ -9,7 +9,7 @@ import java.util.*
 
 @Table(
     database = LocalDatabase::class,
-    indexGroups = [IndexGroup (number = 1, name = "TagId")])
+    indexGroups = [IndexGroup(number = 1, name = "TagId"), IndexGroup(number = 2, name = "HistoryTimestamp")])
 data class TagSensorReading(
     @PrimaryKey(autoincrement = true)
     @Column
@@ -17,7 +17,7 @@ data class TagSensorReading(
     @Index(indexGroups = [1])
     @Column
     var ruuviTagId: String? = null,
-    @Index(indexGroups = [1])
+    @Index(indexGroups = [1, 2])
     @Column
     var createdAt: Date = Date(),
     @Column

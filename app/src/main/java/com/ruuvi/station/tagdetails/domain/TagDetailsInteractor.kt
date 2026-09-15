@@ -1,6 +1,8 @@
 package com.ruuvi.station.tagdetails.domain
 
 import com.ruuvi.station.app.preferences.PreferencesRepository
+import com.ruuvi.station.history.HistoryRange
+import com.ruuvi.station.history.HistorySelection
 import com.ruuvi.station.database.domain.TagRepository
 import com.ruuvi.station.database.domain.SensorHistoryRepository
 import com.ruuvi.station.database.domain.SensorSettingsRepository
@@ -22,18 +24,27 @@ class TagDetailsInteractor(
     fun clearLastSync(sensorId: String) =
         sensorSettingsRepository.clearLastSync(sensorId)
 
+    fun readingOptions(sensorId: String): List<Any?> {
+        val settings = sensorSettingsRepository.getSensorSettings(sensorId)
+        return listOf(preferences.isShowAllGraphPoint(), preferences.getGraphPointInterval(),
+            settings?.temperatureOffset, settings?.humidityOffset, settings?.pressureOffset)
+    }
+
     fun getTagReadings(sensorId: String): List<TagSensorReading> {
         var viewPeriod = preferences.getGraphViewPeriodHours()
         return getTagReadings(sensorId, viewPeriod)
     }
 
     fun getTagReadings(sensorId: String, hours: Int): List<TagSensorReading> {
+        return getTagReadings(sensorId, HistorySelection.Rolling(hours).resolve(System.currentTimeMillis()))
+    }
+
+    fun getTagReadings(sensorId: String, range: HistoryRange): List<TagSensorReading> {
         val sensorSettings = sensorSettingsRepository.getSensorSettings(sensorId)
-        val viewPeriod = if (hours == 0) 24 * 10 else hours
-        val history =  if (preferences.isShowAllGraphPoint()) {
-            sensorHistoryRepository.getHistory(sensorId, viewPeriod)
+        val history = if (preferences.isShowAllGraphPoint()) {
+            sensorHistoryRepository.getHistory(sensorId, range)
         } else {
-            sensorHistoryRepository.getCompositeHistory(sensorId, viewPeriod, preferences.getGraphPointInterval())
+            sensorHistoryRepository.getCompositeHistory(sensorId, range, preferences.getGraphPointInterval())
         }.map { it.copy(
             temperature = it.temperature?.let { temperature -> temperature + (sensorSettings?.temperatureOffset ?: 0.0) },
             humidity = it.humidity?.let { humidity -> humidity + (sensorSettings?.humidityOffset ?: 0.0)},

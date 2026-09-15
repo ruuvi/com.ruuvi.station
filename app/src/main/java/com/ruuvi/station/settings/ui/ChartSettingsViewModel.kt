@@ -39,7 +39,7 @@ class ChartSettingsViewModel(
 
     fun getViewPeriodOptions(): List<SelectionElement> {
         val viewPeriodOptions = mutableListOf<SelectionElement>()
-        for (number in 1 .. 10) {
+        for (number in 1 .. com.ruuvi.station.app.preferences.GlobalSettings.historyLengthDays) {
             viewPeriodOptions.add(SelectionElement(number, number, R.string.chart_view_period_days_count))
         }
         return viewPeriodOptions

@@ -81,6 +81,8 @@ import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.RuuviTheme
 import com.ruuvi.station.app.ui.theme.Titan70
 import com.ruuvi.station.graph.ChartControlElement2
+import com.ruuvi.station.graph.CloudHistoryStatus
+import com.ruuvi.station.graph.VisibleHistorySync
 import com.ruuvi.station.graph.ChartsView
 import com.ruuvi.station.nfc.ui.NfcInteractor
 import com.ruuvi.station.tag.domain.RuuviTag
@@ -204,6 +206,9 @@ private fun SensorDetailScreen(
     val initialPage = sensorIds.indexOf(selectedSensorId).takeIf { it >= 0 } ?: 0
     val pagerState = rememberPagerState(initialPage = initialPage) { sensors.size }
     val currentSensor = sensors.getOrNull(pagerState.currentPage)
+    val activeHistorySensor = if (destination == SensorDetailDestination.HISTORY)
+        sensors.getOrNull(pagerState.settledPage)?.id else null
+    VisibleHistorySync(activeHistorySensor, viewModel::observeHistory)
     val latestSensorIds by rememberUpdatedState(sensorIds)
     val nestedSettings = destination == SensorDetailDestination.SETTINGS &&
         settingsRoute != SensorSettingsRoutes.SENSOR_SETTINGS_ROOT
@@ -618,6 +623,8 @@ private fun ColumnScope.SensorHistoryContent(
     unitsConverter: UnitsConverter,
     viewModel: SensorCardViewModel,
 ) {
+    val historySelection by viewModel.historySelection.collectAsStateWithLifecycle()
+    val historySyncState by viewModel.historySyncState.collectAsStateWithLifecycle()
     var chartCount by remember(sensor.id) { mutableIntStateOf(0) }
     val hideIncreaseChartSize = chartCount < MINIMUM_CHARTS_BEFORE_SIZE_INCREASE
 
@@ -651,7 +658,13 @@ private fun ColumnScope.SensorHistoryContent(
         hideIncreaseChartSize = hideIncreaseChartSize,
         increaseChartSize = viewModel::increaseChartSize,
         decreaseChartSize = viewModel::decreaseChartSize,
+        historySelection = historySelection,
+        setHistoryDates = viewModel::setHistoryDates,
     )
+
+    if (selected && historySyncState.sensorId == sensor.id) {
+        CloudHistoryStatus(historySyncState, viewModel::retryCloudHistory)
+    }
 
     var chartSize by remember { mutableStateOf(Size.Zero) }
     ChartsView(
@@ -665,6 +678,7 @@ private fun ColumnScope.SensorHistoryContent(
         graphDrawDots = viewModel.graphDrawDots,
         selected = selected,
         viewPeriod = viewPeriod,
+        historySelection = historySelection,
         chartCleared = viewModel.getChartCleared(sensor.id),
         showChartStats = showChartStats,
         historyUpdater = viewModel::historyUpdater,

@@ -1,7 +1,6 @@
 package com.ruuvi.station.network.domain
 
 import android.net.Uri
-import com.ruuvi.station.app.preferences.GlobalSettings
 import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.bluetooth.BluetoothLibrary
 import com.ruuvi.station.bluetooth.DefaultOnTagFoundListener.Companion.legacyAirDataformats
@@ -18,9 +17,9 @@ import com.ruuvi.station.image.ImageInteractor
 import com.ruuvi.station.image.ImageSource
 import com.ruuvi.station.network.data.NetworkSyncEvent
 import com.ruuvi.station.network.data.request.GetSensorDataRequest
+import com.ruuvi.station.network.data.request.SortMode
 import com.ruuvi.station.network.data.request.SensorDataMode
 import com.ruuvi.station.network.data.request.SensorDenseRequest
-import com.ruuvi.station.network.data.request.SortMode
 import com.ruuvi.station.network.data.response.*
 import com.ruuvi.station.tagsettings.domain.TagSettingsInteractor
 import com.ruuvi.station.util.extensions.diffGreaterThan
@@ -53,11 +52,11 @@ class NetworkDataSyncInteractor (
     private val tagSettingsInteractor: TagSettingsInteractor,
     private val pushRegisterInteractor: PushRegisterInteractor,
     private val networkShareListInteractor: NetworkShareListInteractor,
-    private val subscriptionInfoSyncInteractor: SubscriptionInfoSyncInteractor
+    private val subscriptionInfoSyncInteractor: SubscriptionInfoSyncInteractor,
+    private val networkHistoryInteractor: NetworkHistoryInteractor
 ) {
     @Volatile
     private var syncJob: Job = Job().also { it.complete() }
-    private val tagJobs = mutableListOf<Job>()
 
     @Volatile
     private var autoRefreshJob: Job? = null
@@ -107,6 +106,7 @@ class NetworkDataSyncInteractor (
     fun stopAutoRefresh() {
         Timber.d("stopAutoRefresh")
         autoRefreshJob?.cancel()
+        networkHistoryInteractor.cancel()
     }
 
     fun syncNetworkData(): Job {
@@ -170,15 +170,16 @@ class NetworkDataSyncInteractor (
                 firebaseInteractor.logSync(userEmail, sensorsInfo.data)
                 val benchUpdate2 = Date()
                 Timber.d("benchmark-updateTags-finish - ${benchUpdate2.time - benchUpdate1.time} ms")
-                Timber.d("benchmark-syncForPeriod-start")
-                val benchSync1 = Date()
-                syncForPeriod(sensorsInfo.data, GlobalSettings.historyLengthHours)
-                val benchSync2 = Date()
-                Timber.d("benchmark-syncForPeriod-finish - ${benchSync2.time - benchSync1.time} ms")
                 updateBackgrounds(sensorForBackgroundUpdate)
                 networkAlertsSyncInteractor.updateAlertsFromNetwork(sensorsInfo)
                 networkShareListInteractor.updateSharingInfo(sensorsInfo)
                 networkRequestExecutor.executeScheduledRequests()
+                sendSyncEvent(NetworkSyncEvent.Success)
+                lastResult = NetworkSyncEvent.Success
+                preferencesRepository.setLastSyncDate(Date().time)
+            }
+            catch (cancelled: CancellationException) {
+                throw cancelled
             }
             catch (exception: Exception) {
                 exception.message?.let { message ->
@@ -193,92 +194,6 @@ class NetworkDataSyncInteractor (
         return syncJob
     }
 
-    private suspend fun syncForPeriod(userInfoData: SensorsDenseResponseBody, hours: Int) {
-        if (!networkInteractor.signedIn) {
-            return
-        }
-
-        withContext(IO) {
-            for (tagInfo in userInfoData.sensors) {
-
-                if (tagInfo.subscription.maxHistoryDays > 0) {
-                    val job = launch {
-                        Timber.d("benchmark-syncSensorDataForPeriod-${tagInfo.sensor}-start")
-                        val benchUpdate1 = Date()
-                        syncSensorDataForPeriod(tagInfo.sensor, hours)
-                        val benchUpdate2 = Date()
-                        Timber.d("benchmark-syncSensorDataForPeriod-${tagInfo.sensor}-finish - ${benchUpdate2.time - benchUpdate1.time} ms")
-                    }
-                    tagJobs.add(job)
-                }
-            }
-            for (job in tagJobs) {
-                job.join()
-            }
-            tagJobs.clear()
-        }
-
-        sendSyncEvent(NetworkSyncEvent.Success)
-        lastResult = NetworkSyncEvent.Success
-        preferencesRepository.setLastSyncDate(Date().time)
-    }
-
-    suspend fun syncSensorDataForPeriod(sensorId: String, period: Int) {
-        Timber.d("Synchronizing... $sensorId")
-
-        val sensorSettings = sensorSettingsRepository.getSensorSettings(sensorId)
-
-        if (sensorSettings != null) {
-            val calendar = Calendar.getInstance()
-            calendar.time = Date()
-            calendar.add(Calendar.HOUR, -period)
-
-            var since = calendar.time
-            val lastSync = sensorSettings.networkHistoryLastSync ?: Date(Long.MIN_VALUE)
-            if (lastSync > since) {
-                calendar.time = lastSync
-                calendar.add(Calendar.SECOND, 1)
-                since = calendar.time
-            }
-
-            // if we have data for recent minute - skipping update
-            if (!since.diffGreaterThan(60*1000)) return
-
-            val benchRequest1 = Date()
-
-            var result = getSince(sensorId, since, 5000)
-            val measurements = mutableListOf<SensorDataMeasurementResponse>()
-
-            var count = 1
-            while (result != null && result.data?.total ?: 0 > 0) {
-                val data = result.data?.measurements
-                result = null
-                if (data != null && data.size > 0) {
-                    measurements.addAll(data)
-                    var maxTimestamp = data.maxByOrNull { it.timestamp }?.timestamp
-                    if (maxTimestamp != null) {
-                        maxTimestamp++
-                        since = Date(maxTimestamp * 1000)
-                        if (since.diffGreaterThan(60*1000) && data.size > 1) {
-                            result = getSince(sensorId, since, 5000)
-                            count++
-                        }
-                    }
-                }
-            }
-            val benchRequest2 = Date()
-            Timber.d("benchmark-getSensorData($count)-finish ${sensorId} - ${benchRequest2.time - benchRequest1.time} ms")
-
-
-            if (measurements.size > 0) {
-                val benchUpdate1 = Date()
-                saveSensorHistory( sensorSettings, measurements)
-                val benchUpdate2 = Date()
-                Timber.d("benchmark-saveSensorData-finish ${sensorId} Data points count ${measurements.size} - ${benchUpdate2.time - benchUpdate1.time} ms")
-            }
-        }
-    }
-
     private suspend fun sendSyncEvent(event: NetworkSyncEvent) {
         Timber.d("SyncEvent = $event")
         CoroutineScope(IO).launch() {
@@ -289,22 +204,6 @@ class NetworkDataSyncInteractor (
     private fun setSyncInProgress(status: Boolean) {
         Timber.d("SyncInProgress = $status")
         syncInProgress.value = status
-    }
-
-    private fun saveSensorHistory(sensorSettings: SensorSettings, measurements: List<SensorDataMeasurementResponse>): Int {
-        val sensorId = sensorSettings.id
-        val list = measurements.mapNotNull { measurement ->
-            preparePoint(sensorSettings, measurement)
-        }.filter { it.dataFormat !in legacyAirDataformats }
-
-        val newestPoint = list.maxByOrNull { it.createdAt }
-
-        if (list.isNotEmpty() && newestPoint != null) {
-            sensorHistoryRepository.bulkInsert(sensorId, list)
-            sensorSettingsRepository.updateNetworkHistoryLastSync(sensorId, newestPoint.createdAt)
-            return list.size
-        }
-        return 0
     }
 
     private fun preparePoint(sensorSettings: SensorSettings, measurement: SensorDataMeasurementResponse): TagSensorReading? {
@@ -386,7 +285,8 @@ class NetworkDataSyncInteractor (
             sensorSettings.owner != owner ||
                     !sensorSettings.networkSensor ||
                     sensorSettings.canShare != sensor.canShare ||
-                    sensorSettings.subscriptionName != subscriptionName
+                    sensorSettings.subscriptionName != subscriptionName ||
+                    sensorSettings.cloudHistoryDays != sensor.subscription.maxHistoryDays
 
         if (!hasChanges) return
 
@@ -395,6 +295,7 @@ class NetworkDataSyncInteractor (
             networkSensor = true
             canShare = sensor.canShare
             this.subscriptionName = subscriptionName
+            cloudHistoryDays = sensor.subscription.maxHistoryDays
 
             update()
         }
@@ -642,9 +543,7 @@ class NetworkDataSyncInteractor (
             if (syncJob.isActive) {
                 syncJob.cancelAndJoin()
             }
-            for (job in tagJobs) {
-                job.cancelAndJoin()
-            }
+            networkHistoryInteractor.cancelAndJoin()
             networkRequestExecutor.cancelAndJoinExecutingRequests(duringRequestCancellation)
         }
     }
