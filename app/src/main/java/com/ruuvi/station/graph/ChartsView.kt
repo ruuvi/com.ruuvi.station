@@ -1,6 +1,9 @@
 package com.ruuvi.station.graph
 
 import android.content.res.Configuration
+import android.view.ViewTreeObserver
+import com.ruuvi.station.history.HistoryRange
+import kotlin.math.ceil
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -62,6 +65,7 @@ fun ChartsView(
     chartSizeLevel: Int,
     scrollToChartEvent: Flow<UnitType>,
     historyUpdater: (String) -> Flow<MutableList<ChartContainer>>,
+    setHistoryViewport: (String, HistoryRange?, Boolean) -> Unit,
     onChartCountChanged: ((Int) -> Unit)? = null
 ) {
     Timber.d("ChartView - top ${sensor.id} $selected viewPeriod = ${viewPeriod.value}")
@@ -90,6 +94,37 @@ fun ChartsView(
     }
 
     val sharedX = rememberSaveable { mutableStateOf<Float?>(null) }
+
+    val currentContainers = rememberUpdatedState(chartContainers)
+    val currentSelected = rememberUpdatedState(selected)
+    val viewportCallback = rememberUpdatedState(setHistoryViewport)
+    val reportViewport = remember(sensor.id) {
+        { chart: LineChart, finished: Boolean ->
+            val container = currentContainers.value.firstOrNull { it.uiComponent === chart }
+            val origin = container?.from
+            val end = container?.to
+            if (currentSelected.value && origin != null && end != null && chart.data != null && chart.xAxis.axisMaximum > chart.xAxis.axisMinimum) {
+                val start = container.axisStart ?: origin
+                val range = if (chart.scaleX <= 1.0001f) null else {
+                    val low = (origin + chart.lowestVisibleX.toDouble().toLong()).coerceIn(start, end)
+                    val high = (origin + ceil(chart.highestVisibleX.toDouble()).toLong() + 1).coerceIn(low, end)
+                    HistoryRange(low, high)
+                }
+                viewportCallback.value(sensor.id, range, finished)
+            }
+        }
+    }
+    // Draw callbacks also follow the viewport during inertial flings after touch-up.
+    DisposableEffect(chartContainers.map { it.uiComponent }) {
+        val listeners = chartContainers.mapNotNull { container -> container.uiComponent?.let { chart ->
+            val listener = ViewTreeObserver.OnDrawListener { reportViewport(chart, false) }
+            chart.viewTreeObserver.addOnDrawListener(listener)
+            chart to listener
+        } }
+        onDispose { listeners.forEach { (chart, listener) ->
+            if (chart.viewTreeObserver.isAlive) chart.viewTreeObserver.removeOnDrawListener(listener)
+        } }
+    }
 
     val lifecycleOwner = LocalLifecycleOwner.current
     LaunchedEffect(sensor.id, selected, lifecycleOwner) {
@@ -122,7 +157,8 @@ fun ChartsView(
                         chartsInitialSetup(
                             charts = chartContainers.mapNotNull { container -> container.uiComponent?.let { container.unitType to it } },
                             unitsConverter = unitsConverter,
-                            context = context
+                            context = context,
+                            onViewportChanged = reportViewport
                         )
                         chartsInitialized = true
                     }
@@ -160,6 +196,7 @@ fun ChartsView(
     LaunchedEffect(key1 = historySelection) {
         Timber.d("ChartView - viewPeriod changed ${sensor.id} $viewPeriod")
         sharedX.value = null
+        if (selected) setHistoryViewport(sensor.id, null, true)
         for (container in chartContainers) {
             container.uiComponent?.fitScreen()
         }
@@ -220,7 +257,7 @@ fun VerticalChartsPrototype(
     sharedX: MutableState<Float?>,
     needsScroll: Boolean
 ) {
-    if (chartContainers.firstOrNull()?.data.isNullOrEmpty()) {
+    if (chartContainers.isEmpty()) {
         EmptyCharts(modifier)
     } else {
         Timber.d("chart height $height $needsScroll")
@@ -262,8 +299,10 @@ fun VerticalChartsPrototype(
                                 graphDrawDots,
                                 showChartStats,
                                 limits = chartContainer.limits,
-                                from,
-                                to,
+                                statistics = chartContainer.statistics,
+                                axisStart = chartContainer.axisStart ?: from,
+                                from = from,
+                                to = to,
                                 sharedX = sharedX,
                             )
                         }
@@ -291,8 +330,10 @@ fun VerticalChartsPrototype(
                             graphDrawDots,
                             showChartStats,
                             limits = chartContainer.limits,
-                            from,
-                            to,
+                                statistics = chartContainer.statistics,
+                                axisStart = chartContainer.axisStart ?: from,
+                                from = from,
+                                to = to,
                             sharedX = sharedX,
                         )
                     }
@@ -344,8 +385,10 @@ fun LandscapeChartsPrototype(
                 graphDrawDots,
                 showChartStats,
                 limits = chartContainer.limits,
-                from,
-                to,
+                                statistics = chartContainer.statistics,
+                                axisStart = chartContainer.axisStart ?: from,
+                                from = from,
+                                to = to,
                 sharedX = sharedX,
             )
         }

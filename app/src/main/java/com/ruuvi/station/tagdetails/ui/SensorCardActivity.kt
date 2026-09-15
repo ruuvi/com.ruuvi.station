@@ -63,6 +63,7 @@ import com.ruuvi.station.dashboard.ui.DashboardActivity
 import com.ruuvi.station.feature.data.FeatureFlag
 import com.ruuvi.station.feature.domain.RuntimeBehavior
 import com.ruuvi.station.graph.ChartControlElement2
+import com.ruuvi.station.graph.cloudSpinnerVisible
 import com.ruuvi.station.graph.CloudHistoryStatus
 import com.ruuvi.station.graph.VisibleHistorySync
 import com.ruuvi.station.history.HistorySelection
@@ -148,6 +149,7 @@ class SensorCardActivity : NfcActivity(), KodeinAware {
                         syncInProgress = syncInProcess,
                         setShowCharts = viewModel::setShowCharts,
                         historyUpdater = viewModel::historyUpdater,
+                        setHistoryViewport = viewModel::setHistoryViewport,
                         unitsConverter = unitsConverter,
                         viewPeriod = viewPeriod,
                         newSensorCard = newSensorCard,
@@ -285,6 +287,7 @@ fun SensorsPager(
     graphDrawDots: Boolean,
     setShowCharts: (Boolean) -> Unit,
     historyUpdater: (String) -> Flow<MutableList<ChartContainer>>,
+    setHistoryViewport: (String, com.ruuvi.station.history.HistoryRange?, Boolean) -> Unit,
     unitsConverter: UnitsConverter,
     viewPeriod: Period,
     chartSizeLevel: Int,
@@ -376,7 +379,7 @@ fun SensorsPager(
                     (context as Activity).onBackPressed()
                 },
                 chartsEnabled = showCharts,
-                syncInProgress = syncInProgress,
+                syncInProgress = cloudSpinnerVisible(syncInProgress, activeHistorySensor, historySyncState),
                 alarmStatus = pagerSensor?.alarmSensorStatus ?: AlarmSensorStatus.NoAlarms,
                 alarmAction = {
                     if (pagerSensor != null) {
@@ -454,6 +457,7 @@ fun SensorsPager(
                                 chartCleared = getChartClearedFlow(sensor.id),
                                 showChartStats = showChartStats,
                                 historyUpdater = historyUpdater,
+                                setHistoryViewport = setHistoryViewport,
                                 chartSizeLevel = chartSizeLevel,
                                 scrollToChartEvent = scrollToChartEvent,
                                 size = size,

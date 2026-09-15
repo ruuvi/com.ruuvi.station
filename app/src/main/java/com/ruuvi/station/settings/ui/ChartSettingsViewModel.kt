@@ -14,9 +14,6 @@ class ChartSettingsViewModel(
     private val _viewPeriod =  MutableStateFlow<Int>(interactor.getGraphViewPeriod())
     val viewPeriod: StateFlow<Int> = _viewPeriod
 
-    private val _showAllPoints = MutableStateFlow(interactor.isShowAllGraphPoint())
-    val showAllPoints: StateFlow<Boolean> = _showAllPoints
-
     private val _drawDots = MutableStateFlow(interactor.graphDrawDots())
     val drawDots: StateFlow<Boolean> = _drawDots
 
@@ -25,11 +22,6 @@ class ChartSettingsViewModel(
     fun setViewPeriod(newPeriod: Int) {
         interactor.setGraphViewPeriod(newPeriod)
         _viewPeriod.value = interactor.getGraphViewPeriod()
-    }
-
-    fun setShowAllPoints(isChecked: Boolean) {
-        interactor.setIsShowAllGraphPoint(isChecked)
-        _showAllPoints.value = interactor.isShowAllGraphPoint()
     }
 
     fun setDrawDots(isChecked: Boolean) {

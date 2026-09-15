@@ -78,7 +78,8 @@ class SensorHistoryRepositoryTest {
             point(now - 1000).insert(db)
             point(range.endExclusiveMillis).insert(db)
         }
-        val readings = repository.getCompositeHistory(sensorId, range, 5)
+        val readings = mutableListOf<TagSensorReading>()
+        repository.forEachReading(sensorId, range) { readings.add(it) }
         assertTrue(readings.isNotEmpty())
         assertTrue(readings.all { it.createdAt.time >= range.startMillis && it.createdAt.time < range.endExclusiveMillis })
     }
@@ -183,10 +184,13 @@ class SensorHistoryRepositoryTest {
             INSERT INTO TagSensorReading(ruuviTagId, createdAt, temperature)
             SELECT '$sensorId', ${retained.startMillis} + n * 60000, 20 FROM ticks""")
         assertEquals(144000L, repository.getCount(sensorId, retained))
-        val sampled = repository.getCompositeHistory(sensorId, retained, 5)
-        assertTrue(sampled.size in 2900..3100)
-        assertTrue(sampled.zipWithNext().all { (a, b) -> a.createdAt <= b.createdAt })
-        assertTrue(sampled.all { it.createdAt.time in retained.startMillis until retained.endExclusiveMillis })
+        val sampler = HistorySampler(retained)
+        repository.forEachReading(sensorId, retained) { sampler.add(it.createdAt.time, it.temperature) }
+        val sampled = sampler.finish()
+        assertEquals(144000L, sampled.statistics!!.count)
+        assertTrue(sampled.points.size <= 1000)
+        assertTrue(sampled.points.zipWithNext().all { (a, b) -> a.timestamp <= b.timestamp })
+        assertTrue(sampled.points.all { it.timestamp in retained.startMillis until retained.endExclusiveMillis })
     }
 
     private fun point(time: Long) = TagSensorReading(ruuviTagId = sensorId, createdAt = Date(time), temperature = 20.0, dataFormat = 5)

@@ -1,8 +1,6 @@
 package com.ruuvi.station.tagdetails.ui
 
 import android.net.Uri
-import androidx.compose.ui.util.fastCoerceAtLeast
-import androidx.compose.ui.util.fastCoerceAtMost
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.mikephil.charting.data.Entry
@@ -20,6 +18,7 @@ import com.ruuvi.station.database.tables.TagSensorReading
 import com.ruuvi.station.export.CsvExporter
 import com.ruuvi.station.export.XlsxExporter
 import com.ruuvi.station.graph.model.ChartContainer
+import com.ruuvi.station.history.HistoryViewportController
 import com.ruuvi.station.history.HistorySelection
 import com.ruuvi.station.history.HistoryRange
 import com.ruuvi.station.network.domain.NetworkHistoryInteractor
@@ -60,7 +59,8 @@ class SensorCardViewModel(
     private val nfcResultInteractor: NfcResultInteractor,
     private val alarmRepository: AlarmRepository,
     private val unitsConverter: UnitsConverter,
-    private val networkHistoryInteractor: NetworkHistoryInteractor
+    private val networkHistoryInteractor: NetworkHistoryInteractor,
+    private val now: () -> Long = System::currentTimeMillis
     ): ViewModel() {
 
     val sensorsFlow: Flow<List<RuuviTag>> = flow {
@@ -78,10 +78,15 @@ class SensorCardViewModel(
 
     private val _historySelection = MutableStateFlow<HistorySelection>(HistorySelection.Rolling(_chartViewPeriod.value.value))
     val historySelection = _historySelection.asStateFlow()
-    private val resolvedWindow = MutableStateFlow(_historySelection.value to _historySelection.value.resolve(System.currentTimeMillis()))
+    private val resolvedWindow = MutableStateFlow(_historySelection.value to _historySelection.value.resolve(now()))
     val historySyncState = networkHistoryInteractor.state
     private val retryHistory = MutableStateFlow(0)
     private var visibleHistoryJob: Job? = null
+    private val viewportController = HistoryViewportController()
+
+    fun setHistoryViewport(sensorId: String, range: HistoryRange?, finished: Boolean) {
+        viewportController.update(sensorId, _historySelection.value, range, finished)
+    }
 
     /** The pager owns this collection and runs it only while the selected history view is resumed. */
     suspend fun observeHistory(sensorId: String) {
@@ -92,7 +97,7 @@ class SensorCardViewModel(
                 lastRetry = retry
                 coroutineScope {
                     visibleHistoryJob = currentCoroutineContext().job
-                    val now = System.currentTimeMillis()
+                    val now = now()
                     val initial = selection.resolve(now)
                     resolvedWindow.value = selection to initial
                     val live = initial.endExclusiveMillis == now
@@ -107,7 +112,7 @@ class SensorCardViewModel(
                     if (live) {
                         while (isActive) {
                             delay(1000)
-                            resolvedWindow.value = selection to selection.resolve(System.currentTimeMillis())
+                            resolvedWindow.value = selection to selection.resolve(now())
                         }
                     } else {
                         awaitCancellation()
@@ -146,84 +151,15 @@ class SensorCardViewModel(
     val scrollToChartEvent = _scrollToChartEvent.receiveAsFlow()
 
 
-    fun getChartData(sensorId: String, unitType: UnitType, hours: Int): Flow<ChartData> =
-        flow<ChartData> {
-            val history = tagDetailsInteractor.getTagReadings(sensorId, hours)
-            val segments = mutableListOf<Segment>()
-            var solidValues = mutableListOf<Double>()
-            var solidTimestamps = mutableListOf<Long>()
-
-            var firstPoint = true
-            var previousTimestamp: Long? = null
-            var previousValue: Double? = null
-
-            var minValue = Double.MAX_VALUE
-            var maxValue = Double.MIN_VALUE
-
-            for (item in history) {
-                val entryValue = getUnitValue(item, unitType)
-
-                if (entryValue == null) {
-                    continue
-                }
-
-                minValue = minValue.fastCoerceAtMost(entryValue)
-                maxValue = maxValue.fastCoerceAtLeast(entryValue)
-
-                val timestamp = item.createdAt.time
-
-                if (firstPoint) {
-                    solidValues += entryValue
-                    solidTimestamps += timestamp
-                    firstPoint = false
-                } else {
-
-                    if (timestamp - (previousTimestamp ?: timestamp) > 60 * 60 * 1000) {
-                        if (solidValues.size > 0) {
-                            val segmentType = if (solidValues.size == 1) SegmentType.Single else SegmentType.Solid
-                            segments.add(
-                                Segment(
-                                    timestamps = solidTimestamps.toList(),
-                                    values = solidValues.toList(),
-                                    segmentType = segmentType
-                                )
-                            )
-                        }
-                        solidTimestamps = mutableListOf()
-                        solidValues = mutableListOf()
-
-                        segments.add(
-                            Segment(
-                                timestamps = listOf(previousTimestamp ?: timestamp, timestamp),
-                                values = listOf(previousValue ?: entryValue, entryValue),
-                                segmentType = SegmentType.Dotted
-                            )
-                        )
-                    }
-                    solidValues += entryValue
-                    solidTimestamps += timestamp
-
-                }
-
-                previousTimestamp = timestamp
-                previousValue = entryValue
-            }
-            if (solidValues.size > 0) {
-                val segmentType = if (solidValues.size == 1) SegmentType.Single else SegmentType.Solid
-                segments.add(Segment (
-                    timestamps = solidTimestamps.toList(),
-                    values = solidValues.toList(),
-                    segmentType = segmentType
-                ))
-            }
-
-            emit(ChartData(
-                segments = segments,
-                minValue = minValue,
-                maxValue = maxValue
-            ))
-        }.flowOn(Dispatchers.IO)
-
+    fun getChartData(sensorId: String, unitType: UnitType, hours: Int): Flow<ChartData> = flow {
+        val range = HistorySelection.Rolling(hours).resolve(now())
+        val sampled = tagDetailsInteractor.sampleHistory(sensorId, range, listOf(unitType), ::getUnitValue).getValue(unitType)
+        val segments = sampled.points.groupBy { it.segment }.values.map { points ->
+            Segment(points.map { it.timestamp }, points.map { it.value },
+                if (points.size == 1) SegmentType.Single else SegmentType.Solid)
+        }
+        emit(ChartData(segments, sampled.statistics?.minimum ?: 0.0, sampled.statistics?.maximum ?: 0.0))
+    }.flowOn(Dispatchers.IO)
 
     fun getUnitValue(item: TagSensorReading, unitType: UnitType): Double? {
         val entryValue = when (unitType) {
@@ -258,95 +194,43 @@ class SensorCardViewModel(
         return entryValue?.toDouble()
     }
 
-    fun historyUpdater(sensorId: String): Flow<MutableList<ChartContainer>> =
-        flow<MutableList<ChartContainer>> {
-            delay(200)
+    @OptIn(ExperimentalCoroutinesApi::class)
+    fun historyUpdater(sensorId: String): Flow<MutableList<ChartContainer>> = flow {
+        var originSelection: HistorySelection? = null
+        var origin = 0L
+        val knownUnits = mutableSetOf<UnitType>()
+        emitAll(combine(
+            resolvedWindow.map { it.first }.distinctUntilChanged(),
+            viewportController.updates
+        ) { selection, viewport ->
+            selection to viewport.range.takeIf { viewport.sensorId == sensorId && viewport.selection == selection }
+        }.distinctUntilChanged().transformLatest { (selection, viewport) ->
+            if (selection != originSelection) {
+                originSelection = selection
+                origin = resolvedWindow.value.second.startMillis
+                knownUnits.clear()
+            }
             var previousKey: Any? = null
-            var cachedHistory = emptyList<TagSensorReading>()
-            while (true) {
+            while (currentCoroutineContext().isActive) {
                 val window = resolvedWindow.value
-                val range = window.second
-                val key = Triple(window.first, sensorHistoryRepository.revision(sensorId), tagDetailsInteractor.readingOptions(sensorId))
-                if (key != previousKey) {
-                    cachedHistory = tagDetailsInteractor.getTagReadings(sensorId, range)
-                    previousKey = key
-                }
-                if (resolvedWindow.value.first != window.first) continue
-                val history = cachedHistory.filter { it.createdAt.time >= range.startMillis && it.createdAt.time < range.endExclusiveMillis }
-
-                val ruuviTag = tagDetailsInteractor.getTagById(sensorId)
-
-
-                if (history.isEmpty() || ruuviTag == null) {
-                    emit(mutableListOf<ChartContainer>())
-                    delay(1000)
-                    continue
-                }
-
-                val from = range.startMillis
-                val to = range.endExclusiveMillis
+                if (window.first != selection) return@transformLatest
+                val range = viewport?.intersect(window.second) ?: window.second
+                val sensor = tagDetailsInteractor.getTagById(sensorId)
+                val units = sensor?.displayOrder?.filter { it !is MovementUnit }.orEmpty()
                 val alarms = getActiveAlarms(sensorId)
-
-//            if (history.isEmpty() ||
-//                (tempChart?.uiComponent != null && tempChart.uiComponent.highestVisibleX >= (tempChart.uiComponent.data?.xMax ?: Float.MIN_VALUE))) {
-//                history = freshHistory
-
-                val displayOrder = ruuviTag.displayOrder.filter { it !is  MovementUnit }
-                val datasetsByUnit: Map<UnitType, MutableList<Entry>> = displayOrder.associateWith { mutableListOf<Entry>() }
-
-                history.forEach { item ->
-
-                    val timestamp = (item.createdAt.time - from).toFloat()
-
-                    for (unit in displayOrder) {
-                        if (unit is MovementUnit) continue
-
-                        val dataset = datasetsByUnit[unit]
-                        dataset?.let {
-
-                            val entryValue = when (unit) {
-                                is TemperatureUnit -> item.temperature?.let { temperature ->
-                                    unitsConverter.getTemperatureValue(temperature, unit)
-                                }
-                                is HumidityUnit -> item.humidity?.let { humidity ->
-                                    unitsConverter.getHumidityValue(humidity, item.temperature, unit)
-                                }
-                                is PressureUnit -> item.pressure?.let { pressure ->
-                                    unitsConverter.getPressureValue(pressure, unit)
-                                }
-                                is BatteryVoltageUnit -> item.voltage
-                                is Acceleration.GForceX -> item.accelX
-                                is Acceleration.GForceY -> item.accelY
-                                is Acceleration.GForceZ -> item.accelZ
-                                is SignalStrengthUnit -> item.rssi
-                                is AirQuality -> AQI.getAQI(item.pm25, item.co2).score
-                                is CO2 -> item.co2
-                                is VOC -> item.voc
-                                is NOX -> item.nox
-                                is PM.PM10 -> item.pm1
-                                is PM.PM25 -> item.pm25
-                                is PM.PM40 -> item.pm4
-                                is PM.PM100 -> item.pm10
-                                is Luminosity -> item.luminosity
-                                is SoundAvg -> item.dBaAvg
-                                is SoundPeak -> item.dBaPeak
-                                else -> null
-                            }
-
-                            if (entryValue != null) {
-                                dataset.add(Entry(timestamp, entryValue.toFloat()))
-                            }
-
-                        }
-                    }
-                }
-
-                val chartContainers = mutableListOf<ChartContainer>()
-
-                for (unit in displayOrder) {
-                    val dataset = datasetsByUnit[unit]
-
-                    if (!dataset.isNullOrEmpty()) {
+                // A rolling axis advances once a minute even when no measurements arrive.
+                val rollingMinute = if (viewport == null && window.second.endExclusiveMillis >= now() - 2000)
+                    window.second.endExclusiveMillis / 60_000 else null
+                val key = listOf(sensorHistoryRepository.revision(sensorId), tagDetailsInteractor.readingOptions(sensorId),
+                    units, alarms, rollingMinute)
+                if (key != previousKey) {
+                    val sampled = tagDetailsInteractor.sampleHistory(sensorId, range, units, ::getUnitValue)
+                    currentCoroutineContext().ensureActive()
+                    val chartContainers = mutableListOf<ChartContainer>()
+                    for (unit in units) {
+                        val series = sampled.getValue(unit)
+                        if (series.points.isEmpty() && unit !in knownUnits) continue
+                        knownUnits.add(unit)
                         val alarmLimit = when (unit) {
                             is TemperatureUnit -> alarms.firstOrNull{ it -> it.alarmType == AlarmType.TEMPERATURE }?.let {
                                 unitsConverter.getTemperatureValue(it.min, unit) to unitsConverter.getTemperatureValue(it.max, unit)
@@ -390,24 +274,20 @@ class SensorCardViewModel(
                             else -> null
                         }
 
-                        chartContainers.add(
-                            ChartContainer(
-                                unitType = unit,
-                                data = dataset,
-                                limits = alarmLimit,
-                                from = from,
-                                to = to,
-                                uiComponent = null
-                            )
-                        )
+                        chartContainers.add(ChartContainer(
+                            unitType = unit,
+                            data = series.points.map { Entry((it.timestamp - origin).toFloat(), it.value.toFloat(), it) }.toMutableList(),
+                            limits = alarmLimit, from = origin, to = window.second.endExclusiveMillis,
+                            axisStart = window.second.startMillis, statistics = series.statistics, uiComponent = null
+                        ))
                     }
+                    emit(chartContainers)
+                    previousKey = key
                 }
-
-                emit(chartContainers)
-                Timber.d("historyUpdater emited ${chartContainers.size} containers")
                 delay(1000)
             }
-        }.flowOn(Dispatchers.IO)
+        })
+    }.flowOn(Dispatchers.IO)
 
     fun getChartCleared(sensorId: String):Flow<String> = chartCleared.filter { it == sensorId }
 

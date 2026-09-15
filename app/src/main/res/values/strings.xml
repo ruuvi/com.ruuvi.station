@@ -242,8 +242,6 @@
     <string name="settings_background_scan_interval">Data logging interval</string>
     <string name="settings_background_scan_interval_description">Define how often the background scanning will run</string>
     <string name="settings_chart">Chart settings</string>
-    <string name="settings_chart_all_points">Show all measurements</string>
-    <string name="settings_chart_all_points_description">Charts may be updated slowly when enabled.</string>
     <string name="settings_chart_description">Configure interval between points shown on chart</string>
     <string name="settings_chart_draw_dots">Show datapoints</string>
     <string name="settings_chart_draw_dots_description">Small dots will help to understand when measurements were collected.</string>
@@ -885,7 +883,6 @@
     <string name="history_select_dates">Select history dates</string>
     <string name="history_apply">Apply</string>
     <string name="history_selected_dates">%1$s – %2$s</string>
-    <string name="history_cloud_loading">Loading cloud history…</string>
     <string name="history_cloud_error">Could not load cloud history. Available local data is shown.</string>
     <string name="history_cloud_unavailable">Cloud history is unavailable for this sensor. Available local data is shown.</string>
     <string name="history_cloud_limited">Cloud history is available for the last %1$d days. Older local data is still shown.</string>

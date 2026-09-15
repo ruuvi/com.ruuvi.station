@@ -188,17 +188,6 @@ class AppSettingsInteractor(
         }
     }
 
-    fun isShowAllGraphPoint(): Boolean =
-        preferencesRepository.isShowAllGraphPoint()
-
-    fun setIsShowAllGraphPoint(isShowAll: Boolean) {
-        if (isShowAll != preferencesRepository.isShowAllGraphPoint()) {
-            preferencesRepository.setNetworkSetting(NetworkSettingNames.CHART_SHOW_ALL_POINTS, isShowAll.toString(),
-                System.currentTimeMillis() / 1000)
-            networkApplicationSettings.updateNetworkSetting(NetworkSettingNames.CHART_SHOW_ALL_POINTS)
-        }
-    }
-
     fun graphDrawDots(): Boolean =
         preferencesRepository.graphDrawDots()
 

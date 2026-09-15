@@ -49,6 +49,8 @@ import com.github.mikephil.charting.formatter.IAxisValueFormatter
 import com.github.mikephil.charting.listener.ChartTouchListener
 import com.github.mikephil.charting.listener.OnChartGestureListener
 import com.github.mikephil.charting.utils.Utils
+import com.ruuvi.station.history.HistoryPoint
+import com.ruuvi.station.history.HistoryStatistics
 import com.ruuvi.station.R
 import com.ruuvi.station.app.ui.components.limitScaleTo
 import com.ruuvi.station.app.ui.components.scaleUpTo
@@ -100,11 +102,11 @@ private fun LineChart.highlightAtTouch(eventX: Float, eventY: Float, sharedX: Mu
 }
 
 private fun LineChart.applySharedHighlight(x: Float?) {
-    if (x == null) {
-        highlightValue(null, false)
-    } else {
-        highlightValue(x, 0, false)
-    }
+    val nearest = if (x == null) null else data?.dataSets?.mapIndexedNotNull { index, set ->
+        set.getEntryForXValue(x, Float.NaN)?.let { index to it }
+    }?.minByOrNull { kotlin.math.abs(it.second.x - x) }
+    if (nearest == null) highlightValue(null, false)
+    else highlightValue(nearest.second.x, nearest.first, false)
 }
 
 @SuppressLint("ClickableViewAccessibility")
@@ -121,16 +123,20 @@ fun ChartViewPrototype(
     from: Long,
     to: Long,
     sharedX: MutableState<Float?>,
+    statistics: HistoryStatistics?,
+    axisStart: Long = from,
 ) {
     val context = LocalContext.current
     val title = stringResource(id = unitType.measurementName).substringBefore(" (")
     val icon = unitType.iconRes
-    var description by remember(lineChart, unitsConverter, unitType) { mutableStateOf("") }
+    val description = remember(statistics, unitsConverter, unitType) {
+        getChartDescription(context, statistics, unitsConverter, unitType)
+    }
+    val rendered = remember(lineChart) { arrayOfNulls<Any>(1) }
+    val renderKey = listOf(chartData, from, to, axisStart, graphDrawDots, limits)
     val getRawValue = remember(unitsConverter, unitType) { unitsConverter.rawValueFormatter(unitType) }
 
-    val latestPoint = chartData.lastOrNull()
-    val latestValue =
-        if (latestPoint != null) getRawValue(latestPoint.y.toDouble()) else ""
+    val latestValue = statistics?.latest?.let(getRawValue) ?: ""
 
     Column (
         modifier = modifier
@@ -217,13 +223,6 @@ fun ChartViewPrototype(
                 .onGloballyPositioned {
                     Timber.d("setLabelCount onGloballyPositioned")
                     setLabelCount(context, lineChart)
-                    description = getChartDescription(
-                        context,
-                        lineChart,
-                        chartData,
-                        unitsConverter,
-                        unitType
-                    )
                 }
                 .padding(horizontal = RuuviStationTheme.dimensions.medium),
             factory = { context ->
@@ -306,29 +305,14 @@ fun ChartViewPrototype(
             update = { view ->
                 Timber.d("ChartView AndroidView - update $from pointsCount = ${chartData.size}")
 
-                if (view.data == null || view.highestVisibleX >= view.data.xMax) {
-                    addDataToChart(context, chartData, view, "", graphDrawDots, limits, from, to)
+                if (view.data == null || rendered[0] != renderKey) {
+                    val matrix = Matrix(view.viewPortHandler.matrixTouch)
+                    addDataToChart(context, chartData, view, "", graphDrawDots, limits, from, to, axisStart)
+                    view.viewPortHandler.refresh(matrix, view, false)
                     (view.marker as ChartMarkerView).getFrom = { from }
+                    rendered[0] = renderKey
                 }
-
-                if (view.data != null) {
-                    val x = sharedX.value
-                    if (x != null) {
-                        view.highlightValue(x, 0, false)
-                    } else {
-                        view.highlightValue(null, false)
-                    }
-                }
-
-                view.post {
-                    description = getChartDescription(
-                        context,
-                        view,
-                        chartData,
-                        unitsConverter,
-                        unitType
-                    )
-                }
+                view.applySharedHighlight(sharedX.value)
 
             }
         )
@@ -337,55 +321,21 @@ fun ChartViewPrototype(
 
 fun getChartDescription(
     context: Context,
-    lineChart: LineChart,
-    chartData: MutableList<Entry>,
+    statistics: HistoryStatistics?,
     unitsConverter: UnitsConverter,
     unitType: UnitType
 ): String {
-    val lowestVisibleX = lineChart.lowestVisibleX
-    val highestVisibleX = lineChart.highestVisibleX
-    val visibleEntries = chartData.filter { it.x >= lowestVisibleX && it.x <= highestVisibleX }
-
-    if (visibleEntries.isEmpty()) return ""
-
-    var totalArea = 0.0
-
-    var min = visibleEntries.first().y
-    var max = visibleEntries.first().y
-
-    for (i in 1 until visibleEntries.size) {
-        val x1 = visibleEntries[i - 1].x
-        val y1 = visibleEntries[i - 1].y
-        val x2 = visibleEntries[i].x
-        val y2 = visibleEntries[i].y
-
-        val area = (x2 - x1) * (y2 + y1) / 2.0
-        totalArea += area
-
-        if (y2 < min) min = y2
-        if (y2 > max) max = y2
-    }
-    val timespan = visibleEntries.last().x - visibleEntries.first().x
-
-    val average = if (timespan != 0f) (totalArea / timespan).toFloat() else visibleEntries.first().y
-
+    if (statistics == null) return ""
     val formatter = unitsConverter.rawValueFormatter(unitType)
-    val minFormatted = formatter(min.toDouble())
-    val maxFormatted = formatter(max.toDouble())
-    val averageFormatted = formatter(average.toDouble())
-
-    return context.getString(
-        R.string.chart_min_max_avg,
-        minFormatted,
-        maxFormatted,
-        averageFormatted
-    )
+    return context.getString(R.string.chart_min_max_avg,
+        formatter(statistics.minimum), formatter(statistics.maximum), formatter(statistics.average))
 }
 
 fun chartsInitialSetup(
     context: Context,
     unitsConverter: UnitsConverter,
-    charts: List<Pair<UnitType, LineChart>>
+    charts: List<Pair<UnitType, LineChart>>,
+    onViewportChanged: (LineChart, Boolean) -> Unit = { _, _ -> }
 ) {
     for (chartPair in charts) {
         setupChart(chartPair.second, unitsConverter, chartPair.first)
@@ -396,7 +346,7 @@ fun chartsInitialSetup(
     }
 
     normalizeOffsets(charts)
-    synchronizeChartGestures(charts.map { it.second }.toSet())
+    synchronizeChartGestures(charts.map { it.second }.toSet(), onViewportChanged)
 }
 
 
@@ -479,24 +429,28 @@ private fun addDataToChart(
     graphDrawDots: Boolean,
     limits: Pair<Double,Double>?,
     from: Long,
-    to: Long
+    to: Long,
+    axisStart: Long
 ) {
     Timber.d("ChartView - addDataToChart")
-    val set = LineDataSet(data, label)
-    set.setDrawCircles(graphDrawDots)
-    set.setDrawValues(false)
-    set.setDrawFilled(true)
-    set.maximumGapBetweenPoints = 3_600_000F
-    set.lineWidth = 1f
-    set.circleRadius = 1.5f
-    set.color = ContextCompat.getColor(context, R.color.chartLineColor)
-    set.setCircleColor(ContextCompat.getColor(context, R.color.chartLineColor))
-    set.setDrawCircleHole(false)
-    set.fillColor = ContextCompat.getColor(context, R.color.chartFillColor)
-    set.enableDashedHighlightLine(10f, 5f, 0f)
-    set.setDrawHighlightIndicators(true)
-    set.highLightColor = ContextCompat.getColor(context, R.color.chartLineColor)
+    val sets = historySegments(data).map { segment ->
+        val set = LineDataSet(segment, label)
+        set.setDrawCircles(graphDrawDots || segment.size == 1)
+        set.setDrawValues(false)
+        set.setDrawFilled(true)
+        set.maximumGapBetweenPoints = Float.MAX_VALUE
+        set.lineWidth = 1f
+        set.circleRadius = 1.5f
+        set.color = ContextCompat.getColor(context, R.color.chartLineColor)
+        set.setCircleColor(ContextCompat.getColor(context, R.color.chartLineColor))
+        set.setDrawCircleHole(false)
+        set.fillColor = ContextCompat.getColor(context, R.color.chartFillColor)
+        set.enableDashedHighlightLine(10f, 5f, 0f)
+        set.setDrawHighlightIndicators(true)
+        set.highLightColor = ContextCompat.getColor(context, R.color.chartLineColor)
 
+        set
+    }
     chart.setXAxisRenderer(
         CustomXAxisRenderer(
             from,
@@ -511,7 +465,7 @@ private fun addDataToChart(
         chart.getTransformer(YAxis.AxisDependency.LEFT)
     )
     chart.xAxis.axisMaximum = (to - from).toFloat()
-    chart.xAxis.axisMinimum = 0f
+    chart.xAxis.axisMinimum = (axisStart - from).toFloat()
 
     chart.axisLeft.removeAllLimitLines()
     if (limits != null) {
@@ -520,8 +474,10 @@ private fun addDataToChart(
     }
 
     chart.description.text = label
-    chart.axisLeft.axisMinimum = set.yMin - 1f
-    chart.axisLeft.axisMaximum = set.yMax + 1f
+    if (data.isNotEmpty()) {
+        chart.axisLeft.axisMinimum = data.minOf { it.y } - 1f
+        chart.axisLeft.axisMaximum = data.maxOf { it.y } + 1f
+    }
     chart.axisLeft.setDrawTopYLabelEntry(false)
     chart.axisLeft.valueFormatter = object : IAxisValueFormatter {
         override fun getFormattedValue(p0: Double, p1: AxisBase?): String {
@@ -529,7 +485,7 @@ private fun addDataToChart(
         }
     }
 
-    chart.data = LineData(set)
+    chart.data = LineData(sets)
     chart.data.isHighlightEnabled = true
     chart.xAxis.valueFormatter = object : IAxisValueFormatter {
         override fun getFormattedValue(value: Double, p1: AxisBase?): String {
@@ -610,7 +566,9 @@ fun normalizeOffsets(charts: List<Pair<UnitType, LineChart>>) {
     }
 }
 
-fun synchronizeChartGestures(charts: Set<LineChart>) {
+fun synchronizeChartGestures(
+    charts: Set<LineChart>, onViewportChanged: (LineChart, Boolean) -> Unit = { _, _ -> }
+) {
     fun synchronizeCharts(sourceChart: LineChart) {
         val sourceMatrixValues = FloatArray(9)
         sourceChart.viewPortHandler.matrixTouch.getValues(sourceMatrixValues)
@@ -639,6 +597,7 @@ fun synchronizeChartGestures(charts: Set<LineChart>) {
                     it.setTouchEnabled(true)
                 }
                 synchronizeCharts(chart)
+                onViewportChanged(chart, true)
             }
 
             override fun onChartFling(me1: MotionEvent?, me2: MotionEvent?, velocityX: Float, velocityY: Float) {}
@@ -654,13 +613,19 @@ fun synchronizeChartGestures(charts: Set<LineChart>) {
 
             override fun onChartScale(me: MotionEvent?, scaleX: Float, scaleY: Float) {
                 synchronizeCharts(chart)
+                onViewportChanged(chart, false)
             }
 
             override fun onChartLongPressed(me: MotionEvent?) {}
             override fun onChartDoubleTapped(me: MotionEvent?) {}
             override fun onChartTranslate(me: MotionEvent?, dX: Float, dY: Float) {
                 synchronizeCharts(chart)
+                onViewportChanged(chart, false)
             }
         }
     }
 }
+
+/** Segment ids come from raw measurements, never from distances between sampled points. */
+internal fun historySegments(data: List<Entry>): List<List<Entry>> =
+    data.groupBy { (it.data as? HistoryPoint)?.segment ?: 0 }.values.toList()

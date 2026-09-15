@@ -242,8 +242,6 @@
     <string name="settings_background_scan_interval">Interwał rejestrowania danych</string>
     <string name="settings_background_scan_interval_description">Zdefiniuj częstość skanowania w tle</string>
     <string name="settings_chart">Ustawienia wykresu</string>
-    <string name="settings_chart_all_points">Pokaż wszystkie dane na wykresie</string>
-    <string name="settings_chart_all_points_description">Włączenie tej opcji może spowolnić aktualizowanie wykresu</string>
     <string name="settings_chart_description">Konfiguruj odstęp czasu pomiędzy punktami widocznymi na wykresie</string>
     <string name="settings_chart_draw_dots">Rysuj kropki na wykresie</string>
     <string name="settings_chart_draw_dots_description">Małe kropki pozwolą zrozumieć, kiedy miał miejsce pomiar</string>

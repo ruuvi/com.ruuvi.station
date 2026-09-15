@@ -31,6 +31,33 @@ import java.time.Instant
 class HistoryControlsTest {
     @get:Rule val compose = createComposeRule()
 
+    @Test fun `history and account loading share one top spinner while errors remain retryable`() {
+        val history = mutableStateOf(com.ruuvi.station.network.domain.HistorySyncState(sensorId = "A", loading = true))
+        val account = mutableStateOf(true)
+        var retried = false
+        compose.setContent {
+            RuuviTheme {
+                Column {
+                    com.ruuvi.station.tagdetails.ui.SensorCardTopAppBar(
+                        navigationCallback = {}, chartsEnabled = true,
+                        syncInProgress = com.ruuvi.station.graph.cloudSpinnerVisible(account.value, "A", history.value),
+                        alarmStatus = com.ruuvi.station.alarm.domain.AlarmSensorStatus.NoAlarms,
+                        alarmAction = {}, chartsAction = {}, settingsAction = {}
+                    )
+                    com.ruuvi.station.graph.CloudHistoryStatus(history.value) { retried = true }
+                }
+            }
+        }
+        compose.onAllNodes(hasProgressBarRangeInfo(androidx.compose.ui.semantics.ProgressBarRangeInfo.Indeterminate)).assertCountEquals(1)
+        compose.onNodeWithText("Loading cloud history…").assertDoesNotExist()
+        compose.runOnIdle { history.value = history.value.copy(loading = false, failed = true) }
+        compose.onAllNodes(hasProgressBarRangeInfo(androidx.compose.ui.semantics.ProgressBarRangeInfo.Indeterminate)).assertCountEquals(1)
+        compose.runOnIdle { account.value = false }
+        compose.onAllNodes(hasProgressBarRangeInfo(androidx.compose.ui.semantics.ProgressBarRangeInfo.Indeterminate)).assertCountEquals(0)
+        compose.onNodeWithText("Try again").performClick()
+        compose.runOnIdle { assertTrue(retried) }
+    }
+
     @Test fun `only resumed selected history subscribes and leaving cancels it`() {
         val activeSensor = mutableStateOf<String?>(null)
         val started = mutableListOf<String>()

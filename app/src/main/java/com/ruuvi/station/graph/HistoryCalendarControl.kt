@@ -108,10 +108,6 @@ fun HistoryRangeCaption(selection: HistorySelection) {
 @Composable
 fun CloudHistoryStatus(state: HistorySyncState, retry: () -> Unit) {
     Column(Modifier.fillMaxWidth().padding(horizontal = 16.dp)) {
-        if (state.loading) {
-            LinearProgressIndicator(modifier = Modifier.fillMaxWidth().testTag("historyCloudLoading"))
-            androidx.compose.material.Text(stringResource(R.string.history_cloud_loading), color = RuuviStationTheme.colors.buttonText)
-        }
         if (state.failed) {
             androidx.compose.material.Text(stringResource(R.string.history_cloud_error), color = RuuviStationTheme.colors.buttonText)
             androidx.compose.material.TextButton(onClick = retry) {

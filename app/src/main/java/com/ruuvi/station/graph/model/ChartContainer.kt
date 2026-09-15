@@ -4,6 +4,7 @@ import androidx.compose.runtime.mutableStateListOf
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.data.Entry
 import com.ruuvi.station.units.model.UnitType
+import com.ruuvi.station.history.HistoryStatistics
 
 data class ChartContainer (
     val unitType: UnitType,
@@ -11,5 +12,7 @@ data class ChartContainer (
     var data: MutableList<Entry>? = mutableStateListOf(),
     var limits: Pair<Double, Double>? = null,
     var from: Long? = null,
-    var to: Long? = null
+    var to: Long? = null,
+    val statistics: HistoryStatistics? = null,
+    val axisStart: Long? = from
 )

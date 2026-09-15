@@ -17,8 +17,23 @@ because retention is a rolling duration.
 
 All defaults to 100 days. Shortcuts remain saved globally; a custom calendar range
 lasts for the current sensor-card session and survives rotation/sensor switching.
-Database queries and graph axes use the same resolved window. Zooming does not
-fetch beyond that window. Mini-chart popups and exports read local data only.
+The selected range bounds graph axes and cloud downloads. The visible viewport
+within that selection controls local queries, with a 100 ms debounce during
+gestures and an immediate request at gesture end. Zooming only loads local detail.
+Mini-chart popups and exports read local data only.
+
+Full graphs and mini charts render at most 1,000 actual measurements per graph.
+A streaming sampler preserves endpoints and time-bucket extrema, while computing
+statistics from every raw measurement in the viewport. Gap segments are identified
+before sampling; wide sample spacing does not create false outages. The old
+"Show all collected measurements" setting no longer overrides the limit. Stored
+measurements and exports retain their full resolution. Cached chart data is reused
+until the viewport, measurement revision, units, offsets, or limits change; a live
+overview also advances once per minute without rebuilding every second.
+
+History loading uses the existing top-center cloud spinner, shared with account
+refresh. Download errors remain retryable and subscription restrictions remain
+visible.
 
 ## Cloud loading
 

@@ -242,8 +242,6 @@
     <string name="settings_background_scan_interval">Historiatietojen tallennusväli</string>
     <string name="settings_background_scan_interval_description">Määritä taustaskannauksen toteutusväli</string>
     <string name="settings_chart">Historiatietojen asetukset</string>
-    <string name="settings_chart_all_points">Näytä kaikki kerätyt mittaukset</string>
-    <string name="settings_chart_all_points_description">Ominaisuuden käyttäminen saattaa hidastaa historiatietojen päivittymistä.</string>
     <string name="settings_chart_description">Määritä tietopisteiden näyttöväli</string>
     <string name="settings_chart_draw_dots">Näytä tietopisteet</string>
     <string name="settings_chart_draw_dots_description">Tietopisteiden näyttäminen helpottaa tallennetun historiatiedon tutkimista.</string>
