@@ -328,7 +328,9 @@ class NetworkDataSyncInteractor (
         userInfoData.sensors.forEach { sensor ->
             val sensorSettings = sensorSettingsRepository.getSensorSettingsOrCreate(sensor.sensor)
             syncOwnershipFromNetwork(sensor, sensorSettings)
-            val shouldUpload = shouldUploadSensorToCloud(sensor, sensorSettings)
+            val shouldUpload =
+                sensor.owner.equals(networkInteractor.getEmail(), ignoreCase = true) &&
+                        shouldUploadSensorToCloud(sensor, sensorSettings)
             if (shouldUpload) {
                 networkInteractor.updateSensorToCloud(sensor.sensor)
             } else if (sensor.lastUpdated > sensorSettings.lastUpdated) {
