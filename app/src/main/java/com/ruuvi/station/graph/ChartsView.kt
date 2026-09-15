@@ -18,6 +18,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.AxisBase
 import com.github.mikephil.charting.formatter.IAxisValueFormatter
@@ -37,7 +38,10 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import timber.log.Timber
 import java.text.DecimalFormat
-import kotlin.math.min
+
+private const val CHART_SIZE_LEVEL_NORMAL = 1
+private const val CHART_SIZE_LEVEL_INCREASED = 2
+private const val CHART_SIZE_LEVEL_MAX = 3
 
 @Composable
 fun ChartsView(
@@ -50,9 +54,10 @@ fun ChartsView(
     chartCleared: Flow<String>,
     viewPeriod: Period,
     size: Size,
-    increasedChartSize: Boolean,
+    chartSizeLevel: Int,
     scrollToChartEvent: Flow<UnitType>,
     historyUpdater: (String) -> Flow<MutableList<ChartContainer>>,
+    onChartCountChanged: ((Int) -> Unit)? = null
 ) {
     Timber.d("ChartView - top ${sensor.id} $selected viewPeriod = ${viewPeriod.value}")
     val context = LocalContext.current
@@ -101,6 +106,7 @@ fun ChartsView(
                 newContainer.uiComponent = uiComponent
             }
             chartContainers = data
+            onChartCountChanged?.invoke(data.size)
 
             if (!chartsInitialized) {
                 Timber.d("ChartView - initial setup ${sensor.id}")
@@ -117,11 +123,15 @@ fun ChartsView(
         }
     }
 
-    LaunchedEffect(key1 = chartContainers.size, increasedChartSize) {
-        chartsPerScreen = if (increasedChartSize) {
-            min(2, chartContainers.size)
+    LaunchedEffect(key1 = chartContainers.size, chartSizeLevel) {
+        if (chartContainers.size < 3) {
+            chartsPerScreen = chartContainers.size
         } else {
-            min(3, chartContainers.size)
+            chartsPerScreen = when (chartSizeLevel) {
+                CHART_SIZE_LEVEL_MAX -> 1
+                CHART_SIZE_LEVEL_INCREASED -> 2
+                else -> 3
+            }
         }
         needsScroll = chartsPerScreen < chartContainers.size
     }
@@ -169,7 +179,7 @@ fun ChartsView(
             )
         } else {
             Box (modifier = modifier.fillMaxSize()) {
-                val height = (size.height / chartsPerScreen).pxToDp()
+                val height = if (chartsPerScreen > 0) (size.height / chartsPerScreen).pxToDp() else 0.dp
 
                 if (!size.isEmpty())
                     VerticalChartsPrototype(
