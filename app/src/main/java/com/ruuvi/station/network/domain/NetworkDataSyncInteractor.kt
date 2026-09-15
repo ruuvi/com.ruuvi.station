@@ -327,7 +327,10 @@ class NetworkDataSyncInteractor (
         val sensorsResult = mutableListOf<SensorsDenseInfo>()
         userInfoData.sensors.forEach { sensor ->
             val sensorSettings = sensorSettingsRepository.getSensorSettingsOrCreate(sensor.sensor)
-            val shouldUpload = shouldUploadSensorToCloud(sensor, sensorSettings)
+            syncOwnershipFromNetwork(sensor, sensorSettings)
+            val shouldUpload =
+                sensor.owner.equals(networkInteractor.getEmail(), ignoreCase = true) &&
+                        shouldUploadSensorToCloud(sensor, sensorSettings)
             if (shouldUpload) {
                 networkInteractor.updateSensorToCloud(sensor.sensor)
             } else if (sensor.lastUpdated > sensorSettings.lastUpdated) {
@@ -358,6 +361,31 @@ class NetworkDataSyncInteractor (
             }
         }
         return sensorsResult
+    }
+
+    private fun syncOwnershipFromNetwork(
+        sensor: SensorsDenseInfo,
+        sensorSettings: SensorSettings
+    ) {
+        val owner = sensor.owner.lowercase()
+        val subscriptionName = sensor.subscription.subscriptionName
+
+        val hasChanges =
+            sensorSettings.owner != owner ||
+                    !sensorSettings.networkSensor ||
+                    sensorSettings.canShare != sensor.canShare ||
+                    sensorSettings.subscriptionName != subscriptionName
+
+        if (!hasChanges) return
+
+        sensorSettings.apply {
+            this.owner = owner
+            networkSensor = true
+            canShare = sensor.canShare
+            this.subscriptionName = subscriptionName
+
+            update()
+        }
     }
 
     private fun shouldUploadSensorToCloud(
