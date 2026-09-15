@@ -17,20 +17,10 @@ fun ChartSettings(
     scaffoldState: ScaffoldState,
     viewModel: ChartSettingsViewModel
 ) {
-    val displayAllPoint = viewModel.showAllPoints.collectAsState()
     val drawDots = viewModel.drawDots.collectAsState()
 
     PageSurfaceWithPadding {
         Column() {
-            SwitchIndicatorRuuvi(
-                text = stringResource(id = R.string.settings_chart_all_points),
-                checked = displayAllPoint.value,
-                onCheckedChange = viewModel::setShowAllPoints
-            )
-            Paragraph(text = stringResource(id = R.string.settings_chart_all_points_description))
-
-            Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
-
             SwitchIndicatorRuuvi(
                 text = stringResource(id = R.string.settings_chart_draw_dots),
                 checked = drawDots.value,

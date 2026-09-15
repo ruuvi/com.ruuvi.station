@@ -83,6 +83,7 @@ import com.ruuvi.station.app.ui.theme.Titan70
 import com.ruuvi.station.graph.ChartControlElement2
 import com.ruuvi.station.graph.CloudHistoryStatus
 import com.ruuvi.station.graph.VisibleHistorySync
+import com.ruuvi.station.graph.cloudSpinnerVisible
 import com.ruuvi.station.graph.ChartsView
 import com.ruuvi.station.nfc.ui.NfcInteractor
 import com.ruuvi.station.tag.domain.RuuviTag
@@ -209,6 +210,7 @@ private fun SensorDetailScreen(
     val activeHistorySensor = if (destination == SensorDetailDestination.HISTORY)
         sensors.getOrNull(pagerState.settledPage)?.id else null
     VisibleHistorySync(activeHistorySensor, viewModel::observeHistory)
+    val historySyncState by viewModel.historySyncState.collectAsStateWithLifecycle()
     val latestSensorIds by rememberUpdatedState(sensorIds)
     val nestedSettings = destination == SensorDetailDestination.SETTINGS &&
         settingsRoute != SensorSettingsRoutes.SENSOR_SETTINGS_ROOT
@@ -329,7 +331,7 @@ private fun SensorDetailScreen(
                 } else {
                     SensorDetailTopAppBar(
                         destination = destination,
-                        syncInProgress = syncInProgress,
+                        syncInProgress = cloudSpinnerVisible(syncInProgress, activeHistorySensor, historySyncState),
                         alarmStatus = currentSensor?.alarmSensorStatus ?: AlarmSensorStatus.NoAlarms,
                         useOpaqueBackground = !useSensorBackground,
                         onBack = onFinish,
@@ -682,6 +684,7 @@ private fun ColumnScope.SensorHistoryContent(
         chartCleared = viewModel.getChartCleared(sensor.id),
         showChartStats = showChartStats,
         historyUpdater = viewModel::historyUpdater,
+        setHistoryViewport = viewModel::setHistoryViewport,
         chartSizeLevel = chartSizeLevel,
         scrollToChartEvent = viewModel.scrollToChartEvent,
         size = chartSize,

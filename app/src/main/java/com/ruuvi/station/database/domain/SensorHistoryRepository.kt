@@ -3,7 +3,6 @@ package com.ruuvi.station.database.domain
 import com.raizlabs.android.dbflow.config.FlowManager
 import com.raizlabs.android.dbflow.sql.language.Method
 import com.raizlabs.android.dbflow.sql.language.SQLite
-import com.raizlabs.android.dbflow.sql.queriable.StringQuery
 import com.ruuvi.station.app.preferences.GlobalSettings
 import com.ruuvi.station.database.tables.*
 import com.ruuvi.station.history.HistoryRange
@@ -12,15 +11,17 @@ import java.util.Date
 import timber.log.Timber
 
 class SensorHistoryRepository(private val now: () -> Long = System::currentTimeMillis) {
-    fun getCompositeHistory(sensorId: String, hoursPeriod: Int, interval: Int) =
-        getCompositeHistory(sensorId, recentRange(hoursPeriod), interval)
-
-    fun getCompositeHistory(sensorId: String, fromDate: Date, interval: Int) =
-        getCompositeHistory(sensorId, HistoryRange(fromDate.time, maxOf(fromDate.time, now())), interval)
-
-    fun getCompositeHistory(sensorId: String, range: HistoryRange, interval: Int): List<TagSensorReading> =
-        if (getCount(sensorId, range) < POINT_THRESHOLD) getHistory(sensorId, range)
-        else getPrunedHistory(sensorId, range, interval)
+    /** Read a bounded range without materializing its potentially large raw history list. */
+    fun forEachReading(sensorId: String, range: HistoryRange, consume: (TagSensorReading) -> Unit) {
+        val adapter = FlowManager.getModelAdapter(TagSensorReading::class.java)
+        SQLite.select().from(TagSensorReading::class.java)
+            .where(TagSensorReading_Table.ruuviTagId.eq(sensorId))
+            .and(TagSensorReading_Table.createdAt.greaterThanOrEq(Date(range.startMillis)))
+            .and(TagSensorReading_Table.createdAt.lessThan(Date(range.endExclusiveMillis)))
+            .orderBy(TagSensorReading_Table.createdAt, true).query()?.use { cursor ->
+                while (cursor.moveToNext()) consume(adapter.loadFromCursor(cursor))
+            }
+    }
 
     fun getHistory(sensorId: String, hoursPeriod: Int) = getHistory(sensorId, recentRange(hoursPeriod))
 
@@ -34,24 +35,6 @@ class SensorHistoryRepository(private val now: () -> Long = System::currentTimeM
         .and(TagSensorReading_Table.createdAt.lessThan(Date(range.endExclusiveMillis)))
         .orderBy(TagSensorReading_Table.createdAt, true)
         .queryList()
-
-    @Suppress("UNUSED_PARAMETER")
-    fun getPrunedHistory(sensorId: String, range: HistoryRange, interval: Int): List<TagSensorReading> {
-        if (range.isEmpty) return emptyList()
-        val denseStart = (now() - HIGH_DENSITY_INTERVAL_MINUTES * 60_000L)
-            .coerceIn(range.startMillis, range.endExclusiveMillis)
-        val bucket = ((denseStart - range.startMillis) / MAXIMUM_POINTS_COUNT).coerceAtLeast(1L)
-        val sensor = sensorId.replace("'", "''")
-        val sql = """SELECT tr.* FROM
-            (SELECT min(id) AS id FROM TagSensorReading
-             WHERE ruuviTagId = '$sensor' AND createdAt >= ${range.startMillis} AND createdAt < $denseStart
-             GROUP BY (createdAt - ${range.startMillis}) / $bucket) gr
-            JOIN TagSensorReading tr ON gr.id = tr.id
-            UNION ALL SELECT * FROM TagSensorReading
-            WHERE ruuviTagId = '$sensor' AND createdAt >= $denseStart AND createdAt < ${range.endExclusiveMillis}
-            ORDER BY createdAt ASC"""
-        return StringQuery(TagSensorReading::class.java, sql).queryList()
-    }
 
     fun getLatestForSensor(sensorId: String, limit: Int): List<TagSensorReading> = SQLite.select()
         .from(TagSensorReading::class.java)
@@ -219,9 +202,6 @@ class SensorHistoryRepository(private val now: () -> Long = System::currentTimeM
         internal val historyLock = Any()
         private val generations = mutableMapOf<String, Long>()
         private val revisions = MutableStateFlow<Map<String, Long>>(emptyMap())
-        const val POINT_THRESHOLD = 1000
-        const val HIGH_DENSITY_INTERVAL_MINUTES = 15
-        const val MAXIMUM_POINTS_COUNT = 3000
         const val TIMELINE_DISTANCE = 1500L
         private const val INSERT_PAGE_SIZE = 5000
         const val CACHE_FRESHNESS_MILLIS = 24 * 60 * 60 * 1000L

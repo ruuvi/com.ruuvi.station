@@ -120,9 +120,6 @@ class PreferencesRepository(
         preferences.backgroundScanInterval = interval
     }
 
-    fun isShowAllGraphPoint(): Boolean =
-        preferences.graphShowAllPoint
-
     fun getUseWebShare(): Boolean =
         preferences.useWebShare
 
