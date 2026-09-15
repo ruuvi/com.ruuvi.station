@@ -390,7 +390,8 @@ fun SensorsPager(
                         verticalArrangement = Arrangement.Top
                     ) {
                         if (showCharts) {
-                            val hideIncreaseChartSize = sensor.displayOrder.filter { it !is UnitType.MovementUnit }.size < 3
+                            var chartCount by remember(sensor.id) { mutableIntStateOf(0) }
+                            val hideIncreaseChartSize = chartCount < 3
                             ChartControlElement2(
                                 sensorId = sensor.id,
                                 showChartStats = showChartStats,
@@ -429,7 +430,10 @@ fun SensorsPager(
                                 historyUpdater = historyUpdater,
                                 chartSizeLevel = chartSizeLevel,
                                 scrollToChartEvent = scrollToChartEvent,
-                                size = size
+                                size = size,
+                                onChartCountChanged = { count ->
+                                    chartCount = count
+                                }
                             )
                         } else {
                             if (newSensorCard) {

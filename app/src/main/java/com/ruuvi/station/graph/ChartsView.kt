@@ -57,6 +57,7 @@ fun ChartsView(
     chartSizeLevel: Int,
     scrollToChartEvent: Flow<UnitType>,
     historyUpdater: (String) -> Flow<MutableList<ChartContainer>>,
+    onChartCountChanged: ((Int) -> Unit)? = null
 ) {
     Timber.d("ChartView - top ${sensor.id} $selected viewPeriod = ${viewPeriod.value}")
     val context = LocalContext.current
@@ -105,6 +106,7 @@ fun ChartsView(
                 newContainer.uiComponent = uiComponent
             }
             chartContainers = data
+            onChartCountChanged?.invoke(data.size)
 
             if (!chartsInitialized) {
                 Timber.d("ChartView - initial setup ${sensor.id}")
