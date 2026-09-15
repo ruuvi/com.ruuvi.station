@@ -34,7 +34,7 @@ object NetworkInjectionModule {
         }
 
         bind<NetworkAlertsSyncInteractor>() with  singleton {
-            NetworkAlertsSyncInteractor(instance(), instance())
+            NetworkAlertsSyncInteractor(instance(), instance(), instance())
         }
 
         bind<SubscriptionInfoSyncInteractor>() with singleton {
