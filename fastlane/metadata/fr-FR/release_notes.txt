@@ -1,0 +1,7 @@
+- Widgets repensés avec une mise en page adaptable et des mises à jour plus fiables
+- Vue historique améliorée avec des icônes de mesure et des mises en page de graphiques flexibles
+- Consultez les partages de capteurs en attente directement dans l’application
+- Ajout d’un accès facile aux paramètres d’abonnement à la newsletter
+- Synchronisation Cloud, mises à jour de propriété des capteurs et horodatages des paramètres améliorés
+- Fiabilité des mises à jour des capteurs Bluetooth améliorée
+- Autres corrections de bugs mineurs et améliorations

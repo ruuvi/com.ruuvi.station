@@ -1,0 +1,7 @@
+- Omdesignade widgetar med skalbar layout och mer tillförlitliga uppdateringar
+- Förbättrad historikvy med mätningsikoner och flexibla diagramlayouter
+- Visa väntande sensordelningar direkt i appen
+- Enkel åtkomst till inställningar för nyhetsbrevsprenumeration har lagts till
+- Förbättrad molnsynkronisering, uppdateringar av sensorägarskap och tidsstämplar för inställningar
+- Förbättrad tillförlitlighet för uppdateringar av Bluetooth-sensorer
+- Andra mindre buggfixar och förbättringar

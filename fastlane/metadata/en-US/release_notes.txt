@@ -1,0 +1,7 @@
+- Redesigned widgets with a scalable layout and more reliable updates
+- Improved History view with measurement icons and flexible chart layouts
+- View pending sensor shares directly in the app
+- Added easy access to newsletter subscription settings
+- Improved cloud synchronization, sensor ownership updates, and setting timestamps
+- Improved Bluetooth sensor update reliability
+- Other minor bug fixes and improvements
