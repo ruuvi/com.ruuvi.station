@@ -52,7 +52,7 @@ class HistorySampler(private val range: HistoryRange) {
     }
 
     companion object {
-        const val MAX_POINTS = 1000
+        const val MAX_POINTS = 400
         const val GAP_MILLIS = 3_600_000L
         private const val BUCKETS = (MAX_POINTS - 2) / 2
     }

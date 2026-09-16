@@ -57,7 +57,7 @@ class HistoryGraphPipelineTest {
         val job = launch { viewModel.historyUpdater("A").collect { outputs.send(it) } }
         try {
             val first = withTimeout(5000) { outputs.receive() }.single()
-            assertTrue(first.data!!.size <= 1000)
+            assertTrue(first.data!!.size <= HistorySampler.MAX_POINTS)
             assertEquals(142560L, first.statistics!!.count)
             delay(1100)
             assertEquals(1, queryCount.get())
@@ -69,7 +69,7 @@ class HistoryGraphPipelineTest {
             val overviewTimes = first.data!!.map { (it.data as HistoryPoint).timestamp }.toSet()
             assertTrue(detail.data!!.any { (it.data as HistoryPoint).timestamp !in overviewTimes })
             val mini = viewModel.getChartData("A", unit, 2400).first()
-            assertTrue(mini.segments.sumOf { it.timestamps.size } <= 1000)
+            assertTrue(mini.segments.sumOf { it.timestamps.size } <= HistorySampler.MAX_POINTS)
             assertEquals(0.0, mini.minValue, 0.0)
             assertEquals(16.0, mini.maxValue, 0.0)
             verifyNoInteractions(cloud)
