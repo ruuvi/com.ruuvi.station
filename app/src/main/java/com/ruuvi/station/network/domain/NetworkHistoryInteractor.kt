@@ -43,19 +43,19 @@ class NetworkHistoryInteractor(
     private val jobs = mutableSetOf<Job>()
     private val syncMutex = Mutex()
 
-    suspend fun syncHistory(sensorId: String, range: HistoryRange, force: Boolean = false, revalidateHistorical: Boolean = true) {
+    suspend fun syncHistory(sensorId: String, range: HistoryRange, revalidateHistorical: Boolean = true) {
         val job = currentCoroutineContext().job
         synchronized(jobs) { jobs.add(job) }
         try {
             syncMutex.withLock {
-                withContext(Dispatchers.IO) { fetch(sensorId, range, force, revalidateHistorical) }
+                withContext(Dispatchers.IO) { fetch(sensorId, range, revalidateHistorical) }
             }
         } finally {
             synchronized(jobs) { jobs.remove(job) }
         }
     }
 
-    private suspend fun fetch(sensorId: String, selected: HistoryRange, force: Boolean, revalidateHistorical: Boolean) {
+    private suspend fun fetch(sensorId: String, selected: HistoryRange, revalidateHistorical: Boolean) {
         _state.value = HistorySyncState(sensorId)
         if (!network.signedIn || selected.isEmpty) return
         val sensor = settings.getSensorSettings(sensorId) ?: return
@@ -86,7 +86,7 @@ class NetworkHistoryInteractor(
             _state.value = HistorySyncState(sensorId, loading = !range.isEmpty, restricted = restricted, cloudHistoryDays = days)
             if (range.isEmpty) return
 
-            val coverage = if (force) emptyList() else history.coverage(
+            val coverage = history.coverage(
                 sensorId, account, backend, if (revalidateHistorical) current - SensorHistoryRepository.CACHE_FRESHNESS_MILLIS else Long.MIN_VALUE
             )
             // Recheck a minute at the live edge to pick up late arrivals, always within the selection.

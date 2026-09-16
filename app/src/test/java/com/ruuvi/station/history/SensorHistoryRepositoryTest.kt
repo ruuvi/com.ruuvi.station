@@ -159,6 +159,44 @@ class SensorHistoryRepositoryTest {
         assertTrue(repository.coverage(sensorId, "account", "production", 0).isEmpty())
     }
 
+    @Test fun `revalidating history replaces obsolete coverage instead of accumulating it`() {
+        repeat(20) {
+            HistoryCoverage(sensorId = sensorId, account = "account", backend = "production",
+                startMillis = retained.startMillis, endExclusiveMillis = now,
+                fetchedAt = now - SensorHistoryRepository.CACHE_FRESHNESS_MILLIS - 1).insert()
+        }
+        repository.saveCloudPage(sensorId, emptyList(), retained, "account", "production", repository.generation(sensorId))
+        assertEquals(listOf(retained), repository.coverage(sensorId, "account", "production", Long.MIN_VALUE))
+    }
+
+    @Test fun `revalidating part of stale coverage preserves only its unchecked remainders`() {
+        val stale = now - SensorHistoryRepository.CACHE_FRESHNESS_MILLIS - 1
+        HistoryCoverage(sensorId = sensorId, account = "account", backend = "production",
+            startMillis = retained.startMillis, endExclusiveMillis = now, fetchedAt = stale).insert()
+        val refreshed = HistoryRange(now - 7 * 86_400_000L, now - 6 * 86_400_000L)
+        repository.saveCloudPage(sensorId, emptyList(), refreshed, "account", "production", repository.generation(sensorId))
+        assertEquals(listOf(refreshed), repository.coverage(sensorId, "account", "production", stale + 1))
+        assertEquals(listOf(HistoryRange(retained.startMillis, refreshed.startMillis), refreshed,
+            HistoryRange(refreshed.endExclusiveMillis, now)), repository.coverage(sensorId, "account", "production", Long.MIN_VALUE))
+    }
+
+    @Test fun `duplicate cloud pages do not grow readings or invalidate cached graphs`() {
+        val readings = listOf(point(now - 10_000), point(now - 5000))
+        val generation = repository.generation(sensorId)
+        repository.saveCloudPage(sensorId, readings, retained, "account", "production", generation)
+        val revision = repository.revision(sensorId)
+        repeat(3) { repository.saveCloudPage(sensorId, readings, retained, "account", "production", generation) }
+        assertEquals(2L, repository.countAll())
+        assertEquals(revision, repository.revision(sensorId))
+    }
+
+    @Test fun `cloud persistence accepts only readings inside the fetched page interval`() {
+        val range = HistoryRange(now - 10_000, now - 5000)
+        repository.saveCloudPage(sensorId, listOf(point(range.startMillis - 5000), point(range.startMillis),
+            point(range.endExclusiveMillis)), range, "account", "production", repository.generation(sensorId))
+        assertEquals(listOf(range.startMillis), repository.getHistory(sensorId, retained).map { it.createdAt.time })
+    }
+
     @Test fun `migration adds range cache without erasing existing readings or guessing coverage`() {
         SQLiteDatabase.create(null).use { sqlite ->
             sqlite.execSQL("CREATE TABLE SensorSettings(id TEXT PRIMARY KEY, networkHistoryLastSync INTEGER)")
@@ -191,6 +229,10 @@ class SensorHistoryRepositoryTest {
         assertTrue(sampled.points.size <= HistorySampler.MAX_POINTS)
         assertTrue(sampled.points.zipWithNext().all { (a, b) -> a.timestamp <= b.timestamp })
         assertTrue(sampled.points.all { it.timestamp in retained.startMillis until retained.endExclusiveMillis })
+        // Sparse cloud pages can overlap a much denser local BLE interval.
+        repository.saveCloudPage(sensorId, listOf(point(retained.startMillis), point(retained.startMillis + 72_000 * 60_000L),
+            point(now - 60_000), point(now - 55_000)), retained, "account", "production", repository.generation(sensorId))
+        assertEquals(144001L, repository.getCount(sensorId, retained))
     }
 
     private fun point(time: Long) = TagSensorReading(ruuviTagId = sensorId, createdAt = Date(time), temperature = 20.0, dataFormat = 5)

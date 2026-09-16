@@ -90,11 +90,8 @@ class SensorCardViewModel(
 
     /** The pager owns this collection and runs it only while the selected history view is resumed. */
     suspend fun observeHistory(sensorId: String) {
-        var lastRetry = retryHistory.value
         combine(_historySelection, retryHistory) { selection, retry -> selection to retry }
-            .collectLatest { (selection, retry) ->
-                val force = retry != lastRetry
-                lastRetry = retry
+            .collectLatest { (selection, _) ->
                 coroutineScope {
                     visibleHistoryJob = currentCoroutineContext().job
                     val now = now()
@@ -104,7 +101,7 @@ class SensorCardViewModel(
                     launch {
                         var first = true
                         do {
-                            networkHistoryInteractor.syncHistory(sensorId, resolvedWindow.value.second, force && first, revalidateHistorical = first)
+                            networkHistoryInteractor.syncHistory(sensorId, resolvedWindow.value.second, revalidateHistorical = first)
                             first = false
                             if (live) delay(NetworkHistoryInteractor.LIVE_REFRESH_MILLIS)
                         } while (live && isActive)

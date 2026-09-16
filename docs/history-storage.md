@@ -22,7 +22,7 @@ within that selection controls local queries, with a 100 ms debounce during
 gestures and an immediate request at gesture end. Zooming only loads local detail.
 Mini-chart popups and exports read local data only.
 
-Full graphs and mini charts render at most 1,000 actual measurements per graph.
+Full graphs and mini charts render at most 400 actual measurements per graph.
 A streaming sampler preserves endpoints and time-bucket extrema, while computing
 statistics from every raw measurement in the viewport. Gap segments are identified
 before sampling; wide sample spacing does not create false outages. The old
@@ -47,12 +47,18 @@ ascending order with mixed resolution and a maximum of 5,000 results per page.
 API timestamps use whole seconds. Each page commits its readings and successfully
 checked interval together. Empty results also establish coverage; failures do not.
 Repeated/non-advancing pages fail rather than spinning or claiming missing data.
+Retry resumes from cached completed pages instead of discarding their coverage.
+Cloud persistence also rejects measurements outside that page's checked interval.
 
 Coverage is isolated by account, backend, and sensor. Opening/changing history
 rechecks coverage older than 24 hours. An open live window refreshes once a minute,
 including a one-minute overlap. Continuous live refresh does not re-fetch older
 covered intervals. Clear history/sensor removal invalidate in-flight pages;
 sign-out cancels history work and clears all coverage.
+Revalidation replaces obsolete overlapping coverage, retaining unchecked stale
+remainders with their original timestamps. Duplicate-only page writes do not
+invalidate graph data. Duplicate detection streams indexed timestamps, so a sparse
+cloud page overlapping dense BLE history does not materialize every existing row.
 
 Schema migration 42 → 43 adds `HistoryCoverage`, `SensorSettings.cloudHistoryDays`,
 and a timestamp index. Existing measurements remain; old sync timestamps are not
@@ -75,3 +81,6 @@ resolved `byte-buddy-agent` JAR using `JAVA_TOOL_OPTIONS=-javaagent:/path/to/jar
 
 New UI strings use the English resources until translations are supplied. Sensor
 firmware history capacity is independent of the app's 100-day local retention.
+
+See [the storage audit and three-year preparation plan](history-storage-audit.md)
+for measured 50-sensor storage sizes, remaining constraints, and benchmark steps.
