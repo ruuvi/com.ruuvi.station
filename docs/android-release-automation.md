@@ -94,65 +94,6 @@ the Firebase AAB without uploading it to Google Play.
 Because Firebase artifacts are retained for 30 days, promote an approved candidate to Play Internal
 before its artifact expires.
 
-### Google Play Alpha
-
-Use `Promote to Google Play Alpha` when the internal build is ready for the smaller tester group.
-
-This does not build the app again. It moves the already-tested build number from internal testing to
-alpha, so testers receive the exact same artifact.
-
-Manual run:
-
-1. Open Play Console and copy the build number from internal testing.
-2. Open GitHub Actions.
-3. Choose `Promote to Google Play Alpha`.
-4. Enter the build number.
-5. Keep the release status completed unless you intentionally want a draft.
-6. Run it.
-
-### Google Play Public Beta
-
-Use `Promote to Google Play Public Beta` when the build is ready for the larger beta group.
-
-Normally the source track is alpha. If the release intentionally skipped alpha, choose internal as the
-source track.
-
-Manual run:
-
-1. Open Play Console and copy the tested build number.
-2. Open GitHub Actions.
-3. Choose `Promote to Google Play Public Beta`.
-4. Enter the build number.
-5. Choose the source track that currently contains the tested build.
-6. Keep the release status completed unless you intentionally want a draft.
-7. Run it.
-
-### Production Rollout
-
-Use `Submit Google Play Production` only after the same build number has already been tested.
-
-The normal path is:
-
-```text
-Firebase AAB -> Play internal -> alpha -> beta -> production
-```
-
-Alpha can be skipped when needed. Beta can also be skipped for small or urgent releases, but the
-source track in the workflow must match where the tested build currently lives.
-
-Manual run:
-
-1. Open Play Console and copy the tested build number.
-2. Open GitHub Actions.
-3. Choose `Submit Google Play Production`.
-4. Enter the tested build number.
-5. Choose the source track that currently contains that build.
-6. Keep staged rollout unless a full rollout is intentional.
-7. Enter the confirmation value requested by the workflow.
-8. Run it.
-
-The default rollout is staged so the release can be monitored before it reaches everyone.
-
 ## Play Store Metadata
 
 Play Store text, graphics, and screenshots live in:
