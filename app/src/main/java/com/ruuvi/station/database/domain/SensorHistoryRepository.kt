@@ -99,10 +99,11 @@ class SensorHistoryRepository(private val now: () -> Long = System::currentTimeM
     fun bulkInsert(sensorId: String, readings: List<TagSensorReading>) = synchronized(historyLock) {
         cleanup()
         for (page in readings.sortedBy { it.createdAt }.chunked(INSERT_PAGE_SIZE)) {
+            var inserted = false
             FlowManager.getDatabase(LocalDatabase::class.java).executeTransaction { db ->
-                insertReadings(sensorId, page, db)
+                inserted = insertReadings(sensorId, page, db)
             }
-            changed(sensorId)
+            if (inserted) changed(sensorId)
         }
     }
 
@@ -118,47 +119,74 @@ class SensorHistoryRepository(private val now: () -> Long = System::currentTimeM
         val current = now()
         val retainedRange = range.intersect(HistoryRange.retained(current))
         if (retainedRange.isEmpty) return@synchronized true
+        var inserted = false
         FlowManager.getDatabase(LocalDatabase::class.java).executeTransaction { db ->
-            insertReadings(sensorId, readings, db)
+            inserted = insertReadings(sensorId, readings.filter {
+                it.createdAt.time >= retainedRange.startMillis && it.createdAt.time < retainedRange.endExclusiveMillis
+            }, db)
             var start = retainedRange.startMillis
             var end = retainedRange.endExclusiveMillis
             var fetched = current
-            for (row in coverageRows(sensorId, account, backend, current - CACHE_FRESHNESS_MILLIS)) {
-                if (row.endExclusiveMillis < start || row.startMillis > end) continue
-                start = minOf(start, row.startMillis)
-                end = maxOf(end, row.endExclusiveMillis)
-                // Conservative expiry: merging must never make old coverage appear newly fetched.
-                fetched = minOf(fetched, row.fetchedAt)
+            val rows = coverageRows(sensorId, account, backend, Long.MIN_VALUE)
+            val merged = mutableSetOf<Long>()
+            // Include the whole connected fresh interval, including overlapping legacy cache rows.
+            do {
+                var expanded = false
+                for (row in rows) {
+                    if (row.id in merged || row.fetchedAt < current - CACHE_FRESHNESS_MILLIS ||
+                        row.endExclusiveMillis < start || row.startMillis > end) continue
+                    start = minOf(start, row.startMillis)
+                    end = maxOf(end, row.endExclusiveMillis)
+                    // Merging must never make old coverage appear newly fetched.
+                    fetched = minOf(fetched, row.fetchedAt)
+                    merged.add(row.id)
+                    expanded = true
+                }
+            } while (expanded)
+            for (row in rows) {
+                if (row.id !in merged && (row.endExclusiveMillis <= start || row.startMillis >= end)) continue
                 row.delete(db)
+                // Revalidation supersedes stale coverage only where it actually fetched data.
+                // Preserve unchecked portions without retaining overlapping obsolete records.
+                if (row.startMillis < start) row.copy(id = 0, endExclusiveMillis = start).insert(db)
+                if (row.endExclusiveMillis > end) row.copy(id = 0, startMillis = end).insert(db)
             }
             HistoryCoverage(sensorId = sensorId, account = account, backend = backend,
                 startMillis = maxOf(start, current - GlobalSettings.historyLengthMillis),
                 endExclusiveMillis = end, fetchedAt = fetched).insert(db)
         }
-        if (readings.isNotEmpty()) changed(sensorId)
+        if (inserted) changed(sensorId)
         true
     }
 
-    private fun insertReadings(sensorId: String, readings: List<TagSensorReading>, db: com.raizlabs.android.dbflow.structure.database.DatabaseWrapper) {
+    private fun insertReadings(sensorId: String, readings: List<TagSensorReading>, db: com.raizlabs.android.dbflow.structure.database.DatabaseWrapper): Boolean {
         val cutoff = now() - GlobalSettings.historyLengthMillis
         val incoming = readings.filter { it.ruuviTagId == sensorId && it.createdAt.time >= cutoff }.sortedBy { it.createdAt }
-        if (incoming.isEmpty()) return
-        val existing = SQLite.select(TagSensorReading_Table.createdAt).from(TagSensorReading::class.java)
+        if (incoming.isEmpty()) return false
+        var inserted = false
+        SQLite.select(TagSensorReading_Table.createdAt).from(TagSensorReading::class.java)
             .where(TagSensorReading_Table.ruuviTagId.eq(sensorId))
             .and(TagSensorReading_Table.createdAt.greaterThanOrEq(Date(incoming.first().createdAt.time - TIMELINE_DISTANCE)))
             .and(TagSensorReading_Table.createdAt.lessThanOrEq(Date(incoming.last().createdAt.time + TIMELINE_DISTANCE)))
-            .orderBy(TagSensorReading_Table.createdAt, true).queryList(db).map { it.createdAt.time }
-        var index = 0
-        var lastInserted: Long? = null
-        for (reading in incoming) {
-            val time = reading.createdAt.time
-            while (index < existing.size && existing[index] <= time - TIMELINE_DISTANCE) index++
-            val duplicate = index < existing.size && existing[index] < time + TIMELINE_DISTANCE
-            if (!duplicate && (lastInserted == null || time - lastInserted >= TIMELINE_DISTANCE)) {
-                reading.copy(id = 0).insert(db)
-                lastInserted = time
+            .orderBy(TagSensorReading_Table.createdAt, true).query(db).use { cursor ->
+                checkNotNull(cursor) { "Cannot query existing history timestamps" }
+                // A sparse cloud page can span millions of BLE rows. Stream the indexed
+                // timestamps instead of allocating a model and boxed Long for each row.
+                fun nextTime(): Long? = if (cursor.moveToNext()) cursor.getLong(0) else null
+                var existingTime = nextTime()
+                var lastInserted: Long? = null
+                for (reading in incoming) {
+                    val time = reading.createdAt.time
+                    while (existingTime != null && existingTime <= time - TIMELINE_DISTANCE) existingTime = nextTime()
+                    val duplicate = existingTime?.let { it < time + TIMELINE_DISTANCE } == true
+                    if (!duplicate && (lastInserted == null || time - lastInserted >= TIMELINE_DISTANCE)) {
+                        reading.copy(id = 0).insert(db)
+                        lastInserted = time
+                        inserted = true
+                    }
+                }
             }
-        }
+        return inserted
     }
 
     fun insertPoint(historyPoint: TagSensorReading) = synchronized(historyLock) {
