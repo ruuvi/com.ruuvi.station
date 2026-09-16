@@ -188,7 +188,7 @@ class SensorHistoryRepositoryTest {
         repository.forEachReading(sensorId, retained) { sampler.add(it.createdAt.time, it.temperature) }
         val sampled = sampler.finish()
         assertEquals(144000L, sampled.statistics!!.count)
-        assertTrue(sampled.points.size <= 1000)
+        assertTrue(sampled.points.size <= HistorySampler.MAX_POINTS)
         assertTrue(sampled.points.zipWithNext().all { (a, b) -> a.timestamp <= b.timestamp })
         assertTrue(sampled.points.all { it.timestamp in retained.startMillis until retained.endExclusiveMillis })
     }

@@ -421,7 +421,7 @@ fun setupMarker(
     chart.marker = markerView
 }
 
-private fun addDataToChart(
+internal fun addDataToChart(
     context: Context,
     data: MutableList<Entry>,
     chart: LineChart,
@@ -434,7 +434,11 @@ private fun addDataToChart(
 ) {
     Timber.d("ChartView - addDataToChart")
     val sets = historySegments(data).map { segment ->
-        val set = LineDataSet(segment, label)
+        val set = object : LineDataSet(segment, label) {
+            // The bundled renderer passes the dataset index to getCircleColor.
+            // Each history segment uses one color, including isolated points.
+            override fun getCircleColor(index: Int): Int = super.getCircleColor(0)
+        }
         set.setDrawCircles(graphDrawDots || segment.size == 1)
         set.setDrawValues(false)
         set.setDrawFilled(true)

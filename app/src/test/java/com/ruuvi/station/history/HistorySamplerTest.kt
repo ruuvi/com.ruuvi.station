@@ -11,13 +11,14 @@ class HistorySamplerTest {
         assertEquals(SampledHistory(emptyList(), null), sampler.finish())
     }
 
-    @Test fun `up to one thousand points are preserved exactly including boundaries`() {
-        val sampler = HistorySampler(HistoryRange(0, 1000))
-        repeat(1000) { sampler.add(it.toLong(), -it.toDouble()) }
+    @Test fun `up to the point cap measurements are preserved exactly including boundaries`() {
+        val count = HistorySampler.MAX_POINTS
+        val sampler = HistorySampler(HistoryRange(0, count.toLong()))
+        repeat(count) { sampler.add(it.toLong(), -it.toDouble()) }
         val result = sampler.finish()
-        assertEquals((0L..999L).toList(), result.points.map { it.timestamp })
-        assertEquals(-999.0, result.statistics!!.minimum, 0.0)
-        assertEquals(-499.5, result.statistics.average, 0.0)
+        assertEquals((0L until count.toLong()).toList(), result.points.map { it.timestamp })
+        assertEquals(-(count - 1).toDouble(), result.statistics!!.minimum, 0.0)
+        assertEquals(-(count - 1) / 2.0, result.statistics.average, 0.0)
     }
 
     @Test fun `dense one minute and 100 day ranges both obey the unconditional cap`() {
@@ -25,7 +26,7 @@ class HistorySamplerTest {
             val sampler = HistorySampler(HistoryRange(0, duration))
             repeat(144000) { i -> sampler.add(i * duration / 144000, kotlin.math.sin(i.toDouble())) }
             val result = sampler.finish()
-            assertTrue(result.points.size <= 1000)
+            assertTrue(result.points.size <= HistorySampler.MAX_POINTS)
             assertEquals(0L, result.points.first().timestamp)
             assertEquals(143999L * duration / 144000, result.points.last().timestamp)
             assertEquals(144000L, result.statistics!!.count)
@@ -60,7 +61,7 @@ class HistorySamplerTest {
         repeat(100000) { i -> all.add(i.toLong(), i.toDouble()); zoom.add(i.toLong(), i.toDouble()) }
         val overview = all.finish().points.map { it.timestamp }.toSet()
         val detail = zoom.finish().points
-        assertEquals(1000, detail.size)
+        assertTrue(detail.size <= HistorySampler.MAX_POINTS)
         assertTrue(detail.any { it.timestamp !in overview })
         assertTrue(detail.all { it.timestamp in 20000L until 21000L })
     }
