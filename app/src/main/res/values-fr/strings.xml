@@ -30,8 +30,8 @@
     <string name="particulate_matter_10">Matières particulaires 1</string>
     <string name="pm10">PM1</string>
     <string name="particulate_matter_25">Matières particulaires 2.5</string>
-    <string name="pm25">PM2.5</string>
     <string name="pm">PM</string>
+    <string name="pm25">PM2.5</string>
     <string name="particulate_matter_40">Matières particulaires 4</string>
     <string name="pm40">PM4</string>
     <string name="particulate_matter_100">Matières particulaires 10</string>
@@ -57,9 +57,9 @@
     <string name="measurement_sequence_number">Numéro de séquence</string>
     <string name="meas_seq_number">N° séq. mes.</string>
     <string name="sound">Son</string>
-    <string name="sound_avg">Son (moyenne)</string>
-    <string name="sound_peak">Son (pic)</string>
-    <string name="sound_instant">Son (instantané)</string>
+    <string name="sound_avg">Son moyen</string>
+    <string name="sound_peak">Pic sonore</string>
+    <string name="sound_instant">Son en temps réel</string>
     <string name="unit_pm10">µg/m³</string>
     <string name="unit_pm25">µg/m³</string>
     <string name="unit_pm40">µg/m³</string>
@@ -153,7 +153,7 @@
     <string name="help_added_tags">Capteurs jumelés : %1$,d</string>
     <string name="help_db_data_points">Données enregistrées : %1$,d</string>
     <string name="help_db_size">Taille de la base de données : %1$,d kB</string>
-    <string name="help_more_to_read_text">Site officiel de Ruuvi : ruuvi.com\nRuuvi Forum : f.ruuvi.com\nRuuvi blog : ruuvi.com/blog\nRuuvi Twitter : twitter.com/ruuvicom</string>
+    <string name="help_more_to_read_text">Site officiel de Ruuvi : ruuvi.com\nRuuvi Forum : f.ruuvi.com\nRuuvi blog : ruuvi.com/blog\nRuuvi X : x.com/ruuvicom</string>
     <string name="help_more_to_read_title">Plus d\'infos</string>
     <string name="help_opensource_text">Tout comme les capteurs Ruuvi, les applications Ruuvi Station sont open source. Suivez le développement et contribuez sur : github.com/ruuvi</string>
     <string name="help_opensource_title">Open-source</string>
@@ -257,14 +257,12 @@
     <string name="settings_gateway_details_link_url">https://docs.ruuvi.com/ruuvi-station-app/gateway</string>
     <string name="settings_gateway_device_identifier">Identifiant de l\'appareil</string>
     <string name="settings_data_forwarding_test">Tester le routeur</string>
-    <string name="settings_global_units">Unités globales</string>
-    <string name="settings_global_units_description">Ces réglages définissent les unités globales utilisées dans Ruuvi Station, sauf pour les valeurs configurées dans les réglages des mesures visibles. Le point de rosée peut être configuré séparément dans les réglages des mesures visibles.</string>
-    <string name="settings_resolution">Résolution</string>
-    <string name="settings_resolution_empty">Ajoutez un capteur pour voir les paramètres de résolution disponibles</string>
     <string name="settings_humidity_unit">Unité d\'humidité</string>
     <string name="settings_temperature">Température</string>
     <string name="settings_humidity">Humidité</string>
     <string name="settings_pressure">Pression</string>
+    <string name="settings_global_units">Unités globales</string>
+    <string name="settings_global_units_description">Ces réglages définissent les unités globales utilisées dans Ruuvi Station, sauf pour les valeurs configurées dans les réglages des mesures visibles. Le point de rosée peut être configuré séparément dans les réglages des mesures visibles.</string>
     <string name="settings_humidity_unit_details">Choisissez l\'unité souhaitée pour l\'humidité.</string>
     <string name="settings_pressure_unit">Unité de pression</string>
     <string name="settings_pressure_unit_details">Choisissez l\'unité souhaitée pour la pression.</string>
@@ -350,6 +348,12 @@
     <string name="share_sensor_description">Vous pouvez partager ce capteur à des amis ou à des membres de votre famille si le capteur est à portée du routeur Ruuvi Gateway.\n\nL\'utilisateur recevra une notification par mail. Le compte Ruuvi est créé en utilisant une adresse mailf si l\'utilisateur n\'en possède pas encore.\n\Le destinataire voit le capteur partagé de la même manière que vous. Lorsque vous modifiez les mesures affichées dans la vue du capteur, les modifications prennent également effet pour le destinataire. Les corrections d’offset que vous définissez sont également mises à jour automatiquement pour le destinataire. À titre d’exception, le nom du capteur et l’image d’arrière-plan ne sont transférés au destinataire qu’une seule fois au moment du partage, après quoi le destinataire peut les modifier de manière indépendante. Les paramètres d’alerte que vous configurez ne sont pas transférés au destinataire, qui peut définir ses propres alertes.</string>
     <string name="share_sensor_add_friend">Ajouter un ami</string>
     <string name="share_sensor_already_shared">Vous avez utilisé %1$,d/%2$,d du nombre maximum de divisions pour ce capteur. Le capteur est partagé avec les utilisateurs suivants :</string>
+    <string name="share_active_access_section_title">Utilisateurs ayant un accès actif à ce capteur :</string>
+    <string name="share_active_access_empty_value">Pas encore partagé avec qui que ce soit</string>
+    <string name="share_sensor_shared_to_count_message">Partages utilisés pour ce capteur : %1$,d/%2$,d
+
+Total des partages utilisés pour votre compte : %3$,d/%4$,d</string>
+    <string name="share_pending_section_title">Les utilisateurs suivants ont été invités et le capteur a été partagé avec eux, mais l\'accès est encore en attente car ils n\'ont pas encore créé de compte Ruuvi gratuit. Les invitations ont été envoyées et l\'accès leur sera accordé une fois leurs comptes créés :</string>
     <string name="share_sensor_send_button">Envoyer</string>
     <string name="share_sensor_unshare_confirm">Voulez-vous arrêter le partage du capteur avec %1$s ?</string>
     <string name="tagsettings_network_info">RÉSEAU</string>
@@ -506,6 +510,9 @@
     <string name="widgets_gateway_only">Vous pouvez utiliser les widgets Ruuvi si les capteurs sont à la portée d\'un Ruuvi Gateway ou si quelqu\'un vous a partagé un capteur.</string>
     <string name="widgets_missing_sensors">Vous ne voyez pas tous vos capteurs sur la liste ? Assurez-vous de vous être approprié tous les capteurs depuis l\'application mobile et que les capteurs sont à la portée d\'un routeur Ruuvi Gateway.</string>
     <string name="widgets_loading">Chargement...</string>
+    <string name="widgets_preview_sensor_name">Sauna</string>
+    <string name="widgets_preview_sensor_value">69.50</string>
+    <string name="widgets_preview_time">19:45</string>
     <string name="widgets_select_sensor_value_type">Choisissez le type de capteur à afficher dans le widget</string>
     <string name="back">Retour</string>
     <string name="select_sensor">Choisissez le capteur</string>
@@ -536,6 +543,8 @@
     <string name="accuracy1_template">%1$,.1f %2$s</string>
     <string name="accuracy2_template">%1$,.2f %2$s</string>
     <string name="accuracy_description">Sélectionnez la précision avec laquelle vous souhaitez voir les valeurs de mesure en direct des capteurs dans l’application. Ce paramètre n’affecte pas les graphiques d’historique, les exports de fichiers CSV et XLXS ni les alertes.</string>
+    <string name="settings_resolution">Résolution</string>
+    <string name="settings_resolution_empty">Ajoutez un capteur pour voir les paramètres de résolution disponibles</string>
     <string name="delete_account">Supprimer le compte</string>
     <string name="account_delete_confirmation_description">Une confirmation a été envoyée à votre adresse électronique. Pour procéder à la suppression, veuillez vérifier votre boîte de réception et suivre les instructions.</string>
     <string name="alert_dialog_title_temperature">Réglage de l\'alerte de température</string>
@@ -749,9 +758,9 @@
     <string name="widgets_enable_background_service">Activez le balayage en arrière-plan pour mettre à jour les valeurs des capteurs locaux via Bluetooth dans le widget. Ce n\'est pas nécessaire pour les capteurs cloud avec Ruuvi Gateway. L\'intervalle de balayage en arrière-plan peut être défini dans les paramètres de l\'application Ruuvi Station (actuellement défini sur %1$s).</string>
     <string name="increase_graph_size">Agrandir la taille des graphiques</string>
     <string name="decrease_graph_size">Réduire la taille des graphiques</string>
-    <string name="sound_average_with_unit">Son (moyenne) (%1$s)</string>
-    <string name="sound_peak_with_unit">Son (pic) (%1$s)</string>
-    <string name="sound_instant_with_unit">Son (instantané) (%1$s)</string>
+    <string name="sound_average_with_unit">Son moyen (%1$s)</string>
+    <string name="sound_peak_with_unit">Pic sonore (%1$s)</string>
+    <string name="sound_instant_with_unit">Son en temps réel (%1$s)</string>
     <string name="export_csv_header_format_air">Date,Qualité de l\'air,Température (%1$s),Humidité (%2$s),Pression (%3$s),CO₂ (ppm),Indice COV,NOX,PM1 (µg/m³),PM2.5 (µg/m³),PM4 (µg/m³),PM10 (µg/m³),RSSI (dBm),Numéro de mesure</string>
     <string name="agree">Accepter</string>
     <string name="decline">Refuser</string>
@@ -785,7 +794,7 @@
     <string name="description_text_humidity_absolute">L’humidité absolue indique la quantité réelle de vapeur d’eau présente dans l’air, c’est-à-dire combien de grammes d’eau se trouvent dans un [b]mètre cube (g/m³)[/b] d’air. Contrairement à l’humidité relative, elle ne dépend pas de la température et reflète la quantité totale d’humidité dans l’air.\n\n[title]Plage cible[/title]\n\nIl n’existe pas de plage cible universelle pour l’humidité absolue. Certains environnements spécifiques, comme les entrepôts, les sites de production ou les laboratoires, peuvent nécessiter un suivi de l’humidité absolue avec des valeurs limites précises.\n\n[title]Actions générales[/title]\n\nL’humidité absolue se régule selon les mêmes principes que l’humidité relative. Dans les environnements industriels, des humidificateurs ou déshumidificateurs spécialisés peuvent être utilisés.\n\n[title]Effets sur le bien-être[/title]\n\nLe contrôle de l’humidité absolue est particulièrement utile dans les [b]zones de production, entrepôts et laboratoires[/b] pour éviter la détérioration ou la dégradation des matériaux.\n\n[title]Conseils et informations supplémentaires[/title]\n\nL’humidité absolue n’est pas mesurée directement, mais [b]calculée à partir des mesures de température et d’humidité relative du capteur[/b]. L’application calcule automatiquement l’humidité absolue à partir des données du capteur, sans qu’aucun calcul manuel ne soit nécessaire.</string>
     <string name="description_text_humidity_dewpoint">Le point de rosée est la température à laquelle [b]la vapeur d’eau se condense en eau liquide[/b] (rosée). L’unité peut être exprimée en °C, °F ou K. Le point de rosée permet d’évaluer le risque de condensation et le comportement de l’humidité à l’intérieur.\n\n[title]Plage cible[/title]\n\nIl n’existe pas de plage cible universelle pour le point de rosée. Pour éviter la condensation, la température du point de rosée doit rester inférieure à celle de l’air ou des surfaces environnantes.\n\n[title]Actions générales[/title]\n\nPour abaisser le point de rosée, il faut réduire l’humidité relative ou, si possible, augmenter la température de l’air ou des surfaces.\n\n[title]Effets sur le bien-être[/title]\n\nLa condensation se produit lorsque la température de l’air ou d’une surface atteint ou descend en dessous du point de rosée. Cela peut entraîner [b]le développement de moisissures, la corrosion et des dommages dus à l’humidité[/b].\n\n[title]Conseils et informations supplémentaires[/title]\n\nLe point de rosée fournit une compréhension plus approfondie du comportement de l’humidité que l’humidité relative seule.</string>
     <string name="description_text_pressure">La pression barométrique indique la force exercée par l’atmosphère sur la surface de la Terre. Les unités disponibles sont Pa, hPa, mmHg ou inHg.\n\n[title]Plage cible[/title]\n\nIl n’existe pas de plage cible pour la pression atmosphérique. La pression normale au niveau de la mer est d’environ 1013 hPa.\n\n[title]Actions générales[/title]\n\nLa pression atmosphérique et ses variations ne peuvent pas être influencées.\n\n[title]Effets sur le bien-être[/title]\n\nSurveillez les variations de pression pour évaluer les [b]changements météorologiques[/b]. Une pression élevée est souvent associée à un temps clair, tandis qu’une pression basse annonce des pluies ou des conditions plus humides. Les variations météorologiques peuvent influencer le bien-être et la vigilance de certaines personnes sensibles.\n\n[title]Conseils et informations supplémentaires[/title]\n\nN’oubliez pas que la valeur mesurée dépend également de l’altitude du lieu de mesure. La valeur affichée par le capteur n’est pas compensée en fonction du niveau de la mer, contrairement à la plupart des services météorologiques, ce qui peut entraîner des différences entre les lectures.</string>
-    <string name="description_text_movement">Le compteur de mouvement indique combien d’événements de mouvement le capteur a détectés à l’aide de son accéléromètre.\n\n[title]Objectif de la mesure[/title]\n\nLe compteur de mouvement permet de vérifier si le capteur a été déplacé, bougé ou soumis à des vibrations provenant de son environnement. Le capteur ne peut pas détecter les mouvements environnants comme un détecteur de mouvement classique.\n\n[title]Conseils et informations supplémentaires[/title]\n\nSi le nombre de mesures augmente sans raison apparente, l’appareil peut être placé sur une surface instable ou dans un endroit sujet aux vibrations ou aux mouvements (par ex. rebord de fenêtre, ventilateur ou machine).\n\nLe capteur lit les données de l’accéléromètre 10 fois par seconde. Un mouvement est enregistré si l’accélération dépasse 0,064 g sur un des axes. 1 g correspond à une accélération de 9,81 m/s².</string>
+    <string name="description_text_movement">Le compteur de mouvement indique combien d’événements de mouvement le capteur a détectés à l’aide de son accéléromètre.\n\n[title]Objectif de la mesure[/title]\n\nLe compteur de mouvement permet de vérifier si le capteur a été déplacé, bougé ou soumis à des vibrations provenant de son environnement. Le capteur ne peut pas détecter les mouvements environnants comme un détecteur de mouvement classique.\n\n[title]Conseils et informations supplémentaires[/title]\n\nSi le nombre de mesures augmente sans raison apparente, l’appareil peut être placé sur une surface instable ou dans un endroit sujet aux vibrations ou aux mouvements (par ex. rebord de fenêtre, ventilateur ou machine).\n\nLe capteur lit les données de l’accéléromètre 10 fois par seconde. Un mouvement est enregistré si l’accélération dépasse 0,064 g sur un des axes. 1 g correspond à une accélération de 9,81 m/s².\n\nL’application utilise un compteur cyclique dont la valeur augmente de 0 à 255, puis revient à 0 après avoir atteint la valeur maximale.</string>
     <string name="description_text_battery_voltage">La tension de la pile indique l’état de l’alimentation du capteur en volts (V).\n\n[title]Objectif de la mesure[/title]\n\nUne tension de pile trop basse peut provoquer des interruptions dans la transmission des données. Surveiller la tension permet de savoir quand remplacer la pile afin d’assurer un fonctionnement continu de l’appareil.\n\n[title]Conseils et informations supplémentaires[/title]\n[li]La tension nominale d’une pile bouton neuve est de 3,0 V.[/li][li]Lorsque la valeur descend à 2,5 volts ou moins à température ambiante, la pile arrive en fin de vie.[/li][li]Une chute soudaine de tension peut être due au froid ou au vieillissement de la pile.[/li][li]L’application avertit d’un faible niveau de pile selon la température :[/li][li2][b]En dessous de –20 °C (–4 °F) :[/b] 2,0 V[/li2][li2][b]–20 … 0 °C (–4 … 32 °F) :[/b] 2,3 V[/li2][li2][b]Au-dessus de 0 °C (32 °F) :[/b] 2,5 V[/li2]\n[b]Recommandation :[/b] Utilisez une pile CR2477 ou CR2477T de haute qualité provenant d’un fabricant réputé. La durée de vie typique dans des conditions normales est d’environ 1 à 2 ans.\n\n[b]Remarque :[/b] Les piles rechargeables ou les modèles CR2477N ne sont pas compatibles avec les capteurs Ruuvi.</string>
     <string name="description_text_acceleration">L’accéléromètre mesure l’accélération sur trois axes (x, y et z). La gravité terrestre génère environ [b]1 g d’accélération[/b] sur l’axe orienté perpendiculairement vers le sol.\n\n[title]Objectif de la mesure[/title]\n\nLe capteur peut être utilisé pour observer son orientation ou sa position.\n[li]Si les valeurs restent stables, le [b]capteur est immobile[/b].[/li][li]Des variations indiquent que le capteur a [b]bougé ou s’est incliné[/b].[/li][li]Des pics soudains ou irréguliers suggèrent un [b]mouvement rapide ou des vibrations[/b], tandis que des changements de niveau plus nets indiquent généralement un [b]changement d’orientation[/b].[/li]\n[title]Conseils et informations supplémentaires[/title]\n\nLa fréquence d’échantillonnage et la vitesse de transmission des données de l’accéléromètre sont optimisées pour une faible consommation d’énergie. Les données d’accélération ne sont donc pas suffisantes pour une analyse détaillée des vibrations ou des mouvements.</string>
     <string name="description_text_signal_strength">La puissance du signal (RSSI) indique la force des paquets de données reçus du capteur par l’appareil mobile. Plus la valeur est proche de zéro, plus le signal reçu est fort. Il s’agit d’une [b]information technique[/b] qui n’a pas besoin d’être surveillée dans un usage quotidien.\n\n[title]Objectif de la mesure[/title]\n\nUn signal faible peut provoquer des coupures de connexion et des retards dans la mise à jour des données du capteur. Vous pouvez suivre la puissance du signal lors du placement du capteur dans un nouvel endroit. La [b]plage de signal optimale[/b] se situe entre –80 et 0 dBm. Notez cependant que la puissance du signal varie constamment en raison des réflexions. Les différents appareils mobiles peuvent également afficher des valeurs légèrement différentes, de sorte qu’elles ne sont pas toujours comparables.\n\n[title]Conseils et informations supplémentaires[/title]\n[li]La qualité du signal est influencée par [b]la distance, les murs, les structures environnantes et les interférences d’autres appareils sans fil.[/b][/li][li]Si le signal est faible, [b]déplacez le capteur[/b] vers un endroit où la connexion avec le récepteur est plus dégagée. La hauteur du capteur par rapport au sol influe également sur la portée – plus il est placé haut, meilleure est la réception.[/li]</string>
@@ -872,16 +881,12 @@
     <string name="update_now">Mettre à jour maintenant</string>
     <string name="led_brightness_select_message">Sélectionnez le niveau de luminosité de la LED souhaité. Assurez-vous d’être à portée Bluetooth de votre Ruuvi Air.</string>
     <string name="notes">Notes</string>
-    <string name="communication_channels">Newsletter Ruuvi</string>
-    <string name="communication_channels_description">Recevez des conseils Ruuvi utiles, des actualités sur les produits et les fonctionnalités, ainsi que des offres spéciales occasionnelles directement dans votre boîte de réception.</string>
-    <string name="newsletter_subscription">Abonnement</string>
-    <string name="newsletter_subscription_confirmation">Consultez votre messagerie pour confirmer votre abonnement à la newsletter.</string>
     <string name="newsletter_card_title">Abonnez-vous aux promotions !</string>
     <string name="newsletter_card_description">Abonnez-vous à la newsletter de Ruuvi et profitez toujours du meilleur prix sur les capteurs.</string>
     <string name="newsletter_subscribe">S’abonner</string>
     <string name="newsletter_url">https://ruuvi.com/join</string>
-    <string name="share_active_access_section_title">Utilisateurs ayant un accès actif à ce capteur :</string>
-    <string name="share_active_access_empty_value">Pas encore partagé avec qui que ce soit</string>
-    <string name="share_sensor_shared_to_count_message">Partages utilisés pour ce capteur : %1$,d/%2$,d\n\nTotal des partages utilisés pour votre compte : %3$,d/%4$,d</string>
-    <string name="share_pending_section_title">Les utilisateurs suivants ont été invités et le capteur a été partagé avec eux, mais l\'accès est encore en attente car ils n\'ont pas encore créé de compte Ruuvi gratuit. Les invitations ont été envoyées et l\'accès leur sera accordé une fois leurs comptes créés :</string>
+    <string name="newsletter_subscription">Abonnement</string>
+    <string name="newsletter_subscription_confirmation">Consultez votre messagerie pour confirmer votre abonnement à la newsletter.</string>
+    <string name="communication_channels">Newsletter Ruuvi</string>
+    <string name="communication_channels_description">Recevez des conseils Ruuvi utiles, des actualités sur les produits et les fonctionnalités, ainsi que des offres spéciales occasionnelles directement dans votre boîte de réception.</string>
 </resources>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="air_quality">Air quality</string>
+    <string name="air_quality">Air Quality</string>
     <string name="aqi_with_unit">Air quality (%1$s)</string>
     <string name="aqi">Air quality</string>
     <string name="temperature_with_unit">Temperature (%1$s)</string>
@@ -30,8 +30,8 @@
     <string name="particulate_matter_10">Particulate matter 1</string>
     <string name="pm10">PM1</string>
     <string name="particulate_matter_25">Particulate matter 2.5</string>
-    <string name="pm25">PM2.5</string>
     <string name="pm">PM</string>
+    <string name="pm25">PM2.5</string>
     <string name="particulate_matter_40">Particulate matter 4</string>
     <string name="pm40">PM4</string>
     <string name="particulate_matter_100">Particulate matter 10</string>
@@ -57,9 +57,9 @@
     <string name="measurement_sequence_number">Measurement sequence number</string>
     <string name="meas_seq_number">Meas. seq. number</string>
     <string name="sound">Sound</string>
-    <string name="sound_avg">Sound (average)</string>
-    <string name="sound_peak">Sound (peak)</string>
-    <string name="sound_instant">Sound (instant)</string>
+    <string name="sound_avg">Sound average</string>
+    <string name="sound_peak">Sound peak</string>
+    <string name="sound_instant">Sound real time</string>
     <string name="unit_pm10">µg/m³</string>
     <string name="unit_pm25">µg/m³</string>
     <string name="unit_pm40">µg/m³</string>
@@ -153,7 +153,7 @@
     <string name="help_added_tags">Added sensors: %1$,d</string>
     <string name="help_db_data_points">Number of locally stored measurements: %1$,d</string>
     <string name="help_db_size">Database size: %1$,d kB</string>
-    <string name="help_more_to_read_text">Ruuvi\'s website: ruuvi.com\nRuuvi Forum: f.ruuvi.com\nRuuvi blog: ruuvi.com/blog\nRuuvi on Twitter: twitter.com/ruuvicom</string>
+    <string name="help_more_to_read_text">Ruuvi\'s website: ruuvi.com\nRuuvi Forum: f.ruuvi.com\nRuuvi blog: ruuvi.com/blog\nRuuvi on X: x.com/ruuvicom</string>
     <string name="help_more_to_read_title">More to read</string>
     <string name="help_opensource_text">Just like Ruuvi sensors, Ruuvi Station apps are open source. Follow the development and contribute at: github.com/ruuvi</string>
     <string name="help_opensource_title">Open-source</string>
@@ -257,14 +257,12 @@
     <string name="settings_gateway_details_link_url">https://docs.ruuvi.com/ruuvi-station-app/gateway</string>
     <string name="settings_gateway_device_identifier">Device identifier</string>
     <string name="settings_data_forwarding_test">Test data forwarding</string>
-    <string name="settings_global_units">Global Units</string>
-    <string name="settings_global_units_description">These settings define the global units used across Ruuvi Station, except for values configured in visible measurements settings. Dew point can be configured separately in visible measurements settings.</string>
-    <string name="settings_resolution">Resolution</string>
-    <string name="settings_resolution_empty">Add a sensor to see the available resolution settings</string>
     <string name="settings_humidity_unit">Humidity unit</string>
     <string name="settings_temperature">Temperature</string>
     <string name="settings_humidity">Humidity</string>
     <string name="settings_pressure">Pressure</string>
+    <string name="settings_global_units">Global Units</string>
+    <string name="settings_global_units_description">These settings define the global units used across Ruuvi Station, except for values configured in visible measurements settings. Dew point can be configured separately in visible measurements settings.</string>
     <string name="settings_humidity_unit_details">Choose the humidity unit you want to be displayed.</string>
     <string name="settings_pressure_unit">Pressure unit</string>
     <string name="settings_pressure_unit_details">Choose the pressure unit you want to be displayed.</string>
@@ -350,6 +348,12 @@
     <string name="share_sensor_description">You can share the sensor with friends and family if it\'s in range of a Ruuvi Gateway.\n\nReceiver will be notified by email. If the receiver doesn\'t have a Ruuvi account, a free Ruuvi account will automatically be created at first log in.\n\nThe recipient sees the shared sensor in the same way as you do. When you modify the measurements shown in the sensor view, the changes also take effect for the recipient. Any offset corrections you set are automatically updated for the recipient as well. As an exception, the sensor name and background image are transferred to the recipient only once at the time of sharing, after which the recipient can modify them independently. The alert settings you configure are not transferred to the recipient, who can define their own alerts.</string>
     <string name="share_sensor_add_friend">Add friend</string>
     <string name="share_sensor_already_shared">You have used %1$,d/%2$,d of maximum shares of this sensor. The sensor has been shared to following users:</string>
+    <string name="share_active_access_section_title">Users with active access to this sensor:</string>
+    <string name="share_active_access_empty_value">Not shared to anyone yet</string>
+    <string name="share_sensor_shared_to_count_message">Used shares for this sensor: %1$,d/%2$,d
+
+Total used shares for your account: %3$,d/%4$,d</string>
+    <string name="share_pending_section_title">The following users have been invited and the sensor has been shared with them, but access is still pending as they have not yet created a free Ruuvi account. Invitations have been sent, and access will be granted once their accounts are set up:</string>
     <string name="share_sensor_send_button">Send</string>
     <string name="share_sensor_unshare_confirm">Do you want to unshare sensor for %1$s?</string>
     <string name="tagsettings_network_info">NETWORK INFO</string>
@@ -506,6 +510,9 @@
     <string name="widgets_gateway_only">You can use Ruuvi widgets if your sensors are in range of a Ruuvi Gateway or if someone has shared with you a Ruuvi sensor.</string>
     <string name="widgets_missing_sensors">Cannot see all your sensors in the list? Make sure that you\'ve claimed ownership of all your sensors and that the sensors are in the range of a Ruuvi Gateway router.</string>
     <string name="widgets_loading">loading...</string>
+    <string name="widgets_preview_sensor_name">Sauna</string>
+    <string name="widgets_preview_sensor_value">69.50</string>
+    <string name="widgets_preview_time">7:45</string>
     <string name="widgets_select_sensor_value_type">Select the type of sensor to display in the widget</string>
     <string name="back">Back</string>
     <string name="select_sensor">Select sensor</string>
@@ -536,6 +543,8 @@
     <string name="accuracy1_template">%1$,.1f %2$s</string>
     <string name="accuracy2_template">%1$,.2f %2$s</string>
     <string name="accuracy_description">Select how accurately you\'d like to see the sensors\' live measurement values in the app. This setting doesn\'t affect history charts, CSV- and XLXS-file exports or alerts.</string>
+    <string name="settings_resolution">Resolution</string>
+    <string name="settings_resolution_empty">Add a sensor to see the available resolution settings</string>
     <string name="delete_account">Delete account</string>
     <string name="account_delete_confirmation_description">A confirmation has been sent to your email. To proceed with the deletion, please check your inbox and follow the instructions.</string>
     <string name="alert_dialog_title_temperature">Set temperature alert</string>
@@ -745,8 +754,8 @@
     <string name="increase_graph_size">Increase graph size</string>
     <string name="decrease_graph_size">Decrease graph size</string>
     <string name="sound_average_with_unit">Sound average (%1$s)</string>
-    <string name="sound_peak_with_unit">Sound (peak) (%1$s)</string>
-    <string name="sound_instant_with_unit">Sound (instant) (%1$s)</string>
+    <string name="sound_peak_with_unit">Sound peak (%1$s)</string>
+    <string name="sound_instant_with_unit">Sound real time (%1$s)</string>
     <string name="export_csv_header_format_air">Date,Air quality,Temperature (%1$s),Humidity (%2$s),Pressure (%3$s),CO₂ (ppm),VOC index,NOX,PM1 (µg/m³),PM2.5 (µg/m³),PM4 (µg/m³),PM10 (µg/m³),RSSI (dBm),Measurement sequence number</string>
     <string name="agree">Agree</string>
     <string name="decline">Decline</string>
@@ -778,7 +787,7 @@
     <string name="description_text_humidity_absolute">Absolute humidity indicates the actual amount of water vapor in the air, expressed as how many grams of water are contained in one [b]cubic meter (g/m³)[/b] of air. Unlike relative humidity, it does not depend on temperature but represents the total amount of moisture in the air.\n\n[title]Target Range[/title]\n\nThere is no universal target range for absolute humidity. Certain specialized environments such as storage areas, production facilities, and laboratories may require monitoring of absolute humidity. In such cases, specific threshold values are defined for these conditions.\n\n[title]General Actions[/title]\n\nAbsolute humidity is managed using the same principles as relative humidity. In industrial environments, specialized humidifiers or dehumidifiers may also be used.\n\n[title]Effects on Well-being[/title]\n\nControlling absolute humidity is particularly useful in [b]production areas, warehouses, and laboratories[/b] to prevent material degradation or spoilage.\n\n[title]Tips and Additional Information[/title]\n\nAbsolute humidity is not measured directly; it is [b]calculated from the sensor’s temperature and relative humidity readings[/b]. The application automatically computes absolute humidity from the sensor data, so no manual calculations are needed.</string>
     <string name="description_text_humidity_dewpoint">The dew point is the temperature at which [b]water vapor condenses into liquid water[/b] (dew). The unit may be expressed in °C, °F, or K. The dew point helps assess the risk of condensation and understand how moisture behaves indoors.\n\n[title]Target Range[/title]\n\nThere is no general target range for the dew point. To prevent condensation, the dew point temperature should remain lower than the air or surface temperature.\n\n[title]General Actions[/title]\n\nTo lower the dew point temperature, reduce relative humidity or, if possible, increase the temperature of the air or surrounding surfaces.\n\n[title]Effects on Well-being[/title]\n\nCondensation occurs when the air or a surface cools to the dew point temperature or below. This can lead to [b]mold growth, corrosion, and moisture damage[/b].\n\n[title]Tips and Additional Information[/title]\n\nThe dew point provides deeper insight into how moisture behaves than relative humidity alone.</string>
     <string name="description_text_pressure">Barometric air pressure indicates the force exerted by the atmosphere on the Earth\'s surface. The selectable units are Pa, hPa, mmHg, or inHg.\n\n[title]Target Range[/title]\n\nAir pressure has no specific target range. The normal pressure at sea level is approximately 1013 hPa.\n\n[title]General Actions[/title]\n\nAtmospheric air pressure and its variations cannot be influenced.\n\n[title]Effects on Well-being[/title]\n\nTrack changes in air pressure to help assess [b]weather variations[/b]. High pressure is often associated with clear weather, while low pressure indicates rain or more humid conditions. Weather changes can affect sensitivity or alertness in some people.\n\n[title]Tips and Additional Information[/title]\n\nKeep in mind that the measured value also depends on the altitude of the measurement location. The sensor value is not compensated for sea level, unlike most weather services, so readings may differ from official reports.</string>
-    <string name="description_text_movement">The motion counter indicates how many motion events the sensor has detected using its accelerometer.\n\n[title]Measurement Purpose[/title]\n\nThe motion counter helps track whether the sensor has been moved, shifted, or exposed to vibration from its surroundings. The sensor cannot detect motion in the environment like a motion detector would.\n\n[title]Tips and Additional Information[/title]\n\nIf the number of measurements increases without a clear reason, the device may be on an unstable surface or placed somewhere with vibration or other movement energy (e.g., a windowsill, fan, or machine).\n\nThe sensor reads acceleration data 10 times per second. Motion is registered if the acceleration exceeds 0.064 g on any axis. One g equals an acceleration of 9.81 m/s².</string>
+    <string name="description_text_movement">The motion counter indicates how many motion events the sensor has detected using its accelerometer.\n\n[title]Measurement Purpose[/title]\n\nThe motion counter helps track whether the sensor has been moved, shifted, or exposed to vibration from its surroundings. The sensor cannot detect motion in the environment like a motion detector would.\n\n[title]Tips and Additional Information[/title]\n\nIf the number of measurements increases without a clear reason, the device may be on an unstable surface or placed somewhere with vibration or other movement energy (e.g., a windowsill, fan, or machine).\n\nThe sensor reads acceleration data 10 times per second. Motion is registered if the acceleration exceeds 0.064 g on any axis. One g equals an acceleration of 9.81 m/s².\n\nThe app uses a wraparound counter whose value increases from 0 to 255 and returns to 0 after reaching the maximum value.</string>
     <string name="description_text_battery_voltage">Battery voltage indicates the power source level of the sensor in volts (V).\n\n[title]Measurement Purpose[/title]\n\nA low battery voltage can cause interruptions in data transmission. Monitoring the voltage helps identify when the battery needs to be replaced to keep the device operating continuously.\n\n[title]Tips and Additional Information[/title]\n[li]The nominal voltage of a new coin cell battery is 3.0 V.[/li][li]When the value drops to 2.5 volts or below at room temperature, the battery is nearing the end of its life.[/li][li]A sudden voltage drop may be caused by cold temperature or battery aging.[/li][li]The app warns about low battery level depending on the temperature, as follows:[/li][li2][b]Below –20 °C (–4 °F):[/b] 2.0 V[/li2][li2][b]–20 … 0 °C (–4 … 32 °F):[/b] 2.3 V[/li2][li2][b]Above 0 °C (32 °F):[/b] 2.5 V[/li2]\n[b]Recommendation:[/b] Use a high-quality CR2477 or CR2477T battery from a reputable manufacturer. The typical lifespan under normal conditions is around 1–2 years.\n\n[b]Note:[/b] Rechargeable or CR2477N batteries are not compatible with Ruuvi sensors.</string>
     <string name="description_text_acceleration">The accelerometer measures acceleration along three axes (x, y, and z). Earth\'s gravity produces approximately [b]1 g of acceleration[/b] on the axis pointing directly toward the ground.\n\n[title]Measurement Purpose[/title]\n\nThe sensor can be used to detect its orientation or position.\n[li]If the values remain stable, the [b]sensor is stationary[/b].[/li][li]Changes in values indicate that the sensor has [b]moved or tilted[/b].[/li][li]Sudden or irregular spikes suggest [b]quick motion or vibration[/b], while clear level changes usually indicate an [b]orientation change[/b].[/li]\n[title]Tips and Additional Information[/title]\n\nThe accelerometer’s sampling frequency and data transmission rate are optimized for low power consumption. Therefore, acceleration data is not suitable for detailed vibration or motion analysis.</string>
     <string name="description_text_signal_strength">Signal strength (RSSI) indicates the power level of data packets received from the sensor by the mobile device. The closer the value is to zero, the stronger the received signal. This is a [b]technical parameter[/b] that usually does not need to be monitored in everyday use.\n\n[title]Measurement Purpose[/title]\n\nA weak signal can cause connection drops and delays in sensor data updates. You can monitor the signal strength when placing the sensor in a new location. The [b]optimal signal range[/b] is between –80 … 0 dBm. However, note that signal strength continuously fluctuates due to reflections. Different mobile devices may also report slightly different values, so numbers are not always directly comparable.\n\n[title]Tips and Additional Information[/title]\n[li]Signal quality is affected by [b]distance, walls, and other structures, as well as interference from other wireless devices[/b].[/li][li]If the signal is weak, [b]move the sensor[/b] to a location with a clearer line of sight to the receiver. The height of the sensor above the ground can also improve range — higher placement usually results in better signal strength.[/li]</string>
@@ -865,16 +874,12 @@
     <string name="update_now">Update now</string>
     <string name="led_brightness_select_message">Select your preferred LED brightness level. Make sure you are within the Bluetooth range of the Ruuvi Air.</string>
     <string name="notes">Notes</string>
-    <string name="communication_channels">Ruuvi newsletter</string>
-    <string name="communication_channels_description">Get useful Ruuvi tips, product updates, feature news, and occasional special offers straight to your inbox.</string>
-    <string name="newsletter_subscription">Subscription</string>
-    <string name="newsletter_subscription_confirmation">Check your email to confirm your newsletter subscription.</string>
     <string name="newsletter_card_title">Subscribe for promotions!</string>
     <string name="newsletter_card_description">Subscribe to Ruuvi’s newsletter and always get sensors at the best price.</string>
     <string name="newsletter_subscribe">Subscribe</string>
     <string name="newsletter_url">https://ruuvi.com/join</string>
-    <string name="share_active_access_section_title">Users with active access to this sensor:</string>
-    <string name="share_active_access_empty_value">Not shared to anyone yet</string>
-    <string name="share_sensor_shared_to_count_message">Used shares for this sensor: %1$,d/%2$,d\n\nTotal used shares for your account: %3$,d/%4$,d</string>
-    <string name="share_pending_section_title">The following users have been invited and the sensor has been shared with them, but access is still pending as they have not yet created a free Ruuvi account. Invitations have been sent, and access will be granted once their accounts are set up:</string>
+    <string name="newsletter_subscription">Subscription</string>
+    <string name="newsletter_subscription_confirmation">Check your email to confirm your newsletter subscription.</string>
+    <string name="communication_channels">Ruuvi newsletter</string>
+    <string name="communication_channels_description">Get useful Ruuvi tips, product updates, feature news, and occasional special offers straight to your inbox.</string>
 </resources>

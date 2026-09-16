@@ -30,8 +30,8 @@
     <string name="particulate_matter_10">Feinstaub 1</string>
     <string name="pm10">PM1</string>
     <string name="particulate_matter_25">Feinstaub 2.5</string>
-    <string name="pm25">PM2.5</string>
     <string name="pm">PM</string>
+    <string name="pm25">PM2.5</string>
     <string name="particulate_matter_40">Feinstaub 4</string>
     <string name="pm40">PM4</string>
     <string name="particulate_matter_100">Feinstaub 10</string>
@@ -57,9 +57,9 @@
     <string name="measurement_sequence_number">Messsequenznummer</string>
     <string name="meas_seq_number">Messseq.nr</string>
     <string name="sound">Ton</string>
-    <string name="sound_avg">Ton (durchschnitt)</string>
-    <string name="sound_peak">Ton (spitze)</string>
-    <string name="sound_instant">Ton (sofort)</string>
+    <string name="sound_avg">Durchschnittlicher Ton</string>
+    <string name="sound_peak">Tonspitze</string>
+    <string name="sound_instant">Ton in Echtzeit</string>
     <string name="unit_pm10">µg/m³</string>
     <string name="unit_pm25">µg/m³</string>
     <string name="unit_pm40">µg/m³</string>
@@ -153,7 +153,7 @@
     <string name="help_added_tags">Sensoren hinzugefügt: %1$,d</string>
     <string name="help_db_data_points">Anzahl lokal gespeicherter Messungen: %1$,d</string>
     <string name="help_db_size">Datenbankgröße: %1$,d kB</string>
-    <string name="help_more_to_read_text">Ruuvi-Website: ruuvi.com\nRuuvi-Forum: f.ruuvi.com\nRuuvi-blog: ruuvi.com/blog\nRuuvi auf Twitter: twitter.com/ruuvicom</string>
+    <string name="help_more_to_read_text">Ruuvi-Website: ruuvi.com\nRuuvi-Forum: f.ruuvi.com\nRuuvi-blog: ruuvi.com/blog\nRuuvi auf X: x.com/ruuvicom</string>
     <string name="help_more_to_read_title">Mehr erfahren</string>
     <string name="help_opensource_text">Genau wie Ruuvi-Sensoren sind auch die Ruuvi Station-Apps Open Source. Verfolgen Sie die Entwicklung und leisten Sie einen Beitrag unter: github.com/ruuvi</string>
     <string name="help_opensource_title">Open-source</string>
@@ -257,14 +257,12 @@
     <string name="settings_gateway_details_link_url">https://docs.ruuvi.com/ruuvi-station-app/gateway</string>
     <string name="settings_gateway_device_identifier">Gerätekennung</string>
     <string name="settings_data_forwarding_test">Testdatenweiterleitung</string>
-    <string name="settings_global_units">Globale Einheiten</string>
-    <string name="settings_global_units_description">Diese Einstellungen legen die globalen Einheiten fest, die in Ruuvi Station verwendet werden, mit Ausnahme der Werte, die in den Einstellungen für sichtbare Messungen konfiguriert wurden. Der Taupunkt kann separat in den Einstellungen für sichtbare Messungen konfiguriert werden.</string>
-    <string name="settings_resolution">Auflösung</string>
-    <string name="settings_resolution_empty">Fügen Sie einen Sensor hinzu, um die verfügbaren Auflösungseinstellungen anzuzeigen</string>
     <string name="settings_humidity_unit">Feuchtigkeitseinheit</string>
     <string name="settings_temperature">Temperatur</string>
     <string name="settings_humidity">Feuchtigkeit</string>
     <string name="settings_pressure">Druck</string>
+    <string name="settings_global_units">Globale Einheiten</string>
+    <string name="settings_global_units_description">Diese Einstellungen legen die globalen Einheiten fest, die in Ruuvi Station verwendet werden, mit Ausnahme der Werte, die in den Einstellungen für sichtbare Messungen konfiguriert wurden. Der Taupunkt kann separat in den Einstellungen für sichtbare Messungen konfiguriert werden.</string>
     <string name="settings_humidity_unit_details">Wählen Sie die Luftfeuchtigkeitseinheit aus, die angezeigt werden soll.</string>
     <string name="settings_pressure_unit">Druckeinheit</string>
     <string name="settings_pressure_unit_details">Wählen Sie die Druckeinheit, die angezeigt werden soll.</string>
@@ -350,6 +348,12 @@
     <string name="share_sensor_description">Sie können den Sensor mit Freunden und Familie teilen, wenn er sich in Reichweite eines Ruuvi Gateways befindet.\n\nDer Empfänger wird per E-Mail benachrichtigt. Wenn der Empfänger kein Ruuvi-Konto hat, wird beim ersten Anmelden automatisch ein kostenloses Ruuvi-Konto erstellt.\n\nDer Empfänger sieht den freigegebenen Sensor auf die gleiche Weise wie Sie. Wenn Sie die im Sensoransichtsbildschirm angezeigten Messwerte ändern, treten die Änderungen auch für den Empfänger in Kraft. Auch von Ihnen festgelegte Offset-Korrekturen werden automatisch für den Empfänger aktualisiert. Eine Ausnahme bilden der Sensorname und das Hintergrundbild, die nur einmal zum Zeitpunkt der Freigabe übertragen werden; danach kann der Empfänger sie selbstständig anpassen. Die von Ihnen konfigurierten Alarmeinstellungen werden nicht auf den Empfänger übertragen, der eigene Alarme festlegen kann.</string>
     <string name="share_sensor_add_friend">Freund hinzufügen</string>
     <string name="share_sensor_already_shared">Sie haben %1$,d/%2$,d der maximalen Teilungszahl für diesen Sensor verwendet. Der Sensor wird mit den folgenden Benutzern geteilt:</string>
+    <string name="share_active_access_section_title">Benutzer mit aktivem Zugriff auf diesen Sensor:</string>
+    <string name="share_active_access_empty_value">Noch mit niemandem geteilt</string>
+    <string name="share_sensor_shared_to_count_message">Verwendete Freigaben für diesen Sensor: %1$,d/%2$,d
+
+Insgesamt verwendete Freigaben für Ihr Konto: %3$,d/%4$,d</string>
+    <string name="share_pending_section_title">Die folgenden Benutzer wurden eingeladen und der Sensor wurde mit ihnen geteilt, aber der Zugriff steht noch aus, da sie noch kein kostenloses Ruuvi-Konto erstellt haben. Einladungen wurden versendet und der Zugriff wird gewährt, sobald ihre Konten eingerichtet sind:</string>
     <string name="share_sensor_send_button">Senden</string>
     <string name="share_sensor_unshare_confirm">Möchten Sie die Freigabe des Sensors für %1$s aufheben?</string>
     <string name="tagsettings_network_info">NETZWERK INFORMATION</string>
@@ -506,6 +510,9 @@
     <string name="widgets_gateway_only">Sie können Ruuvi-Widgets verwenden, wenn sich Ihre Sensoren in Reichweite eines Ruuvi-Gateways befinden oder wenn Ihnen jemand einen Ruuvi-Sensor zur Verfügung gestellt hat.</string>
     <string name="widgets_missing_sensors">Sie können nicht alle Ihre Sensoren in der Liste sehen? Vergewissern Sie sich, dass Sie alle Ihre Sensoren für sich beansprucht haben und dass sich die Sensoren in der Reichweite eines Ruuvi Gateway Routers befinden.</string>
     <string name="widgets_loading">laden...</string>
+    <string name="widgets_preview_sensor_name">Sauna</string>
+    <string name="widgets_preview_sensor_value">69.50</string>
+    <string name="widgets_preview_time">19:45</string>
     <string name="widgets_select_sensor_value_type">Wählen Sie den Sensortyp, der im Widget angezeigt werden soll</string>
     <string name="back">Zurück</string>
     <string name="select_sensor">Sensor auswählen</string>
@@ -536,6 +543,8 @@
     <string name="accuracy1_template">%1$,.1f %2$s</string>
     <string name="accuracy2_template">%1$,.2f %2$s</string>
     <string name="accuracy_description">Wählen Sie aus, wie genau die Live-Messwerte der Sensoren in der App angezeigt werden sollen. Diese Einstellung wirkt sich nicht auf Verlaufsdiagramme, den Export von CSV- und XLXS-Dateien oder Warnungen aus.</string>
+    <string name="settings_resolution">Auflösung</string>
+    <string name="settings_resolution_empty">Fügen Sie einen Sensor hinzu, um die verfügbaren Auflösungseinstellungen anzuzeigen</string>
     <string name="delete_account">Konto löschen</string>
     <string name="account_delete_confirmation_description">Es wurde eine Bestätigung an Ihre E-Mail gesendet. Um mit der Löschung fortzufahren, überprüfen Sie bitte Ihren Posteingang und folgen Sie den Anweisungen.</string>
     <string name="alert_dialog_title_temperature">Temperaturalarm einstellen</string>
@@ -755,9 +764,9 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="widgets_enable_background_service">Aktualisieren Sie die Daten der lokalen Bluetooth-Sensoren im Widget, indem Sie die Hintergrundsuche aktivieren. Dies ist nicht erforderlich für Cloud-Sensoren, deren Daten über Ruuvi Gateway gesammelt werden. Das Intervall für die Hintergrundsuche kann in den Einstellungen der Ruuvi Station-App festgelegt werden (derzeit eingestellt auf %1$s).</string>
     <string name="increase_graph_size">Vergrößern Sie die Größe der Diagramme</string>
     <string name="decrease_graph_size">Verkleinern Sie die Größe der Diagramme</string>
-    <string name="sound_average_with_unit">Ton (durchschnitt) (%1$s)</string>
-    <string name="sound_peak_with_unit">Ton (spitze) (%1$s)</string>
-    <string name="sound_instant_with_unit">Ton (sofort) (%1$s)</string>
+    <string name="sound_average_with_unit">Durchschnittlicher Ton (%1$s)</string>
+    <string name="sound_peak_with_unit">Tonspitze (%1$s)</string>
+    <string name="sound_instant_with_unit">Ton in Echtzeit (%1$s)</string>
     <string name="export_csv_header_format_air">Datum,Luftqualität,Temperatur (%1$s),Luftfeuchtigkeit (%2$s),Luftdruck (%3$s),CO₂ (ppm),VOC-Index,NOX,PM1 (µg/m³),PM2.5 (µg/m³),PM4 (µg/m³),PM10 (µg/m³),RSSI (dBm),Messfolgenummer</string>
     <string name="agree">Zustimmen</string>
     <string name="decline">Ablehnen</string>
@@ -790,7 +799,7 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="description_text_humidity_absolute">Die absolute Luftfeuchtigkeit gibt die tatsächliche Menge an Wasserdampf in der Luft an, also wie viele Gramm Wasser in einem [b]Kubikmeter Luft (g/m³)[/b] enthalten sind. Im Gegensatz zur relativen Luftfeuchtigkeit hängt sie nicht von der Temperatur ab, sondern beschreibt die tatsächliche Feuchtigkeitsmenge.\n\n[title]Zielbereich[/title]\n\nFür die absolute Luftfeuchtigkeit gibt es keinen allgemeinen Zielbereich. Bestimmte Umgebungen wie Lager, Produktionsstätten und Labore können eine Überwachung der absoluten Luftfeuchtigkeit erfordern. In solchen Fällen gelten spezifische Grenzwerte.\n\n[title]Allgemeine Maßnahmen[/title]\n\nDie absolute Luftfeuchtigkeit wird nach denselben Grundsätzen geregelt wie die relative Luftfeuchtigkeit. In industriellen Umgebungen können zudem spezielle Luftbefeuchter oder -entfeuchter eingesetzt werden.\n\n[title]Auswirkungen auf das Wohlbefinden[/title]\n\nDie Kontrolle der absoluten Luftfeuchtigkeit hilft in [b]Produktionsräumen, Lagern und Laboren[/b], die Beschädigung oder den Verderb von Materialien zu verhindern.\n\n[title]Tipps und zusätzliche Informationen[/title]\n\nDie absolute Luftfeuchtigkeit wird nicht direkt gemessen, sondern [b]aus den Temperatur- und Feuchtigkeitsmessungen des Sensors berechnet[/b]. Die App berechnet die absolute Luftfeuchtigkeit automatisch aus den Sensordaten, sodass keine manuellen Berechnungen erforderlich sind.</string>
     <string name="description_text_humidity_dewpoint">Der Taupunkt ist die Temperatur, bei der [b]Wasserdampf zu Wasser kondensiert[/b] (Tau). Die Einheit kann in °C, °F oder K angegeben werden. Der Taupunkt hilft, das Risiko von Kondensation einzuschätzen und das Feuchtigkeitsverhalten in Innenräumen zu verstehen.\n\n[title]Zielbereich[/title]\n\nFür den Taupunkt gibt es keinen allgemeinen Zielbereich. Um Kondensation zu vermeiden, sollte die Taupunkttemperatur niedriger sein als die Temperatur der Luft oder der Oberflächen.\n\n[title]Allgemeine Maßnahmen[/title]\n\nUm die Taupunkttemperatur zu senken, verringern Sie die relative Luftfeuchtigkeit oder erhöhen Sie, wenn möglich, die Temperatur der Luft oder der Oberflächen.\n\n[title]Auswirkungen auf das Wohlbefinden[/title]\n\nKondensation tritt auf, wenn die Temperatur der Luft oder einer Oberfläche den Taupunkt erreicht oder darunter fällt. Dies kann [b]Schimmelbildung, Korrosion und Feuchtigkeitsschäden[/b] verursachen.\n\n[title]Tipps und zusätzliche Informationen[/title]\n\nDer Taupunkt liefert ein tieferes Verständnis des Feuchtigkeitsverhaltens als allein die relative Luftfeuchtigkeit.</string>
     <string name="description_text_pressure">Der barometrische Luftdruck zeigt die Kraft an, mit der die Atmosphäre auf die Erdoberfläche drückt. Wählbare Einheiten sind Pa, hPa, mmHg oder inHg.\n\n[title]Zielbereich[/title]\n\nFür den Luftdruck gibt es keinen spezifischen Zielbereich. Der normale Luftdruck auf Meereshöhe beträgt etwa 1013 hPa.\n\n[title]Allgemeine Maßnahmen[/title]\n\nDer atmosphärische Luftdruck und seine Schwankungen können nicht beeinflusst werden.\n\n[title]Auswirkungen auf das Wohlbefinden[/title]\n\nBeobachten Sie Änderungen des Luftdrucks, um [b]Wetterveränderungen[/b] einzuschätzen. Hoher Luftdruck ist oft mit klarem Wetter verbunden, während niedriger Luftdruck Regen oder feuchtere Bedingungen ankündigt. Wetterumschwünge können bei empfindlichen Personen das Wohlbefinden oder die Energie beeinflussen.\n\n[title]Tipps und zusätzliche Informationen[/title]\n\nBeachten Sie, dass der Messwert auch von der Höhe des Messorts über dem Meeresspiegel abhängt. Der vom Sensor angezeigte Wert ist nicht auf Meereshöhe korrigiert, wie es bei den meisten Wetterdiensten der Fall ist. Daher kann der Messwert von offiziellen Angaben abweichen.</string>
-    <string name="description_text_movement">Der Bewegungszähler zeigt an, wie viele Bewegungsereignisse der Sensor mithilfe seines Beschleunigungssensors erkannt hat.\n\n[title]Messzweck[/title]\n\nMit dem Bewegungszähler lässt sich nachvollziehen, ob der Sensor bewegt, verschoben oder Vibrationen ausgesetzt wurde. Der Sensor kann keine Bewegungen in der Umgebung erkennen wie ein Bewegungsmelder.\n\n[title]Tipps und zusätzliche Informationen[/title]\n\nWenn die Anzahl der Messungen ohne ersichtlichen Grund zunimmt, steht das Gerät möglicherweise auf einer instabilen Oberfläche oder befindet sich an einem Ort mit Vibrationen oder anderen Bewegungsquellen (z. B. Fensterbank, Ventilator oder Maschine).\n\nDer Sensor erfasst die Beschleunigung 10-mal pro Sekunde. Eine Bewegung wird registriert, wenn die Beschleunigung auf einer beliebigen Achse 0,064 g überschreitet. 1 g entspricht einer Beschleunigung von 9,81 m/s².</string>
+    <string name="description_text_movement">Der Bewegungszähler zeigt an, wie viele Bewegungsereignisse der Sensor mithilfe seines Beschleunigungssensors erkannt hat.\n\n[title]Messzweck[/title]\n\nMit dem Bewegungszähler lässt sich nachvollziehen, ob der Sensor bewegt, verschoben oder Vibrationen ausgesetzt wurde. Der Sensor kann keine Bewegungen in der Umgebung erkennen wie ein Bewegungsmelder.\n\n[title]Tipps und zusätzliche Informationen[/title]\n\nWenn die Anzahl der Messungen ohne ersichtlichen Grund zunimmt, steht das Gerät möglicherweise auf einer instabilen Oberfläche oder befindet sich an einem Ort mit Vibrationen oder anderen Bewegungsquellen (z. B. Fensterbank, Ventilator oder Maschine).\n\nDer Sensor erfasst die Beschleunigung 10-mal pro Sekunde. Eine Bewegung wird registriert, wenn die Beschleunigung auf einer beliebigen Achse 0,064 g überschreitet. 1 g entspricht einer Beschleunigung von 9,81 m/s².\n\nDie App verwendet einen zyklischen Zähler, dessen Wert von 0 bis 255 ansteigt und nach Erreichen des Maximalwerts auf 0 zurückgesetzt wird.</string>
     <string name="description_text_battery_voltage">Die Batteriespannung zeigt den Zustand der Stromquelle des Sensors in Volt (V) an.\n\n[title]Messzweck[/title]\n\nEine zu niedrige Batteriespannung kann Unterbrechungen in der Datenübertragung verursachen. Die Überwachung der Spannung hilft festzustellen, wann die Batterie ausgetauscht werden sollte, um einen unterbrechungsfreien Betrieb sicherzustellen.\n\n[title]Tipps und zusätzliche Informationen[/title]\n[li]Die Nennspannung einer neuen Knopfzelle beträgt 3,0 V.[/li][li]Sinkt der Wert bei Raumtemperatur auf 2,5 Volt oder darunter, ist die Batterie nahezu entladen.[/li][li]Ein plötzlicher Spannungsabfall kann durch Kälte oder Alterung der Batterie verursacht werden.[/li][li]Die App warnt vor niedriger Batteriespannung in Abhängigkeit von der Temperatur wie folgt:[/li][li2][b]Unter –20 °C (–4 °F):[/b] 2,0 V[/li2][li2][b]–20 … 0 °C (–4 … 32 °F):[/b] 2,3 V[/li2][li2][b]Über 0 °C (32 °F):[/b] 2,5 V[/li2]\n[b]Empfehlung:[/b] Verwenden Sie eine hochwertige CR2477- oder CR2477T-Batterie eines bekannten Herstellers. Die typische Lebensdauer unter normalen Bedingungen beträgt etwa 1–2 Jahre.\n\n[b]Hinweis:[/b] Wiederaufladbare Batterien oder CR2477N-Modelle sind mit Ruuvi-Sensoren nicht kompatibel.</string>
     <string name="description_text_acceleration">Der Beschleunigungssensor misst die Beschleunigung entlang der drei Achsen (x, y und z). Die Erdanziehung verursacht etwa [b]1 g Beschleunigung[/b] auf der Achse, die senkrecht zur Erdoberfläche zeigt.\n\n[title]Messzweck[/title]\n\nDer Sensor kann verwendet werden, um die Lage oder Ausrichtung des Geräts zu bestimmen.\n[li]Wenn die Werte stabil bleiben, ist der [b]Sensor unbewegt[/b].[/li][li]Änderungen der Werte zeigen, dass der Sensor [b]bewegt oder geneigt[/b] wurde.[/li][li]Plötzliche oder unregelmäßige Spitzen deuten auf [b]schnelle Bewegungen oder Vibrationen[/b] hin, während deutliche Niveauänderungen meist eine [b]Änderung der Ausrichtung[/b] anzeigen.[/li]\n[title]Tipps und zusätzliche Informationen[/title]\n\nDie Abtastrate und Datenübertragungsgeschwindigkeit des Beschleunigungssensors sind auf geringen Energieverbrauch optimiert. Daher sind die Beschleunigungsdaten nicht für detaillierte Vibrations- oder Bewegungsanalysen geeignet.</string>
     <string name="description_text_signal_strength">Die Signalstärke (RSSI) zeigt die Stärke der vom Sensor empfangenen Datenpakete an. Je näher der Wert bei null liegt, desto stärker ist das empfangene Signal. Dies ist eine [b]technische Information[/b], die im normalen Gebrauch in der Regel nicht überwacht werden muss.\n\n[title]Messzweck[/title]\n\nEin schwaches Signal kann Verbindungsabbrüche und Verzögerungen bei der Aktualisierung der Sensordaten verursachen. Die Signalstärke kann überwacht werden, wenn der Sensor an einem neuen Ort platziert wird. Der [b]optimale Signalbereich[/b] liegt zwischen –80 und 0 dBm. Beachten Sie jedoch, dass die Signalstärke aufgrund von Reflexionen ständig schwankt. Verschiedene Mobilgeräte können die Signalstärke leicht unterschiedlich anzeigen, daher sind die Werte nicht immer direkt vergleichbar.\n\n[title]Tipps und zusätzliche Informationen[/title]\n[li]Die Signalqualität wird beeinflusst durch [b]Entfernung, Wände und andere Strukturen sowie durch Störungen von anderen drahtlosen Geräten.[/b][/li][li]Wenn das Signal schwach ist, [b]verschieben Sie den Sensor[/b] an einen Ort mit besserer Sichtlinie zum Empfänger. Auch die Höhe über dem Boden wirkt sich auf die Reichweite aus – eine höhere Position verbessert in der Regel den Empfang.[/li]</string>
@@ -877,16 +886,12 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="update_now">Jetzt aktualisieren</string>
     <string name="led_brightness_select_message">Wählen Sie die gewünschte LED-Helligkeitsstufe. Stellen Sie sicher, dass Sie sich innerhalb der Bluetooth-Reichweite des Ruuvi Air befinden.</string>
     <string name="notes">Notizen</string>
-    <string name="communication_channels">Ruuvi-Newsletter</string>
-    <string name="communication_channels_description">Erhalte nützliche Ruuvi-Tipps, Produkt-Updates, Neuigkeiten zu Funktionen und gelegentliche Sonderangebote direkt in dein Postfach.</string>
-    <string name="newsletter_subscription">Abonnement</string>
-    <string name="newsletter_subscription_confirmation">Prüfe deine E-Mails, um dein Newsletter-Abonnement zu bestätigen.</string>
     <string name="newsletter_card_title">Angebote abonnieren!</string>
     <string name="newsletter_card_description">Abonniere den Ruuvi-Newsletter und erhalte Sensoren immer zum besten Preis.</string>
     <string name="newsletter_subscribe">Abonnieren</string>
     <string name="newsletter_url">https://ruuvi.com/de/beitreten</string>
-    <string name="share_active_access_section_title">Benutzer mit aktivem Zugriff auf diesen Sensor:</string>
-    <string name="share_active_access_empty_value">Noch mit niemandem geteilt</string>
-    <string name="share_sensor_shared_to_count_message">Verwendete Freigaben für diesen Sensor: %1$,d/%2$,d\n\nInsgesamt verwendete Freigaben für Ihr Konto: %3$,d/%4$,d</string>
-    <string name="share_pending_section_title">Die folgenden Benutzer wurden eingeladen und der Sensor wurde mit ihnen geteilt, aber der Zugriff steht noch aus, da sie noch kein kostenloses Ruuvi-Konto erstellt haben. Einladungen wurden versendet und der Zugriff wird gewährt, sobald ihre Konten eingerichtet sind:</string>
+    <string name="newsletter_subscription">Abonnement</string>
+    <string name="newsletter_subscription_confirmation">Prüfe deine E-Mails, um dein Newsletter-Abonnement zu bestätigen.</string>
+    <string name="communication_channels">Ruuvi-Newsletter</string>
+    <string name="communication_channels_description">Erhalte nützliche Ruuvi-Tipps, Produkt-Updates, Neuigkeiten zu Funktionen und gelegentliche Sonderangebote direkt in dein Postfach.</string>
 </resources>
