@@ -1,0 +1,7 @@
+- Widgets neu gestaltet: skalierbares Layout und zuverlässigere Aktualisierungen
+- Verlaufsansicht mit Messsymbolen und flexiblen Diagrammlayouts verbessert
+- Ausstehende Sensorfreigaben direkt in der App anzeigen
+- Einfacher Zugriff auf die Einstellungen für den Newsletter-Abonnement hinzugefügt
+- Cloud-Synchronisierung, Aktualisierung der Sensorinhaberschaft und Zeitstempel von Einstellungen verbessert
+- Zuverlässigkeit der Aktualisierungen von Bluetooth-Sensoren verbessert
+- Weitere kleinere Fehlerbehebungen und Verbesserungen
