@@ -1,0 +1,7 @@
+- Uudistettu widgettejä: mukautuva asettelu ja luotettavammat päivitykset
+- Parannettu historianäkymää mittauskuvakkeilla ja joustavilla kaavioasetteluilla
+- Odottavat anturijaot näytetään nyt anturin jako -sivulla
+- Lisätty helppo pääsy uutiskirjeen tilausasetuksiin
+- Parannettu pilvisynkronointia, anturin omistajuustietojen päivitystä ja asetusten aikaleimoja
+- Parannettu Bluetooth-antureiden päivitysten luotettavuutta
+- Muita pienempiä parannuksia ja bugikorjauksia
