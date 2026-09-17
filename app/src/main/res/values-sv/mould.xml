@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="mould_risk_index">Mögelriskindex</string>
+    <string name="mould_risk_very_low">Mycket låg</string>
+    <string name="mould_risk_low">Låg</string>
+    <string name="mould_risk_elevated">Förhöjd</string>
+    <string name="mould_risk_high">Hög</string>
+    <string name="mould_risk_very_high">Mycket hög</string>
+    <string name="mould_risk_unavailable">Inte tillgängligt</string>
+    <string name="mould_risk_missing_input">Temperatur och relativ luftfuktighet från samma mätning behövs för att beräkna indexet.</string>
+    <string name="mould_risk_invalid_input">Temperatur- eller luftfuktighetsvärdet är ogiltigt. Den relativa luftfuktigheten måste vara mellan 0 och 100 %.</string>
+    <string name="mould_risk_temperature_range">Indexet är endast tillgängligt vid temperaturer över 0 °C och under 50 °C (32–122 °F). Ett saknat index innebär inte låg risk.</string>
+    <string name="mould_risk_inputs">Aktuella förhållanden</string>
+    <string name="mould_risk_scale">Högre värden betyder att förhållandena är mer gynnsamma för mögeltillväxt.</string>
+    <string name="mould_risk_legend_item">%1$s: %2$s</string>
+    <string name="index_accessibility">%1$s, %2$s av %3$d, %4$s</string>
+    <string name="description_text_mould_risk" formatted="false">Uppskattar hur gynnsamma de aktuella förhållandena vid sensorn är för mögeltillväxt. Indexet upptäcker inte mögel. Tillväxt beror även på varaktighet, material och ytförhållanden.\n\nEtt sjunkande värde betyder inte att befintligt mögel har försvunnit. Kallare ytor kan ha högre relativ luftfuktighet än luften vid sensorn. Ett lågt värde utesluter inte mögel på andra platser.\n\n[title]Förstå indexet[/title]\nRuuvi-indexet går från [b]0 till 100[/b]. Högre värden betyder gynnsammare tillväxtförhållanden. Det är inte en sannolikhet, hälsobedömning eller uppskattning av ackumulerad mögeltillväxt. Korta fukttoppar och långvarig fukt kan ge samma aktuella värde. Använd historikdiagrammet för att se varaktigheten.\n\nReferensgränsen för luftfuktighet kommer från forskning om trä. Skalan och färgklasserna är Ruuvins produktval, inte en validerad mögelriskskala. Vid 20 °C ger 60 % relativ luftfuktighet 0, 70 % ger 25, 80 % ger 50 och 90 % ger 75.\n\n[title]Åtgärder[/title]\nFölj ihållande förhöjda värden, minska överskottsfukt och undersök orsaken till bestående fukt. Placera sensorn nära området du vill övervaka och håll ventilationsöppningarna fria.\n\n[title]Vetenskaplig bakgrund[/title]\nIndexet skiljer sig från den finska mögeltillväxtmodellen, som använder skalan 0–6, exponeringshistorik och materialegenskaper.\n[li][link url=https://research.tuni.fi/buildingphysics/finnish-mould-growth-model/]Finnish mould growth model[/link][/li][li][link url=https://bwk.kuleuven.be/bwf/projects/annex41/protected/data/VTT%20Oct%202007%20Paper%20A41-T4-Fin-07-1.pdf]VTT (2007)[/link][/li]</string>
+</resources>

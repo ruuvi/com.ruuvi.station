@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Kept outside generated strings.xml until added to station.localization. -->
+    <string name="mould_risk_index">Mould risk index</string>
+    <string name="mould_risk_very_low">Very low</string>
+    <string name="mould_risk_low">Low</string>
+    <string name="mould_risk_elevated">Elevated</string>
+    <string name="mould_risk_high">High</string>
+    <string name="mould_risk_very_high">Very high</string>
+    <string name="mould_risk_unavailable">Unavailable</string>
+    <string name="mould_risk_missing_input">Temperature and relative humidity from the same reading are needed to calculate the index.</string>
+    <string name="mould_risk_invalid_input">The temperature or humidity reading is invalid. Relative humidity must be between 0 and 100%.</string>
+    <string name="mould_risk_temperature_range">The index is available only at temperatures above 0°C and below 50°C (32–122°F). An unavailable index does not indicate low risk.</string>
+    <string name="mould_risk_inputs">Current conditions</string>
+    <string name="mould_risk_scale">Higher values mean conditions are more favourable to mould growth.</string>
+    <string name="mould_risk_legend_item">%1$s: %2$s</string>
+    <string name="index_accessibility">%1$s, %2$s out of %3$d, %4$s</string>
+    <string name="description_text_mould_risk" formatted="false">Estimates how favourable current conditions at this sensor are for mould growth. It does not detect mould. Growth also depends on duration, materials and surface conditions.\n\nA falling score does not mean existing mould has disappeared. Colder surfaces may have higher relative humidity than the air at the sensor, so a low score does not rule out mould elsewhere.\n\n[title]Understanding the index[/title]\nThe Ruuvi index ranges from [b]0 to 100[/b]. Higher values mean more favourable conditions for growth. It is a current-conditions indicator, not a probability, a health assessment or an estimate of accumulated mould growth. Brief humidity peaks and sustained dampness can produce the same current score. Use the history graph to see how long conditions persist.\n\nThe reference humidity threshold comes from research on wood. The 0–100 mapping and colour bands are Ruuvi product choices, not a validated mould-risk scale. At 20°C, 60% RH gives 0, 70% gives 25, 80% gives 50 and 90% gives 75.\n\n[title]What you can do[/title]\nMonitor sustained elevated readings, reduce excess moisture and investigate persistent dampness. Place the sensor near the area you want to monitor while keeping its ventilation openings clear.\n\n[title]Scientific background[/title]\nThis index differs from the Finnish mould growth model, which uses a 0–6 scale, exposure history and material characteristics.\n[li][link url=https://research.tuni.fi/buildingphysics/finnish-mould-growth-model/]Finnish mould growth model[/link][/li][li][link url=https://bwk.kuleuven.be/bwf/projects/annex41/protected/data/VTT%20Oct%202007%20Paper%20A41-T4-Fin-07-1.pdf]VTT research: reference humidity threshold, equation 1[/link][/li]</string>
+</resources>

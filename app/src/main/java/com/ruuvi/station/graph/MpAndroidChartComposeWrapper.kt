@@ -1,5 +1,7 @@
 package com.ruuvi.station.graph
 
+import com.ruuvi.station.graph.model.preciseValue
+import com.ruuvi.station.graph.model.startsSegment
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Color
@@ -68,6 +70,7 @@ import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
 import java.util.Date
 import kotlin.math.max
+import kotlin.math.roundToInt
 
 private typealias RawValueFormatter = (Double) -> String
 
@@ -83,6 +86,7 @@ private fun UnitsConverter.rawValueFormatter(unitType: UnitType): RawValueFormat
         is UnitType.VOC -> { value -> getValueWithoutUnit(value, unitType.defaultAccuracy) }
         is UnitType.NOX -> { value -> getValueWithoutUnit(value, unitType.defaultAccuracy) }
         is UnitType.SignalStrengthUnit -> { value -> getValueWithoutUnit(value, unitType.defaultAccuracy) }
+        is UnitType.MouldRisk -> { value -> value.roundToInt().toString() }
         is UnitType.AirQuality -> { value -> getValueWithoutUnit(value, unitType.defaultAccuracy) }
         is UnitType.Luminosity -> { value -> getValueWithoutUnit(value, unitType.defaultAccuracy) }
         is UnitType.SoundAvg -> { value -> getValueWithoutUnit(value, unitType.defaultAccuracy) }
@@ -103,7 +107,10 @@ private fun LineChart.applySharedHighlight(x: Float?) {
     if (x == null) {
         highlightValue(null, false)
     } else {
-        highlightValue(x, 0, false)
+        val index = data?.dataSets?.withIndex()?.minByOrNull { (_, set) ->
+            set.getEntryForXValue(x, Float.NaN)?.let { kotlin.math.abs(it.x - x) } ?: Float.MAX_VALUE
+        }?.index ?: 0
+        highlightValue(x, index, false)
     }
 }
 
@@ -121,6 +128,7 @@ fun ChartViewPrototype(
     from: Long,
     to: Long,
     sharedX: MutableState<Float?>,
+    latestValueAvailable: Boolean = true,
 ) {
     val context = LocalContext.current
     val title = stringResource(id = unitType.measurementName).substringBefore(" (")
@@ -130,7 +138,7 @@ fun ChartViewPrototype(
 
     val latestPoint = chartData.lastOrNull()
     val latestValue =
-        if (latestPoint != null) getRawValue(latestPoint.y.toDouble()) else ""
+        if (!latestValueAvailable) "— " else if (latestPoint != null) getRawValue(latestPoint.preciseValue) else ""
 
     Column (
         modifier = modifier
@@ -173,8 +181,8 @@ fun ChartViewPrototype(
                     Text(
                         fontFamily = ruuviStationFonts.mulishBold,
                         fontSize = RuuviStationTheme.fontSizes.small.scaledToMax(max = 20.sp),
-                        text = if (unitType.measurementCode == "AQI") "$latestValue/100" else latestValue,
-                        color = RuuviStationTheme.colors.buttonText
+                        text = if (unitType is UnitType.AirQuality || unitType is UnitType.MouldRisk) "$latestValue/100" else latestValue,
+                        color = if (latestValueAvailable) RuuviStationTheme.colors.buttonText else androidx.compose.ui.graphics.Color.Gray
                     )
 
                     Text(
@@ -307,14 +315,14 @@ fun ChartViewPrototype(
                 Timber.d("ChartView AndroidView - update $from pointsCount = ${chartData.size}")
 
                 if (view.data == null || view.highestVisibleX >= view.data.xMax) {
-                    addDataToChart(context, chartData, view, "", graphDrawDots, limits, from, to)
+                    addDataToChart(context, chartData, view, "", graphDrawDots, limits, from, to, unitType)
                     (view.marker as ChartMarkerView).getFrom = { from }
                 }
 
                 if (view.data != null) {
                     val x = sharedX.value
                     if (x != null) {
-                        view.highlightValue(x, 0, false)
+                        view.applySharedHighlight(x)
                     } else {
                         view.highlightValue(null, false)
                     }
@@ -349,25 +357,28 @@ fun getChartDescription(
     if (visibleEntries.isEmpty()) return ""
 
     var totalArea = 0.0
+    var measuredTimespan = 0.0
 
-    var min = visibleEntries.first().y
-    var max = visibleEntries.first().y
+    var min = visibleEntries.first().preciseValue
+    var max = visibleEntries.first().preciseValue
 
     for (i in 1 until visibleEntries.size) {
         val x1 = visibleEntries[i - 1].x
-        val y1 = visibleEntries[i - 1].y
+        val y1 = visibleEntries[i - 1].preciseValue
         val x2 = visibleEntries[i].x
-        val y2 = visibleEntries[i].y
+        val y2 = visibleEntries[i].preciseValue
 
-        val area = (x2 - x1) * (y2 + y1) / 2.0
-        totalArea += area
+        if (!visibleEntries[i].startsSegment) {
+            totalArea += (x2 - x1) * (y2 + y1) / 2.0
+            measuredTimespan += x2 - x1
+        }
 
         if (y2 < min) min = y2
         if (y2 > max) max = y2
     }
-    val timespan = visibleEntries.last().x - visibleEntries.first().x
+    val timespan = measuredTimespan
 
-    val average = if (timespan != 0f) (totalArea / timespan).toFloat() else visibleEntries.first().y
+    val average = if (timespan != 0.0) totalArea / timespan else visibleEntries.first().preciseValue
 
     val formatter = unitsConverter.rawValueFormatter(unitType)
     val minFormatted = formatter(min.toDouble())
@@ -479,23 +490,33 @@ private fun addDataToChart(
     graphDrawDots: Boolean,
     limits: Pair<Double,Double>?,
     from: Long,
-    to: Long
+    to: Long,
+    unitType: UnitType
 ) {
     Timber.d("ChartView - addDataToChart")
-    val set = LineDataSet(data, label)
-    set.setDrawCircles(graphDrawDots)
-    set.setDrawValues(false)
-    set.setDrawFilled(true)
-    set.maximumGapBetweenPoints = 3_600_000F
-    set.lineWidth = 1f
-    set.circleRadius = 1.5f
-    set.color = ContextCompat.getColor(context, R.color.chartLineColor)
-    set.setCircleColor(ContextCompat.getColor(context, R.color.chartLineColor))
-    set.setDrawCircleHole(false)
-    set.fillColor = ContextCompat.getColor(context, R.color.chartFillColor)
-    set.enableDashedHighlightLine(10f, 5f, 0f)
-    set.setDrawHighlightIndicators(true)
-    set.highLightColor = ContextCompat.getColor(context, R.color.chartLineColor)
+    val groups = mutableListOf<MutableList<Entry>>()
+    for (entry in data) {
+        if (groups.isEmpty() || entry.startsSegment) groups.add(mutableListOf())
+        groups.last().add(entry)
+    }
+    if (groups.isEmpty()) groups.add(mutableListOf())
+    val sets = groups.map { entries ->
+        val set = LineDataSet(entries, label)
+        set.setDrawCircles(graphDrawDots || (unitType is UnitType.MouldRisk && entries.size == 1))
+        set.setDrawValues(false)
+        set.setDrawFilled(true)
+        set.maximumGapBetweenPoints = 3_600_000F
+        set.lineWidth = 1f
+        set.circleRadius = 1.5f
+        set.color = ContextCompat.getColor(context, R.color.chartLineColor)
+        set.setCircleColor(ContextCompat.getColor(context, R.color.chartLineColor))
+        set.setDrawCircleHole(false)
+        set.fillColor = ContextCompat.getColor(context, R.color.chartFillColor)
+        set.enableDashedHighlightLine(10f, 5f, 0f)
+        set.setDrawHighlightIndicators(true)
+        set.highLightColor = ContextCompat.getColor(context, R.color.chartLineColor)
+        set
+    }
 
     chart.setXAxisRenderer(
         CustomXAxisRenderer(
@@ -513,6 +534,10 @@ private fun addDataToChart(
     chart.xAxis.axisMaximum = (to - from).toFloat()
     chart.xAxis.axisMinimum = 0f
 
+    if (unitType is UnitType.MouldRisk) {
+        chart.axisLeft.granularity = 1f
+        chart.setScaleYEnabled(false)
+    }
     chart.axisLeft.removeAllLimitLines()
     if (limits != null) {
         chart.axisLeft.addLimitLine(getLimitLine(context, limits.first.toFloat()))
@@ -520,16 +545,16 @@ private fun addDataToChart(
     }
 
     chart.description.text = label
-    chart.axisLeft.axisMinimum = set.yMin - 1f
-    chart.axisLeft.axisMaximum = set.yMax + 1f
-    chart.axisLeft.setDrawTopYLabelEntry(false)
+    chart.axisLeft.axisMinimum = if (unitType is UnitType.MouldRisk) 0f else sets.minOf { it.yMin } - 1f
+    chart.axisLeft.axisMaximum = if (unitType is UnitType.MouldRisk) 100f else sets.maxOf { it.yMax } + 1f
+    chart.axisLeft.setDrawTopYLabelEntry(unitType is UnitType.MouldRisk)
     chart.axisLeft.valueFormatter = object : IAxisValueFormatter {
         override fun getFormattedValue(p0: Double, p1: AxisBase?): String {
             return formatDoubleToString(p0)
         }
     }
 
-    chart.data = LineData(set)
+    chart.data = LineData(sets)
     chart.data.isHighlightEnabled = true
     chart.xAxis.valueFormatter = object : IAxisValueFormatter {
         override fun getFormattedValue(value: Double, p1: AxisBase?): String {

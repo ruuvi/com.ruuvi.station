@@ -79,7 +79,9 @@ fun ValueBottomSheet (
         sheetState = sheetState,
         modifier = modifier
     ) {
-        if (sheetValue.unitType == UnitType.AirQuality.AqiIndex) {
+        if (sheetValue.unitType == UnitType.MouldRisk.Index) {
+            MouldValueSheetContent(sheetValue, extraValues, maxHeight, chartHistory, scrollToChart, onChangeValue)
+        } else if (sheetValue.unitType == UnitType.AirQuality.AqiIndex) {
             AirValueSheetContent(
                 sheetValue = sheetValue,
                 extraValues = extraValues,

@@ -7,5 +7,8 @@ data class EnvironmentValue(
     val valueWithUnit: String,
     val valueWithoutUnit: String,
     val unitString: String,
-    val unitType: UnitType
+    val unitType: UnitType,
+    // An unavailable value's numeric placeholder must not be classified or plotted.
+    val isAvailable: Boolean = true,
+    val unavailableReason: Int? = null
 )

@@ -99,6 +99,7 @@ class VisibleMeasurementsOrderInteractor(
     ): List<UnitType> {
         return getPossibleDisplayOptions(
             isAir = dataFormatIsAir(entity.dataFormat),
+            temperatureExist = entity.temperature != null,
             humidityExist = entity.humidity != null,
             pressureExist = entity.pressure != null,
             luminosityExist = entity.luminosity != null,
@@ -111,6 +112,7 @@ class VisibleMeasurementsOrderInteractor(
     ): List<UnitType> {
         return getPossibleDisplayOptions(
             isAir = dataFormatIsAir(entity.dataFormat),
+            temperatureExist = entity.temperature != null,
             humidityExist = entity.humidity != null,
             pressureExist = entity.pressure != null,
             luminosityExist = entity.luminosity != null,
@@ -120,6 +122,7 @@ class VisibleMeasurementsOrderInteractor(
 
     fun getPossibleDisplayOptions(
         isAir: Boolean,
+        temperatureExist: Boolean,
         humidityExist: Boolean,
         pressureExist: Boolean,
         luminosityExist: Boolean,
@@ -143,6 +146,7 @@ class VisibleMeasurementsOrderInteractor(
                 displayOptions.add(HumidityUnit.Relative)
                 displayOptions.add(HumidityUnit.Absolute)
                 displayOptions.add(HumidityUnit.DewPoint)
+                if (temperatureExist) displayOptions.add(UnitType.MouldRisk.Index)
             }
             if (pressureExist) {
                 displayOptions.add(PressureUnit.HectoPascal)
@@ -167,6 +171,7 @@ class VisibleMeasurementsOrderInteractor(
                 displayOptions.add(HumidityUnit.Relative)
                 displayOptions.add(HumidityUnit.Absolute)
                 displayOptions.add(HumidityUnit.DewPoint)
+                if (temperatureExist) displayOptions.add(UnitType.MouldRisk.Index)
             }
             if (pressureExist) {
                 displayOptions.add(PressureUnit.HectoPascal)

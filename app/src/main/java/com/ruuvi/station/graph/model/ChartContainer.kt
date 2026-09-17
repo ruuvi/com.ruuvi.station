@@ -11,5 +11,6 @@ data class ChartContainer (
     var data: MutableList<Entry>? = mutableStateListOf(),
     var limits: Pair<Double, Double>? = null,
     var from: Long? = null,
-    var to: Long? = null
+    var to: Long? = null,
+    val latestValueAvailable: Boolean = true
 )

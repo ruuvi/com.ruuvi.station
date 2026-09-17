@@ -32,6 +32,8 @@ fun CircularGradientProgress(
     progressText: String,
     lineColor: Color,
     size: Dp = 140.dp,
+    maximum: Int = 100,
+    textColor: Color = Color.White,
     modifier: Modifier = Modifier
 ) {
     val density = LocalDensity.current
@@ -107,7 +109,7 @@ fun CircularGradientProgress(
             text = progressText,
             fontSize = RuuviStationTheme.fontSizes.bigValue.fixedSp(),
             fontFamily = ruuviStationFonts.oswaldBold,
-            color = Color.White,
+            color = textColor,
             modifier = Modifier.padding(bottom = 8.dp)
         )
 
@@ -117,10 +119,10 @@ fun CircularGradientProgress(
                 .padding(bottom = 4.dp)
         ) {
             Text(
-                text = "/100",
+                text = "/$maximum",
                 fontSize = RuuviStationTheme.fontSizes.big.fixedSp(),
                 fontFamily = ruuviStationFonts.oswaldRegular,
-                color = Color.White,
+                color = textColor,
                 modifier = Modifier
             )
         }

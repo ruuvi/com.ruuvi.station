@@ -8,12 +8,14 @@ import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.highlight.Highlight
 import com.github.mikephil.charting.utils.MPPointF
 import com.ruuvi.station.R
+import com.ruuvi.station.graph.model.preciseValue
 import com.ruuvi.station.units.domain.UnitsConverter
 import com.ruuvi.station.units.model.Accuracy
 import com.ruuvi.station.units.model.UnitType
 import timber.log.Timber
 import java.text.DateFormat
 import java.util.*
+import kotlin.math.roundToInt
 
 class ChartMarkerView @JvmOverloads
 constructor(
@@ -70,7 +72,11 @@ constructor(
         } else {
             unitType.defaultAccuracy
         }
-        val valueText = unitsConverter.getValue(e.y.toDouble(), accuracy, unitsConverter.getUnitStringForUnitType(unitType))
+        val valueText = if (unitType is UnitType.MouldRisk) {
+            "${e.preciseValue.roundToInt()}/100"
+        } else {
+            unitsConverter.getValue(e.y.toDouble(), accuracy, unitsConverter.getUnitStringForUnitType(unitType))
+        }
 
         tvContent.text ="$valueText\n$timeText\n$dateText"
 

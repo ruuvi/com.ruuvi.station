@@ -1,5 +1,11 @@
 package com.ruuvi.station.tagdetails.ui.elements
 
+import androidx.compose.foundation.clickable
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.onClick
+import com.ruuvi.station.units.model.IndexPresentation
+import com.ruuvi.station.units.model.toIndexPresentation
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -31,29 +37,46 @@ fun CircularAQIDisplay(
     modifier: Modifier = Modifier,
     clickAction: () -> Unit = {}
 ) {
+    CircularIndexDisplay(aqi.toIndexPresentation(), alertActive, modifier, clickAction)
+}
 
+@Composable
+fun CircularIndexDisplay(
+    index: IndexPresentation,
+    alertActive: Boolean,
+    modifier: Modifier = Modifier,
+    clickAction: () -> Unit = {}
+) {
+
+    val accessibility = stringResource(R.string.index_accessibility, stringResource(index.title),
+        index.scoreString, index.maximum, stringResource(index.description))
     Column(
-        modifier = modifier,
+        modifier = modifier.clickable(onClick = clickAction).clearAndSetSemantics {
+            contentDescription = accessibility
+            onClick { clickAction(); true }
+        },
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top
     ) {
         CircularGradientProgress(
-            progress = aqi.score?.toFloat() ?: 0f,
-            progressText = aqi.scoreString,
-            lineColor = aqi.color
+            progress = (index.score?.toFloat() ?: 0f) * 100f / index.maximum,
+            progressText = index.scoreString,
+            lineColor = index.color,
+            maximum = index.maximum,
+            textColor = if (index.score == null) Color.Gray else Color.White
         )
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.medium))
         Text(
-            text = stringResource(aqi.descriptionRes),
+            text = stringResource(index.description),
             style = RuuviStationTheme.typography.dashboardValue,
             fontSize = 18.sp,
-            color = Color.White
+            color = if (index.score == null) Color.Gray else Color.White
         )
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
 
         SensorUnitName(
-            icon = R.drawable.icon_air_quality,
-            name = stringResource(R.string.air_quality),
+            icon = index.icon,
+            name = stringResource(index.title),
             itemHeight = RuuviStationTheme.dimensions.sensorCardValueItemHeight.scaleUpTo(1.5f),
             alertActive = alertActive,
             modifier = Modifier.padding(horizontal = RuuviStationTheme.dimensions.extended)

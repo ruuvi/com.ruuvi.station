@@ -1,5 +1,12 @@
 package com.ruuvi.station.dashboard.ui.dashboard_elements
 
+import com.ruuvi.station.units.model.mouldRiskPresentationOrNull
+import com.ruuvi.station.app.ui.components.indexSemantics
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
+import com.ruuvi.station.units.model.IndexPresentation
+import com.ruuvi.station.units.model.toIndexPresentation
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
@@ -10,6 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment.Companion.Top
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -29,14 +37,15 @@ fun BigValueDisplay(
     alertTriggered: Boolean,
     modifier: Modifier = Modifier
 ) {
+    val index = value.mouldRiskPresentationOrNull()
     val textColor = if (alertTriggered) {
         RuuviStationTheme.colors.activeAlertThemed
     } else {
-        RuuviStationTheme.colors.settingsTitleText
+        index?.color ?: RuuviStationTheme.colors.settingsTitleText
     }
 
     Row(
-        modifier = modifier.wrapContentSize(),
+        modifier = modifier.indexSemantics(index).wrapContentSize(),
         verticalAlignment = Top
     ) {
         Text(
@@ -67,14 +76,15 @@ fun BigValueExtDisplay(
     showTitle: Boolean,
     modifier: Modifier = Modifier
 ) {
+    val index = value.mouldRiskPresentationOrNull()
     val textColor = if (alertTriggered) {
         RuuviStationTheme.colors.activeAlertThemed
     } else {
-        RuuviStationTheme.colors.dashboardValue
+        index?.color ?: RuuviStationTheme.colors.dashboardValue
     }
 
     ConstraintLayout (
-        modifier = modifier.wrapContentWidth()
+        modifier = modifier.indexSemantics(index).wrapContentWidth()
     ){
         val (bigValue, subscript, superscript) = createRefs()
 
@@ -115,19 +125,26 @@ fun BigValueExtDisplay(
 }
 
 @Composable
-fun AQIDisplay(
-    value: AQI,
+fun AQIDisplay(value: AQI, alertTriggered: Boolean, modifier: Modifier = Modifier) {
+    IndexDisplay(value.toIndexPresentation(), alertTriggered, modifier)
+}
+
+@Composable
+fun IndexDisplay(
+    value: IndexPresentation,
     alertTriggered: Boolean,
     modifier: Modifier = Modifier
 ) {
-    val textColor = if (alertTriggered) {
+    val accessibility = stringResource(R.string.index_accessibility, stringResource(value.title),
+        value.scoreString, value.maximum, stringResource(value.description))
+    val textColor = if (value.score == null) Color.Gray else if (alertTriggered) {
         RuuviStationTheme.colors.activeAlertThemed
     } else {
         RuuviStationTheme.colors.dashboardValue
     }
 
     ConstraintLayout (
-        modifier = modifier.wrapContentWidth()
+        modifier = modifier.wrapContentWidth().clearAndSetSemantics { contentDescription = accessibility }
     ){
         val (bigValue, subscript, superscript, progress) = createRefs()
 
@@ -145,7 +162,8 @@ fun AQIDisplay(
         Text(
             style = RuuviStationTheme.typography.dashboardBigValueUnit,
             fontSize = RuuviStationTheme.fontSizes.compact.limitScaleTo(1.2f),
-            text = "/100",
+            text = "/${value.maximum}",
+            color = if (value.score == null) Color.Gray else Color.Unspecified,
             modifier = Modifier
                 .constrainAs(superscript) {
                     top.linkTo(bigValue.top, 7.dp)
@@ -156,15 +174,19 @@ fun AQIDisplay(
         Text(
             style = RuuviStationTheme.typography.dashboardValueTitle,
             fontSize = RuuviStationTheme.fontSizes.petite.limitScaleTo(1.2f),
-            text = stringResource(id = R.string.air_quality),
+            text = stringResource(value.title),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
             modifier = Modifier.constrainAs(subscript) {
                 start.linkTo(bigValue.end, 4.dp)
+                end.linkTo(parent.end)
+                width = Dimension.preferredWrapContent
                 baseline.linkTo(bigValue.baseline)
             }
         )
 
         GlowingProgressBarIndicator(
-            progress = (value.score?.toFloat() ?: 0f) / 100F,
+            progress = (value.score?.toFloat() ?: 0f) / value.maximum.toFloat(),
             lineColor = value.color,
             modifier = Modifier
                 .constrainAs(progress) {

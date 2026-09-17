@@ -5,6 +5,9 @@ import com.ruuvi.station.R
 import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.units.domain.TemperatureConverter.Companion.fahrenheitMultiplier
 import com.ruuvi.station.units.domain.aqi.AQI
+import com.ruuvi.station.units.domain.mould.MouldRiskCalculator
+import com.ruuvi.station.units.domain.mould.MouldRiskResult
+import com.ruuvi.station.units.domain.mould.MouldRiskUnavailableReason
 import com.ruuvi.station.units.model.*
 import com.ruuvi.station.units.model.UnitType.*
 import com.ruuvi.station.util.extensions.equalsEpsilon
@@ -60,6 +63,29 @@ class UnitsConverter (
                 unitType = AirQuality.AqiIndex
             )
         }
+    }
+
+    fun getMouldRiskEnvironmentValue(temperatureCelsius: Double?, relativeHumidity: Double?): EnvironmentValue {
+        val result = MouldRiskCalculator.calculate(temperatureCelsius, relativeHumidity)
+        val number = (result as? MouldRiskResult.Available)?.displayedScore?.toString() ?: "— "
+        val reason = (result as? MouldRiskResult.Unavailable)?.reason?.let {
+            when (it) {
+                MouldRiskUnavailableReason.MISSING_INPUT -> R.string.mould_risk_missing_input
+                MouldRiskUnavailableReason.INVALID_INPUT -> R.string.mould_risk_invalid_input
+                MouldRiskUnavailableReason.TEMPERATURE_OUT_OF_RANGE -> R.string.mould_risk_temperature_range
+            }
+        }
+        return EnvironmentValue(
+            original = result.score ?: 0.0,
+            value = result.score ?: 0.0,
+            accuracy = Accuracy.Accuracy0,
+            valueWithUnit = "$number/100",
+            valueWithoutUnit = "$number/100",
+            unitString = "",
+            unitType = MouldRisk.Index,
+            isAvailable = result.score != null,
+            unavailableReason = reason
+        )
     }
 
     // Temperature

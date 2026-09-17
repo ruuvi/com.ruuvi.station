@@ -1,5 +1,7 @@
 package com.ruuvi.station.dashboard.ui.dashboard_elements
 
+import com.ruuvi.station.units.model.mouldRiskPresentationOrNull
+import com.ruuvi.station.app.ui.components.indexSemantics
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -48,15 +50,16 @@ fun ValueDisplayExtended(
     alertTriggered: Boolean,
     modifier: Modifier = Modifier
 ) {
+    val index = value.mouldRiskPresentationOrNull()
     val textColor = if (alertTriggered) {
         RuuviStationTheme.colors.activeAlertThemed
     } else {
-        RuuviStationTheme.colors.dashboardValue
+        index?.color ?: RuuviStationTheme.colors.dashboardValue
     }
 
     Column {
         Row(
-            modifier = modifier,
+            modifier = modifier.indexSemantics(index),
             verticalAlignment = Alignment.Bottom
         ) {
             Text(
@@ -93,14 +96,15 @@ fun ValueDisplaySimple(
     alertTriggered: Boolean,
     modifier: Modifier = Modifier
 ) {
+    val index = value.mouldRiskPresentationOrNull()
     val textColor = if (alertTriggered) {
         RuuviStationTheme.colors.activeAlertThemed
     } else {
-        RuuviStationTheme.colors.primary
+        index?.color ?: RuuviStationTheme.colors.primary
     }
 
     Row(
-        modifier = modifier,
+        modifier = modifier.indexSemantics(index),
         verticalAlignment = Alignment.Bottom
     ) {
         Text(

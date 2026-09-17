@@ -348,6 +348,19 @@ sealed class UnitType(
         }
     }
 
+    sealed class MouldRisk : UnitType(
+        unitCode = "INDEX",
+        unitTitle = R.string.empty,
+        unit = R.string.empty,
+        measurementCode = "MOULD",
+        measurementTitle = R.string.mould_risk_index,
+        measurementName = R.string.mould_risk_index,
+        iconRes = R.drawable.icon_mold,
+        defaultAccuracy = Accuracy.Accuracy0
+    ) {
+        data object Index : MouldRisk()
+    }
+
     sealed class Luminosity(
         code: String,
         unitTitle: Int,
@@ -675,6 +688,7 @@ sealed class UnitType(
                 BATTERY_MEASUREMENT_CODE -> BatteryVoltageUnit.getByCode(unitType)
                 ACCELERATION_MEASUREMENT_CODE -> Acceleration.getByCode(unitType)
                 SIGNAL_STRENGTH_MEASUREMENT_CODE -> SignalStrengthUnit.getByCode(unitType)
+                "MOULD" -> if (unitType == "INDEX") MouldRisk.Index else null
                 AQI_MEASUREMENT_CODE -> AirQuality.getByCode(unitType)
                 LUMINOSITY_MEASUREMENT_CODE -> Luminosity.getByCode(unitType)
                 AVG_NOISE_MEASUREMENT_CODE -> SoundAvg.getByCode(unitType)
@@ -713,6 +727,7 @@ fun UnitType.getDescriptionBodyResId(): Int {
         is UnitType.BatteryVoltageUnit -> R.string.description_text_battery_voltage
         is UnitType.Acceleration -> R.string.description_text_acceleration
         is UnitType.SignalStrengthUnit -> R.string.description_text_signal_strength
+        is UnitType.MouldRisk -> R.string.description_text_mould_risk
         is UnitType.AirQuality -> R.string.description_text_air_quality
         is UnitType.Luminosity -> R.string.description_text_luminosity
         is UnitType.SoundAvg -> R.string.description_text_sound_level

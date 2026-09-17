@@ -1,5 +1,6 @@
 package com.ruuvi.station.tagdetails.ui.popup
 
+import com.ruuvi.station.units.domain.score.QualityCalculator
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -21,9 +22,6 @@ import com.ruuvi.station.app.ui.components.scaleUpTo
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.RuuviTheme
 import com.ruuvi.station.app.ui.theme.ruuviStationFonts
-import com.ruuvi.station.units.domain.score.ScoreAqi
-import com.ruuvi.station.units.domain.score.ScoreCo2
-import com.ruuvi.station.units.domain.score.ScorePM
 import com.ruuvi.station.units.model.Accuracy
 import com.ruuvi.station.units.model.EnvironmentValue
 import com.ruuvi.station.units.model.UnitType
@@ -33,12 +31,7 @@ fun ValueSheetHeader(
     sheetValue: EnvironmentValue,
     modifier: Modifier = Modifier
 ) {
-    val score = when (sheetValue.unitType) {
-        is UnitType.AirQuality.AqiIndex -> ScoreAqi.score(sheetValue.value)
-        is UnitType.CO2.Ppm -> ScoreCo2.score(sheetValue.value)
-        is UnitType.PM.PM25 -> ScorePM.score(sheetValue.value)
-        else -> null
-    }
+    val score = QualityCalculator.calc(sheetValue)
 
     Column (
         verticalArrangement = Arrangement.Top
@@ -71,7 +64,8 @@ fun ValueSheetHeader(
                 ValueSheetHeaderText(
                     modifier = Modifier
                         .alignByBaseline(),
-                    text = sheetValue.valueWithoutUnit
+                    text = sheetValue.valueWithoutUnit,
+                    color = if (sheetValue.isAvailable) RuuviStationTheme.colors.popupHeaderText else Color.Gray
                 )
 
                 ValueSheetUnitText(
@@ -99,14 +93,15 @@ fun ValueSheetHeader(
 @Composable
 fun ValueSheetHeaderText(
     text: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    color: Color = RuuviStationTheme.colors.popupHeaderText
 ) {
     Text(
         modifier = modifier,
         fontSize = RuuviStationTheme.fontSizes.normal.limitScaleTo(1.5f),
         fontFamily = ruuviStationFonts.mulishBold,
         text = text,
-        color = RuuviStationTheme.colors.popupHeaderText
+        color = color
     )
 }
 

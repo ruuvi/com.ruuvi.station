@@ -255,6 +255,7 @@ fun VerticalChartsPrototype(
                                 from,
                                 to,
                                 sharedX = sharedX,
+                                latestValueAvailable = chartContainer.latestValueAvailable,
                             )
                         }
                     }
@@ -284,6 +285,7 @@ fun VerticalChartsPrototype(
                             from,
                             to,
                             sharedX = sharedX,
+                            latestValueAvailable = chartContainer.latestValueAvailable,
                         )
                     }
                 }
@@ -337,6 +339,7 @@ fun LandscapeChartsPrototype(
                 from,
                 to,
                 sharedX = sharedX,
+                latestValueAvailable = chartContainer.latestValueAvailable,
             )
         }
     }

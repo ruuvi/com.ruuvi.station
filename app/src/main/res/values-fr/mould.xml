@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="mould_risk_index">Indice de risque de moisissure</string>
+    <string name="mould_risk_very_low">Très faible</string>
+    <string name="mould_risk_low">Faible</string>
+    <string name="mould_risk_elevated">Accru</string>
+    <string name="mould_risk_high">Élevé</string>
+    <string name="mould_risk_very_high">Très élevé</string>
+    <string name="mould_risk_unavailable">Indisponible</string>
+    <string name="mould_risk_missing_input">La température et l’humidité relative d’une même mesure sont nécessaires au calcul de l’indice.</string>
+    <string name="mould_risk_invalid_input">La valeur de température ou d’humidité est invalide. L’humidité relative doit être comprise entre 0 et 100 %.</string>
+    <string name="mould_risk_temperature_range">L’indice est disponible uniquement au-dessus de 0 °C et en dessous de 50 °C (32–122 °F). Un indice indisponible ne signifie pas un risque faible.</string>
+    <string name="mould_risk_inputs">Conditions actuelles</string>
+    <string name="mould_risk_scale">Des valeurs plus élevées indiquent des conditions plus favorables au développement de moisissures.</string>
+    <string name="mould_risk_legend_item">%1$s : %2$s</string>
+    <string name="index_accessibility">%1$s, %2$s sur %3$d, %4$s</string>
+    <string name="description_text_mould_risk" formatted="false">Estime dans quelle mesure les conditions actuelles au niveau de ce capteur favorisent le développement de moisissures. Cet indice ne détecte pas les moisissures. Leur développement dépend aussi de la durée, des matériaux et des conditions de surface.\n\nUne baisse du score ne signifie pas que les moisissures existantes ont disparu. Les surfaces plus froides peuvent présenter une humidité relative supérieure à celle de l’air près du capteur. Un score faible n’exclut pas des moisissures ailleurs.\n\n[title]Comprendre l’indice[/title]\nL’indice Ruuvi va de [b]0 à 100[/b]. Des valeurs plus élevées indiquent des conditions plus favorables au développement. Ce n’est ni une probabilité, ni une évaluation sanitaire, ni une estimation de la croissance cumulée. Un bref pic d’humidité et une humidité persistante peuvent donner le même score instantané. Consultez le graphique historique pour en connaître la durée.\n\nLe seuil d’humidité de référence provient de recherches sur le bois. L’échelle et les couleurs sont des choix de produit Ruuvi, pas une échelle validée de risque de moisissure. À 20 °C, une humidité relative de 60 % donne 0, 70 % donne 25, 80 % donne 50 et 90 % donne 75.\n\n[title]Actions possibles[/title]\nSurveillez les valeurs élevées persistantes, réduisez l’excès d’humidité et recherchez les causes d’humidité durable. Placez le capteur près de la zone à surveiller en laissant ses ouvertures de ventilation dégagées.\n\n[title]Fondements scientifiques[/title]\nCet indice diffère du modèle finlandais de croissance des moisissures, qui utilise une échelle de 0 à 6, l’historique d’exposition et les caractéristiques des matériaux.\n[li][link url=https://research.tuni.fi/buildingphysics/finnish-mould-growth-model/]Finnish mould growth model[/link][/li][li][link url=https://bwk.kuleuven.be/bwf/projects/annex41/protected/data/VTT%20Oct%202007%20Paper%20A41-T4-Fin-07-1.pdf]VTT (2007)[/link][/li]</string>
+</resources>

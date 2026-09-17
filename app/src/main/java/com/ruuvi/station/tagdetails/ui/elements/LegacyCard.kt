@@ -1,9 +1,13 @@
 package com.ruuvi.station.tagdetails.ui.elements
 
+import com.ruuvi.station.app.ui.components.indexSemantics
+import com.ruuvi.station.units.model.IndexPresentation
+import com.ruuvi.station.units.model.mouldRiskPresentationOrNull
+import com.ruuvi.station.units.model.UnitType
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -12,12 +16,19 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -28,18 +39,22 @@ import com.ruuvi.station.app.ui.theme.White80
 import com.ruuvi.station.app.ui.theme.ruuviStationFonts
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tag.domain.isAir
-import com.ruuvi.station.units.model.UnitType
+import com.ruuvi.station.tagdetails.ui.TopMeasurement
+import com.ruuvi.station.tagdetails.ui.popup.SensorValueBottomSheet
+import com.ruuvi.station.units.model.EnvironmentValue
+import com.ruuvi.station.vico.model.ChartData
+import kotlinx.coroutines.flow.Flow
 
 @Composable
 fun SensorCardLegacy(
     modifier: Modifier = Modifier,
-    sensor: RuuviTag
+    sensor: RuuviTag,
+    getChartData: (String, UnitType, Int) -> Flow<ChartData>,
+    scrollToChart: (UnitType) -> Unit
 ) {
-
-    val valuesWithoutFirst = if (sensor.valuesToDisplay.isNotEmpty()) {
-        sensor.valuesToDisplay.subList(1, sensor.valuesToDisplay.size)
-    } else {
-        listOf()
+    if (sensor.displayOrder.any { it is UnitType.MouldRisk }) {
+        MouldSensorCardLegacy(modifier, sensor, getChartData, scrollToChart)
+        return
     }
 
     Box(
@@ -85,6 +100,43 @@ fun SensorCardLegacy(
         }
     }
 
+}
+
+/** Keep the legacy value style, with scrolling so selected values cannot cover the gauge. */
+@Composable
+private fun MouldSensorCardLegacy(
+    modifier: Modifier,
+    sensor: RuuviTag,
+    getChartData: (String, UnitType, Int) -> Flow<ChartData>,
+    scrollToChart: (UnitType) -> Unit
+) {
+    var sheetValue by remember(sensor.id) { mutableStateOf<EnvironmentValue?>(null) }
+    var height by remember { mutableStateOf(0) }
+    Column(
+        modifier = modifier.fillMaxSize().onSizeChanged { height = it.height }
+            .verticalScroll(rememberScrollState())
+            .padding(RuuviStationTheme.dimensions.extended),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(RuuviStationTheme.dimensions.extended)
+    ) {
+        sensor.valuesToDisplay.firstOrNull()?.let { value ->
+            TopMeasurement(sensor, value) { sheetValue = value }
+        }
+        sensor.valuesToDisplay.drop(1).forEach { value ->
+            SensorValueItemLegacy(
+                icon = value.unitType.iconRes,
+                value = value.valueWithoutUnit,
+                unit = value.unitString,
+                name = stringResource(value.unitType.measurementName),
+                index = value.mouldRiskPresentationOrNull(),
+                modifier = Modifier.fillMaxWidth().clickable { sheetValue = value }
+            )
+        }
+    }
+    sheetValue?.let { value ->
+        SensorValueBottomSheet(sensor, value, height, getChartData, scrollToChart,
+            onChangeValue = { sheetValue = it }, onDismiss = { sheetValue = null })
+    }
 }
 
 @Composable
@@ -191,16 +243,19 @@ fun SensorValueItemLegacy(
     icon: Int,
     value: String,
     unit: String,
-    name: String = ""
+    name: String = "",
+    index: IndexPresentation? = null,
+    modifier: Modifier = Modifier
 ) {
     Row (
+        modifier = modifier.indexSemantics(index),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Start
     ) {
         Icon(
             modifier = Modifier.size(48.dp),
             painter = painterResource(id = icon),
-            tint = Color.White,
+            tint = index?.color ?: Color.White,
             contentDescription = ""
         )
         Column {
@@ -216,7 +271,7 @@ fun SensorValueItemLegacy(
                     fontFamily = ruuviStationFonts.mulishBold,
                     fontWeight = FontWeight.Bold,
                     text = value,
-                    color = Color.White
+                    color = index?.color ?: Color.White
                 )
 
                 Text(
@@ -226,7 +281,7 @@ fun SensorValueItemLegacy(
                             start = RuuviStationTheme.dimensions.small
                         ),
                     style = RuuviStationTheme.typography.dashboardSecondary,
-                    color = Color.White,
+                    color = index?.color ?: Color.White,
                     fontWeight = FontWeight.Bold,
                     fontSize = RuuviStationTheme.fontSizes.compact,
                     text = unit,

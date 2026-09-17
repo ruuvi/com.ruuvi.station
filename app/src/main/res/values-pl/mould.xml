@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="mould_risk_index">Wskaźnik ryzyka pleśni</string>
+    <string name="mould_risk_very_low">Bardzo niskie</string>
+    <string name="mould_risk_low">Niskie</string>
+    <string name="mould_risk_elevated">Podwyższone</string>
+    <string name="mould_risk_high">Wysokie</string>
+    <string name="mould_risk_very_high">Bardzo wysokie</string>
+    <string name="mould_risk_unavailable">Niedostępny</string>
+    <string name="mould_risk_missing_input">Do obliczenia wskaźnika potrzebne są temperatura i wilgotność względna z tego samego pomiaru.</string>
+    <string name="mould_risk_invalid_input">Odczyt temperatury lub wilgotności jest nieprawidłowy. Wilgotność względna musi mieścić się w zakresie 0–100%.</string>
+    <string name="mould_risk_temperature_range">Wskaźnik jest dostępny tylko w temperaturze powyżej 0°C i poniżej 50°C (32–122°F). Brak wskaźnika nie oznacza niskiego ryzyka.</string>
+    <string name="mould_risk_inputs">Aktualne warunki</string>
+    <string name="mould_risk_scale">Wyższe wartości oznaczają warunki bardziej sprzyjające rozwojowi pleśni.</string>
+    <string name="mould_risk_legend_item">%1$s: %2$s</string>
+    <string name="index_accessibility">%1$s, %2$s z %3$d, %4$s</string>
+    <string name="description_text_mould_risk" formatted="false">Szacuje, jak bardzo aktualne warunki przy tym czujniku sprzyjają rozwojowi pleśni. Nie wykrywa pleśni. Rozwój zależy również od czasu trwania warunków, materiałów i warunków na powierzchni.\n\nSpadek wyniku nie oznacza, że istniejąca pleśń zniknęła. Chłodniejsze powierzchnie mogą mieć wyższą wilgotność względną niż powietrze przy czujniku. Niski wynik nie wyklucza pleśni w innych miejscach.\n\n[title]Znaczenie wskaźnika[/title]\nWskaźnik Ruuvi obejmuje zakres [b]0–100[/b]. Wyższe wartości oznaczają warunki bardziej sprzyjające rozwojowi. Nie jest to prawdopodobieństwo, ocena zdrowotna ani szacunek skumulowanego wzrostu pleśni. Krótkie skoki wilgotności i długotrwała wilgoć mogą dawać ten sam bieżący wynik. Czas trwania warunków można sprawdzić na wykresie historii.\n\nReferencyjny próg wilgotności pochodzi z badań drewna. Skala i kolory są decyzjami produktowymi Ruuvi, a nie zweryfikowaną skalą ryzyka pleśni. Przy 20°C wilgotność względna 60% daje 0, 70% daje 25, 80% daje 50, a 90% daje 75.\n\n[title]Możliwe działania[/title]\nObserwuj utrzymujące się podwyższone wartości, ogranicz nadmiar wilgoci i zbadaj przyczynę długotrwałego zawilgocenia. Umieść czujnik blisko monitorowanego obszaru, pozostawiając otwory wentylacyjne odsłonięte.\n\n[title]Podstawy naukowe[/title]\nWskaźnik ten różni się od fińskiego modelu wzrostu pleśni, który wykorzystuje skalę 0–6, historię warunków i właściwości materiałów.\n[li][link url=https://research.tuni.fi/buildingphysics/finnish-mould-growth-model/]Finnish mould growth model[/link][/li][li][link url=https://bwk.kuleuven.be/bwf/projects/annex41/protected/data/VTT%20Oct%202007%20Paper%20A41-T4-Fin-07-1.pdf]VTT (2007)[/link][/li]</string>
+</resources>

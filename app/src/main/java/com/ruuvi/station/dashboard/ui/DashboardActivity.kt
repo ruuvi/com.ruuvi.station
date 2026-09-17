@@ -1,5 +1,7 @@
 package com.ruuvi.station.dashboard.ui
 
+import com.ruuvi.station.dashboard.ui.dashboard_elements.IndexDisplay
+import com.ruuvi.station.units.model.mouldRiskPresentation
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
@@ -651,7 +653,10 @@ fun DashboardItem(
                         if (sensor.latestMeasurement != null) {
                             val bigValue = sensor.valuesToDisplay.firstOrNull()
                             if (bigValue != null) {
-                                if (bigValue.unitType is UnitType.AirQuality) {
+                                if (bigValue.unitType is UnitType.MouldRisk) {
+                                    IndexDisplay(bigValue.mouldRiskPresentation(), alertTriggered = false)
+                                    Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.medium))
+                                } else if (bigValue.unitType is UnitType.AirQuality) {
                                     AQIDisplay(
                                         value = AQI.getAQI(sensor.latestMeasurement),
                                         alertTriggered = bigValue.unitType.alarmType?.let {

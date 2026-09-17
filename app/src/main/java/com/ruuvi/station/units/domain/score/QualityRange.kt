@@ -13,6 +13,11 @@ sealed class QualityRange (
     object Fair: QualityRange(color = FairColor, description = R.string.fair)
     object Good: QualityRange(color = GoodColor, description = R.string.good)
     object Excellent: QualityRange(color = ExcellentColor, description = R.string.excellent)
+    object MouldVeryLow: QualityRange(ExcellentColor, R.string.mould_risk_very_low)
+    object MouldLow: QualityRange(GoodColor, R.string.mould_risk_low)
+    object MouldElevated: QualityRange(FairColor, R.string.mould_risk_elevated)
+    object MouldHigh: QualityRange(PoorColor, R.string.mould_risk_high)
+    object MouldVeryHigh: QualityRange(VeryPoorColor, R.string.mould_risk_very_high)
 }
 
 val VeryPoorColor = Color(0xFFED5021)

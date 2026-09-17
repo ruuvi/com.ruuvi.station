@@ -1,5 +1,9 @@
 package com.ruuvi.station.tagdetails.ui
 
+import com.ruuvi.station.units.model.mouldRiskPresentationOrNull
+import com.ruuvi.station.tagdetails.ui.popup.SensorValueBottomSheet
+import com.ruuvi.station.tagdetails.ui.elements.CircularIndexDisplay
+import com.ruuvi.station.units.model.mouldRiskPresentation
 import android.app.Activity
 import android.app.PendingIntent
 import android.content.Context
@@ -74,7 +78,6 @@ import com.ruuvi.station.tagdetails.ui.elements.BigValueDisplay
 import com.ruuvi.station.tagdetails.ui.elements.CircularAQIDisplay
 import com.ruuvi.station.tagdetails.ui.elements.SensorCardLegacy
 import com.ruuvi.station.tagdetails.ui.elements.SensorValueItem
-import com.ruuvi.station.tagdetails.ui.popup.ValueBottomSheet
 import com.ruuvi.station.tagsettings.ui.TagSettingsActivity
 import com.ruuvi.station.units.domain.UnitsConverter
 import com.ruuvi.station.units.model.EnvironmentValue
@@ -446,7 +449,9 @@ fun SensorsPager(
                             } else {
                                 SensorCardLegacy(
                                     sensor = sensor,
-                                    modifier = Modifier.weight(1f)
+                                    modifier = Modifier.weight(1f),
+                                    getChartData = getChartData,
+                                    scrollToChart = scrollToChart
                                 )
                             }
                         }
@@ -688,30 +693,11 @@ fun SensorCard(
 
     if (showBottomSheet) {
         sheetValue?.let { value ->
-
-            val chartHistory by produceState<ChartData?>(
-                initialValue = null,
-                key1 = sensor.id,
-                key2 = value.unitType
-            ) {
-                getChartData(sensor.id, value.unitType, 48).collectLatest { data ->
-                    this.value = data
-                }
-            }
-
-            val extraValues = if (value.unitType is UnitType.AirQuality.AqiIndex) {
-                listOfNotNull(sensor.latestMeasurement?.pm25, sensor.latestMeasurement?.co2)
-            } else {
-                listOf()
-            }
-
-            ValueBottomSheet(
-                sheetValue = value,
-                extraValues = extraValues,
-                chartHistory = chartHistory,
+            SensorValueBottomSheet(
+                sensor = sensor,
+                value = value,
                 maxHeight = size.height,
-                lastUpdate = sensor.latestMeasurement?.updatedAt,
-                modifier = Modifier,
+                getChartData = getChartData,
                 scrollToChart = scrollToChart,
                 onChangeValue = { newValue -> sheetValue = newValue}
             ) {
@@ -728,7 +714,9 @@ fun TopMeasurement(
     modifier: Modifier = Modifier,
     clickAction: () -> Unit = {}
 ) {
-    if (value.unitType is UnitType.AirQuality) {
+    if (value.unitType is UnitType.MouldRisk) {
+        CircularIndexDisplay(value.mouldRiskPresentation(), false, modifier, clickAction)
+    } else if (value.unitType is UnitType.AirQuality) {
         if (sensor.latestMeasurement != null) {
             CircularAQIDisplay(
                 value = value,
@@ -801,6 +789,7 @@ fun SensorValues(
                         value.unitString
                     }
                     SensorValueItem(
+                        index = value.mouldRiskPresentationOrNull(),
                         icon = value.unitType.iconRes,
                         value = value.valueWithoutUnit,
                         unit = unit,

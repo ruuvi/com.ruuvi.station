@@ -177,6 +177,9 @@ class TagConverter(
                         unitsConverter.getSignalEnvironmentValue(entity.rssi)
                     )
                 }
+                MouldRisk.Index -> {
+                    valuesToDisplay.add(unitsConverter.getMouldRiskEnvironmentValue(temperature, humidity))
+                }
                 AirQuality.AqiIndex -> {
                     valuesToDisplay.add(
                         unitsConverter.getAqiEnvironmentValue(AQI.getAQI(

@@ -127,6 +127,7 @@ private fun aqiSet(range: QualityRange): IntArray = when (range) {
     is QualityRange.Fair      -> AQI_FAIR
     is QualityRange.Poor      -> AQI_POOR
     is QualityRange.VeryPoor  -> AQI_VERYPOOR
+    else -> error("Mould risk does not use air-quality advice")
 }
 
 @StringRes

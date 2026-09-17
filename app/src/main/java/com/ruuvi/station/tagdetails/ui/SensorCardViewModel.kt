@@ -1,5 +1,8 @@
 package com.ruuvi.station.tagdetails.ui
 
+import com.ruuvi.station.units.domain.mould.MouldRiskCalculator
+import com.ruuvi.station.graph.model.mouldRiskHistory
+import com.ruuvi.station.graph.model.toMouldRiskEntries
 import android.net.Uri
 import androidx.compose.ui.util.fastCoerceAtLeast
 import androidx.compose.ui.util.fastCoerceAtMost
@@ -98,6 +101,10 @@ class SensorCardViewModel(
     fun getChartData(sensorId: String, unitType: UnitType, hours: Int): Flow<ChartData> =
         flow<ChartData> {
             val history = tagDetailsInteractor.getTagReadings(sensorId, hours)
+            if (unitType == MouldRisk.Index) {
+                emit(mouldRiskHistory(history))
+                return@flow
+            }
             val segments = mutableListOf<Segment>()
             var solidValues = mutableListOf<Double>()
             var solidTimestamps = mutableListOf<Long>()
@@ -190,6 +197,7 @@ class SensorCardViewModel(
             is Acceleration.GForceY -> item.accelY
             is Acceleration.GForceZ -> item.accelZ
             is SignalStrengthUnit -> item.rssi
+            is MouldRisk -> MouldRiskCalculator.calculate(item.temperature, item.humidity).score
             is AirQuality -> AQI.getAQI(item.pm25, item.co2).score
             is CO2 -> item.co2
             is VOC -> item.voc
@@ -243,39 +251,12 @@ class SensorCardViewModel(
                     val timestamp = (item.createdAt.time - from).toFloat()
 
                     for (unit in displayOrder) {
-                        if (unit is MovementUnit) continue
+                        if (unit is MovementUnit || unit is MouldRisk) continue
 
                         val dataset = datasetsByUnit[unit]
                         dataset?.let {
 
-                            val entryValue = when (unit) {
-                                is TemperatureUnit -> item.temperature?.let { temperature ->
-                                    unitsConverter.getTemperatureValue(temperature, unit)
-                                }
-                                is HumidityUnit -> item.humidity?.let { humidity ->
-                                    unitsConverter.getHumidityValue(humidity, item.temperature, unit)
-                                }
-                                is PressureUnit -> item.pressure?.let { pressure ->
-                                    unitsConverter.getPressureValue(pressure, unit)
-                                }
-                                is BatteryVoltageUnit -> item.voltage
-                                is Acceleration.GForceX -> item.accelX
-                                is Acceleration.GForceY -> item.accelY
-                                is Acceleration.GForceZ -> item.accelZ
-                                is SignalStrengthUnit -> item.rssi
-                                is AirQuality -> AQI.getAQI(item.pm25, item.co2).score
-                                is CO2 -> item.co2
-                                is VOC -> item.voc
-                                is NOX -> item.nox
-                                is PM.PM10 -> item.pm1
-                                is PM.PM25 -> item.pm25
-                                is PM.PM40 -> item.pm4
-                                is PM.PM100 -> item.pm10
-                                is Luminosity -> item.luminosity
-                                is SoundAvg -> item.dBaAvg
-                                is SoundPeak -> item.dBaPeak
-                                else -> null
-                            }
+                            val entryValue = getUnitValue(item, unit)
 
                             if (entryValue != null) {
                                 dataset.add(Entry(timestamp, entryValue.toFloat()))
@@ -285,12 +266,17 @@ class SensorCardViewModel(
                     }
                 }
 
+                if (MouldRisk.Index in displayOrder) {
+                    val entries = datasetsByUnit.getValue(MouldRisk.Index)
+                    entries.addAll(mouldRiskHistory(history).toMouldRiskEntries(from))
+                }
+
                 val chartContainers = mutableListOf<ChartContainer>()
 
                 for (unit in displayOrder) {
                     val dataset = datasetsByUnit[unit]
 
-                    if (!dataset.isNullOrEmpty()) {
+                    if (dataset != null && (dataset.isNotEmpty() || unit is MouldRisk)) {
                         val alarmLimit = when (unit) {
                             is TemperatureUnit -> alarms.firstOrNull{ it -> it.alarmType == AlarmType.TEMPERATURE }?.let {
                                 unitsConverter.getTemperatureValue(it.min, unit) to unitsConverter.getTemperatureValue(it.max, unit)
@@ -341,7 +327,8 @@ class SensorCardViewModel(
                                 limits = alarmLimit,
                                 from = from,
                                 to = to,
-                                uiComponent = null
+                                uiComponent = null,
+                                latestValueAvailable = unit !is MouldRisk || getUnitValue(history.last(), unit) != null
                             )
                         )
                     }

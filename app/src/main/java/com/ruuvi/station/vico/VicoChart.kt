@@ -51,6 +51,7 @@ fun VicoChartNoInteraction(
     chartHistory: ChartData,
     minMaxLocked: Pair<Double, Double>? = null,
     yAxisValues: List<Float>? = null,
+    rangePadding: Double = 1.0,
     modifier: Modifier = Modifier
 ) {
     val minY = minMaxLocked?.first ?: chartHistory.minValue
@@ -193,8 +194,8 @@ fun VicoChartNoInteraction(
                 rememberLineCartesianLayer(
                     lineProvider = LineCartesianLayer.LineProvider.series(lineStyles),
                     rangeProvider = CartesianLayerRangeProvider.fixed(
-                        minY = minY - 1f,
-                        maxY = maxY + 1f
+                        minY = minY - rangePadding,
+                        maxY = maxY + rangePadding
                     ),
                 ),
                 startAxis = VerticalAxis.rememberStart(

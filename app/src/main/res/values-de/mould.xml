@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="mould_risk_index">Schimmelrisikoindex</string>
+    <string name="mould_risk_very_low">Sehr niedrig</string>
+    <string name="mould_risk_low">Niedrig</string>
+    <string name="mould_risk_elevated">Erhöht</string>
+    <string name="mould_risk_high">Hoch</string>
+    <string name="mould_risk_very_high">Sehr hoch</string>
+    <string name="mould_risk_unavailable">Nicht verfügbar</string>
+    <string name="mould_risk_missing_input">Zur Berechnung werden Temperatur und relative Luftfeuchtigkeit derselben Messung benötigt.</string>
+    <string name="mould_risk_invalid_input">Der Temperatur- oder Feuchtigkeitswert ist ungültig. Die relative Luftfeuchtigkeit muss zwischen 0 und 100 % liegen.</string>
+    <string name="mould_risk_temperature_range">Der Index ist nur bei Temperaturen über 0 °C und unter 50 °C (32–122 °F) verfügbar. Ein fehlender Index bedeutet kein geringes Risiko.</string>
+    <string name="mould_risk_inputs">Aktuelle Bedingungen</string>
+    <string name="mould_risk_scale">Höhere Werte bedeuten günstigere Bedingungen für Schimmelwachstum.</string>
+    <string name="mould_risk_legend_item">%1$s: %2$s</string>
+    <string name="index_accessibility">%1$s, %2$s von %3$d, %4$s</string>
+    <string name="description_text_mould_risk" formatted="false">Schätzt, wie günstig die aktuellen Bedingungen an diesem Sensor für Schimmelwachstum sind. Der Index erkennt keinen Schimmel. Wachstum hängt auch von Dauer, Materialien und Oberflächenbedingungen ab.\n\nEin sinkender Wert bedeutet nicht, dass vorhandener Schimmel verschwunden ist. Kältere Oberflächen können eine höhere relative Feuchtigkeit aufweisen als die Luft am Sensor. Ein niedriger Wert schließt Schimmel an anderen Stellen nicht aus.\n\n[title]Den Index verstehen[/title]\nDer Ruuvi-Index reicht von [b]0 bis 100[/b]. Höhere Werte bedeuten günstigere Wachstumsbedingungen. Er ist keine Wahrscheinlichkeit, Gesundheitsbewertung oder Schätzung des angesammelten Schimmelwachstums. Kurze Feuchtigkeitsspitzen und anhaltende Feuchtigkeit können denselben aktuellen Wert ergeben. Das Verlaufsdiagramm zeigt die Dauer.\n\nDer Referenzwert für die Feuchtigkeit stammt aus der Holzforschung. Skala und Farbklassen sind Produktentscheidungen von Ruuvi, keine validierte Schimmelrisikoskala. Bei 20 °C ergeben 60 % relative Feuchtigkeit den Wert 0, 70 % den Wert 25, 80 % den Wert 50 und 90 % den Wert 75.\n\n[title]Maßnahmen[/title]\nBeobachten Sie dauerhaft erhöhte Werte, reduzieren Sie überschüssige Feuchtigkeit und untersuchen Sie anhaltende Nässe. Platzieren Sie den Sensor nahe dem zu überwachenden Bereich und halten Sie seine Lüftungsöffnungen frei.\n\n[title]Wissenschaftlicher Hintergrund[/title]\nDieser Index unterscheidet sich vom finnischen Schimmelwachstumsmodell, das eine Skala von 0–6, den Expositionsverlauf und Materialeigenschaften verwendet.\n[li][link url=https://research.tuni.fi/buildingphysics/finnish-mould-growth-model/]Finnish mould growth model[/link][/li][li][link url=https://bwk.kuleuven.be/bwf/projects/annex41/protected/data/VTT%20Oct%202007%20Paper%20A41-T4-Fin-07-1.pdf]VTT (2007)[/link][/li]</string>
+</resources>

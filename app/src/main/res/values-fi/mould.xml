@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="mould_risk_index">Homeriskin indeksi</string>
+    <string name="mould_risk_very_low">Erittäin matala</string>
+    <string name="mould_risk_low">Matala</string>
+    <string name="mould_risk_elevated">Kohonnut</string>
+    <string name="mould_risk_high">Korkea</string>
+    <string name="mould_risk_very_high">Erittäin korkea</string>
+    <string name="mould_risk_unavailable">Ei saatavilla</string>
+    <string name="mould_risk_missing_input">Indeksin laskemiseen tarvitaan saman mittauksen lämpötila ja suhteellinen kosteus.</string>
+    <string name="mould_risk_invalid_input">Lämpötila- tai kosteuslukema on virheellinen. Suhteellisen kosteuden on oltava välillä 0–100 %.</string>
+    <string name="mould_risk_temperature_range">Indeksi on saatavilla vain yli 0 °C:n ja alle 50 °C:n lämpötiloissa (32–122 °F). Puuttuva indeksi ei tarkoita matalaa riskiä.</string>
+    <string name="mould_risk_inputs">Nykyiset olosuhteet</string>
+    <string name="mould_risk_scale">Suurempi arvo tarkoittaa homeen kasvulle suotuisampia olosuhteita.</string>
+    <string name="mould_risk_legend_item">%1$s: %2$s</string>
+    <string name="index_accessibility">%1$s, %2$s / %3$d, %4$s</string>
+    <string name="description_text_mould_risk" formatted="false">Arvioi, kuinka suotuisat nykyiset olosuhteet tämän anturin kohdalla ovat homeen kasvulle. Indeksi ei havaitse hometta. Kasvu riippuu myös olosuhteiden kestosta, materiaaleista ja pintojen olosuhteista.\n\nLaskeva arvo ei tarkoita, että olemassa oleva home olisi hävinnyt. Kylmillä pinnoilla suhteellinen kosteus voi olla korkeampi kuin anturin ympäröivässä ilmassa. Matala arvo ei sulje pois hometta muualla.\n\n[title]Indeksin tulkinta[/title]\nRuuvi-indeksin asteikko on [b]0–100[/b]. Suurempi arvo tarkoittaa kasvulle suotuisampia olosuhteita. Arvo ei ole todennäköisyys, terveysarvio eikä arvio kertyneestä homekasvusta. Lyhyt kosteuspiikki ja jatkuva kosteus voivat antaa saman hetkellisen arvon. Tarkista olosuhteiden kesto historiakuvaajasta.\n\nKosteuden vertailuraja perustuu puuta koskevaan tutkimukseen. Asteikko ja väriluokat ovat Ruuvin tuotevalintoja, eivät validoitu homeriskin asteikko. Lämpötilassa 20 °C suhteellinen kosteus 60 % antaa arvon 0, 70 % arvon 25, 80 % arvon 50 ja 90 % arvon 75.\n\n[title]Toimenpiteet[/title]\nSeuraa pitkäkestoisia kohonneita arvoja, vähennä liiallista kosteutta ja selvitä jatkuvan kosteuden syy. Aseta anturi lähelle seurattavaa aluetta ja pidä sen ilmanvaihtoaukot vapaina.\n\n[title]Tieteellinen tausta[/title]\nTämä indeksi eroaa suomalaisesta homemallista, joka käyttää asteikkoa 0–6, olosuhdehistoriaa ja materiaalien ominaisuuksia.\n[li][link url=https://research.tuni.fi/buildingphysics/finnish-mould-growth-model/]Finnish mould growth model[/link][/li][li][link url=https://bwk.kuleuven.be/bwf/projects/annex41/protected/data/VTT%20Oct%202007%20Paper%20A41-T4-Fin-07-1.pdf]VTT (2007)[/link][/li]</string>
+</resources>

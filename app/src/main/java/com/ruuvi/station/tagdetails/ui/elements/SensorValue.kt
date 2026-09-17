@@ -1,5 +1,7 @@
 package com.ruuvi.station.tagdetails.ui.elements
 
+import com.ruuvi.station.app.ui.components.indexSemantics
+import com.ruuvi.station.units.model.IndexPresentation
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -41,6 +43,7 @@ fun SensorValueItem(
     itemHeight: Dp,
     alertActive: Boolean,
     modifier: Modifier = Modifier,
+    index: IndexPresentation? = null,
     clickAction: () -> Unit
 ) {
     val shape = RoundedCornerShape(itemHeight / 2)
@@ -61,6 +64,7 @@ fun SensorValueItem(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Start,
         modifier = modifier
+            .indexSemantics(index)
             .then(internalModifier)
             .then(borderModifier)
             .clickable { clickAction.invoke() }
@@ -70,7 +74,7 @@ fun SensorValueItem(
                 .height(24.dp.scaleUpTo(1.5f))
                 .padding(horizontal = RuuviStationTheme.dimensions.medium),
             painter = painterResource(id = icon),
-            tint = Color(0xff5ebdb2),
+            tint = index?.color ?: Color(0xff5ebdb2),
             contentDescription = ""
         )
 
@@ -88,7 +92,7 @@ fun SensorValueItem(
                     fontFamily = ruuviStationFonts.mulishBold,
                     fontWeight = FontWeight.Bold,
                     text = value,
-                    color = Color.White
+                    color = index?.color ?: Color.White
                 )
 
                 Text(
@@ -98,7 +102,7 @@ fun SensorValueItem(
                             start = RuuviStationTheme.dimensions.small
                         ),
                     style = RuuviStationTheme.typography.dashboardSecondary,
-                    color = Color.White,
+                    color = index?.color ?: Color.White,
                     fontWeight = FontWeight.Bold,
                     fontSize = RuuviStationTheme.fontSizes.compact.limitScaleTo(1.5f),
                     text = unit,
