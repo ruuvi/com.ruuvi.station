@@ -662,7 +662,7 @@ fun DashboardItem(
                                 } else {
                                     BigValueExtDisplay(
                                         value = bigValue,
-                                        alertTriggered = bigValue.unitType?.alarmType?.let {
+                                        alertTriggered = bigValue.unitType.alarmType?.let {
                                             sensor.alarmSensorStatus.triggered(it)
                                         } ?: false,
                                         showTitle = true,

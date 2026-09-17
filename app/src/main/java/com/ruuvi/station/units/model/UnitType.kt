@@ -218,6 +218,7 @@ sealed class UnitType(
         measurementCode = BATTERY_MEASUREMENT_CODE,
         measurementTitle = R.string.battery_voltage,
         measurementName = R.string.battery,
+        alarmType = AlarmType.BATTERY_VOLTAGE,
         defaultAccuracy = Accuracy.Accuracy2
     ) {
         data object Volt: BatteryVoltageUnit(BATTERY_UNIT_VOLT, R.string.voltage_unit, R.string.voltage_unit)
