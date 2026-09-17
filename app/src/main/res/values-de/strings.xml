@@ -113,6 +113,7 @@
     <string name="alert_subtitle_off">Aus</string>
     <string name="alert_subtitle_on">Warnung bei weniger als %1$s oder mehr als %2$s</string>
     <string name="alerts">Warnungen</string>
+    <string name="alerts_top_menu_hint">Die Alarmeinstellungen befinden sich jetzt an einem neuen Ort. Öffnen Sie die Alarmeinstellungen über das Glockensymbol im oberen Menü oder tippen Sie hier.</string>
     <string name="background_image">Hintergrundbild</string>
     <string name="background_notification_message">Sie können das Scannen im Hintergrund in den Einstellungen deaktivieren</string>
     <string name="background_notification_scanning_every">Alles Scannen</string>
@@ -592,7 +593,6 @@ Insgesamt verwendete Freigaben für Ihr Konto: %3$,d/%4$,d</string>
     <string name="main_view">Hauptansicht</string>
     <string name="full_image_view">Vollbildansicht</string>
     <string name="history_view">Ansicht Verlauf</string>
-    <string name="settings_and_alerts">Einstellungen \u0026 Benachrichtigungen</string>
     <string name="change_background">Hintergrundbild ändern</string>
     <string name="check_claim_state">Prüfung des Antragsstatus</string>
     <string name="claim_in_progress">Anspruchserhebung läuft</string>

@@ -34,6 +34,7 @@ import com.ruuvi.station.util.extensions.clickableSingle
 fun RuuviTopAppBar(
     title: String,
     modifier: Modifier = Modifier,
+    navigationAction: (() -> Unit)? = null,
     actions: @Composable RowScope.() -> Unit = {}
 ) {
     val context = LocalContext.current as Activity
@@ -49,7 +50,7 @@ fun RuuviTopAppBar(
         },
         navigationIcon = {
             IconButton(onClick = {
-                context.onBackPressed()
+                navigationAction?.invoke() ?: context.onBackPressed()
             }) {
                 Icon(Icons.Default.ArrowBack, stringResource(id = R.string.back))
             }

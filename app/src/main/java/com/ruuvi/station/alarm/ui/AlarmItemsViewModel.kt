@@ -14,13 +14,12 @@ import com.ruuvi.station.util.extensions.diff
 import com.ruuvi.station.util.extensions.equalsEpsilon
 import com.ruuvi.station.util.extensions.processStatus
 import com.ruuvi.station.util.extensions.round
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 
 class AlarmItemsViewModel(
@@ -213,9 +212,9 @@ class AlarmItemsViewModel(
         }
     }
 
-    fun refreshSensorState() {
-        Timber.d("getTagInfo")
-        CoroutineScope(Dispatchers.IO).launch {
+    suspend fun refreshSensorState() {
+        Timber.d("refreshSensorState")
+        withContext(Dispatchers.IO) {
             val sensorState = tagSettingsInteractor.getFavouriteSensorById(sensorId)
             if (sensorState != null) {
                 _sensorState.value = sensorState
