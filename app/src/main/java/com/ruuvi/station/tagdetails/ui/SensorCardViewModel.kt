@@ -92,28 +92,35 @@ class SensorCardViewModel(
     suspend fun observeHistory(sensorId: String) {
         combine(_historySelection, retryHistory) { selection, retry -> selection to retry }
             .collectLatest { (selection, _) ->
-                coroutineScope {
-                    visibleHistoryJob = currentCoroutineContext().job
-                    val now = now()
-                    val initial = selection.resolve(now)
-                    resolvedWindow.value = selection to initial
-                    val live = initial.endExclusiveMillis == now
-                    launch {
-                        var first = true
-                        do {
-                            networkHistoryInteractor.syncHistory(sensorId, resolvedWindow.value.second, revalidateHistorical = first)
-                            first = false
-                            if (live) delay(NetworkHistoryInteractor.LIVE_REFRESH_MILLIS)
-                        } while (live && isActive)
-                    }
-                    if (live) {
-                        while (isActive) {
-                            delay(1000)
-                            resolvedWindow.value = selection to selection.resolve(now())
+                var roundJob: Job? = null
+                try {
+                    coroutineScope {
+                        roundJob = currentCoroutineContext().job
+                        visibleHistoryJob = roundJob
+                        val now = now()
+                        val initial = selection.resolve(now)
+                        resolvedWindow.value = selection to initial
+                        val live = initial.endExclusiveMillis == now
+                        launch {
+                            var first = true
+                            do {
+                                networkHistoryInteractor.syncHistory(sensorId, resolvedWindow.value.second, revalidateHistorical = first)
+                                first = false
+                                if (live) delay(NetworkHistoryInteractor.LIVE_REFRESH_MILLIS)
+                            } while (live && isActive)
                         }
-                    } else {
-                        awaitCancellation()
+                        if (live) {
+                            while (isActive) {
+                                delay(1000)
+                                resolvedWindow.value = selection to selection.resolve(now())
+                            }
+                        } else {
+                            awaitCancellation()
+                        }
                     }
+                } finally {
+                    // Do not retain a completed/cancelled job past its collection round.
+                    if (visibleHistoryJob === roundJob) visibleHistoryJob = null
                 }
             }
     }

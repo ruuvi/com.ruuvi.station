@@ -1,5 +1,7 @@
 package com.ruuvi.station.history
 
+import timber.log.Timber
+
 data class HistoryPoint(val timestamp: Long, val value: Double, val segment: Int)
 
 data class HistoryStatistics(
@@ -24,7 +26,9 @@ class HistorySampler(private val range: HistoryRange) {
     fun add(timestamp: Long, value: Double?) {
         if (value == null || !value.isFinite() || timestamp < range.startMillis || timestamp >= range.endExclusiveMillis) return
         val previous = last
-        require(previous == null || timestamp >= previous.timestamp) { "History must be ordered" }
+        if (previous != null && timestamp < previous.timestamp) {
+            return //require throws IllegalArgumentException, so one out-of-order reading would crash the app during chart sampling
+        }
         val point = HistoryPoint(timestamp, value,
             (previous?.segment ?: 0) + if (previous != null && timestamp - previous.timestamp > GAP_MILLIS) 1 else 0)
         if (first == null) first = point
