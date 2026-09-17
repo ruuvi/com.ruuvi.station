@@ -6,7 +6,7 @@ fastlane_require "tmpdir"
 default_platform(:android)
 
 PACKAGE_NAME = "com.ruuvi.station"
-FASTLANE_DIR = __dir__
+FASTLANE_DIR = File.expand_path(__dir__)
 PROJECT_ROOT = File.expand_path("..", FASTLANE_DIR)
 CI_LOGS_DIR = File.join(PROJECT_ROOT, "ci-logs")
 SECRET_TMP_DIR = if ENV["RUNNER_TEMP"].to_s.strip.empty?
