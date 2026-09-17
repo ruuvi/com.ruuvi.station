@@ -14,8 +14,8 @@ on:
           - images
           - screenshots
           - all
-      version_code:
-        description: 'Optional versionCode for changelogs, metadata, or screenshots'
+      build_number:
+        description: 'Build number (e.g. 635397593); required for changelogs or all'
         required: false
         default: ''
 
@@ -48,7 +48,7 @@ jobs:
         env:
           SERVICE_ACCOUNT_JSON: ${{ secrets.SERVICE_ACCOUNT_JSON }}
           PLAY_METADATA_SYNC_MODE: ${{ github.event.inputs.sync_mode }}
-          PLAY_METADATA_VERSION_CODE: ${{ github.event.inputs.version_code }}
+          PLAY_METADATA_VERSION_CODE: ${{ github.event.inputs.build_number }}
         run: bundle exec fastlane android sync_play_store_metadata
 
       - name: Collect CI logs
@@ -87,7 +87,7 @@ jobs:
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
           TELEGRAM_SUCCESS_MENTION: ${{ secrets.TELEGRAM_SUCCESS_MENTION }}
           TELEGRAM_SUCCESS_TITLE: Google Play metadata was updated.
-          TELEGRAM_SUCCESS_BUILD: ${{ github.event.inputs.version_code }}
+          TELEGRAM_SUCCESS_BUILD: ${{ github.event.inputs.build_number }}
           DISTRIBUTION_CHANNEL: Google Play metadata
           JOB_STATUS: ${{ job.status }}
           WORKFLOW_NAME: ${{ github.workflow }}

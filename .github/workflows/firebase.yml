@@ -37,8 +37,8 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Require manual branch builds to include current master
-        if: github.event_name == 'workflow_dispatch' && github.ref_name != 'master'
+      - name: Require manual feature branch builds to include current master
+        if: github.event_name == 'workflow_dispatch' && github.ref_name != 'master' && !startsWith(github.ref_name, 'release/')
         run: |
           git fetch --no-tags origin master
 
