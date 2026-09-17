@@ -57,7 +57,7 @@ import com.ruuvi.station.app.permissions.NotificationPermission
 import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.app.ui.DashboardMainMenu
 import com.ruuvi.station.app.ui.DashboardTopAppBar
-import com.ruuvi.station.app.ui.components.BlinkingEffect
+import com.ruuvi.station.app.ui.components.AlertBadgeIcon
 import com.ruuvi.station.app.ui.components.Paragraph
 import com.ruuvi.station.app.ui.components.RuuviButton
 import com.ruuvi.station.app.ui.components.limitScaleTo
@@ -83,7 +83,6 @@ import com.ruuvi.station.tagdetails.ui.SensorCardActivity
 import com.ruuvi.station.tagdetails.ui.SensorCardOpenType
 import com.ruuvi.station.tagsettings.ui.BackgroundActivity
 import com.ruuvi.station.tagsettings.ui.SetSensorName
-import com.ruuvi.station.tagsettings.ui.TagSettingsActivity
 import com.ruuvi.station.units.domain.aqi.AQI
 import com.ruuvi.station.units.model.UnitType
 import com.ruuvi.station.util.base.NfcActivity
@@ -96,6 +95,8 @@ import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
 import org.kodein.di.generic.instance
 import kotlin.math.min
+
+private val DASHBOARD_ALERT_CONTAINER_SIZE = 36.dp
 
 class DashboardActivity : NfcActivity(), KodeinAware {
 
@@ -165,14 +166,17 @@ class DashboardActivity : NfcActivity(), KodeinAware {
                 }
 
                 Box (
-                    modifier =
-                        if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                            Modifier
-                                .statusBarsPadding()
-                                .windowInsetsPadding(WindowInsets.tappableElement)
-                        } else {
-                            Modifier.statusBarsPadding()
-                        }
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(systemBarsColor)
+                        .statusBarsPadding()
+                        .then(
+                            if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                                Modifier.windowInsetsPadding(WindowInsets.tappableElement)
+                            } else {
+                                Modifier
+                            },
+                        ),
                 ) {
                     Scaffold(
                         scaffoldState = scaffoldState,
@@ -815,43 +819,30 @@ fun ItemButtons(
 
     Row(
         modifier = modifier
-            .width(RuuviStationTheme.dimensions.dashboardIconSize * 2),
+            .width(DASHBOARD_ALERT_CONTAINER_SIZE + RuuviStationTheme.dimensions.dashboardIconSize),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.End,
     ) {
         CompositionLocalProvider(LocalMinimumInteractiveComponentEnforcement provides false) {
-            if (sensor.alarmSensorStatus is AlarmSensorStatus.NotTriggered) {
+            if (sensor.alarmSensorStatus != AlarmSensorStatus.NoAlarms) {
                 IconButton(
-                    modifier = Modifier.size(RuuviStationTheme.dimensions.dashboardIconSize),
+                    modifier = Modifier.size(DASHBOARD_ALERT_CONTAINER_SIZE),
                     enabled = interactionEnabled,
                     onClick = {
-                        TagSettingsActivity.start(context, sensor.id)
-                    }
+                        SensorCardActivity.start(context, sensor.id, SensorCardOpenType.ALERTS)
+                    },
                 ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_notifications_on_24px),
-                        contentDescription = null,
-                        tint = RuuviStationTheme.colors.accent
+                    AlertBadgeIcon(
+                        alarmStatus = sensor.alarmSensorStatus,
+                        iconColor = RuuviStationTheme.colors.dashboardBurger,
+                        triggeredBadgeColor = RuuviStationTheme.colors.activeAlertThemed,
+                        contentDescription = stringResource(id = R.string.alerts),
+                        iconRes = R.drawable.ic_sensor_menu_alerts,
+                        iconSize = 30.dp,
                     )
                 }
-            } else if (sensor.alarmSensorStatus is AlarmSensorStatus.Triggered) {
-                BlinkingEffect() {
-                    IconButton(
-                        modifier = Modifier.size(RuuviStationTheme.dimensions.dashboardIconSize),
-                        enabled = interactionEnabled,
-                        onClick = {
-                            TagSettingsActivity.start(context, sensor.id)
-                        }
-                    ) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_notifications_active_24px),
-                            contentDescription = null,
-                            tint = RuuviStationTheme.colors.activeAlertThemed
-                        )
-                    }
-                }
             } else {
-                Spacer(modifier = Modifier.size(RuuviStationTheme.dimensions.dashboardIconSize))
+                Spacer(modifier = Modifier.size(DASHBOARD_ALERT_CONTAINER_SIZE))
             }
 
             DashboardItemDropdownMenu(
@@ -990,14 +981,14 @@ fun ItemBottomUpdatedInfo(
                 Icon(
                     modifier = Modifier.height(RuuviStationTheme.dimensions.mediumPlus * fontScale),
                     painter = painterResource(id = icon),
-                    tint = RuuviStationTheme.colors.primary.copy(alpha = 0.5f),
+                    tint = RuuviStationTheme.colors.primary.copy(alpha = 0.8f),
                     contentDescription = null,
                 )
             } else {
                 Icon(
                     modifier = Modifier.height(RuuviStationTheme.dimensions.mediumPlus * fontScale),
                     painter = painterResource(id = icon),
-                    tint = RuuviStationTheme.colors.primary.copy(alpha = 0.5f),
+                    tint = RuuviStationTheme.colors.primary.copy(alpha = 0.8f),
                     contentDescription = null,
                 )
             }
@@ -1120,12 +1111,22 @@ fun DashboardItemDropdownMenu(
                         )
                     }
                     DropdownMenuItem(onClick = {
-                        TagSettingsActivity.start(context, sensor.id)
+                        SensorCardActivity.start(context, sensor.id, SensorCardOpenType.ALERTS)
                         threeDotsMenuExpanded = false
                     }) {
                         Paragraph(
                             text = stringResource(
-                                id = R.string.settings_and_alerts
+                                id = R.string.alerts
+                            )
+                        )
+                    }
+                    DropdownMenuItem(onClick = {
+                        SensorCardActivity.start(context, sensor.id, SensorCardOpenType.SETTINGS)
+                        threeDotsMenuExpanded = false
+                    }) {
+                        Paragraph(
+                            text = stringResource(
+                                id = R.string.sensor_settings
                             )
                         )
                     }
@@ -1206,7 +1207,7 @@ fun DashboardItemDropdownMenu(
                     }
 
                     DropdownMenuItem(onClick = {
-                        TagSettingsActivity.startToRemove(context, sensor.id)
+                        SensorCardActivity.startToRemove(context, sensor.id)
                         threeDotsMenuExpanded = false
                     }) {
                         Paragraph(

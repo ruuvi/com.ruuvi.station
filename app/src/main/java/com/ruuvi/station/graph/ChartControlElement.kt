@@ -17,6 +17,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
@@ -35,6 +36,7 @@ import timber.log.Timber
 
 private const val CHART_SIZE_LEVEL_NORMAL = 1
 private const val CHART_SIZE_LEVEL_MAX = 3
+private val ChartToolbarHeight = 36.dp
 
 @Composable
 fun ChartControlElement2(
@@ -99,7 +101,10 @@ fun ChartControlElement2(
         }
     }
 
-    Row(verticalAlignment = Alignment.CenterVertically) {
+    Row(
+        modifier = Modifier.height(ChartToolbarHeight),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
         if (syncInProgress) {
             IconButton(onClick = {
                 disconnectDialogOpened = true
