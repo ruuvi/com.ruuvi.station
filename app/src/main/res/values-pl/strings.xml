@@ -113,6 +113,7 @@
     <string name="alert_subtitle_off">Wyłącz</string>
     <string name="alert_subtitle_on">Ostrzeżenie, gdy mniej niż %1$s lub więcej niż %2$s</string>
     <string name="alerts">Ostrzeżenia</string>
+    <string name="alerts_top_menu_hint">Ustawienia alarmów znajdują się teraz w nowym miejscu. Przejdź do ustawień alarmów za pomocą ikony dzwonka w górnym menu lub stuknij tutaj.</string>
     <string name="background_image">Obraz tła</string>
     <string name="background_notification_message">Możesz wyłączyć skanowanie w tle w ustawieniach</string>
     <string name="background_notification_scanning_every">Skanuj wszystko</string>
@@ -592,7 +593,6 @@
     <string name="main_view">Widok główny</string>
     <string name="full_image_view">Widok pełnego obrazu</string>
     <string name="history_view">Widok historii</string>
-    <string name="settings_and_alerts">Ustawienia i alerty</string>
     <string name="change_background">Zmień tło</string>
     <string name="check_claim_state">Sprawdzanie stanu przejęcia</string>
     <string name="claim_in_progress">Przejmowanie w toku</string>
@@ -702,6 +702,8 @@
     <string name="use_dev_server">Użyj serwera Dev</string>
     <string name="use_dev_server_description">Aby zastosować zmiany, po prostu zsynchronizuj dane z pulpitu nawigacyjnego lub poczekaj do następnej synchronizacji.</string>
     <string name="sensor_details">Szczegóły czujnika</string>
+    <string name="previous_sensor">Poprzedni czujnik</string>
+    <string name="next_sensor">Następny czujnik</string>
     <string name="nfc_dialog_add_sensor">Dodaj czujnik</string>
     <string name="nfc_dialog_name">Nazwa:</string>
     <string name="nfc_dialog_mac_address">Adres MAC:</string>

@@ -1,11 +1,15 @@
 package com.ruuvi.station.alarm.ui
 
+import android.Manifest
 import android.content.Context
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -22,6 +26,10 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.repeatOnLifecycle
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
@@ -37,51 +45,43 @@ import com.ruuvi.station.tagsettings.ui.SensorSettingsTitle
 import com.ruuvi.station.units.domain.UnitsConverter
 import com.ruuvi.station.units.model.UnitType
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import timber.log.Timber
 import java.text.DateFormat
 import java.util.*
 import kotlin.math.roundToInt
 
+private const val ALARM_REFRESH_INTERVAL_MILLIS = 1_000L
+
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun AlarmsGroup(
     scaffoldState: ScaffoldState,
-    viewModel: AlarmItemsViewModel
+    viewModel: AlarmItemsViewModel,
+    showTitle: Boolean = true,
 ) {
-    val notificationPermissionState = rememberPermissionState(
-        android.Manifest.permission.POST_NOTIFICATIONS
-    )
-
-    var permissionAsked by remember {
-        mutableStateOf(false)
-    }
-
-    LaunchedEffect(key1 = true) {
-        Timber.d("Alarms LaunchedEffect")
+    val lifecycleOwner = LocalLifecycleOwner.current
+    LaunchedEffect(viewModel, lifecycleOwner) {
         viewModel.initAlarms()
-        while (true) {
-            Timber.d("AlarmItems refreshAlarmState ")
-            viewModel.refreshAlarmState()
-            viewModel.refreshSensorState()
-            delay(1000)
+        lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+            while (isActive) {
+                viewModel.refreshAlarmState()
+                viewModel.refreshSensorState()
+                delay(ALARM_REFRESH_INTERVAL_MILLIS)
+            }
         }
     }
-    Timber.d("AlarmItems refresh ")
     val alarms = viewModel.alarms
 
-    val sensorState by viewModel.sensorState.collectAsState()
+    val sensorState by viewModel.sensorState.collectAsStateWithLifecycle()
 
-    if (!notificationPermissionState.status.isGranted && !permissionAsked && alarms.any { it.isEnabled.value }) {
-        permissionAsked = true
-        LaunchedEffect(key1 = true) {
-            notificationPermissionState.launchPermissionRequest()
-        }
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        AlarmNotificationPermissionEffect(alarms)
     }
 
     Column {
-        if (alarms.isNotEmpty()) SensorSettingsTitle(title = stringResource(id = R.string.alerts))
+        if (showTitle && alarms.isNotEmpty()) SensorSettingsTitle(title = stringResource(id = R.string.alerts))
         for (itemState in alarms) {
-            Timber.d("AlarmItem $itemState")
             val title = viewModel.getTitle(itemState.type)
             when (itemState.type) {
                 AlarmType.TEMPERATURE, AlarmType.HUMIDITY, AlarmType.PRESSURE, AlarmType.CO2,
@@ -140,7 +140,6 @@ fun AlarmsGroup(
                         setDescription = viewModel::setDescription,
                         manualRangeSave = viewModel::manualRangeSave
                     )
-                else -> {}
             }
         }
     }
@@ -149,6 +148,25 @@ fun AlarmsGroup(
         scaffoldState = scaffoldState,
         uiEvent = viewModel.uiEvent
     )
+}
+
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
+@OptIn(ExperimentalPermissionsApi::class)
+@Composable
+private fun AlarmNotificationPermissionEffect(alarms: List<AlarmItemState>) {
+    val notificationPermissionState = rememberPermissionState(
+        Manifest.permission.POST_NOTIFICATIONS,
+    )
+    var permissionAsked by rememberSaveable { mutableStateOf(false) }
+    val shouldRequestNotificationPermission = !notificationPermissionState.status.isGranted &&
+        !permissionAsked &&
+        alarms.any { it.isEnabled.value }
+    LaunchedEffect(shouldRequestNotificationPermission) {
+        if (shouldRequestNotificationPermission) {
+            permissionAsked = true
+            notificationPermissionState.launchPermissionRequest()
+        }
+    }
 }
 
 
