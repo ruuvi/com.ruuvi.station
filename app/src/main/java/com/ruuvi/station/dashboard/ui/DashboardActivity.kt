@@ -654,13 +654,17 @@ fun DashboardItem(
                                 if (bigValue.unitType is UnitType.AirQuality) {
                                     AQIDisplay(
                                         value = AQI.getAQI(sensor.latestMeasurement),
-                                        alertTriggered = sensor.alarmSensorStatus.triggered(AlarmType.AQI),
+                                        alertTriggered = bigValue.unitType.alarmType?.let {
+                                            sensor.alarmSensorStatus.triggered(it)
+                                        } ?: false,
                                     )
                                     Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.medium))
                                 } else {
                                     BigValueExtDisplay(
                                         value = bigValue,
-                                        alertTriggered = sensor.alarmSensorStatus.triggered(AlarmType.TEMPERATURE),
+                                        alertTriggered = bigValue.unitType.alarmType?.let {
+                                            sensor.alarmSensorStatus.triggered(it)
+                                        } ?: false,
                                         showTitle = true,
                                         modifier = Modifier,
                                     )
