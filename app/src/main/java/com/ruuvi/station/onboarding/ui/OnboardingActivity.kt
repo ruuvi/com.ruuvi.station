@@ -43,12 +43,13 @@ import com.ruuvi.station.util.extensions.viewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import org.kodein.di.KodeinAware
-import org.kodein.di.android.closestKodein
+import org.kodein.di.DI
+import org.kodein.di.DIAware
+import org.kodein.di.android.closestDI
 
-class OnboardingActivity : AppCompatActivity(), KodeinAware {
+class OnboardingActivity : AppCompatActivity(), DIAware {
 
-    override val kodein by closestKodein()
+    override val di by closestDI()
 
     private val onboardingViewModel: OnboardingViewModel by viewModel()
 

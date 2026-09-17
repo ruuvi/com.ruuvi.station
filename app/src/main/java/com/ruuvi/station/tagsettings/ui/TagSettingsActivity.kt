@@ -40,28 +40,28 @@ import com.ruuvi.station.tagsettings.ui.notes.NotesViewModel
 import com.ruuvi.station.tagsettings.ui.visible_measurements.VisibleMeasurements
 import com.ruuvi.station.tagsettings.ui.visible_measurements.VisibleMeasurementsViewModel
 import com.ruuvi.station.util.extensions.viewModel
-import org.kodein.di.Kodein
-import org.kodein.di.KodeinAware
-import org.kodein.di.android.closestKodein
+import org.kodein.di.DI
+import org.kodein.di.DIAware
+import org.kodein.di.android.closestDI
 import java.util.*
 import kotlin.concurrent.scheduleAtFixedRate
 
-class TagSettingsActivity : AppCompatActivity(), KodeinAware {
+class TagSettingsActivity : AppCompatActivity(), DIAware {
 
-    override val kodein: Kodein by closestKodein()
+    override val di: DI by closestDI()
 
     private val viewModel: TagSettingsViewModel by viewModel {
-        intent.getStringExtra(TAG_ID)?.let {
-            TagSettingsViewModelArgs(
-                tagId = it,
-                newSensor = intent.getBooleanExtra(NEW_SENSOR, false),
-                openRemove = intent.getBooleanExtra(OPEN_REMOVE, false)
-            )
-        }
+        val tagId = intent.getStringExtra(TAG_ID)
+        if (tagId == null) throw IllegalArgumentException("Tag ID is required")
+        TagSettingsViewModelArgs(
+            tagId = tagId,
+            newSensor = intent.getBooleanExtra(NEW_SENSOR, false),
+            openRemove = intent.getBooleanExtra(OPEN_REMOVE, false)
+        )
     }
 
     private val alarmsViewModel: AlarmItemsViewModel by viewModel {
-        intent.getStringExtra(TAG_ID)
+        intent.getStringExtra(TAG_ID) ?: ""
     }
 
     private var timer: Timer? = null
@@ -151,10 +151,8 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
                                 enterTransition = enterTransition,
                                 exitTransition = exitTransition
                             ) {
-                                val removeSensorViewModel: RemoveSensorViewModel by viewModel() {
-                                    intent.getStringExtra(TAG_ID)?.let {
-                                        RemoveSensorViewModelArgs(it)
-                                    }
+                                val removeSensorViewModel: RemoveSensorViewModel by viewModel {
+                                    RemoveSensorViewModelArgs(intent.getStringExtra(TAG_ID) ?: "")
                                 }
                                 RemoveSensor(
                                     scaffoldState = scaffoldState,
@@ -168,10 +166,8 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
                                 enterTransition = enterTransition,
                                 exitTransition = exitTransition
                             ) {
-                                val visibleMeasurementsViewModel: VisibleMeasurementsViewModel by viewModel() {
-                                    intent.getStringExtra(TAG_ID)?.let {
-                                        it
-                                    }
+                                val visibleMeasurementsViewModel: VisibleMeasurementsViewModel by viewModel {
+                                    intent.getStringExtra(TAG_ID) ?: ""
                                 }
                                 val useDefault by visibleMeasurementsViewModel.useDefaultOrder.collectAsStateWithLifecycle()
                                 val sensorState by visibleMeasurementsViewModel.sensorState.collectAsStateWithLifecycle()
@@ -195,10 +191,8 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
                                 enterTransition = enterTransition,
                                 exitTransition = exitTransition
                             ) {
-                                val ledControlViewModel: LedControlViewModel by viewModel() {
-                                    intent.getStringExtra(TAG_ID)?.let {
-                                        it
-                                    }
+                                val ledControlViewModel: LedControlViewModel by viewModel {
+                                    intent.getStringExtra(TAG_ID) ?: ""
                                 }
                                 LedControlScreen(
                                     viewModel = ledControlViewModel
@@ -210,10 +204,8 @@ class TagSettingsActivity : AppCompatActivity(), KodeinAware {
                                 enterTransition = enterTransition,
                                 exitTransition = exitTransition
                             ) {
-                                val notesViewModel: NotesViewModel by viewModel() {
-                                    intent.getStringExtra(TAG_ID)?.let {
-                                        it
-                                    }
+                                val notesViewModel: NotesViewModel by viewModel {
+                                    intent.getStringExtra(TAG_ID) ?: ""
                                 }
                                 val note by notesViewModel.note.collectAsStateWithLifecycle()
                                 Notes(

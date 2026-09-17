@@ -13,9 +13,9 @@ import com.ruuvi.station.widgets.domain.ComplexWidgetPreferencesInteractor
 import com.ruuvi.station.widgets.domain.WidgetPreferencesInteractor
 import com.ruuvi.station.widgets.ui.complexWidget.ComplexWidgetProvider
 import com.ruuvi.station.widgets.ui.simpleWidget.SimpleWidget
-import org.kodein.di.Kodein
-import org.kodein.di.android.kodein
-import org.kodein.di.generic.instance
+import org.kodein.di.DI
+import org.kodein.di.android.closestDI
+import org.kodein.di.instance
 import java.util.Locale
 import java.util.concurrent.TimeUnit
 
@@ -160,8 +160,8 @@ object WidgetRefreshScheduler {
         val appWidgetIds = installedWidgetIds(applicationContext, SimpleWidget::class.java)
         if (appWidgetIds.isEmpty()) return
 
-        val kodein: Kodein by kodein(applicationContext)
-        val simplePreferences: WidgetPreferencesInteractor by kodein.instance()
+        val di: DI by closestDI(applicationContext)
+        val simplePreferences: WidgetPreferencesInteractor by di.instance()
         val matchingWidgetIds = matchingSimpleWidgetIdsBySensor(
             appWidgetIds = appWidgetIds,
             sensorId = normalizedSensorId,
@@ -192,8 +192,8 @@ object WidgetRefreshScheduler {
         val appWidgetIds = installedWidgetIds(applicationContext, ComplexWidgetProvider::class.java)
         if (appWidgetIds.isEmpty()) return
 
-        val kodein: Kodein by kodein(applicationContext)
-        val complexPreferences: ComplexWidgetPreferencesInteractor by kodein.instance()
+        val di: DI by closestDI(applicationContext)
+        val complexPreferences: ComplexWidgetPreferencesInteractor by di.instance()
         val matchingWidgetIds = matchingComplexWidgetIdsBySensor(
             appWidgetIds = appWidgetIds,
             sensorId = normalizedSensorId,
