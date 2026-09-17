@@ -113,14 +113,14 @@ class DfuUpdateViewModel(
 
         if (!sensorFw.isSuccess) {
             return true
-        } else {
-            if (isNewerVersion(sensorFw.fw, latestFw)) {
-                return true
-            } else {
-                _stage.value = DfuUpdateStage.ALREADY_LATEST_VERSION
-                return false
-            }
         }
+
+        val isNewer = isNewerVersion(sensorFw.fw, latestFw)
+        if (!isNewer) {
+            _stage.value = DfuUpdateStage.ALREADY_LATEST_VERSION
+        }
+
+        return isNewer
     }
 
     fun getSensorFirmwareVersion() {
