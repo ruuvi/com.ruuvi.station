@@ -13,19 +13,79 @@ import com.ruuvi.station.database.tables.*
 class LocalDatabase {
     companion object {
         const val NAME = "LocalDatabase"
-        const val VERSION = 43
+        const val VERSION = 44
+        private fun ensureHistorySchema(database: DatabaseWrapper) {
+            ensureColumnIfMissing(database, "SensorSettings", "cloudHistoryDays") {
+                "ALTER TABLE SensorSettings ADD COLUMN cloudHistoryDays INTEGER"
+            }
+
+            database.execSQL("CREATE INDEX IF NOT EXISTS HistoryTimestamp ON TagSensorReading(createdAt)")
+
+            database.execSQL(
+                """CREATE TABLE IF NOT EXISTS HistoryCoverage (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT, sensorId TEXT, account TEXT, backend TEXT,
+                    startMillis INTEGER NOT NULL, endExclusiveMillis INTEGER NOT NULL, fetchedAt INTEGER NOT NULL
+                )"""
+            )
+
+            // Handle partially compatible schemas from earlier branch builds.
+            ensureColumnIfMissing(database, "HistoryCoverage", "sensorId") {
+                "ALTER TABLE HistoryCoverage ADD COLUMN sensorId TEXT"
+            }
+            ensureColumnIfMissing(database, "HistoryCoverage", "account") {
+                "ALTER TABLE HistoryCoverage ADD COLUMN account TEXT"
+            }
+            ensureColumnIfMissing(database, "HistoryCoverage", "backend") {
+                "ALTER TABLE HistoryCoverage ADD COLUMN backend TEXT"
+            }
+            ensureColumnIfMissing(database, "HistoryCoverage", "startMillis") {
+                "ALTER TABLE HistoryCoverage ADD COLUMN startMillis INTEGER NOT NULL DEFAULT 0"
+            }
+            ensureColumnIfMissing(database, "HistoryCoverage", "endExclusiveMillis") {
+                "ALTER TABLE HistoryCoverage ADD COLUMN endExclusiveMillis INTEGER NOT NULL DEFAULT 0"
+            }
+            ensureColumnIfMissing(database, "HistoryCoverage", "fetchedAt") {
+                "ALTER TABLE HistoryCoverage ADD COLUMN fetchedAt INTEGER NOT NULL DEFAULT 0"
+            }
+
+            database.execSQL("CREATE INDEX IF NOT EXISTS HistoryCoverageSensor ON HistoryCoverage(sensorId)")
+        }
+
+        private fun ensureColumnIfMissing(
+            database: DatabaseWrapper,
+            table: String,
+            column: String,
+            alterSql: () -> String
+        ) {
+            if (hasColumn(database, table, column)) return
+            database.execSQL(alterSql())
+        }
+
+        private fun hasColumn(database: DatabaseWrapper, table: String, column: String): Boolean {
+            val cursor = database.rawQuery("PRAGMA table_info($table)", emptyArray())
+            try {
+                val nameIndex = cursor.getColumnIndex("name")
+                while (cursor.moveToNext()) {
+                    if (nameIndex >= 0 && cursor.getString(nameIndex) == column) return true
+                }
+            } finally {
+                cursor.close()
+            }
+            return false
+        }
+    }
+
+    @Migration(version = 44, database = LocalDatabase::class)
+    class Migration44HistorySchemaCompat : BaseMigration() {
+        override fun migrate(database: DatabaseWrapper) {
+            ensureHistorySchema(database)
+        }
     }
 
     @Migration(version = 43, database = LocalDatabase::class)
     class Migration43 : BaseMigration() {
         override fun migrate(database: DatabaseWrapper) {
-            database.execSQL("ALTER TABLE SensorSettings ADD COLUMN cloudHistoryDays INTEGER")
-            database.execSQL("CREATE INDEX IF NOT EXISTS HistoryTimestamp ON TagSensorReading(createdAt)")
-            database.execSQL("""CREATE TABLE IF NOT EXISTS HistoryCoverage (
-                id INTEGER PRIMARY KEY AUTOINCREMENT, sensorId TEXT, account TEXT, backend TEXT,
-                startMillis INTEGER NOT NULL, endExclusiveMillis INTEGER NOT NULL, fetchedAt INTEGER NOT NULL
-            )""")
-            database.execSQL("CREATE INDEX IF NOT EXISTS HistoryCoverageSensor ON HistoryCoverage(sensorId)")
+            ensureHistorySchema(database)
         }
     }
 
