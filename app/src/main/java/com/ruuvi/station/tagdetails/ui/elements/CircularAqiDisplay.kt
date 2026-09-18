@@ -40,7 +40,12 @@ fun CircularAQIDisplay(
         CircularGradientProgress(
             progress = aqi.score?.toFloat() ?: 0f,
             progressText = aqi.scoreString,
-            lineColor = aqi.color
+            lineColor = aqi.color,
+            progressTextColor = if (alertActive) {
+                RuuviStationTheme.colors.activeAlert
+            } else {
+                Color.White
+            },
         )
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.medium))
         Text(

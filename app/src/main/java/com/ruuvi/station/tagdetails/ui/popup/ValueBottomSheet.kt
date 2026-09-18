@@ -31,6 +31,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.ruuvi.station.R
+import com.ruuvi.station.alarm.domain.AlarmSensorStatus
 import com.ruuvi.station.app.ui.components.MarkupText
 import com.ruuvi.station.app.ui.components.limitScaleTo
 import com.ruuvi.station.app.ui.components.modifier.fadingEdge
@@ -51,9 +52,10 @@ import java.util.Date
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ValueBottomSheet (
+fun ValueBottomSheet(
     sheetValue: EnvironmentValue,
     extraValues: List<EnvironmentValue> = listOf(),
+    alarmStatus: AlarmSensorStatus,
     modifier: Modifier = Modifier,
     chartHistory: ChartData?,
     maxHeight: Int,
@@ -83,6 +85,7 @@ fun ValueBottomSheet (
             AirValueSheetContent(
                 sheetValue = sheetValue,
                 extraValues = extraValues,
+                alarmStatus = alarmStatus,
                 maxHeight = maxHeight,
                 lastUpdate = lastUpdate,
                 chartHistory = chartHistory,
@@ -92,6 +95,7 @@ fun ValueBottomSheet (
         } else {
             ValueSheetContent(
                 sheetValue = sheetValue,
+                alertActive = alarmStatus.isTriggeredFor(sheetValue),
                 maxHeight = maxHeight,
                 chartHistory = chartHistory,
                 scrollToChart = scrollToChart,
@@ -103,6 +107,7 @@ fun ValueBottomSheet (
 @Composable
 fun ValueSheetContent(
     sheetValue: EnvironmentValue,
+    alertActive: Boolean = false,
     maxHeight: Int,
     chartHistory: ChartData?,
     scrollToChart: (UnitType) -> Unit
@@ -115,7 +120,10 @@ fun ValueSheetContent(
             .padding(horizontal = RuuviStationTheme.dimensions.screenPadding)
             .verticalScroll(scrollState)
     ) {
-        ValueSheetHeader(sheetValue)
+        ValueSheetHeader(
+            sheetValue = sheetValue,
+            alertActive = alertActive,
+        )
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
         if (sheetValue.unitType != UnitType.MovementUnit.MovementsCount && sheetValue.unitType != UnitType.MsnUnit.MsnCount) {
             if (chartHistory != null && chartHistory.segments.isNotEmpty()) {
@@ -159,6 +167,7 @@ fun got2DaysOfHistory(chartHistory: ChartData?): Boolean {
 fun AirValueSheetContent(
     sheetValue: EnvironmentValue,
     extraValues: List<EnvironmentValue> = listOf(),
+    alarmStatus: AlarmSensorStatus = AlarmSensorStatus.NoAlarms,
     maxHeight: Int,
     lastUpdate: Date?,
     chartHistory: ChartData?,
@@ -175,7 +184,10 @@ fun AirValueSheetContent(
             .padding(horizontal = RuuviStationTheme.dimensions.screenPadding)
             .verticalScroll(scrollState)
     ) {
-        ValueSheetHeader(sheetValue)
+        ValueSheetHeader(
+            sheetValue = sheetValue,
+            alertActive = alarmStatus.isTriggeredFor(sheetValue),
+        )
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
 
         if (chartHistory != null && chartHistory.segments.isNotEmpty()) {
@@ -211,6 +223,7 @@ fun AirValueSheetContent(
                     unit = extra.unitString,
                     name = stringResource(extra.unitType.measurementName),
                     score = QualityCalculator.calc(extra),
+                    alertActive = alarmStatus.isTriggeredFor(extra),
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     coroutineScope.launch {
@@ -248,6 +261,8 @@ fun NoHistoryData() {
     }
 }
 
+private fun AlarmSensorStatus.isTriggeredFor(value: EnvironmentValue): Boolean =
+    value.unitType.alarmType?.let { triggered(it) } ?: false
 
 @Preview
 @Composable
