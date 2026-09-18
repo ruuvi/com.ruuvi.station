@@ -708,6 +708,7 @@ fun SensorCard(
             ValueBottomSheet(
                 sheetValue = value,
                 extraValues = extraValues,
+                alarmStatus = sensor.alarmSensorStatus,
                 chartHistory = chartHistory,
                 maxHeight = size.height,
                 lastUpdate = sensor.latestMeasurement?.updatedAt,

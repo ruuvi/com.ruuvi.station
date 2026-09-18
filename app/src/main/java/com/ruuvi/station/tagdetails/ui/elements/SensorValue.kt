@@ -44,11 +44,13 @@ fun SensorValueItem(
     clickAction: () -> Unit
 ) {
     val shape = RoundedCornerShape(itemHeight / 2)
+    val alertColor = RuuviStationTheme.colors.activeAlert
+    val valueColor = if (alertActive) alertColor else Color.White
 
     val borderModifier = if (alertActive) {
         Modifier.border(
-            width = 1.5.dp,
-            color = RuuviStationTheme.colors.activeAlert.copy(alpha = blinkingAlpha()),
+            width = 1.dp,
+            color = alertColor.copy(alpha = blinkingAlpha()),
             shape = shape
         )
     } else Modifier
@@ -88,7 +90,7 @@ fun SensorValueItem(
                     fontFamily = ruuviStationFonts.mulishBold,
                     fontWeight = FontWeight.Bold,
                     text = value,
-                    color = Color.White
+                    color = valueColor
                 )
 
                 Text(
@@ -132,7 +134,7 @@ fun SensorUnitName(
 
     val borderModifier = if (alertActive) {
         Modifier.border(
-            width = 1.5.dp,
+            width = 1.dp,
             color = RuuviStationTheme.colors.activeAlert.copy(alpha = blinkingAlpha()),
             shape = shape
         )
