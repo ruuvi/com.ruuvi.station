@@ -115,6 +115,7 @@ fun ChartViewPrototype(
     chartData: MutableList<Entry>,
     unitsConverter: UnitsConverter,
     unitType: UnitType,
+    alertTriggered: Boolean,
     graphDrawDots: Boolean,
     showChartStats: Boolean,
     limits: Pair<Double,Double>?,
@@ -173,17 +174,29 @@ fun ChartViewPrototype(
                     Text(
                         fontFamily = ruuviStationFonts.mulishBold,
                         fontSize = RuuviStationTheme.fontSizes.small.scaledToMax(max = 20.sp),
-                        text = if (unitType.measurementCode == "AQI") "$latestValue/100" else latestValue,
-                        color = RuuviStationTheme.colors.buttonText
+                        text = latestValue,
+                        color = if (alertTriggered) {
+                            RuuviStationTheme.colors.activeAlert
+                        } else {
+                            RuuviStationTheme.colors.buttonText
+                        }
                     )
 
                     Text(
                         modifier = Modifier.padding(
-                            start = RuuviStationTheme.dimensions.small
+                            start = if (unitType is UnitType.AirQuality) {
+                                0.dp
+                            } else {
+                                RuuviStationTheme.dimensions.small
+                            }
                         ),
                         fontFamily = ruuviStationFonts.mulishBold,
                         fontSize = RuuviStationTheme.fontSizes.small.scaledToMax(max = 20.sp),
-                        text = stringResource(unitType.unit),
+                        text = if (unitType is UnitType.AirQuality) {
+                            "/100"
+                        } else {
+                            stringResource(unitType.unit)
+                        },
                         color = RuuviStationTheme.colors.buttonText
                     )
                 }

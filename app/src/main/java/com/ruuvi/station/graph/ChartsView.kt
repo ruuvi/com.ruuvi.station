@@ -23,6 +23,7 @@ import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.AxisBase
 import com.github.mikephil.charting.formatter.IAxisValueFormatter
 import com.ruuvi.station.R
+import com.ruuvi.station.alarm.domain.AlarmSensorStatus
 import com.ruuvi.station.app.ui.components.LoadingAnimation3dots
 import com.ruuvi.station.app.ui.components.modifier.fadingEdge
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
@@ -171,6 +172,7 @@ fun ChartsView(
            LandscapeChartsPrototype(
                modifier = modifier,
                chartContainers = chartContainers,
+               alarmStatus = sensor.alarmSensorStatus,
                unitsConverter = unitsConverter,
                graphDrawDots = graphDrawDots,
                scrollToChartEvent = scrollToChartEvent,
@@ -185,6 +187,7 @@ fun ChartsView(
                     VerticalChartsPrototype(
                         modifier = Modifier,
                         chartContainers = chartContainers,
+                        alarmStatus = sensor.alarmSensorStatus,
                         unitsConverter = unitsConverter,
                         graphDrawDots = graphDrawDots,
                         showChartStats = showChartStats,
@@ -202,6 +205,7 @@ fun ChartsView(
 fun VerticalChartsPrototype(
     modifier: Modifier,
     chartContainers: List<ChartContainer>,
+    alarmStatus: AlarmSensorStatus,
     unitsConverter: UnitsConverter,
     graphDrawDots: Boolean,
     showChartStats: Boolean,
@@ -249,11 +253,12 @@ fun VerticalChartsPrototype(
                                 data,
                                 unitsConverter,
                                 chartContainer.unitType,
-                                graphDrawDots,
-                                showChartStats,
+                                alertTriggered = alarmStatus.isTriggeredFor(chartContainer.unitType),
+                                graphDrawDots = graphDrawDots,
+                                showChartStats = showChartStats,
                                 limits = chartContainer.limits,
-                                from,
-                                to,
+                                from = from,
+                                to = to,
                                 sharedX = sharedX,
                             )
                         }
@@ -278,11 +283,12 @@ fun VerticalChartsPrototype(
                             data,
                             unitsConverter,
                             chartContainer.unitType,
-                            graphDrawDots,
-                            showChartStats,
+                            alertTriggered = alarmStatus.isTriggeredFor(chartContainer.unitType),
+                            graphDrawDots = graphDrawDots,
+                            showChartStats = showChartStats,
                             limits = chartContainer.limits,
-                            from,
-                            to,
+                            from = from,
+                            to = to,
                             sharedX = sharedX,
                         )
                     }
@@ -296,6 +302,7 @@ fun VerticalChartsPrototype(
 fun LandscapeChartsPrototype(
     modifier: Modifier,
     chartContainers: List<ChartContainer>,
+    alarmStatus: AlarmSensorStatus,
     unitsConverter: UnitsConverter,
     graphDrawDots: Boolean,
     scrollToChartEvent: Flow<UnitType>,
@@ -331,11 +338,12 @@ fun LandscapeChartsPrototype(
                 data,
                 unitsConverter,
                 chartContainer.unitType,
-                graphDrawDots,
-                showChartStats,
+                alertTriggered = alarmStatus.isTriggeredFor(chartContainer.unitType),
+                graphDrawDots = graphDrawDots,
+                showChartStats = showChartStats,
                 limits = chartContainer.limits,
-                from,
-                to,
+                from = from,
+                to = to,
                 sharedX = sharedX,
             )
         }
@@ -360,6 +368,9 @@ fun EmptyCharts(modifier: Modifier) {
         )
     }
 }
+
+private fun AlarmSensorStatus.isTriggeredFor(unitType: UnitType): Boolean =
+    unitType.alarmType?.let { triggered(it) } ?: false
 
 fun setupChart(
     chart: LineChart,

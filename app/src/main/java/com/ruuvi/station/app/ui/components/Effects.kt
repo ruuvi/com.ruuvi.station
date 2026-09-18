@@ -1,6 +1,11 @@
 package com.ruuvi.station.app.ui.components
 
+import androidx.compose.animation.core.CubicBezierEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.*
@@ -34,19 +39,21 @@ fun BlinkingEffect(
 }
 
 @Composable
-fun blinkingAlpha(
-    blinkingEffect: (Long) -> Float = ::fadeBlinking
-): Float {
-    var blinkingAlpha by remember { mutableStateOf(1f) }
-
-    LaunchedEffect(true) {
-        while (true) {
-            val time = System.currentTimeMillis()
-            blinkingAlpha = blinkingEffect(time)
-            delay(50)
-        }
-    }
-    return blinkingAlpha
+fun blinkingAlpha(): Float {
+    val transition = rememberInfiniteTransition(label = "alert border pulse")
+    val alpha by transition.animateFloat(
+        initialValue = 1f,
+        targetValue = 0.3f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(
+                durationMillis = 1_000,
+                easing = CubicBezierEasing(0.42f, 0f, 0.58f, 1f),
+            ),
+            repeatMode = RepeatMode.Reverse,
+        ),
+        label = "alert border alpha",
+    )
+    return alpha
 }
 
 fun fadeBlinking(time: Long): Float {

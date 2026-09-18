@@ -310,7 +310,7 @@ fun SensorCard(
     scrollToChart: (UnitType) -> Unit
 ) {
     var showBottomSheet by remember { mutableStateOf(false) }
-    var sheetValue by remember { mutableStateOf<EnvironmentValue?>(null) }
+    var sheetUnitType by remember(sensor.id) { mutableStateOf<UnitType?>(null) }
     val itemHeight = 48.dp.scaleUpTo(MAXIMUM_FONT_SCALE)
     var size by remember { mutableStateOf(IntSize.Zero) }
     var topSize by remember { mutableStateOf(IntSize.Zero) }
@@ -354,7 +354,7 @@ fun SensorCard(
                         value = firstValue,
                     ) {
                         showBottomSheet = true
-                        sheetValue = firstValue
+                        sheetUnitType = firstValue.unitType
                     }
                 }
             }
@@ -391,7 +391,7 @@ fun SensorCard(
                         horizontalPadding = horizontalPadding,
                     ) {
                         showBottomSheet = true
-                        sheetValue = it
+                        sheetUnitType = it.unitType
                     }
                 }
             } else {
@@ -403,14 +403,15 @@ fun SensorCard(
                     horizontalPadding = horizontalPadding,
                 ) {
                     showBottomSheet = true
-                    sheetValue = it
+                    sheetUnitType = it.unitType
                 }
             }
         }
     }
 
     if (showBottomSheet) {
-        sheetValue?.let { value ->
+        val value = resolveCurrentSheetValue(sensor, sheetUnitType)
+        value?.let {
 
             val chartHistory by produceState<ChartData?>(
                 initialValue = null,
@@ -431,17 +432,31 @@ fun SensorCard(
             ValueBottomSheet(
                 sheetValue = value,
                 extraValues = extraValues,
+                alarmStatus = sensor.alarmSensorStatus,
                 chartHistory = chartHistory,
                 maxHeight = size.height,
                 lastUpdate = sensor.latestMeasurement?.updatedAt,
                 modifier = Modifier,
                 scrollToChart = scrollToChart,
-                onChangeValue = { newValue -> sheetValue = newValue}
+                onChangeValue = { newValue -> sheetUnitType = newValue.unitType }
             ) {
                 showBottomSheet = false
             }
         }
     }
+}
+
+internal fun resolveCurrentSheetValue(
+    sensor: RuuviTag,
+    selectedUnitType: UnitType?,
+): EnvironmentValue? {
+    if (selectedUnitType == null) return null
+
+    return sensor.valuesToDisplay.firstOrNull { it.unitType == selectedUnitType }
+        ?: listOfNotNull(
+            sensor.latestMeasurement?.pm25,
+            sensor.latestMeasurement?.co2,
+        ).firstOrNull { it.unitType == selectedUnitType }
 }
 
 @Composable
