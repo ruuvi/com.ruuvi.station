@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.Icon
 import androidx.compose.material.ScaffoldState
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
@@ -28,10 +29,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.ruuvi.station.R
-import com.ruuvi.station.alarm.ui.AlarmsGroup
-import com.ruuvi.station.alarm.ui.AlarmItemsViewModel
 import com.ruuvi.station.app.ui.UiText
 import com.ruuvi.station.app.ui.components.*
 import com.ruuvi.station.app.ui.components.dialog.CustomContentDialog
@@ -54,17 +54,21 @@ import com.ruuvi.station.units.model.UnitType.*
 fun SensorSettings(
     scaffoldState: ScaffoldState,
     onNavigate: (String) -> Unit,
+    onAlertsClick: () -> Unit,
     viewModel: TagSettingsViewModel,
-    alarmsViewModel: AlarmItemsViewModel
 ) {
     val context = LocalContext.current
-    val sensorState by viewModel.sensorState.collectAsState()
-    val userLoggedIn by viewModel.userLoggedIn.collectAsState()
-    val sensorOwnedByUser by viewModel.sensorOwnedByUser.collectAsState(initial = false)
-    val sensorIsShared by viewModel.sensorShared.collectAsState()
-    val sensorOwnedOrOffline by viewModel.sensorOwnedOrOffline.collectAsState(initial = false)
-    val isLowBattery by viewModel.isLowBattery.collectAsState(initial = false)
-    val firmware by viewModel.firmware.collectAsState(initial = null)
+    val sensorState by viewModel.sensorState.collectAsStateWithLifecycle()
+    val userLoggedIn by viewModel.userLoggedIn.collectAsStateWithLifecycle()
+    val sensorOwnedByUser by viewModel.sensorOwnedByUser.collectAsStateWithLifecycle(
+        initialValue = false,
+    )
+    val sensorIsShared by viewModel.sensorShared.collectAsStateWithLifecycle()
+    val sensorOwnedOrOffline by viewModel.sensorOwnedOrOffline.collectAsStateWithLifecycle(
+        initialValue = false,
+    )
+    val isLowBattery by viewModel.isLowBattery.collectAsStateWithLifecycle(initialValue = false)
+    val firmware by viewModel.firmware.collectAsStateWithLifecycle(initialValue = null)
     var showAskToClaimDialog by remember {
         mutableStateOf(false)
     }
@@ -123,10 +127,10 @@ fun SensorSettings(
             NotesGroup(sensorState = sensorState)
         }
 
-        AlarmsGroup(
-            scaffoldState,
-            alarmsViewModel
-        )
+        DividerSurfaceColor()
+        AlertsShortcutGroup(onClick = onAlertsClick)
+        DividerSurfaceColor()
+
         if (sensorOwnedOrOffline && sensorState.latestMeasurement != null) {
             CalibrationSettingsGroup(
                 sensorState = sensorState,
@@ -181,6 +185,49 @@ fun SensorSettings(
 }
 
 @Composable
+private fun AlertsShortcutGroup(onClick: () -> Unit) {
+    Column(modifier = Modifier.fillMaxWidth()) {
+        Text(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(RuuviStationTheme.colors.settingsTitle)
+                .padding(
+                    horizontal = RuuviStationTheme.dimensions.screenPadding,
+                    vertical = RuuviStationTheme.dimensions.mediumPlus,
+                ),
+            text = stringResource(id = R.string.alerts),
+            style = RuuviStationTheme.typography.title,
+        )
+
+        DividerSurfaceColor()
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable(onClick = onClick)
+                .background(RuuviStationTheme.colors.background)
+                .padding(
+                    horizontal = RuuviStationTheme.dimensions.screenPadding,
+                    vertical = RuuviStationTheme.dimensions.mediumPlus,
+                ),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                modifier = Modifier.weight(1f),
+                text = stringResource(id = R.string.alerts_top_menu_hint),
+                style = RuuviStationTheme.typography.paragraph,
+            )
+            Icon(
+                modifier = Modifier.padding(start = RuuviStationTheme.dimensions.mediumPlus),
+                painter = painterResource(id = R.drawable.arrow_forward_16),
+                tint = RuuviStationTheme.colors.trackInactive,
+                contentDescription = null,
+            )
+        }
+    }
+}
+
+@Composable
 fun SensorSettingsImage(
     sensorState: RuuviTag,
     onClick: () -> Unit
@@ -196,23 +243,30 @@ fun SensorSettingsImage(
     ) {
         Timber.d("Image path ${sensorState.userBackground} ")
 
-        if (sensorState.userBackground != null) {
-            val uri = sensorState.userBackground.toUri()
+        val defaultBackground = painterResource(
+            if (sensorState.isAir()) R.drawable.new_bg_air else R.drawable.new_bg2,
+        )
+        val backgroundUri = sensorState.userBackground
+            ?.takeIf(String::isNotBlank)
+            ?.toUri()
+            ?.takeIf { !it.path.isNullOrBlank() }
 
-            if (uri.path != null) {
-                AsyncImage(
-                    modifier = Modifier.fillMaxSize(),
-                    model = uri,
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop
-                )
-                Image(
-                    modifier = Modifier.fillMaxSize(),
-                    painter = painterResource(id = R.drawable.tag_bg_layer),
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop
-                )
-            }
+        if (backgroundUri != null) {
+            AsyncImage(
+                modifier = Modifier.fillMaxSize(),
+                model = backgroundUri,
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                error = defaultBackground,
+                fallback = defaultBackground,
+            )
+        } else {
+            Image(
+                modifier = Modifier.fillMaxSize(),
+                painter = defaultBackground,
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+            )
         }
     }
 

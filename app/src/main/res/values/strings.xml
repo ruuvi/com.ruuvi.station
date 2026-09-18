@@ -113,6 +113,7 @@
     <string name="alert_subtitle_off">Off</string>
     <string name="alert_subtitle_on">Alert when less than %1$s or more than %2$s</string>
     <string name="alerts">Alerts</string>
+    <string name="alerts_top_menu_hint">Alert settings are now located in a new place. Go to alert settings from the bell icon in the top menu or tap here.</string>
     <string name="background_image">Background image</string>
     <string name="background_notification_message">You can disable background scanning in settings</string>
     <string name="background_notification_scanning_every">Scanning every</string>
@@ -592,7 +593,6 @@ Total used shares for your account: %3$,d/%4$,d</string>
     <string name="main_view">Main view</string>
     <string name="full_image_view">Full image view</string>
     <string name="history_view">History view</string>
-    <string name="settings_and_alerts">Settings \u0026 alerts</string>
     <string name="change_background">Change background</string>
     <string name="check_claim_state">Checking claim state</string>
     <string name="claim_in_progress">Claiming in progress</string>

@@ -113,6 +113,7 @@
     <string name="alert_subtitle_off">Désactivé</string>
     <string name="alert_subtitle_on">Notifier si la valeur est inférieure à %1$s ou supérieure à %2$s</string>
     <string name="alerts">Notifications</string>
+    <string name="alerts_top_menu_hint">Les réglages des alertes se trouvent désormais à un nouvel emplacement. Accédez aux réglages des alertes depuis l’icône de cloche dans le menu supérieur ou appuyez ici.</string>
     <string name="background_image">Fond d\'écran</string>
     <string name="background_notification_message">Désactiver le balayage en arrière-plan dans les réglages</string>
     <string name="background_notification_scanning_every">Balayage toutes les</string>
@@ -592,7 +593,6 @@ Total des partages utilisés pour votre compte : %3$,d/%4$,d</string>
     <string name="main_view">Vue principale</string>
     <string name="full_image_view">Vue d\'ensemble de l\'image</string>
     <string name="history_view">Vue de l\'histoire</string>
-    <string name="settings_and_alerts">Paramètres \u0026 alertes</string>
     <string name="change_background">Changer le fond d\'écran</string>
     <string name="check_claim_state">Vérification de l\'état de la demande</string>
     <string name="claim_in_progress">Réclamation en cours</string>

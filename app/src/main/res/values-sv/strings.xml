@@ -113,6 +113,7 @@
     <string name="alert_subtitle_off">Av</string>
     <string name="alert_subtitle_on">Alarmera när mindre än %1$s eller mer än %2$s</string>
     <string name="alerts">Alarm</string>
+    <string name="alerts_top_menu_hint">Larminställningarna finns nu på en ny plats. Gå till larminställningarna via klockikonen i toppmenyn eller tryck här.</string>
     <string name="background_image">Bakgrundsbild</string>
     <string name="background_notification_message">Avaktivera bakgrundsskanning i inställningar</string>
     <string name="background_notification_scanning_every">Skanna varje</string>
@@ -592,7 +593,6 @@ Totalt antal använda delningar för ditt konto: %3$,d/%4$,d</string>
     <string name="main_view">Huvudvy</string>
     <string name="full_image_view">Bildvy</string>
     <string name="history_view">Historikvy</string>
-    <string name="settings_and_alerts">Inställningar \u0026 alarm</string>
     <string name="change_background">Byt bakgrund</string>
     <string name="check_claim_state">Kontrollerar anspråkstillstånd</string>
     <string name="claim_in_progress">Anspråk pågår</string>
