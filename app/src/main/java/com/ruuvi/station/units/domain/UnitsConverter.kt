@@ -38,15 +38,17 @@ class UnitsConverter (
     fun getAqiEnvironmentValue(
         value: AQI
     ): EnvironmentValue {
+        val maximum = AQI.AQI_MAX.toInt()
+        val suffix = "/$maximum"
         if (value.score != null) {
             val aqi = getValueWithoutUnit(value.score, Accuracy.Accuracy0)
             return EnvironmentValue(
                 original = value.score,
                 value = value.score,
                 accuracy = Accuracy.Accuracy0,
-                valueWithUnit = "$aqi/100 ${context.getString(AirQuality.AqiIndex.unit)}",
-                valueWithoutUnit = "$aqi/100",
-                unitString = context.getString(AirQuality.AqiIndex.unit),
+                valueWithUnit = "$aqi$suffix",
+                valueWithoutUnit = aqi,
+                unitString = suffix,
                 unitType = AirQuality.AqiIndex
             )
         } else {
@@ -54,9 +56,9 @@ class UnitsConverter (
                 original = 0.toDouble(),
                 value = 0.toDouble(),
                 accuracy = Accuracy.Accuracy0,
-                valueWithUnit = "$NO_VALUE_AVAILABLE/100 ${context.getString(R.string.air_quality)}",
-                valueWithoutUnit = "$NO_VALUE_AVAILABLE/100",
-                unitString = context.getString(R.string.air_quality),
+                valueWithUnit = "$NO_VALUE_AVAILABLE$suffix",
+                valueWithoutUnit = NO_VALUE_AVAILABLE,
+                unitString = suffix,
                 unitType = AirQuality.AqiIndex
             )
         }

@@ -54,7 +54,7 @@ fun BigValueDisplay(
             style = RuuviStationTheme.typography.dashboardBigValueUnit,
             fontSize = RuuviStationTheme.fontSizes.compact.limitScaleTo(1.5f),
             text = value.unitString,
-            color = textColor
+            color = RuuviStationTheme.colors.settingsTitleText
         )
 
     }
@@ -146,6 +146,7 @@ fun AQIDisplay(
             style = RuuviStationTheme.typography.dashboardBigValueUnit,
             fontSize = RuuviStationTheme.fontSizes.compact.limitScaleTo(1.2f),
             text = "/100",
+            color = RuuviStationTheme.colors.dashboardValue,
             modifier = Modifier
                 .constrainAs(superscript) {
                     top.linkTo(bigValue.top, 7.dp)
