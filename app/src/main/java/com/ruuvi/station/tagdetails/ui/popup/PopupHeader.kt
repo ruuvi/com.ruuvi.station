@@ -31,7 +31,8 @@ import com.ruuvi.station.units.model.UnitType
 @Composable
 fun ValueSheetHeader(
     sheetValue: EnvironmentValue,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    alertActive: Boolean = false,
 ) {
     val score = when (sheetValue.unitType) {
         is UnitType.AirQuality.AqiIndex -> ScoreAqi.score(sheetValue.value)
@@ -71,7 +72,12 @@ fun ValueSheetHeader(
                 ValueSheetHeaderText(
                     modifier = Modifier
                         .alignByBaseline(),
-                    text = sheetValue.valueWithoutUnit
+                    text = sheetValue.valueWithoutUnit,
+                    color = if (alertActive) {
+                        RuuviStationTheme.colors.activeAlertThemed
+                    } else {
+                        RuuviStationTheme.colors.popupHeaderText
+                    },
                 )
 
                 ValueSheetUnitText(
@@ -99,14 +105,15 @@ fun ValueSheetHeader(
 @Composable
 fun ValueSheetHeaderText(
     text: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    color: Color = RuuviStationTheme.colors.popupHeaderText,
 ) {
     Text(
         modifier = modifier,
         fontSize = RuuviStationTheme.fontSizes.normal.limitScaleTo(1.5f),
         fontFamily = ruuviStationFonts.mulishBold,
         text = text,
-        color = RuuviStationTheme.colors.popupHeaderText
+        color = color,
     )
 }
 

@@ -34,6 +34,12 @@ fun BigValueDisplay(
     modifier: Modifier = Modifier,
     clickAction: () -> Unit = {}
 ) {
+    val valueColor = if (alertActive) {
+        RuuviStationTheme.colors.activeAlert
+    } else {
+        Color.White
+    }
+
     Column(
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
@@ -60,7 +66,7 @@ fun BigValueDisplay(
                     fontSize = RuuviStationTheme.fontSizes.bigValue.fixedSp(),
                     fontFamily = ruuviStationFonts.oswaldBold,
                     text = value.valueWithoutUnit,
-                    color = Color.White
+                    color = valueColor
                 )
                 Text(
                     modifier = Modifier
@@ -107,4 +113,3 @@ private fun BigValueDisplayPreview() {
         )
     }
 }
-

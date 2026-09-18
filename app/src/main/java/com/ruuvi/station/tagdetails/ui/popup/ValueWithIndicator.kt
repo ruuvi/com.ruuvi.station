@@ -1,6 +1,6 @@
 package com.ruuvi.station.tagdetails.ui.popup
 
-
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -23,6 +23,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.ruuvi.station.app.ui.components.blinkingAlpha
 import com.ruuvi.station.app.ui.components.limitScaleTo
 import com.ruuvi.station.app.ui.components.scaleUpTo
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
@@ -40,13 +41,24 @@ fun ValueWithIndicator(
     name: String,
     itemHeight: Dp = RuuviStationTheme.dimensions.sensorCardValueItemHeight,
     score: QualityRange?,
+    alertActive: Boolean = false,
     modifier: Modifier = Modifier,
     clickAction: () -> Unit
 ) {
+    val alertColor = RuuviStationTheme.colors.activeAlertThemed
+    val alertBorder = if (alertActive) {
+        BorderStroke(
+            width = 1.dp,
+            color = alertColor.copy(alpha = blinkingAlpha()),
+        )
+    } else {
+        null
+    }
 
     Surface(
         shape = RoundedCornerShape(itemHeight / 2),
         color = RuuviStationTheme.colors.popupButtonBackground,
+        border = alertBorder,
         //shadowElevation = 1.dp,
         //tonalElevation = 2.dp,
         modifier = Modifier.height(itemHeight)
@@ -78,7 +90,11 @@ fun ValueWithIndicator(
                         fontFamily = ruuviStationFonts.mulishBold,
                         fontWeight = FontWeight.Bold,
                         text = value,
-                        color = RuuviStationTheme.colors.popupHeaderText
+                        color = if (alertActive) {
+                            alertColor
+                        } else {
+                            RuuviStationTheme.colors.popupHeaderText
+                        },
                     )
 
                     Text(
