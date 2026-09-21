@@ -44,6 +44,7 @@ class NetworkSignInInteractor (
             preferencesRepository.resetSubscriptionShareSettings()
             preferencesRepository.clearMarketingConsent()
             pushRegisterInteractor.checkAndRegisterDeviceToken()
+            sensorSettingsRepository.clearNetworkBackgroundTimestamps()
 
             val sensors = sensorSettingsRepository.getSensorSettings()
             for (sensor in sensors) {

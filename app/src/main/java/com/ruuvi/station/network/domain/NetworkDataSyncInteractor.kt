@@ -512,8 +512,7 @@ class NetworkDataSyncInteractor (
             localSettings.networkSensor = true
             localSettings.update()
         }
-        val localtime = localSettings.backgroundTimestamp
-        val networktime = sensor.lastUpdated
+
         if (localSettings.userBackground != null && sensor.lastUpdated < localSettings.backgroundTimestamp) {
             networkInteractor.uploadImageToSyncWithCloud(
                 sensorId = sensor.sensor,

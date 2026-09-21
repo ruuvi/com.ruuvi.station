@@ -1,8 +1,8 @@
 package com.ruuvi.station.network.domain
 
 import android.graphics.Bitmap
-import android.net.Uri
 import androidx.annotation.VisibleForTesting
+import androidx.core.net.toUri
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.ruuvi.station.BuildConfig
@@ -249,25 +249,42 @@ class RuuviNetworkRepository
     }
 
     suspend fun uploadImage(filename: String, request: UploadImageRequest, token: String): UploadImageResponse? = withContext(dispatcher) {
+        val fileUri = filename.toUri()
+        val bitmap = imageInteractor.getImage(fileUri) ?: return@withContext UploadImageResponse(
+            result = RuuviNetworkResponse.errorResult,
+            error = "Invalid image data",
+            data = null,
+            code = null
+        )
+
+        val stream = ByteArrayOutputStream()
+        val compressed = bitmap.compress(Bitmap.CompressFormat.JPEG, 60, stream)
+
+        if (!compressed || stream.size() == 0) {
+            bitmap.recycle()
+
+            return@withContext UploadImageResponse(
+                result = RuuviNetworkResponse.errorResult,
+                error = "Failed to encode image",
+                data = null,
+                code = null
+            )
+        }
+
+        val mediaType = request.type.toMediaType()
+        val body = stream.toByteArray().toRequestBody(mediaType)
+        bitmap.recycle()
+
         val response = retrofitService.uploadImage(getAuth(token), request)
         val result: UploadImageResponse?
         if (response.isSuccessful) {
             result = response.body()
             Timber.d("upload response: $result")
             result?.data?.uploadURL?.let { url->
-                val fileUri = Uri.parse(filename)
-                val bitmap = imageInteractor.getImage(fileUri)
-                bitmap?.let {
-                    val stream = ByteArrayOutputStream()
-                    bitmap.compress(Bitmap.CompressFormat.JPEG, 60, stream)
-                    val mediaType = request.type.toMediaType()
-                    val body = stream.toByteArray().toRequestBody(mediaType)
-                    retrofitService.uploadImageData(url, request.type, body)
-                    bitmap.recycle()
-                }
+                retrofitService.uploadImageData(url, request.type, body)
             }
         } else {
-            val type = object : TypeToken<ShareSensorResponse>() {}.type
+            val type = object : TypeToken<UploadImageResponse>() {}.type
             val errorResponse: UploadImageResponse? = Gson().fromJson(response.errorBody()?.charStream(), type)
             result = errorResponse
         }
