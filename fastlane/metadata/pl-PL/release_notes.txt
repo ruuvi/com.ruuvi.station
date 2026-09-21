@@ -1,0 +1,7 @@
+- Przeprojektowane widżety z elastycznym układem i bardziej niezawodnymi aktualizacjami
+- Ulepszony widok historii z ikonami pomiarów i elastycznymi układami wykresów
+- Wyświetlaj oczekujące udostępnienia czujników bezpośrednio w aplikacji
+- Dodano łatwy dostęp do ustawień subskrypcji newslettera
+- Ulepszona synchronizacja z chmurą, aktualizacje własności czujników i znaczniki czasu ustawień
+- Poprawiona niezawodność aktualizacji czujników Bluetooth
+- Inne drobne poprawki błędów i ulepszenia

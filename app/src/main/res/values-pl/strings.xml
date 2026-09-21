@@ -30,8 +30,8 @@
     <string name="particulate_matter_10">Pył zawieszony 1</string>
     <string name="pm10">PM1</string>
     <string name="particulate_matter_25">Pył zawieszony 2.5</string>
-    <string name="pm25">PM2.5</string>
     <string name="pm">PM</string>
+    <string name="pm25">PM2.5</string>
     <string name="particulate_matter_40">Pył zawieszony 4</string>
     <string name="pm40">PM4</string>
     <string name="particulate_matter_100">Pył zawieszony 10</string>
@@ -57,9 +57,9 @@
     <string name="measurement_sequence_number">Numer sekwencji pomiaru</string>
     <string name="meas_seq_number">Nr seq. pom.</string>
     <string name="sound">Dźwięk</string>
-    <string name="sound_avg">Dźwięk (średnia)</string>
-    <string name="sound_peak">Dźwięk (szczyt)</string>
-    <string name="sound_instant">Dźwięk (natychmiastowy)</string>
+    <string name="sound_avg">Średni dźwięk</string>
+    <string name="sound_peak">Szczyt dźwięku</string>
+    <string name="sound_instant">Dźwięk w czasie rzeczywistym</string>
     <string name="unit_pm10">µg/m³</string>
     <string name="unit_pm25">µg/m³</string>
     <string name="unit_pm40">µg/m³</string>
@@ -153,7 +153,7 @@
     <string name="help_added_tags">Dodane czujniki: %1$,d</string>
     <string name="help_db_data_points">Liczba pomiarów przechowywanych lokalnie: %1$,d</string>
     <string name="help_db_size">Rozmiar bazy danych: %1$,d kB</string>
-    <string name="help_more_to_read_text">Strona internetowa Ruuvi: ruuvi.com\nForum Ruuvi: f.ruuvi.com\nBlog Ruuvi: ruuvi.com/blog\nRuuvi na Twitterze: twitter.com/ruuvicom</string>
+    <string name="help_more_to_read_text">Strona internetowa Ruuvi: ruuvi.com\nForum Ruuvi: f.ruuvi.com\nBlog Ruuvi: ruuvi.com/blog\nRuuvi na Xze: x.com/ruuvicom</string>
     <string name="help_more_to_read_title">DOWIEDZ SIĘ WIĘCEJ</string>
     <string name="help_opensource_text">Tak jak czujniki Ruuvi, Ruuvi Station również jest narzędziem typu open-source: github.com/ruuvi</string>
     <string name="help_opensource_title">Open-source</string>
@@ -190,7 +190,7 @@
     <string name="my_ruuvi_account">Moje konto Ruuvi</string>
     <string name="min">min</string>
     <string name="minutes">Minuty</string>
-    <string name="more_info">WIĘCEJ INFORMACJI</string>
+    <string name="more_info">Więcej informacji</string>
     <string name="name">NAZWA</string>
     <string name="navigation_drawer_close">Zamknij menu nawigacji</string>
     <string name="navigation_drawer_open">Otwórz menu nawigacji</string>
@@ -257,14 +257,12 @@
     <string name="settings_gateway_details_link_url">https://docs.ruuvi.com/ruuvi-station-app/gateway</string>
     <string name="settings_gateway_device_identifier">Identyfikator urządzenia</string>
     <string name="settings_data_forwarding_test">Przetestuj przekazywanie danych</string>
-    <string name="settings_global_units">Jednostki globalne</string>
-    <string name="settings_global_units_description">Te ustawienia określają globalne jednostki używane w Ruuvi Station, z wyjątkiem wartości skonfigurowanych w ustawieniach widocznych pomiarów. Punkt rosy można skonfigurować oddzielnie w ustawieniach widocznych pomiarów.</string>
-    <string name="settings_resolution">Rozdzielczość</string>
-    <string name="settings_resolution_empty">Dodaj czujnik, aby zobaczyć dostępne ustawienia rozdzielczości</string>
     <string name="settings_humidity_unit">Jednostka wilgotności powietrza</string>
     <string name="settings_temperature">Temperatura</string>
     <string name="settings_humidity">Wilgotność</string>
     <string name="settings_pressure">Ciśnienie</string>
+    <string name="settings_global_units">Jednostki globalne</string>
+    <string name="settings_global_units_description">Te ustawienia określają globalne jednostki używane w Ruuvi Station, z wyjątkiem wartości skonfigurowanych w ustawieniach widocznych pomiarów. Punkt rosy można skonfigurować oddzielnie w ustawieniach widocznych pomiarów.</string>
     <string name="settings_humidity_unit_details">Wyświetl wybraną jednostkę wilgotności powietrza.</string>
     <string name="settings_pressure_unit">Jednostka ciśnienia</string>
     <string name="settings_pressure_unit_details">Wyświetl wybraną jednostkę ciśnienia.</string>
@@ -350,6 +348,12 @@
     <string name="share_sensor_description">Możesz udostępnić czujnik znajomym i rodzinie, jeśli znajduje się w zasięgu Ruuvi Gateway.\n\nOdbiorca zostanie powiadomiony e-mailem. Jeśli odbiorca nie ma konta Ruuvi, bezpłatne konto Ruuvi zostanie automatycznie utworzone przy pierwszym logowaniu.\n\nOdbiorca widzi udostępniony czujnik tak samo jak Ty. Gdy zmienisz pomiary widoczne w widoku czujnika, zmiany będą też obowiązywać u odbiorcy. Wszelkie ustawione przez Ciebie korekty offsetu również będą automatycznie aktualizowane u odbiorcy. Wyjątkiem są nazwa czujnika i obraz tła, które są przekazywane odbiorcy tylko raz w momencie udostępnienia, po czym odbiorca może zmieniać je niezależnie. Skonfigurowane przez Ciebie ustawienia alertów nie są przekazywane odbiorcy, który może zdefiniować własne alerty.</string>
     <string name="share_sensor_add_friend">Dodaj znajomego</string>
     <string name="share_sensor_already_shared">Wykorzystano %1$,d/%2$,d maksymalnej liczby udostępnień tego czujnika. Czujnik został udostępniony następującym użytkownikom:</string>
+    <string name="share_active_access_section_title">Użytkownicy z aktywnym dostępem do tego czujnika:</string>
+    <string name="share_active_access_empty_value">Jeszcze nikomu nie udostępniono</string>
+    <string name="share_sensor_shared_to_count_message">Wykorzystane udostępnienia dla tego czujnika: %1$,d/%2$,d
+
+Łączna liczba wykorzystanych udostępnień dla Twojego konta: %3$,d/%4$,d</string>
+    <string name="share_pending_section_title">Następujący użytkownicy zostali zaproszeni i czujnik został im udostępniony, ale dostęp nadal oczekuje, ponieważ nie utworzyli jeszcze bezpłatnego konta Ruuvi. Zaproszenia zostały wysłane, a dostęp zostanie przyznany po utworzeniu ich kont:</string>
     <string name="share_sensor_send_button">Wyślij</string>
     <string name="share_sensor_unshare_confirm">Czy chcesz cofnąć udostępnienie czujnika dla %1$s?</string>
     <string name="tagsettings_network_info">INFORMACJA O SIECI</string>
@@ -506,6 +510,9 @@
     <string name="widgets_gateway_only">Możesz używać widżetów Ruuvi, jeśli czujniki są w zasięgu Ruuvi Gateway albo ktoś udostępnił Ci czujnik Ruuvi.</string>
     <string name="widgets_missing_sensors">Nie widzisz wszystkich swoich czujników na liście? Upewnij się, że przejęto własność wszystkich czujników i że są one w zasięgu routera Ruuvi Gateway.</string>
     <string name="widgets_loading">ładowanie...</string>
+    <string name="widgets_preview_sensor_name">Sauna</string>
+    <string name="widgets_preview_sensor_value">69.50</string>
+    <string name="widgets_preview_time">7:45</string>
     <string name="widgets_select_sensor_value_type">Wybierz typ czujnika do wyświetlenia w widżecie</string>
     <string name="back">Wstecz</string>
     <string name="select_sensor">Wybierz czujnik</string>
@@ -536,6 +543,8 @@
     <string name="accuracy1_template">%1$,.1f %2$s</string>
     <string name="accuracy2_template">%1$,.2f %2$s</string>
     <string name="accuracy_description">Wybierz, z jaką dokładnością chcesz widzieć bieżące wartości pomiarowe czujników w aplikacji. To ustawienie nie wpływa na wykresy historii, eksport plików CSV i XLXS ani na alarmy.</string>
+    <string name="settings_resolution">Rozdzielczość</string>
+    <string name="settings_resolution_empty">Dodaj czujnik, aby zobaczyć dostępne ustawienia rozdzielczości</string>
     <string name="delete_account">Usuń konto</string>
     <string name="account_delete_confirmation_description">Potwierdzenie zostało wysłane na Twój adres e-mail. Aby kontynuować usuwanie, sprawdź skrzynkę odbiorczą i postępuj zgodnie z instrukcjami.</string>
     <string name="alert_dialog_title_temperature">Ustaw alert temperatury</string>
@@ -744,9 +753,9 @@
     <string name="widgets_enable_background_service">Włącz skanowanie w tle, aby zaktualizować wartości lokalnych czujników przez Bluetooth w widżecie. Nie jest to wymagane dla czujników w chmurze z Ruuvi Gateway. Interwał skanowania w tle można ustawić w ustawieniach aplikacji Ruuvi Station (obecnie ustawiony na %1$s).</string>
     <string name="increase_graph_size">Powiększ rozmiar wykresów</string>
     <string name="decrease_graph_size">Zmniejsz rozmiar wykresów</string>
-    <string name="sound_average_with_unit">Dźwięk (średnia) (%1$s)</string>
-    <string name="sound_peak_with_unit">Dźwięk (szczyt) (%1$s)</string>
-    <string name="sound_instant_with_unit">Dźwięk (natychmiastowy) (%1$s)</string>
+    <string name="sound_average_with_unit">Średni dźwięk (%1$s)</string>
+    <string name="sound_peak_with_unit">Szczyt dźwięku (%1$s)</string>
+    <string name="sound_instant_with_unit">Dźwięk w czasie rzeczywistym (%1$s)</string>
     <string name="export_csv_header_format_air">Data,Jakość powietrza,Temperatura (%1$s),Wilgotność (%2$s),Ciśnienie (%3$s),CO₂ (ppm),Indeks LZO,NOX,PM1 (µg/m³),PM2.5 (µg/m³),PM4 (µg/m³),PM10 (µg/m³),RSSI (dBm),Numer sekwencji pomiarowej</string>
     <string name="agree">Zgadzam się</string>
     <string name="decline">Odmów</string>
@@ -779,7 +788,7 @@
     <string name="description_text_humidity_absolute">Wilgotność bezwzględna określa rzeczywistą ilość pary wodnej w powietrzu, czyli ile gramów wody znajduje się w jednym [b]metrze sześciennym (g/m³)[/b] powietrza. W przeciwieństwie do wilgotności względnej nie zależy ona od temperatury i pokazuje faktyczną zawartość wilgoci w powietrzu.\n\n[title]Zakres docelowy[/title]\n\nDla wilgotności bezwzględnej nie istnieje uniwersalny zakres docelowy. W niektórych specjalnych pomieszczeniach, takich jak magazyny, hale produkcyjne czy laboratoria, może być wymagany jej pomiar. W takich przypadkach ustala się konkretne wartości graniczne.\n\n[title]Zalecane działania[/title]\n\nWilgotność bezwzględną reguluje się według tych samych zasad co wilgotność względną. W środowiskach przemysłowych można dodatkowo stosować specjalne nawilżacze lub osuszacze powietrza.\n\n[title]Wpływ na środowisko i komfort[/title]\n\nKontrola wilgotności bezwzględnej pomaga w [b]halach produkcyjnych, magazynach i laboratoriach[/b] zapobiegać psuciu się lub degradacji materiałów.\n\n[title]Wskazówki i dodatkowe informacje[/title]\n\nWilgotność bezwzględna nie jest wartością mierzoną bezpośrednio — jest [b]obliczana na podstawie pomiarów temperatury i wilgotności względnej czujnika[/b]. Aplikacja automatycznie przelicza te dane, dzięki czemu nie ma potrzeby wykonywania obliczeń ręcznie.</string>
     <string name="description_text_humidity_dewpoint">Punkt rosy to temperatura, w której [b]para wodna skrapla się w wodę[/b] (rosę). Jednostką może być °C, °F lub K. Punkt rosy pomaga ocenić ryzyko kondensacji i zrozumieć zachowanie wilgoci w pomieszczeniach.\n\n[title]Zakres docelowy[/title]\n\nNie istnieje uniwersalny zakres docelowy dla punktu rosy. Aby uniknąć kondensacji, temperatura punktu rosy powinna być niższa niż temperatura powietrza lub powierzchni.\n\n[title]Zalecane działania[/title]\n\nAby obniżyć temperaturę punktu rosy, należy zmniejszyć wilgotność względną lub – jeśli to możliwe – podnieść temperaturę powietrza lub powierzchni.\n\n[title]Wpływ na środowisko i komfort[/title]\n\nKondensacja występuje, gdy temperatura powietrza lub powierzchni spada do punktu rosy lub poniżej niego. Może to prowadzić do [b]rozwoju pleśni, korozji i uszkodzeń spowodowanych wilgocią[/b].\n\n[title]Wskazówki i dodatkowe informacje[/title]\n\nPunkt rosy dostarcza głębszej wiedzy o zachowaniu wilgoci niż sama wilgotność względna.</string>
     <string name="description_text_pressure">Ciśnienie barometryczne wskazuje siłę, z jaką atmosfera naciska na powierzchnię Ziemi. Dostępne jednostki to Pa, hPa, mmHg lub inHg.\n\n[title]Zakres docelowy[/title]\n\nCiśnienie powietrza nie ma określonego zakresu docelowego. Normalne ciśnienie na poziomie morza wynosi około 1013 hPa.\n\n[title]Zalecane działania[/title]\n\nNa ciśnienie atmosferyczne i jego zmiany nie mamy wpływu.\n\n[title]Wpływ na samopoczucie[/title]\n\nObserwuj zmiany ciśnienia, aby lepiej oceniać [b]zmiany pogody[/b]. Wysokie ciśnienie często wiąże się z pogodą słoneczną, natomiast niskie — z deszczem lub bardziej wilgotnymi warunkami. U osób wrażliwych wahania pogodowe mogą wpływać na samopoczucie i poziom energii.\n\n[title]Wskazówki i dodatkowe informacje[/title]\n\nPamiętaj, że wynik pomiaru zależy również od wysokości miejsca pomiaru nad poziomem morza. Wartość wskazywana przez czujnik nie jest skorygowana względem poziomu morza, jak w większości serwisów pogodowych, dlatego odczyt może różnić się od danych meteorologicznych.</string>
-    <string name="description_text_movement">Licznik ruchu pokazuje, ile zdarzeń ruchu czujnik wykrył za pomocą akcelerometru.\n\n[title]Cel pomiaru[/title]\n\nLicznik ruchu pozwala sprawdzić, czy czujnik został przesunięty, poruszony lub czy odczuwał wibracje z otoczenia. Czujnik nie wykrywa ruchu w otoczeniu tak jak typowy czujnik ruchu.\n\n[title]Wskazówki i dodatkowe informacje[/title]\n\nJeśli liczba pomiarów rośnie bez wyraźnej przyczyny, urządzenie może znajdować się na niestabilnej powierzchni lub w miejscu narażonym na wibracje albo inne źródła energii ruchu (np. parapet, wentylator, maszyna).\n\nCzujnik odczytuje dane z akcelerometru 10 razy na sekundę. Ruch jest rejestrowany, gdy przyspieszenie przekracza próg 0,064 g na dowolnej osi. 1 g odpowiada przyspieszeniu 9,81 m/s².</string>
+    <string name="description_text_movement">Licznik ruchu pokazuje, ile zdarzeń ruchu czujnik wykrył za pomocą akcelerometru.\n\n[title]Cel pomiaru[/title]\n\nLicznik ruchu pozwala sprawdzić, czy czujnik został przesunięty, poruszony lub czy odczuwał wibracje z otoczenia. Czujnik nie wykrywa ruchu w otoczeniu tak jak typowy czujnik ruchu.\n\n[title]Wskazówki i dodatkowe informacje[/title]\n\nJeśli liczba pomiarów rośnie bez wyraźnej przyczyny, urządzenie może znajdować się na niestabilnej powierzchni lub w miejscu narażonym na wibracje albo inne źródła energii ruchu (np. parapet, wentylator, maszyna).\n\nCzujnik odczytuje dane z akcelerometru 10 razy na sekundę. Ruch jest rejestrowany, gdy przyspieszenie przekracza próg 0,064 g na dowolnej osi. 1 g odpowiada przyspieszeniu 9,81 m/s².\n\nAplikacja używa licznika cyklicznego, którego wartość rośnie od 0 do 255 i po osiągnięciu wartości maksymalnej wraca do 0.</string>
     <string name="description_text_battery_voltage">Napięcie baterii pokazuje stan zasilania czujnika w woltach (V).\n\n[title]Cel pomiaru[/title]\n\nZbyt niskie napięcie baterii może powodować przerwy w transmisji danych. Monitorowanie napięcia pozwala odpowiednio wcześnie zauważyć, kiedy należy wymienić baterię, aby urządzenie działało bez zakłóceń.\n\n[title]Wskazówki i dodatkowe informacje[/title]\n[li]Nominalne napięcie nowej baterii typu pastylkowego wynosi 3,0 V.[/li][li]Gdy wartość spadnie do 2,5 V lub mniej w temperaturze pokojowej, bateria jest bliska wyczerpania.[/li][li]Nagły spadek napięcia może wynikać z niskiej temperatury lub starzenia się baterii.[/li][li]Aplikacja ostrzega o niskim poziomie naładowania baterii w zależności od temperatury:[/li][li2][b]Poniżej –20 °C (–4 °F):[/b] 2,0 V[/li2][li2][b]–20 … 0 °C (–4 … 32 °F):[/b] 2,3 V[/li2][li2][b]Powyżej 0 °C (32 °F):[/b] 2,5 V[/li2]\n[b]Zalecenie:[/b] Używaj wysokiej jakości baterii CR2477 lub CR2477T od renomowanego producenta. Typowa żywotność w normalnych warunkach wynosi około 1–2 lata.\n\n[b]Uwaga:[/b] Akumulatory lub baterie CR2477N nie są kompatybilne z czujnikami Ruuvi.</string>
     <string name="description_text_acceleration">Akcelerometr mierzy przyspieszenie wzdłuż trzech osi (x, y i z). Siła grawitacji Ziemi powoduje około [b]1 g przyspieszenia[/b] na osi skierowanej prostopadle do powierzchni ziemi.\n\n[title]Cel pomiaru[/title]\n\nCzujnik może być używany do obserwacji jego położenia lub orientacji.\n[li]Jeśli wartości pozostają stabilne, [b]czujnik jest nieruchomy[/b].[/li][li]Zmiany wartości wskazują, że czujnik został [b]poruszony lub przechylony[/b].[/li][li]Nagłe lub nieregularne skoki oznaczają [b]szybki ruch lub wibracje[/b], natomiast wyraźne zmiany poziomu zwykle wskazują na [b]zmianę orientacji[/b].[/li]\n[title]Wskazówki i dodatkowe informacje[/title]\n\nCzęstotliwość próbkowania i prędkość transmisji danych akcelerometru są zoptymalizowane pod kątem niskiego zużycia energii. Dane te nie są więc wystarczające do szczegółowej analizy drgań lub przyspieszeń.</string>
     <string name="description_text_signal_strength">Siła sygnału (RSSI) pokazuje moc pakietów danych odbieranych przez urządzenie mobilne z czujnika. Im bliżej wartość znajduje się zera, tym silniejszy jest sygnał. Jest to [b]informacja techniczna[/b], której nie trzeba śledzić podczas zwykłego użytkowania.\n\n[title]Cel pomiaru[/title]\n\nSłaby sygnał może powodować przerwy w połączeniu i opóźnienia w aktualizacji danych z czujnika. Możesz obserwować siłę sygnału podczas umieszczania czujnika w nowym miejscu. [b]Optymalna siła sygnału[/b] mieści się w zakresie od –80 do 0 dBm. Pamiętaj jednak, że siła sygnału stale się zmienia z powodu odbić. Różne urządzenia mobilne mogą również raportować wartości w nieco inny sposób, więc liczby nie zawsze są bezpośrednio porównywalne.\n\n[title]Wskazówki i dodatkowe informacje[/title]\n[li]Na jakość sygnału wpływają [b]odległość, ściany, inne przeszkody oraz zakłócenia powodowane przez inne urządzenia bezprzewodowe.[/b][/li][li]Jeśli sygnał jest słaby, [b]przenieś czujnik[/b] w miejsce z lepszą widocznością odbiornika. Wysokość umieszczenia czujnika również wpływa na zasięg – wyżej zamontowany czujnik zazwyczaj odbiera sygnał silniej.[/li]</string>
@@ -869,10 +878,12 @@
     <string name="update_now">Aktualizuj teraz</string>
     <string name="led_brightness_select_message">Wybierz żądany poziom jasności diody LED. Upewnij się, że jesteś w zasięgu Bluetooth swojego Ruuvi Air.</string>
     <string name="notes">Notatki</string>
-    <string name="communication_channels">Kanały komunikacji</string>
-    <string name="communication_channels_description">Mogę otrzymywać wskazówki i inne przydatne informacje dotyczące produktów Ruuvi.</string>
-    <string name="share_active_access_section_title">Użytkownicy z aktywnym dostępem do tego czujnika:</string>
-    <string name="share_active_access_empty_value">Jeszcze nikomu nie udostępniono</string>
-    <string name="share_sensor_shared_to_count_message">Wykorzystane udostępnienia dla tego czujnika: %1$,d/%2$,d\n\nŁączna liczba wykorzystanych udostępnień dla Twojego konta: %3$,d/%4$,d</string>
-    <string name="share_pending_section_title">Następujący użytkownicy zostali zaproszeni i czujnik został im udostępniony, ale dostęp nadal oczekuje, ponieważ nie utworzyli jeszcze bezpłatnego konta Ruuvi. Zaproszenia zostały wysłane, a dostęp zostanie przyznany po utworzeniu ich kont:</string>
+    <string name="newsletter_card_title">Subskrybuj promocje!</string>
+    <string name="newsletter_card_description">Subskrybuj newsletter Ruuvi i kupuj sensory zawsze w najlepszej cenie.</string>
+    <string name="newsletter_subscribe">Subskrybuj</string>
+    <string name="newsletter_url">https://ruuvi.com/join</string>
+    <string name="newsletter_subscription">Subskrypcja</string>
+    <string name="newsletter_subscription_confirmation">Sprawdź swoją pocztę e-mail, aby potwierdzić subskrypcję newslettera.</string>
+    <string name="communication_channels">Newsletter Ruuvi</string>
+    <string name="communication_channels_description">Otrzymuj przydatne wskazówki Ruuvi, aktualizacje produktów, informacje o funkcjach i okazjonalne oferty specjalne prosto na swoją skrzynkę.</string>
 </resources>

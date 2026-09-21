@@ -279,16 +279,6 @@ fun GeneralSettingsGroup(
                 value = sensorState.subscriptionName
             )
         }
-    } else {
-        DividerRuuvi()
-        TextEditWithCaptionButton(
-            title = stringResource(id = R.string.tagsettings_owner),
-            value = stringResource(id = R.string.owner_none),
-            icon = painterResource(id = R.drawable.arrow_forward_16),
-            tint = RuuviStationTheme.colors.trackInactive
-        ) {
-            ClaimSensorActivity.start(context, sensorState.id)
-        }
     }
 
     if (setNameDialog) {

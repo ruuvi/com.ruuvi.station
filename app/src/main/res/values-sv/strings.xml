@@ -30,8 +30,8 @@
     <string name="particulate_matter_10">Partiklar 1</string>
     <string name="pm10">PM1</string>
     <string name="particulate_matter_25">Partiklar 2.5</string>
-    <string name="pm25">PM2.5</string>
     <string name="pm">PM</string>
+    <string name="pm25">PM2.5</string>
     <string name="particulate_matter_40">Partiklar 4</string>
     <string name="pm40">PM4</string>
     <string name="particulate_matter_100">Partiklar 10</string>
@@ -57,9 +57,9 @@
     <string name="measurement_sequence_number">Mätningssekvensnummer</string>
     <string name="meas_seq_number">Mätn.seq.nr</string>
     <string name="sound">Ljud</string>
-    <string name="sound_avg">Ljud (genomsnitt)</string>
-    <string name="sound_peak">Ljud (topp)</string>
-    <string name="sound_instant">Ljud (momentan)</string>
+    <string name="sound_avg">Genomsnittligt ljud</string>
+    <string name="sound_peak">Ljudtopp</string>
+    <string name="sound_instant">Ljud i realtid</string>
     <string name="unit_pm10">µg/m³</string>
     <string name="unit_pm25">µg/m³</string>
     <string name="unit_pm40">µg/m³</string>
@@ -153,7 +153,7 @@
     <string name="help_added_tags">Tillagda sensorer: %1$,d</string>
     <string name="help_db_data_points">Sparade mätningar: %1$,d</string>
     <string name="help_db_size">Databasens storlek: %1$,d kB</string>
-    <string name="help_more_to_read_text">Ruuvis hemsida: ruuvi.com\nRuuvi Forum: f.ruuvi.com\nRuuvi Blog: ruuvi.com/blog\nRuuvi Twitter: twitter.com/ruuvicom</string>
+    <string name="help_more_to_read_text">Ruuvis hemsida: ruuvi.com\nRuuvi Forum: f.ruuvi.com\nRuuvi Blog: ruuvi.com/blog\nRuuvi X: x.com/ruuvicom</string>
     <string name="help_more_to_read_title">Läs mer</string>
     <string name="help_opensource_text">Precis som Ruuvi-sensorer är Ruuvi Station-appar öppen källkod. Följ utvecklingen och bidra på: github.com/ruuvi</string>
     <string name="help_opensource_title">Öppen källkod</string>
@@ -257,14 +257,12 @@
     <string name="settings_gateway_details_link_url">https://docs.ruuvi.com/ruuvi-station-app/gateway</string>
     <string name="settings_gateway_device_identifier">Enhetsidentifikation</string>
     <string name="settings_data_forwarding_test">Testa vidarebefordran av data</string>
-    <string name="settings_global_units">Globala enheter</string>
-    <string name="settings_global_units_description">Dessa inställningar definierar de globala enheter som används i Ruuvi Station, förutom värden som konfigureras i inställningarna för synliga mätningar. Daggpunkt kan konfigureras separat i inställningarna för synliga mätningar.</string>
-    <string name="settings_resolution">Upplösning</string>
-    <string name="settings_resolution_empty">Lägg till en sensor för att se tillgängliga upplösningsinställningar</string>
     <string name="settings_humidity_unit">Luftfuktighetsenhet</string>
     <string name="settings_temperature">Temperatur</string>
     <string name="settings_humidity">Fuktighet</string>
     <string name="settings_pressure">Lufttryck</string>
+    <string name="settings_global_units">Globala enheter</string>
+    <string name="settings_global_units_description">Dessa inställningar definierar de globala enheter som används i Ruuvi Station, förutom värden som konfigureras i inställningarna för synliga mätningar. Daggpunkt kan konfigureras separat i inställningarna för synliga mätningar.</string>
     <string name="settings_humidity_unit_details">Välj den fuktighetsenhet som du vill ska visas.</string>
     <string name="settings_pressure_unit">Tryckenhet</string>
     <string name="settings_pressure_unit_details">Välj den tryckenhet du vill ska visas.</string>
@@ -350,6 +348,12 @@
     <string name="share_sensor_description">Du kan dela sensorn med vänner och familj om den är inom räckhåll för en Ruuvi Gateway.\n\nMottagaren meddelas via e-post. Om mottagaren inte har ett Ruuvi-konto skapas ett gratis Ruuvi-konto automatiskt vid första inloggningen.\n\nMottagaren ser den delade sensorn på samma sätt som du gör. När du ändrar de mätningar som visas i sensorvyn träder ändringarna även i kraft för mottagaren. Även de offset-korrigeringar du ställer in uppdateras automatiskt för mottagaren. Som undantag överförs sensorns namn och bakgrundsbild endast en gång vid delningstillfället, varefter mottagaren kan ändra dem själv. De larminställningar du konfigurerar överförs inte till mottagaren, utan hen kan ställa in egna larm.</string>
     <string name="share_sensor_add_friend">Lägg till vän</string>
     <string name="share_sensor_already_shared">Du har använt %1$,d/%2$,d av det maximala antalet delningar för denna sensor. Sensorn delas med följande användare:</string>
+    <string name="share_active_access_section_title">Användare med aktiv åtkomst till denna sensor:</string>
+    <string name="share_active_access_empty_value">Inte delad med någon ännu</string>
+    <string name="share_sensor_shared_to_count_message">Använda delningar för denna sensor: %1$,d/%2$,d
+
+Totalt antal använda delningar för ditt konto: %3$,d/%4$,d</string>
+    <string name="share_pending_section_title">Följande användare har bjudits in och sensorn har delats med dem, men åtkomsten väntar fortfarande eftersom de ännu inte har skapat ett gratis Ruuvi-konto. Inbjudningar har skickats och åtkomst ges när deras konton har skapats:</string>
     <string name="share_sensor_send_button">Skicka</string>
     <string name="share_sensor_unshare_confirm">Vill du sluta dela sensorn med %1$s?</string>
     <string name="tagsettings_network_info">NÄTVERKSINFO</string>
@@ -506,6 +510,9 @@
     <string name="widgets_gateway_only">Du kan använda Ruuvi widgets om dina sensorer är inom räckhåll för en Ruuvi Gateway eller om någon har delat en Ruuvi Sensor med dig.</string>
     <string name="widgets_missing_sensors">Kan du inte se alla dina sensorer i listan? Se till att du har bekräftat ägandet av alla dina sensorer i applikationen och att de är inom räckhåll för Ruuvi Gateway-routern.</string>
     <string name="widgets_loading">laddar...</string>
+    <string name="widgets_preview_sensor_name">Bastu</string>
+    <string name="widgets_preview_sensor_value">69.50</string>
+    <string name="widgets_preview_time">19:45</string>
     <string name="widgets_select_sensor_value_type">Välj vilken typ av sensor som ska visas i widgeten</string>
     <string name="back">Tillbaka</string>
     <string name="select_sensor">Välj sensor</string>
@@ -536,6 +543,8 @@
     <string name="accuracy1_template">%1$,.1f %2$s</string>
     <string name="accuracy2_template">%1$,.2f %2$s</string>
     <string name="accuracy_description">Välj hur exakt du vill se sensorernas live-mätvärden i appen. Den här inställningen påverkar inte historikdiagram, export av CSV- och XLXS-filer eller alarm.</string>
+    <string name="settings_resolution">Upplösning</string>
+    <string name="settings_resolution_empty">Lägg till en sensor för att se tillgängliga upplösningsinställningar</string>
     <string name="delete_account">Radera konto</string>
     <string name="account_delete_confirmation_description">En bekräftelse skickas till din e-post. För att fortsätta med raderingen, kontrollera din inkorg och följ instruktionerna.</string>
     <string name="alert_dialog_title_temperature">Ställ in temperaturalarm</string>
@@ -744,9 +753,9 @@
     <string name="widgets_enable_background_service">Uppdatera lokala Bluetooth-sensorers data i widgeten genom att aktivera bakgrundsskanning. Detta behövs inte för molnsensorer vars data samlas in via Ruuvi Gateway. Intervall för bakgrundsskanning kan ställas in i Ruuvi Station-appens inställningar (för närvarande inställt på %1$s).</string>
     <string name="increase_graph_size">Förstora diagrammens storlek</string>
     <string name="decrease_graph_size">Minska diagrammens storlek</string>
-    <string name="sound_average_with_unit">Ljud (medel) (%1$s)</string>
-    <string name="sound_peak_with_unit">Ljud (topp) (%1$s)</string>
-    <string name="sound_instant_with_unit">Ljud (momentan) (%1$s)</string>
+    <string name="sound_average_with_unit">Genomsnittligt ljud (%1$s)</string>
+    <string name="sound_peak_with_unit">Ljudtopp (%1$s)</string>
+    <string name="sound_instant_with_unit">Ljud i realtid (%1$s)</string>
     <string name="export_csv_header_format_air">Datum,Luftkvalitet,Temperatur (%1$s),Luftfuktighet (%2$s),Lufttryck (%3$s),CO₂ (ppm),VOC-index,NOX,PM1 (µg/m³),PM2.5 (µg/m³),PM4 (µg/m³),PM10 (µg/m³),RSSI (dBm),Mätningssekvensnummer</string>
     <string name="agree">Godkänn</string>
     <string name="decline">Avböj</string>
@@ -780,7 +789,7 @@
     <string name="description_text_humidity_absolute">Absolut luftfuktighet anger den faktiska mängden vattenånga i luften, alltså hur många gram vatten som finns i en [b]kubikmeter luft (g/m³)[/b]. Till skillnad från relativ luftfuktighet beror den inte på temperaturen utan visar den faktiska mängden fukt i luften.\n\n[title]Målområde[/title]\n\nDet finns inget allmänt målområde för absolut luftfuktighet. Vissa miljöer, som lagerutrymmen, produktionsanläggningar och laboratorier, kan kräva mätning av absolut luftfuktighet med specifika gränsvärden.\n\n[title]Allmänna åtgärder[/title]\n\nAbsolut luftfuktighet regleras på samma sätt som relativ luftfuktighet. I industriella miljöer kan särskilda luftfuktare eller avfuktare användas.\n\n[title]Effekter på välbefinnandet[/title]\n\nKontroll av absolut luftfuktighet hjälper till att i [b]produktionslokaler, lager och laboratorier[/b] förhindra att material förstörs eller försämras.\n\n[title]Tips och ytterligare information[/title]\n\nAbsolut luftfuktighet mäts inte direkt utan [b]beräknas utifrån sensorns temperatur- och fuktighetsmätningar[/b]. Appen beräknar automatiskt absolut luftfuktighet från sensordata, så du behöver inte göra egna beräkningar.</string>
     <string name="description_text_humidity_dewpoint">Daggpunkten är den temperatur då [b]vattenånga kondenserar till vatten[/b] (dagg). Enheten kan anges i °C, °F eller K. Daggpunkten används för att bedöma risken för kondens och förstå hur fukt beter sig inomhus.\n\n[title]Målområde[/title]\n\nDet finns inget allmänt målområde för daggpunkten. För att undvika kondens bör daggpunkten vara lägre än luftens eller ytors temperatur.\n\n[title]Allmänna åtgärder[/title]\n\nFör att sänka daggpunkten bör du minska den relativa luftfuktigheten eller, om möjligt, höja luftens eller ytors temperatur.\n\n[title]Effekter på välbefinnandet[/title]\n\nKondensation uppstår när luftens eller en ytas temperatur sjunker till daggpunkten eller lägre. Detta kan orsaka [b]mögeltillväxt, korrosion och fuktskador[/b].\n\n[title]Tips och ytterligare information[/title]\n\nDaggpunkten ger en djupare förståelse för hur fukt beter sig än enbart relativ luftfuktighet.</string>
     <string name="description_text_pressure">Barometertryck visar det tryck som atmosfären utövar på jordens yta. Tillgängliga enheter är Pa, hPa, mmHg eller inHg.\n\n[title]Målområde[/title]\n\nDet finns inget målområde för lufttryck. Normalt tryck vid havsnivå är cirka 1013 hPa.\n\n[title]Allmänna åtgärder[/title]\n\nAtmosfäriskt tryck och dess variationer kan inte påverkas.\n\n[title]Effekter på välbefinnandet[/title]\n\nFölj förändringar i lufttrycket för att bedöma [b]vädervariationer[/b]. Högt tryck förknippas ofta med klart väder, medan lågt tryck tyder på regn eller fuktigare förhållanden. Väderomslag kan påverka välbefinnande och energinivå hos känsliga personer.\n\n[title]Tips och ytterligare information[/title]\n\nKom ihåg att det uppmätta värdet även beror på mätplatsens höjd över havet. Sensorns värde är inte justerat till havsnivå, vilket de flesta vädertjänster gör, så mätningen kan skilja sig från officiella rapporter.</string>
-    <string name="description_text_movement">Rörelseräknaren visar hur många rörelsehändelser sensorn har upptäckt med hjälp av sin accelerometer.\n\n[title]Syftet med mätningen[/title]\n\nRörelseräknaren hjälper dig att se om sensorn har flyttats, rubbats eller utsatts för vibrationer från omgivningen. Sensorn kan inte upptäcka rörelser i omgivningen som en rörelsesensor gör.\n\n[title]Tips och ytterligare information[/title]\n\nOm antalet mätningar ökar utan tydlig orsak kan enheten stå på en instabil yta eller vara placerad där vibrationer eller rörelseenergi förekommer (t.ex. fönsterbräda, fläkt eller maskin).\n\nSensorn avläser acceleration 10 gånger per sekund. Rörelse registreras om accelerationen överskrider 0,064 g på någon axel. 1 g motsvarar en acceleration på 9,81 m/s².</string>
+    <string name="description_text_movement">Rörelseräknaren visar hur många rörelsehändelser sensorn har upptäckt med hjälp av sin accelerometer.\n\n[title]Syftet med mätningen[/title]\n\nRörelseräknaren hjälper dig att se om sensorn har flyttats, rubbats eller utsatts för vibrationer från omgivningen. Sensorn kan inte upptäcka rörelser i omgivningen som en rörelsesensor gör.\n\n[title]Tips och ytterligare information[/title]\n\nOm antalet mätningar ökar utan tydlig orsak kan enheten stå på en instabil yta eller vara placerad där vibrationer eller rörelseenergi förekommer (t.ex. fönsterbräda, fläkt eller maskin).\n\nSensorn avläser acceleration 10 gånger per sekund. Rörelse registreras om accelerationen överskrider 0,064 g på någon axel. 1 g motsvarar en acceleration på 9,81 m/s².\n\nAppen använder en cyklisk räknare vars värde ökar från 0 till 255 och återgår till 0 efter att maxvärdet har uppnåtts.</string>
     <string name="description_text_battery_voltage">Batterispänningen visar sensorns strömkälla i volt (V).\n\n[title]Syftet med mätningen[/title]\n\nFör låg batterispänning kan orsaka avbrott i datakommunikationen. Genom att övervaka spänningen kan du i tid upptäcka när batteriet behöver bytas för att säkerställa kontinuerlig drift.\n\n[title]Tips och ytterligare information[/title]\n[li]En ny knappcells batteri har en nominell spänning på 3,0 V.[/li][li]När värdet sjunker till 2,5 volt eller lägre vid rumstemperatur är batteriet snart slut.[/li][li]En plötslig spänningsminskning kan bero på kyla eller batteriets åldrande.[/li][li]Appen varnar för låg batterinivå vid olika temperaturer enligt följande:[/li][li2][b]Under –20 °C:[/b] 2,0 V[/li2][li2][b]–20 … 0 °C:[/b] 2,3 V[/li2][li2][b]Över 0 °C:[/b] 2,5 V[/li2]\n[b]Rekommendation:[/b] Använd ett högkvalitativt CR2477- eller CR2477T-batteri från en pålitlig tillverkare. Batteriets livslängd under normala förhållanden är cirka 1–2 år.\n\n[b]Observera:[/b] Uppladdningsbara batterier eller CR2477N-modeller är inte kompatibla med Ruuvi-sensorer.</string>
     <string name="description_text_acceleration">Accelerometern mäter acceleration längs tre axlar (x, y och z). Jordens gravitation orsakar cirka [b]1 g acceleration[/b] på den axel som pekar rakt mot marken.\n\n[title]Syftet med mätningen[/title]\n\nSensorn kan användas för att observera dess position eller orientering.\n[li]Om värdena förblir stabila är [b]sensorn stilla[/b].[/li][li]Förändringar i värdena visar att sensorn har [b]flyttats eller lutats[/b].[/li][li]Snabba eller oregelbundna toppar tyder på [b]snabba rörelser eller vibrationer[/b], medan tydliga nivåändringar oftast indikerar en [b]ändrad orientering[/b].[/li]\n[title]Tips och ytterligare information[/title]\n\nAccelerometerns samplingsfrekvens och dataöverföringshastighet är optimerade för låg energiförbrukning. Därför är mätdata inte tillräckliga för detaljerad vibrations- eller rörelseanalys.</string>
     <string name="description_text_signal_strength">Signalstyrkan (RSSI) visar hur starka datapaketen som tas emot från sensorn är. Ju närmare värdet är noll, desto starkare är signalen. Detta är en [b]teknisk uppgift[/b] som vanligtvis inte behöver övervakas i normal användning.\n\n[title]Syftet med mätningen[/title]\n\nEn svag signal kan orsaka avbrott och fördröjningar i uppdateringen av sensordata. Du kan övervaka signalstyrkan när du placerar sensorn på en ny plats. [b]Optimal signalstyrka[/b] är mellan –80 och 0 dBm. Observera att signalstyrkan varierar hela tiden på grund av reflektioner. Olika mobila enheter kan också rapportera signalstyrka på olika sätt, så värdena är inte alltid direkt jämförbara.\n\n[title]Tips och ytterligare information[/title]\n[li]Signalens kvalitet påverkas av [b]avstånd, väggar och andra hinder samt störningar från andra trådlösa enheter.[/b][/li][li]Om signalen är svag, [b]flytta sensorn[/b] till en plats med bättre fri sikt mot mottagaren. Sensorns höjd över marken påverkar också räckvidden – en högre placering ger oftast bättre signal.[/li]</string>
@@ -867,10 +876,12 @@
     <string name="update_now">Uppdatera nu</string>
     <string name="led_brightness_select_message">Välj önskad LED-ljusstyrka. Se till att du är inom Ruuvi Airs Bluetooth-räckvidd.</string>
     <string name="notes">Anteckningar</string>
-    <string name="communication_channels">Kommunikationskanaler</string>
-    <string name="communication_channels_description">Jag kan komma att få tips och annan användbar information om Ruuvi-produkter.</string>
-    <string name="share_active_access_section_title">Användare med aktiv åtkomst till denna sensor:</string>
-    <string name="share_active_access_empty_value">Inte delad med någon ännu</string>
-    <string name="share_sensor_shared_to_count_message">Använda delningar för denna sensor: %1$,d/%2$,d\n\nTotalt antal använda delningar för ditt konto: %3$,d/%4$,d</string>
-    <string name="share_pending_section_title">Följande användare har bjudits in och sensorn har delats med dem, men åtkomsten väntar fortfarande eftersom de ännu inte har skapat ett gratis Ruuvi-konto. Inbjudningar har skickats och åtkomst ges när deras konton har skapats:</string>
+    <string name="newsletter_card_title">Prenumerera på erbjudanden!</string>
+    <string name="newsletter_card_description">Prenumerera på Ruuvís nyhetsbrev och få alltid sensorer till bästa pris.</string>
+    <string name="newsletter_subscribe">Prenumerera</string>
+    <string name="newsletter_url">https://ruuvi.com/join</string>
+    <string name="newsletter_subscription">Prenumeration</string>
+    <string name="newsletter_subscription_confirmation">Kontrollera din e-post för att bekräfta din prenumeration på nyhetsbrevet.</string>
+    <string name="communication_channels">Ruuvís nyhetsbrev</string>
+    <string name="communication_channels_description">Få användbara Ruuvi-tips, produktuppdateringar, funktionsnyheter och enstaka specialerbjudanden direkt till din inkorg.</string>
 </resources>

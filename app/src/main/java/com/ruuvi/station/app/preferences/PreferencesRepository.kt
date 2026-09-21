@@ -18,6 +18,12 @@ class PreferencesRepository(
     private val preferences: Preferences,
     private val sensorShareListRepository: SensorShareListRepository = SensorShareListRepository(),
     ) {
+    companion object {
+        const val CHART_SIZE_LEVEL_NORMAL = 1
+        const val CHART_SIZE_LEVEL_INCREASED = 2
+        const val CHART_SIZE_LEVEL_MAX = 3
+    }
+
     fun getTemperatureUnit(): TemperatureUnit =
         preferences.temperatureUnit
 
@@ -174,6 +180,8 @@ class PreferencesRepository(
     fun getExperimentalFeaturesLiveData() = preferences.getExperimentalFeaturesLiveData()
 
     fun getDeveloperSettingsLiveData() = preferences.getDeveloperSettingsLiveData()
+
+    fun getMarketingConsentLiveData() = preferences.getMarketingConsentLiveData()
 
     fun getTemperatureUnitLiveData() =
         preferences.getTemperatureUnitCodeLiveData().map { TemperatureUnit.getByCode(it) }
@@ -344,10 +352,21 @@ class PreferencesRepository(
     }
 
     fun isIncreasedChartSize(): Boolean =
-        preferences.increasedChartSize
+        preferences.chartSizeLevel > CHART_SIZE_LEVEL_NORMAL
 
     fun setIncreasedChartSize(increasedChartSize: Boolean) {
-        preferences.increasedChartSize = increasedChartSize
+        preferences.chartSizeLevel = if (increasedChartSize) {
+            CHART_SIZE_LEVEL_INCREASED
+        } else {
+            CHART_SIZE_LEVEL_NORMAL
+        }
+    }
+
+    fun getChartSizeLevel(): Int =
+        preferences.chartSizeLevel
+
+    fun setChartSizeLevel(chartSizeLevel: Int) {
+        preferences.chartSizeLevel = chartSizeLevel
     }
 
     fun isFirebaseConsent(): Boolean =
@@ -363,8 +382,15 @@ class PreferencesRepository(
     fun isDisableEmailNotifications(): Boolean =
         preferences.disableEmailNotifications
 
-    fun getMarketingPermission(): Boolean =
-        preferences.marketingPermission
+    fun getMarketingConsent(): Boolean = preferences.marketingConsent
+
+    fun setMarketingConsent(consent: Boolean) {
+        preferences.marketingConsent = consent
+    }
+
+    fun clearMarketingConsent() {
+        preferences.marketingConsent = false
+    }
 
     fun setNetworkSetting(settingName: String, value: String?, timestamp: Long) {
         when (settingName) {
@@ -517,12 +543,6 @@ NetworkSettingNames.SENSOR_ORDER -> {
                 preferences.tipsAllowedLastUpdated = timestamp
             }
 
-            NetworkSettingNames.MARKETING_PERMISSION -> {
-                val isAllowed = value?.toBooleanExtra() ?: return
-                preferences.marketingPermission = isAllowed
-                preferences.marketingPermissionLastUpdated = timestamp
-            }
-
             else -> Unit
         }
     }
@@ -553,7 +573,6 @@ NetworkSettingNames.SENSOR_ORDER -> {
             NetworkSettingNames.DISABLE_PUSH_NOTIFICATIONS -> if (preferences.disablePushNotifications) "1" else "0"
             NetworkSettingNames.DISABLE_TELEGRAM_NOTIFICATIONS -> if (preferences.disableTelegramNotifications) "1" else "0"
             NetworkSettingNames.TIPS_ALLOWED -> if (preferences.tipsAllowed) "1" else "0"
-            NetworkSettingNames.MARKETING_PERMISSION -> if (preferences.marketingPermission) "1" else "0"
             else -> null
         }
     }
@@ -584,7 +603,6 @@ NetworkSettingNames.SENSOR_ORDER -> {
             NetworkSettingNames.DISABLE_PUSH_NOTIFICATIONS -> preferences.disablePushNotificationsLastUpdated
             NetworkSettingNames.DISABLE_TELEGRAM_NOTIFICATIONS -> preferences.disableTelegramNotificationsLastUpdated
             NetworkSettingNames.TIPS_ALLOWED -> preferences.tipsAllowedLastUpdated
-            NetworkSettingNames.MARKETING_PERMISSION -> preferences.marketingPermissionLastUpdated
             else -> 0L
         }
     }

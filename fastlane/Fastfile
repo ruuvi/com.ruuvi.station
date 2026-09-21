@@ -6,7 +6,7 @@ fastlane_require "tmpdir"
 default_platform(:android)
 
 PACKAGE_NAME = "com.ruuvi.station"
-FASTLANE_DIR = __dir__
+FASTLANE_DIR = File.expand_path(__dir__)
 PROJECT_ROOT = File.expand_path("..", FASTLANE_DIR)
 CI_LOGS_DIR = File.join(PROJECT_ROOT, "ci-logs")
 SECRET_TMP_DIR = if ENV["RUNNER_TEMP"].to_s.strip.empty?
@@ -15,6 +15,8 @@ SECRET_TMP_DIR = if ENV["RUNNER_TEMP"].to_s.strip.empty?
                    File.join(ENV["RUNNER_TEMP"], "ruuvi-android-release")
                  end
 PLAY_METADATA_PATH = File.join(FASTLANE_DIR, "metadata")
+# Google Play limits release notes to 500 Unicode characters per language.
+PLAY_RELEASE_NOTES_MAX_CHARACTERS = 500
 PLAY_TRACKS = ["internal", "alpha", "beta", "production"]
 PLAY_RELEASE_STATUSES = ["completed", "draft", "halted", "inProgress"]
 
@@ -236,10 +238,34 @@ def metadata_has_play_screenshots?
   end
 end
 
-def metadata_has_play_changelogs?
-  Dir.glob(File.join(PLAY_METADATA_PATH, "*", "changelogs", "*.txt")).any? do |entry|
-    File.file?(entry) && !IGNORED_STORE_TEMPLATE_FILES.include?(File.basename(entry))
+def play_release_notes_path(locale)
+  File.join(PLAY_METADATA_PATH, locale, "release_notes.txt")
+end
+
+def staged_play_metadata_path(sync_mode, version_code)
+  return PLAY_METADATA_PATH unless ["changelogs", "all"].include?(sync_mode)
+
+  metadata_root = File.join(CI_LOGS_DIR, "play-metadata-sync")
+  FileUtils.rm_rf(metadata_root)
+  FileUtils.mkdir_p(metadata_root)
+  FileUtils.cp_r(File.join(PLAY_METADATA_PATH, "."), metadata_root) if sync_mode == "all"
+
+  play_metadata_locales.each do |locale|
+    release_notes_path = play_release_notes_path(locale)
+    UI.user_error!("No Google Play release notes found at #{release_notes_path}") unless File.file?(release_notes_path)
+
+    release_notes = File.read(release_notes_path, encoding: "UTF-8").strip
+    UI.user_error!("Google Play release notes are empty at #{release_notes_path}") if release_notes.empty?
+    if release_notes.length > PLAY_RELEASE_NOTES_MAX_CHARACTERS
+      UI.user_error!("Google Play release notes for #{locale} contain #{release_notes.length} characters (maximum #{PLAY_RELEASE_NOTES_MAX_CHARACTERS}). Shorten #{release_notes_path} and retry.")
+    end
+
+    changelog_dir = File.join(metadata_root, locale, "changelogs")
+    FileUtils.mkdir_p(changelog_dir)
+    File.write(File.join(changelog_dir, "#{version_code}.txt"), release_notes)
   end
+
+  metadata_root
 end
 
 def play_metadata_locales
@@ -298,20 +324,22 @@ def metadata_sync_options(options)
   allowed_modes = ["metadata", "changelogs", "images", "screenshots", "all"]
   UI.user_error!("sync_mode must be one of: #{allowed_modes.join(', ')}") unless allowed_modes.include?(sync_mode)
 
-  skip_metadata = ["changelogs", "images", "screenshots"].include?(sync_mode)
-  skip_changelogs = ["images", "screenshots"].include?(sync_mode)
-  skip_images = ["metadata", "screenshots"].include?(sync_mode)
-  skip_images = true if sync_mode == "changelogs"
-  skip_screenshots = ["metadata", "images"].include?(sync_mode)
-  skip_screenshots = true if sync_mode == "changelogs"
+  skip_metadata = !["metadata", "all"].include?(sync_mode)
+  skip_changelogs = !["changelogs", "all"].include?(sync_mode)
+  skip_images = !["images", "all"].include?(sync_mode)
+  skip_screenshots = !["screenshots", "all"].include?(sync_mode)
+
+  version_code = (options[:version_code] || ENV["PLAY_METADATA_VERSION_CODE"]).to_s.strip
+  UI.user_error!("Build number is required when syncing changelogs or all content") if !skip_changelogs && version_code.empty?
 
   UI.user_error!("No Google Play metadata files found at #{PLAY_METADATA_PATH}") if !skip_metadata && !directory_has_files?(PLAY_METADATA_PATH)
-  UI.user_error!("No Google Play changelog files found at #{PLAY_METADATA_PATH}") if !skip_changelogs && !metadata_has_play_changelogs?
   UI.user_error!("No Google Play image files found at #{PLAY_METADATA_PATH}") if !skip_images && !metadata_has_play_images?
   UI.user_error!("No Google Play screenshot files found at #{PLAY_METADATA_PATH}") if !skip_screenshots && !metadata_has_play_screenshots?
 
+  metadata_path = staged_play_metadata_path(sync_mode, version_code)
+
   supply_options = supply_base_options.merge(
-    metadata_path: PLAY_METADATA_PATH,
+    metadata_path: metadata_path,
     skip_upload_apk: true,
     skip_upload_aab: true,
     skip_upload_metadata: skip_metadata,
@@ -321,8 +349,7 @@ def metadata_sync_options(options)
     sync_image_upload: true
   )
 
-  version_code = (options[:version_code] || ENV["PLAY_METADATA_VERSION_CODE"]).to_s.strip
-  supply_options[:version_code] = positive_integer(version_code, "version_code") unless version_code.empty?
+  supply_options[:version_code] = positive_integer(version_code, "Build number") unless version_code.empty?
   supply_options
 end
 

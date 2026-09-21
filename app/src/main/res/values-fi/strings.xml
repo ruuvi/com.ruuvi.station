@@ -30,8 +30,8 @@
     <string name="particulate_matter_10">Pienhiukkaset 1</string>
     <string name="pm10">PM1</string>
     <string name="particulate_matter_25">Pienhiukkaset 2.5</string>
-    <string name="pm25">PM2.5</string>
     <string name="pm">PM</string>
+    <string name="pm25">PM2.5</string>
     <string name="particulate_matter_40">Pienhiukkaset 4</string>
     <string name="pm40">PM4</string>
     <string name="particulate_matter_100">Pienhiukkaset 10</string>
@@ -57,9 +57,9 @@
     <string name="measurement_sequence_number">Mittausjärjestysnumero</string>
     <string name="meas_seq_number">Mittausjärjestysnumero</string>
     <string name="sound">Ääni</string>
-    <string name="sound_avg">Ääni (keskiarvo)</string>
-    <string name="sound_peak">Ääni (huippu)</string>
-    <string name="sound_instant">Ääni (hetkellinen)</string>
+    <string name="sound_avg">Äänen keskiarvo</string>
+    <string name="sound_peak">Äänen huippuarvo</string>
+    <string name="sound_instant">Ääni reaaliajassa</string>
     <string name="unit_pm10">µg/m³</string>
     <string name="unit_pm25">µg/m³</string>
     <string name="unit_pm40">µg/m³</string>
@@ -153,7 +153,7 @@
     <string name="help_added_tags">Lisätyt anturit: %1$,d</string>
     <string name="help_db_data_points">Paikallisesti tallennettujen mittausten lukumäärä: %1$,d</string>
     <string name="help_db_size">Tietokannan koko: %1$,d kt</string>
-    <string name="help_more_to_read_text">Ruuvin kotisivu: ruuvi.com\nRuuvi Forum: f.ruuvi.com\nRuuvi blog: ruuvi.com/fi/blogi\nRuuvi Twitter: twitter.com/ruuvicom</string>
+    <string name="help_more_to_read_text">Ruuvin kotisivu: ruuvi.com\nRuuvi Forum: f.ruuvi.com\nRuuvi blog: ruuvi.com/fi/blogi\nRuuvi X: x.com/ruuvicom</string>
     <string name="help_more_to_read_title">Lue lisää</string>
     <string name="help_opensource_text">Kuten Ruuvi-anturit, Ruuvi Station -sovellukset perustuvat avoimeen lähdekoodiin. Seuraa kehitystä ja osallistu osoitteessa: github.com/ruuvi</string>
     <string name="help_opensource_title">Avoin lähdekoodi</string>
@@ -257,14 +257,12 @@
     <string name="settings_gateway_details_link_url">https://docs.ruuvi.com/ruuvi-station-app/gateway</string>
     <string name="settings_gateway_device_identifier">Laitteen tunniste</string>
     <string name="settings_data_forwarding_test">Testaa välityspalvelin</string>
-    <string name="settings_global_units">Yleiset yksiköt</string>
-    <string name="settings_global_units_description">Nämä asetukset määrittävät Ruuvi Stationissa käytettävät yleiset yksiköt lukuun ottamatta arvoja, jotka on määritetty näytettävien mittausten asetuksissa. Kastepisteen voi määrittää erikseen näytettävät mittaukset -sivulla.</string>
-    <string name="settings_resolution">Resoluutio</string>
-    <string name="settings_resolution_empty">Lisää anturi nähdäksesi käytettävissä olevat resoluutioasetukset</string>
     <string name="settings_humidity_unit">Kosteusyksikkö</string>
     <string name="settings_temperature">Lämpötila</string>
     <string name="settings_humidity">Kosteus</string>
     <string name="settings_pressure">Paine</string>
+    <string name="settings_global_units">Yleiset yksiköt</string>
+    <string name="settings_global_units_description">Nämä asetukset määrittävät Ruuvi Stationissa käytettävät yleiset yksiköt lukuun ottamatta arvoja, jotka on määritetty näytettävien mittausten asetuksissa. Kastepisteen voi määrittää erikseen näytettävät mittaukset -sivulla.</string>
     <string name="settings_humidity_unit_details">Valitse sovelluksessa käytettävä kosteusyksikkö.</string>
     <string name="settings_pressure_unit">Paineyksikkö</string>
     <string name="settings_pressure_unit_details">Valitse sovelluksessa käytettävä paineyksikkö.</string>
@@ -350,6 +348,12 @@
     <string name="share_sensor_description">Voit jakaa tämän anturin ystäville tai perheenjäsenille, mikäli laite on Ruuvi Gateway -reitittimen kuuluvuusalueella.\n\nVastaanottaja saa jakamisesta ilmoituksen sähköpostilla. Ilmainen Ruuvi-tili luodaan ensimmäisen sisäänkirjautumisen yhteydessä, mikäli vastaanottajalla ei ole vielä Ruuvi-tiliä.\n\nVastaanottaja näkee jaetun anturin samalla tavalla kuin sinä. Kun muokkaat anturinäkymässä näytettäviä mittauksia, muutokset tulevat voimaan myös vastaanottajalla. Myös asettamasi offset-korjaukset päivittyvät automaattisesti vastaanottajalle. Poikkeuksena anturin nimi ja taustakuva, jotka siirtyvät vastaanottajalle vain kerran jakamisen yhteydessä. Tämän jälkeen vastaanottaja voi muokata niitä itse. Asettamasi hälytysasetukset eivät siirry vastaanottajalle, vaan hän voi määrittää omat hälytyksensä.</string>
     <string name="share_sensor_add_friend">Lisää ystävä</string>
     <string name="share_sensor_already_shared">Olet käyttänyt %1$,d/%2$,d tämän anturin enimmäisjakomäärästä. Anturi on jaettu seuraaville käyttäjille:</string>
+    <string name="share_active_access_section_title">Käyttäjät, joilla on aktiivinen pääsy tähän anturiin:</string>
+    <string name="share_active_access_empty_value">Ei vielä jaettu kenellekään</string>
+    <string name="share_sensor_shared_to_count_message">Tälle anturille käytetyt jaot: %1$,d/%2$,d
+
+Tilillesi käytetyt jaot yhteensä: %3$,d/%4$,d</string>
+    <string name="share_pending_section_title">Seuraavat käyttäjät on kutsuttu ja anturi on jaettu heille, mutta käyttöoikeus odottaa vielä, koska he eivät ole vielä luoneet ilmaista Ruuvi-tiliä. Kutsut on lähetetty, ja käyttöoikeus myönnetään, kun heidän tilinsä on luotu:</string>
     <string name="share_sensor_send_button">Lähetä</string>
     <string name="share_sensor_unshare_confirm">Haluatko lopettaa anturin jakamisen käyttäjälle %1$s?</string>
     <string name="tagsettings_network_info">VERKON TIEDOT</string>
@@ -506,6 +510,9 @@
     <string name="widgets_gateway_only">Voit käyttää Ruuvin widgettejä mikäli anturisi ovat Ruuvi Gatewayn kuuluvuusalueella tai mikäli joku on jakanut sinulle Ruuvi-anturin.</string>
     <string name="widgets_missing_sensors">Etkö näe kaikkia antureitasi listassa? Varmista, että olet vahvistanut kaikkien anturiesi omistajuudet sovelluksessa ja että ne ovat Ruuvi Gateway -reitittimen kuuluvuusalueella.</string>
     <string name="widgets_loading">ladataan...</string>
+    <string name="widgets_preview_sensor_name">Sauna</string>
+    <string name="widgets_preview_sensor_value">69,50</string>
+    <string name="widgets_preview_time">19.45</string>
     <string name="widgets_select_sensor_value_type">Valitse widgetissä näytettävä anturityyppi</string>
     <string name="back">Takaisin</string>
     <string name="select_sensor">Valitse anturi</string>
@@ -536,6 +543,8 @@
     <string name="accuracy1_template">%1$,.1f %2$s</string>
     <string name="accuracy2_template">%1$,.2f %2$s</string>
     <string name="accuracy_description">Valitse kuinka suurella tarkkuudella haluat mittaustietojen näkyvän sovelluksessa. Tämä asetus ei vaikuta historiatietoihin, CSV- ja XLXS-tiedostoon vientiin tai hälytyksiin.</string>
+    <string name="settings_resolution">Resoluutio</string>
+    <string name="settings_resolution_empty">Lisää anturi nähdäksesi käytettävissä olevat resoluutioasetukset</string>
     <string name="delete_account">Poista tili</string>
     <string name="account_delete_confirmation_description">Vahvistussähköposti lähetetty. Poista tili noudattamalla sähköpostissa annettuja ohjeita.</string>
     <string name="alert_dialog_title_temperature">Aseta lämpötilahälytys</string>
@@ -744,9 +753,9 @@
     <string name="widgets_enable_background_service">Päivitä paikallisten Bluetooth-antureiden tiedot widgetiin ottamalla taustaskannaus käyttöön. Tätä ei tarvita pilviantureille, joiden tiedot kerätään Ruuvi Gatewayn avulla. Taustaskannauksen aikaväli voidaan asettaa Ruuvi Station -sovelluksen asetuksissa (tämän hetkinen arvo on %1$s).</string>
     <string name="increase_graph_size">Suurenna kaavioiden kokoa</string>
     <string name="decrease_graph_size">Pienennä kaavioiden kokoa</string>
-    <string name="sound_average_with_unit">Ääni (keskiarvo) (%1$s)</string>
-    <string name="sound_peak_with_unit">Ääni (huippu) (%1$s)</string>
-    <string name="sound_instant_with_unit">Ääni (hetkellinen) (%1$s)</string>
+    <string name="sound_average_with_unit">Äänen keskiarvo (%1$s)</string>
+    <string name="sound_peak_with_unit">Äänen huippuarvo (%1$s)</string>
+    <string name="sound_instant_with_unit">Ääni reaaliajassa (%1$s)</string>
     <string name="export_csv_header_format_air">Päivämäärä,Ilmanlaatu,Lämpötila (%1$s),Ilmankosteus (%2$s),Ilmanpaine (%3$s),CO₂ (ppm),VOC-indeksi,NOX,PM1 (µg/m³),PM2.5 (µg/m³),PM4 (µg/m³),PM10 (µg/m³),Lähetysteho (dBm),Mittausjärjestysnumero</string>
     <string name="agree">Hyväksy</string>
     <string name="decline">Hylkää</string>
@@ -779,7 +788,7 @@
     <string name="description_text_humidity_absolute">Absoluuttinen kosteus kertoo ilman todellisen vesihöyryn määrän, eli kuinka monta grammaa vettä yhdessä [b]kuutiometrissä (g/m³)[/b] ilmaa on. Toisin kuin suhteellinen ilmankosteus, se ei riipu lämpötilasta, vaan kuvaa kosteuden määrää sellaisenaan.\n\n[title]Tavoitealue[/title]\n\nAbsoluuttinen kosteus on suure, jolle ei ole yleistä tavoitealuetta. Jotkin erityiset tilat, kuten varastot, tuotantotilat ja laboratoriot voivat edellyttää absoluuttisen kosteuden mittaamista. Näissä tapauksissa absoluuttiselle kosteudelle on asetettu erityiset raja-arvot.\n\n[title]Yleiset toimenpiteet[/title]\n\nAbsoluuttisen kosteuden määrää hallitaan samoin periaattein kuin suhteellisen kosteuden määrää. Teollisissa tiloissa voidaan lisäksi käyttää erityisiä ilmankostuttimia ja -kuivaimia.\n\n[title]Vaikutukset hyvinvointiin[/title]\n\nAbsoluuttisen kosteuden hallinta auttaa esimerkiksi [b]tuotantotiloissa, varastoissa ja laboratorioissa[/b] ehkäisemään materiaalien pilaantumista tai hajoamista.\n\n[title]Vinkkejä ja lisätietoja[/title]\n\nAbsoluuttinen kosteus ei ole suoraan mitattava arvo, vaan se [b]lasketaan anturin lämpötila- ja suhteellisen kosteuden mittauksista[/b]. Sovellus laskee absoluuttisen kosteuden automaattisesti anturin datasta, joten sinun ei tarvitse tehdä erillisiä laskelmia.</string>
     <string name="description_text_humidity_dewpoint">Kastepiste on lämpötila, jossa [b]vesihöyry tiivistyy vedeksi[/b] (eli kasteeksi). Yksikkö voi olla °C, °F tai K. Kastepisteen avulla voidaan arvioida kondenssiriskiä ja kosteuden käyttäytymistä sisäilmassa.\n\n[title]Tavoitealue[/title]\n\nKastepiste on suure, jolle ei ole yleistä tavoitealuetta. Ilmankosteuden kondensaation välttämiseksi kastepistelämpötila tulee olla alhaisempi kuin ilman tai ilmassa olevien pintojen lämpötila.\n\n[title]Yleiset toimenpiteet[/title]\n\nKastepistelämpötilan alentamiseksi on syytä laskea ilman suhteellista kosteutta, tai mikäli mahdollista, nostaa ympäristön tai pintojen lämpötilaa.\n\n[title]Vaikutukset hyvinvointiin[/title]\n\nKosteuden tiivistyminen, eli kondensaatio pinnoille tapahtuu, kun ilman tai jonkin pinnan lämpötila laskee kastepisteeseen tai sen alle. Tämä voi aiheuttaa [b]homekasvua, korroosiota ja kosteusvaurioita[/b].\n\n[title]Vinkkejä ja lisätietoja[/title]\n\nKastepiste tarjoaa syvempää tietoa kosteuden käyttäytymisestä kuin pelkkä suhteellinen kosteus.</string>
     <string name="description_text_pressure">Barometrinen ilmanpaine kertoo, kuinka suuren paineen ilmakehä aiheuttaa maanpinnalle. Valittavina yksikköinä ovat Pa, hPa, mmHg tai inHg.\n\n[title]Tavoitealue[/title]\n\nIlmanpaineella ei ole tavoitealuetta. Normaali ilmanpaine merenpinnan tasolla on noin 1013 hPa.\n\n[title]Yleiset toimenpiteet[/title]\n\nIlmakehän ilmanpaineeseen ja sen vaihteluihin ei voi vaikuttaa.\n\n[title]Vaikutukset hyvinvointiin[/title]\n\nSeuraa ilmanpaineen muutoksia, jos haluat arvioida [b]sään vaihteluita[/b]. Korkea ilmanpaine liittyy usein kirkkaaseen säähän, kun taas matala ilmanpaine ennakoi sateita tai kosteampia olosuhteita. Hyvin herkillä ihmisillä sään vaihtelut voivat vaikuttaa omaan vireyteen.\n\n[title]Vinkkejä ja lisätietoja[/title]\n\nMuista, että mittausarvo riippuu myös mittauspaikan korkeudesta merenpinnasta. Anturin ilmoittamaa arvoa ei ole kompensoitu merenpinnan mukaan, kuten useimmat sääpalvelut ilmoittavat mittaukset. Tästä syystä mitattu lukema saattaa erota sääpalveluihin verrattuna.</string>
-    <string name="description_text_movement">Liikelaskuri ilmoittaa, kuinka monta liiketapahtumaa anturi on havainnut kiihtyvyysanturinsa perusteella.\n\n[title]Mittauksen tarkoitus[/title]\n\nLiikelaskurin avulla voit seurata, onko anturia siirretty, liikutettu tai siihen on johtunut tärinää ympäristöstä. Anturi ei pysty havaitsemaan ympärillä olevaa liikettä kuten liiketunnistimet.\n\n[title]Vinkkejä ja lisätietoja[/title]\n\nJos mittausten määrä kasvaa ilman selkeää syytä, laite saattaa olla epävakaalla alustalla tai anturi on sijoitettu paikkaan, jossa on värinää tai muuta liike-energiaa (esim. ikkunalauta, tuuletin tai kone).\n\nAnturi lukee liikkeen kiihtyvyysanturilta 10 kertaa sekunnissa. Liike rekisteröidään, mikäli kiihtyvyys ylittää 0,064g:n rajan minkään akselin suhteen. 1 g vastaa kiihtyvyyden arvoa 9,81 m/s².</string>
+    <string name="description_text_movement">Liikelaskuri ilmoittaa, kuinka monta liiketapahtumaa anturi on havainnut kiihtyvyysanturinsa perusteella.\n\n[title]Mittauksen tarkoitus[/title]\n\nLiikelaskurin avulla voit seurata, onko anturia siirretty, liikutettu tai siihen on johtunut tärinää ympäristöstä. Anturi ei pysty havaitsemaan ympärillä olevaa liikettä kuten liiketunnistimet.\n\n[title]Vinkkejä ja lisätietoja[/title]\n\nJos mittausten määrä kasvaa ilman selkeää syytä, laite saattaa olla epävakaalla alustalla tai anturi on sijoitettu paikkaan, jossa on värinää tai muuta liike-energiaa (esim. ikkunalauta, tuuletin tai kone).\n\nAnturi lukee liikkeen kiihtyvyysanturilta 10 kertaa sekunnissa. Liike rekisteröidään, mikäli kiihtyvyys ylittää 0,064g:n rajan minkään akselin suhteen. 1 g vastaa kiihtyvyyden arvoa 9,81 m/s².\n\nSovelluksessa käytetään kiertävää laskuria, jonka arvo kasvaa välillä 0–255 ja palautuu enimmäisarvon jälkeen takaisin arvoon 0.</string>
     <string name="description_text_battery_voltage">Pariston jännite kertoo anturin virtalähteen tilan voltteina (V).\n\n[title]Mittauksen tarkoitus[/title]\n\nLiian alhainen paristojännite voi aiheuttaa katkoksia tiedonsiirtoon. Jännitteen seuraaminen auttaa havaitsemaan ajoissa, milloin paristo on vaihdettava, jotta laite toimii keskeytyksettä.\n\n[title]Vinkkejä ja lisätietoja[/title]\n[li]Uuden nappipariston nimellisjännite on 3,0 V.[/li][li]Kun arvo laskee huoneenlämmössä 2,5 volttiin tai alle, paristo alkaa olla lopussa.[/li][li]Äkillinen jänniteen lasku voi johtua kylmästä lämpötilasta tai pariston ikääntymisestä.[/li][li]Sovellus varoittaa pariston alhaisesta varaustasosta eri jännitelukemissa lämpötilan mukaan seuraavasti:[/li][li2][b]Alle –20 °C (-4 °F):[/b] 2,0 V[/li2][li2][b]-20 … 0 °C (-4 … 32 °F):[/b] 2,3 V[/li2][li2][b]Yli 0 °C (32 °F):[/b] 2,5 V[/li2]\n[b]Suositus:[/b] Käytä laadukasta CR2477- tai CR2477T-paristoa tunnetulta valmistajalta. Pariston käyttöikä normaaliolosuhteissa on noin 1–2 vuotta.\n\n[b]Huomio:[/b] Uudelleenladattavat tai CR2477N-paristot eivät ole yhteensopivia Ruuvin anturien kanssa.</string>
     <string name="description_text_acceleration">Kiihtyvyysanturi mittaa kiihtyvyyttä kolmella akselilla (x, y ja z). Maan vetovoima aiheuttaa anturiin noin [b]1 g:n kiihtyvyyden[/b] sillä akselilla, joka osoittaa kohtisuoraan kohti maan pintaa.\n\n[title]Mittauksen tarkoitus[/title]\n\nAnturia voidaan käyttää anturin asennon havainnointiin.\n[li]Jos arvot pysyvät vakaina, [b]anturi on paikallaan.[/b][/li][li]Muutokset arvoissa kertovat, että anturi on [b]liikkunut tai kallistunut[/b].[/li][li]Äkilliset ja epämääräiset piikit viittaavat [b]nopeaan liikkeeseen tai tärinään[/b], kun taas selkeät tasomuutokset kertovat yleensä [b]asennon muutoksesta[/b].[/li]\n[title]Vinkkejä ja lisätietoja[/title]\n\nKiihtyvyysanturin näytteenottotaajuus ja anturin tiedonsiirtonopeus on optimoitu virrankulutuksen ehdoilla. Tästä syystä kiihtyvyystiedot eivät ole riittäviä esimerkiksi värähtely- tai kiihtyvyysanalyysiin.</string>
     <string name="description_text_signal_strength">Signaalin voimakkuus (RSSI) ilmaisee mobiililaitteen anturilta vastaanottamien datapakettien signaalivoimakkuuden. Mitä lähempänä arvo on nollaa, sitä vahvempi vastaanotettu signaali on. Tämä on [b]tekninen tieto[/b], mitä ei tavallisessa käytössä tarvitse seurata.\n\n[title]Mittauksen tarkoitus[/title]\n\nHeikko signaali voi aiheuttaa yhteyskatkoksia ja viivettä anturitietojen päivittymisessä. Voit seurata signaalin voimakkuutta, kun sijoitat anturin uuteen paikkaan. [b]Optimaalinen signaalin voimakkuus[/b] on välillä –80 … 0 dBm. Huomaa kuitenkin, että signaalin voimakkuus vaihtelee jatkuvasti johtuen signaalien heijastumisesta. Eri mobiililaitteet voivat myös kertoa voimakkuuden hieman eri tavoin, joten numerot eivät ole aina verrannollisia keskenään.\n\n[title]Vinkkejä ja lisätietoja[/title]\n[li]Yhteyden voimakkuuteen vaikuttavat esimerkiksi [b]etäisyys, seinät ja muut rakenteet sekä muiden langattomien laitteiden aiheuttamat häiriöt.[/b][/li][li]Jos signaali on heikko, [b]siirrä anturi[/b] paikkaan, jossa yhteys vastaanottimeen on esteettömämpi. Anturin korkeus maasta vaikuttaa myös yleensä kantamaan ja korkeammalta signaali kantaa paremmin.[/li]</string>
@@ -866,10 +875,12 @@
     <string name="update_now">Päivitä nyt</string>
     <string name="led_brightness_select_message">Valitse haluamasi LED-kirkkaustaso. Varmista, että olet Ruuvi Airin Bluetooth-kantaman sisällä.</string>
     <string name="notes">Muistiinpanot</string>
-    <string name="communication_channels">Viestintäkanavat</string>
-    <string name="communication_channels_description">Minulle voidaan lähettää vinkkejä ja muuta hyödyllistä tietoa Ruuvi-tuotteista.</string>
-    <string name="share_active_access_section_title">Käyttäjät, joilla on aktiivinen pääsy tähän anturiin:</string>
-    <string name="share_active_access_empty_value">Ei vielä jaettu kenellekään</string>
-    <string name="share_sensor_shared_to_count_message">Tälle anturille käytetyt jaot: %1$,d/%2$,d\n\nTilillesi käytetyt jaot yhteensä: %3$,d/%4$,d</string>
-    <string name="share_pending_section_title">Seuraavat käyttäjät on kutsuttu ja anturi on jaettu heille, mutta käyttöoikeus odottaa vielä, koska he eivät ole vielä luoneet ilmaista Ruuvi-tiliä. Kutsut on lähetetty, ja käyttöoikeus myönnetään, kun heidän tilinsä on luotu:</string>
+    <string name="newsletter_card_title">Tilaa tarjoukset!</string>
+    <string name="newsletter_card_description">Tilaa Ruuvin uutiskirje ja hanki anturit aina parhaaseen hintaan.</string>
+    <string name="newsletter_subscribe">Tilaa</string>
+    <string name="newsletter_url">https://ruuvi.com/fi/liity</string>
+    <string name="newsletter_subscription">Tilaus</string>
+    <string name="newsletter_subscription_confirmation">Vahvista uutiskirjeen tilaus sähköpostistasi.</string>
+    <string name="communication_channels">Ruuvin uutiskirje</string>
+    <string name="communication_channels_description">Saat hyödyllisiä Ruuvi-vinkkejä, tuotepäivityksiä, ominaisuusuutisia ja satunnaisia erikoistarjouksia suoraan sähköpostiisi.</string>
 </resources>

@@ -125,6 +125,7 @@ class DashboardActivity : NfcActivity(), KodeinAware {
                 val scope = rememberCoroutineScope()
                 val userEmail by dashboardViewModel.userEmail.observeAsState()
                 val signedIn = !userEmail.isNullOrEmpty()
+                val marketingConsent by dashboardViewModel.marketingConsent.observeAsState(false)
                 val signedInOnce by dashboardViewModel.signedInOnce.collectAsState(false)
                 val bannerDisabled by dashboardViewModel.bannerDisabled.collectAsState(false)
                 val sensors by dashboardViewModel.sensorsList.collectAsState()
@@ -210,7 +211,9 @@ class DashboardActivity : NfcActivity(), KodeinAware {
                         drawerContent = {
                             DashboardMainMenu(
                                 scaffoldState = scaffoldState,
-                                signedIn = signedIn
+                                signedIn = signedIn,
+                                showNewsletter = dashboardViewModel.isMarketingConsentEnabled() &&
+                                    (!signedIn || !marketingConsent)
                             )
                         },
                         drawerBackgroundColor = RuuviStationTheme.colors.background
@@ -647,13 +650,17 @@ fun DashboardItem(
                                 if (bigValue.unitType is UnitType.AirQuality) {
                                     AQIDisplay(
                                         value = AQI.getAQI(sensor.latestMeasurement),
-                                        alertTriggered = sensor.alarmSensorStatus.triggered(AlarmType.AQI),
+                                        alertTriggered = bigValue.unitType.alarmType?.let {
+                                            sensor.alarmSensorStatus.triggered(it)
+                                        } ?: false,
                                     )
                                     Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.medium))
                                 } else {
                                     BigValueExtDisplay(
                                         value = bigValue,
-                                        alertTriggered = sensor.alarmSensorStatus.triggered(AlarmType.TEMPERATURE),
+                                        alertTriggered = bigValue.unitType.alarmType?.let {
+                                            sensor.alarmSensorStatus.triggered(it)
+                                        } ?: false,
                                         showTitle = true,
                                         modifier = Modifier,
                                     )
