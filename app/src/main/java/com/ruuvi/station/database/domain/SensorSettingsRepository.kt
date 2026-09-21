@@ -153,6 +153,13 @@ class SensorSettingsRepository {
             .execute()
     }
 
+    fun clearNetworkBackgroundTimestamps() {
+        SQLite.update(SensorSettings::class.java)
+            .set(SensorSettings_Table.backgroundTimestamp.eq(0L))
+            .where(SensorSettings_Table.networkSensor.eq(true))
+            .execute()
+    }
+
     fun setSensorFirmware(sensorId: String, firmware: String?) {
         getSensorSettings(sensorId)?.let {
             it.firmware = firmware
