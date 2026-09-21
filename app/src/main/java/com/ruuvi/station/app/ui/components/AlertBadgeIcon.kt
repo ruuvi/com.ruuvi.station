@@ -24,6 +24,10 @@ import com.ruuvi.station.R
 import com.ruuvi.station.alarm.domain.AlarmSensorStatus
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 
+private const val MAX_DISPLAYED_ALERT_COUNT = 99
+private val ALERT_CONTAINER_SIZE = 36.dp
+private val ALERT_BADGE_SIZE = 15.dp
+
 @Composable
 fun AlertBadgeIcon(
     alarmStatus: AlarmSensorStatus,
@@ -40,11 +44,15 @@ fun AlertBadgeIcon(
         is AlarmSensorStatus.NotTriggered -> alarmStatus.enabledCount
         is AlarmSensorStatus.Triggered -> alarmStatus.alarmTypes.size
     }
-    val badgeText = if (badgeCount > 99) "99+" else badgeCount.toString()
+    val badgeText = if (badgeCount > MAX_DISPLAYED_ALERT_COUNT) {
+        "$MAX_DISPLAYED_ALERT_COUNT+"
+    } else {
+        badgeCount.toString()
+    }
 
     // Matches the shared iOS alert-bell geometry: a 30 dp icon in a 36 dp
     // container, with the badge anchored four points inside the icon's edge.
-    Box(modifier = modifier.size(36.dp)) {
+    Box(modifier = modifier.size(ALERT_CONTAINER_SIZE)) {
         Icon(
             modifier = Modifier
                 .size(iconSize)
@@ -64,8 +72,8 @@ fun AlertBadgeIcon(
             if (triggered) {
                 Box(
                     modifier = badgeModifier
-                        .height(15.dp)
-                        .widthIn(min = 15.dp)
+                        .height(ALERT_BADGE_SIZE)
+                        .widthIn(min = ALERT_BADGE_SIZE)
                         .background(
                             color = triggeredBadgeColor.copy(alpha = 1f),
                             shape = RoundedCornerShape(percent = 50),

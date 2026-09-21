@@ -96,6 +96,8 @@ import org.kodein.di.android.closestKodein
 import org.kodein.di.generic.instance
 import kotlin.math.min
 
+private val DASHBOARD_ALERT_CONTAINER_SIZE = 36.dp
+
 class DashboardActivity : NfcActivity(), KodeinAware {
 
     override val kodein by closestKodein()
@@ -821,14 +823,14 @@ fun ItemButtons(
 
     Row(
         modifier = modifier
-            .width(36.dp + RuuviStationTheme.dimensions.dashboardIconSize),
+            .width(DASHBOARD_ALERT_CONTAINER_SIZE + RuuviStationTheme.dimensions.dashboardIconSize),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.End,
     ) {
         CompositionLocalProvider(LocalMinimumInteractiveComponentEnforcement provides false) {
             if (sensor.alarmSensorStatus != AlarmSensorStatus.NoAlarms) {
                 IconButton(
-                    modifier = Modifier.size(36.dp),
+                    modifier = Modifier.size(DASHBOARD_ALERT_CONTAINER_SIZE),
                     enabled = interactionEnabled,
                     onClick = {
                         SensorCardActivity.start(context, sensor.id, SensorCardOpenType.ALERTS)
@@ -844,7 +846,7 @@ fun ItemButtons(
                     )
                 }
             } else {
-                Spacer(modifier = Modifier.size(36.dp))
+                Spacer(modifier = Modifier.size(DASHBOARD_ALERT_CONTAINER_SIZE))
             }
 
             DashboardItemDropdownMenu(

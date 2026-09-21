@@ -707,6 +707,8 @@ Total des partages utilisés pour votre compte : %3$,d/%4$,d</string>
     <string name="use_dev_server">Utiliser le serveur de développement</string>
     <string name="use_dev_server_description">Pour appliquer les modifications, synchronisez simplement les données du tableau de bord ou attendez la prochaine synchronisation.</string>
     <string name="sensor_details">Détails du capteur</string>
+    <string name="previous_sensor">Capteur précédent</string>
+    <string name="next_sensor">Capteur suivant</string>
     <string name="nfc_dialog_add_sensor">Ajouter un capteur</string>
     <string name="nfc_dialog_name">Nom:</string>
     <string name="nfc_dialog_mac_address">Adresse MAC:</string>

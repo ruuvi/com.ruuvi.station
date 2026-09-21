@@ -702,6 +702,8 @@ Totalt antal använda delningar för ditt konto: %3$,d/%4$,d</string>
     <string name="use_dev_server">Använd dev-server</string>
     <string name="use_dev_server_description">För att tillämpa ändringar synkronisera helt enkelt data från instrumentpanelen eller vänta till nästa synkronisering.</string>
     <string name="sensor_details">Sensordetaljer</string>
+    <string name="previous_sensor">Föregående sensor</string>
+    <string name="next_sensor">Nästa sensor</string>
     <string name="nfc_dialog_add_sensor">Lägg till sensor</string>
     <string name="nfc_dialog_name">Namn:</string>
     <string name="nfc_dialog_mac_address">MAC-adress:</string>

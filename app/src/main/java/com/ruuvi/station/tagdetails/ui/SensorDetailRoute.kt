@@ -100,6 +100,12 @@ import com.ruuvi.station.util.Period
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 
+private const val SETTINGS_NAVIGATION_ANIMATION_MILLIS = 400
+private const val DESTINATION_CROSSFADE_MILLIS = 200
+private const val BACKGROUND_COLOR_ANIMATION_MILLIS = 300
+private const val MINIMUM_CHARTS_BEFORE_SIZE_INCREASE = 3
+private val HISTORY_STATUS_BAR_COLOR = Color(0xE6001D1B)
+
 internal data class SensorDetailViewModelProvider(
     val settings: (String) -> TagSettingsViewModel,
     val alerts: (String) -> AlarmItemsViewModel,
@@ -292,7 +298,7 @@ private fun SensorDetailScreen(
                 .fillMaxSize()
                 .systemBarsPadding(),
             transitionSpec = {
-                val animationSpec = tween<IntOffset>(durationMillis = 400)
+                val animationSpec = tween<IntOffset>(durationMillis = SETTINGS_NAVIGATION_ANIMATION_MILLIS)
                 if (targetState == SensorSettingsRoutes.SENSOR_SETTINGS_ROOT) {
                     slideInHorizontally(animationSpec) { -it } togetherWith
                         slideOutHorizontally(animationSpec) { it }
@@ -495,7 +501,7 @@ private fun SensorRootPager(
             Crossfade(
                 targetState = destination,
                 modifier = Modifier.fillMaxSize(),
-                animationSpec = tween(durationMillis = 200),
+                animationSpec = tween(durationMillis = DESTINATION_CROSSFADE_MILLIS),
                 label = "sensor detail destination",
             ) { visibleDestination ->
                 RuuviTheme(darkTheme = visibleDestination.forcesDarkTheme || systemDarkTheme) {
@@ -610,7 +616,7 @@ private fun ColumnScope.SensorHistoryContent(
     viewModel: SensorCardViewModel,
 ) {
     var chartCount by remember(sensor.id) { mutableIntStateOf(0) }
-    val hideIncreaseChartSize = chartCount < 3
+    val hideIncreaseChartSize = chartCount < MINIMUM_CHARTS_BEFORE_SIZE_INCREASE
 
     ChartControlElement2(
         sensorId = sensor.id,
@@ -743,11 +749,11 @@ private fun SensorDetailBackground(
     val overlayColor by animateColorAsState(
         targetValue = when (destination) {
             SensorDetailDestination.CARD -> Color.Transparent
-            SensorDetailDestination.HISTORY -> Color(0xE6001D1B)
+            SensorDetailDestination.HISTORY -> HISTORY_STATUS_BAR_COLOR
             SensorDetailDestination.ALERTS,
             SensorDetailDestination.SETTINGS -> Titan70
         },
-        animationSpec = tween(durationMillis = 300),
+        animationSpec = tween(durationMillis = BACKGROUND_COLOR_ANIMATION_MILLIS),
         label = "sensor detail background overlay",
     )
     if (overlayColor != Color.Transparent) {

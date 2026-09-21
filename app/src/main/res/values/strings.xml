@@ -702,6 +702,8 @@ Total used shares for your account: %3$,d/%4$,d</string>
     <string name="use_dev_server">Use Dev server</string>
     <string name="use_dev_server_description">To apply changes simply sync data from dashboard or wait till next sync.</string>
     <string name="sensor_details">Sensor details</string>
+    <string name="previous_sensor">Previous sensor</string>
+    <string name="next_sensor">Next sensor</string>
     <string name="nfc_dialog_add_sensor">Add sensor</string>
     <string name="nfc_dialog_name">Name:</string>
     <string name="nfc_dialog_mac_address">MAC address:</string>

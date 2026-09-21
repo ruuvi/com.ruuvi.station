@@ -713,6 +713,8 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="use_dev_server">Verwenden Sie einen Entwicklungsserver</string>
     <string name="use_dev_server_description">Um Änderungen zu übernehmen, synchronisieren Sie einfach die Daten vom Dashboard oder warten Sie bis zur nächsten Synchronisierung.</string>
     <string name="sensor_details">Sensordetails</string>
+    <string name="previous_sensor">Vorheriger Sensor</string>
+    <string name="next_sensor">Nächster Sensor</string>
     <string name="nfc_dialog_add_sensor">Sensor hinzufügen</string>
     <string name="nfc_dialog_name">Name:</string>
     <string name="nfc_dialog_mac_address">MAC-Adresse:</string>

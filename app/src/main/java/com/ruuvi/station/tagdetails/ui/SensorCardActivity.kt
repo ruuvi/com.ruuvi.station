@@ -81,6 +81,16 @@ import timber.log.Timber
 import kotlin.math.ceil
 import kotlin.math.floor
 
+private const val MAXIMUM_FONT_SCALE = 1.5f
+private const val TABLET_MINIMUM_WIDTH_DP = 600
+private const val TABLET_LANDSCAPE_COLUMNS = 4
+private const val TABLET_COLUMNS = 3
+private const val LANDSCAPE_COLUMNS = 3
+private const val PHONE_COLUMNS = 2
+private val SENSOR_VALUE_ITEM_SPACING = 6.dp
+private val PAGE_INDICATOR_WIDTH = 4.dp
+private const val SENSOR_STATUS_REFRESH_DELAY_MILLIS = 500L
+
 class SensorCardActivity : NfcActivity(), KodeinAware {
 
     override val kodein by closestKodein()
@@ -301,7 +311,7 @@ fun SensorCard(
 ) {
     var showBottomSheet by remember { mutableStateOf(false) }
     var sheetValue by remember { mutableStateOf<EnvironmentValue?>(null) }
-    val itemHeight = 48.dp.scaleUpTo(1.5f)
+    val itemHeight = 48.dp.scaleUpTo(MAXIMUM_FONT_SCALE)
     var size by remember { mutableStateOf(IntSize.Zero) }
     var topSize by remember { mutableStateOf(IntSize.Zero) }
     val halfSize = (size.height / 2).pxToDp()
@@ -312,7 +322,7 @@ fun SensorCard(
         listOf()
     }
     val padding = if (halfSize < 200.dp) 8.dp else 32.dp
-    val itemSeparator = 6.dp
+    val itemSeparator = SENSOR_VALUE_ITEM_SPACING
     val bottomSize = floor(((size.height - topSize.height).pxToDp() - padding - itemSeparator).value).dp
 
     val columnModifier = modifier.fadingEdge(scrollState)
@@ -351,12 +361,12 @@ fun SensorCard(
 
             val configuration = LocalConfiguration.current
             val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
-            val isTablet = configuration.smallestScreenWidthDp >= 600
+            val isTablet = configuration.smallestScreenWidthDp >= TABLET_MINIMUM_WIDTH_DP
             val columnCount = when {
-                isTablet && isLandscape -> 4
-                isTablet -> 3
-                isLandscape -> 3
-                else -> 2
+                isTablet && isLandscape -> TABLET_LANDSCAPE_COLUMNS
+                isTablet -> TABLET_COLUMNS
+                isLandscape -> LANDSCAPE_COLUMNS
+                else -> PHONE_COLUMNS
             }
             val horizontalPadding = when {
                 isTablet && isLandscape -> 80.dp
@@ -495,13 +505,13 @@ fun SensorValues(
             .fillMaxWidth()
             .padding(horizontal = horizontalPadding),
         verticalAlignment = Alignment.Top,
-        horizontalArrangement = Arrangement.spacedBy(6.dp, Alignment.CenterHorizontally)
+        horizontalArrangement = Arrangement.spacedBy(SENSOR_VALUE_ITEM_SPACING, Alignment.CenterHorizontally)
     ) {
         for (columnValues in valuesDistributed) {
             Column(
                 modifier = Modifier
                     .weight(1f),
-                verticalArrangement = Arrangement.spacedBy(6.dp, Alignment.Top),
+                verticalArrangement = Arrangement.spacedBy(SENSOR_VALUE_ITEM_SPACING, Alignment.Top),
                 horizontalAlignment = Alignment.Start
             ) {
                 if (columnValues.isEmpty()) {
@@ -545,7 +555,7 @@ fun VerticalScrollbarOverlay(
     Box(
         modifier = modifier
             .fillMaxHeight()
-            .width(4.dp)
+            .width(PAGE_INDICATOR_WIDTH)
             .background(Color.LightGray.copy(alpha = 0.3f))
             .onGloballyPositioned { coordinates ->
                 boxHeightPx = coordinates.size.height
@@ -559,9 +569,12 @@ fun VerticalScrollbarOverlay(
         Box(
             modifier = Modifier
                 .offset(y = offset)
-                .width(4.dp)
+                .width(PAGE_INDICATOR_WIDTH)
                 .height(scrollBarHeight)
-                .background(Color.White.copy(alpha = 0.75f), shape = RoundedCornerShape(2.dp))
+                .background(
+                    Color.White.copy(alpha = 0.75f),
+                    shape = RoundedCornerShape(2.dp),
+                )
         )
     }
 }
@@ -641,14 +654,22 @@ fun SensorCardBottom(
                 Icon(
                     modifier = Modifier
                         .size(
-                            width = if (sensor.getSource() == UpdateSource.Cloud) 22.dp else 16.dp,
-                            height = if (sensor.getSource() == UpdateSource.Cloud) 16.dp else 24.dp,
+                            width = if (sensor.getSource() == UpdateSource.Cloud) {
+                                22.dp
+                            } else {
+                                16.dp
+                            },
+                            height = if (sensor.getSource() == UpdateSource.Cloud) {
+                                16.dp
+                            } else {
+                                24.dp
+                            },
                         ),
                     painter = painterResource(id = icon),
                     tint = White80,
                     contentDescription = null,
                 )
-                Spacer(modifier = Modifier.width(6.dp))
+                Spacer(modifier = Modifier.width(SENSOR_VALUE_ITEM_SPACING))
                 Text(
                     modifier = Modifier,
                     style = RuuviStationTheme.typography.dashboardSecondary,
@@ -669,7 +690,7 @@ fun SensorCardBottom(
                 while (isActive) {
                     updatedText =
                         sensor.latestMeasurement.updatedAt.describingTimeSince(context)
-                    delay(500)
+                    delay(SENSOR_STATUS_REFRESH_DELAY_MILLIS)
                 }
             }
         }

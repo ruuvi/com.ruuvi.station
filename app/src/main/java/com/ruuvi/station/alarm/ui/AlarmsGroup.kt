@@ -51,6 +51,8 @@ import java.text.DateFormat
 import java.util.*
 import kotlin.math.roundToInt
 
+private const val ALARM_REFRESH_INTERVAL_MILLIS = 1_000L
+
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun AlarmsGroup(
@@ -65,7 +67,7 @@ fun AlarmsGroup(
             while (isActive) {
                 viewModel.refreshAlarmState()
                 viewModel.refreshSensorState()
-                delay(1_000)
+                delay(ALARM_REFRESH_INTERVAL_MILLIS)
             }
         }
     }

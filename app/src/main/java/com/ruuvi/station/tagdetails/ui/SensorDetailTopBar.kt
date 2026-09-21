@@ -55,17 +55,21 @@ import kotlin.math.ceil
 import kotlin.math.floor
 import kotlin.math.roundToInt
 
-private val SensorMenuButtonWidth = 40.dp
-private val SensorMenuButtonSpacing = 2.dp
-private val SensorMenuIndicatorWidth = 16.dp
-private val SensorDetailHeaderHeight = 44.dp
-private val SensorTitleTopPadding = 10.dp
-private val SensorTitleBottomPadding = 6.dp
-private val SensorTitleTouchTargetExpansion = 8.dp
-private val SensorTitleArrowTopOffset = 2.dp
-private val SensorTitleArrowTouchSize = 48.dp
-private val SensorTitleArrowSize = 16.dp
-private val SensorTitleLineHeight = 24.sp
+private val SENSOR_MENU_BUTTON_WIDTH = 40.dp
+private val SENSOR_MENU_BUTTON_SPACING = 2.dp
+private val SENSOR_MENU_INDICATOR_WIDTH = 16.dp
+private val SENSOR_DETAIL_HEADER_HEIGHT = 44.dp
+private val SENSOR_TITLE_TOP_PADDING = 10.dp
+private val SENSOR_TITLE_BOTTOM_PADDING = 6.dp
+private val SENSOR_TITLE_TOUCH_TARGET_EXPANSION = 8.dp
+private val SENSOR_TITLE_ARROW_TOP_OFFSET = 2.dp
+private val SENSOR_TITLE_ARROW_TOUCH_SIZE = 48.dp
+private val SENSOR_TITLE_ARROW_SIZE = 16.dp
+private val SENSOR_TITLE_LINE_HEIGHT = 24.sp
+private val SENSOR_MENU_ICON_SIZE = 30.dp
+private const val SENSOR_MENU_INDICATOR_DAMPING_RATIO = 0.8f
+private const val SENSOR_TITLE_FADE_IN_MILLIS = 200
+private const val SENSOR_TITLE_FADE_OUT_MILLIS = 150
 
 @Composable
 internal fun SensorDetailTopAppBar(
@@ -81,7 +85,7 @@ internal fun SensorDetailTopAppBar(
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(SensorDetailHeaderHeight)
+            .height(SENSOR_DETAIL_HEADER_HEIGHT)
             .background(
                 if (useOpaqueBackground) RuuviStationTheme.colors.topBar else Color.Transparent,
             ),
@@ -91,7 +95,7 @@ internal fun SensorDetailTopAppBar(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             IconButton(
-                modifier = Modifier.size(SensorDetailHeaderHeight),
+                modifier = Modifier.size(SENSOR_DETAIL_HEADER_HEIGHT),
                 onClick = onBack,
             ) {
                 Icon(
@@ -124,7 +128,7 @@ internal fun SensorDetailTopAppBar(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(SensorDetailHeaderHeight),
+                    .height(SENSOR_DETAIL_HEADER_HEIGHT),
                 contentAlignment = Alignment.Center,
             ) {
                 CircularIndicator(color = Color.White.copy(alpha = 0.5f))
@@ -141,11 +145,13 @@ private fun SensorDetailMenu(
     onDestinationSelected: (SensorDetailDestination) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val destinations = SensorDetailDestination.entries
     val indicatorOffset by animateDpAsState(
-        targetValue = (SensorMenuButtonWidth + SensorMenuButtonSpacing) * destination.ordinal +
-            (SensorMenuButtonWidth - SensorMenuIndicatorWidth) / 2,
+        targetValue = (SENSOR_MENU_BUTTON_WIDTH + SENSOR_MENU_BUTTON_SPACING) *
+            destinations.indexOf(destination) +
+            (SENSOR_MENU_BUTTON_WIDTH - SENSOR_MENU_INDICATOR_WIDTH) / 2,
         animationSpec = spring(
-            dampingRatio = 0.8f,
+            dampingRatio = SENSOR_MENU_INDICATOR_DAMPING_RATIO,
             stiffness = Spring.StiffnessLow,
         ),
         label = "sensor detail menu indicator",
@@ -154,60 +160,49 @@ private fun SensorDetailMenu(
     Box(
         modifier = modifier
             .width(
-                SensorMenuButtonWidth * SensorDetailDestination.entries.size +
-                    SensorMenuButtonSpacing * (SensorDetailDestination.entries.size - 1),
+                SENSOR_MENU_BUTTON_WIDTH * destinations.size +
+                    SENSOR_MENU_BUTTON_SPACING * (destinations.size - 1),
             )
-            .height(SensorDetailHeaderHeight),
+            .height(SENSOR_DETAIL_HEADER_HEIGHT),
     ) {
         Row(
             modifier = Modifier.fillMaxHeight(),
-            horizontalArrangement = Arrangement.spacedBy(SensorMenuButtonSpacing),
+            horizontalArrangement = Arrangement.spacedBy(SENSOR_MENU_BUTTON_SPACING),
         ) {
-            DestinationAction(
-                selected = destination == SensorDetailDestination.CARD,
-                onClick = { onDestinationSelected(SensorDetailDestination.CARD) },
-            ) {
-                Icon(
-                    modifier = Modifier.size(30.dp),
-                    painter = painterResource(id = R.drawable.ic_sensor_menu_measurement),
-                    tint = iconColor,
-                    contentDescription = stringResource(id = R.string.full_image_view),
-                )
-            }
-            DestinationAction(
-                selected = destination == SensorDetailDestination.HISTORY,
-                onClick = { onDestinationSelected(SensorDetailDestination.HISTORY) },
-            ) {
-                Icon(
-                    modifier = Modifier.size(30.dp),
-                    painter = painterResource(id = R.drawable.ic_sensor_menu_graph),
-                    tint = iconColor,
-                    contentDescription = stringResource(id = R.string.history_view),
-                )
-            }
-            DestinationAction(
-                selected = destination == SensorDetailDestination.ALERTS,
-                onClick = { onDestinationSelected(SensorDetailDestination.ALERTS) },
-            ) {
-                AlertBadgeIcon(
-                    alarmStatus = alarmStatus,
-                    iconColor = iconColor,
-                    triggeredBadgeColor = RuuviStationTheme.colors.activeAlertThemed,
-                    contentDescription = stringResource(id = R.string.alerts),
-                    iconRes = R.drawable.ic_sensor_menu_alerts,
-                    iconSize = 30.dp,
-                )
-            }
-            DestinationAction(
-                selected = destination == SensorDetailDestination.SETTINGS,
-                onClick = { onDestinationSelected(SensorDetailDestination.SETTINGS) },
-            ) {
-                Icon(
-                    modifier = Modifier.size(30.dp),
-                    painter = painterResource(id = R.drawable.ic_sensor_menu_settings),
-                    tint = iconColor,
-                    contentDescription = stringResource(id = R.string.sensor_settings),
-                )
+            destinations.forEach { menuDestination ->
+                DestinationAction(
+                    selected = destination == menuDestination,
+                    onClick = { onDestinationSelected(menuDestination) },
+                ) {
+                    when (menuDestination) {
+                        SensorDetailDestination.CARD -> Icon(
+                            modifier = Modifier.size(SENSOR_MENU_ICON_SIZE),
+                            painter = painterResource(id = R.drawable.ic_sensor_menu_measurement),
+                            tint = iconColor,
+                            contentDescription = stringResource(id = R.string.full_image_view),
+                        )
+                        SensorDetailDestination.HISTORY -> Icon(
+                            modifier = Modifier.size(SENSOR_MENU_ICON_SIZE),
+                            painter = painterResource(id = R.drawable.ic_sensor_menu_graph),
+                            tint = iconColor,
+                            contentDescription = stringResource(id = R.string.history_view),
+                        )
+                        SensorDetailDestination.ALERTS -> AlertBadgeIcon(
+                            alarmStatus = alarmStatus,
+                            iconColor = iconColor,
+                            triggeredBadgeColor = RuuviStationTheme.colors.activeAlertThemed,
+                            contentDescription = stringResource(id = R.string.alerts),
+                            iconRes = R.drawable.ic_sensor_menu_alerts,
+                            iconSize = SENSOR_MENU_ICON_SIZE,
+                        )
+                        SensorDetailDestination.SETTINGS -> Icon(
+                            modifier = Modifier.size(SENSOR_MENU_ICON_SIZE),
+                            painter = painterResource(id = R.drawable.ic_sensor_menu_settings),
+                            tint = iconColor,
+                            contentDescription = stringResource(id = R.string.sensor_settings),
+                        )
+                    }
+                }
             }
         }
 
@@ -216,7 +211,7 @@ private fun SensorDetailMenu(
                 .align(Alignment.BottomStart)
                 .offset { IntOffset(indicatorOffset.roundToPx(), 0) }
                 .padding(bottom = 4.dp)
-                .width(SensorMenuIndicatorWidth)
+                .width(SENSOR_MENU_INDICATOR_WIDTH)
                 .height(2.dp)
                 .background(
                     color = RuuviStationTheme.colors.topBarText,
@@ -234,13 +229,13 @@ private fun DestinationAction(
 ) {
     Box(
         modifier = Modifier
-            .width(SensorMenuButtonWidth)
+            .width(SENSOR_MENU_BUTTON_WIDTH)
             .fillMaxHeight(),
         contentAlignment = Alignment.Center,
     ) {
         IconButton(
             modifier = Modifier
-                .size(SensorMenuButtonWidth)
+                .size(SENSOR_MENU_BUTTON_WIDTH)
                 .semantics {
                     this.selected = selected
                 },
@@ -265,7 +260,7 @@ internal fun SensorDetailTitle(
     contentColor: Color = Color.White,
 ) {
     val labelHorizontalPadding =
-        RuuviStationTheme.dimensions.huge - SensorTitleArrowTouchSize
+        RuuviStationTheme.dimensions.huge - SENSOR_TITLE_ARROW_TOUCH_SIZE
 
     Box(
         modifier = modifier
@@ -274,10 +269,10 @@ internal fun SensorDetailTitle(
         Column(
             modifier = Modifier
                 .padding(
-                    top = SensorTitleTopPadding,
-                    bottom = SensorTitleBottomPadding + SensorTitleTouchTargetExpansion,
+                    top = SENSOR_TITLE_TOP_PADDING,
+                    bottom = SENSOR_TITLE_BOTTOM_PADDING + SENSOR_TITLE_TOUCH_TARGET_EXPANSION,
                 )
-                .padding(horizontal = SensorTitleArrowTouchSize)
+                .padding(horizontal = SENSOR_TITLE_ARROW_TOUCH_SIZE)
                 .align(Alignment.TopCenter)
                 .fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -295,8 +290,8 @@ internal fun SensorDetailTitle(
                 modifier = Modifier.padding(horizontal = labelHorizontalPadding),
                 targetState = subtitle,
                 transitionSpec = {
-                    fadeIn(animationSpec = tween(durationMillis = 200)) togetherWith
-                        fadeOut(animationSpec = tween(durationMillis = 150))
+                    fadeIn(animationSpec = tween(durationMillis = SENSOR_TITLE_FADE_IN_MILLIS)) togetherWith
+                        fadeOut(animationSpec = tween(durationMillis = SENSOR_TITLE_FADE_OUT_MILLIS))
                 },
                 contentAlignment = Alignment.TopCenter,
                 label = "sensor detail subtitle",
@@ -320,15 +315,15 @@ internal fun SensorDetailTitle(
                 IconButton(
                     modifier = Modifier
                         .align(Alignment.TopStart)
-                        .size(SensorTitleArrowTouchSize),
+                        .size(SENSOR_TITLE_ARROW_TOUCH_SIZE),
                     onClick = onSelectPrevious,
                 ) {
                     Icon(
                         modifier = Modifier
-                            .offset(y = -SensorTitleArrowTopOffset)
-                            .size(SensorTitleArrowSize),
+                            .offset(y = -SENSOR_TITLE_ARROW_TOP_OFFSET)
+                            .size(SENSOR_TITLE_ARROW_SIZE),
                         painter = painterResource(id = R.drawable.arrow_back_16),
-                        contentDescription = null,
+                        contentDescription = stringResource(id = R.string.previous_sensor),
                         tint = contentColor,
                     )
                 }
@@ -338,15 +333,15 @@ internal fun SensorDetailTitle(
                 IconButton(
                     modifier = Modifier
                         .align(Alignment.TopEnd)
-                        .size(SensorTitleArrowTouchSize),
+                        .size(SENSOR_TITLE_ARROW_TOUCH_SIZE),
                     onClick = onSelectNext,
                 ) {
                     Icon(
                         modifier = Modifier
-                            .offset(y = -SensorTitleArrowTopOffset)
-                            .size(SensorTitleArrowSize),
+                            .offset(y = -SENSOR_TITLE_ARROW_TOP_OFFSET)
+                            .size(SENSOR_TITLE_ARROW_SIZE),
                         painter = painterResource(id = R.drawable.arrow_forward_16),
-                        contentDescription = null,
+                        contentDescription = stringResource(id = R.string.next_sensor),
                         tint = contentColor,
                     )
                 }
@@ -391,7 +386,7 @@ private fun SensorTitlePager(
                             .clearAndSetSemantics { },
                         text = sensors[page].displayName,
                         fontSize = RuuviStationTheme.fontSizes.big,
-                        lineHeight = SensorTitleLineHeight,
+                        lineHeight = SENSOR_TITLE_LINE_HEIGHT,
                         fontFamily = RuuviStationTheme.fonts.mulishExtraBold,
                         textAlign = TextAlign.Center,
                         color = contentColor,
