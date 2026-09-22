@@ -13,6 +13,7 @@ import com.ruuvi.station.dfu.data.ReleaseAssets
 import com.ruuvi.station.dfu.domain.LatestFwInteractor
 import com.ruuvi.station.tag.domain.isAir
 import com.ruuvi.station.util.MacAddressUtils.Companion.incrementMacAddress
+import com.ruuvi.station.util.isNewerVersion
 import com.ruuvi.station.util.extensions.diffGreaterThan
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -112,23 +113,14 @@ class DfuUpdateViewModel(
 
         if (!sensorFw.isSuccess) {
             return true
-        } else {
-            try {
-                val sensorFwFirstNumberIndex = sensorFw.fw.indexOfFirst { it.isDigit() }
-                val sensorFwParsed = SemVer.parse(sensorFw.fw.subSequence(sensorFwFirstNumberIndex, sensorFw.fw.length).toString())
-                val latestFwFirstNumberIndex = latestFw.indexOfFirst { it.isDigit() }
-                val latestFwParsed = SemVer.parse(latestFw.subSequence(latestFwFirstNumberIndex, latestFw.length).toString())
-
-                if (sensorFwParsed.compareTo(latestFwParsed) < 0) {
-                    return true
-                } else {
-                    _stage.value = DfuUpdateStage.ALREADY_LATEST_VERSION
-                    return false
-                }
-            } catch (e: IllegalArgumentException) {
-                return true
-            }
         }
+
+        val isNewer = isNewerVersion(sensorFw.fw, latestFw)
+        if (!isNewer) {
+            _stage.value = DfuUpdateStage.ALREADY_LATEST_VERSION
+        }
+
+        return isNewer
     }
 
     fun getSensorFirmwareVersion() {
