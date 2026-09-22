@@ -317,7 +317,7 @@ class UnitsConverter (
             if (it !in -100.0..370.0) {
                 null
             } else {
-                HumidityConverter(temperature, humidity / 100)
+                HumidityConverter(temperature, humidity)
             }
         } ?: return null
         return when (humidityUnit) {
