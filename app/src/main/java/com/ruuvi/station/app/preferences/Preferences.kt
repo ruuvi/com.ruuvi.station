@@ -26,12 +26,6 @@ class Preferences (val context: Context) {
             sharedPreferences.edit { putInt(PREF_BACKGROUND_SCAN_INTERVAL, interval) }
         }
 
-    var backgroundScanIntervalLastUpdated: Long
-        get() = sharedPreferences.getLong(PREF_BACKGROUND_SCAN_INTERVAL_LAST_UPDATED, 0L)
-        set(value) {
-            sharedPreferences.edit { putLong(PREF_BACKGROUND_SCAN_INTERVAL_LAST_UPDATED, value) }
-        }
-
     var backgroundScanMode: BackgroundScanModes
         get() = BackgroundScanModes.fromInt(
             sharedPreferences.getInt(
@@ -42,15 +36,6 @@ class Preferences (val context: Context) {
             ?: BackgroundScanModes.BACKGROUND
         set(mode) {
             sharedPreferences.edit { putInt(PREF_BACKGROUND_SCAN_MODE, mode.value) }
-        }
-
-    var backgroundScanModeLastUpdated: Long
-        get() = sharedPreferences.getLong(
-            PREF_BACKGROUND_SCAN_MODE_LAST_UPDATED,
-            0L
-        )
-        set(value) {
-            sharedPreferences.edit { putLong(PREF_BACKGROUND_SCAN_MODE_LAST_UPDATED, value) }
         }
 
     var isFirstStart: Boolean
@@ -741,9 +726,7 @@ class Preferences (val context: Context) {
     companion object {
         private const val DEFAULT_SCAN_INTERVAL = 5 * 60
         private const val PREF_BACKGROUND_SCAN_INTERVAL = "pref_background_scan_interval"
-        private const val PREF_BACKGROUND_SCAN_INTERVAL_LAST_UPDATED = "pref_background_scan_interval_last_updated"
         private const val PREF_BACKGROUND_SCAN_MODE = "pref_background_scan_mode"
-        private const val PREF_BACKGROUND_SCAN_MODE_LAST_UPDATED = "pref_background_scan_mode_last_updated"
         private const val PREF_FIRST_START = "FIRST_START_PREF2"
         private const val PREF_FIRST_GRAPH = "first_graph_visit"
         private const val PREF_TEMPERATURE_UNIT = "pref_temperature_unit"
