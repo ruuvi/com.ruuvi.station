@@ -42,6 +42,7 @@ class NetworkSignInInteractor (
 
             networkTokenRepository.clearTokenInfo()
             preferencesRepository.resetSubscriptionShareSettings()
+            preferencesRepository.resetAppSettings()
             preferencesRepository.clearMarketingConsent()
             pushRegisterInteractor.checkAndRegisterDeviceToken()
 
