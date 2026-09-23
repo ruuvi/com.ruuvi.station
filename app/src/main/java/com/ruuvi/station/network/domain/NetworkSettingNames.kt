@@ -1,8 +1,6 @@
 package com.ruuvi.station.network.domain
 
 object NetworkSettingNames {
-    const val BACKGROUND_SCAN_MODE = "BACKGROUND_SCAN_MODE"
-    const val BACKGROUND_SCAN_INTERVAL = "BACKGROUND_SCAN_INTERVAL"
     const val UNIT_TEMPERATURE = "UNIT_TEMPERATURE"
     const val UNIT_HUMIDITY = "UNIT_HUMIDITY"
     const val UNIT_PRESSURE = "UNIT_PRESSURE"
@@ -28,8 +26,6 @@ object NetworkSettingNames {
     const val TIPS_ALLOWED = "TIPS_ALLOWED"
 
     val TRACKED_SETTINGS = listOf(
-        BACKGROUND_SCAN_MODE,
-        BACKGROUND_SCAN_INTERVAL,
         UNIT_TEMPERATURE,
         UNIT_HUMIDITY,
         UNIT_PRESSURE,

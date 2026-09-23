@@ -109,8 +109,16 @@ class PreferencesRepository(
     fun getBackgroundScanMode(): BackgroundScanModes =
         preferences.backgroundScanMode
 
+    fun setBackgroundScanMode(mode: BackgroundScanModes) {
+        preferences.backgroundScanMode = mode
+    }
+
     fun getBackgroundScanInterval(): Int =
         preferences.backgroundScanInterval
+
+    fun setBackgroundScanInterval(interval: Int) {
+        preferences.backgroundScanInterval = interval
+    }
 
     fun isShowAllGraphPoint(): Boolean =
         preferences.graphShowAllPoint
@@ -394,18 +402,6 @@ class PreferencesRepository(
 
     fun setNetworkSetting(settingName: String, value: String?, timestamp: Long) {
         when (settingName) {
-            NetworkSettingNames.BACKGROUND_SCAN_MODE -> {
-                val mode = value?.toIntOrNull()?.let(BackgroundScanModes::fromInt) ?: return
-                preferences.backgroundScanMode = mode
-                preferences.backgroundScanModeLastUpdated = timestamp
-            }
-
-            NetworkSettingNames.BACKGROUND_SCAN_INTERVAL -> {
-                val interval = value?.toIntOrNull() ?: return
-                preferences.backgroundScanInterval = interval
-                preferences.backgroundScanIntervalLastUpdated = timestamp
-            }
-
             NetworkSettingNames.UNIT_TEMPERATURE -> {
                 val unitCode = value ?: return
                 preferences.temperatureUnit = TemperatureUnit.getByCode(unitCode)
@@ -549,8 +545,6 @@ NetworkSettingNames.SENSOR_ORDER -> {
 
     fun getNetworkSetting(settingName: String): String? {
         return when (settingName) {
-            NetworkSettingNames.BACKGROUND_SCAN_MODE -> preferences.backgroundScanMode.value.toString()
-            NetworkSettingNames.BACKGROUND_SCAN_INTERVAL -> preferences.backgroundScanInterval.toString()
             NetworkSettingNames.UNIT_TEMPERATURE -> preferences.temperatureUnit.unitCode
             NetworkSettingNames.UNIT_HUMIDITY -> preferences.humidityUnit.unitCode
             NetworkSettingNames.UNIT_PRESSURE -> preferences.pressureUnit.unitCode
@@ -579,8 +573,6 @@ NetworkSettingNames.SENSOR_ORDER -> {
 
     fun getNetworkSettingLastUpdated(settingName: String): Long {
         return when (settingName) {
-            NetworkSettingNames.BACKGROUND_SCAN_MODE -> preferences.backgroundScanModeLastUpdated
-            NetworkSettingNames.BACKGROUND_SCAN_INTERVAL -> preferences.backgroundScanIntervalLastUpdated
             NetworkSettingNames.UNIT_TEMPERATURE -> preferences.temperatureUnitLastUpdated
             NetworkSettingNames.UNIT_HUMIDITY -> preferences.humidityUnitLastUpdated
             NetworkSettingNames.UNIT_PRESSURE -> preferences.pressureUnitLastUpdated
