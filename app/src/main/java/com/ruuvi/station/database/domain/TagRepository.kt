@@ -105,8 +105,14 @@ class TagRepository(
         val transaction = database.beginTransactionAsync {
             sensor.id?.let { sensorId ->
                 sensor.favorite = true
-                val sensorSettings = SensorSettings(id = sensorId, createDate = Date(), name = sensor.displayName())
-                sensorSettings.save(it)
+                if (sensorSettingsRepository.getSensorSettings(sensorId) == null) {
+                    val sensorSettings = SensorSettings(
+                        id = sensorId,
+                        createDate = Date(),
+                        name = sensor.displayName()
+                    )
+                    sensorSettings.save(it)
+                }
                 sensor.save(it)
             }
         }
