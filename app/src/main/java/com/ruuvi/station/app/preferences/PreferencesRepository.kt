@@ -310,6 +310,10 @@ class PreferencesRepository(
         preferences.resetSubscriptionShareSettings()
     }
 
+    fun resetAppSettings() {
+        preferences.resetAppSettings()
+    }
+
     fun getDontShowGattSync(): Boolean =
         preferences.dontShowGattSync
 
