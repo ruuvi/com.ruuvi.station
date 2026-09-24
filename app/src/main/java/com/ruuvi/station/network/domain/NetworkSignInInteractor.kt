@@ -1,6 +1,7 @@
 package com.ruuvi.station.network.domain
 
 import com.ruuvi.station.app.preferences.PreferencesRepository
+import com.ruuvi.station.database.domain.NetworkRequestRepository
 import com.ruuvi.station.database.domain.SensorSettingsRepository
 import com.ruuvi.station.database.domain.TagRepository
 import com.ruuvi.station.firebase.domain.PushRegisterInteractor
@@ -14,6 +15,7 @@ class NetworkSignInInteractor (
     private val networkInteractor: RuuviNetworkInteractor,
     private val networkDataSyncInteractor: NetworkDataSyncInteractor,
     private val networkTokenRepository: NetworkTokenRepository,
+    private val networkRequestRepository: NetworkRequestRepository,
     private val sensorSettingsRepository: SensorSettingsRepository,
     private val pushRegisterInteractor: PushRegisterInteractor,
     private val preferencesRepository: PreferencesRepository,
@@ -40,6 +42,7 @@ class NetworkSignInInteractor (
             val stopJob = networkDataSyncInteractor.stopSync()
             stopJob.join()
 
+            networkRequestRepository.deletePendingRequests()
             networkTokenRepository.clearTokenInfo()
             preferencesRepository.resetSubscriptionShareSettings()
             preferencesRepository.resetAppSettings()
