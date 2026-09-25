@@ -512,8 +512,6 @@ class Preferences (val context: Context) {
 
     fun resetAppSettings() {
         sharedPreferences.edit {
-            remove(PREF_BACKGROUND_SCAN_INTERVAL)
-            remove(PREF_BACKGROUND_SCAN_MODE)
             remove(PREF_TEMPERATURE_UNIT)
             remove(PREF_TEMPERATURE_UNIT_LAST_UPDATED)
             remove(PREF_HUMIDITY_UNIT)

@@ -585,7 +585,8 @@ class NetworkDataSyncInteractor (
                     sensor.sensor,
                     Uri.fromFile(imageFile).toString(),
                     null,
-                    networkImageGuid
+                    networkImageGuid,
+                    sensor.lastUpdated
                 )
             } catch (e: Exception) {
                 Timber.e(e, "Failed to load image: ${sensor.picture}")
