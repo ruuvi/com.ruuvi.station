@@ -67,14 +67,14 @@ import com.ruuvi.station.app.ui.components.TextFieldRuuvi
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.RuuviTheme
 import com.ruuvi.station.util.extensions.viewModel
-import org.kodein.di.Kodein
-import org.kodein.di.KodeinAware
-import org.kodein.di.android.closestKodein
+import org.kodein.di.DI
+import org.kodein.di.DIAware
+import org.kodein.di.android.closestDI
 import timber.log.Timber
 
-class ShareSensorActivity : AppCompatActivity() , KodeinAware {
+class ShareSensorActivity : AppCompatActivity() , DIAware {
 
-    override val kodein: Kodein by closestKodein()
+    override val di: DI by closestDI()
 
     private val viewModel: ShareSensorViewModel by viewModel {
         intent.getStringExtra(TAG_ID).orEmpty()

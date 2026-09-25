@@ -33,9 +33,9 @@ import coil.compose.AsyncImage
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.ruuvi.station.tagsettings.di.TagSettingsViewModelArgs
 import com.ruuvi.station.util.extensions.viewModel
-import org.kodein.di.Kodein
-import org.kodein.di.KodeinAware
-import org.kodein.di.android.closestKodein
+import org.kodein.di.DI
+import org.kodein.di.DIAware
+import org.kodein.di.android.closestDI
 import com.ruuvi.station.R
 import com.ruuvi.station.app.ui.components.*
 import com.ruuvi.station.app.ui.theme.RuuviTheme
@@ -45,13 +45,13 @@ import com.ruuvi.station.app.ui.RuuviTopAppBar
 import com.ruuvi.station.app.ui.UiEvent
 import timber.log.Timber
 
-class DfuUpdateActivity : AppCompatActivity() , KodeinAware {
+class DfuUpdateActivity : AppCompatActivity() , DIAware {
 
-    override val kodein: Kodein by closestKodein()
+    override val di: DI by closestDI()
 
     private val viewModel: DfuUpdateViewModel by viewModel { TagSettingsViewModelArgs(intent.getStringExtra(SENSOR_ID) ?:"") }
 
-    private val viewModelAir: DfuAirUpdateViewModel by viewModel { intent.getStringExtra(SENSOR_ID) }
+    private val viewModelAir: DfuAirUpdateViewModel by viewModel { intent.getStringExtra(SENSOR_ID) ?: "" }
 
     private lateinit var permissionsInteractor: PermissionsInteractor
 

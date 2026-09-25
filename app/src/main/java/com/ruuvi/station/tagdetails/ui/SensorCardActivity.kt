@@ -67,16 +67,18 @@ import com.ruuvi.station.units.domain.UnitsConverter
 import com.ruuvi.station.units.model.EnvironmentValue
 import com.ruuvi.station.units.model.UnitType
 import com.ruuvi.station.util.base.NfcActivity
-import org.kodein.di.KodeinAware
-import org.kodein.di.android.closestKodein
+import org.kodein.di.DI
+import org.kodein.di.DIAware
+import org.kodein.di.android.closestDI
 import com.ruuvi.station.util.extensions.*
 import com.ruuvi.station.util.ui.pxToDp
 import com.ruuvi.station.vico.model.ChartData
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
-import org.kodein.di.generic.instance
+import org.kodein.di.instance
 import org.kodein.di.direct
+import org.kodein.di.factory
 import timber.log.Timber
 import kotlin.math.ceil
 import kotlin.math.floor
@@ -91,9 +93,10 @@ private val SENSOR_VALUE_ITEM_SPACING = 6.dp
 private val PAGE_INDICATOR_WIDTH = 4.dp
 private const val SENSOR_STATUS_REFRESH_DELAY_MILLIS = 500L
 
-class SensorCardActivity : NfcActivity(), KodeinAware {
+class SensorCardActivity : NfcActivity(), DIAware {
 
-    override val kodein by closestKodein()
+
+    override val di: DI by closestDI()
 
     private val unitsConverter: UnitsConverter by instance()
     private val runtimeBehavior: RuntimeBehavior by instance()
@@ -113,7 +116,7 @@ class SensorCardActivity : NfcActivity(), KodeinAware {
         )
     }
 
-    private inline fun <reified TViewModel : ViewModel, reified TArgument> keyedViewModel(
+    private inline fun <reified TViewModel : ViewModel, reified TArgument : Any> keyedViewModel(
         key: String,
         argument: TArgument,
     ): TViewModel = ViewModelProvider(
@@ -121,7 +124,7 @@ class SensorCardActivity : NfcActivity(), KodeinAware {
         object : ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")
             override fun <T : ViewModel> create(modelClass: Class<T>): T =
-                kodein.direct.instance<TArgument, TViewModel>(arg = argument) as T
+                di.direct.factory<TArgument, TViewModel>().invoke(argument) as T
         }
     )[key, TViewModel::class.java]
 

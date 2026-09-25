@@ -61,7 +61,6 @@ import com.ruuvi.station.app.ui.components.AlertBadgeIcon
 import com.ruuvi.station.app.ui.components.Paragraph
 import com.ruuvi.station.app.ui.components.RuuviButton
 import com.ruuvi.station.app.ui.components.limitScaleTo
-import com.ruuvi.station.app.ui.components.rememberResourceUri
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme.colors
 import com.ruuvi.station.app.ui.theme.RuuviTheme
@@ -91,16 +90,17 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
-import org.kodein.di.KodeinAware
-import org.kodein.di.android.closestKodein
-import org.kodein.di.generic.instance
+import org.kodein.di.DI
+import org.kodein.di.DIAware
+import org.kodein.di.android.closestDI
+import org.kodein.di.instance
 import kotlin.math.min
 
 private val DASHBOARD_ALERT_CONTAINER_SIZE = 36.dp
 
-class DashboardActivity : NfcActivity(), KodeinAware {
+class DashboardActivity : NfcActivity(), DIAware {
 
-    override val kodein by closestKodein()
+    override val di: DI by closestDI()
 
     private val dashboardViewModel: DashboardActivityViewModel by viewModel()
     private val preferencesRepository: PreferencesRepository by instance()

@@ -29,12 +29,13 @@ import com.ruuvi.station.app.ui.RuuviTopAppBar
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.RuuviTheme
 import com.ruuvi.station.util.extensions.viewModel
-import org.kodein.di.KodeinAware
-import org.kodein.di.android.closestKodein
+import org.kodein.di.DI
+import org.kodein.di.DIAware
+import org.kodein.di.android.closestDI
 
-class SettingsActivity : AppCompatActivity(), KodeinAware {
+class SettingsActivity : AppCompatActivity(), DIAware {
 
-    override val kodein by closestKodein()
+    override val di by closestDI()
 
     private val appSettingsListViewModel: AppSettingsListViewModel by viewModel()
 
