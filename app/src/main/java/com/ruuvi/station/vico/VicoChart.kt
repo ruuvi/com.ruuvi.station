@@ -157,7 +157,7 @@ fun VicoChartNoInteraction(
 
     val fontSize = if (booleanResource(R.bool.isTablet)) 14.sp else 10.sp
     val label = rememberAxisLabelComponent(
-        style = TextStyle(
+        style = RuuviStationTheme.typography.dashboardSecondary.copy(
             color = RuuviStationTheme.colors.chartLabel,
             fontSize = fontSize
         )
