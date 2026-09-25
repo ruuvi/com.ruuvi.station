@@ -76,8 +76,9 @@ import com.ruuvi.station.vico.model.ChartData
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.distinctUntilChanged
 import org.kodein.di.instance
+import org.kodein.di.direct
+import org.kodein.di.factory
 import timber.log.Timber
 import kotlin.math.ceil
 import kotlin.math.floor
@@ -115,7 +116,7 @@ class SensorCardActivity : NfcActivity(), DIAware {
         )
     }
 
-    private inline fun <reified TViewModel : ViewModel, reified TArgument> keyedViewModel(
+    private inline fun <reified TViewModel : ViewModel, reified TArgument : Any> keyedViewModel(
         key: String,
         argument: TArgument,
     ): TViewModel = ViewModelProvider(
@@ -123,7 +124,7 @@ class SensorCardActivity : NfcActivity(), DIAware {
         object : ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")
             override fun <T : ViewModel> create(modelClass: Class<T>): T =
-                kodein.direct.instance<TArgument, TViewModel>(arg = argument) as T
+                di.direct.factory<TArgument, TViewModel>().invoke(argument) as T
         }
     )[key, TViewModel::class.java]
 

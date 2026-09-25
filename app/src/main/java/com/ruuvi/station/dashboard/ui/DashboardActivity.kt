@@ -61,7 +61,6 @@ import com.ruuvi.station.app.ui.components.AlertBadgeIcon
 import com.ruuvi.station.app.ui.components.Paragraph
 import com.ruuvi.station.app.ui.components.RuuviButton
 import com.ruuvi.station.app.ui.components.limitScaleTo
-import com.ruuvi.station.app.ui.components.rememberResourceUri
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme.colors
 import com.ruuvi.station.app.ui.theme.RuuviTheme
@@ -83,7 +82,6 @@ import com.ruuvi.station.tagdetails.ui.SensorCardActivity
 import com.ruuvi.station.tagdetails.ui.SensorCardOpenType
 import com.ruuvi.station.tagsettings.ui.BackgroundActivity
 import com.ruuvi.station.tagsettings.ui.SetSensorName
-import com.ruuvi.station.tagsettings.ui.TagSettingsActivity
 import com.ruuvi.station.units.domain.aqi.AQI
 import com.ruuvi.station.units.model.UnitType
 import com.ruuvi.station.util.base.NfcActivity
@@ -593,7 +591,7 @@ fun DashboardItem(
                 alpha = if (itemIsDragged) 0.7f else 1f
             }
             .clickableSingle(enabled = interactionEnabled) {
-                SensorCardActivity.star(
+                SensorCardActivity.start(
                     context,
                     sensor.id,
                     SensorCardOpenType.DEFAULT
