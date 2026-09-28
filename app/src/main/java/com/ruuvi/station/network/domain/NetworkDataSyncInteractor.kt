@@ -35,6 +35,7 @@ import timber.log.Timber
 import java.io.File
 import java.net.URI
 import java.util.*
+import androidx.core.net.toUri
 
 class NetworkDataSyncInteractor (
     private val preferencesRepository: PreferencesRepository,
@@ -607,12 +608,16 @@ class NetworkDataSyncInteractor (
     private fun setDefaultBackgroundLocally(sensorId: String, sensorSettings: SensorSettings) {
         val defaultBackground = imageInteractor.getDefaultBackgroundById(sensorSettings.defaultBackground)
         val imageFile = imageInteractor.saveResourceAsFile(sensorId, defaultBackground) ?: return
+        val oldBackground = sensorSettings.userBackground
         sensorSettingsRepository.updateSensorBackground(
             sensorId = sensorId,
             userBackground = Uri.fromFile(imageFile).toString(),
             defaultBackground = sensorSettings.defaultBackground,
             networkBackground = null
         )
+        oldBackground?.let { background ->
+            imageInteractor.deleteFile(background.toUri().path ?: background)
+        }
     }
 
     suspend fun getSince(tagId: String, since: Date, limit: Int): GetSensorDataResponse? {
@@ -638,6 +643,7 @@ class NetworkDataSyncInteractor (
             for (job in tagJobs) {
                 job.cancelAndJoin()
             }
+            networkRequestExecutor.cancelAndJoinExecutingRequests()
         }
     }
 }

@@ -16,6 +16,7 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
 import timber.log.Timber
+import java.util.concurrent.ConcurrentHashMap
 
 class NetworkRequestExecutor (
     private val tokenRepository: NetworkTokenRepository,
@@ -84,6 +85,10 @@ class NetworkRequestExecutor (
     fun anySettingsRequests(): Boolean {
         val requests = networkRequestRepository.getScheduledRequests()
         return requests.any{ it.type == NetworkRequestType.SETTINGS }
+    }
+
+    suspend fun cancelAndJoinExecutingRequests() {
+        jobManager.cancelAndJoinAll()
     }
 
     private suspend fun execute(networkRequest: NetworkRequest): Boolean {
@@ -155,7 +160,7 @@ class NetworkRequestExecutor (
             Timber.d("runSpecificAction exception: ${throwable.message} ${throwable.stackTrace}")
         }
 
-        val job = CoroutineScope(Dispatchers.IO + coroutineExceptionHandler).launch {
+        val job = CoroutineScope(Dispatchers.IO + coroutineExceptionHandler).launch(start = CoroutineStart.LAZY) {
             response =  when (networkRequest.type) {
                 NetworkRequestType.UNCLAIM -> unclaimSensor(token, request as UnclaimSensorRequest)
                 NetworkRequestType.UPDATE_SENSOR -> updateSensor(
@@ -180,6 +185,7 @@ class NetworkRequestExecutor (
             }
         }
         jobManager.registerJob(networkRequest.id, job)
+        job.start()
         job.join()
         return response
     }
@@ -254,7 +260,7 @@ class NetworkRequestExecutor (
     }
 
     class NetworkJobManager() {
-        private val jobs: MutableMap<Int, Job> = mutableMapOf()
+        private val jobs = ConcurrentHashMap<Int, Job>()
 
         fun jobsToLog() {
             val log = StringBuilder()
@@ -268,7 +274,8 @@ class NetworkRequestExecutor (
 
         fun registerJob(id: Int, job: Job) {
             Timber.d("registerJob $id")
-            if (!jobs.containsKey(id)) {
+            val existingJob = jobs[id]
+            if (existingJob?.isActive != true) {
                 jobs[id] = job
             }
         }
@@ -282,6 +289,15 @@ class NetworkRequestExecutor (
                 job?.cancel()
             } else {
                 Timber.d("job $id not found")
+            }
+        }
+
+        suspend fun cancelAndJoinAll() {
+            val activeJobs = jobs.entries.toList()
+            for ((id, job) in activeJobs) {
+                Timber.d("Canceling and joining job $id isActive ${job.isActive}")
+                job.cancelAndJoin()
+                jobs.remove(id, job)
             }
         }
 
