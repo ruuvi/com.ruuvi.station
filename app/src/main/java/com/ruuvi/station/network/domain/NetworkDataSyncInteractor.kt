@@ -613,7 +613,8 @@ class NetworkDataSyncInteractor (
             sensorId = sensorId,
             userBackground = Uri.fromFile(imageFile).toString(),
             defaultBackground = sensorSettings.defaultBackground,
-            networkBackground = null
+            networkBackground = null,
+            timestamp = 0L
         )
         oldBackground?.let { background ->
             imageInteractor.deleteFile(background.toUri().path ?: background)
