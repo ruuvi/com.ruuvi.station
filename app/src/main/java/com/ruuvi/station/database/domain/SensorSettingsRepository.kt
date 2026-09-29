@@ -95,6 +95,7 @@ class SensorSettingsRepository {
         settings.userBackground = null
         settings.defaultBackground = defaultBackground
         settings.networkBackground = null
+        settings.lastUpdated = 0L
         settings.update()
     }
 

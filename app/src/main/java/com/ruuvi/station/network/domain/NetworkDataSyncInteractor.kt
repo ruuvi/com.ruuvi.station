@@ -11,6 +11,7 @@ import com.ruuvi.station.database.domain.SensorSettingsRepository
 import com.ruuvi.station.database.domain.TagRepository
 import com.ruuvi.station.database.tables.SensorSettings
 import com.ruuvi.station.database.tables.TagSensorReading
+import com.ruuvi.station.database.tables.isAir
 import com.ruuvi.station.firebase.domain.FirebaseInteractor
 import com.ruuvi.station.firebase.domain.PushRegisterInteractor
 import com.ruuvi.station.image.ImageInteractor
@@ -513,8 +514,7 @@ class NetworkDataSyncInteractor (
             localSettings.networkSensor = true
             localSettings.update()
         }
-        val localtime = localSettings.backgroundTimestamp
-        val networktime = sensor.lastUpdated
+
         if (localSettings.userBackground != null && sensor.lastUpdated < localSettings.backgroundTimestamp) {
             networkInteractor.uploadImageToSyncWithCloud(
                 sensorId = sensor.sensor,
@@ -531,7 +531,7 @@ class NetworkDataSyncInteractor (
 
             if (sensorSettings != null) {
                 if (sensor.picture.isBlank()) {
-                    setDefaultBackgroundLocally(sensor.sensor, sensorSettings)
+                    setDefaultBackgroundLocally(sensor.sensor)
                 } else {
                     setSensorImage(sensor, sensorSettings)
                 }
@@ -561,7 +561,7 @@ class NetworkDataSyncInteractor (
         val networkImageGuid = getNetworkImageGuid(sensor.picture)
         if (networkImageGuid == null) {
             Timber.w("Invalid image URL for ${sensor.sensor}: ${sensor.picture}")
-            setDefaultBackgroundLocally(sensor.sensor, sensorSettings)
+            setDefaultBackgroundLocally(sensor.sensor)
             return
         }
 
@@ -581,7 +581,7 @@ class NetworkDataSyncInteractor (
                 )
             } catch (e: Exception) {
                 Timber.e(e, "Failed to load image: ${sensor.picture}")
-                setDefaultBackgroundLocally(sensor.sensor, sensorSettings)
+                setDefaultBackgroundLocally(sensor.sensor)
             }
         }
     }
@@ -595,13 +595,9 @@ class NetworkDataSyncInteractor (
         }
     }
 
-    private fun setDefaultBackgroundLocally(sensorId: String, sensorSettings: SensorSettings) {
-        val defaultBackground = imageInteractor.getDefaultBackgroundById(sensorSettings.defaultBackground)
-        val oldBackground = sensorSettings.userBackground
+    private fun setDefaultBackgroundLocally(sensorId: String) {
+        val defaultBackground = imageInteractor.getDefaultResource(tagRepository.getTagById(sensorId)?.isAir() == true)
         sensorSettingsRepository.setDefaultSensorBackground(sensorId, defaultBackground)
-        oldBackground?.let { background ->
-            imageInteractor.deleteFile(background.toUri().path ?: background)
-        }
     }
 
     suspend fun getSince(tagId: String, since: Date, limit: Int): GetSensorDataResponse? {

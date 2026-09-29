@@ -609,8 +609,15 @@ fun DashboardItem(
                         .fillMaxHeight()
                         .background(color = RuuviStationTheme.colors.defaultSensorBackground),
                 ) {
-                    sensor.userBackground?.let(Uri::parse)?.takeIf { it.path != null }?.let { uri ->
-                        DashboardImage(uri)
+                    val userBackground = sensor.userBackground
+                        ?.takeIf(String::isNotBlank)
+                        ?.let(Uri::parse)
+                        ?.takeIf { !it.path.isNullOrBlank() }
+
+                    when {
+                        userBackground != null -> DashboardImage(userBackground)
+                        sensor.defaultBackground != 0 ->
+                            DashboardImage(rememberResourceUri(sensor.defaultBackground))
                     }
                 }
             }
