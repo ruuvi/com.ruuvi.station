@@ -531,17 +531,7 @@ class NetworkDataSyncInteractor (
 
             if (sensorSettings != null) {
                 if (sensor.picture.isBlank()) {
-                    val defaultBackground = imageInteractor.getDefaultBackgroundById(sensorSettings.defaultBackground)
-                    val isOwner = sensor.owner.equals(networkInteractor.getEmail(), ignoreCase = true)
-                    if (isOwner) {
-                        tagSettingsInteractor.setDefaultBackgroundImageByResource(
-                            sensorId = sensor.sensor,
-                            defaultBackground = defaultBackground,
-                            uploadNow = true
-                        )
-                    } else {
-                        setDefaultBackgroundLocally(sensor.sensor, sensorSettings)
-                    }
+                    setDefaultBackgroundLocally(sensor.sensor, sensorSettings)
                 } else {
                     setSensorImage(sensor, sensorSettings)
                 }
@@ -607,15 +597,8 @@ class NetworkDataSyncInteractor (
 
     private fun setDefaultBackgroundLocally(sensorId: String, sensorSettings: SensorSettings) {
         val defaultBackground = imageInteractor.getDefaultBackgroundById(sensorSettings.defaultBackground)
-        val imageFile = imageInteractor.saveResourceAsFile(sensorId, defaultBackground) ?: return
         val oldBackground = sensorSettings.userBackground
-        sensorSettingsRepository.updateSensorBackground(
-            sensorId = sensorId,
-            userBackground = Uri.fromFile(imageFile).toString(),
-            defaultBackground = sensorSettings.defaultBackground,
-            networkBackground = null,
-            timestamp = 0L
-        )
+        sensorSettingsRepository.setDefaultSensorBackground(sensorId, defaultBackground)
         oldBackground?.let { background ->
             imageInteractor.deleteFile(background.toUri().path ?: background)
         }

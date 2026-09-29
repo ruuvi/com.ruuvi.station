@@ -1,13 +1,11 @@
 package com.ruuvi.station.network.domain
 
-import android.net.Uri
 import com.ruuvi.station.app.ui.UiText
 import com.ruuvi.station.database.domain.SensorSettingsRepository
 import com.ruuvi.station.database.model.NetworkRequestType
 import com.ruuvi.station.database.tables.Alarm
 import com.ruuvi.station.database.tables.NetworkRequest
 import com.ruuvi.station.database.tables.SensorSettings
-import com.ruuvi.station.image.ImageSource
 import com.ruuvi.station.firebase.domain.FirebaseInteractor
 import com.ruuvi.station.network.data.NetworkTokenInfo
 import com.ruuvi.station.network.data.request.*
@@ -16,11 +14,9 @@ import com.ruuvi.station.network.data.response.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
 import timber.log.Timber
-import java.io.File
 import java.lang.Exception
 import java.sql.Timestamp
 import java.util.*
-import androidx.core.net.toUri
 
 class RuuviNetworkInteractor (
     private val tokenRepository: NetworkTokenRepository,
@@ -227,8 +223,9 @@ class RuuviNetworkInteractor (
     }
 
     fun uploadImage(sensorId: String, filename: String, uploadNow: Boolean = false) {
-        if (isDefaultBackground(filename)) {
-            Timber.d("Skipping upload of default background for $sensorId")
+        val sensorSettings = sensorSettingsRepository.getSensorSettings(sensorId)
+        if (sensorSettings?.userBackground != filename) {
+            Timber.d("Skipping upload of non-user background for $sensorId")
             return
         }
 
@@ -240,8 +237,8 @@ class RuuviNetworkInteractor (
     }
 
     fun uploadImageToSyncWithCloud(sensorId: String, filename: String, uploadNow: Boolean = false, sensorSettings: SensorSettings) {
-        if (isDefaultBackground(filename)) {
-            Timber.d("Skipping upload of default background for $sensorId")
+        if (sensorSettings.userBackground != filename) {
+            Timber.d("Skipping upload of non-user background for $sensorId")
             return
         }
 
@@ -249,11 +246,6 @@ class RuuviNetworkInteractor (
             val networkRequest = NetworkRequest(NetworkRequestType.UPLOAD_IMAGE, sensorId, UploadImageRequestWrapper(filename, UploadImageRequest(sensorId)))
             networkRequestExecutor.registerRequest(networkRequest, uploadNow)
         }
-    }
-
-    private fun isDefaultBackground(filename: String): Boolean {
-        val path = filename.toUri().path ?: filename
-        return File(path).name.startsWith("${ImageSource.DEFAULT.prefix}_")
     }
 
     suspend fun getSensorData(request: GetSensorDataRequest):GetSensorDataResponse? = withContext(Dispatchers.IO) {

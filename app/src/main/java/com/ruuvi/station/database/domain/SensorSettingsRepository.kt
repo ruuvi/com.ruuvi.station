@@ -90,6 +90,14 @@ class SensorSettingsRepository {
         }
     }
 
+    fun setDefaultSensorBackground(sensorId: String, defaultBackground: Int) {
+        val settings = getSensorSettingsOrCreate(sensorId)
+        settings.userBackground = null
+        settings.defaultBackground = defaultBackground
+        settings.networkBackground = null
+        settings.update()
+    }
+
     fun updateSensorBackground(
         sensorId: String,
         userBackground: String?,

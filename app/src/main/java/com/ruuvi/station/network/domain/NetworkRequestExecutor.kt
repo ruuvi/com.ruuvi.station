@@ -101,6 +101,12 @@ class NetworkRequestExecutor (
         var result = false
 
         if (request != null) {
+            if (request is UploadImageRequestWrapper && !isCurrentUserBackground(request)) {
+                Timber.d("Skipping queued upload of non-user background for ${request.request.sensor}")
+                disableRequest(networkRequest, NetworkRequestStatus.SUCCESS)
+                return true
+            }
+
             token?.let {
                 try {
                     val response = runSpecificAction(token, networkRequest, request)
@@ -125,6 +131,9 @@ class NetworkRequestExecutor (
         }
         return result
     }
+
+    private fun isCurrentUserBackground(request: UploadImageRequestWrapper): Boolean =
+        sensorSettingsRepository.getSensorSettings(request.request.sensor)?.userBackground == request.filename
 
     private fun startExecuting(networkRequest: NetworkRequest): Boolean {
         if (jobManager.isJobRunning(networkRequest.id)) {
