@@ -8,6 +8,7 @@ import com.ruuvi.station.database.tables.Alarm
 import com.ruuvi.station.database.tables.NetworkRequest
 import com.ruuvi.station.database.tables.SensorSettings
 import com.ruuvi.station.image.ImageSource
+import com.ruuvi.station.image.isDefaultBackground
 import com.ruuvi.station.firebase.domain.FirebaseInteractor
 import com.ruuvi.station.network.data.NetworkTokenInfo
 import com.ruuvi.station.network.data.request.*
@@ -249,11 +250,6 @@ class RuuviNetworkInteractor (
             val networkRequest = NetworkRequest(NetworkRequestType.UPLOAD_IMAGE, sensorId, UploadImageRequestWrapper(filename, UploadImageRequest(sensorId)))
             networkRequestExecutor.registerRequest(networkRequest, uploadNow)
         }
-    }
-
-    private fun isDefaultBackground(filename: String): Boolean {
-        val path = filename.toUri().path ?: filename
-        return File(path).name.startsWith("${ImageSource.DEFAULT.prefix}_")
     }
 
     suspend fun getSensorData(request: GetSensorDataRequest):GetSensorDataResponse? = withContext(Dispatchers.IO) {

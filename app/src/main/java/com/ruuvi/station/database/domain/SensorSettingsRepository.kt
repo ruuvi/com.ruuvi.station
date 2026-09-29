@@ -106,6 +106,14 @@ class SensorSettingsRepository {
         settings.update()
     }
 
+    fun setDefaultSensorBackground(sensorId: String, defaultBackground: Int) {
+        val settings = getSensorSettingsOrCreate(sensorId)
+        settings.userBackground = null
+        settings.defaultBackground = defaultBackground
+        settings.networkBackground = null
+        settings.update()
+    }
+
     fun updateNetworkBackground(sensorId: String, networkBackground: String?, timestamp: Long? = null) {
         Timber.d("updateNetworkBackground $sensorId $networkBackground")
         val settings = getSensorSettingsOrCreate(sensorId)

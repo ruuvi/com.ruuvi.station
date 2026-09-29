@@ -17,8 +17,7 @@ class ImageMigrationInteractor(
         for (setting in settings) {
             tagSettingsInteractor.setDefaultBackgroundImageByResource(
                 sensorId = setting.id,
-                defaultBackground = imageInteractor.getDefaultBackgroundById(setting.defaultBackground),
-                uploadNow = false
+                defaultBackground = imageInteractor.getDefaultBackgroundById(setting.defaultBackground)
             )
         }
     }

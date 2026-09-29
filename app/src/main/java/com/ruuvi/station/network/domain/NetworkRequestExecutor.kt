@@ -8,6 +8,7 @@ import com.ruuvi.station.database.domain.SensorSettingsRepository
 import com.ruuvi.station.database.model.NetworkRequestStatus
 import com.ruuvi.station.database.model.NetworkRequestType
 import com.ruuvi.station.database.tables.NetworkRequest
+import com.ruuvi.station.image.isDefaultBackground
 import com.ruuvi.station.network.data.request.*
 import com.ruuvi.station.network.data.requestWrappers.UploadImageRequestWrapper
 import com.ruuvi.station.network.data.response.*
@@ -101,6 +102,14 @@ class NetworkRequestExecutor (
         var result = false
 
         if (request != null) {
+            if (networkRequest.type == NetworkRequestType.UPLOAD_IMAGE && request is UploadImageRequestWrapper) {
+                if (isDefaultBackground(request.filename)) {
+                    Timber.d("Skipping upload of default background for ${networkRequest.key}: $networkRequest")
+                    disableRequest(networkRequest, NetworkRequestStatus.SUCCESS)
+                    return true
+                }
+            }
+
             token?.let {
                 try {
                     val response = runSpecificAction(token, networkRequest, request)

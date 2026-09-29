@@ -15,6 +15,7 @@ import com.ruuvi.station.firebase.domain.FirebaseInteractor
 import com.ruuvi.station.firebase.domain.PushRegisterInteractor
 import com.ruuvi.station.image.ImageInteractor
 import com.ruuvi.station.image.ImageSource
+import com.ruuvi.station.image.isDefaultBackground
 import com.ruuvi.station.network.data.NetworkSyncEvent
 import com.ruuvi.station.network.data.request.GetSensorDataRequest
 import com.ruuvi.station.network.data.request.SensorDataMode
@@ -513,9 +514,11 @@ class NetworkDataSyncInteractor (
             localSettings.networkSensor = true
             localSettings.update()
         }
-        val localtime = localSettings.backgroundTimestamp
-        val networktime = sensor.lastUpdated
-        if (localSettings.userBackground != null && sensor.lastUpdated < localSettings.backgroundTimestamp) {
+        if (
+            localSettings.userBackground != null &&
+            !isDefaultBackground(localSettings.userBackground!!) &&
+            sensor.lastUpdated < localSettings.backgroundTimestamp
+        ) {
             networkInteractor.uploadImageToSyncWithCloud(
                 sensorId = sensor.sensor,
                 filename = localSettings.userBackground!!,
@@ -536,8 +539,7 @@ class NetworkDataSyncInteractor (
                     if (isOwner) {
                         tagSettingsInteractor.setDefaultBackgroundImageByResource(
                             sensorId = sensor.sensor,
-                            defaultBackground = defaultBackground,
-                            uploadNow = true
+                            defaultBackground = defaultBackground
                         )
                     } else {
                         setDefaultBackgroundLocally(sensor.sensor, sensorSettings)
@@ -607,15 +609,8 @@ class NetworkDataSyncInteractor (
 
     private fun setDefaultBackgroundLocally(sensorId: String, sensorSettings: SensorSettings) {
         val defaultBackground = imageInteractor.getDefaultBackgroundById(sensorSettings.defaultBackground)
-        val imageFile = imageInteractor.saveResourceAsFile(sensorId, defaultBackground) ?: return
         val oldBackground = sensorSettings.userBackground
-        sensorSettingsRepository.updateSensorBackground(
-            sensorId = sensorId,
-            userBackground = Uri.fromFile(imageFile).toString(),
-            defaultBackground = sensorSettings.defaultBackground,
-            networkBackground = null,
-            timestamp = 0L
-        )
+        sensorSettingsRepository.setDefaultSensorBackground(sensorId, defaultBackground)
         oldBackground?.let { background ->
             imageInteractor.deleteFile(background.toUri().path ?: background)
         }

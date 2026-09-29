@@ -12,6 +12,7 @@ import android.os.Environment
 import android.provider.MediaStore
 import android.webkit.MimeTypeMap
 import androidx.core.content.FileProvider
+import androidx.core.net.toUri
 import androidx.exifinterface.media.ExifInterface
 import coil.imageLoader
 import coil.request.ImageRequest
@@ -286,4 +287,9 @@ enum class ImageSource (val prefix: String) {
     DEFAULT ("default"),
     GALLERY ("gallery"),
     CLOUD ("cloud")
+}
+
+fun isDefaultBackground(filename: String): Boolean {
+    val path = filename.toUri().path ?: filename
+    return File(path).name.startsWith("${ImageSource.DEFAULT.prefix}_")
 }

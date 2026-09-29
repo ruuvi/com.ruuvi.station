@@ -2,6 +2,7 @@ package com.ruuvi.station.tagsettings.domain
 
 import android.net.Uri
 import androidx.annotation.DrawableRes
+import androidx.core.net.toUri
 import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.database.domain.SensorSettingsRepository
 import com.ruuvi.station.database.domain.TagRepository
@@ -85,7 +86,7 @@ class TagSettingsInteractor(
         val sensorSettings = getSensorSettings(sensorId)
         if (sensorSettings != null) {
             sensorSettings.userBackground?.let { oldFile ->
-                imageInteractor.deleteFile(oldFile)
+                imageInteractor.deleteFile(oldFile.toUri().path ?: oldFile)
             }
             sensorSettingsRepository.updateSensorBackground(
                 sensorId = sensorId,
@@ -116,18 +117,14 @@ class TagSettingsInteractor(
 
     fun setDefaultBackgroundImageByResource(
         sensorId: String,
-        @DrawableRes defaultBackground: Int,
-        uploadNow: Boolean = false
+        @DrawableRes defaultBackground: Int
     ) {
         Timber.d("setDefaultBackgroundImage $sensorId $defaultBackground")
-        val imageFile = imageInteractor.saveResourceAsFile(sensorId, defaultBackground)
-        if (imageFile != null) {
-            setBackgroundImage(
-                sensorId = sensorId,
-                userBackground = Uri.fromFile(imageFile).toString(),
-                uploadNow = uploadNow
-            )
+        val sensorSettings = getSensorSettings(sensorId)
+        sensorSettings?.userBackground?.let { oldFile ->
+            imageInteractor.deleteFile(oldFile.toUri().path ?: oldFile)
         }
+        sensorSettingsRepository.setDefaultSensorBackground(sensorId, defaultBackground)
     }
 
     fun setImageFromGallery(sensorId: String, uri: Uri): Boolean {
