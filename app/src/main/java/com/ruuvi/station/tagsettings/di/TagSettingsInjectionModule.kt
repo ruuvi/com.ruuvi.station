@@ -29,7 +29,7 @@ object TagSettingsInjectionModule {
         }
 
         bind<VisibleMeasurementsViewModel>() with factory { sensorId: String ->
-            VisibleMeasurementsViewModel(sensorId, instance(), instance(), instance(), instance(), instance(), instance())
+            VisibleMeasurementsViewModel(sensorId, instance(), instance(), instance(), instance(), instance(), instance(), instance())
         }
 
         bind<LedControlViewModel>() with factory { sensorId: String ->

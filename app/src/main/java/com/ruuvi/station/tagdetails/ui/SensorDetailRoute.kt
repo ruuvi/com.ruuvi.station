@@ -690,6 +690,7 @@ private fun SensorSettingsNestedScreen(
                 onAction = viewModel::onAction,
                 effects = viewModel.effects,
                 getUnitName = viewModel::getUnitName,
+                getDefaultImageResource = viewModel::getDefaultImageResource,
                 selected = selected,
                 allOptions = possibleOptions,
             )

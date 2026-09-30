@@ -619,8 +619,7 @@ class NetworkDataSyncInteractor (
             return
         }
 
-        val defaultBackground = imageInteractor.getDefaultResource(tagRepository.getTagById(sensorId)?.isAir() == true)
-        sensorSettingsRepository.setDefaultSensorBackground(sensorId, defaultBackground)
+        sensorSettingsRepository.setDefaultSensorBackground(sensorId, 0)
     }
 
     suspend fun getSince(tagId: String, since: Date, limit: Int): GetSensorDataResponse? {

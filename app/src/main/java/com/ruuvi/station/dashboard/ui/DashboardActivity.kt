@@ -250,6 +250,7 @@ class DashboardActivity : NfcActivity(), KodeinAware {
                                             syncCloud = dashboardViewModel::syncCloud,
                                             setName = dashboardViewModel::setName,
                                             onMove = dashboardViewModel::moveItem,
+                                            getDefaultImageResource = dashboardViewModel::getDefaultImageResource,
                                             refreshing = refreshing,
                                             dragDropListState = dragDropListState
                                         )
@@ -422,6 +423,7 @@ fun DashboardItems(
     syncCloud: ()-> Unit,
     setName: (String, String?) -> Unit,
     onMove: (Int, Int, Boolean) -> Unit,
+    getDefaultImageResource: (RuuviTag) -> Int,
     dragDropListState: ItemStaggeredGridDragAndDropState,
     refreshing: Boolean
 ) {
@@ -486,7 +488,8 @@ fun DashboardItems(
                             displacementOffset = displacementOffset,
                             itemIsDragged = itemIsDragged,
                             setName = setName,
-                            moveItem = onMove
+                            moveItem = onMove,
+                            getDefaultImageResource = getDefaultImageResource,
                         )
                 }
             }
@@ -567,6 +570,7 @@ fun DashboardItem(
     itemIsDragged: Boolean,
     setName: (String, String?) -> Unit,
     moveItem: (Int, Int, Boolean) -> Unit,
+    getDefaultImageResource: (RuuviTag) -> Int,
     modifier: Modifier = Modifier,
     interactionEnabled: Boolean = true
 ) {
@@ -616,8 +620,9 @@ fun DashboardItem(
 
                     when {
                         userBackground != null -> DashboardImage(userBackground)
-                        sensor.defaultBackground != 0 ->
-                            DashboardImage(rememberResourceUri(sensor.defaultBackground))
+                        else -> DashboardImage(
+                            rememberResourceUri(getDefaultImageResource(sensor))
+                        )
                     }
                 }
             }

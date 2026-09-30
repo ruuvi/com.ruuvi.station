@@ -101,17 +101,24 @@ class TagRepository(
         tag.save()
     }
 
-    fun makeSensorFavorite(sensor: RuuviTagEntity) {
+    fun makeSensorFavorite(sensor: RuuviTagEntity, defaultBackground: Int) {
         val transaction = database.beginTransactionAsync {
             sensor.id?.let { sensorId ->
                 sensor.favorite = true
-                if (sensorSettingsRepository.getSensorSettings(sensorId) == null) {
-                    val sensorSettings = SensorSettings(
+                val settings = sensorSettingsRepository.getSensorSettings(sensorId)
+                if (settings == null) {
+                    SensorSettings(
                         id = sensorId,
                         createDate = Date(),
-                        name = sensor.displayName()
-                    )
-                    sensorSettings.save(it)
+                        name = sensor.displayName(),
+                        defaultBackground = defaultBackground
+                    ).save(it)
+                } else {
+                    settings.userBackground = null
+                    settings.defaultBackground = defaultBackground
+                    settings.networkBackground = null
+                    settings.imageUrl = null
+                    settings.update(it)
                 }
                 sensor.save(it)
             }

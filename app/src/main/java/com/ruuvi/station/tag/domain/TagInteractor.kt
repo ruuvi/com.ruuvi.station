@@ -60,11 +60,11 @@ class TagInteractor constructor(
 
     fun makeSensorFavorite(sensor: RuuviTagEntity) {
         sensor.id?.let { sensorId ->
-            tagRepository.makeSensorFavorite(sensor)
-            tagSettingsInteractor.setRandomDefaultBackgroundImage(sensorId, sensor.isAir())
-            sensor.id?.let {sensorId ->
-                sortingInteractor.addNewSensor(sensorId)
-            }
+            tagRepository.makeSensorFavorite(
+                sensor = sensor,
+                defaultBackground = tagSettingsInteractor.getDefaultBackgroundResource(sensor.isAir())
+            )
+            sortingInteractor.addNewSensor(sensorId)
         }
     }
 
