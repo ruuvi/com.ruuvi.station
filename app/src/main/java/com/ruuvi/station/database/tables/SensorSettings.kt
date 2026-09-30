@@ -25,6 +25,8 @@ data class SensorSettings(
     @Column
     var networkBackground: String? = null,
     @Column
+    var imageUrl: String? = null,
+    @Column
     var humidityOffset: Double? = null,
     @Column
     var humidityOffsetDate: Date? = null,
@@ -81,6 +83,11 @@ data class SensorSettings(
         networkSensor = true
         subscriptionName = sensor.subscription.subscriptionName
         lastUpdated = sensor.lastUpdated
+        update()
+    }
+
+    fun updateImageUrlFromNetwork(picture: String) {
+        imageUrl = picture.takeIf { it.isNotBlank() }
         update()
     }
 }

@@ -9,8 +9,10 @@ import com.ruuvi.station.alarm.domain.AlarmsInteractor
 import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.tagsettings.ui.move
 import com.ruuvi.station.database.domain.SensorSettingsRepository
+import com.ruuvi.station.image.ImageInteractor
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tag.domain.VisibleMeasurementsOrderInteractor
+import com.ruuvi.station.tag.domain.isAir
 import com.ruuvi.station.tagsettings.domain.TagSettingsInteractor
 import com.ruuvi.station.units.domain.UnitsConverter
 import com.ruuvi.station.units.model.UnitType
@@ -35,7 +37,8 @@ class VisibleMeasurementsViewModel(
     private val unitsConverter: UnitsConverter,
     private val alarmsInteractor: AlarmsInteractor,
     private val visibleMeasurementsOrderInteractor: VisibleMeasurementsOrderInteractor,
-    private val sensorSettingsRepository: SensorSettingsRepository
+    private val sensorSettingsRepository: SensorSettingsRepository,
+    private val imageInteractor: ImageInteractor
 ): ViewModel() {
 
     private val _sensorState = MutableStateFlow<RuuviTag>(
@@ -130,6 +133,10 @@ class VisibleMeasurementsViewModel(
 
     fun getUnitName(unit: UnitType): String {
         return unitsConverter.getTitleForUnitType(unit)
+    }
+
+    fun getDefaultImageResource(sensor: RuuviTag): Int {
+        return imageInteractor.getDefaultBackgroundById(sensor.defaultBackground, sensor.isAir())
     }
 
     private fun addToDisplayOrder(unit: UnitType) {

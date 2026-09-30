@@ -156,9 +156,7 @@ class AppSettingsInteractor(
 
     fun setBackgroundScanMode(mode: BackgroundScanModes) {
         if (mode != preferencesRepository.getBackgroundScanMode()) {
-            preferencesRepository.setNetworkSetting(NetworkSettingNames.BACKGROUND_SCAN_MODE, mode.value.toString(),
-                System.currentTimeMillis() / 1000)
-            networkApplicationSettings.updateNetworkSetting(NetworkSettingNames.BACKGROUND_SCAN_MODE)
+            preferencesRepository.setBackgroundScanMode(mode)
         }
     }
 
@@ -182,9 +180,7 @@ class AppSettingsInteractor(
 
     fun setBackgroundScanInterval(interval: Int) {
         if (interval != preferencesRepository.getBackgroundScanInterval()) {
-            preferencesRepository.setNetworkSetting(NetworkSettingNames.BACKGROUND_SCAN_INTERVAL, interval.toString(),
-                System.currentTimeMillis() / 1000)
-            networkApplicationSettings.updateNetworkSetting(NetworkSettingNames.BACKGROUND_SCAN_INTERVAL)
+            preferencesRepository.setBackgroundScanInterval(interval)
         }
     }
 

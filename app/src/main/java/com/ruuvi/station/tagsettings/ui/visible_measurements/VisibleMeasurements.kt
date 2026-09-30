@@ -82,6 +82,7 @@ fun VisibleMeasurements(
     onAction: (VisibleMeasurementsActions) -> Unit,
     effects: SharedFlow<VisibleMeasurementsEffect>,
     getUnitName: (UnitType) -> String,
+    getDefaultImageResource: (RuuviTag) -> Int,
     selected: List<ListOption>,
     allOptions: List<ListOption>
 ) {
@@ -198,7 +199,8 @@ fun VisibleMeasurements(
                     itemIsDragged = false,
                     setName = {_,_ ->},
                     moveItem = {_,_,_ ->},
-                    interactionEnabled = false
+                    interactionEnabled = false,
+                    getDefaultImageResource = getDefaultImageResource
                 )
             } else {
                 DashboardItemSimple(
@@ -376,7 +378,8 @@ fun VisibleMeasurementsPreview(modifier: Modifier = Modifier) {
             sensorState = ruuviTagPreview,
             selected = testSelected,
             allOptions = testAllOptions,
-            getUnitName = {_ -> return@VisibleMeasurements ""},
+            getUnitName = { "" },
+            getDefaultImageResource = { R.drawable.bg2 },
             effects = MutableSharedFlow(),
             modifier = Modifier.background(RuuviStationTheme.colors.background)
         )

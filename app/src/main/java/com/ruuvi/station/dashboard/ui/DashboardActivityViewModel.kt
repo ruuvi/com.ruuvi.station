@@ -4,11 +4,13 @@ import androidx.lifecycle.*
 import com.ruuvi.gateway.tester.nfc.model.SensorNfсScanInfo
 import com.ruuvi.station.app.permissions.PermissionLogicInteractor
 import com.ruuvi.station.app.preferences.PreferencesRepository
+import com.ruuvi.station.bluetooth.BluetoothInteractor
 import com.ruuvi.station.dashboard.DashboardTapAction
 import com.ruuvi.station.dashboard.DashboardType
 import com.ruuvi.station.dashboard.domain.SensorsSortingInteractor
 import com.ruuvi.station.feature.domain.RuntimeBehavior
 import com.ruuvi.station.feature.data.FeatureFlag
+import com.ruuvi.station.image.ImageInteractor
 import com.ruuvi.station.network.domain.NetworkApplicationSettings
 import com.ruuvi.station.network.domain.NetworkDataSyncInteractor
 import com.ruuvi.station.network.domain.NetworkSettingNames
@@ -18,6 +20,7 @@ import com.ruuvi.station.network.domain.MarketingConsentInteractor
 import com.ruuvi.station.nfc.domain.NfcResultInteractor
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tag.domain.TagInteractor
+import com.ruuvi.station.tag.domain.isAir
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import timber.log.Timber
@@ -33,7 +36,9 @@ class DashboardActivityViewModel(
     private val nfcResultInteractor: NfcResultInteractor,
     private val sortingInteractor: SensorsSortingInteractor,
     private val runtimeBehavior: RuntimeBehavior,
-    private val marketingConsentInteractor: MarketingConsentInteractor
+    private val bluetoothInteractor: BluetoothInteractor,
+    private val marketingConsentInteractor: MarketingConsentInteractor,
+    private val imageInteractor: ImageInteractor
 ) : ViewModel() {
 
     private val _sensorsList = MutableStateFlow(tagInteractor.getTags())
@@ -137,12 +142,21 @@ class DashboardActivityViewModel(
     fun syncCloud() {
         viewModelScope.launch {
             _dataRefreshing.value = true
-            val job = networkDataSyncInteractor.syncNetworkData()
-            job.invokeOnCompletion {
+
+            try {
+                if (bluetoothInteractor.canScan()) {
+                    bluetoothInteractor.startForegroundScanning()
+                }
+
+                if (preferencesRepository.signedIn()) {
+                    networkDataSyncInteractor.syncNetworkData().join()
+                } else {
+                    delay(1000)
+                }
+                refreshSensors()
+            } finally {
                 _dataRefreshing.value = false
             }
-            delay(200)
-            if (job.isActive) _dataRefreshing.value = false
         }
     }
 
@@ -221,4 +235,8 @@ class DashboardActivityViewModel(
     }
 
     fun isCustomOrderEnabled() = sortingInteractor.isCustomOrderEnabled()
+
+    fun getDefaultImageResource(sensor: RuuviTag): Int {
+        return imageInteractor.getDefaultBackgroundById(sensor.defaultBackground, sensor.isAir())
+    }
 }

@@ -26,12 +26,6 @@ class Preferences (val context: Context) {
             sharedPreferences.edit { putInt(PREF_BACKGROUND_SCAN_INTERVAL, interval) }
         }
 
-    var backgroundScanIntervalLastUpdated: Long
-        get() = sharedPreferences.getLong(PREF_BACKGROUND_SCAN_INTERVAL_LAST_UPDATED, 0L)
-        set(value) {
-            sharedPreferences.edit { putLong(PREF_BACKGROUND_SCAN_INTERVAL_LAST_UPDATED, value) }
-        }
-
     var backgroundScanMode: BackgroundScanModes
         get() = BackgroundScanModes.fromInt(
             sharedPreferences.getInt(
@@ -42,15 +36,6 @@ class Preferences (val context: Context) {
             ?: BackgroundScanModes.BACKGROUND
         set(mode) {
             sharedPreferences.edit { putInt(PREF_BACKGROUND_SCAN_MODE, mode.value) }
-        }
-
-    var backgroundScanModeLastUpdated: Long
-        get() = sharedPreferences.getLong(
-            PREF_BACKGROUND_SCAN_MODE_LAST_UPDATED,
-            0L
-        )
-        set(value) {
-            sharedPreferences.edit { putLong(PREF_BACKGROUND_SCAN_MODE_LAST_UPDATED, value) }
         }
 
     var isFirstStart: Boolean
@@ -525,6 +510,55 @@ class Preferences (val context: Context) {
         }
     }
 
+    fun resetAppSettings() {
+        sharedPreferences.edit {
+            remove(PREF_TEMPERATURE_UNIT)
+            remove(PREF_TEMPERATURE_UNIT_LAST_UPDATED)
+            remove(PREF_HUMIDITY_UNIT)
+            remove(PREF_HUMIDITY_UNIT_LAST_UPDATED)
+            remove(PREF_PRESSURE_UNIT)
+            remove(PREF_PRESSURE_UNIT_LAST_UPDATED)
+            remove(PREF_ACCURACY_TEMPERATURE)
+            remove(PREF_ACCURACY_TEMPERATURE_LAST_UPDATED)
+            remove(PREF_ACCURACY_HUMIDITY)
+            remove(PREF_ACCURACY_HUMIDITY_LAST_UPDATED)
+            remove(PREF_ACCURACY_PRESSURE)
+            remove(PREF_ACCURACY_PRESSURE_LAST_UPDATED)
+            remove(PREF_ACCURACY_HUMIDITY_RELATIVE)
+            remove(PREF_ACCURACY_HUMIDITY_RELATIVE_LAST_UPDATED)
+            remove(PREF_ACCURACY_HUMIDITY_ABSOLUTE)
+            remove(PREF_ACCURACY_HUMIDITY_ABSOLUTE_LAST_UPDATED)
+            remove(PREF_ACCURACY_HUMIDITY_DEW_POINT)
+            remove(PREF_ACCURACY_HUMIDITY_DEW_POINT_LAST_UPDATED)
+            remove(PREF_ACCURACY_PM)
+            remove(PREF_ACCURACY_PM_LAST_UPDATED)
+            remove(PREF_ACCURACY_ACCELERATION)
+            remove(PREF_ACCURACY_ACCELERATION_LAST_UPDATED)
+            remove(PREF_ACCURACY_VOLTAGE)
+            remove(PREF_ACCURACY_VOLTAGE_LAST_UPDATED)
+            remove(PREF_CLOUD_MODE)
+            remove(PREF_CLOUD_MODE_LAST_UPDATED)
+            remove(PREF_GRAPH_SHOW_ALL_POINTS)
+            remove(PREF_GRAPH_SHOW_ALL_POINTS_LAST_UPDATED)
+            remove(PREF_GRAPH_DRAW_DOTS)
+            remove(PREF_GRAPH_DRAW_DOTS_LAST_UPDATED)
+            remove(PREF_DASHBOARD_TYPE)
+            remove(PREF_DASHBOARD_TYPE_LAST_UPDATED)
+            remove(PREF_DASHBOARD_TAP_ACTION)
+            remove(PREF_DASHBOARD_TAP_ACTION_LAST_UPDATED)
+            remove(PREF_DASHBOARD_SORTED_SENSORS)
+            remove(PREF_DASHBOARD_SORTED_SENSORS_LAST_UPDATED)
+            remove(PREF_DISABLE_EMAIL_NOTIFICATIONS)
+            remove(PREF_DISABLE_EMAIL_NOTIFICATIONS_LAST_UPDATED)
+            remove(PREF_DISABLE_PUSH_NOTIFICATIONS)
+            remove(PREF_DISABLE_PUSH_NOTIFICATIONS_LAST_UPDATED)
+            remove(PREF_DISABLE_TELEGRAM_NOTIFICATIONS)
+            remove(PREF_DISABLE_TELEGRAM_NOTIFICATIONS_LAST_UPDATED)
+            remove(PREF_TIPS_ALLOWED)
+            remove(PREF_TIPS_ALLOWED_LAST_UPDATED)
+        }
+    }
+
     var dontShowGattSync: Boolean
         get() = sharedPreferences.getBoolean(PREF_DONT_SHOW_GATT_SYNC, false)
         set(value) {
@@ -741,9 +775,7 @@ class Preferences (val context: Context) {
     companion object {
         private const val DEFAULT_SCAN_INTERVAL = 5 * 60
         private const val PREF_BACKGROUND_SCAN_INTERVAL = "pref_background_scan_interval"
-        private const val PREF_BACKGROUND_SCAN_INTERVAL_LAST_UPDATED = "pref_background_scan_interval_last_updated"
         private const val PREF_BACKGROUND_SCAN_MODE = "pref_background_scan_mode"
-        private const val PREF_BACKGROUND_SCAN_MODE_LAST_UPDATED = "pref_background_scan_mode_last_updated"
         private const val PREF_FIRST_START = "FIRST_START_PREF2"
         private const val PREF_FIRST_GRAPH = "first_graph_visit"
         private const val PREF_TEMPERATURE_UNIT = "pref_temperature_unit"

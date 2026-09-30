@@ -264,7 +264,7 @@ class ImageInteractor (
         }
     }
 
-    fun getDefaultBackgroundById(number: Int): Int {
+    fun getDefaultBackgroundById(number: Int, isAir: Boolean? = false): Int {
         return when (number) {
             1 -> R.drawable.bg2
             2 -> R.drawable.bg3
@@ -274,7 +274,7 @@ class ImageInteractor (
             6 -> R.drawable.bg7
             7 -> R.drawable.bg8
             8 -> R.drawable.bg9
-            else -> getDefaultResource(false)
+            else -> getDefaultResource(isAir ?: false)
         }
     }
 
