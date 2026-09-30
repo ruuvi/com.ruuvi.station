@@ -108,11 +108,14 @@ class TagSettingsInteractor(
         sensorId: String,
         isAir: Boolean
     ) {
-        setDefaultBackgroundImageByResource(
+        sensorSettingsRepository.setDefaultSensorBackground(
             sensorId = sensorId,
             defaultBackground = imageInteractor.getDefaultResource(isAir)
         )
     }
+
+    fun getDefaultBackgroundResource(isAir: Boolean): Int =
+        imageInteractor.getDefaultResource(isAir)
 
     fun setDefaultBackgroundImageByResource(
         sensorId: String,

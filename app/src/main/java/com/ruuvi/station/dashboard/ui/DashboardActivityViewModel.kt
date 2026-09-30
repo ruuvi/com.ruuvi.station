@@ -10,6 +10,7 @@ import com.ruuvi.station.dashboard.DashboardType
 import com.ruuvi.station.dashboard.domain.SensorsSortingInteractor
 import com.ruuvi.station.feature.domain.RuntimeBehavior
 import com.ruuvi.station.feature.data.FeatureFlag
+import com.ruuvi.station.image.ImageInteractor
 import com.ruuvi.station.network.domain.NetworkApplicationSettings
 import com.ruuvi.station.network.domain.NetworkDataSyncInteractor
 import com.ruuvi.station.network.domain.NetworkSettingNames
@@ -19,6 +20,7 @@ import com.ruuvi.station.network.domain.MarketingConsentInteractor
 import com.ruuvi.station.nfc.domain.NfcResultInteractor
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tag.domain.TagInteractor
+import com.ruuvi.station.tag.domain.isAir
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import timber.log.Timber
@@ -35,7 +37,8 @@ class DashboardActivityViewModel(
     private val sortingInteractor: SensorsSortingInteractor,
     private val runtimeBehavior: RuntimeBehavior,
     private val bluetoothInteractor: BluetoothInteractor,
-    private val marketingConsentInteractor: MarketingConsentInteractor
+    private val marketingConsentInteractor: MarketingConsentInteractor,
+    private val imageInteractor: ImageInteractor
 ) : ViewModel() {
 
     private val _sensorsList = MutableStateFlow(tagInteractor.getTags())
@@ -232,4 +235,8 @@ class DashboardActivityViewModel(
     }
 
     fun isCustomOrderEnabled() = sortingInteractor.isCustomOrderEnabled()
+
+    fun getDefaultImageResource(sensor: RuuviTag): Int {
+        return imageInteractor.getDefaultBackgroundById(sensor.defaultBackground, sensor.isAir())
+    }
 }

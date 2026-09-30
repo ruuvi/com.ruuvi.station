@@ -223,6 +223,12 @@ class RuuviNetworkInteractor (
     }
 
     fun uploadImage(sensorId: String, filename: String, uploadNow: Boolean = false) {
+        val sensorSettings = sensorSettingsRepository.getSensorSettings(sensorId)
+        if (sensorSettings?.userBackground != filename) {
+            Timber.d("Skipping upload of non-user background for $sensorId")
+            return
+        }
+
         if (shouldSendSensorDataToNetwork(sensorId)) {
             val networkRequest = NetworkRequest(NetworkRequestType.UPLOAD_IMAGE, sensorId, UploadImageRequestWrapper(filename, UploadImageRequest(sensorId)))
             Timber.d("uploadImage $networkRequest")
@@ -231,6 +237,11 @@ class RuuviNetworkInteractor (
     }
 
     fun uploadImageToSyncWithCloud(sensorId: String, filename: String, uploadNow: Boolean = false, sensorSettings: SensorSettings) {
+        if (sensorSettings.userBackground != filename) {
+            Timber.d("Skipping upload of non-user background for $sensorId")
+            return
+        }
+
         if (shouldSendSensorDataToNetworkBy(sensorSettings)) {
             val networkRequest = NetworkRequest(NetworkRequestType.UPLOAD_IMAGE, sensorId, UploadImageRequestWrapper(filename, UploadImageRequest(sensorId)))
             networkRequestExecutor.registerRequest(networkRequest, uploadNow)

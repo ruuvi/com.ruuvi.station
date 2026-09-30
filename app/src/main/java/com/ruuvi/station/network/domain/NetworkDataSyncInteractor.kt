@@ -11,6 +11,7 @@ import com.ruuvi.station.database.domain.SensorSettingsRepository
 import com.ruuvi.station.database.domain.TagRepository
 import com.ruuvi.station.database.tables.SensorSettings
 import com.ruuvi.station.database.tables.TagSensorReading
+import com.ruuvi.station.database.tables.isAir
 import com.ruuvi.station.firebase.domain.FirebaseInteractor
 import com.ruuvi.station.firebase.domain.PushRegisterInteractor
 import com.ruuvi.station.image.ImageInteractor
@@ -35,6 +36,7 @@ import timber.log.Timber
 import java.io.File
 import java.net.URI
 import java.util.*
+import androidx.core.net.toUri
 
 class NetworkDataSyncInteractor (
     private val preferencesRepository: PreferencesRepository,
@@ -331,11 +333,21 @@ class NetworkDataSyncInteractor (
             val shouldUpload =
                 sensor.owner.equals(networkInteractor.getEmail(), ignoreCase = true) &&
                         shouldUploadSensorToCloud(sensor, sensorSettings)
+            val shouldUpdateFromNetwork = sensor.lastUpdated > sensorSettings.lastUpdated
+            val shouldUpdateImageUrl = sensor.picture.takeIf { it.isNotBlank() } !=
+                    sensorSettings.imageUrl?.takeIf { it.isNotBlank() }
             if (shouldUpload) {
                 networkInteractor.updateSensorToCloud(sensor.sensor)
-            } else if (sensor.lastUpdated > sensorSettings.lastUpdated) {
-                sensorSettings.updateFromNetwork(sensor)
-                sensorsResult.add(sensor)
+            } else {
+                if (shouldUpdateFromNetwork) {
+                    sensorSettings.updateFromNetwork(sensor)
+                }
+                if (shouldUpdateImageUrl) {
+                    sensorSettings.updateImageUrlFromNetwork(sensor.picture)
+                }
+                if (shouldUpdateFromNetwork || shouldUpdateImageUrl) {
+                    sensorsResult.add(sensor)
+                }
             }
 
             val tagEntry = tagRepository.getTagById(sensor.sensor)
@@ -512,8 +524,7 @@ class NetworkDataSyncInteractor (
             localSettings.networkSensor = true
             localSettings.update()
         }
-        val localtime = localSettings.backgroundTimestamp
-        val networktime = sensor.lastUpdated
+
         if (localSettings.userBackground != null && sensor.lastUpdated < localSettings.backgroundTimestamp) {
             networkInteractor.uploadImageToSyncWithCloud(
                 sensorId = sensor.sensor,
@@ -529,12 +540,8 @@ class NetworkDataSyncInteractor (
             val sensorSettings = sensorSettingsRepository.getSensorSettings(sensor.sensor)
 
             if (sensorSettings != null) {
-                if (sensor.picture.isEmpty()) {
-                    tagSettingsInteractor.setDefaultBackgroundImageByResource(
-                        sensorId = sensor.sensor,
-                        defaultBackground = imageInteractor.getDefaultBackgroundById(sensorSettings.defaultBackground),
-                        uploadNow = true
-                    )
+                if (sensor.picture.isBlank()) {
+                    setDefaultBackgroundLocally(sensor.sensor, sensorSettings)
                 } else {
                     setSensorImage(sensor, sensorSettings)
                 }
@@ -561,7 +568,12 @@ class NetworkDataSyncInteractor (
     private suspend fun setSensorImage(sensor: SensorsDenseInfo, sensorSettings: SensorSettings) {
         if (networkRequestExecutor.gotAnyImagesInSync(sensor.sensor)) return
 
-        val networkImageGuid = File(URI(sensor.picture).path).nameWithoutExtension
+        val networkImageGuid = getNetworkImageGuid(sensor.picture)
+        if (networkImageGuid == null) {
+            Timber.w("Invalid image URL for ${sensor.sensor}: ${sensor.picture}")
+            setDefaultBackgroundLocally(sensor.sensor, sensorSettings)
+            return
+        }
 
         if (networkImageGuid != sensorSettings.networkBackground) {
             Timber.d("updating image $networkImageGuid ${sensorSettings}")
@@ -574,12 +586,40 @@ class NetworkDataSyncInteractor (
                     sensor.sensor,
                     Uri.fromFile(imageFile).toString(),
                     null,
-                    networkImageGuid
+                    networkImageGuid,
+                    sensor.lastUpdated
                 )
             } catch (e: Exception) {
                 Timber.e(e, "Failed to load image: ${sensor.picture}")
+                setDefaultBackgroundLocally(sensor.sensor, sensorSettings)
             }
         }
+    }
+
+    private fun getNetworkImageGuid(pictureUrl: String): String? {
+        return try {
+            val path = URI(pictureUrl).path ?: return null
+            File(path).nameWithoutExtension.takeIf { it.isNotBlank() }
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+    private fun setDefaultBackgroundLocally(sensorId: String, sensorSettings: SensorSettings) {
+        val existingBackground = sensorSettings.userBackground
+        if (!existingBackground.isNullOrBlank()) {
+            sensorSettingsRepository.updateSensorBackground(
+                sensorId = sensorId,
+                userBackground = existingBackground,
+                defaultBackground = 0,
+                networkBackground = null,
+                timestamp = sensorSettings.lastUpdated,
+                imageUrl = "",
+            )
+            return
+        }
+
+        sensorSettingsRepository.setDefaultSensorBackground(sensorId, 0)
     }
 
     suspend fun getSince(tagId: String, since: Date, limit: Int): GetSensorDataResponse? {
@@ -605,6 +645,7 @@ class NetworkDataSyncInteractor (
             for (job in tagJobs) {
                 job.cancelAndJoin()
             }
+            networkRequestExecutor.cancelAndJoinExecutingRequests()
         }
     }
 }

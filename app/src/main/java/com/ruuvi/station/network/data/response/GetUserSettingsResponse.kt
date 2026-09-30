@@ -7,10 +7,6 @@ typealias GetUserSettingsResponse = RuuviNetworkResponse<GetUserSettingsResponse
 data class GetUserSettingsResponseBody(val settings: NetworkUserSettings)
 
 data class NetworkUserSettings(
-    val BACKGROUND_SCAN_MODE: String?,
-    val BACKGROUND_SCAN_MODE_lastUpdated: Long?,
-    val BACKGROUND_SCAN_INTERVAL: String?,
-    val BACKGROUND_SCAN_INTERVAL_lastUpdated: Long?,
     val UNIT_TEMPERATURE: String?,
     val UNIT_TEMPERATURE_lastUpdated: Long?,
     val UNIT_HUMIDITY: String?,
@@ -59,8 +55,6 @@ data class NetworkUserSettings(
     val TIPS_ALLOWED_lastUpdated: Long?,
 ) {
     fun isEmpty() =
-                BACKGROUND_SCAN_MODE == null &&
-                BACKGROUND_SCAN_INTERVAL == null &&
                 UNIT_TEMPERATURE == null &&
                 UNIT_HUMIDITY == null &&
                 UNIT_PRESSURE == null &&
@@ -87,8 +81,6 @@ data class NetworkUserSettings(
 
     fun valueFor(settingName: String): String? {
         return when (settingName) {
-            NetworkSettingNames.BACKGROUND_SCAN_MODE -> BACKGROUND_SCAN_MODE
-            "BACKGROUND_SCAN_INTERVAL" -> BACKGROUND_SCAN_INTERVAL
             NetworkSettingNames.UNIT_TEMPERATURE -> UNIT_TEMPERATURE
             NetworkSettingNames.UNIT_HUMIDITY -> UNIT_HUMIDITY
             NetworkSettingNames.UNIT_PRESSURE -> UNIT_PRESSURE
@@ -118,8 +110,6 @@ data class NetworkUserSettings(
 
     fun timestampFor(settingName: String): Long {
         return when (settingName) {
-            NetworkSettingNames.BACKGROUND_SCAN_MODE -> BACKGROUND_SCAN_MODE_lastUpdated
-            NetworkSettingNames.BACKGROUND_SCAN_INTERVAL -> BACKGROUND_SCAN_INTERVAL_lastUpdated
             NetworkSettingNames.UNIT_TEMPERATURE -> UNIT_TEMPERATURE_lastUpdated
             NetworkSettingNames.UNIT_HUMIDITY -> UNIT_HUMIDITY_lastUpdated
             NetworkSettingNames.UNIT_PRESSURE -> UNIT_PRESSURE_lastUpdated

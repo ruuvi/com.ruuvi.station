@@ -9,7 +9,6 @@ import com.ruuvi.station.database.domain.SensorSettingsRepository
 import com.ruuvi.station.database.tables.RuuviTagEntity
 import com.ruuvi.station.database.tables.SensorSettings
 import com.ruuvi.station.database.tables.isAir
-import com.ruuvi.station.network.domain.NetworkSettingNames
 import com.ruuvi.station.tagsettings.domain.TagSettingsInteractor
 import com.ruuvi.station.util.BackgroundScanModes
 import com.ruuvi.station.util.MacAddressUtils
@@ -48,7 +47,7 @@ class TagInteractor constructor(
         preferencesRepository.getBackgroundScanMode()
 
     fun setBackgroundScanMode(mode: BackgroundScanModes) {
-        preferencesRepository.setNetworkSetting(NetworkSettingNames.BACKGROUND_SCAN_MODE, mode.value.toString(), System.currentTimeMillis() / 1000)
+        preferencesRepository.setBackgroundScanMode(mode)
     }
 
     fun isFirstGraphVisit(): Boolean =
@@ -61,11 +60,11 @@ class TagInteractor constructor(
 
     fun makeSensorFavorite(sensor: RuuviTagEntity) {
         sensor.id?.let { sensorId ->
-            tagRepository.makeSensorFavorite(sensor)
-            tagSettingsInteractor.setRandomDefaultBackgroundImage(sensorId, sensor.isAir())
-            sensor.id?.let {sensorId ->
-                sortingInteractor.addNewSensor(sensorId)
-            }
+            tagRepository.makeSensorFavorite(
+                sensor = sensor,
+                defaultBackground = tagSettingsInteractor.getDefaultBackgroundResource(sensor.isAir())
+            )
+            sortingInteractor.addNewSensor(sensorId)
         }
     }
 

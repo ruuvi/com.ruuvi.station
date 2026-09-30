@@ -90,6 +90,15 @@ class NetworkRequestRepository {
             .queryList()
     }
 
+    fun deletePendingRequests() {
+        SQLite.delete(NetworkRequest::class.java)
+            .where(
+                NetworkRequest_Table.status.eq(NetworkRequestStatus.READY)
+                    .or(NetworkRequest_Table.status.eq(NetworkRequestStatus.EXECUTING))
+            )
+            .execute()
+    }
+
     fun startExecuting(networkRequest: NetworkRequest): Boolean {
         val request = getById(networkRequest.id)
         if (request != null && request.status == NetworkRequestStatus.READY) {
