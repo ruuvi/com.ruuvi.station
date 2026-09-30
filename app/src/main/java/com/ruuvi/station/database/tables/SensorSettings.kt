@@ -82,8 +82,12 @@ data class SensorSettings(
         temperatureOffset = sensor.offsetTemperature
         networkSensor = true
         subscriptionName = sensor.subscription.subscriptionName
-        imageUrl = sensor.picture
         lastUpdated = sensor.lastUpdated
+        update()
+    }
+
+    fun updateImageUrlFromNetwork(picture: String) {
+        imageUrl = picture.takeIf { it.isNotBlank() }
         update()
     }
 }
