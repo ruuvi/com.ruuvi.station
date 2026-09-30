@@ -25,6 +25,8 @@ data class SensorSettings(
     @Column
     var networkBackground: String? = null,
     @Column
+    var imageUrl: String? = null,
+    @Column
     var humidityOffset: Double? = null,
     @Column
     var humidityOffsetDate: Date? = null,
@@ -80,6 +82,7 @@ data class SensorSettings(
         temperatureOffset = sensor.offsetTemperature
         networkSensor = true
         subscriptionName = sensor.subscription.subscriptionName
+        imageUrl = sensor.picture
         lastUpdated = sensor.lastUpdated
         update()
     }

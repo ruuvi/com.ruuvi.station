@@ -95,8 +95,7 @@ class SensorSettingsRepository {
         settings.userBackground = null
         settings.defaultBackground = defaultBackground
         settings.networkBackground = null
-        settings.backgroundTimestamp = 0L
-        settings.lastUpdated = 0L
+        settings.imageUrl = null
         settings.update()
     }
 
@@ -105,7 +104,8 @@ class SensorSettingsRepository {
         userBackground: String?,
         defaultBackground: Int?,
         networkBackground: String?,
-        timestamp: Long = Date().time / 1000
+        timestamp: Long = Date().time / 1000,
+        imageUrl: String? = null,
     ) {
         val settings = getSensorSettingsOrCreate(sensorId)
         settings.userBackground = userBackground
@@ -113,6 +113,9 @@ class SensorSettingsRepository {
         settings.networkBackground = networkBackground
         settings.backgroundTimestamp = timestamp
         settings.lastUpdated = timestamp
+        imageUrl?.let {
+            settings.imageUrl = it
+        }
         settings.update()
     }
 

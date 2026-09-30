@@ -333,9 +333,12 @@ class NetworkDataSyncInteractor (
             val shouldUpload =
                 sensor.owner.equals(networkInteractor.getEmail(), ignoreCase = true) &&
                         shouldUploadSensorToCloud(sensor, sensorSettings)
+            val shouldUpdateFromNetwork =
+                sensor.lastUpdated > sensorSettings.lastUpdated ||
+                        sensor.picture != sensorSettings.imageUrl
             if (shouldUpload) {
                 networkInteractor.updateSensorToCloud(sensor.sensor)
-            } else if (sensor.lastUpdated > sensorSettings.lastUpdated) {
+            } else if (shouldUpdateFromNetwork) {
                 sensorSettings.updateFromNetwork(sensor)
                 sensorsResult.add(sensor)
             }
@@ -603,7 +606,8 @@ class NetworkDataSyncInteractor (
                 userBackground = existingBackground,
                 defaultBackground = 0,
                 networkBackground = null,
-                timestamp = 0L
+                timestamp = sensorSettings.lastUpdated,
+                imageUrl = "",
             )
             return
         }
