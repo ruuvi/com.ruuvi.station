@@ -17,8 +17,8 @@ data class SetAlertRequest(
             return SetAlertRequest(
                 sensor = alarm.ruuviTagId,
                 type = alarm.alarmType.networkCode ?: throw IllegalArgumentException(),
-                min = alarm.min,
-                max = alarm.max,
+                min = alarm.alarmType.normalizeStoredBound(alarm.min),
+                max = alarm.alarmType.normalizeStoredBound(alarm.max),
                 enabled = alarm.enabled,
                 description = alarm.customDescription,
                 timestamp = alarm.lastUpdated

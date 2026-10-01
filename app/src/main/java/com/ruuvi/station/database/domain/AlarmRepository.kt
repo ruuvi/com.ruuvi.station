@@ -87,13 +87,16 @@ class AlarmRepository {
             alarm = Alarm()
         }
 
-        val extraRange = getByDbCode(type).extraRange
-        val possibleRange = getByDbCode(type).possibleRange
-        val extended = (!possibleRange.contains(min) && extraRange.contains(min)) ||
-                (!possibleRange.contains(max) && extraRange.contains(max))
+        val alarmType = getByDbCode(type)
+        val extraRange = alarmType.extraRange
+        val possibleRange = alarmType.possibleRange
+        val normalizedMin = alarmType.normalizeStoredBound(min)
+        val normalizedMax = alarmType.normalizeStoredBound(max)
+        val extended = (!possibleRange.contains(normalizedMin) && extraRange.contains(normalizedMin)) ||
+                (!possibleRange.contains(normalizedMax) && extraRange.contains(normalizedMax))
 
-        val min = if (type == Alarm.MOVEMENT) 0.0 else min
-        val max = if (type == Alarm.MOVEMENT) 0.0 else max
+        val min = if (type == Alarm.MOVEMENT) 0.0 else normalizedMin
+        val max = if (type == Alarm.MOVEMENT) 0.0 else normalizedMax
 
         alarm.ruuviTagId = sensorId
         alarm.enabled = enabled
