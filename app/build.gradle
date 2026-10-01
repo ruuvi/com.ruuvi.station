@@ -100,7 +100,7 @@ android {
 
     defaultConfig {
         applicationId "com.ruuvi.station"
-        minSdkVersion 23
+        minSdkVersion 24
         targetSdkVersion 37
         compileSdk 37
         versionCode = (releaseEnv("ANDROID_VERSION_CODE") ?: "1").toInteger()
@@ -280,7 +280,7 @@ dependencies {
     implementation libs.timber
 
     //DI
-    implementation libs.kodein.di.generic.jvm
+    implementation libs.kodein.di
     implementation libs.kodein.di.conf.jvm
     implementation libs.kodein.di.framework.android.x
 
@@ -312,8 +312,7 @@ dependencies {
     implementation libs.kotlinx.coroutines.core // or latest stable
 
 
-    implementation(libs.compose)
-    implementation(libs.vico.core)
+    implementation(libs.vico.compose)
 
     implementation libs.glide
 }

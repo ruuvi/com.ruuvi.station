@@ -8,11 +8,14 @@ import com.ruuvi.station.tagdetails.domain.TagViewModelArgs
 import com.ruuvi.station.tagdetails.ui.SensorCardViewModel
 import com.ruuvi.station.tagdetails.ui.SensorCardViewModelArguments
 import com.ruuvi.station.tagdetails.ui.TagViewModel
-import org.kodein.di.Kodein
-import org.kodein.di.generic.*
+import org.kodein.di.DI
+import org.kodein.di.bind
+import org.kodein.di.factory
+import org.kodein.di.instance
+import org.kodein.di.singleton
 
 object TagDetailsInjectionModule {
-    val module = Kodein.Module(TagDetailsInjectionModule.javaClass.name) {
+    val module = DI.Module(TagDetailsInjectionModule.javaClass.name) {
 
         bind<TagDetailsInteractor>() with singleton {
             TagDetailsInteractor(instance(), instance(), instance(), instance(), instance())

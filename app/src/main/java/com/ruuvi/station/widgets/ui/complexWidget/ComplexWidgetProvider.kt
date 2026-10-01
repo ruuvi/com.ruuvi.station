@@ -8,9 +8,9 @@ import androidx.glance.appwidget.GlanceAppWidgetReceiver
 import com.ruuvi.station.widgets.domain.ComplexWidgetPreferencesInteractor
 import com.ruuvi.station.widgets.update.WidgetRefreshScheduler
 import com.ruuvi.station.widgets.update.WidgetRefreshTrigger
-import org.kodein.di.Kodein
-import org.kodein.di.android.kodein
-import org.kodein.di.generic.instance
+import org.kodein.di.DI
+import org.kodein.di.android.closestDI
+import org.kodein.di.instance
 import timber.log.Timber
 
 class ComplexWidgetProvider : GlanceAppWidgetReceiver() {
@@ -28,8 +28,8 @@ class ComplexWidgetProvider : GlanceAppWidgetReceiver() {
 
     override fun onDeleted(context: Context, appWidgetIds: IntArray) {
         try {
-            val kodein: Kodein by kodein(context.applicationContext)
-            val preferencesInteractor: ComplexWidgetPreferencesInteractor by kodein.instance()
+            val di: DI by closestDI(context.applicationContext)
+            val preferencesInteractor: ComplexWidgetPreferencesInteractor by di.instance()
             for (appWidgetId in appWidgetIds) {
                 Timber.d("onDeleted Id $appWidgetId")
                 preferencesInteractor.removeComplexWidgetSettings(appWidgetId)

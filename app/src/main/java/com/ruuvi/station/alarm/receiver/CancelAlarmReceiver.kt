@@ -10,20 +10,20 @@ import com.ruuvi.station.network.domain.RuuviNetworkInteractor
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import org.kodein.di.Kodein
-import org.kodein.di.KodeinAware
-import org.kodein.di.generic.instance
+import org.kodein.di.DI
+import org.kodein.di.DIAware
+import org.kodein.di.instance
 
-class CancelAlarmReceiver : BroadcastReceiver(), KodeinAware {
+class CancelAlarmReceiver : BroadcastReceiver(), DIAware {
 
-    override lateinit var kodein: Kodein
+    override lateinit var di: DI
     private val alarmRepository: AlarmRepository by instance()
     private val networkInteractor: RuuviNetworkInteractor by instance()
 
     override fun onReceive(context: Context, intent: Intent) {
         val pendingResult = goAsync()
-        kodein = (context.applicationContext as KodeinAware).kodein
-        val alarmCheckInteractor: AlarmCheckInteractor by kodein.instance()
+        di = (context.applicationContext as DIAware).di
+        val alarmCheckInteractor: AlarmCheckInteractor by di.instance()
 
         val alarmId = intent.getIntExtra("alarmId", DEFAULT_ID)
         val notificationId = intent.getIntExtra("notificationId", DEFAULT_ID)
