@@ -31,9 +31,14 @@ enum class AlarmType(
 
     fun valueInRange(value: Double): Boolean = value >= extraRange.start && value <= extraRange.endInclusive
 
-    companion object {
-        fun getByNetworkCode(networkCode: String): AlarmType? = values().firstOrNull { it.networkCode == networkCode }
+    fun normalizeStoredBound(value: Double): Double = when (this) {
+        VOC, NOX -> value.coerceIn(extraRange.start, extraRange.endInclusive)
+        else -> value
+    }
 
-        fun getByDbCode(code: Int): AlarmType = values().firstOrNull { it.value == code } ?: TEMPERATURE
+    companion object {
+        fun getByNetworkCode(networkCode: String): AlarmType? = entries.firstOrNull { it.networkCode == networkCode }
+
+        fun getByDbCode(code: Int): AlarmType = entries.firstOrNull { it.value == code } ?: TEMPERATURE
     }
 }

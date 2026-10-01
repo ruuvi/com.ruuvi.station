@@ -1,5 +1,6 @@
 package com.ruuvi.station.alarm.domain
 
+import com.ruuvi.station.database.tables.Alarm
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -39,5 +40,22 @@ class AlarmTypeTest {
             assertEquals("1", state.displayLow)
             assertEquals("500", state.displayHigh)
         }
+    }
+
+    @Test
+    fun `legacy VOC alert with zero lower bound is displayed as one through five hundred`() {
+        val alarmsInteractor = mock<AlarmsInteractor>()
+        whenever(alarmsInteractor.getRangeValue(AlarmType.VOC, 1.0f)).thenReturn(1.0f)
+        whenever(alarmsInteractor.getRangeValue(AlarmType.VOC, 500.0f)).thenReturn(500.0f)
+        whenever(alarmsInteractor.getDisplayValue(1.0f, 0)).thenReturn("1")
+        whenever(alarmsInteractor.getDisplayValue(500.0f, 0)).thenReturn("500")
+        val legacyAlarm = Alarm(min = 0.0, max = 500.0, type = AlarmType.VOC.value)
+
+        val state = AlarmItemState.getStateForDbAlarm(legacyAlarm, alarmsInteractor)
+
+        assertEquals(1.0, state.min, 0.0)
+        assertEquals(500.0, state.max, 0.0)
+        assertEquals(1.0f, state.rangeLow)
+        assertEquals(500.0f, state.rangeHigh)
     }
 }
