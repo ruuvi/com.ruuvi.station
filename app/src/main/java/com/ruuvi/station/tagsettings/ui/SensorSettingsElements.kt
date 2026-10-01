@@ -72,7 +72,10 @@ fun SensorSettings(
     Column(
         modifier = Modifier.verticalScroll(rememberScrollState())
     ) {
-        SensorSettingsImage(sensorState = sensorState) {
+        SensorSettingsImage(
+            sensorState = sensorState,
+            getDefaultImageResource = viewModel::getDefaultImageResource
+        ) {
             BackgroundActivity.start(context, sensorState.id)
         }
         GeneralSettingsGroup(
@@ -183,6 +186,7 @@ fun SensorSettings(
 @Composable
 fun SensorSettingsImage(
     sensorState: RuuviTag,
+    getDefaultImageResource: (RuuviTag) -> Int,
     onClick: () -> Unit
 ) {
     val context = LocalContext.current
@@ -196,24 +200,24 @@ fun SensorSettingsImage(
     ) {
         Timber.d("Image path ${sensorState.userBackground} ")
 
-        if (sensorState.userBackground != null) {
-            val uri = sensorState.userBackground.toUri()
+        val background = sensorState.userBackground
+            ?.takeIf(String::isNotBlank)
+            ?.toUri()
+            ?.takeIf { !it.path.isNullOrBlank() }
+            ?: rememberResourceUri(getDefaultImageResource(sensorState))
 
-            if (uri.path != null) {
-                AsyncImage(
-                    modifier = Modifier.fillMaxSize(),
-                    model = uri,
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop
-                )
-                Image(
-                    modifier = Modifier.fillMaxSize(),
-                    painter = painterResource(id = R.drawable.tag_bg_layer),
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop
-                )
-            }
-        }
+        AsyncImage(
+            modifier = Modifier.fillMaxSize(),
+            model = background,
+            contentDescription = null,
+            contentScale = ContentScale.Crop
+        )
+        Image(
+            modifier = Modifier.fillMaxSize(),
+            painter = painterResource(id = R.drawable.tag_bg_layer),
+            contentDescription = null,
+            contentScale = ContentScale.Crop
+        )
     }
 
     TextEditWithCaptionButton(

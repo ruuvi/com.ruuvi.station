@@ -56,6 +56,7 @@ import com.ruuvi.station.app.ui.components.BlinkingEffect
 import com.ruuvi.station.app.ui.components.CircularIndicator
 import com.ruuvi.station.app.ui.components.limitScaleTo
 import com.ruuvi.station.app.ui.components.modifier.fadingEdge
+import com.ruuvi.station.app.ui.components.rememberResourceUri
 import com.ruuvi.station.app.ui.components.scaleUpTo
 import com.ruuvi.station.app.ui.theme.*
 import com.ruuvi.station.dashboard.DashboardTapAction
@@ -65,10 +66,12 @@ import com.ruuvi.station.feature.domain.RuntimeBehavior
 import com.ruuvi.station.graph.ChartControlElement2
 import com.ruuvi.station.graph.ChartsView
 import com.ruuvi.station.graph.model.ChartContainer
+import com.ruuvi.station.image.ImageInteractor
 import com.ruuvi.station.nfc.domain.NfcScanResponse
 import com.ruuvi.station.nfc.ui.NfcInteractor
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tag.domain.UpdateSource
+import com.ruuvi.station.tag.domain.isAir
 import com.ruuvi.station.tag.domain.isLowBattery
 import com.ruuvi.station.tagdetails.ui.elements.BigValueDisplay
 import com.ruuvi.station.tagdetails.ui.elements.CircularAQIDisplay
@@ -101,6 +104,7 @@ class SensorCardActivity : NfcActivity(), KodeinAware {
 
     private val unitsConverter: UnitsConverter by instance()
     private val runtimeBehavior: RuntimeBehavior by instance()
+    private val imageInteractor: ImageInteractor by instance()
 
     private val viewModel: SensorCardViewModel by viewModel {
         val preferences: PreferencesRepository by kodein.instance()
@@ -166,7 +170,10 @@ class SensorCardActivity : NfcActivity(), KodeinAware {
                         getIndex = viewModel::getIndex,
                         scrollToChart = viewModel::scrollToChart,
                         scrollToChartEvent = viewModel.scrollToChartEvent,
-                        getChartData = viewModel::getChartData
+                        getChartData = viewModel::getChartData,
+                        getDefaultImageResource = {
+                            imageInteractor.getDefaultBackgroundById(it.defaultBackground, it.isAir())
+                        }
                     )
                 }
             }
@@ -298,7 +305,8 @@ fun SensorsPager(
     getIndex: (String) -> Int,
     scrollToChart: (UnitType) -> Unit,
     scrollToChartEvent: Flow<UnitType>,
-    getChartData: (String, UnitType, Int) -> Flow<ChartData>
+    getChartData: (String, UnitType, Int) -> Flow<ChartData>,
+    getDefaultImageResource: (RuuviTag) -> Int
 ) {
     Timber.d("SensorsPager selected $selectedSensor sensors count ${sensors.size}")
     val systemUiController = rememberSystemUiController()
@@ -336,12 +344,13 @@ fun SensorsPager(
     Timber.d("page sensor $pagerSensor bg= ${pagerSensor?.userBackground}")
 
     pagerSensor?.let { sensor ->
-        if (sensor.userBackground != null) {
-            val uri = Uri.parse(sensor.userBackground)
-            if (uri.path != null) {
-                SensorCardImage(uri, showCharts)
-            }
-        }
+        val background = sensor.userBackground
+            ?.takeIf(String::isNotBlank)
+            ?.let(Uri::parse)
+            ?.takeIf { !it.path.isNullOrBlank() }
+            ?: rememberResourceUri(getDefaultImageResource(sensor))
+
+        SensorCardImage(background, showCharts)
     }
 
     NfcInteractor(

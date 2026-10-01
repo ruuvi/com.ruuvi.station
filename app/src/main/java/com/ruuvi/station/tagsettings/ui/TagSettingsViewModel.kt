@@ -14,6 +14,7 @@ import com.ruuvi.station.database.tables.RuuviTagEntity
 import com.ruuvi.station.feature.domain.RuntimeBehavior
 import com.ruuvi.station.network.domain.RuuviNetworkInteractor
 import com.ruuvi.station.tag.domain.RuuviTag
+import com.ruuvi.station.tag.domain.isAir
 import com.ruuvi.station.tag.domain.isLowBattery
 import com.ruuvi.station.tagsettings.domain.TagSettingsInteractor
 import com.ruuvi.station.units.domain.AccelerationConverter
@@ -102,6 +103,9 @@ class TagSettingsViewModel(
             }
         }
     }
+
+    fun getDefaultImageResource(sensor: RuuviTag): Int =
+        interactor.getDefaultBackgroundResource(sensor.defaultBackground, sensor.isAir())
 
     private fun getFirmware(firmware: String?): UiText? {
         Timber.d("getFirmware")
