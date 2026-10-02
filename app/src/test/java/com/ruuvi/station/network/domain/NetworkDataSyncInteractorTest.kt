@@ -59,6 +59,7 @@ import org.mockito.kotlin.never
 import java.io.IOException
 import java.util.Date
 import java.util.concurrent.TimeUnit
+import kotlin.time.Duration.Companion.milliseconds
 import com.ruuvi.station.network.data.response.SensorSettings as CloudSensorSettings
 import org.mockito.kotlin.any as anyMockito
 import org.mockito.kotlin.verify as verifyMockito
@@ -204,14 +205,14 @@ class NetworkDataSyncInteractorTest {
         }
         val job = interactor.syncNetworkData()
         try {
-            withTimeout(TIMEOUT) { started.await() }
+            withTimeout(TIMEOUT.milliseconds) { started.await() }
 
             assertTrue(interactor.syncInProgressFlow.value)
             assertSame(job, interactor.syncNetworkData())
             coVerify(exactly = 1) { networkInteractor.getSensorDenseLastData(any()) }
 
             release.complete(Unit)
-            withTimeout(TIMEOUT) { job.join() }
+            withTimeout(TIMEOUT.milliseconds) { job.join() }
             assertFalse(interactor.syncInProgressFlow.value)
         } finally {
             job.cancelAndJoin()
@@ -265,7 +266,7 @@ class NetworkDataSyncInteractorTest {
             code = NetworkResponseLocalizer.ER_UNAUTHORIZED,
         )
         val event = async(context = Dispatchers.Unconfined, start = CoroutineStart.UNDISPATCHED) {
-            withTimeout(TIMEOUT) { interactor.syncEvents.first { it is NetworkSyncEvent.Unauthorised } }
+            withTimeout(TIMEOUT.milliseconds) { interactor.syncEvents.first { it is NetworkSyncEvent.Unauthorised } }
         }
 
         syncAndJoin(expectSuccess = false)
@@ -320,11 +321,11 @@ class NetworkDataSyncInteractorTest {
         }
         val job = interactor.syncNetworkData()
         try {
-            withTimeout(TIMEOUT) { started.await() }
+            withTimeout(TIMEOUT.milliseconds) { started.await() }
 
             val stopJob = interactor.stopSync()
             try {
-                withTimeout(TIMEOUT) { stopJob.join() }
+                withTimeout(TIMEOUT.milliseconds) { stopJob.join() }
             } finally {
                 stopJob.cancelAndJoin()
             }
@@ -728,7 +729,7 @@ class NetworkDataSyncInteractorTest {
     private suspend fun syncAndJoin(expectSuccess: Boolean = true) {
         val job = interactor.syncNetworkData()
         try {
-            withTimeout(TIMEOUT) { job.join() }
+            withTimeout(TIMEOUT.milliseconds) { job.join() }
         } finally {
             job.cancelAndJoin()
         }

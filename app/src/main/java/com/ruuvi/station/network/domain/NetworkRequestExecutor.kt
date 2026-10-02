@@ -135,12 +135,9 @@ class NetworkRequestExecutor (
         sensorSettingsRepository.getSensorSettings(request.request.sensor)?.userBackground == request.filename
 
     private fun startExecuting(networkRequest: NetworkRequest): Boolean {
-        if (jobManager.isJobRunning(networkRequest.id)) {
-            Timber.d("Job ${networkRequest.id} is already running")
-            return false
+        val result = jobManager.tryStartExecuting(networkRequest.id) {
+            networkRequestRepository.startExecuting(networkRequest)
         }
-
-        val result = networkRequestRepository.startExecuting(networkRequest)
         Timber.d("startExecuting $result $networkRequest")
         return result
     }
@@ -269,6 +266,7 @@ class NetworkRequestExecutor (
 
     class NetworkJobManager() {
         private val jobs = ConcurrentHashMap<Int, Job>()
+        private val executionStartLock = Any()
         private val cancellationLock = Any()
         private var activeCancellations = 0
 
@@ -297,6 +295,16 @@ class NetworkRequestExecutor (
                 }
             }
         }
+
+        fun tryStartExecuting(id: Int, claimRequest: () -> Boolean): Boolean =
+            synchronized(executionStartLock) {
+                if (isJobRunning(id)) {
+                    Timber.d("Job $id is already running")
+                    false
+                } else {
+                    claimRequest()
+                }
+            }
 
         fun cancelJob(id: Int) {
             Timber.d("cancelJob $id")

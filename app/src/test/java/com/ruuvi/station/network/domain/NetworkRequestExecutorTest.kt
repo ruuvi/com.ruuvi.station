@@ -32,8 +32,11 @@ import io.mockk.verify
 import io.mockk.verifyOrder
 import io.mockk.verifySequence
 import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.awaitCancellation
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
@@ -46,6 +49,8 @@ import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import java.io.IOException
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.atomic.AtomicBoolean
 import java.util.Date
 import kotlin.time.Duration.Companion.milliseconds
 
@@ -207,6 +212,48 @@ class NetworkRequestExecutorTest {
                 execution.cancel()
             }
         }
+    }
+
+    @Test
+    fun `concurrent scheduler passes claim and execute a request only once`() = runBlocking {
+        val request = queuedRequest()
+        val callersReady = CountDownLatch(2)
+        val firstClaimEntered = CountDownLatch(1)
+        val releaseFirstClaim = CountDownLatch(1)
+        val firstClaim = AtomicBoolean(true)
+        val requestIsReady = AtomicBoolean(true)
+        every { requestRepository.getScheduledRequests() } returns listOf(request)
+        every { requestRepository.startExecuting(request) } answers {
+            val wasReady = requestIsReady.get()
+            if (firstClaim.compareAndSet(true, false)) {
+                firstClaimEntered.countDown()
+                releaseFirstClaim.await()
+            }
+            requestIsReady.set(false)
+            wasReady
+        }
+        coEvery { networkRepository.unclaimSensor(any(), TOKEN) } returns response()
+
+        try {
+            withTimeout(TIMEOUT.milliseconds) {
+                val executions = List(2) {
+                    async(Dispatchers.Default) {
+                        callersReady.countDown()
+                        executor.executeScheduledRequests()
+                    }
+                }
+                callersReady.await()
+                firstClaimEntered.await()
+                releaseFirstClaim.countDown()
+                executions.awaitAll()
+            }
+        } finally {
+            releaseFirstClaim.countDown()
+        }
+
+        verify(exactly = 2) { requestRepository.startExecuting(request) }
+        coVerify(exactly = 1) { networkRepository.unclaimSensor(any(), TOKEN) }
+        verifyTerminal(request, NetworkRequestStatus.SUCCESS)
     }
 
     @Test
