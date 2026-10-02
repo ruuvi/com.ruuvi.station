@@ -92,11 +92,12 @@ class NetworkRequestExecutor (
     }
 
     private suspend fun execute(networkRequest: NetworkRequest): Boolean {
+        val token = getToken()?.token ?: return false
+
         if (!startExecuting(networkRequest)) {
             return false
         }
 
-        val token = getToken()?.token
         val request = getRequest(networkRequest)
         var result = false
 
@@ -107,24 +108,22 @@ class NetworkRequestExecutor (
                 return true
             }
 
-            token?.let {
-                try {
-                    val response = runSpecificAction(token, networkRequest, request)
-                    Timber.d("Execute response: $response")
-                    if (response?.isSuccess() == true) {
-                        disableRequest(networkRequest, NetworkRequestStatus.SUCCESS)
-                        result = true
+            try {
+                val response = runSpecificAction(token, networkRequest, request)
+                Timber.d("Execute response: $response")
+                if (response?.isSuccess() == true) {
+                    disableRequest(networkRequest, NetworkRequestStatus.SUCCESS)
+                    result = true
+                } else {
+                    if (response?.code == ER_CONFLICT) {
+                        disableRequest(networkRequest, NetworkRequestStatus.CONFLICT)
                     } else {
-                        if (response?.code == ER_CONFLICT) {
-                            disableRequest(networkRequest, NetworkRequestStatus.CONFLICT)
-                        } else {
-                            registerFailedAttempt(networkRequest)
-                        }
+                        registerFailedAttempt(networkRequest)
                     }
-                } catch (e: Exception) {
-                    Timber.d("Exception catched: ${e.message}")
-                    registerFailedAttempt(networkRequest)
                 }
+            } catch (e: Exception) {
+                Timber.d("Exception catched: ${e.message}")
+                registerFailedAttempt(networkRequest)
             }
         } else {
             disableRequest(networkRequest, NetworkRequestStatus.PARSE_FAIL)

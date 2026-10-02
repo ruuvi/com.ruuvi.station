@@ -47,6 +47,7 @@ import org.junit.Before
 import org.junit.Test
 import java.io.IOException
 import java.util.Date
+import kotlin.time.Duration.Companion.milliseconds
 
 class NetworkRequestExecutorTest {
     private val tokenRepository = mockk<NetworkTokenRepository>()
@@ -168,7 +169,7 @@ class NetworkRequestExecutorTest {
         verify(exactly = 1) { requestRepository.startExecuting(request) }
         verify(exactly = 0) { requestRepository.disableRequest(any(), any()) }
         verify(exactly = 0) { requestRepository.registerFailedAttempt(any()) }
-        verify { tokenRepository wasNot Called }
+        verify(exactly = 1) { tokenRepository.getTokenInfo() }
         verify { networkRepository wasNot Called }
     }
 
@@ -184,7 +185,7 @@ class NetworkRequestExecutorTest {
             response()
         }
 
-        withTimeout(TIMEOUT) {
+        withTimeout(TIMEOUT.milliseconds) {
             val execution = launch { executor.executeScheduledRequests() }
             try {
                 started.await()
@@ -322,13 +323,17 @@ class NetworkRequestExecutorTest {
     }
 
     @Test
-    fun `missing token does not send a scheduled request`() = runBlocking {
+    fun `missing token leaves scheduled request ready without sending it`() = runBlocking {
+        val request = queuedRequest()
         every { tokenRepository.getTokenInfo() } returns null
-        every { requestRepository.getScheduledRequests() } returns listOf(queuedRequest())
+        every { requestRepository.getScheduledRequests() } returns listOf(request)
 
         executeScheduled()
 
         verify(exactly = 1) { tokenRepository.getTokenInfo() }
+        verify(exactly = 0) { requestRepository.startExecuting(request) }
+        verify(exactly = 0) { requestRepository.disableRequest(any(), any()) }
+        verify(exactly = 0) { requestRepository.registerFailedAttempt(any()) }
         verify { networkRepository wasNot Called }
         verify { sensorSettingsRepository wasNot Called }
     }
@@ -346,7 +351,7 @@ class NetworkRequestExecutorTest {
         }
 
         val registration = executor.registerRequest(replacement, executeNow = false)
-        withTimeout(TIMEOUT) { registration.join() }
+        withTimeout(TIMEOUT.milliseconds) { registration.join() }
 
         assertFalse(registration.isCancelled)
         assertTrue(oldJobs.all { it.isCompleted })
@@ -425,7 +430,7 @@ class NetworkRequestExecutorTest {
             }
         }
 
-        withTimeout(TIMEOUT) {
+        withTimeout(TIMEOUT.milliseconds) {
             val execution = launch { executor.executeScheduledRequests() }
             started.await()
 
@@ -534,11 +539,11 @@ class NetworkRequestExecutorTest {
     }
 
     private suspend fun executeScheduled() {
-        withTimeout(TIMEOUT) { executor.executeScheduledRequests() }
+        withTimeout(TIMEOUT.milliseconds) { executor.executeScheduledRequests() }
     }
 
     private suspend fun collectStatuses(request: NetworkRequest): List<OperationStatus> =
-        withTimeout(TIMEOUT) { executor.registerRequestWithStatus(request).take(2).toList() }
+        withTimeout(TIMEOUT.milliseconds) { executor.registerRequestWithStatus(request).take(2).toList() }
 
     private suspend fun verifyStaleUploadSkipped(settings: SensorSettings?) {
         val request = queuedRequest(type = NetworkRequestType.UPLOAD_IMAGE, payload = imageRequest())
