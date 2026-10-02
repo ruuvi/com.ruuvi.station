@@ -269,6 +269,8 @@ class NetworkRequestExecutor (
 
     class NetworkJobManager() {
         private val jobs = ConcurrentHashMap<Int, Job>()
+        private val cancellationLock = Any()
+        private var activeCancellations = 0
 
         fun jobsToLog() {
             val log = StringBuilder()
@@ -282,9 +284,17 @@ class NetworkRequestExecutor (
 
         fun registerJob(id: Int, job: Job) {
             Timber.d("registerJob $id")
-            val existingJob = jobs[id]
-            if (existingJob?.isActive != true) {
-                jobs[id] = job
+            synchronized(cancellationLock) {
+                if (activeCancellations > 0) {
+                    Timber.d("Canceling job $id registered while cancellation is in progress")
+                    job.cancel()
+                    return
+                }
+
+                val existingJob = jobs[id]
+                if (existingJob?.isActive != true) {
+                    jobs[id] = job
+                }
             }
         }
 
@@ -301,11 +311,20 @@ class NetworkRequestExecutor (
         }
 
         suspend fun cancelAndJoinAll() {
-            val activeJobs = jobs.entries.toList()
-            for ((id, job) in activeJobs) {
-                Timber.d("Canceling and joining job $id isActive ${job.isActive}")
-                job.cancelAndJoin()
-                jobs.remove(id, job)
+            synchronized(cancellationLock) {
+                activeCancellations++
+            }
+            try {
+                val activeJobs = jobs.entries.toList()
+                for ((id, job) in activeJobs) {
+                    Timber.d("Canceling and joining job $id isActive ${job.isActive}")
+                    job.cancelAndJoin()
+                    jobs.remove(id, job)
+                }
+            } finally {
+                synchronized(cancellationLock) {
+                    activeCancellations--
+                }
             }
         }
 

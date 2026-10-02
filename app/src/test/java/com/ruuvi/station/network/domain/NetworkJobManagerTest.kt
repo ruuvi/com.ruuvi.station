@@ -6,6 +6,7 @@ import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.awaitCancellation
+import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
@@ -14,6 +15,7 @@ import org.junit.After
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import kotlin.time.Duration.Companion.milliseconds
 
 class NetworkJobManagerTest {
     private val manager = NetworkJobManager()
@@ -21,10 +23,10 @@ class NetworkJobManagerTest {
 
     @After
     fun cancelOutstandingJobs() = runBlocking {
-        withTimeout(TIMEOUT) {
+        withTimeout(TIMEOUT.milliseconds) {
             jobs.forEach { it.cancel() }
             manager.cancelAndJoinAll()
-            jobs.forEach { it.join() }
+            jobs.joinAll()
         }
     }
 
@@ -33,7 +35,7 @@ class NetworkJobManagerTest {
         assertFalse(manager.isJobRunning(1))
 
         manager.cancelJob(1)
-        withTimeout(TIMEOUT) { manager.cancelAndJoinAll() }
+        withTimeout(TIMEOUT.milliseconds) { manager.cancelAndJoinAll() }
 
         assertFalse(manager.isJobRunning(1))
     }
@@ -86,7 +88,7 @@ class NetworkJobManagerTest {
 
     @Test
     fun `lazy job is not running before start and can be cancelled without executing`() = runBlocking {
-        withTimeout(TIMEOUT) {
+        withTimeout(TIMEOUT.milliseconds) {
             var executed = false
             val job = launch(start = CoroutineStart.LAZY) {
                 executed = true
@@ -105,7 +107,7 @@ class NetworkJobManagerTest {
 
     @Test
     fun `started lazy job is running until its work completes`() = runBlocking {
-        withTimeout(TIMEOUT) {
+        withTimeout(TIMEOUT.milliseconds) {
             val release = CompletableDeferred<Unit>()
             val job = launch(start = CoroutineStart.LAZY) { release.await() }
             manager.registerJob(1, job)
@@ -122,7 +124,7 @@ class NetworkJobManagerTest {
 
     @Test
     fun `cancel all waits for coroutine cleanup and cancels every registered job`() = runBlocking {
-        withTimeout(TIMEOUT) {
+        withTimeout(TIMEOUT.milliseconds) {
             val cleanupStarted = CompletableDeferred<Unit>()
             val finishCleanup = CompletableDeferred<Unit>()
             val first = launch(start = CoroutineStart.UNDISPATCHED) {
@@ -160,8 +162,8 @@ class NetworkJobManagerTest {
     }
 
     @Test
-    fun `cancel all preserves a replacement registered while the old job is finishing`() = runBlocking {
-        withTimeout(TIMEOUT) {
+    fun `cancel all stops a replacement registered while the old job is finishing`() = runBlocking {
+        withTimeout(TIMEOUT.milliseconds) {
             val cleanupStarted = CompletableDeferred<Unit>()
             val finishCleanup = CompletableDeferred<Unit>()
             val original = launch(start = CoroutineStart.UNDISPATCHED) {
@@ -180,17 +182,17 @@ class NetworkJobManagerTest {
                 cleanupStarted.await()
                 val replacement = activeJob()
                 manager.registerJob(1, replacement)
-                assertTrue(manager.isJobRunning(1))
+                assertTrue(replacement.isCancelled)
+                assertFalse(manager.isJobRunning(1))
 
                 finishCleanup.complete(Unit)
                 cancellation.join()
 
                 assertTrue(original.isCancelled)
                 assertTrue(original.isCompleted)
-                assertTrue(replacement.isActive)
-                assertTrue(manager.isJobRunning(1))
-                manager.cancelJob(1)
                 assertTrue(replacement.isCancelled)
+                assertFalse(replacement.isActive)
+                assertFalse(manager.isJobRunning(1))
             } finally {
                 finishCleanup.complete(Unit)
             }
