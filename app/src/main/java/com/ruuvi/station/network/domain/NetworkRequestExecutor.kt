@@ -92,11 +92,12 @@ class NetworkRequestExecutor (
     }
 
     private suspend fun execute(networkRequest: NetworkRequest): Boolean {
+        val token = getToken()?.token ?: return false
+
         if (!startExecuting(networkRequest)) {
             return false
         }
 
-        val token = getToken()?.token
         val request = getRequest(networkRequest)
         var result = false
 
@@ -107,24 +108,22 @@ class NetworkRequestExecutor (
                 return true
             }
 
-            token?.let {
-                try {
-                    val response = runSpecificAction(token, networkRequest, request)
-                    Timber.d("Execute response: $response")
-                    if (response?.isSuccess() == true) {
-                        disableRequest(networkRequest, NetworkRequestStatus.SUCCESS)
-                        result = true
+            try {
+                val response = runSpecificAction(token, networkRequest, request)
+                Timber.d("Execute response: $response")
+                if (response?.isSuccess() == true) {
+                    disableRequest(networkRequest, NetworkRequestStatus.SUCCESS)
+                    result = true
+                } else {
+                    if (response?.code == ER_CONFLICT) {
+                        disableRequest(networkRequest, NetworkRequestStatus.CONFLICT)
                     } else {
-                        if (response?.code == ER_CONFLICT) {
-                            disableRequest(networkRequest, NetworkRequestStatus.CONFLICT)
-                        } else {
-                            registerFailedAttempt(networkRequest)
-                        }
+                        registerFailedAttempt(networkRequest)
                     }
-                } catch (e: Exception) {
-                    Timber.d("Exception catched: ${e.message}")
-                    registerFailedAttempt(networkRequest)
                 }
+            } catch (e: Exception) {
+                Timber.d("Exception catched: ${e.message}")
+                registerFailedAttempt(networkRequest)
             }
         } else {
             disableRequest(networkRequest, NetworkRequestStatus.PARSE_FAIL)
@@ -136,12 +135,9 @@ class NetworkRequestExecutor (
         sensorSettingsRepository.getSensorSettings(request.request.sensor)?.userBackground == request.filename
 
     private fun startExecuting(networkRequest: NetworkRequest): Boolean {
-        if (jobManager.isJobRunning(networkRequest.id)) {
-            Timber.d("Job ${networkRequest.id} is already running")
-            return false
+        val result = jobManager.tryStartExecuting(networkRequest.id) {
+            networkRequestRepository.startExecuting(networkRequest)
         }
-
-        val result = networkRequestRepository.startExecuting(networkRequest)
         Timber.d("startExecuting $result $networkRequest")
         return result
     }
@@ -270,6 +266,9 @@ class NetworkRequestExecutor (
 
     class NetworkJobManager() {
         private val jobs = ConcurrentHashMap<Int, Job>()
+        private val executionStartLock = Any()
+        private val cancellationLock = Any()
+        private var activeCancellations = 0
 
         fun jobsToLog() {
             val log = StringBuilder()
@@ -283,11 +282,29 @@ class NetworkRequestExecutor (
 
         fun registerJob(id: Int, job: Job) {
             Timber.d("registerJob $id")
-            val existingJob = jobs[id]
-            if (existingJob?.isActive != true) {
-                jobs[id] = job
+            synchronized(cancellationLock) {
+                if (activeCancellations > 0) {
+                    Timber.d("Canceling job $id registered while cancellation is in progress")
+                    job.cancel()
+                    return
+                }
+
+                val existingJob = jobs[id]
+                if (existingJob?.isActive != true) {
+                    jobs[id] = job
+                }
             }
         }
+
+        fun tryStartExecuting(id: Int, claimRequest: () -> Boolean): Boolean =
+            synchronized(executionStartLock) {
+                if (isJobRunning(id)) {
+                    Timber.d("Job $id is already running")
+                    false
+                } else {
+                    claimRequest()
+                }
+            }
 
         fun cancelJob(id: Int) {
             Timber.d("cancelJob $id")
@@ -302,11 +319,20 @@ class NetworkRequestExecutor (
         }
 
         suspend fun cancelAndJoinAll() {
-            val activeJobs = jobs.entries.toList()
-            for ((id, job) in activeJobs) {
-                Timber.d("Canceling and joining job $id isActive ${job.isActive}")
-                job.cancelAndJoin()
-                jobs.remove(id, job)
+            synchronized(cancellationLock) {
+                activeCancellations++
+            }
+            try {
+                val activeJobs = jobs.entries.toList()
+                for ((id, job) in activeJobs) {
+                    Timber.d("Canceling and joining job $id isActive ${job.isActive}")
+                    job.cancelAndJoin()
+                    jobs.remove(id, job)
+                }
+            } finally {
+                synchronized(cancellationLock) {
+                    activeCancellations--
+                }
             }
         }
 
