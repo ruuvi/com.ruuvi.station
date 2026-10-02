@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.preference.PreferenceManager
+import androidx.core.text.util.LocalePreferences
 import com.ruuvi.station.app.ui.DarkModeState
 import com.ruuvi.station.dashboard.DashboardTapAction
 import com.ruuvi.station.dashboard.DashboardType
@@ -54,7 +55,7 @@ class Preferences (val context: Context) {
         get() {
             return when (sharedPreferences.getString(
                 PREF_TEMPERATURE_UNIT,
-                DEFAULT_TEMPERATURE_UNIT
+                defaultTemperatureUnitCode()
             )) {
                 "C" -> TemperatureUnit.Celsius
                 "F" -> TemperatureUnit.Fahrenheit
@@ -728,7 +729,11 @@ class Preferences (val context: Context) {
         SharedPreferenceBooleanLiveData(sharedPreferences, PREF_MARKETING_CONSENT, false)
 
     fun getTemperatureUnitCodeLiveData() =
-        SharedPreferenceStringLiveData(sharedPreferences, PREF_TEMPERATURE_UNIT, DEFAULT_TEMPERATURE_UNIT)
+        SharedPreferenceStringLiveData(
+            sharedPreferences,
+            PREF_TEMPERATURE_UNIT,
+            defaultTemperatureUnitCode()
+        )
 
     fun getHumidityUnitCodeLiveData() =
         SharedPreferenceIntLiveData(sharedPreferences, PREF_HUMIDITY_UNIT, 0)
@@ -864,7 +869,13 @@ class Preferences (val context: Context) {
 
         private const val PREF_USE_WEB_SHARE = "pref_use_web_share"
 
-        private const val DEFAULT_TEMPERATURE_UNIT = "C"
+        internal fun defaultTemperatureUnitCode(
+            localeTemperatureUnit: String = LocalePreferences.getTemperatureUnit()
+        ): String = when (localeTemperatureUnit) {
+            LocalePreferences.TemperatureUnit.FAHRENHEIT -> TemperatureUnit.Fahrenheit.unitCode
+            LocalePreferences.TemperatureUnit.KELVIN -> TemperatureUnit.Kelvin.unitCode
+            else -> TemperatureUnit.Celsius.unitCode
+        }
         private const val DEFAULT_DATA_FORWARDING_URL = ""
         private const val DEFAULT_DEVICE_ID = ""
         private const val DEFAULT_GRAPH_POINT_INTERVAL = 1
