@@ -5,11 +5,12 @@ import androidx.lifecycle.LiveData
 
 abstract class SharedPreferenceLiveData<T>(val sharedPrefs: SharedPreferences,
                                            val key: String,
-                                           val defValue: T) : LiveData<T>() {
+                                           val defValue: T,
+                                           private val defaultValueProvider: () -> T = { defValue }) : LiveData<T>() {
 
     private val preferenceChangeListener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
         if (key == this.key) {
-            postValue(getValueFromPreferences(key, defValue))
+            postValue(getValueFromPreferences(key, defaultValueProvider()))
         }
     }
 
@@ -17,7 +18,7 @@ abstract class SharedPreferenceLiveData<T>(val sharedPrefs: SharedPreferences,
 
     override fun onActive() {
         super.onActive()
-        value = getValueFromPreferences(key, defValue)
+        value = getValueFromPreferences(key, defaultValueProvider())
         sharedPrefs.registerOnSharedPreferenceChangeListener(preferenceChangeListener)
     }
 
@@ -32,8 +33,12 @@ class SharedPreferenceIntLiveData(sharedPrefs: SharedPreferences, key: String, d
     override fun getValueFromPreferences(key: String, defValue: Int): Int = sharedPrefs.getInt(key, defValue)
 }
 
-class SharedPreferenceStringLiveData(sharedPrefs: SharedPreferences, key: String, defValue: String) :
-    SharedPreferenceLiveData<String>(sharedPrefs, key, defValue) {
+class SharedPreferenceStringLiveData(
+    sharedPrefs: SharedPreferences,
+    key: String,
+    defValue: String,
+    private val defaultValueProvider: () -> String = { defValue }
+) : SharedPreferenceLiveData<String>(sharedPrefs, key, defValue, defaultValueProvider) {
     override fun getValueFromPreferences(key: String, defValue: String): String = sharedPrefs.getString(key, defValue) ?: defValue
 }
 

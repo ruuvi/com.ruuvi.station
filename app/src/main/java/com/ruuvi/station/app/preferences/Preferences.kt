@@ -732,7 +732,8 @@ class Preferences (val context: Context) {
         SharedPreferenceStringLiveData(
             sharedPreferences,
             PREF_TEMPERATURE_UNIT,
-            defaultTemperatureUnitCode()
+            defaultTemperatureUnitCode(),
+            ::defaultTemperatureUnitCode
         )
 
     fun getHumidityUnitCodeLiveData() =
