@@ -1,6 +1,7 @@
 package com.ruuvi.station.settings.ui
 
 import android.app.Activity
+import android.app.LocaleConfig
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
@@ -72,7 +73,7 @@ fun SettingsList(
             item {
                 SettingsElement(
                     name = stringResource(id = R.string.settings_language),
-                    value = Locale.getDefault().displayLanguage,
+                    value = getDisplayedAppLanguage(context).displayLanguage,
                     onClick = {
                         val intent = Intent(android.provider.Settings.ACTION_APP_LOCALE_SETTINGS)
                         intent.data = Uri.parse("package:${context.packageName}")
@@ -189,6 +190,31 @@ fun SettingsList(
             }
         }
     }
+}
+
+private fun getDisplayedAppLanguage(context: android.content.Context): Locale {
+    if (Build.VERSION.SDK_INT < TIRAMISU) {
+        return Locale.ENGLISH
+    }
+
+    val supportedLocales = LocaleConfig(context).supportedLocales
+        ?.let { locales -> List(locales.size()) { locales[it] } }
+        .orEmpty()
+    val configuredLocales = context.resources.configuration.locales
+        .let { locales -> List(locales.size()) { locales[it] } }
+
+    return resolveAppLanguageLocale(configuredLocales, supportedLocales)
+}
+
+internal fun resolveAppLanguageLocale(
+    configuredLocales: List<Locale>,
+    supportedLocales: List<Locale>
+): Locale {
+    return configuredLocales.firstNotNullOfOrNull { configuredLocale ->
+        supportedLocales.firstOrNull { supportedLocale ->
+            configuredLocale.language.equals(supportedLocale.language, ignoreCase = true)
+        }
+    } ?: supportedLocales.firstOrNull() ?: Locale.ENGLISH
 }
 
 @Composable
