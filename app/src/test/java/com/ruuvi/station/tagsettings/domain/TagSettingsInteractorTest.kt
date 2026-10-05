@@ -136,11 +136,11 @@ class TagSettingsInteractorTest {
 
         interactor.setBackgroundImage(SENSOR_ID, NEW_IMAGE, uploadNow = true)
 
-        verify { imageInteractor.deleteFile(OLD_IMAGE) }
-        verify {
-            sensorSettingsRepository.updateSensorBackground(SENSOR_ID, NEW_IMAGE, 0, null)
-            networkInteractor.uploadImage(SENSOR_ID, NEW_IMAGE, true)
+        verify(exactly = 1) { imageInteractor.deleteFile(OLD_IMAGE) }
+        verify(exactly = 1) {
+            sensorSettingsRepository.updateSensorBackground(SENSOR_ID, NEW_IMAGE, 0, null, any(), null)
         }
+        verify(exactly = 1) { networkInteractor.uploadImage(SENSOR_ID, NEW_IMAGE, true) }
     }
 
     companion object {
