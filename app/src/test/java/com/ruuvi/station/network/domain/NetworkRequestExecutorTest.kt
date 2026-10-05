@@ -413,6 +413,32 @@ class NetworkRequestExecutorTest {
     }
 
     @Test
+    fun `queued registration is rejected while cancellation cleanup is in progress`() = runBlocking {
+        val request = queuedRequest()
+        val cleanupStarted = CompletableDeferred<Unit>()
+        val releaseCleanup = CompletableDeferred<Unit>()
+        val cancellation = async {
+            executor.cancelAndJoinExecutingRequests {
+                cleanupStarted.complete(Unit)
+                releaseCleanup.await()
+            }
+        }
+
+        try {
+            withTimeout(TIMEOUT.milliseconds) { cleanupStarted.await() }
+
+            val registration = executor.registerRequest(request, executeNow = false)
+            withTimeout(TIMEOUT.milliseconds) { registration.join() }
+
+            verify(exactly = 0) { requestRepository.getSimilar(request) }
+            verify(exactly = 0) { requestRepository.saveRequest(request) }
+        } finally {
+            releaseCleanup.complete(Unit)
+            withTimeout(TIMEOUT.milliseconds) { cancellation.await() }
+        }
+    }
+
+    @Test
     fun `status registration saves then reports progress and success`() = runBlocking {
         val request = queuedRequest()
         coEvery { networkRepository.unclaimSensor(any(), TOKEN) } returns response()

@@ -29,8 +29,14 @@ class NetworkRequestExecutor (
 
     fun registerRequest(networkRequest: NetworkRequest, executeNow: Boolean = true): Job {
         return CoroutineScope(Dispatchers.IO).launch {
-            disableSimilarRequest (networkRequest)
-            networkRequestRepository.saveRequest(networkRequest)
+            if (!jobManager.registerRequestIfAllowed {
+                    disableSimilarRequest(networkRequest)
+                    networkRequestRepository.saveRequest(networkRequest)
+                }
+            ) {
+                Timber.d("Skipping request registration during cancellation: $networkRequest")
+                return@launch
+            }
             if (executeNow) {
                 delay(1000)
                 val request = networkRequestRepository.getById(networkRequest.id)
@@ -46,8 +52,15 @@ class NetworkRequestExecutor (
         Timber.d("registerRequest $networkRequest true")
         CoroutineScope(Dispatchers.IO).launch {
             send(OperationStatus.InProgress)
-            disableSimilarRequest (networkRequest)
-            networkRequestRepository.saveRequest(networkRequest)
+            if (!jobManager.registerRequestIfAllowed {
+                    disableSimilarRequest(networkRequest)
+                    networkRequestRepository.saveRequest(networkRequest)
+                }
+            ) {
+                Timber.d("Skipping request registration during cancellation: $networkRequest")
+                send(OperationStatus.Fail(UiText.EmptyString))
+                return@launch
+            }
             Timber.d("request saved $networkRequest")
             Timber.d("execute NOW $networkRequest")
             val result = execute(networkRequest)
@@ -87,8 +100,8 @@ class NetworkRequestExecutor (
         return requests.any{ it.type == NetworkRequestType.SETTINGS }
     }
 
-    suspend fun cancelAndJoinExecutingRequests() {
-        jobManager.cancelAndJoinAll()
+    suspend fun cancelAndJoinExecutingRequests(duringCancellation: suspend () -> Unit = {}) {
+        jobManager.cancelAndJoinAll(duringCancellation)
     }
 
     private suspend fun execute(networkRequest: NetworkRequest): Boolean {
@@ -296,13 +309,30 @@ class NetworkRequestExecutor (
             }
         }
 
-        fun tryStartExecuting(id: Int, claimRequest: () -> Boolean): Boolean =
-            synchronized(executionStartLock) {
-                if (isJobRunning(id)) {
-                    Timber.d("Job $id is already running")
+        fun registerRequestIfAllowed(registerRequest: () -> Unit): Boolean =
+            synchronized(cancellationLock) {
+                if (activeCancellations > 0) {
                     false
                 } else {
-                    claimRequest()
+                    registerRequest()
+                    true
+                }
+            }
+
+        fun tryStartExecuting(id: Int, claimRequest: () -> Boolean): Boolean =
+            synchronized(cancellationLock) {
+                if (activeCancellations > 0) {
+                    Timber.d("Not starting job $id while cancellation is in progress")
+                    false
+                } else {
+                    synchronized(executionStartLock) {
+                        if (isJobRunning(id)) {
+                            Timber.d("Job $id is already running")
+                            false
+                        } else {
+                            claimRequest()
+                        }
+                    }
                 }
             }
 
@@ -318,7 +348,7 @@ class NetworkRequestExecutor (
             }
         }
 
-        suspend fun cancelAndJoinAll() {
+        suspend fun cancelAndJoinAll(duringCancellation: suspend () -> Unit = {}) {
             synchronized(cancellationLock) {
                 activeCancellations++
             }
@@ -329,6 +359,7 @@ class NetworkRequestExecutor (
                     job.cancelAndJoin()
                     jobs.remove(id, job)
                 }
+                duringCancellation()
             } finally {
                 synchronized(cancellationLock) {
                     activeCancellations--

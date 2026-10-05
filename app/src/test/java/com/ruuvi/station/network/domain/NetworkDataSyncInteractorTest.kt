@@ -332,7 +332,7 @@ class NetworkDataSyncInteractorTest {
 
             assertTrue(job.isCancelled)
             assertFalse(interactor.syncInProgressFlow.value)
-            coVerify(exactly = 1) { requestExecutor.cancelAndJoinExecutingRequests() }
+            coVerify(exactly = 1) { requestExecutor.cancelAndJoinExecutingRequests(any()) }
             verify(exactly = 0) { preferencesRepository.setLastSyncDate(any()) }
         } finally {
             job.cancelAndJoin()
