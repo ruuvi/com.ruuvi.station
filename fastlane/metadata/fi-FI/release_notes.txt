@@ -1,7 +1,6 @@
-- Uudistettu widgettejä: mukautuva asettelu ja luotettavammat päivitykset
-- Parannettu historianäkymää mittauskuvakkeilla ja joustavilla kaavioasetteluilla
-- Odottavat anturijaot näytetään nyt anturin jako -sivulla
-- Lisätty helppo pääsy uutiskirjeen tilausasetuksiin
-- Parannettu pilvisynkronointia, anturin omistajuustietojen päivitystä ja asetusten aikaleimoja
-- Parannettu Bluetooth-antureiden päivitysten luotettavuutta
-- Muita pienempiä parannuksia ja bugikorjauksia
+- Uudistettu historianäkymä ja uusi koko näkymän kokoinen kaaviovaihtoehto
+- Parannetut, vapaasti skaalattavat widgetit
+- Luotettavammat hälytykset, Bluetooth-päivitykset ja pilvisynkronointi
+- Odottavat anturijaot näytetään nyt sovelluksessa
+- Parempi yhteensopivuus uudempien Android-versioiden kanssa
+- Useita käytettävyys- ja vakauskorjauksia
