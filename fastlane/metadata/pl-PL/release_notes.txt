@@ -1,7 +1,6 @@
-- Przeprojektowane widżety z elastycznym układem i bardziej niezawodnymi aktualizacjami
-- Ulepszony widok historii z ikonami pomiarów i elastycznymi układami wykresów
-- Wyświetlaj oczekujące udostępnienia czujników bezpośrednio w aplikacji
-- Dodano łatwy dostęp do ustawień subskrypcji newslettera
-- Ulepszona synchronizacja z chmurą, aktualizacje własności czujników i znaczniki czasu ustawień
-- Poprawiona niezawodność aktualizacji czujników Bluetooth
-- Inne drobne poprawki błędów i ulepszenia
+- Przeprojektowany widok historii z nową opcją wykresu w pełnym rozmiarze
+- Ulepszone widżety z możliwością swobodnej zmiany rozmiaru
+- Bardziej niezawodne alerty, aktualizacje Bluetooth i synchronizacja z chmurą
+- Oczekujące udostępnienia czujników są teraz wyświetlane w aplikacji
+- Lepsza zgodność z nowszymi wersjami systemu Android
+- Różne poprawki użyteczności i stabilności
