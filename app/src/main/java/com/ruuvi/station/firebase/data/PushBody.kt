@@ -29,6 +29,6 @@ data class AlertMessage(
 ) {
 
     val alarmType: AlarmType?
-        get() = AlarmType.getByNetworkCode(alertType.lowercase())
+        get() = AlarmType.getByNetworkCode(alertType)
 
 }
