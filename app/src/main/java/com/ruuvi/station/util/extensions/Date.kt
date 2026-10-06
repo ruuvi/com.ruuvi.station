@@ -2,11 +2,15 @@ package com.ruuvi.station.util.extensions
 
 import android.content.Context
 import android.text.format.DateFormat
+import android.text.format.DateUtils
 import com.ruuvi.station.R
+import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.math.abs
 
 const val hours24 = 24 * 60 * 60 * 1000L
+private const val FINLAND_COUNTRY_CODE = "FI"
+private val FINNISH_FINLAND_LOCALE = Locale("fi", FINLAND_COUNTRY_CODE)
 
 fun Date.getEpochSecond(): Long {
     return this.time / 1000L
@@ -50,13 +54,36 @@ fun Date.localizedTime(context: Context): String {
     return timeFormat.format(this)
 }
 
-fun Date.localizedDate(context: Context): String {
-    val dateFormat = DateFormat.getDateFormat(context)
-    return dateFormat.format(this)
+fun Date.localizedDate(context: Context, includeYear: Boolean = true): String {
+    val pattern = localizedNumericDatePattern(
+        context.resources.configuration.locales[0],
+        includeYear
+    )
+    if (pattern != null) {
+        return SimpleDateFormat(pattern, FINNISH_FINLAND_LOCALE).format(this)
+    }
+
+    return if (includeYear) {
+        DateFormat.getDateFormat(context).format(this)
+    } else {
+        DateUtils.formatDateTime(
+            context,
+            time,
+            DateUtils.FORMAT_SHOW_DATE or DateUtils.FORMAT_NO_YEAR or DateUtils.FORMAT_NUMERIC_DATE
+        )
+    }
 }
 
 fun Date.localizedDateTime(context: Context): String {
     val dateFormat = DateFormat.getDateFormat(context)
     val timeFormat = DateFormat.getTimeFormat(context)
     return "${dateFormat.format(this)} ${timeFormat.format(this)}"
+}
+
+internal fun localizedNumericDatePattern(locale: Locale, includeYear: Boolean): String? {
+    if (!locale.country.equals(FINLAND_COUNTRY_CODE, ignoreCase = true)) {
+        return null
+    }
+
+    return if (includeYear) "d.M.yyyy" else "d.M."
 }

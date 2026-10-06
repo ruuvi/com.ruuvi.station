@@ -1,11 +1,11 @@
 package com.ruuvi.station.vico
 
-import android.text.format.DateUtils
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianValueFormatter
 import com.ruuvi.station.util.extensions.isStartOfTheDay
+import com.ruuvi.station.util.extensions.localizedDate
 import java.text.DateFormat
 import java.util.Date
 
@@ -16,9 +16,7 @@ fun rememberDateFormatter(): CartesianValueFormatter {
         CartesianValueFormatter { measureContext, value, verticalAxisPosition ->
             val date = Date(value.toLong())
             if (date.isStartOfTheDay()) {
-                val flags: Int =
-                    DateUtils.FORMAT_SHOW_DATE or DateUtils.FORMAT_NO_YEAR or DateUtils.FORMAT_NUMERIC_DATE
-                DateUtils.formatDateTime(context, date.time, flags)
+                date.localizedDate(context, includeYear = false)
             } else {
                 DateFormat.getTimeInstance(DateFormat.SHORT).format(date).replace(" ", "")
             }

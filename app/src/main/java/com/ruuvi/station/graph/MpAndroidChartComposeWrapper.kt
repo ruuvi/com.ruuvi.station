@@ -5,7 +5,6 @@ import android.content.Context
 import android.graphics.Color
 import android.graphics.Matrix
 import android.graphics.Paint
-import android.text.format.DateUtils
 import android.view.GestureDetector
 import android.view.HapticFeedbackConstants
 import android.view.MotionEvent
@@ -62,6 +61,7 @@ import com.ruuvi.station.tutorials.ui.TutorialDialog
 import com.ruuvi.station.units.domain.UnitsConverter
 import com.ruuvi.station.units.model.UnitType
 import com.ruuvi.station.util.extensions.isStartOfTheDay
+import com.ruuvi.station.util.extensions.localizedDate
 import timber.log.Timber
 import java.text.DateFormat
 import java.text.DecimalFormat
@@ -548,8 +548,7 @@ private fun addDataToChart(
         override fun getFormattedValue(value: Double, p1: AxisBase?): String {
             val date = Date(value.toLong() + from)
             return if (date.isStartOfTheDay()) {
-                val flags: Int = DateUtils.FORMAT_SHOW_DATE or DateUtils.FORMAT_NO_YEAR or DateUtils.FORMAT_NUMERIC_DATE
-                DateUtils.formatDateTime(context, date.time, flags)
+                date.localizedDate(context, includeYear = false)
             } else {
                 DateFormat.getTimeInstance(DateFormat.SHORT).format(date).replace(" ","")
             }
@@ -577,8 +576,7 @@ fun formatDoubleToString(value: Double): String {
 private fun setLabelCount(context: Context, chart: LineChart) {
     val now = Date()
     val timeText = DateFormat.getTimeInstance(DateFormat.SHORT).format(now)
-    val flags: Int = DateUtils.FORMAT_SHOW_DATE or DateUtils.FORMAT_NO_YEAR or DateUtils.FORMAT_NUMERIC_DATE
-    val dateText = DateUtils.formatDateTime(context, now.time, flags)
+    val dateText = now.localizedDate(context, includeYear = false)
 
     val computePaint = Paint(Paint.ANTI_ALIAS_FLAG)
     computePaint.typeface = chart.xAxis.typeface

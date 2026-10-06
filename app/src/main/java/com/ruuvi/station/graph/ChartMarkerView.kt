@@ -1,7 +1,6 @@
 package com.ruuvi.station.graph
 
 import android.content.Context
-import android.text.format.DateUtils
 import android.widget.TextView
 import com.github.mikephil.charting.components.MarkerView
 import com.github.mikephil.charting.data.Entry
@@ -11,6 +10,7 @@ import com.ruuvi.station.R
 import com.ruuvi.station.units.domain.UnitsConverter
 import com.ruuvi.station.units.model.Accuracy
 import com.ruuvi.station.units.model.UnitType
+import com.ruuvi.station.util.extensions.localizedDate
 import timber.log.Timber
 import java.text.DateFormat
 import java.util.*
@@ -59,11 +59,7 @@ constructor(
         val date = Date(e.x.toLong() + getFrom.invoke())
         val timeText = DateFormat.getTimeInstance(DateFormat.SHORT).format(date).replace(" ","")
 
-        val dateText = DateUtils.formatDateTime(
-            context,
-            date.time,
-            DateUtils.FORMAT_SHOW_DATE or DateUtils.FORMAT_NO_YEAR or DateUtils.FORMAT_NUMERIC_DATE
-        )
+        val dateText = date.localizedDate(context, includeYear = false)
 
         val accuracy = if (unitType == UnitType.AirQuality.AqiIndex) {
             Accuracy.Accuracy1
