@@ -634,7 +634,7 @@ class NetworkDataSyncInteractor (
         return networkInteractor.getSensorData(request)
     }
 
-    fun stopSync(): Job {
+    fun stopSync(duringRequestCancellation: suspend () -> Unit = {}): Job {
         Timber.d("stopSync")
         syncInProgress.value = false
         return CoroutineScope(IO).launch() {
@@ -645,7 +645,7 @@ class NetworkDataSyncInteractor (
             for (job in tagJobs) {
                 job.cancelAndJoin()
             }
-            networkRequestExecutor.cancelAndJoinExecutingRequests()
+            networkRequestExecutor.cancelAndJoinExecutingRequests(duringRequestCancellation)
         }
     }
 }

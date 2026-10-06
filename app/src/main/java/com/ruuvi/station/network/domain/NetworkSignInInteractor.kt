@@ -39,22 +39,23 @@ class NetworkSignInInteractor (
 
     fun signOut(finished: ()->Unit) {
         CoroutineScope(Dispatchers.IO).launch {
-            val stopJob = networkDataSyncInteractor.stopSync()
-            stopJob.join()
+            val stopJob = networkDataSyncInteractor.stopSync {
+                networkRequestRepository.deletePendingRequests()
+                networkTokenRepository.clearTokenInfo()
 
-            networkRequestRepository.deletePendingRequests()
-            networkTokenRepository.clearTokenInfo()
-            preferencesRepository.resetSubscriptionShareSettings()
-            preferencesRepository.resetAppSettings()
-            preferencesRepository.clearMarketingConsent()
-            pushRegisterInteractor.checkAndRegisterDeviceToken()
+                preferencesRepository.resetSubscriptionShareSettings()
+                preferencesRepository.resetAppSettings()
+                preferencesRepository.clearMarketingConsent()
+                pushRegisterInteractor.checkAndRegisterDeviceToken()
 
-            val sensors = sensorSettingsRepository.getSensorSettings()
-            for (sensor in sensors) {
-                if (sensor.networkSensor) {
-                    tagRepository.deleteSensorAndRelatives(sensor.id)
+                val sensors = sensorSettingsRepository.getSensorSettings()
+                for (sensor in sensors) {
+                    if (sensor.networkSensor) {
+                        tagRepository.deleteSensorAndRelatives(sensor.id)
+                    }
                 }
             }
+            stopJob.join()
             withContext(Dispatchers.Main){
                 finished()
             }
