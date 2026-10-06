@@ -9,8 +9,9 @@ import java.util.*
 import kotlin.math.abs
 
 const val hours24 = 24 * 60 * 60 * 1000L
+private const val ENGLISH_LANGUAGE_CODE = "en"
 private const val FINLAND_COUNTRY_CODE = "FI"
-private val FINNISH_FINLAND_LOCALE = Locale("fi", FINLAND_COUNTRY_CODE)
+private val FINNISH_FINLAND_LOCALE = Locale.forLanguageTag("fi-FI")
 
 fun Date.getEpochSecond(): Long {
     return this.time / 1000L
@@ -75,13 +76,14 @@ fun Date.localizedDate(context: Context, includeYear: Boolean = true): String {
 }
 
 fun Date.localizedDateTime(context: Context): String {
-    val dateFormat = DateFormat.getDateFormat(context)
-    val timeFormat = DateFormat.getTimeFormat(context)
-    return "${dateFormat.format(this)} ${timeFormat.format(this)}"
+    return "${localizedDate(context)} ${localizedTime(context)}"
 }
 
 internal fun localizedNumericDatePattern(locale: Locale, includeYear: Boolean): String? {
-    if (!locale.country.equals(FINLAND_COUNTRY_CODE, ignoreCase = true)) {
+    if (
+        !locale.language.equals(ENGLISH_LANGUAGE_CODE, ignoreCase = true) ||
+        !locale.country.equals(FINLAND_COUNTRY_CODE, ignoreCase = true)
+    ) {
         return null
     }
 

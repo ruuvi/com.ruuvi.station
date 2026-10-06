@@ -21,4 +21,9 @@ class DateTest {
     fun `keeps Android date patterns for other regions`() {
         assertNull(localizedNumericDatePattern(Locale.UK, includeYear = true))
     }
+
+    @Test
+    fun `keeps Android date patterns for Finnish Finland`() {
+        assertNull(localizedNumericDatePattern(Locale.forLanguageTag("fi-FI"), includeYear = true))
+    }
 }
