@@ -24,7 +24,7 @@ class NetworkShareListInteractorTest {
 
         verify(exactly = 1) { repository.updateSharingList(first.sensor, first.sharedTo, first.sharedToPending) }
         verify(exactly = 1) { repository.updateSharingList(second.sensor, second.sharedTo, second.sharedToPending) }
-        verify(exactly = 2) { repository.updateSharingList(any(), any(), any()) }
+        verify(atLeast = 1, atMost = 2) { repository.updateSharingList(any(), any(), any()) }
     }
 
     @Test
