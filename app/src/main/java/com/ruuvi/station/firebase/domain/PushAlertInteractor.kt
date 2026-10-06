@@ -129,16 +129,16 @@ class PushAlertInteractor(
     }
 
     fun getDewPointMessage(message: AlertMessage, context: Context): String {
+        val unit = TemperatureUnit.getByCode(message.alertUnit)
+
         val resource = if (message.currentValue < message.thresholdValue) {
             R.string.alert_notification_dew_point_low_threshold
         } else {
             R.string.alert_notification_dew_point_high_threshold
         }
 
-        val displayThreshold = unitsConverter.getDisplayValue(
-            unitsConverter.getTemperatureValue(message.thresholdValue).toFloat()
-        )
-        return context.getString(resource, "$displayThreshold ${unitsConverter.getTemperatureUnitString()}")
+        val displayThreshold = unitsConverter.getDisplayValue(message.thresholdValue.toFloat())
+        return context.getString(resource, "$displayThreshold ${unitsConverter.getTemperatureUnitString(unit)}")
     }
 
     fun getRssiMessage(message: AlertMessage, context: Context): String {
