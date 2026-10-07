@@ -884,4 +884,9 @@ Total used shares for your account: %3$,d/%4$,d</string>
     <string name="newsletter_subscription_confirmation">Check your email to confirm your newsletter subscription.</string>
     <string name="communication_channels">Ruuvi newsletter</string>
     <string name="communication_channels_description">Get useful Ruuvi tips, product updates, feature news, and occasional special offers straight to your inbox.</string>
+    <string name="enable_background_service">Enable background service</string>
+    <string name="use_web_version_of_share">Use web version of share</string>
+    <string name="font_scaling">Font scalin%g 1$s%%</string>
+    <string name="disable_developer_mode">Disable developer mode</string>
+    <string name="registered_fcm_tokens">Registered FCM tokens</string>
 </resources>

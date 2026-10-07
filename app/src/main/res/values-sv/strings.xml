@@ -886,4 +886,9 @@ Totalt antal använda delningar för ditt konto: %3$,d/%4$,d</string>
     <string name="newsletter_subscription_confirmation">Kontrollera din e-post för att bekräfta din prenumeration på nyhetsbrevet.</string>
     <string name="communication_channels">Ruuvís nyhetsbrev</string>
     <string name="communication_channels_description">Få användbara Ruuvi-tips, produktuppdateringar, funktionsnyheter och enstaka specialerbjudanden direkt till din inkorg.</string>
+    <string name="enable_background_service">Aktivera bakgrundstjänst</string>
+    <string name="use_web_version_of_share">Använd webbversionen för delning</string>
+    <string name="font_scaling">Teckenskalning %1$s%%</string>
+    <string name="disable_developer_mode">Inaktivera utvecklarläge</string>
+    <string name="registered_fcm_tokens">Registrerade FCM-token</string>
 </resources>

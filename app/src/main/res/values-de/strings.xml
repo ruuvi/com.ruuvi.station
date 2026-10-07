@@ -896,4 +896,9 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="newsletter_subscription_confirmation">Prüfe deine E-Mails, um dein Newsletter-Abonnement zu bestätigen.</string>
     <string name="communication_channels">Ruuvi-Newsletter</string>
     <string name="communication_channels_description">Erhalte nützliche Ruuvi-Tipps, Produkt-Updates, Neuigkeiten zu Funktionen und gelegentliche Sonderangebote direkt in dein Postfach.</string>
+    <string name="enable_background_service">Hintergrunddienst aktivieren</string>
+    <string name="use_web_version_of_share">Webversion der Freigabe verwenden</string>
+    <string name="font_scaling">Schriftskalierung %1$s%%</string>
+    <string name="disable_developer_mode">Entwicklermodus deaktivieren</string>
+    <string name="registered_fcm_tokens">Registrierte FCM-Token</string>
 </resources>
