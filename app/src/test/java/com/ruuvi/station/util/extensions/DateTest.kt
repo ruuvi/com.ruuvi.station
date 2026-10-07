@@ -43,6 +43,35 @@ class DateTest {
     }
 
     @Test
+    fun `falls back to the default locale when the compatibility locale list is empty`() {
+        val context = mockk<Context>()
+        val resources = mockk<Resources>()
+        val configuration = mockk<Configuration>()
+        val locale = Locale.Builder()
+            .setLanguage("en")
+            .setRegion("FI")
+            .build()
+        val date = Calendar.getInstance().apply {
+            set(2024, Calendar.FEBRUARY, 3, 12, 0, 0)
+            set(Calendar.MILLISECOND, 0)
+        }.time
+        val previousDefaultLocale = Locale.getDefault()
+
+        every { context.resources } returns resources
+        every { resources.configuration } returns configuration
+        mockkStatic(ConfigurationCompat::class)
+        every { ConfigurationCompat.getLocales(configuration) } returns LocaleListCompat.getEmptyLocaleList()
+        Locale.setDefault(locale)
+
+        try {
+            assertEquals("3.2.2024", date.localizedDate(context))
+        } finally {
+            Locale.setDefault(previousDefaultLocale)
+            unmockkStatic(ConfigurationCompat::class)
+        }
+    }
+
+    @Test
     fun `uses Finnish numeric date patterns for English Finland`() {
         val locale = Locale.Builder()
             .setLanguage("en")
