@@ -3,6 +3,7 @@ package com.ruuvi.station.util.extensions
 import android.content.Context
 import android.text.format.DateFormat
 import android.text.format.DateUtils
+import androidx.core.os.ConfigurationCompat
 import com.ruuvi.station.R
 import java.text.SimpleDateFormat
 import java.util.*
@@ -57,7 +58,7 @@ fun Date.localizedTime(context: Context): String {
 
 fun Date.localizedDate(context: Context, includeYear: Boolean = true): String {
     val pattern = localizedNumericDatePattern(
-        context.resources.configuration.locales[0],
+        ConfigurationCompat.getLocales(context.resources.configuration)[0] ?: Locale.getDefault(),
         includeYear
     )
     if (pattern != null) {
