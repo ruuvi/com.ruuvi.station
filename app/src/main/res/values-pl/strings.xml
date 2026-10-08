@@ -888,4 +888,9 @@
     <string name="newsletter_subscription_confirmation">Sprawdź swoją pocztę e-mail, aby potwierdzić subskrypcję newslettera.</string>
     <string name="communication_channels">Newsletter Ruuvi</string>
     <string name="communication_channels_description">Otrzymuj przydatne wskazówki Ruuvi, aktualizacje produktów, informacje o funkcjach i okazjonalne oferty specjalne prosto na swoją skrzynkę.</string>
+    <string name="enable_background_service">Włącz usługę działającą w tle</string>
+    <string name="use_web_version_of_share">Użyj internetowej wersji udostępniania</string>
+    <string name="font_scaling">Skalowanie czcionki %1$s%%</string>
+    <string name="disable_developer_mode">Wyłącz tryb deweloperski</string>
+    <string name="registered_fcm_tokens">Zarejestrowane tokeny FCM</string>
 </resources>

@@ -885,4 +885,9 @@ Tilillesi käytetyt jaot yhteensä: %3$,d/%4$,d</string>
     <string name="newsletter_subscription_confirmation">Vahvista uutiskirjeen tilaus sähköpostistasi.</string>
     <string name="communication_channels">Ruuvin uutiskirje</string>
     <string name="communication_channels_description">Saat hyödyllisiä Ruuvi-vinkkejä, tuotepäivityksiä, ominaisuusuutisia ja satunnaisia erikoistarjouksia suoraan sähköpostiisi.</string>
+    <string name="enable_background_service">Ota taustapalvelu käyttöön</string>
+    <string name="use_web_version_of_share">Käytä jakamisen verkkoversiota</string>
+    <string name="font_scaling">Fontin skaalaus %1$s%%</string>
+    <string name="disable_developer_mode">Poista kehittäjätila käytöstä</string>
+    <string name="registered_fcm_tokens">Rekisteröidyt FCM-tunnukset</string>
 </resources>

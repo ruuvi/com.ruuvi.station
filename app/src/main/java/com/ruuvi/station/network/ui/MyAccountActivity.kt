@@ -207,7 +207,7 @@ fun MyAccountBody(
                         SubscriptionInfo(subscription = subscription)
 
                         if (tokens != null) {
-                            ParagraphWithPadding(text = "Registered FCM tokens")
+                            ParagraphWithPadding(text = stringResource(id = R.string.registered_fcm_tokens))
                             for (token in tokens) {
                                 Paragraph(text = "${token.first} - ${token.second}")
                             }

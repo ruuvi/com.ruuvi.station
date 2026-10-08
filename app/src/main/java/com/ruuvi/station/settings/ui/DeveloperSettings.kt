@@ -47,7 +47,7 @@ fun DeveloperSettings(
             )
 
             SwitchIndicatorRuuvi(
-                text = "Use web version of share",
+                text = stringResource(id = R.string.use_web_version_of_share),
                 checked = useWebShare,
                 onCheckedChange = viewModel::setUseWebShare
             )
@@ -62,9 +62,9 @@ fun DeveloperSettings(
             Spacer(modifier = Modifier.height(48.dp))
             Subtitle("Debug info")
             val scale = LocalDensity.current.fontScale
-            Paragraph(text = "Font scaling ${scale * 100}%")
+            Paragraph(text = stringResource(id = R.string.font_scaling, scale * 100))
             Spacer(modifier = Modifier.height(48.dp))
-            RuuviButton(text = "Disable dev mode") {
+            RuuviButton(text = stringResource(id = R.string.disable_developer_mode)) {
                 viewModel.setDevModeEnabled(false)
                 onNavigate.invoke(SettingsRoutes.LIST)
             }

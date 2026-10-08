@@ -891,4 +891,9 @@ Total des partages utilisés pour votre compte : %3$,d/%4$,d</string>
     <string name="newsletter_subscription_confirmation">Consultez votre messagerie pour confirmer votre abonnement à la newsletter.</string>
     <string name="communication_channels">Newsletter Ruuvi</string>
     <string name="communication_channels_description">Recevez des conseils Ruuvi utiles, des actualités sur les produits et les fonctionnalités, ainsi que des offres spéciales occasionnelles directement dans votre boîte de réception.</string>
+    <string name="enable_background_service">Activer le service en arrière-plan</string>
+    <string name="use_web_version_of_share">Utiliser la version Web du partage</string>
+    <string name="font_scaling">Mise à l\'échelle de la police %1$s%%</string>
+    <string name="disable_developer_mode">Désactiver le mode développeur</string>
+    <string name="registered_fcm_tokens">Jetons FCM enregistrés</string>
 </resources>

@@ -99,7 +99,7 @@ fun EnableBackgroundService(
             modifier = Modifier.padding(RuuviStationTheme.dimensions.screenPadding)
         )
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.mediumPlus))
-        RuuviButton(text = "Enable background service") {
+        RuuviButton(text = stringResource(id = R.string.enable_background_service)) {
             enableBackgroundService.invoke()
         }
         Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.mediumPlus))
