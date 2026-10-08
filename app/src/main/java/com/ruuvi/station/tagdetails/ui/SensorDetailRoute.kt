@@ -618,6 +618,10 @@ private fun ColumnScope.SensorHistoryContent(
     var chartCount by remember(sensor.id) { mutableIntStateOf(0) }
     val hideIncreaseChartSize = chartCount < MINIMUM_CHARTS_BEFORE_SIZE_INCREASE
 
+    LaunchedEffect(sensor.id, selected) {
+        viewModel.autoSyncGattHistory(sensor, selected)
+    }
+
     ChartControlElement2(
         sensorId = sensor.id,
         showChartStats = showChartStats,

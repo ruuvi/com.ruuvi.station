@@ -25,6 +25,7 @@ import com.ruuvi.station.nfc.domain.NfcResultInteractor
 import com.ruuvi.station.settings.domain.AppSettingsInteractor
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tag.domain.TagInteractor
+import com.ruuvi.station.tag.domain.isAir
 import com.ruuvi.station.tagdetails.domain.TagDetailsInteractor
 import com.ruuvi.station.units.domain.UnitsConverter
 import com.ruuvi.station.units.domain.aqi.AQI
@@ -485,6 +486,12 @@ class SensorCardViewModel(
             }
             Timber.d("sync logs from: %s", syncFrom)
             gattInteractor.readLogs(sensorId, syncFrom)
+        }
+    }
+
+    fun autoSyncGattHistory(sensor: RuuviTag, selected: Boolean) {
+        if (selected && sensor.isAir()) {
+            syncGatt(sensor.id)
         }
     }
 
