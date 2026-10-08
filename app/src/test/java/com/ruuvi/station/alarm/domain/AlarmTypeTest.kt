@@ -58,4 +58,18 @@ class AlarmTypeTest {
         assertEquals(1.0f, state.rangeLow)
         assertEquals(500.0f, state.rangeHigh)
     }
+
+    @Test
+    fun `getByNetworkCode matches camelCase, lowercase, and snake_case codes`() {
+        assertEquals(AlarmType.DEW_POINT, AlarmType.getByNetworkCode("dewPoint"))
+        assertEquals(AlarmType.DEW_POINT, AlarmType.getByNetworkCode("dewpoint"))
+        assertEquals(AlarmType.DEW_POINT, AlarmType.getByNetworkCode("dew_point"))
+
+        assertEquals(AlarmType.ABSOLUTE_HUMIDITY, AlarmType.getByNetworkCode("humidityAbsolute"))
+        assertEquals(AlarmType.ABSOLUTE_HUMIDITY, AlarmType.getByNetworkCode("humidityabsolute"))
+        assertEquals(AlarmType.ABSOLUTE_HUMIDITY, AlarmType.getByNetworkCode("humidity_absolute"))
+
+        assertEquals(AlarmType.TEMPERATURE, AlarmType.getByNetworkCode("temperature"))
+        assertEquals(AlarmType.HUMIDITY, AlarmType.getByNetworkCode("humidity"))
+    }
 }

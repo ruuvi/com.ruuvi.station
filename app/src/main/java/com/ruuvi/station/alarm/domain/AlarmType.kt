@@ -37,7 +37,12 @@ enum class AlarmType(
     }
 
     companion object {
-        fun getByNetworkCode(networkCode: String): AlarmType? = entries.firstOrNull { it.networkCode == networkCode }
+        fun getByNetworkCode(networkCode: String): AlarmType? {
+            val cleanCode = networkCode.replace("_", "").lowercase()
+            return entries.firstOrNull {
+                it.networkCode?.replace("_", "")?.lowercase() == cleanCode
+            }
+        }
 
         fun getByDbCode(code: Int): AlarmType = entries.firstOrNull { it.value == code } ?: TEMPERATURE
     }
