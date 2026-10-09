@@ -38,6 +38,7 @@ import com.ruuvi.station.vico.model.SegmentType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
+import java.util.concurrent.ConcurrentHashMap
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -477,6 +478,7 @@ class SensorCardViewModel(
     }
 
     fun syncGatt(sensorId: String) {
+        autoSyncAttemptMap[sensorId] = System.currentTimeMillis()
         val sensor = tagDetailsInteractor.getTagById(sensorId)
         sensor?.let { sensor ->
             var syncFrom = sensor.lastSync
@@ -490,8 +492,15 @@ class SensorCardViewModel(
     }
 
     fun autoSyncGattHistory(sensor: RuuviTag, selected: Boolean) {
-        if (selected && sensor.isAir()) {
-            syncGatt(sensor.id)
+        if (selected && sensor.isAir() && !sensor.networkSensor) {
+            val lastSyncTime = sensor.lastSync?.time ?: 0L
+            val lastAttemptTime = autoSyncAttemptMap[sensor.id] ?: 0L
+            val latestTime = maxOf(lastSyncTime, lastAttemptTime)
+            val currentTime = System.currentTimeMillis()
+
+            if (currentTime - latestTime >= AUTO_SYNC_COOLDOWN_MS) {
+                syncGatt(sensor.id)
+            }
         }
     }
 
@@ -541,6 +550,15 @@ class SensorCardViewModel(
         if (arguments.sensorId != null) {
             val sensors = tagInteractor.getTags()
             _selectedSensor.value = sensors.firstOrNull { it.id == arguments.sensorId }?.id
+        }
+    }
+
+    companion object {
+        private const val AUTO_SYNC_COOLDOWN_MS = 5 * 60 * 1000L
+        private val autoSyncAttemptMap = ConcurrentHashMap<String, Long>()
+
+        fun clearAutoSyncAttempts() {
+            autoSyncAttemptMap.clear()
         }
     }
 

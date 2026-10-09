@@ -49,15 +49,34 @@ class SensorCardViewModelTest {
 
     @Before
     fun setUp() {
+        SensorCardViewModel.clearAutoSyncAttempts()
         every { networkDataSyncInteractor.syncInProgressFlow } returns MutableStateFlow(false)
         every { tagDetailsInteractor.getTagById(AIR_SENSOR.id) } returns AIR_SENSOR
     }
 
     @Test
-    fun `selected Air sensor starts GATT history sync`() {
+    fun `selected Air sensor starts GATT history sync when no recent sync or attempt`() {
         viewModel.autoSyncGattHistory(AIR_SENSOR, selected = true)
 
-        verify { gattInteractor.readLogs(AIR_SENSOR.id, LAST_SYNC) }
+        verify { gattInteractor.readLogs(AIR_SENSOR.id, OLD_LAST_SYNC) }
+    }
+
+    @Test
+    fun `selected Air sensor skips GATT history sync if attempted within 5 minutes`() {
+        viewModel.autoSyncGattHistory(AIR_SENSOR, selected = true)
+        viewModel.autoSyncGattHistory(AIR_SENSOR, selected = true)
+
+        verify(exactly = 1) { gattInteractor.readLogs(AIR_SENSOR.id, any()) }
+    }
+
+    @Test
+    fun `selected Air sensor skips GATT history sync if synced within 5 minutes`() {
+        val recentSync = Date(System.currentTimeMillis() - 1 * 60 * 1000L)
+        val recentSyncSensor = AIR_SENSOR.copy(lastSync = recentSync)
+
+        viewModel.autoSyncGattHistory(recentSyncSensor, selected = true)
+
+        verify(exactly = 0) { gattInteractor.readLogs(any(), any()) }
     }
 
     @Test
@@ -74,12 +93,23 @@ class SensorCardViewModelTest {
         verify(exactly = 0) { gattInteractor.readLogs(any(), any()) }
     }
 
+    @Test
+    fun `selected cloud Air sensor does not start GATT history sync`() {
+        viewModel.autoSyncGattHistory(CLOUD_AIR_SENSOR, selected = true)
+
+        verify(exactly = 0) { gattInteractor.readLogs(any(), any()) }
+    }
+
     private companion object {
-        val LAST_SYNC = Date()
+        val OLD_LAST_SYNC = Date(System.currentTimeMillis() - 10 * 60 * 1000L)
         val AIR_SENSOR = ruuviTagPreview.copy(
             id = "AA:BB:CC:DD:EE:FF",
-            lastSync = LAST_SYNC,
+            lastSync = OLD_LAST_SYNC,
+            networkSensor = false,
             latestMeasurement = sensorMeasurementsPreview.copy(dataFormat = 0xE0),
+        )
+        val CLOUD_AIR_SENSOR = AIR_SENSOR.copy(
+            networkSensor = true
         )
     }
 }
