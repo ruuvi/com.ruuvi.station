@@ -192,6 +192,60 @@ class SensorCardViewModelTest {
         }
     }
 
+    @Test
+    fun `decreasing maximum chart size persists increased size`() {
+        every { preferencesRepository.getChartSizeLevel() } returns
+            PreferencesRepository.CHART_SIZE_LEVEL_MAX
+
+        viewModel.decreaseChartSize()
+
+        verify {
+            preferencesRepository.setChartSizeLevel(
+                PreferencesRepository.CHART_SIZE_LEVEL_INCREASED
+            )
+        }
+        assertEquals(
+            PreferencesRepository.CHART_SIZE_LEVEL_INCREASED,
+            viewModel.chartSizeLevel.value
+        )
+    }
+
+    @Test
+    fun `decreasing increased chart size persists normal size`() {
+        every { preferencesRepository.getChartSizeLevel() } returns
+            PreferencesRepository.CHART_SIZE_LEVEL_INCREASED
+
+        viewModel.decreaseChartSize()
+
+        verify {
+            preferencesRepository.setChartSizeLevel(
+                PreferencesRepository.CHART_SIZE_LEVEL_NORMAL
+            )
+        }
+        assertEquals(
+            PreferencesRepository.CHART_SIZE_LEVEL_NORMAL,
+            viewModel.chartSizeLevel.value
+        )
+    }
+
+    @Test
+    fun `decreasing normal chart size remains normal`() {
+        every { preferencesRepository.getChartSizeLevel() } returns
+            PreferencesRepository.CHART_SIZE_LEVEL_NORMAL
+
+        viewModel.decreaseChartSize()
+
+        verify {
+            preferencesRepository.setChartSizeLevel(
+                PreferencesRepository.CHART_SIZE_LEVEL_NORMAL
+            )
+        }
+        assertEquals(
+            PreferencesRepository.CHART_SIZE_LEVEL_NORMAL,
+            viewModel.chartSizeLevel.value
+        )
+    }
+
     private companion object {
         val OLD_LAST_SYNC = Date(System.currentTimeMillis() - 10 * 60 * 1000L)
         val AIR_SENSOR = ruuviTagPreview.copy(
