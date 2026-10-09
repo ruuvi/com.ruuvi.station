@@ -3,7 +3,7 @@ package com.ruuvi.station.vico
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
-import com.patrykandpatrick.vico.core.cartesian.data.CartesianValueFormatter
+import com.patrykandpatrick.vico.compose.cartesian.data.CartesianValueFormatter
 import com.ruuvi.station.util.extensions.isStartOfTheDay
 import com.ruuvi.station.util.extensions.localizedDate
 import java.text.DateFormat

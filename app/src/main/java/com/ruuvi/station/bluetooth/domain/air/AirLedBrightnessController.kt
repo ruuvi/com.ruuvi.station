@@ -3,7 +3,7 @@ package com.ruuvi.station.bluetooth.domain.air
 import android.bluetooth.BluetoothAdapter
 import android.content.Context
 import com.ruuvi.station.tagsettings.ui.led_control.LedBrightnessLevel
-import io.runtime.mcumgr.response.shell.McuMgrExecResponse
+import no.nordicsemi.android.mcumgr.response.shell.McuMgrExecResponse
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
