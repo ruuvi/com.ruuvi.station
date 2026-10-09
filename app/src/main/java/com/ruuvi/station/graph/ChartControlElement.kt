@@ -87,7 +87,7 @@ fun ChartControlElement2(
         syncStatus.collectLatest { event ->
             Timber.d("SyncEvent collected $event")
 
-            if (listOf(
+            if (event.manualSync && listOf(
                     SyncProgress.ERROR,
                     SyncProgress.NOT_FOUND,
                     SyncProgress.NOT_SUPPORTED,
