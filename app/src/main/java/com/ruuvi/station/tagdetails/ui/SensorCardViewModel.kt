@@ -491,8 +491,16 @@ class SensorCardViewModel(
         }
     }
 
+    fun isGattSyncInProgress(sensorId: String? = null): Boolean {
+        val status = gattInteractor.syncStatusFlow.value ?: return false
+        if (!status.syncProgress.syncInProgress) return false
+        return sensorId == null || status.sensorId == sensorId
+    }
+
     fun autoSyncGattHistory(sensor: RuuviTag, selected: Boolean) {
         if (selected && sensor.isAir() && !sensor.networkSensor) {
+            if (isGattSyncInProgress(sensor.id)) return
+
             val lastSyncTime = sensor.lastSync?.time ?: 0L
             val lastAttemptTime = autoSyncAttemptMap[sensor.id] ?: 0L
             val latestTime = maxOf(lastSyncTime, lastAttemptTime)

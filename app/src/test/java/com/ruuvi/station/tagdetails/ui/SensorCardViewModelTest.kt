@@ -2,6 +2,8 @@ package com.ruuvi.station.tagdetails.ui
 
 import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.bluetooth.domain.BluetoothGattInteractor
+import com.ruuvi.station.bluetooth.model.GattSyncStatus
+import com.ruuvi.station.bluetooth.model.SyncProgress
 import com.ruuvi.station.database.domain.AlarmRepository
 import com.ruuvi.station.database.domain.SensorHistoryRepository
 import com.ruuvi.station.export.CsvExporter
@@ -51,6 +53,7 @@ class SensorCardViewModelTest {
     fun setUp() {
         SensorCardViewModel.clearAutoSyncAttempts()
         every { networkDataSyncInteractor.syncInProgressFlow } returns MutableStateFlow(false)
+        every { gattInteractor.syncStatusFlow } returns MutableStateFlow(null)
         every { tagDetailsInteractor.getTagById(AIR_SENSOR.id) } returns AIR_SENSOR
     }
 
@@ -75,6 +78,16 @@ class SensorCardViewModelTest {
         val recentSyncSensor = AIR_SENSOR.copy(lastSync = recentSync)
 
         viewModel.autoSyncGattHistory(recentSyncSensor, selected = true)
+
+        verify(exactly = 0) { gattInteractor.readLogs(any(), any()) }
+    }
+
+    @Test
+    fun `selected Air sensor skips GATT history sync if already downloading`() {
+        val syncingStatus = GattSyncStatus(AIR_SENSOR.id, SyncProgress.READING_DATA)
+        every { gattInteractor.syncStatusFlow } returns MutableStateFlow(syncingStatus)
+
+        viewModel.autoSyncGattHistory(AIR_SENSOR, selected = true)
 
         verify(exactly = 0) { gattInteractor.readLogs(any(), any()) }
     }
