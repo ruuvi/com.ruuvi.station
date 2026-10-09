@@ -20,6 +20,8 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Test
 import java.util.Date
@@ -31,6 +33,7 @@ class SensorCardViewModelTest {
     private val appSettingsInteractor = mockk<AppSettingsInteractor>(relaxed = true)
     private val preferencesRepository = mockk<PreferencesRepository>(relaxed = true)
     private val gattInteractor = mockk<BluetoothGattInteractor>(relaxed = true)
+    private val syncStatus = MutableStateFlow<GattSyncStatus?>(null)
     private val viewModel by lazy {
         SensorCardViewModel(
             arguments = SensorCardViewModelArguments(),
@@ -53,7 +56,7 @@ class SensorCardViewModelTest {
     fun setUp() {
         SensorCardViewModel.clearAutoSyncAttempts()
         every { networkDataSyncInteractor.syncInProgressFlow } returns MutableStateFlow(false)
-        every { gattInteractor.syncStatusFlow } returns MutableStateFlow(null)
+        every { gattInteractor.syncStatusFlow } returns syncStatus
         every { tagDetailsInteractor.getTagById(AIR_SENSOR.id) } returns AIR_SENSOR
     }
 
@@ -111,6 +114,26 @@ class SensorCardViewModelTest {
         viewModel.autoSyncGattHistory(CLOUD_AIR_SENSOR, selected = true)
 
         verify(exactly = 0) { gattInteractor.readLogs(any(), any()) }
+    }
+
+    @Test
+    fun `automatic GATT history sync failure is marked as non-manual`() = runBlocking {
+        viewModel.autoSyncGattHistory(AIR_SENSOR, selected = true)
+        syncStatus.value = GattSyncStatus(AIR_SENSOR.id, SyncProgress.ERROR)
+
+        val event = viewModel.getGattEvents(AIR_SENSOR.id).first()
+
+        assert(!event.manualSync)
+    }
+
+    @Test
+    fun `manual GATT history sync failure is marked as manual`() = runBlocking {
+        viewModel.syncGatt(AIR_SENSOR.id)
+        syncStatus.value = GattSyncStatus(AIR_SENSOR.id, SyncProgress.ERROR)
+
+        val event = viewModel.getGattEvents(AIR_SENSOR.id).first()
+
+        assert(event.manualSync)
     }
 
     private companion object {
