@@ -43,6 +43,7 @@ class SensorCardViewModelTest {
     private val gattInteractor = mockk<BluetoothGattInteractor>(relaxed = true)
     private val unitsConverter = mockk<UnitsConverter>(relaxed = true)
     private val syncStatus = MutableStateFlow<GattSyncStatus?>(null)
+    private var lastAutomaticGattSyncAttempt = 0L
     private val viewModel by lazy {
         SensorCardViewModel(
             arguments = SensorCardViewModelArguments(),
@@ -63,18 +64,37 @@ class SensorCardViewModelTest {
 
     @Before
     fun setUp() {
-        SensorCardViewModel.clearAutoSyncAttempts()
+        val automaticAttempt = slot<Long>()
+
+        lastAutomaticGattSyncAttempt = 0L
         every { networkDataSyncInteractor.syncInProgressFlow } returns MutableStateFlow(false)
         every { gattInteractor.syncStatusFlow } returns syncStatus
         every { gattInteractor.readLogs(any(), any()) } returns true
+        every { preferencesRepository.getLastAutomaticGattSyncAttempt(any()) } answers {
+            lastAutomaticGattSyncAttempt
+        }
+        every {
+            preferencesRepository.setLastAutomaticGattSyncAttempt(any(), capture(automaticAttempt))
+        } answers {
+            lastAutomaticGattSyncAttempt = automaticAttempt.captured
+        }
         every { tagDetailsInteractor.getTagById(AIR_SENSOR.id) } returns AIR_SENSOR
     }
 
     @Test
     fun `selected Air sensor starts GATT history sync when no recent sync or attempt`() {
+        val attemptTime = slot<Long>()
+
         viewModel.autoSyncGattHistory(AIR_SENSOR, selected = true)
 
         verify { gattInteractor.readLogs(AIR_SENSOR.id, OLD_LAST_SYNC) }
+        verify {
+            preferencesRepository.setLastAutomaticGattSyncAttempt(
+                AIR_SENSOR.id,
+                capture(attemptTime)
+            )
+        }
+        assertTrue(attemptTime.captured <= System.currentTimeMillis())
     }
 
     @Test
@@ -83,6 +103,35 @@ class SensorCardViewModelTest {
         viewModel.autoSyncGattHistory(AIR_SENSOR, selected = true)
 
         verify(exactly = 1) { gattInteractor.readLogs(AIR_SENSOR.id, any()) }
+    }
+
+    @Test
+    fun `selected Air sensor skips GATT history sync if persisted attempt is within cooldown`() {
+        lastAutomaticGattSyncAttempt = System.currentTimeMillis() - 4 * 60 * 1000L
+
+        viewModel.autoSyncGattHistory(AIR_SENSOR, selected = true)
+
+        verify(exactly = 0) { gattInteractor.readLogs(AIR_SENSOR.id, any()) }
+    }
+
+    @Test
+    fun `selected Air sensor starts GATT history sync after persisted attempt cooldown expires`() {
+        lastAutomaticGattSyncAttempt = System.currentTimeMillis() - 6 * 60 * 1000L
+
+        viewModel.autoSyncGattHistory(AIR_SENSOR, selected = true)
+
+        verify(exactly = 1) { gattInteractor.readLogs(AIR_SENSOR.id, any()) }
+    }
+
+    @Test
+    fun `rejected automatic GATT sync does not persist an attempt`() {
+        every { gattInteractor.readLogs(AIR_SENSOR.id, any()) } returns false
+
+        viewModel.autoSyncGattHistory(AIR_SENSOR, selected = true)
+
+        verify(exactly = 0) {
+            preferencesRepository.setLastAutomaticGattSyncAttempt(AIR_SENSOR.id, any())
+        }
     }
 
     @Test
@@ -138,6 +187,9 @@ class SensorCardViewModelTest {
         viewModel.syncGatt(AIR_SENSOR.id)
 
         verify { gattInteractor.readLogs(AIR_SENSOR.id, OLD_LAST_SYNC) }
+        verify(exactly = 0) {
+            preferencesRepository.setLastAutomaticGattSyncAttempt(AIR_SENSOR.id, any())
+        }
     }
 
     @Test

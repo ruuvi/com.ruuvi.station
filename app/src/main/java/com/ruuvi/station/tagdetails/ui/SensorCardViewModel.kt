@@ -38,7 +38,6 @@ import com.ruuvi.station.vico.model.SegmentType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
-import java.util.concurrent.ConcurrentHashMap
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -92,6 +91,7 @@ class SensorCardViewModel(
 
     private val _scrollToChartEvent = Channel<UnitType>(Channel.BUFFERED)
     val scrollToChartEvent = _scrollToChartEvent.receiveAsFlow()
+    private val manualSyncMap = mutableMapOf<String, Boolean>()
 
 
     fun getChartData(sensorId: String, unitType: UnitType, hours: Int): Flow<ChartData> =
@@ -499,7 +499,12 @@ class SensorCardViewModel(
             Timber.d("sync logs from: %s", syncFrom)
             if (gattInteractor.readLogs(sensorId, syncFrom)) {
                 manualSyncMap[sensorId] = manual
-                autoSyncAttemptMap[sensorId] = System.currentTimeMillis()
+                if (!manual) {
+                    preferencesRepository.setLastAutomaticGattSyncAttempt(
+                        sensorId,
+                        System.currentTimeMillis()
+                    )
+                }
             }
         }
     }
@@ -512,7 +517,7 @@ class SensorCardViewModel(
             if (isGattSyncInProgress(sensor.id)) return
 
             val lastSyncTime = sensor.lastSync?.time ?: 0L
-            val lastAttemptTime = autoSyncAttemptMap[sensor.id] ?: 0L
+            val lastAttemptTime = preferencesRepository.getLastAutomaticGattSyncAttempt(sensor.id)
             val latestTime = maxOf(lastSyncTime, lastAttemptTime)
             val currentTime = System.currentTimeMillis()
 
@@ -573,13 +578,6 @@ class SensorCardViewModel(
 
     companion object {
         private const val AUTO_SYNC_COOLDOWN_MS = 5 * 60 * 1000L
-        private val autoSyncAttemptMap = ConcurrentHashMap<String, Long>()
-        private val manualSyncMap = ConcurrentHashMap<String, Boolean>()
-
-        fun clearAutoSyncAttempts() {
-            autoSyncAttemptMap.clear()
-            manualSyncMap.clear()
-        }
     }
 
 }
