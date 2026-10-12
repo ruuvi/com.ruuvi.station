@@ -4,6 +4,7 @@ import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.bluetooth.BluetoothInteractor
 import com.ruuvi.station.bluetooth.contract.IRuuviGattListener
 import com.ruuvi.station.bluetooth.contract.LogReading
+import com.ruuvi.station.bluetooth.model.GattSyncStatus
 import com.ruuvi.station.bluetooth.model.SyncProgress
 import com.ruuvi.station.database.domain.SensorHistoryRepository
 import com.ruuvi.station.database.domain.SensorSettingsRepository
@@ -12,6 +13,8 @@ import com.ruuvi.station.database.tables.SensorSettings
 import com.ruuvi.station.database.tables.TagSensorReading
 import com.ruuvi.station.dataforwarding.domain.DataForwardingSender
 import com.ruuvi.station.firebase.domain.FirebaseInteractor
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.runBlocking
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
@@ -139,6 +142,23 @@ class BluetoothGattInteractorTest {
         assertFalse(interactor.readLogs(sensorId, Date()))
 
         verify(exactly = 1) { bluetoothInteractor.readLogs(sensorId, any(), any()) }
+    }
+
+    @Test
+    fun `GATT progress is tracked independently for each sensor`() = runBlocking {
+        val firstSensorId = "AA:BB:CC:DD:EE:FF"
+        val secondSensorId = "11:22:33:44:55:66"
+        interactor.setSyncStatus(GattSyncStatus(firstSensorId, SyncProgress.READING_DATA))
+        interactor.setSyncStatus(GattSyncStatus(secondSensorId, SyncProgress.SAVING_DATA))
+
+        assertEquals(
+            SyncProgress.READING_DATA,
+            interactor.getSyncStatusFlow(firstSensorId).first()?.syncProgress
+        )
+        assertEquals(
+            SyncProgress.SAVING_DATA,
+            interactor.getSyncStatusFlow(secondSensorId).first()?.syncProgress
+        )
     }
 
     private fun logReading(sensorId: String): LogReading = mockk<LogReading>(relaxed = true).also {

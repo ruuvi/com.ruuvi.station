@@ -12,8 +12,11 @@ import com.ruuvi.station.database.domain.TagRepository
 import com.ruuvi.station.database.tables.TagSensorReading
 import com.ruuvi.station.dataforwarding.domain.DataForwardingSender
 import com.ruuvi.station.firebase.domain.FirebaseInteractor
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
 import timber.log.Timber
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
@@ -30,6 +33,7 @@ class BluetoothGattInteractor (
 ) {
     private val syncStatus = MutableStateFlow<GattSyncStatus?> (null)
     val syncStatusFlow: StateFlow<GattSyncStatus?> = syncStatus
+    private val syncStatuses = MutableStateFlow<Map<String, GattSyncStatus>>(emptyMap())
     private val sessionIdGenerator = AtomicLong()
     private val activeSessions = ConcurrentHashMap<String, Long>()
     private val sessionLock = Any()
@@ -45,12 +49,18 @@ class BluetoothGattInteractor (
         setSessionSyncStatus(sensorId, sessionId, SyncProgress.CONNECTING)
         val found= interactor.readLogs(sensorId, from, object : IRuuviGattListener {
             override fun connected(state: Boolean) {
-                Timber.d("connected $state syncProgress = ${syncStatus.value?.syncProgress}")
+                Timber.d(
+                    "connected $state syncProgress = " +
+                        "${syncStatuses.value[sensorId]?.syncProgress}"
+                )
                 if (state) {
                     setSessionSyncStatus(sensorId, sessionId, SyncProgress.CONNECTED)
                     setSessionSyncStatus(sensorId, sessionId, SyncProgress.READING_INFO)
                 } else {
-                    if (syncStatus.value?.syncProgress == SyncProgress.SAVING_DATA || syncStatus.value?.syncProgress == SyncProgress.DONE) {
+                    if (
+                        syncStatuses.value[sensorId]?.syncProgress == SyncProgress.SAVING_DATA ||
+                        syncStatuses.value[sensorId]?.syncProgress == SyncProgress.DONE
+                    ) {
                         setSessionSyncStatus(sensorId, sessionId, SyncProgress.DONE)
                     } else {
                         setSessionSyncStatus(sensorId, sessionId, SyncProgress.DISCONNECTED)
@@ -125,9 +135,15 @@ class BluetoothGattInteractor (
         sensorId?.let(activeSessions::containsKey) ?: activeSessions.isNotEmpty()
     }
 
+    fun getSyncStatusFlow(sensorId: String): Flow<GattSyncStatus?> =
+        syncStatuses.map { it[sensorId] }.distinctUntilChanged()
+
     fun setSyncStatus(status: GattSyncStatus) {
-        Timber.d("syncStatusFlow sent $status")
-        syncStatus.value = status
+        synchronized(sessionLock) {
+            Timber.d("syncStatusFlow sent $status")
+            syncStatus.value = status
+            syncStatuses.value = syncStatuses.value + (status.sensorId to status)
+        }
     }
 
     fun saveGattReadings(sensorId: String, data: List<LogReading>) {
@@ -156,7 +172,7 @@ class BluetoothGattInteractor (
 
     fun resetGattStatus(sensorId: String, sessionId: Long? = null) {
         synchronized(sessionLock) {
-            val currentStatus = syncStatus.value
+            val currentStatus = syncStatuses.value[sensorId]
             if (sessionId != null &&
                 (currentStatus?.sensorId != sensorId || currentStatus.sessionId != sessionId)
             ) {

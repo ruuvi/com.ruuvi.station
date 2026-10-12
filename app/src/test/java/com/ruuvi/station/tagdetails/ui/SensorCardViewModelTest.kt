@@ -69,6 +69,7 @@ class SensorCardViewModelTest {
         lastAutomaticGattSyncAttempt = 0L
         every { networkDataSyncInteractor.syncInProgressFlow } returns MutableStateFlow(false)
         every { gattInteractor.syncStatusFlow } returns syncStatus
+        every { gattInteractor.getSyncStatusFlow(AIR_SENSOR.id) } returns syncStatus
         every { gattInteractor.readLogs(any(), any()) } returns true
         every { preferencesRepository.getLastAutomaticGattSyncAttempt(any()) } answers {
             lastAutomaticGattSyncAttempt

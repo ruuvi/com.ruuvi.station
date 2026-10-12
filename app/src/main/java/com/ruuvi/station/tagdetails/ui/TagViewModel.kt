@@ -91,7 +91,7 @@ class TagViewModel(
 
     private fun collectGattSyncStatus() {
         viewModelScope.launch {
-            gattInteractor.syncStatusFlow.collect {
+            gattInteractor.getSyncStatusFlow(sensorId).collect {
                 Timber.d("syncStatusFlow collected $it")
                 it?.let { gattStatus ->
                     if (gattStatus.sensorId == sensorId) {
