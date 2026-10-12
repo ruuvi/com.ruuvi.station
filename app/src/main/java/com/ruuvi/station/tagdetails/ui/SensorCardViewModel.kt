@@ -414,7 +414,7 @@ class SensorCardViewModel(
                                     manualSync = isManual
                                 )
                             )
-                            resetGattStatus(sensorId)
+                            resetGattStatus(sensorId, gattStatus.sessionId)
                         }
                         SyncProgress.CONNECTING -> {
                             emit(
@@ -480,8 +480,8 @@ class SensorCardViewModel(
         gattInteractor.disconnect(sensorId)
     }
 
-    fun resetGattStatus(sensorId: String) {
-        gattInteractor.resetGattStatus(sensorId)
+    fun resetGattStatus(sensorId: String, sessionId: Long? = null) {
+        gattInteractor.resetGattStatus(sensorId, sessionId)
     }
 
     fun syncGatt(sensorId: String, manual: Boolean = true) {

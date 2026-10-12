@@ -112,7 +112,7 @@ class TagViewModel(
                                 _gattSyncInProgress.value = false
                                 _gattSyncStatus.value = UiText.EmptyString
                                 _event.emit(SyncProgress.DISCONNECTED)
-                                resetGattStatus()
+                                resetGattStatus(gattStatus.sessionId)
                             }
                             SyncProgress.READING_DATA -> {
                                 _gattSyncInProgress.value = true
@@ -134,19 +134,19 @@ class TagViewModel(
                                 _gattSyncInProgress.value = false
                                 _gattSyncStatus.value = UiText.EmptyString
                                 _event.emit(SyncProgress.NOT_SUPPORTED)
-                                resetGattStatus()
+                                resetGattStatus(gattStatus.sessionId)
                             }
                             SyncProgress.NOT_FOUND -> {
                                 _gattSyncInProgress.value = false
                                 _gattSyncStatus.value = UiText.EmptyString
                                 _event.emit(SyncProgress.NOT_FOUND)
-                                resetGattStatus()
+                                resetGattStatus(gattStatus.sessionId)
                             }
                             SyncProgress.ERROR -> {
                                 _gattSyncInProgress.value = false
                                 _gattSyncStatus.value = UiText.EmptyString
                                 _event.emit(SyncProgress.ERROR)
-                                resetGattStatus()
+                                resetGattStatus(gattStatus.sessionId)
                             }
                         }
                     }
@@ -177,8 +177,8 @@ class TagViewModel(
         }
     }
 
-    fun resetGattStatus() {
-        gattInteractor.resetGattStatus(sensorId)
+    fun resetGattStatus(sessionId: Long? = null) {
+        gattInteractor.resetGattStatus(sensorId, sessionId)
     }
 
     fun removeTagData() {

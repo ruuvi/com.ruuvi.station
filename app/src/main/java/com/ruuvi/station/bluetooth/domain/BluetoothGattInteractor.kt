@@ -16,6 +16,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import timber.log.Timber
 import java.util.*
+import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.atomic.AtomicLong
 
 class BluetoothGattInteractor (
     private val interactor: BluetoothInteractor,
@@ -28,59 +30,85 @@ class BluetoothGattInteractor (
 ) {
     private val syncStatus = MutableStateFlow<GattSyncStatus?> (null)
     val syncStatusFlow: StateFlow<GattSyncStatus?> = syncStatus
+    private val sessionIdGenerator = AtomicLong()
+    private val activeSessions = ConcurrentHashMap<String, Long>()
+    private val sessionLock = Any()
 
     fun readLogs(sensorId: String, from: Date?) {
-        setSyncStatus(GattSyncStatus(sensorId, SyncProgress.CONNECTING))
+        val sessionId = sessionIdGenerator.incrementAndGet()
+        activeSessions[sensorId] = sessionId
+        setSessionSyncStatus(sensorId, sessionId, SyncProgress.CONNECTING)
         val found= interactor.readLogs(sensorId, from, object : IRuuviGattListener {
             override fun connected(state: Boolean) {
                 Timber.d("connected $state syncProgress = ${syncStatus.value?.syncProgress}")
                 if (state) {
-                    setSyncStatus(GattSyncStatus(sensorId, SyncProgress.CONNECTED))
-                    setSyncStatus(GattSyncStatus(sensorId, SyncProgress.READING_INFO))
+                    setSessionSyncStatus(sensorId, sessionId, SyncProgress.CONNECTED)
+                    setSessionSyncStatus(sensorId, sessionId, SyncProgress.READING_INFO)
                 } else {
                     if (syncStatus.value?.syncProgress == SyncProgress.SAVING_DATA || syncStatus.value?.syncProgress == SyncProgress.DONE) {
-                        setSyncStatus(GattSyncStatus(sensorId, SyncProgress.DONE))
+                        setSessionSyncStatus(sensorId, sessionId, SyncProgress.DONE)
                     } else {
-                        setSyncStatus(GattSyncStatus(sensorId, SyncProgress.DISCONNECTED))
+                        setSessionSyncStatus(sensorId, sessionId, SyncProgress.DISCONNECTED)
                     }
                 }
             }
 
             override fun deviceInfo(model: String, fw: String, canReadLogs: Boolean, serialNumber: String?) {
                 if (canReadLogs) {
-                    setSyncStatus(GattSyncStatus(sensorId, SyncProgress.READING_DATA, model, fw))
+                    setSessionSyncStatus(
+                        sensorId,
+                        sessionId,
+                        SyncProgress.READING_DATA,
+                        deviceInfoModel = model,
+                        deviceInfoFw = fw
+                    )
                 } else {
-                    setSyncStatus(GattSyncStatus(sensorId, SyncProgress.NOT_SUPPORTED, model, fw))
+                    setSessionSyncStatus(
+                        sensorId,
+                        sessionId,
+                        SyncProgress.NOT_SUPPORTED,
+                        deviceInfoModel = model,
+                        deviceInfoFw = fw
+                    )
                 }
             }
 
             override fun dataReady(data: List<LogReading>) {
-                setSyncStatus(GattSyncStatus(
+                setSessionSyncStatus(
                     sensorId,
+                    sessionId,
                     SyncProgress.SAVING_DATA,
                     readDataSize = data.size
-                ))
+                )
+                if (!isCurrentSession(sensorId, sessionId)) return
                 saveGattReadings(sensorId, data)
-                if (shouldForwardData()) forwardGattReadings(sensorId, data)
+                if (isCurrentSession(sensorId, sessionId) && shouldForwardData()) {
+                    forwardGattReadings(sensorId, data)
+                }
             }
 
             override fun syncProgress(syncedDataPoints: Int) {
                 // Throttle UI updates, this might have to be tweaked.
                 // Maybe a time based thing would be better?
                 if (syncedDataPoints % 10 == 0) {
-                    setSyncStatus(GattSyncStatus(sensorId, SyncProgress.READING_DATA, syncedDataPoints = syncedDataPoints))
+                    setSessionSyncStatus(
+                        sensorId,
+                        sessionId,
+                        SyncProgress.READING_DATA,
+                        syncedDataPoints = syncedDataPoints
+                    )
                 }
             }
 
             override fun error(errorMessage: String) {
                 Timber.d("Error: $errorMessage")
-                setSyncStatus(GattSyncStatus(sensorId, SyncProgress.ERROR))
+                setSessionSyncStatus(sensorId, sessionId, SyncProgress.ERROR)
             }
 
             override fun heartbeat(raw: String) { }
         })
         if (!found)
-            setSyncStatus(GattSyncStatus(sensorId, SyncProgress.NOT_FOUND))
+            setSessionSyncStatus(sensorId, sessionId, SyncProgress.NOT_FOUND)
     }
 
     fun disconnect(id: String): Boolean {
@@ -116,9 +144,52 @@ class BluetoothGattInteractor (
     fun updateLastSync(sensorId: String, date: Date?) =
         sensorSettingsRepository.updateLastSync(sensorId, date)
 
-    fun resetGattStatus(sensorId: String) {
-        setSyncStatus(GattSyncStatus(sensorId, SyncProgress.STILL))
+    fun resetGattStatus(sensorId: String, sessionId: Long? = null) {
+        synchronized(sessionLock) {
+            val currentStatus = syncStatus.value
+            if (sessionId != null &&
+                (currentStatus?.sensorId != sensorId || currentStatus.sessionId != sessionId)
+            ) {
+                return
+            }
+            activeSessions.remove(sensorId)
+            setSyncStatus(GattSyncStatus(sensorId, SyncProgress.STILL, sessionId = sessionId ?: 0))
+        }
     }
+
+    private fun setSessionSyncStatus(
+        sensorId: String,
+        sessionId: Long,
+        syncProgress: SyncProgress,
+        deviceInfoModel: String = "",
+        deviceInfoFw: String = "",
+        readDataSize: Int = 0,
+        syncedDataPoints: Int = 0
+    ) {
+        synchronized(sessionLock) {
+            if (!isCurrentSession(sensorId, sessionId)) {
+                Timber.d("Ignoring stale GATT callback for $sensorId session $sessionId")
+                return
+            }
+            setSyncStatus(
+                GattSyncStatus(
+                    sensorId = sensorId,
+                    syncProgress = syncProgress,
+                    deviceInfoModel = deviceInfoModel,
+                    deviceInfoFw = deviceInfoFw,
+                    readDataSize = readDataSize,
+                    syncedDataPoints = syncedDataPoints,
+                    sessionId = sessionId
+                )
+            )
+            if (!syncProgress.syncInProgress) {
+                activeSessions.remove(sensorId, sessionId)
+            }
+        }
+    }
+
+    private fun isCurrentSession(sensorId: String, sessionId: Long): Boolean =
+        activeSessions[sensorId] == sessionId
 
     private fun shouldForwardData(): Boolean {
         return preferencesRepository.getDataForwardingDuringSyncEnabled() &&
