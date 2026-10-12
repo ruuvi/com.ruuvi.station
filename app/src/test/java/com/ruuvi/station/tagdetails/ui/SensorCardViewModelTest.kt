@@ -78,6 +78,9 @@ class SensorCardViewModelTest {
         } answers {
             lastAutomaticGattSyncAttempt = automaticAttempt.captured
         }
+        every { preferencesRepository.clearLastAutomaticGattSyncAttempt(any()) } answers {
+            lastAutomaticGattSyncAttempt = 0L
+        }
         every { tagDetailsInteractor.getTagById(AIR_SENSOR.id) } returns AIR_SENSOR
     }
 

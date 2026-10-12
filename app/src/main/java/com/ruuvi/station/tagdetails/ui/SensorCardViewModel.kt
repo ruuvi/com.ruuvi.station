@@ -543,6 +543,7 @@ class SensorCardViewModel(
     fun removeTagData(sensorId: String) {
         sensorHistoryRepository.removeForSensor(sensorId)
         tagDetailsInteractor.clearLastSync(sensorId)
+        preferencesRepository.clearLastAutomaticGattSyncAttempt(sensorId)
         viewModelScope.launch {
             _chartCleared.emit(sensorId)
         }

@@ -188,6 +188,10 @@ class PreferencesRepository(
         preferences.setLastAutomaticGattSyncAttempt(sensorId, timestamp)
     }
 
+    fun clearLastAutomaticGattSyncAttempt(sensorId: String) {
+        preferences.clearLastAutomaticGattSyncAttempt(sensorId)
+    }
+
     fun getUserEmailLiveData() = preferences.getUserEmailLiveData()
 
     fun getLastSyncDateLiveData() = preferences.getLastSyncDateLiveData()

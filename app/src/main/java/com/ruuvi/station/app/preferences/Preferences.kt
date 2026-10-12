@@ -363,6 +363,12 @@ class Preferences (val context: Context) {
         }
     }
 
+    fun clearLastAutomaticGattSyncAttempt(sensorId: String) {
+        sharedPreferences.edit {
+            remove("$PREF_LAST_AUTOMATIC_GATT_SYNC_ATTEMPT$sensorId")
+        }
+    }
+
     var experimentalFeatures: Boolean
         get() = sharedPreferences.getBoolean(PREF_EXPERIMENTAL_FEATURES, false)
         set(experimentalFeatures) {
