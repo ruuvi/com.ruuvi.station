@@ -2,9 +2,9 @@
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item>
         <bitmap android:src="@drawable/bg9"
-            android:gravity="fill" />
+            android:gravity="fill" android:dither="true" />
     </item>
     <item>
-        <bitmap android:src="@drawable/gradient_layer" />
+        <bitmap android:src="@drawable/gradient_layer" android:dither="true" />
     </item>
 </layer-list>

@@ -3,6 +3,7 @@ package com.ruuvi.station.dashboard.ui
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
+import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
 import androidx.activity.compose.setContent
@@ -1042,6 +1043,7 @@ fun DashboardImage(
             modifier = modifier.fillMaxSize(),
             model = ImageRequest.Builder(context)
                 .data(userBackground)
+                .bitmapConfig(Bitmap.Config.ARGB_8888)
                 .crossfade(false)
                 .build(),
             contentDescription = null,

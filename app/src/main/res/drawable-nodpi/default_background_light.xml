@@ -7,6 +7,6 @@
     </item>
     <item>
         <bitmap android:src="@drawable/tag_bg_layer"
-            android:gravity="fill" android:alpha="0.35"/>
+            android:gravity="fill" android:alpha="0.35" android:dither="true"/>
     </item>
 </layer-list>

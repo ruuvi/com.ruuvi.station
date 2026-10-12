@@ -4,6 +4,7 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
+import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
 import androidx.activity.compose.setContent
@@ -631,6 +632,7 @@ fun SensorCardImage(
         modifier = Modifier.fillMaxSize(),
         model = ImageRequest.Builder(LocalContext.current)
             .data(userBackground)
+            .bitmapConfig(Bitmap.Config.ARGB_8888)
             .crossfade(true)
             .build(),
         contentDescription = null,

@@ -9,7 +9,6 @@ import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
-import android.provider.MediaStore
 import android.webkit.MimeTypeMap
 import androidx.core.content.FileProvider
 import androidx.exifinterface.media.ExifInterface
@@ -28,6 +27,7 @@ import kotlin.random.Random
 import kotlin.random.asJavaRandom
 
 const val MAX_RESOLUTION = 3000
+const val JPEG_QUALITY = 100
 
 class ImageInteractor (
     private val context: Context
@@ -63,6 +63,7 @@ class ImageInteractor (
             val imageLoader = context.imageLoader
             val request = ImageRequest.Builder(context)
                 .data(url)
+                .bitmapConfig(Bitmap.Config.ARGB_8888)
                 .target(
                     onStart = { },
                     onSuccess = { result ->
@@ -73,7 +74,7 @@ class ImageInteractor (
                         var output: FileOutputStream? = null
                         try {
                             output = FileOutputStream(imageFile)
-                            bitmap.compress(Bitmap.CompressFormat.JPEG, 60, output)
+                            bitmap.compress(Bitmap.CompressFormat.JPEG, JPEG_QUALITY, output)
                             continuation.resume(imageFile)
                         } catch (e: Exception) {
                             Timber.e(e)
@@ -127,13 +128,17 @@ class ImageInteractor (
     fun getImage(imageUri: Uri): Bitmap? {
         try {
             return if (Build.VERSION.SDK_INT < 28) {
-                MediaStore.Images.Media.getBitmap(
-                    context.contentResolver,
-                    imageUri
-                )
+                val options = BitmapFactory.Options().apply {
+                    inPreferredConfig = Bitmap.Config.ARGB_8888
+                }
+                context.contentResolver.openInputStream(imageUri).use { inputStream ->
+                    BitmapFactory.decodeStream(inputStream, null, options)
+                }
             } else {
                 val source = ImageDecoder.createSource(context.contentResolver, imageUri)
-                ImageDecoder.decodeBitmap(source)
+                ImageDecoder.decodeBitmap(source) { decoder, _, _ ->
+                    decoder.allocator = ImageDecoder.ALLOCATOR_SOFTWARE
+                }
             }
         } catch (e: Exception) {
             Timber.e(e, "Failed to get image $imageUri")
@@ -145,7 +150,9 @@ class ImageInteractor (
     fun resize(filename: String?, uri: Uri?, rotation: Int) {
         try {
 
-            var bitmap = MediaStore.Images.Media.getBitmap(context.contentResolver, uri)
+            var bitmap = requireNotNull(uri?.let(::getImage)) {
+                "Unable to decode background image"
+            }
 
             bitmap = rotate(bitmap, rotation.toFloat())
 
@@ -172,7 +179,7 @@ class ImageInteractor (
 
             val outputStream = FileOutputStream(file)
 
-            out.compress(Bitmap.CompressFormat.JPEG, 60, outputStream)
+            out.compress(Bitmap.CompressFormat.JPEG, JPEG_QUALITY, outputStream)
 
             outputStream.flush()
 
@@ -194,21 +201,14 @@ class ImageInteractor (
 
     fun saveResourceAsFile(sensorId: String, resourceImage: Int): File? {
         val image = createFile(sensorId, ImageSource.DEFAULT)
-        val bitmap = BitmapFactory.decodeResource(
-            context.resources,
-            resourceImage
-        )
-
-        var output: FileOutputStream? = null
         try {
-            output = FileOutputStream(image)
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 60, output)
+            context.resources.openRawResource(resourceImage).use { input ->
+                image.outputStream().use(input::copyTo)
+            }
         } catch (e: Exception) {
             Timber.e(e)
-          return null
-        } finally {
-            output?.flush()
-            output?.close()
+            image.delete()
+            return null
         }
         return image
     }
