@@ -301,7 +301,12 @@ fun ViewPeriodMenu(
                         Period.Day10,
                         Period.Day30,
                         Period.Day60,
+                        Period.Day90,
                         Period.Day100,
+                        Period.Day180,
+                        Period.Year1,
+                        Period.Year2,
+                        Period.Year3,
                     )
                     for (day in periodOptions) {
                         DropdownMenuItem(onClick = {

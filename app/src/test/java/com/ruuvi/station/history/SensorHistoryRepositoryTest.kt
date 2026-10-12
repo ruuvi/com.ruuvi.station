@@ -217,6 +217,7 @@ class SensorHistoryRepositoryTest {
     }
 
     @Test fun `100 day minute resolution history is sampled to a bounded chart`() {
+        val retained = HistoryRange(now - 100 * 86_400_000L, now)
         val db = FlowManager.getWritableDatabase(LocalDatabase.NAME)
         db.execSQL("""WITH RECURSIVE ticks(n) AS (SELECT 0 UNION ALL SELECT n+1 FROM ticks WHERE n < 143999)
             INSERT INTO TagSensorReading(ruuviTagId, createdAt, temperature)
@@ -233,6 +234,54 @@ class SensorHistoryRepositoryTest {
         repository.saveCloudPage(sensorId, listOf(point(retained.startMillis), point(retained.startMillis + 72_000 * 60_000L),
             point(now - 60_000), point(now - 55_000)), retained, "account", "production", repository.generation(sensorId))
         assertEquals(144001L, repository.getCount(sensorId, retained))
+    }
+
+    @Test fun `three years of sparse cloud history stream to at most 400 actual points`() {
+        FlowManager.getWritableDatabase(LocalDatabase.NAME).execSQL("""WITH RECURSIVE ticks(n) AS
+            (SELECT 0 UNION ALL SELECT n+1 FROM ticks WHERE n < 105119)
+            INSERT INTO TagSensorReading(ruuviTagId, createdAt, temperature)
+            SELECT '$sensorId', ${retained.startMillis} + n * 900000, n % 31 FROM ticks""")
+        val sampler = HistorySampler(retained)
+        repository.forEachReading(sensorId, retained) { sampler.add(it.createdAt.time, it.temperature) }
+        val sampled = sampler.finish()
+        assertEquals(105120L, sampled.statistics!!.count)
+        assertTrue(sampled.points.size <= 400)
+        assertEquals(retained.startMillis, sampled.points.first().timestamp)
+        assertEquals(now - 900_000L, sampled.points.last().timestamp)
+        assertEquals(0.0, sampled.statistics.minimum, 0.0)
+        assertEquals(30.0, sampled.statistics.maximum, 0.0)
+    }
+
+    @Test fun `merged migration preserves both main and experimental database layouts`() {
+        for (layout in listOf("legacy", "main43", "history43", "history44")) {
+            SQLiteDatabase.create(null).use { sqlite ->
+                val imageColumn = if (layout == "main43") ", imageUrl TEXT" else ""
+                val historyColumn = if (layout.startsWith("history")) ", cloudHistoryDays INTEGER" else ""
+                sqlite.execSQL("CREATE TABLE SensorSettings(id TEXT PRIMARY KEY$imageColumn$historyColumn)")
+                sqlite.execSQL("CREATE TABLE TagSensorReading(id INTEGER PRIMARY KEY, ruuviTagId TEXT, createdAt INTEGER)")
+                sqlite.execSQL("INSERT INTO SensorSettings(id) VALUES ('sensor')")
+                sqlite.execSQL("INSERT INTO TagSensorReading VALUES (1, 'sensor', $now)")
+                if (layout == "main43") sqlite.execSQL("UPDATE SensorSettings SET imageUrl = 'saved-image'")
+                if (layout.startsWith("history")) {
+                    sqlite.execSQL("UPDATE SensorSettings SET cloudHistoryDays = 1095")
+                    LocalDatabase.Migration44HistorySchemaCompat().migrate(AndroidDatabase.from(sqlite))
+                    sqlite.execSQL("INSERT INTO HistoryCoverage(sensorId, startMillis, endExclusiveMillis, fetchedAt) VALUES ('sensor', 1, 2, 3)")
+                }
+                repeat(2) { LocalDatabase.Migration45MergedSchema().migrate(AndroidDatabase.from(sqlite)) }
+                sqlite.rawQuery("SELECT imageUrl, cloudHistoryDays FROM SensorSettings", null).use { cursor ->
+                    assertTrue(cursor.moveToFirst())
+                    if (layout == "main43") assertEquals("saved-image", cursor.getString(0))
+                    if (layout.startsWith("history")) assertEquals(1095, cursor.getInt(1))
+                }
+                sqlite.rawQuery("SELECT COUNT(*) FROM TagSensorReading", null).use { cursor ->
+                    assertTrue(cursor.moveToFirst()); assertEquals(1, cursor.getInt(0))
+                }
+                sqlite.rawQuery("SELECT COUNT(*) FROM HistoryCoverage", null).use { cursor ->
+                    assertTrue(cursor.moveToFirst())
+                    assertEquals(if (layout.startsWith("history")) 1 else 0, cursor.getInt(0))
+                }
+            }
+        }
     }
 
     private fun point(time: Long) = TagSensorReading(ruuviTagId = sensorId, createdAt = Date(time), temperature = 20.0, dataFormat = 5)

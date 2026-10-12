@@ -20,6 +20,7 @@ import com.ruuvi.station.export.XlsxExporter
 import com.ruuvi.station.graph.model.ChartContainer
 import com.ruuvi.station.history.HistoryViewportController
 import com.ruuvi.station.history.HistorySelection
+import com.ruuvi.station.history.SampledHistory
 import com.ruuvi.station.history.HistoryRange
 import com.ruuvi.station.network.domain.NetworkHistoryInteractor
 import com.ruuvi.station.network.domain.NetworkDataSyncInteractor
@@ -202,6 +203,9 @@ class SensorCardViewModel(
         var originSelection: HistorySelection? = null
         var origin = 0L
         val knownUnits = mutableSetOf<UnitType>()
+        val samples = object : LinkedHashMap<List<Any?>, Map<UnitType, SampledHistory>>(5, 0.75f, true) {
+            override fun removeEldestEntry(eldest: MutableMap.MutableEntry<List<Any?>, Map<UnitType, SampledHistory>>) = size > 5
+        }
         emitAll(combine(
             resolvedWindow.map { it.first }.distinctUntilChanged(),
             viewportController.updates
@@ -224,10 +228,15 @@ class SensorCardViewModel(
                 // A rolling axis advances once a minute even when no measurements arrive.
                 val rollingMinute = if (viewport == null && window.second.endExclusiveMillis >= now() - 2000)
                     window.second.endExclusiveMillis / 60_000 else null
-                val key = listOf(sensorHistoryRepository.revision(sensorId), tagDetailsInteractor.readingOptions(sensorId),
-                    units, alarms, rollingMinute)
+                val revision = sensorHistoryRepository.revision(sensorId)
+                val readingOptions = tagDetailsInteractor.readingOptions(sensorId)
+                val key = listOf(revision, readingOptions, units, alarms, rollingMinute)
                 if (key != previousKey) {
-                    val sampled = tagDetailsInteractor.sampleHistory(sensorId, range, units, ::getUnitValue)
+                    val sampleKey = listOf(range, revision, readingOptions, units)
+                    val sampled = samples[sampleKey] ?: tagDetailsInteractor.sampleHistory(sensorId, range, units, ::getUnitValue).also {
+                        currentCoroutineContext().ensureActive()
+                        samples[sampleKey] = it
+                    }
                     currentCoroutineContext().ensureActive()
                     val chartContainers = mutableListOf<ChartContainer>()
                     for (unit in units) {

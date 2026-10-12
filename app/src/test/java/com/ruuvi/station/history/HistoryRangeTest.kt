@@ -9,16 +9,20 @@ import java.util.TimeZone
 class HistoryRangeTest {
     private val now = Instant.parse("2026-09-15T12:00:00Z").toEpochMilli()
 
-    @Test fun `All and 100 days use the same overflow safe rolling range`() {
+    @Test fun `All and three years use the same overflow safe rolling range`() {
         val all = HistorySelection.Rolling().resolve(now)
-        assertEquals(8_640_000_000L, now - all.startMillis)
+        assertEquals(94_608_000_000L, now - all.startMillis)
         assertEquals(GlobalSettings.historyLengthMillis, now - all.startMillis)
-        assertEquals(all, HistorySelection.Rolling(2400).resolve(now))
+        assertEquals(all, HistorySelection.Rolling(26280).resolve(now))
         assertEquals(now, all.endExclusiveMillis)
     }
 
+    @Test fun `oversized requests are clamped at three years`() {
+        assertEquals(HistoryRange.retained(now), HistorySelection.Rolling(Int.MAX_VALUE).resolve(now))
+    }
+
     @Test fun `shortcuts stay within their selected duration`() {
-        for (hours in listOf(1, 7 * 24, 30 * 24, 60 * 24)) {
+        for (hours in listOf(1, 7 * 24, 30 * 24, 60 * 24, 90 * 24, 100 * 24, 180 * 24, 365 * 24, 730 * 24, 1095 * 24)) {
             assertEquals(HistoryRange(now - hours * 3_600_000L, now), HistorySelection.Rolling(hours).resolve(now))
         }
     }
@@ -39,13 +43,13 @@ class HistoryRangeTest {
     }
 
     @Test fun `today is capped at now and oldest partial day at retention cutoff`() {
-        val range = HistorySelection.Custom(date("2026-06-07"), date("2026-09-15"))
+        val range = HistorySelection.Custom(date("2023-09-16"), date("2026-09-15"))
             .resolve(now, TimeZone.getTimeZone("UTC"))
         assertEquals(HistoryRange.retained(now), range)
     }
 
     @Test fun `expired selection and disjoint intersection are empty`() {
-        assertTrue(HistorySelection.Custom(date("2025-01-01"), date("2025-01-01")).resolve(now).isEmpty)
+        assertTrue(HistorySelection.Custom(date("2022-01-01"), date("2022-01-01")).resolve(now).isEmpty)
         assertTrue(HistoryRange(1, 3).intersect(HistoryRange(10, 20)).isEmpty)
     }
 

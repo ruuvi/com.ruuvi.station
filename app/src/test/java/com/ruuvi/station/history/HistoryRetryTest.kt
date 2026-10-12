@@ -29,7 +29,7 @@ class HistoryRetryTest {
         val requests = CopyOnWriteArrayList<GetSensorDataRequest>()
         whenever(network.signedIn).thenReturn(true)
         whenever(network.getEmail()).thenReturn("account")
-        whenever(settings.getSensorSettings("A")).thenReturn(SensorSettings(id = "A", networkSensor = true, cloudHistoryDays = 100))
+        whenever(settings.getSensorSettings("A")).thenReturn(SensorSettings(id = "A", networkSensor = true, cloudHistoryDays = 1095))
         whenever(history.coverage(any(), any(), any(), any())).thenAnswer { covered.toList() }
         whenever(history.saveCloudPage(any(), any(), any(), any(), any(), any())).thenAnswer {
             covered += it.getArgument<HistoryRange>(2)
@@ -52,8 +52,11 @@ class HistoryRetryTest {
             withTimeout(5000) { cloud.state.first { it.failed } }
             viewModel.retryCloudHistory()
             withTimeout(5000) { completed.await() }
-            assertEquals(3, requests.size)
-            assertEquals(range.startMillis + 1000, requests.last().since!!.time)
+            withTimeout(5000) { cloud.state.first { !it.loading && !it.failed && requests.size == 4 } }
+            assertEquals(4, requests.size)
+            assertEquals(range.startMillis + 1000, requests[2].since!!.time)
+            assertEquals("sparse", requests[2].mode!!.code)
+            assertEquals("mixed", requests[3].mode!!.code)
         } finally { job.cancelAndJoin() }
     }
 

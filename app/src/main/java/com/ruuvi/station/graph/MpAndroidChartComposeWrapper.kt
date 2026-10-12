@@ -504,13 +504,20 @@ internal fun addDataToChart(
 
     chart.data = LineData(sets)
     chart.data.isHighlightEnabled = true
+    val yearFormat = java.text.SimpleDateFormat(
+        android.text.format.DateFormat.getBestDateTimePattern(java.util.Locale.getDefault(), "MMM yyyy"),
+        java.util.Locale.getDefault()
+    )
+    val timeFormat = DateFormat.getTimeInstance(DateFormat.SHORT)
     chart.xAxis.valueFormatter = object : IAxisValueFormatter {
         override fun getFormattedValue(value: Double, p1: AxisBase?): String {
             val date = Date(value.toLong() + from)
-            return if (date.isStartOfTheDay()) {
+            return if (chart.visibleXRange >= 180 * 86_400_000L) {
+                yearFormat.format(date)
+            } else if (date.isStartOfTheDay()) {
                 date.localizedDate(context, includeYear = false)
             } else {
-                DateFormat.getTimeInstance(DateFormat.SHORT).format(date).replace(" ","")
+                timeFormat.format(date).replace(" ","")
             }
         }
     }
@@ -594,7 +601,10 @@ fun synchronizeChartGestures(
                 val targetMatrixValues = FloatArray(9)
                 targetMatrix.getValues(targetMatrixValues)
                 targetMatrixValues[Matrix.MSCALE_X] = sourceMatrixValues[Matrix.MSCALE_X]
-                targetMatrixValues[Matrix.MTRANS_X] = sourceMatrixValues[Matrix.MTRANS_X]
+                val sourceWidth = sourceChart.viewPortHandler.contentWidth()
+                val targetWidth = targetChart.viewPortHandler.contentWidth()
+                targetMatrixValues[Matrix.MTRANS_X] = sourceMatrixValues[Matrix.MTRANS_X] *
+                    if (sourceWidth > 0f) targetWidth / sourceWidth else 1f
                 targetMatrixValues[Matrix.MSKEW_X] = sourceMatrixValues[Matrix.MSKEW_X]
                 targetMatrix.setValues(targetMatrixValues)
                 targetChart.viewPortHandler.refresh(targetMatrix, targetChart, true)

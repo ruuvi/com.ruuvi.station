@@ -60,9 +60,10 @@ remainders with their original timestamps. Duplicate-only page writes do not
 invalidate graph data. Duplicate detection streams indexed timestamps, so a sparse
 cloud page overlapping dense BLE history does not materialize every existing row.
 
-Schema migration 42 → 43 adds `HistoryCoverage`, `SensorSettings.cloudHistoryDays`,
-and a timestamp index. Existing measurements remain; old sync timestamps are not
-treated as proof of complete interval coverage.
+Database version 45 reconciles main's image URL migration with experimental
+history schemas at versions 43 and 44. It adds missing `imageUrl`, `cloudHistoryDays`,
+`HistoryCoverage`, and indexes without removing saved measurements or coverage.
+Old sync timestamps are not treated as proof of complete interval coverage.
 
 ## Verification
 

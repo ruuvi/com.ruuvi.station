@@ -36,15 +36,18 @@ class NetworkHistoryInteractorTest {
     @Test fun `download is restricted to one sensor and selected seven days`() = runBlocking<Unit> {
         interactor.syncHistory(sensorId, selected)
         val requests = argumentCaptor<GetSensorDataRequest>()
-        verify(network).getSensorData(requests.capture())
+        verify(network, times(2)).getSensorData(requests.capture())
         val request = requests.firstValue
         assertEquals(sensorId, request.sensor)
         assertEquals(selected.startMillis, request.since?.time)
-        assertEquals(selected.endExclusiveMillis - 1000, request.until?.time)
+        assertEquals(now - 48 * 3_600_000L - 1000, request.until?.time)
         assertEquals(5000, request.limit)
         assertEquals("asc", request.sort?.code)
-        assertEquals("mixed", request.mode?.code)
-        verify(history).saveCloudPage(eq(sensorId), eq(emptyList()), eq(selected), eq("user@example.com"), eq("production"), eq(0L))
+        assertEquals("sparse", request.mode?.code)
+        assertEquals("mixed", requests.secondValue.mode?.code)
+        assertEquals(request.until!!.time + 1000, requests.secondValue.since!!.time)
+        assertEquals(selected.endExclusiveMillis - 1000, requests.secondValue.until?.time)
+        verify(history, times(2)).saveCloudPage(eq(sensorId), eq(emptyList()), any(), eq("user@example.com"), eq("history-v2|production"), eq(0L))
         assertFalse(interactor.state.value.failed)
     }
 
@@ -53,10 +56,10 @@ class NetworkHistoryInteractorTest {
         whenever(network.getSensorData(any())).thenReturn(response(start), response(start + 1), response())
         interactor.syncHistory(sensorId, selected)
         val requests = argumentCaptor<GetSensorDataRequest>()
-        verify(network, times(3)).getSensorData(requests.capture())
-        assertEquals(listOf(start, start + 1, start + 2), requests.allValues.map { it.since!!.time / 1000 })
-        assertEquals(1, requests.allValues.map { it.until }.distinct().size)
-        verify(history, times(3)).saveCloudPage(any(), any(), any(), any(), any(), any())
+        verify(network, times(4)).getSensorData(requests.capture())
+        assertEquals(listOf(start, start + 1, start + 2), requests.allValues.take(3).map { it.since!!.time / 1000 })
+        assertEquals(1, requests.allValues.take(3).map { it.until }.distinct().size)
+        verify(history, times(4)).saveCloudPage(any(), any(), any(), any(), any(), any())
     }
 
     @Test fun `cached older empty interval does not download again`() = runBlocking<Unit> {
@@ -80,7 +83,7 @@ class NetworkHistoryInteractorTest {
 
     @Test fun `live cached history refreshes only its last minute`() = runBlocking<Unit> {
         whenever(history.coverage(any(), any(), any(), any())).thenReturn(listOf(selected))
-        interactor.syncHistory(sensorId, selected)
+        interactor.syncHistory(sensorId, selected, revalidateHistorical = false)
         val requests = argumentCaptor<GetSensorDataRequest>()
         verify(network).getSensorData(requests.capture())
         assertEquals(now - 60_000, requests.firstValue.since?.time)
@@ -141,10 +144,34 @@ class NetworkHistoryInteractorTest {
         verify(history, never()).saveCloudPage(any(), any(), any(), any(), any(), any())
     }
 
-    @Test fun `cache keys isolate backend and account and stale coverage is revalidated`() = runBlocking<Unit> {
+    @Test fun `cache keys isolate backend and account and invalidate old mixed archive coverage`() = runBlocking<Unit> {
         whenever(preferences.isDevServerEnabled()).thenReturn(true)
         interactor.syncHistory(sensorId, selected)
-        verify(history).coverage(sensorId, "user@example.com", "testnet", now - SensorHistoryRepository.CACHE_FRESHNESS_MILLIS)
+        verify(history).coverage(sensorId, "user@example.com", "history-v2|testnet", Long.MIN_VALUE)
+    }
+
+    @Test fun `three year archive uses large sparse pages then a bounded mixed tail`() = runBlocking<Unit> {
+        whenever(settings.getSensorSettings(sensorId)).thenReturn(SensorSettings(id = sensorId, networkSensor = true, cloudHistoryDays = 1095))
+        val range = HistoryRange.retained(now)
+        whenever(network.getSensorData(any())).thenReturn(response(range.startMillis / 1000), response(), response())
+        interactor.syncHistory(sensorId, range)
+        val requests = argumentCaptor<GetSensorDataRequest>()
+        verify(network, times(3)).getSensorData(requests.capture())
+        assertEquals(listOf(144_000, 144_000, 144_000), requests.allValues.map { it.limit })
+        assertEquals(listOf("sparse", "sparse", "mixed"), requests.allValues.map { it.mode!!.code })
+        assertEquals(range.startMillis + 1000, requests.secondValue.since!!.time)
+        assertEquals(now - 48 * 3_600_000L, requests.lastValue.since!!.time)
+        assertFalse(interactor.state.value.restricted)
+    }
+
+    @Test fun `opening downloaded history only revalidates the recent 48 hours`() = runBlocking<Unit> {
+        whenever(history.coverage(any(), any(), any(), any())).thenReturn(listOf(selected))
+        interactor.syncHistory(sensorId, selected)
+        val requests = argumentCaptor<GetSensorDataRequest>()
+        verify(network).getSensorData(requests.capture())
+        assertEquals(now - 48 * 3_600_000L, requests.firstValue.since!!.time)
+        assertEquals("mixed", requests.firstValue.mode!!.code)
+        verify(history).coverage(sensorId, "user@example.com", "history-v2|production", Long.MIN_VALUE)
     }
 
     private fun response(vararg seconds: Long): GetSensorDataResponse = RuuviNetworkResponse(

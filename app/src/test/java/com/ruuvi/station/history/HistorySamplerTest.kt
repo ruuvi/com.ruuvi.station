@@ -21,8 +21,8 @@ class HistorySamplerTest {
         assertEquals(-(count - 1) / 2.0, result.statistics.average, 0.0)
     }
 
-    @Test fun `dense one minute and 100 day ranges both obey the unconditional cap`() {
-        for (duration in listOf(60_000L, 100 * 86_400_000L)) {
+    @Test fun `dense one minute through three year ranges both obey the unconditional cap`() {
+        for (duration in listOf(60_000L, 100 * 86_400_000L, 1095 * 86_400_000L)) {
             val sampler = HistorySampler(HistoryRange(0, duration))
             repeat(144000) { i -> sampler.add(i * duration / 144000, kotlin.math.sin(i.toDouble())) }
             val result = sampler.finish()

@@ -8,9 +8,9 @@ import com.ruuvi.station.database.domain.SensorHistoryRepository
 import com.ruuvi.station.database.domain.SensorSettingsRepository
 import com.ruuvi.station.database.tables.TagSensorReading
 import com.ruuvi.station.history.HistoryRange
-import com.ruuvi.station.history.uncoveredHistory
+import com.ruuvi.station.history.HistoryRequest
+import com.ruuvi.station.history.historyToFetch
 import com.ruuvi.station.network.data.request.GetSensorDataRequest
-import com.ruuvi.station.network.data.request.SensorDataMode
 import com.ruuvi.station.network.data.request.SensorDenseRequest
 import com.ruuvi.station.network.data.request.SortMode
 import kotlinx.coroutines.*
@@ -61,7 +61,7 @@ class NetworkHistoryInteractor(
         val sensor = settings.getSensorSettings(sensorId) ?: return
         if (!sensor.networkSensor) return
         val account = network.getEmail()?.lowercase(Locale.ROOT) ?: return
-        val backend = if (preferences.isDevServerEnabled()) "testnet" else "production"
+        val backend = coverageBackend()
         val generation = history.generation(sensorId)
         _state.value = HistorySyncState(sensorId, loading = true)
         try {
@@ -86,16 +86,10 @@ class NetworkHistoryInteractor(
             _state.value = HistorySyncState(sensorId, loading = !range.isEmpty, restricted = restricted, cloudHistoryDays = days)
             if (range.isEmpty) return
 
-            val coverage = history.coverage(
-                sensorId, account, backend, if (revalidateHistorical) current - SensorHistoryRepository.CACHE_FRESHNESS_MILLIS else Long.MIN_VALUE
-            )
-            // Recheck a minute at the live edge to pick up late arrivals, always within the selection.
-            val stableEnd = if (range.endExclusiveMillis >= current - LIVE_REFRESH_MILLIS)
-                maxOf(range.startMillis, range.endExclusiveMillis - LIVE_REFRESH_MILLIS)
-            else range.endExclusiveMillis
-            val stableCoverage = coverage.map { it.intersect(HistoryRange(range.startMillis, stableEnd)) }
-            for (missing in uncoveredHistory(range, stableCoverage)) {
-                fetchRange(sensorId, missing, account, backend, generation)
+            val coverage = history.coverage(sensorId, account, backend, Long.MIN_VALUE)
+            val missing = range.historyToFetch(coverage, revalidateHistorical, current)
+            for (request in HistoryRequest.plan(missing, selected, current)) {
+                fetchRange(sensorId, request, account, backend, generation)
             }
         } catch (cancelled: CancellationException) {
             throw cancelled
@@ -107,7 +101,8 @@ class NetworkHistoryInteractor(
         }
     }
 
-    private suspend fun fetchRange(sensorId: String, range: HistoryRange, account: String, backend: String, generation: Long) {
+    private suspend fun fetchRange(sensorId: String, request: HistoryRequest, account: String, backend: String, generation: Long) {
+        val range = request.range
         var cursor = range.startMillis
         val untilSeconds = (range.endExclusiveMillis - 1) / 1000
         while (cursor < range.endExclusiveMillis) {
@@ -120,11 +115,11 @@ class NetworkHistoryInteractor(
             }
             val response = network.getSensorData(GetSensorDataRequest(
                 sensor = sensorId, since = Date(sinceSeconds * 1000), until = Date(untilSeconds * 1000),
-                sort = SortMode.ASCENDING, limit = PAGE_SIZE, mode = SensorDataMode.MIXED
+                sort = SortMode.ASCENDING, limit = request.limit, mode = request.mode
             ))
             currentCoroutineContext().ensureActive()
             check(network.getEmail()?.lowercase(Locale.ROOT) == account &&
-                (if (preferences.isDevServerEnabled()) "testnet" else "production") == backend) { "Cloud account changed" }
+                coverageBackend() == backend) { "Cloud account changed" }
             check(response?.isSuccess() == true) { "Cloud history request failed" }
             val body = response.data ?: error("Missing history response")
             check(body.sensor == sensorId) { "Unexpected sensor in history response" }
@@ -134,6 +129,7 @@ class NetworkHistoryInteractor(
                 ?.coerceAtMost(range.endExclusiveMillis) ?: range.endExclusiveMillis
             check(next > cursor) { "History cursor did not advance" }
             val readings = measurements.mapNotNull { measurement ->
+                currentCoroutineContext().ensureActive()
                 try {
                     if (measurement.data.isEmpty()) null else TagSensorReading(
                         BluetoothLibrary.decode(sensorId, measurement.data, measurement.rssi), Date(measurement.timestamp * 1000)
@@ -149,6 +145,9 @@ class NetworkHistoryInteractor(
         }
     }
 
+    // Discard coverage claimed by the old mixed archive paginator; retain the local readings.
+    private fun coverageBackend() = "history-v2|" + if (preferences.isDevServerEnabled()) "testnet" else "production"
+
     fun cancel() {
         synchronized(jobs) { jobs.toList() }.forEach { it.cancel() }
     }
@@ -161,7 +160,7 @@ class NetworkHistoryInteractor(
     }
 
     companion object {
-        const val PAGE_SIZE = 5000
+        const val PAGE_SIZE = HistoryRequest.PAGE_SIZE
         const val LIVE_REFRESH_MILLIS = 60_000L
     }
 }

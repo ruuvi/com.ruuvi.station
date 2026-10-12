@@ -13,12 +13,7 @@ import com.ruuvi.station.firebase.domain.FirebaseInteractor
 import com.ruuvi.station.firebase.domain.PushRegisterInteractor
 import com.ruuvi.station.image.ImageInteractor
 import com.ruuvi.station.network.data.NetworkSyncEvent
-import com.ruuvi.station.network.data.request.GetSensorDataRequest
-import com.ruuvi.station.network.data.request.SensorDataMode
 import com.ruuvi.station.network.data.request.SensorDenseRequest
-import com.ruuvi.station.network.data.request.SortMode
-import com.ruuvi.station.network.data.response.GetSensorDataResponse
-import com.ruuvi.station.network.data.response.GetSensorDataResponseBody
 import com.ruuvi.station.network.data.response.RuuviNetworkResponse
 import com.ruuvi.station.network.data.response.SensorDataMeasurementResponse
 import com.ruuvi.station.network.data.response.SensorSettings_defaultDisplayOrder
@@ -58,7 +53,6 @@ import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
 import java.io.IOException
 import java.util.Date
-import java.util.concurrent.TimeUnit
 import kotlin.time.Duration.Companion.milliseconds
 import com.ruuvi.station.network.data.response.SensorSettings as CloudSensorSettings
 import org.mockito.kotlin.any as anyMockito
@@ -78,6 +72,7 @@ class NetworkDataSyncInteractorTest {
     private val firebaseInteractor = mockk<FirebaseInteractor>(relaxed = true)
     private val shareListInteractor = mockk<NetworkShareListInteractor>(relaxed = true)
     private val subscriptionSyncInteractor = mockk<SubscriptionInfoSyncInteractor>(relaxed = true)
+    private val historySyncInteractor = mockk<NetworkHistoryInteractor>(relaxed = true)
     private val interactor = NetworkDataSyncInteractor(
         preferencesRepository = preferencesRepository,
         tagRepository = tagRepository,
@@ -94,6 +89,7 @@ class NetworkDataSyncInteractorTest {
         pushRegisterInteractor = mockk<PushRegisterInteractor>(relaxed = true),
         networkShareListInteractor = shareListInteractor,
         subscriptionInfoSyncInteractor = subscriptionSyncInteractor,
+        networkHistoryInteractor = historySyncInteractor,
     )
 
     @Before
@@ -323,7 +319,11 @@ class NetworkDataSyncInteractorTest {
         try {
             withTimeout(TIMEOUT.milliseconds) { started.await() }
 
-            val stopJob = interactor.stopSync()
+            var clearedAccount = false
+            coEvery { requestExecutor.cancelAndJoinExecutingRequests(any()) } coAnswers {
+                firstArg<suspend () -> Unit>().invoke()
+            }
+            val stopJob = interactor.stopSync { clearedAccount = true }
             try {
                 withTimeout(TIMEOUT.milliseconds) { stopJob.join() }
             } finally {
@@ -332,7 +332,11 @@ class NetworkDataSyncInteractorTest {
 
             assertTrue(job.isCancelled)
             assertFalse(interactor.syncInProgressFlow.value)
-            coVerify(exactly = 1) { requestExecutor.cancelAndJoinExecutingRequests(any()) }
+            coVerifyOrder {
+                historySyncInteractor.cancelAndJoin()
+                requestExecutor.cancelAndJoinExecutingRequests(any())
+            }
+            assertTrue(clearedAccount)
             verify(exactly = 0) { preferencesRepository.setLastSyncDate(any()) }
         } finally {
             job.cancelAndJoin()
@@ -481,7 +485,7 @@ class NetworkDataSyncInteractorTest {
     }
 
     @Test
-    fun `subscribed sensor fetches history instead of separately inserting the latest point`() = runBlocking {
+    fun `subscribed sensor updates latest data without starting history downloads`() = runBlocking {
         val sensor = denseSensor()
         stubSensor(sensor.copy(
             subscription = sensor.subscription.copy(maxHistoryDays = 7),
@@ -492,22 +496,22 @@ class NetworkDataSyncInteractorTest {
 
         verifyMockito(tagRepository).activateSensor(anyMockito())
         verify(exactly = 0) { sensorHistoryRepository.insertPoint(any()) }
-        coVerify(exactly = 1) { networkInteractor.getSensorData(match { it.sensor == SYNC_SENSOR_ID }) }
+        coVerify(exactly = 0) { networkInteractor.getSensorData(any()) }
     }
 
     @Test
-    fun `history download exception fails the overall sync without advancing checkpoints`() = runBlocking {
+    fun `history endpoint failure does not block account refresh`() = runBlocking {
         val sensor = denseSensor()
         stubSensor(sensor.copy(subscription = sensor.subscription.copy(maxHistoryDays = 7)))
         coEvery { networkInteractor.getSensorData(any()) } throws IOException("History unavailable")
 
-        syncAndJoin(expectSuccess = false)
+        syncAndJoin()
 
-        assertFailedSync("History unavailable")
+        coVerify(exactly = 0) { networkInteractor.getSensorData(any()) }
         verifyNoHistoryWrites()
-        verify(exactly = 0) { alertsSyncInteractor.updateAlertsFromNetwork(any()) }
-        verify(exactly = 0) { shareListInteractor.updateSharingInfo(any()) }
-        coVerify(exactly = 1) { requestExecutor.executeScheduledRequests() }
+        verify(exactly = 1) { alertsSyncInteractor.updateAlertsFromNetwork(any()) }
+        verify(exactly = 1) { shareListInteractor.updateSharingInfo(any()) }
+        coVerify(exactly = 2) { requestExecutor.executeScheduledRequests() }
     }
 
     @Test
@@ -556,175 +560,8 @@ class NetworkDataSyncInteractorTest {
         assertSame(NetworkSyncEvent.Success, interactor.lastResult)
     }
 
-    @Test
-    fun `history is not requested without local sensor settings`() = runBlocking {
-        every { sensorSettingsRepository.getSensorSettings(SYNC_SENSOR_ID) } returns null
-
-        interactor.syncSensorDataForPeriod(SYNC_SENSOR_ID, 24)
-
-        coVerify(exactly = 0) { networkInteractor.getSensorData(any()) }
-        verifyNoHistoryWrites()
-    }
-
-    @Test
-    fun `recent history sync skips downloading the last minute again`() = runBlocking {
-        every { sensorSettingsRepository.getSensorSettings(SYNC_SENSOR_ID) } returns localSettings().copy(
-            networkHistoryLastSync = Date(),
-        )
-
-        interactor.syncSensorDataForPeriod(SYNC_SENSOR_ID, 24)
-
-        coVerify(exactly = 0) { networkInteractor.getSensorData(any()) }
-        verifyNoHistoryWrites()
-    }
-
-    @Test
-    fun `history request resumes one second after a newer local watermark`() = runBlocking {
-        val lastSync = Date(System.currentTimeMillis() - TimeUnit.HOURS.toMillis(2))
-        every { sensorSettingsRepository.getSensorSettings(SYNC_SENSOR_ID) } returns localSettings().copy(
-            networkHistoryLastSync = lastSync,
-        )
-
-        interactor.syncSensorDataForPeriod(SYNC_SENSOR_ID, 24)
-
-        coVerify(exactly = 1) {
-            networkInteractor.getSensorData(GetSensorDataRequest(
-                sensor = SYNC_SENSOR_ID,
-                since = Date(lastSync.time + 1_000L),
-                sort = SortMode.ASCENDING,
-                limit = 5_000,
-                mode = SensorDataMode.MIXED,
-            ))
-        }
-        verifyNoHistoryWrites()
-    }
-
-    @Test
-    fun `old watermark does not extend the requested history window`() = runBlocking {
-        every { sensorSettingsRepository.getSensorSettings(SYNC_SENSOR_ID) } returns localSettings().copy(
-            networkHistoryLastSync = Date(0L),
-        )
-        val before = System.currentTimeMillis()
-
-        interactor.syncSensorDataForPeriod(SYNC_SENSOR_ID, 24)
-
-        val request = slot<GetSensorDataRequest>()
-        coVerify(exactly = 1) { networkInteractor.getSensorData(capture(request)) }
-        val day = TimeUnit.HOURS.toMillis(24)
-        assertTrue(requireNotNull(request.captured.since).time in (before - day)..(System.currentTimeMillis() - day))
-        assertEquals(SortMode.ASCENDING, request.captured.sort)
-        assertEquals(SensorDataMode.MIXED, request.captured.mode)
-        assertEquals(5_000, request.captured.limit)
-        assertNull(request.captured.until)
-    }
-
-    @Test
-    fun `history pages advance from the maximum timestamp and persist a single batch`() = runBlocking {
-        every { sensorSettingsRepository.getSensorSettings(SYNC_SENSOR_ID) } returns localSettings()
-        coEvery { networkInteractor.getSensorData(any()) } returnsMany listOf(
-            historyResponse(measurement(30L), measurement(10L)),
-            historyResponse(measurement(40L)),
-            historyResponse(),
-        )
-
-        interactor.syncSensorDataForPeriod(SYNC_SENSOR_ID, 24)
-
-        val requests = mutableListOf<GetSensorDataRequest>()
-        coVerify(exactly = 2) { networkInteractor.getSensorData(capture(requests)) }
-        assertEquals(Date(31_000L), requests[1].since)
-        val readings = slot<List<TagSensorReading>>()
-        verify(exactly = 1) { sensorHistoryRepository.bulkInsert(SYNC_SENSOR_ID, capture(readings)) }
-        assertEquals(listOf(30_000L, 10_000L, 40_000L), readings.captured.map { it.createdAt.time })
-        assertTrue(readings.captured.all { it.ruuviTagId == SYNC_SENSOR_ID && it.rssi == -60 })
-        verify(exactly = 1) { sensorSettingsRepository.updateNetworkHistoryLastSync(SYNC_SENSOR_ID, Date(40_000L)) }
-    }
-
-    @Test
-    fun `history pagination stops once the newest point is within the last minute`() = runBlocking {
-        every { sensorSettingsRepository.getSensorSettings(SYNC_SENSOR_ID) } returns localSettings()
-        val now = System.currentTimeMillis() / 1000
-        coEvery { networkInteractor.getSensorData(any()) } returnsMany listOf(
-            historyResponse(measurement(now - 10), measurement(now - 5)),
-            historyResponse(),
-        )
-
-        interactor.syncSensorDataForPeriod(SYNC_SENSOR_ID, 24)
-
-        coVerify(exactly = 1) { networkInteractor.getSensorData(any()) }
-        verify(exactly = 1) { sensorHistoryRepository.bulkInsert(SYNC_SENSOR_ID, match { it.size == 2 }) }
-        verify { sensorSettingsRepository.updateNetworkHistoryLastSync(SYNC_SENSOR_ID, Date((now - 5) * 1000)) }
-    }
-
-    @Test
-    fun `empty history page does not advance the watermark`() = runBlocking {
-        every { sensorSettingsRepository.getSensorSettings(SYNC_SENSOR_ID) } returns localSettings()
-        coEvery { networkInteractor.getSensorData(any()) } returns historyResponse()
-
-        interactor.syncSensorDataForPeriod(SYNC_SENSOR_ID, 24)
-
-        coVerify(exactly = 1) { networkInteractor.getSensorData(any()) }
-        verifyNoHistoryWrites()
-    }
-
-    @Test
-    fun `malformed and legacy air measurements are excluded from history and its watermark`() = runBlocking {
-        every { sensorSettingsRepository.getSensorSettings(SYNC_SENSOR_ID) } returns localSettings()
-        every { BluetoothLibrary.decode(SYNC_SENSOR_ID, "invalid", any()) } throws IllegalArgumentException("Invalid data")
-        every { BluetoothLibrary.decode(SYNC_SENSOR_ID, "legacy-6", any()) } returns FoundRuuviTag(dataFormat = 0x06)
-        every { BluetoothLibrary.decode(SYNC_SENSOR_ID, "legacy-f0", any()) } returns FoundRuuviTag(dataFormat = 0xF0)
-        coEvery { networkInteractor.getSensorData(any()) } returnsMany listOf(
-            historyResponse(
-                measurement(10L),
-                measurement(20L, data = ""),
-                measurement(30L, data = "invalid"),
-                measurement(40L, data = "legacy-6"),
-                measurement(50L, data = "legacy-f0"),
-            ),
-            historyResponse(),
-        )
-
-        interactor.syncSensorDataForPeriod(SYNC_SENSOR_ID, 24)
-
-        val readings = slot<List<TagSensorReading>>()
-        verify(exactly = 1) { sensorHistoryRepository.bulkInsert(SYNC_SENSOR_ID, capture(readings)) }
-        assertEquals(listOf(Date(10_000L)), readings.captured.map { it.createdAt })
-        verify(exactly = 1) { sensorSettingsRepository.updateNetworkHistoryLastSync(SYNC_SENSOR_ID, Date(10_000L)) }
-        verify(exactly = 0) { BluetoothLibrary.decode(any(), "", any()) }
-    }
-
-    @Test
-    fun `undecodable history does not create an empty batch or update its watermark`() = runBlocking {
-        every { sensorSettingsRepository.getSensorSettings(SYNC_SENSOR_ID) } returns localSettings()
-        every { BluetoothLibrary.decode(SYNC_SENSOR_ID, "invalid", any()) } throws IllegalArgumentException("Invalid data")
-        coEvery { networkInteractor.getSensorData(any()) } returnsMany listOf(
-            historyResponse(measurement(10L, data = "invalid")),
-            historyResponse(),
-        )
-
-        interactor.syncSensorDataForPeriod(SYNC_SENSOR_ID, 24)
-
-        verifyNoHistoryWrites()
-    }
-
-    @Test
-    fun `getSince preserves the requested sensor date and page size`() = runBlocking {
-        val since = Date(123_000L)
-        val response = historyResponse()
-        coEvery { networkInteractor.getSensorData(any()) } returns response
-
-        val result = interactor.getSince(SYNC_SENSOR_ID, since, 250)
-
-        assertSame(response, result)
-        coVerify(exactly = 1) {
-            networkInteractor.getSensorData(GetSensorDataRequest(
-                sensor = SYNC_SENSOR_ID,
-                since = since,
-                sort = SortMode.ASCENDING,
-                limit = 250,
-                mode = SensorDataMode.MIXED,
-            ))
-        }
-    }
+    // History pagination/cache/cancellation now belong to NetworkHistoryInteractorTest;
+    // account refresh intentionally never invokes that endpoint.
 
     private suspend fun syncAndJoin(expectSuccess: Boolean = true) {
         val job = interactor.syncNetworkData()
@@ -790,20 +627,6 @@ class NetworkDataSyncInteractorTest {
         rssi = rssi,
     )
 
-    private fun historyResponse(vararg measurements: SensorDataMeasurementResponse): GetSensorDataResponse =
-        RuuviNetworkResponse(
-            result = RuuviNetworkResponse.successResult,
-            error = "",
-            data = GetSensorDataResponseBody(
-                sensor = SYNC_SENSOR_ID,
-                offsetTemperature = 0.0,
-                offsetHumidity = 0.0,
-                offsetPressure = 0.0,
-                total = measurements.size,
-                measurements = measurements.toList(),
-            ),
-            code = null,
-        )
 
     companion object {
         private const val TIMEOUT = 5_000L

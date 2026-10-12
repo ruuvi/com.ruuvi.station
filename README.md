@@ -33,7 +33,7 @@ Ruuvi Station is an open-source Android app [available](https://play.google.com/
 - [x] Humidity (%, g/m3, °C)
 - [x] Air Pressure (Pa, hPa, mmHg, inHg)
 - [x] Acceleration (g)
-- [x] 100 days sensor data storage
+- [x] Up to 3 years (1,095 days) of sensor history storage and graphs
 - [x] Charts
 - [x] Cloud Features
 - [x] Data Forwarding

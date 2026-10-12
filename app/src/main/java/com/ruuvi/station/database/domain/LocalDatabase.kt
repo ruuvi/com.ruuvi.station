@@ -13,7 +13,7 @@ import com.ruuvi.station.database.tables.*
 class LocalDatabase {
     companion object {
         const val NAME = "LocalDatabase"
-        const val VERSION = 44
+        const val VERSION = 45
         private fun ensureHistorySchema(database: DatabaseWrapper) {
             ensureColumnIfMissing(database, "SensorSettings", "cloudHistoryDays") {
                 "ALTER TABLE SensorSettings ADD COLUMN cloudHistoryDays INTEGER"
@@ -72,6 +72,18 @@ class LocalDatabase {
                 cursor.close()
             }
             return false
+        }
+    }
+
+    // Version 43 was used for imageUrl on main and history on the experimental
+    // branch. Repair both layouts, including branch installations already at 44.
+    @Migration(version = 45, database = LocalDatabase::class)
+    class Migration45MergedSchema : BaseMigration() {
+        override fun migrate(database: DatabaseWrapper) {
+            ensureColumnIfMissing(database, "SensorSettings", "imageUrl") {
+                "ALTER TABLE SensorSettings ADD COLUMN imageUrl TEXT"
+            }
+            ensureHistorySchema(database)
         }
     }
 

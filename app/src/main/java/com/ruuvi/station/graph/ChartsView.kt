@@ -96,6 +96,7 @@ fun ChartsView(
 
     val sharedX = rememberSaveable { mutableStateOf<Float?>(null) }
 
+    val viewportSource = remember(sensor.id) { arrayOfNulls<LineChart>(1) }
     val currentContainers = rememberUpdatedState(chartContainers)
     val currentSelected = rememberUpdatedState(selected)
     val viewportCallback = rememberUpdatedState(setHistoryViewport)
@@ -118,7 +119,11 @@ fun ChartsView(
     // Draw callbacks also follow the viewport during inertial flings after touch-up.
     DisposableEffect(chartContainers.map { it.uiComponent }) {
         val listeners = chartContainers.mapNotNull { container -> container.uiComponent?.let { chart ->
-            val listener = ViewTreeObserver.OnDrawListener { reportViewport(chart, false) }
+            val listener = ViewTreeObserver.OnDrawListener {
+                // Following charts can have slightly different plot widths. Their redraws
+                // must not replace the source viewport and repeatedly cancel local scans.
+                if (viewportSource[0] === chart) reportViewport(chart, false)
+            }
             chart.viewTreeObserver.addOnDrawListener(listener)
             chart to listener
         } }
@@ -136,7 +141,7 @@ fun ChartsView(
 
             historyUpdater(sensor.id).collectLatest { data ->
                 Timber.d("ChartView - new data collected ${data.size}")
-                if (chartUIComponents.size != data.size) {
+                if (chartUIComponents.keys != data.map { it.unitType }.toSet()) {
                     chartUIComponents.clear()
                     chartsInitialized = false
                 }
@@ -159,7 +164,10 @@ fun ChartsView(
                             charts = chartContainers.mapNotNull { container -> container.uiComponent?.let { container.unitType to it } },
                             unitsConverter = unitsConverter,
                             context = context,
-                            onViewportChanged = reportViewport
+                            onViewportChanged = { chart, finished ->
+                                viewportSource[0] = chart
+                                reportViewport(chart, finished)
+                            }
                         )
                         chartsInitialized = true
                     }

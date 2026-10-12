@@ -3,11 +3,13 @@ package com.ruuvi.station.graph
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.renderer.XAxisRenderer
 import com.github.mikephil.charting.utils.Transformer
+import com.github.mikephil.charting.utils.Utils
 import com.github.mikephil.charting.utils.ViewPortHandler
-import timber.log.Timber
-import java.util.*
+import java.util.Calendar
+import java.util.TimeZone
 import kotlin.math.abs
 import kotlin.math.ceil
+import kotlin.math.floor
 
 class CustomXAxisRenderer(
     private val from: Long,
@@ -17,79 +19,48 @@ class CustomXAxisRenderer(
 ) : XAxisRenderer(viewPortHandler, xAxis, trans) {
 
     override fun computeAxisValues(min: Float, max: Float) {
-        Timber.d("computeAxisValues ($min / $max) From = $from")
-
-        val labelCount = mAxis.labelCount
-        val range = abs(max - min).toDouble()
-        Timber.d("computeAxisValues range $range")
-
-        if (labelCount == 0 || range <=0) {
+        val range = abs(max.toDouble() - min.toDouble())
+        if (mAxis.labelCount == 0 || range <= 0 || !range.isFinite()) {
             mAxis.mEntries = doubleArrayOf()
             mAxis.mCenteredEntries = floatArrayOf()
             mAxis.mEntryCount = 0
             return
         }
-
-        val rawInterval = range / labelCount
-        Timber.d("computeAxisValues rawInterval $rawInterval")
-
-        val interval = getClosestPredefinedInterval(rawInterval)
-        Timber.d("computeAxisValues interval $interval")
-
-        var firstPoint = ((from + min.toLong()) / interval) * interval - from  - 2 * interval
-        var lastPoint =  (ceil((from.toDouble() + max.toDouble()) / interval).toLong()) * interval - from  + 2 * interval
-        Timber.d("computeAxisValues firstPoint $firstPoint lastPoint $lastPoint")
-
-        if (range < interval) {
-            firstPoint = min.toLong()
-            lastPoint = firstPoint
-        }
-
-        var numberOfPoints = 0
-        if (lastPoint != firstPoint) {
-            for (f in firstPoint..lastPoint step interval) {
-                numberOfPoints++
-            }
-        } else {
-            numberOfPoints = 1
-        }
-
-        mAxis.mEntryCount = numberOfPoints
-        mAxis.mEntries = DoubleArray(numberOfPoints)
-        Timber.d("computeAxisValues labelCount = $labelCount numberOfPoints = $numberOfPoints")
-
-        for ((i, value) in ((firstPoint..lastPoint) step interval).withIndex()) {
-            val date = Date(from + value)
-            val localOffset = if (interval > 3600000) TimeZone.getDefault().getOffset(date.time) else 0
-
-            mAxis.mEntries[i] = (value - localOffset).toDouble()
-        }
-    }
-
-    private fun getClosestPredefinedInterval (rawInterval: Double): Long {
-        return intervals.sortedBy { abs(it - rawInterval) }.first()
+        mAxisLabelPaint.typeface = mAxis.typeface
+        mAxisLabelPaint.textSize = mAxis.textSize
+        // Measure the current date format too: month/year labels need more room than HH:mm.
+        val textWidth = listOf(min.toDouble(), (min.toDouble() + max) / 2, max.toDouble())
+            .maxOf { mAxisLabelPaint.measureText(mAxis.valueFormatter.getFormattedValue(it, mAxis)) }
+        val fittingLabels = (mViewPortHandler.contentWidth() / (textWidth + Utils.convertDpToPixel(16f)))
+            .toInt().coerceAtLeast(1)
+        val count = minOf(mAxis.labelCount, fittingLabels)
+        val interval = intervals.firstOrNull { it >= range / count } ?: intervals.last()
+        val first = floor((from + min.toDouble()) / interval).toLong() * interval - 2 * interval
+        val last = ceil((from + max.toDouble()) / interval).toLong() * interval + 2 * interval
+        val entries = (first..last step interval).map { timestamp ->
+            // Calendar fields, rather than a fixed UTC offset, keep ticks at local
+            // midnight across DST boundaries, including fractional-offset time zones.
+            val aligned = if (interval >= 3_600_000L) {
+                val utc = Calendar.getInstance(TimeZone.getTimeZone("UTC")).apply { timeInMillis = timestamp }
+                Calendar.getInstance().apply {
+                    clear()
+                    set(utc.get(Calendar.YEAR), utc.get(Calendar.MONTH), utc.get(Calendar.DAY_OF_MONTH),
+                        utc.get(Calendar.HOUR_OF_DAY), 0, 0)
+                }.timeInMillis
+            } else timestamp
+            (aligned - from).toDouble()
+        }.distinct().sorted()
+        mAxis.mEntries = entries.toDoubleArray()
+        mAxis.mEntryCount = entries.size
     }
 
     companion object {
         val intervals = longArrayOf(
-            60000,      // 1m
-            120000,     // 2m
-            180000,     // 3m
-            300000,     // 5m
-            600000,     // 10m
-            900000,     // 15m
-            1800000,    // 30m
-            3600000,    // 1h
-            7200000,    // 2h
-            10800000,   // 3h
-            21600000,   // 6h
-            43200000,   // 12h
-            86400000,   // 1d
-            172800000,  // 2d
-            345600000,  // 4d
-            691200000,  // 8d
-            1209600000, // 14d
-            2592000000, // 30d
+            60_000, 120_000, 180_000, 300_000, 600_000, 900_000, 1_800_000,
+            3_600_000, 7_200_000, 10_800_000, 21_600_000, 43_200_000,
+            86_400_000, 172_800_000, 345_600_000, 691_200_000, 1_209_600_000,
+            30 * 86_400_000L, 60 * 86_400_000L, 90 * 86_400_000L,
+            180 * 86_400_000L, 365 * 86_400_000L, 730 * 86_400_000L, 1024 * 86_400_000L
         )
     }
 }

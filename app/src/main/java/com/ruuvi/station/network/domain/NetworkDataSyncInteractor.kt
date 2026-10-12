@@ -16,9 +16,6 @@ import com.ruuvi.station.firebase.domain.PushRegisterInteractor
 import com.ruuvi.station.image.ImageInteractor
 import com.ruuvi.station.image.ImageSource
 import com.ruuvi.station.network.data.NetworkSyncEvent
-import com.ruuvi.station.network.data.request.GetSensorDataRequest
-import com.ruuvi.station.network.data.request.SortMode
-import com.ruuvi.station.network.data.request.SensorDataMode
 import com.ruuvi.station.network.data.request.SensorDenseRequest
 import com.ruuvi.station.network.data.response.*
 import com.ruuvi.station.tagsettings.domain.TagSettingsInteractor
@@ -521,18 +518,6 @@ class NetworkDataSyncInteractor (
         }
 
         sensorSettingsRepository.setDefaultSensorBackground(sensorId, 0)
-    }
-
-    suspend fun getSince(tagId: String, since: Date, limit: Int): GetSensorDataResponse? {
-        Timber.d("benchmark-getSince-$tagId since $since")
-        val request = GetSensorDataRequest(
-            sensor = tagId,
-            since = since,
-            sort = SortMode.ASCENDING,
-            limit = limit,
-            mode = SensorDataMode.MIXED
-        )
-        return networkInteractor.getSensorData(request)
     }
 
     fun stopSync(duringRequestCancellation: suspend () -> Unit = {}): Job {

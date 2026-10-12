@@ -19,7 +19,7 @@ jacoco {
 def mockitoVersion = "5.23.0"
 def mockitoKotlinVersion = "6.3.0"
 
-abstract class MockitoAgentArgumentProvider implements CommandLineArgumentProvider {
+abstract class TestAgentArgumentProvider implements CommandLineArgumentProvider {
     @Classpath
     abstract ConfigurableFileCollection getAgentClasspath()
 
@@ -31,12 +31,18 @@ abstract class MockitoAgentArgumentProvider implements CommandLineArgumentProvid
 
 configurations {
     mockitoAgent
+    mockkAgent
 }
 
 tasks.withType(Test).configureEach {
-    def mockitoAgentArgumentProvider = objects.newInstance(MockitoAgentArgumentProvider)
+    def mockitoAgentArgumentProvider = objects.newInstance(TestAgentArgumentProvider)
     mockitoAgentArgumentProvider.agentClasspath.from(configurations.mockitoAgent)
     jvmArgumentProviders.add(mockitoAgentArgumentProvider)
+    // MockK uses Byte Buddy's instrumentation holder, separate from Mockito's.
+    // Preload the agent so both work without dynamic JVM attachment.
+    def mockkAgentArgumentProvider = objects.newInstance(TestAgentArgumentProvider)
+    mockkAgentArgumentProvider.agentClasspath.from(configurations.mockkAgent)
+    jvmArgumentProviders.add(mockkAgentArgumentProvider)
 }
 
 def releaseEnv = { name ->
@@ -276,6 +282,9 @@ dependencies {
     testImplementation libs.mockk
     testImplementation "org.mockito.kotlin:mockito-kotlin:$mockitoKotlinVersion"
     mockitoAgent("org.mockito:mockito-core:$mockitoVersion") {
+        transitive = false
+    }
+    mockkAgent("net.bytebuddy:byte-buddy-agent:1.18.2") {
         transitive = false
     }
     testImplementation "androidx.arch.core:core-testing:2.2.0"

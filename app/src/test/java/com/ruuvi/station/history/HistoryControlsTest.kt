@@ -102,6 +102,13 @@ class HistoryControlsTest {
         compose.onNodeWithText("All").performClick()
         compose.onNodeWithText("30 days").performScrollTo().assertExists()
         compose.onNodeWithText("60 days").performScrollTo().assertExists()
+        compose.onNodeWithText("90 days").performScrollTo().assertExists()
+        compose.onNodeWithText("180 days").performScrollTo().assertExists()
+        for ((label, hours) in listOf("1 year" to 8760, "2 years" to 17520, "3 years" to 26280)) {
+            compose.onNodeWithText(label).performScrollTo().performClick()
+            compose.runOnIdle { assertEquals(hours, selected) }
+            compose.onNodeWithText("All").performClick()
+        }
     }
 
     @Test fun `cancel leaves range unchanged and apply converts the selection to custom`() {

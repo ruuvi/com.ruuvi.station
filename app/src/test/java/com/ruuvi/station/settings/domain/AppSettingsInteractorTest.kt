@@ -35,7 +35,6 @@ class AppSettingsInteractorTest {
 
     @Before
     fun setUp() {
-        every { preferencesRepository.isShowAllGraphPoint() } returns false
         every { preferencesRepository.graphDrawDots() } returns false
         every { preferencesRepository.getBackgroundScanMode() } returns BackgroundScanModes.BACKGROUND
         every { preferencesRepository.getBackgroundScanInterval() } returns 15
@@ -95,7 +94,6 @@ class AppSettingsInteractorTest {
 
     @Test
     fun `unchanged chart and scan preferences are not rewritten`() {
-        interactor.setIsShowAllGraphPoint(false)
         interactor.setGraphDrawDots(false)
         interactor.setBackgroundScanMode(BackgroundScanModes.BACKGROUND)
         interactor.setBackgroundScanInterval(15)

@@ -36,6 +36,10 @@ class RuuviNetworkRepository
         it.level = HttpLoggingInterceptor.Level.BODY
     }
 
+    private val historyInterceptor = HttpLoggingInterceptor().also {
+        it.level = HttpLoggingInterceptor.Level.BASIC
+    }
+
     private val client = OkHttpClient
         .Builder()
         .addNetworkInterceptor { chain ->
@@ -46,7 +50,11 @@ class RuuviNetworkRepository
                     .build()
             )
         }
-        .addInterceptor(interceptor)
+        .addInterceptor { chain ->
+            // Multi-year pages are large: do not buffer and print their entire JSON body.
+            if (chain.request().url.pathSegments.lastOrNull() == "get") historyInterceptor.intercept(chain)
+            else interceptor.intercept(chain)
+        }
         .build()
 
     private var retrofit = buildRetrofit()

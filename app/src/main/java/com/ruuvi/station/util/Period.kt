@@ -22,6 +22,11 @@ sealed class Period(val value: Int, val stringResourceId: Int, val shouldPassVal
     data object Day30: Period(30 * 24, R.string.day_30)
     data object Day60: Period(60 * 24, R.string.day_60)
     data object Day100: Period(100 * 24, R.string.day_100)
+    data object Day90: Period(90 * 24, R.string.day_90)
+    data object Day180: Period(180 * 24, R.string.day_180)
+    data object Year1: Period(365 * 24, R.string.year_1)
+    data object Year2: Period(730 * 24, R.string.year_2)
+    data object Year3: Period(1095 * 24, R.string.year_3)
     class HourX(value: Int): Period(value, R.string.hour_x, true)
 
     companion object {
@@ -46,6 +51,11 @@ sealed class Period(val value: Int, val stringResourceId: Int, val shouldPassVal
                 30 * 24 -> Day30
                 60 * 24 -> Day60
                 100 * 24 -> Day100
+                90 * 24 -> Day90
+                180 * 24 -> Day180
+                365 * 24 -> Year1
+                730 * 24 -> Year2
+                1095 * 24 -> Year3
                 else -> HourX(value)
             }
     }
