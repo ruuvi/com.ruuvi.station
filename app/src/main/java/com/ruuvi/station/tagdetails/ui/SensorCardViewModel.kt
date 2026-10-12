@@ -485,8 +485,10 @@ class SensorCardViewModel(
     }
 
     fun syncGatt(sensorId: String, manual: Boolean = true) {
-        manualSyncMap[sensorId] = manual
-        autoSyncAttemptMap[sensorId] = System.currentTimeMillis()
+        if (isGattSyncInProgress(sensorId)) {
+            Timber.d("Ignoring duplicate GATT download for $sensorId")
+            return
+        }
         val sensor = tagDetailsInteractor.getTagById(sensorId)
         sensor?.let { sensor ->
             var syncFrom = sensor.lastSync
@@ -495,7 +497,10 @@ class SensorCardViewModel(
                 syncFrom = historyLength
             }
             Timber.d("sync logs from: %s", syncFrom)
-            gattInteractor.readLogs(sensorId, syncFrom)
+            if (gattInteractor.readLogs(sensorId, syncFrom)) {
+                manualSyncMap[sensorId] = manual
+                autoSyncAttemptMap[sensorId] = System.currentTimeMillis()
+            }
         }
     }
 

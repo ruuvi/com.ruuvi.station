@@ -66,6 +66,7 @@ class SensorCardViewModelTest {
         SensorCardViewModel.clearAutoSyncAttempts()
         every { networkDataSyncInteractor.syncInProgressFlow } returns MutableStateFlow(false)
         every { gattInteractor.syncStatusFlow } returns syncStatus
+        every { gattInteractor.readLogs(any(), any()) } returns true
         every { tagDetailsInteractor.getTagById(AIR_SENSOR.id) } returns AIR_SENSOR
     }
 
@@ -130,6 +131,15 @@ class SensorCardViewModelTest {
         viewModel.syncGatt(AIR_SENSOR.id)
 
         verify { gattInteractor.readLogs(AIR_SENSOR.id, OLD_LAST_SYNC) }
+    }
+
+    @Test
+    fun `manual GATT sync skips an active download`() {
+        syncStatus.value = GattSyncStatus(AIR_SENSOR.id, SyncProgress.READING_DATA)
+
+        viewModel.syncGatt(AIR_SENSOR.id)
+
+        verify(exactly = 0) { gattInteractor.readLogs(AIR_SENSOR.id, any()) }
     }
 
     @Test

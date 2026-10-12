@@ -34,9 +34,14 @@ class BluetoothGattInteractor (
     private val activeSessions = ConcurrentHashMap<String, Long>()
     private val sessionLock = Any()
 
-    fun readLogs(sensorId: String, from: Date?) {
-        val sessionId = sessionIdGenerator.incrementAndGet()
-        activeSessions[sensorId] = sessionId
+    fun readLogs(sensorId: String, from: Date?): Boolean {
+        val sessionId = synchronized(sessionLock) {
+            if (activeSessions.containsKey(sensorId)) {
+                Timber.d("Ignoring duplicate GATT download for $sensorId")
+                return false
+            }
+            sessionIdGenerator.incrementAndGet().also { activeSessions[sensorId] = it }
+        }
         setSessionSyncStatus(sensorId, sessionId, SyncProgress.CONNECTING)
         val found= interactor.readLogs(sensorId, from, object : IRuuviGattListener {
             override fun connected(state: Boolean) {
@@ -109,6 +114,7 @@ class BluetoothGattInteractor (
         })
         if (!found)
             setSessionSyncStatus(sensorId, sessionId, SyncProgress.NOT_FOUND)
+        return true
     }
 
     fun disconnect(id: String): Boolean {
