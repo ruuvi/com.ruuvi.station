@@ -121,6 +121,10 @@ class BluetoothGattInteractor (
         return interactor.disconnect(id)
     }
 
+    fun isSyncInProgress(sensorId: String? = null): Boolean = synchronized(sessionLock) {
+        sensorId?.let(activeSessions::containsKey) ?: activeSessions.isNotEmpty()
+    }
+
     fun setSyncStatus(status: GattSyncStatus) {
         Timber.d("syncStatusFlow sent $status")
         syncStatus.value = status

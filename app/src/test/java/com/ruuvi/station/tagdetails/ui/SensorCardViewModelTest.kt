@@ -97,12 +97,19 @@ class SensorCardViewModelTest {
 
     @Test
     fun `selected Air sensor skips GATT history sync if already downloading`() {
-        val syncingStatus = GattSyncStatus(AIR_SENSOR.id, SyncProgress.READING_DATA)
-        every { gattInteractor.syncStatusFlow } returns MutableStateFlow(syncingStatus)
+        every { gattInteractor.isSyncInProgress(AIR_SENSOR.id) } returns true
 
         viewModel.autoSyncGattHistory(AIR_SENSOR, selected = true)
 
         verify(exactly = 0) { gattInteractor.readLogs(any(), any()) }
+    }
+
+    @Test
+    fun `GATT sync progress for another sensor does not hide this sensor active download`() {
+        syncStatus.value = GattSyncStatus("other-sensor", SyncProgress.READING_DATA)
+        every { gattInteractor.isSyncInProgress(AIR_SENSOR.id) } returns true
+
+        assertTrue(viewModel.isGattSyncInProgress(AIR_SENSOR.id))
     }
 
     @Test
@@ -135,7 +142,7 @@ class SensorCardViewModelTest {
 
     @Test
     fun `manual GATT sync skips an active download`() {
-        syncStatus.value = GattSyncStatus(AIR_SENSOR.id, SyncProgress.READING_DATA)
+        every { gattInteractor.isSyncInProgress(AIR_SENSOR.id) } returns true
 
         viewModel.syncGatt(AIR_SENSOR.id)
 

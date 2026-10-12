@@ -504,11 +504,8 @@ class SensorCardViewModel(
         }
     }
 
-    fun isGattSyncInProgress(sensorId: String? = null): Boolean {
-        val status = gattInteractor.syncStatusFlow.value ?: return false
-        if (!status.syncProgress.syncInProgress) return false
-        return sensorId == null || status.sensorId == sensorId
-    }
+    fun isGattSyncInProgress(sensorId: String? = null): Boolean =
+        gattInteractor.isSyncInProgress(sensorId)
 
     fun autoSyncGattHistory(sensor: RuuviTag, selected: Boolean) {
         if (selected && sensor.isAir() && !sensor.networkSensor) {
