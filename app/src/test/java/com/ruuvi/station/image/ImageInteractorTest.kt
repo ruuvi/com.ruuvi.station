@@ -7,6 +7,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Environment
+import android.webkit.MimeTypeMap
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
@@ -16,8 +17,10 @@ import io.mockk.unmockkStatic
 import io.mockk.verify
 import org.junit.Assert.assertArrayEquals
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertSame
+import org.junit.Assert.assertTrue
 import org.junit.After
 import org.junit.Test
 import java.io.IOException
@@ -33,7 +36,7 @@ class ImageInteractorTest {
     @After
     fun tearDown() {
         filesDirectory.deleteRecursively()
-        unmockkStatic(Bitmap::class, BitmapFactory::class)
+        unmockkStatic(Bitmap::class, BitmapFactory::class, MimeTypeMap::class)
     }
 
     @Test
@@ -108,6 +111,36 @@ class ImageInteractorTest {
         } finally {
             destination.delete()
         }
+    }
+
+    @Test
+    fun `recognizes supported background image formats`() {
+        val imageUri = mockk<Uri>()
+        val imageInteractor = spyk(interactor)
+
+        listOf("jpeg", "jpg", "png", "heic", "heif", "webp").forEach { extension ->
+            every { imageInteractor.getMimeType(imageUri) } returns extension
+
+            assertTrue(imageInteractor.isImage(imageUri))
+        }
+        every { imageInteractor.getMimeType(imageUri) } returns "gif"
+
+        assertFalse(imageInteractor.isImage(imageUri))
+        assertFalse(imageInteractor.isImage(null))
+    }
+
+    @Test
+    fun `gets image extension from content resolver MIME type`() {
+        val contentResolver = mockk<ContentResolver>()
+        val imageUri = mockk<Uri>()
+        val mimeTypeMap = mockk<MimeTypeMap>()
+        every { context.contentResolver } returns contentResolver
+        every { contentResolver.getType(imageUri) } returns "image/jpeg"
+        mockkStatic(MimeTypeMap::class)
+        every { MimeTypeMap.getSingleton() } returns mimeTypeMap
+        every { mimeTypeMap.getExtensionFromMimeType("image/jpeg") } returns "jpeg"
+
+        assertEquals("jpeg", interactor.getMimeType(imageUri))
     }
 
     private companion object {
