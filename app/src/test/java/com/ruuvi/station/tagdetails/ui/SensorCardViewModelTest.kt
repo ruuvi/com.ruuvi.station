@@ -10,6 +10,8 @@ import com.ruuvi.station.database.domain.SensorHistoryRepository
 import com.ruuvi.station.database.tables.TagSensorReading
 import com.ruuvi.station.export.CsvExporter
 import com.ruuvi.station.export.XlsxExporter
+import com.ruuvi.station.history.HistoryRange
+import com.ruuvi.station.history.HistorySampler
 import com.ruuvi.station.network.domain.NetworkDataSyncInteractor
 import com.ruuvi.station.nfc.domain.NfcResultInteractor
 import com.ruuvi.station.settings.domain.AppSettingsInteractor
@@ -18,8 +20,10 @@ import com.ruuvi.station.tag.domain.ruuviTagPreview
 import com.ruuvi.station.tag.domain.sensorMeasurementsPreview
 import com.ruuvi.station.tagdetails.domain.TagDetailsInteractor
 import com.ruuvi.station.units.domain.UnitsConverter
+import com.ruuvi.station.units.model.UnitType
 import com.ruuvi.station.units.model.UnitType.TemperatureUnit
 import com.ruuvi.station.vico.model.SegmentType
+import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
@@ -44,6 +48,7 @@ class SensorCardViewModelTest {
     private val unitsConverter = mockk<UnitsConverter>(relaxed = true)
     private val syncStatus = MutableStateFlow<GattSyncStatus?>(null)
     private var lastAutomaticGattSyncAttempt = 0L
+    private var chartReadings = emptyList<TagSensorReading>()
     private val viewModel by lazy {
         SensorCardViewModel(
             arguments = SensorCardViewModelArguments(),
@@ -59,11 +64,23 @@ class SensorCardViewModelTest {
             nfcResultInteractor = mockk<NfcResultInteractor>(relaxed = true),
             alarmRepository = mockk<AlarmRepository>(relaxed = true),
             unitsConverter = unitsConverter,
+            networkHistoryInteractor = mockk(relaxed = true),
+            now = { 1_000_000L + 24 * 60 * 60 * 1000L },
         )
     }
 
     @Before
     fun setUp() {
+        coEvery { tagDetailsInteractor.sampleHistory(any(), any(), any(), any()) } answers {
+            val range = secondArg<HistoryRange>()
+            val units = thirdArg<List<UnitType>>()
+            val value = arg<(TagSensorReading, UnitType) -> Double?>(3)
+            units.associateWith { unit ->
+                HistorySampler(range).apply {
+                    chartReadings.forEach { add(it.createdAt.time, value(it, unit)) }
+                }.finish()
+            }
+        }
         val automaticAttempt = slot<Long>()
 
         lastAutomaticGattSyncAttempt = 0L
@@ -324,7 +341,7 @@ class SensorCardViewModelTest {
     }
 
     @Test
-    fun `chart data creates solid dotted and final single segments around time gaps`() = runBlocking {
+    fun `chart data keeps solid and isolated points in separate segments around time gaps`() = runBlocking {
         val start = Date(1_000_000L)
         val readings = listOf(
             TagSensorReading(createdAt = start, temperature = 1.0),
@@ -332,7 +349,7 @@ class SensorCardViewModelTest {
             TagSensorReading(createdAt = Date(start.time + 20 * 60 * 1000L)),
             TagSensorReading(createdAt = Date(start.time + 2 * 60 * 60 * 1000L), temperature = 3.0),
         )
-        every { tagDetailsInteractor.getTagReadings(AIR_SENSOR.id, 24) } returns readings
+        chartReadings = readings
         every {
             unitsConverter.getTemperatureValue(any(), TemperatureUnit.Celsius)
         } answers { firstArg<Double>() }
@@ -345,17 +362,16 @@ class SensorCardViewModelTest {
 
         assertEquals(1.0, chartData.minValue, 0.0)
         assertEquals(3.0, chartData.maxValue, 0.0)
-        assertEquals(3, chartData.segments.size)
+        assertEquals(2, chartData.segments.size)
         assertEquals(SegmentType.Solid, chartData.segments[0].segmentType)
         assertEquals(listOf(1.0, 2.0), chartData.segments[0].values)
-        assertEquals(SegmentType.Dotted, chartData.segments[1].segmentType)
-        assertEquals(SegmentType.Single, chartData.segments[2].segmentType)
-        assertEquals(listOf(3.0), chartData.segments[2].values)
+        assertEquals(SegmentType.Single, chartData.segments[1].segmentType)
+        assertEquals(listOf(3.0), chartData.segments[1].values)
     }
 
     @Test
     fun `chart data skips readings without the selected measurement`() = runBlocking {
-        every { tagDetailsInteractor.getTagReadings(AIR_SENSOR.id, 24) } returns listOf(
+        chartReadings = listOf(
             TagSensorReading(createdAt = Date(1_000_000L)),
         )
 
