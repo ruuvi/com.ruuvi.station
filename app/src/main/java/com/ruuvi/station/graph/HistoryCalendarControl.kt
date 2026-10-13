@@ -30,7 +30,7 @@ fun HistoryCalendarControl(selection: HistorySelection, setDates: (Long, Long) -
     var expanded by rememberSaveable { mutableStateOf(false) }
     IconButton(onClick = { expanded = true }, modifier = Modifier.testTag("historyCalendar")) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Icon(Icons.Default.CalendarToday, stringResource(R.string.history_select_dates),
+            Icon(Icons.Default.CalendarToday, "Select history dates",
                 tint = RuuviStationTheme.colors.buttonText, modifier = Modifier.size(20.dp))
             Icon(Icons.Default.ArrowDropDown, null, tint = RuuviStationTheme.colors.accent,
                 modifier = Modifier.size(18.dp))
@@ -71,7 +71,7 @@ fun HistoryCalendarControl(selection: HistorySelection, setDates: (Long, Long) -
                             if (start != null && end != null) setDates(start, end)
                             expanded = false
                         }, modifier = Modifier.testTag("historyCalendarApply")
-                    ) { Text(stringResource(R.string.history_apply)) }
+                    ) { Text("Apply") }
                 },
                 dismissButton = {
                     TextButton(onClick = { expanded = false }) { Text(stringResource(android.R.string.cancel)) }
@@ -79,7 +79,7 @@ fun HistoryCalendarControl(selection: HistorySelection, setDates: (Long, Long) -
             ) {
                 DateRangePicker(
                     state = state,
-                    title = { Text(stringResource(R.string.history_select_dates), modifier = Modifier.padding(16.dp)) },
+                    title = { Text("Select history dates", modifier = Modifier.padding(16.dp)) },
                     headline = null,
                     showModeToggle = false,
                     modifier = Modifier.fillMaxWidth()
@@ -98,7 +98,7 @@ fun HistoryRangeCaption(selection: HistorySelection) {
         val start = dateFormat.format(Date(localMidnight(selection.startDateUtc, zone)))
         val end = dateFormat.format(Date(localMidnight(selection.endDateUtc, zone)))
         androidx.compose.material.Text(
-            stringResource(R.string.history_selected_dates, start, end),
+            "$start – $end",
             color = RuuviStationTheme.colors.buttonText,
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp).testTag("historyRangeCaption")
         )
@@ -109,15 +109,15 @@ fun HistoryRangeCaption(selection: HistorySelection) {
 fun CloudHistoryStatus(state: HistorySyncState, retry: () -> Unit) {
     Column(Modifier.fillMaxWidth().padding(horizontal = 16.dp)) {
         if (state.failed) {
-            androidx.compose.material.Text(stringResource(R.string.history_cloud_error), color = RuuviStationTheme.colors.buttonText)
+            androidx.compose.material.Text("Could not load cloud history. Available local data is shown.", color = RuuviStationTheme.colors.buttonText)
             androidx.compose.material.TextButton(onClick = retry) {
                 androidx.compose.material.Text(stringResource(R.string.try_again), color = RuuviStationTheme.colors.buttonText)
             }
         }
         if (state.restricted) {
             androidx.compose.material.Text(
-                if (state.cloudHistoryDays == 0) stringResource(R.string.history_cloud_unavailable)
-                else stringResource(R.string.history_cloud_limited, state.cloudHistoryDays ?: 0),
+                if (state.cloudHistoryDays == 0) "Cloud history is unavailable for this sensor. Available local data is shown."
+                else "Cloud history is available for the last ${state.cloudHistoryDays ?: 0} days. Older local data is still shown.",
                 color = RuuviStationTheme.colors.buttonText
             )
         }

@@ -962,7 +962,7 @@ fun ItemBottomNoData(
             style = RuuviStationTheme.typography.dashboardSecondary,
             fontSize = ruuviStationFontsSizes.petite.limitScaleTo(1.5f),
             textAlign = TextAlign.Center,
-            text = stringResource(id = R.string.no_measurement_data),
+            text = "No measurement data available",
         )
     }
 }

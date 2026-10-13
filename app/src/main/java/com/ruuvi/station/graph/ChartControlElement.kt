@@ -249,6 +249,17 @@ fun ChartControlElement2(
 }
 
 @Composable
+private fun periodLabel(period: Period): String {
+    period.hardcodedLabel?.let { return it }
+    val resourceId = requireNotNull(period.stringResourceId)
+    return if (period.shouldPassValue) {
+        stringResource(resourceId, period.value)
+    } else {
+        stringResource(resourceId)
+    }
+}
+
+@Composable
 fun ViewPeriodMenu(
     viewPeriod: Period,
     setViewPeriod: (Int) -> Unit,
@@ -260,11 +271,7 @@ fun ViewPeriodMenu(
 
     Box(modifier = Modifier.clickable { daysMenuExpanded = true }) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            val daysText = if (custom) stringResource(R.string.history_custom) else if (viewPeriod.shouldPassValue) {
-                stringResource(id = viewPeriod.stringResourceId, viewPeriod.value)
-            } else {
-                stringResource(id = viewPeriod.stringResourceId)
-            }
+            val daysText = if (custom) "Custom" else periodLabel(viewPeriod)
             Text(
                 style = RuuviStationTheme.typography.subtitle,
                 text = daysText,
@@ -313,7 +320,7 @@ fun ViewPeriodMenu(
                             setViewPeriod.invoke(day.value)
                             daysMenuExpanded = false
                         }) {
-                            Paragraph(text = stringResource(id = day.stringResourceId))
+                            Paragraph(text = periodLabel(day))
                         }
                     }
 

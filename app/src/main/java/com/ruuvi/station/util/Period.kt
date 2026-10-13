@@ -2,7 +2,13 @@ package com.ruuvi.station.util
 
 import com.ruuvi.station.R
 
-sealed class Period(val value: Int, val stringResourceId: Int, val shouldPassValue: Boolean = false) {
+sealed class Period(
+    val value: Int,
+    val stringResourceId: Int? = null,
+    val shouldPassValue: Boolean = false,
+    // Temporary English labels until these keys are available in station.localization.
+    val hardcodedLabel: String? = null
+) {
     data object All: Period(0, R.string.all)
     data object Hour1: Period(1, R.string.hour_1)
     data object Hour2: Period(2, R.string.hour_2)
@@ -19,14 +25,14 @@ sealed class Period(val value: Int, val stringResourceId: Int, val shouldPassVal
     data object Day8: Period(8 * 24, R.string.day_8)
     data object Day9: Period(9 * 24, R.string.day_9)
     data object Day10: Period(10 * 24, R.string.day_10)
-    data object Day30: Period(30 * 24, R.string.day_30)
-    data object Day60: Period(60 * 24, R.string.day_60)
-    data object Day100: Period(100 * 24, R.string.day_100)
-    data object Day90: Period(90 * 24, R.string.day_90)
-    data object Day180: Period(180 * 24, R.string.day_180)
-    data object Year1: Period(365 * 24, R.string.year_1)
-    data object Year2: Period(730 * 24, R.string.year_2)
-    data object Year3: Period(1095 * 24, R.string.year_3)
+    data object Day30: Period(30 * 24, hardcodedLabel = "30 days")
+    data object Day60: Period(60 * 24, hardcodedLabel = "60 days")
+    data object Day100: Period(100 * 24, hardcodedLabel = "100 days")
+    data object Day90: Period(90 * 24, hardcodedLabel = "90 days")
+    data object Day180: Period(180 * 24, hardcodedLabel = "180 days")
+    data object Year1: Period(365 * 24, hardcodedLabel = "1 year")
+    data object Year2: Period(730 * 24, hardcodedLabel = "2 years")
+    data object Year3: Period(1095 * 24, hardcodedLabel = "3 years")
     class HourX(value: Int): Period(value, R.string.hour_x, true)
 
     companion object {

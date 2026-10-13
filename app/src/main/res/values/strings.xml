@@ -887,20 +887,4 @@ Total used shares for your account: %3$,d/%4$,d</string>
     <string name="font_scaling">Font scaling %1$s%%</string>
     <string name="disable_developer_mode">Disable developer mode</string>
     <string name="registered_fcm_tokens">Registered FCM tokens</string>
-    <string name="no_measurement_data">No measurement data available</string>
-    <string name="day_30">30 days</string>
-    <string name="day_60">60 days</string>
-    <string name="day_100">100 days</string>
-    <string name="day_90">90 days</string>
-    <string name="day_180">180 days</string>
-    <string name="year_1">1 year</string>
-    <string name="year_2">2 years</string>
-    <string name="year_3">3 years</string>
-    <string name="history_custom">Custom</string>
-    <string name="history_select_dates">Select history dates</string>
-    <string name="history_apply">Apply</string>
-    <string name="history_selected_dates">%1$s – %2$s</string>
-    <string name="history_cloud_error">Could not load cloud history. Available local data is shown.</string>
-    <string name="history_cloud_unavailable">Cloud history is unavailable for this sensor. Available local data is shown.</string>
-    <string name="history_cloud_limited">Cloud history is available for the last %1$d days. Older local data is still shown.</string>
 </resources>
