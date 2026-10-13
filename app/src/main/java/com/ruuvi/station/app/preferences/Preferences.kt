@@ -354,6 +354,21 @@ class Preferences (val context: Context) {
             sharedPreferences.edit { putLong(PREF_LAST_SYNC_DATE, syncDate) }
         }
 
+    fun getLastAutomaticGattSyncAttempt(sensorId: String): Long =
+        sharedPreferences.getLong("$PREF_LAST_AUTOMATIC_GATT_SYNC_ATTEMPT$sensorId", 0L)
+
+    fun setLastAutomaticGattSyncAttempt(sensorId: String, timestamp: Long) {
+        sharedPreferences.edit {
+            putLong("$PREF_LAST_AUTOMATIC_GATT_SYNC_ATTEMPT$sensorId", timestamp)
+        }
+    }
+
+    fun clearLastAutomaticGattSyncAttempt(sensorId: String) {
+        sharedPreferences.edit {
+            remove("$PREF_LAST_AUTOMATIC_GATT_SYNC_ATTEMPT$sensorId")
+        }
+    }
+
     var experimentalFeatures: Boolean
         get() = sharedPreferences.getBoolean(PREF_EXPERIMENTAL_FEATURES, false)
         set(experimentalFeatures) {
@@ -825,6 +840,8 @@ class Preferences (val context: Context) {
         private const val PREF_NETWORK_EMAIL = "pref_network_email"
         private const val PREF_NETWORK_TOKEN = "pref_network_token"
         private const val PREF_LAST_SYNC_DATE = "pref_last_sync_date"
+        private const val PREF_LAST_AUTOMATIC_GATT_SYNC_ATTEMPT =
+            "pref_last_automatic_gatt_sync_attempt_"
         private const val PREF_EXPERIMENTAL_FEATURES = "pref_experimental_features"
         private const val PREF_DEVELOPER_SETTINGS = "pref_developer_settings"
         private const val PREF_REQUEST_FOR_REVIEW_DATE = "pref_request_for_review_date"

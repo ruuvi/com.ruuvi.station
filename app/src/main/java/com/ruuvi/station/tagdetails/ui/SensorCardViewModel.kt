@@ -25,6 +25,7 @@ import com.ruuvi.station.nfc.domain.NfcResultInteractor
 import com.ruuvi.station.settings.domain.AppSettingsInteractor
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tag.domain.TagInteractor
+import com.ruuvi.station.tag.domain.isAir
 import com.ruuvi.station.tagdetails.domain.TagDetailsInteractor
 import com.ruuvi.station.units.domain.UnitsConverter
 import com.ruuvi.station.units.domain.aqi.AQI
@@ -90,6 +91,7 @@ class SensorCardViewModel(
 
     private val _scrollToChartEvent = Channel<UnitType>(Channel.BUFFERED)
     val scrollToChartEvent = _scrollToChartEvent.receiveAsFlow()
+    private val manualSyncMap = mutableMapOf<String, Boolean>()
 
 
     fun getChartData(sensorId: String, unitType: UnitType, hours: Int): Flow<ChartData> =
@@ -384,8 +386,9 @@ class SensorCardViewModel(
     }
 
     fun getGattEvents(sensorId: String): Flow<SyncStatus> = flow{
-        gattInteractor.syncStatusFlow.filter { it?.sensorId == sensorId }.collect{ status ->
-            Timber.d("getGattEvents gattInteractor.syncStatusFlow $status")
+        gattInteractor.getSyncStatusFlow(sensorId).filterNotNull().collect{ status ->
+            Timber.d("getGattEvents sensor $sensorId $status")
+            val isManual = manualSyncMap[sensorId] ?: false
             status?.let { gattStatus ->
                 if (gattStatus.sensorId == sensorId) {
                     when (gattStatus.syncProgress) {
@@ -395,7 +398,8 @@ class SensorCardViewModel(
                                     sensorId = gattStatus.sensorId,
                                     syncProgress = gattStatus.syncProgress,
                                     syncInProgress = gattStatus.syncProgress.syncInProgress,
-                                    statusMessage = UiText.EmptyString
+                                    statusMessage = UiText.EmptyString,
+                                    manualSync = isManual
                                 )
                             )
                         }
@@ -406,10 +410,11 @@ class SensorCardViewModel(
                                     sensorId = gattStatus.sensorId,
                                     syncProgress = gattStatus.syncProgress,
                                     syncInProgress = gattStatus.syncProgress.syncInProgress,
-                                    statusMessage = UiText.EmptyString
+                                    statusMessage = UiText.EmptyString,
+                                    manualSync = isManual
                                 )
                             )
-                            resetGattStatus(sensorId)
+                            resetGattStatus(sensorId, gattStatus.sessionId)
                         }
                         SyncProgress.CONNECTING -> {
                             emit(
@@ -417,7 +422,8 @@ class SensorCardViewModel(
                                     sensorId = gattStatus.sensorId,
                                     syncProgress = gattStatus.syncProgress,
                                     syncInProgress = gattStatus.syncProgress.syncInProgress,
-                                    statusMessage = UiText.StringResource(R.string.connecting)
+                                    statusMessage = UiText.StringResource(R.string.connecting),
+                                    manualSync = isManual
                                 )
                             )
                         }
@@ -427,7 +433,8 @@ class SensorCardViewModel(
                                     sensorId = gattStatus.sensorId,
                                     syncProgress = gattStatus.syncProgress,
                                     syncInProgress = gattStatus.syncProgress.syncInProgress,
-                                    statusMessage = UiText.StringResource(R.string.connected_reading_info)
+                                    statusMessage = UiText.StringResource(R.string.connected_reading_info),
+                                    manualSync = isManual
                                 )
                             )
                         }
@@ -442,7 +449,8 @@ class SensorCardViewModel(
                                     sensorId = gattStatus.sensorId,
                                     syncProgress = gattStatus.syncProgress,
                                     syncInProgress = gattStatus.syncProgress.syncInProgress,
-                                    statusMessage = message
+                                    statusMessage = message,
+                                    manualSync = isManual
                                 )
                             )
                         }
@@ -457,7 +465,8 @@ class SensorCardViewModel(
                                     sensorId = gattStatus.sensorId,
                                     syncProgress = gattStatus.syncProgress,
                                     syncInProgress = gattStatus.syncProgress.syncInProgress,
-                                    statusMessage = message
+                                    statusMessage = message,
+                                    manualSync = isManual
                                 )
                             )
                         }
@@ -471,11 +480,15 @@ class SensorCardViewModel(
         gattInteractor.disconnect(sensorId)
     }
 
-    fun resetGattStatus(sensorId: String) {
-        gattInteractor.resetGattStatus(sensorId)
+    fun resetGattStatus(sensorId: String, sessionId: Long? = null) {
+        gattInteractor.resetGattStatus(sensorId, sessionId)
     }
 
-    fun syncGatt(sensorId: String) {
+    fun syncGatt(sensorId: String, manual: Boolean = true) {
+        if (isGattSyncInProgress(sensorId)) {
+            Timber.d("Ignoring duplicate GATT download for $sensorId")
+            return
+        }
         val sensor = tagDetailsInteractor.getTagById(sensorId)
         sensor?.let { sensor ->
             var syncFrom = sensor.lastSync
@@ -484,7 +497,33 @@ class SensorCardViewModel(
                 syncFrom = historyLength
             }
             Timber.d("sync logs from: %s", syncFrom)
-            gattInteractor.readLogs(sensorId, syncFrom)
+            if (gattInteractor.readLogs(sensorId, syncFrom)) {
+                manualSyncMap[sensorId] = manual
+                if (!manual) {
+                    preferencesRepository.setLastAutomaticGattSyncAttempt(
+                        sensorId,
+                        System.currentTimeMillis()
+                    )
+                }
+            }
+        }
+    }
+
+    fun isGattSyncInProgress(sensorId: String? = null): Boolean =
+        gattInteractor.isSyncInProgress(sensorId)
+
+    fun autoSyncGattHistory(sensor: RuuviTag, selected: Boolean) {
+        if (selected && sensor.isAir() && !sensor.networkSensor) {
+            if (isGattSyncInProgress(sensor.id)) return
+
+            val lastSyncTime = sensor.lastSync?.time ?: 0L
+            val lastAttemptTime = preferencesRepository.getLastAutomaticGattSyncAttempt(sensor.id)
+            val latestTime = maxOf(lastSyncTime, lastAttemptTime)
+            val currentTime = System.currentTimeMillis()
+
+            if (currentTime - latestTime >= AUTO_SYNC_COOLDOWN_MS) {
+                syncGatt(sensor.id, manual = false)
+            }
         }
     }
 
@@ -504,6 +543,7 @@ class SensorCardViewModel(
     fun removeTagData(sensorId: String) {
         sensorHistoryRepository.removeForSensor(sensorId)
         tagDetailsInteractor.clearLastSync(sensorId)
+        preferencesRepository.clearLastAutomaticGattSyncAttempt(sensorId)
         viewModelScope.launch {
             _chartCleared.emit(sensorId)
         }
@@ -537,6 +577,10 @@ class SensorCardViewModel(
         }
     }
 
+    companion object {
+        private const val AUTO_SYNC_COOLDOWN_MS = 5 * 60 * 1000L
+    }
+
 }
 
 data class SensorCardViewModelArguments(
@@ -547,5 +591,6 @@ data class SyncStatus (
     val sensorId: String,
     val syncProgress: SyncProgress = SyncProgress.STILL,
     val syncInProgress: Boolean,
-    val statusMessage: UiText
+    val statusMessage: UiText,
+    val manualSync: Boolean = false,
 )

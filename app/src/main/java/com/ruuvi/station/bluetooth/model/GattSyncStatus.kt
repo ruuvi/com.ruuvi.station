@@ -6,7 +6,8 @@ data class GattSyncStatus (
     val deviceInfoModel: String = "",
     val deviceInfoFw: String = "",
     val readDataSize: Int = 0,
-    var syncedDataPoints: Int = 0
+    var syncedDataPoints: Int = 0,
+    val sessionId: Long = 0
 )
 
 enum class SyncProgress (val syncInProgress: Boolean) {

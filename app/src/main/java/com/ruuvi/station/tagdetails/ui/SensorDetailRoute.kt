@@ -67,7 +67,10 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import kotlinx.coroutines.delay
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.ruuvi.station.R
 import com.ruuvi.station.alarm.domain.AlarmSensorStatus
@@ -617,6 +620,17 @@ private fun ColumnScope.SensorHistoryContent(
 ) {
     var chartCount by remember(sensor.id) { mutableIntStateOf(0) }
     val hideIncreaseChartSize = chartCount < MINIMUM_CHARTS_BEFORE_SIZE_INCREASE
+
+    val lifecycleOwner = LocalLifecycleOwner.current
+
+    LaunchedEffect(sensor.id, selected) {
+        if (selected) {
+            delay(250)
+            if (lifecycleOwner.lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED)) {
+                viewModel.autoSyncGattHistory(sensor, selected)
+            }
+        }
+    }
 
     ChartControlElement2(
         sensorId = sensor.id,
