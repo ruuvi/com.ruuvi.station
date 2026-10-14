@@ -11,7 +11,9 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.unmockkStatic
+import io.mockk.verify
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertThrows
 import org.junit.After
 import org.junit.Rule
 import org.junit.Test
@@ -113,6 +115,54 @@ class PreferencesTest {
 
         assertEquals(listOf(TemperatureUnit.Kelvin.unitCode), values)
         liveData.removeObserver(observer)
+    }
+
+    @Test
+    fun `dashboard card timeout defaults to sixty seconds`() {
+        val sharedPreferences = mockk<SharedPreferences>(relaxed = true)
+        every {
+            sharedPreferences.getLong("pref_dashboard_card_timeout_seconds", any())
+        } answers { secondArg<Long>() }
+
+        assertEquals(60L, preferencesUsing(sharedPreferences).dashboardCardTimeoutSeconds)
+    }
+
+    @Test
+    fun `dashboard card timeout reads the saved long value`() {
+        val sharedPreferences = mockk<SharedPreferences>(relaxed = true)
+        every {
+            sharedPreferences.getLong("pref_dashboard_card_timeout_seconds", any())
+        } returns Long.MAX_VALUE
+
+        assertEquals(Long.MAX_VALUE, preferencesUsing(sharedPreferences).dashboardCardTimeoutSeconds)
+    }
+
+    @Test
+    fun `dashboard card timeout persists the minimum and large custom values`() {
+        val sharedPreferences = mockk<SharedPreferences>(relaxed = true)
+        val editor = mockk<SharedPreferences.Editor>(relaxed = true)
+        every { sharedPreferences.edit() } returns editor
+        val preferences = preferencesUsing(sharedPreferences)
+
+        for (seconds in listOf(1L, 137L, Long.MAX_VALUE)) {
+            preferences.dashboardCardTimeoutSeconds = seconds
+
+            verify { editor.putLong("pref_dashboard_card_timeout_seconds", seconds) }
+        }
+        verify(exactly = 3) { editor.apply() }
+    }
+
+    @Test
+    fun `dashboard card timeout refuses values below one second`() {
+        val sharedPreferences = mockk<SharedPreferences>(relaxed = true)
+        val preferences = preferencesUsing(sharedPreferences)
+
+        for (seconds in listOf(0L, -1L)) {
+            assertThrows(IllegalArgumentException::class.java) {
+                preferences.dashboardCardTimeoutSeconds = seconds
+            }
+        }
+        verify(exactly = 0) { sharedPreferences.edit() }
     }
 
     private fun preferencesUsing(sharedPreferences: SharedPreferences): Preferences {

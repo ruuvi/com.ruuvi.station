@@ -282,6 +282,12 @@ class PreferencesRepository(
         preferences.dashboardTapAction = dashboardTapAction
     }
 
+    fun getDashboardCardTimeoutSeconds(): Long = preferences.dashboardCardTimeoutSeconds
+
+    fun setDashboardCardTimeoutSeconds(seconds: Long) {
+        preferences.dashboardCardTimeoutSeconds = seconds
+    }
+
     fun getRegisteredToken(): String = preferences.registeredToken
 
     fun updateRegisteredToken(token: String) {

@@ -465,6 +465,16 @@ class Preferences (val context: Context) {
             sharedPreferences.edit { putLong(PREF_DASHBOARD_TAP_ACTION_LAST_UPDATED, lastUpdated) }
         }
 
+    var dashboardCardTimeoutSeconds: Long
+        get() = sharedPreferences.getLong(
+            PREF_DASHBOARD_CARD_TIMEOUT_SECONDS,
+            DEFAULT_DASHBOARD_CARD_TIMEOUT_SECONDS
+        )
+        set(seconds) {
+            require(seconds >= 1) { "Dashboard card timeout must be at least 1 second" }
+            sharedPreferences.edit { putLong(PREF_DASHBOARD_CARD_TIMEOUT_SECONDS, seconds) }
+        }
+
     var registeredToken: String
         get() = sharedPreferences.getString(PREF_REGISTERED_DEVICE_TOKEN, "") ?: ""
         set(token) {
@@ -853,6 +863,7 @@ class Preferences (val context: Context) {
         private const val PREF_DASHBOARD_TYPE_LAST_UPDATED = "pref_dashboard_type_last_updated"
         private const val PREF_DASHBOARD_TAP_ACTION = "pref_dashboard_tap_action"
         private const val PREF_DASHBOARD_TAP_ACTION_LAST_UPDATED = "pref_dashboard_tap_action_last_updated"
+        private const val PREF_DASHBOARD_CARD_TIMEOUT_SECONDS = "pref_dashboard_card_timeout_seconds"
         private const val PREF_REGISTERED_DEVICE_TOKEN = "pref_registered_device_token"
         private const val PREF_REGISTERED_TOKEN_LANGUAGE = "pref_registered_token_language"
         private const val PREF_DEVICE_TOKEN_REFRESH_DATE = "pref_device_token_refresh_date"
@@ -903,6 +914,7 @@ class Preferences (val context: Context) {
         private const val DEFAULT_REQUEST_FOR_REVIEW_DATE = 0L
         private const val DEFAULT_REQUEST_FOR_APP_UPDATE_DATE = 0L
         private const val DEFAULT_DARKMODE = AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
+        private const val DEFAULT_DASHBOARD_CARD_TIMEOUT_SECONDS = 60L
         private const val CHART_SIZE_LEVEL_NORMAL = 1
         private const val CHART_SIZE_LEVEL_INCREASED = 2
         private const val CHART_SIZE_LEVEL_MAX = 3

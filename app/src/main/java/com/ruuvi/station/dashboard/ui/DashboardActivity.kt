@@ -131,6 +131,7 @@ class DashboardActivity : NfcActivity(), DIAware {
                 val signedInOnce by dashboardViewModel.signedInOnce.collectAsState(false)
                 val bannerDisabled by dashboardViewModel.bannerDisabled.collectAsState(false)
                 val sensors by dashboardViewModel.sensorsList.collectAsState()
+                val staleSensorIds by dashboardViewModel.staleSensorIds.collectAsState()
                 val refreshing by dashboardViewModel.dataRefreshing.collectAsState(false)
                 val syncInProgress by dashboardViewModel.syncInProgress.collectAsState(false)
                 val dashboardType by dashboardViewModel.dashboardType.collectAsState()
@@ -245,6 +246,7 @@ class DashboardActivity : NfcActivity(), DIAware {
                                         }
                                         DashboardItems(
                                             items = it,
+                                            staleSensorIds = staleSensorIds,
                                             userEmail = userEmail,
                                             dashboardType = dashboardType,
                                             dashboardTapAction = dashboardTapAction,
@@ -304,6 +306,8 @@ class DashboardActivity : NfcActivity(), DIAware {
                                     !dragDropListState.getLazyListState().isScrollInProgress
                                 ) {
                                     dashboardViewModel.refreshSensors()
+                                } else {
+                                    dashboardViewModel.refreshSensorFreshness()
                                 }
                                 delay(1000)
                             }
@@ -418,6 +422,7 @@ fun EmptyDashboard(
 @Composable
 fun DashboardItems(
     items: List<RuuviTag>,
+    staleSensorIds: Set<String>,
     userEmail: String?,
     dashboardType: DashboardType,
     dashboardTapAction: DashboardTapAction,
@@ -478,6 +483,7 @@ fun DashboardItems(
                             setName = setName,
                             displacementOffset = displacementOffset,
                             itemIsDragged = itemIsDragged,
+                            isStale = sensor.id in staleSensorIds,
                             moveItem = onMove
                             )
                     DashboardType.IMAGE_VIEW ->
@@ -488,6 +494,7 @@ fun DashboardItems(
                             userEmail = userEmail,
                             displacementOffset = displacementOffset,
                             itemIsDragged = itemIsDragged,
+                            isStale = sensor.id in staleSensorIds,
                             setName = setName,
                             moveItem = onMove,
                             getDefaultImageResource = getDefaultImageResource,
@@ -573,7 +580,8 @@ fun DashboardItem(
     moveItem: (Int, Int, Boolean) -> Unit,
     getDefaultImageResource: (RuuviTag) -> Int,
     modifier: Modifier = Modifier,
-    interactionEnabled: Boolean = true
+    interactionEnabled: Boolean = true,
+    isStale: Boolean = false
 ) {
     val context = LocalContext.current
     val modifier = if (itemIsDragged) {
@@ -593,7 +601,11 @@ fun DashboardItem(
                 translationX = displacementOffset?.x?.toFloat() ?: 0f
                 scaleX = if (itemIsDragged) 1.04f else 1f
                 scaleY = if (itemIsDragged) 1.04f else 1f
-                alpha = if (itemIsDragged) 0.7f else 1f
+                alpha = when {
+                    isStale -> 0.5f
+                    itemIsDragged -> 0.7f
+                    else -> 1f
+                }
             }
             .clickableSingle(enabled = interactionEnabled) {
                 SensorCardActivity.start(
@@ -717,7 +729,8 @@ fun DashboardItemSimple(
     moveItem: (Int, Int, Boolean) -> Unit,
     displacementOffset: IntOffset?,
     itemIsDragged: Boolean,
-    interactionEnabled: Boolean = true
+    interactionEnabled: Boolean = true,
+    isStale: Boolean = false
 ) {
     val context = LocalContext.current
     val modifier = if (itemIsDragged) {
@@ -734,7 +747,11 @@ fun DashboardItemSimple(
                 translationX = displacementOffset?.x?.toFloat() ?: 0f
                 scaleX = if (itemIsDragged) 1.04f else 1f
                 scaleY = if (itemIsDragged) 1.04f else 1f
-                alpha = if (itemIsDragged) 0.7f else 1f
+                alpha = when {
+                    isStale -> 0.5f
+                    itemIsDragged -> 0.7f
+                    else -> 1f
+                }
             }
             .clickableSingle(interactionEnabled) {
                 SensorCardActivity.start(
