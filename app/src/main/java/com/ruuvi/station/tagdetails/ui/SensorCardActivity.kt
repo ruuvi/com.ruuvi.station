@@ -678,9 +678,9 @@ fun SensorCardBottom(
                                 16.dp
                             },
                             height = if (sensor.getSource() == UpdateSource.Cloud) {
-                                16.dp
+                                12.dp
                             } else {
-                                24.dp
+                                12.dp
                             },
                         ),
                     painter = painterResource(id = icon),
