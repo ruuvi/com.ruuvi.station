@@ -9,16 +9,23 @@ import android.webkit.WebViewClient
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.ScaffoldState
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.ruuvi.station.R
 import com.ruuvi.station.app.ui.components.*
+import com.ruuvi.station.app.ui.components.dialog.CustomContentDialog
+import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.feature.data.Feature
 import com.ruuvi.station.feature.data.FeatureFlag
 import timber.log.Timber
@@ -31,6 +38,8 @@ fun DeveloperSettings(
 ) {
     val devServerEnabled by viewModel.devServerEnabled.collectAsState()
     val useWebShare by viewModel.useWebShare.collectAsState()
+    val dashboardCardTimeoutSeconds by viewModel.dashboardCardTimeoutSeconds.collectAsState()
+    var showDashboardCardTimeoutDialog by rememberSaveable { mutableStateOf(false) }
 
     PageSurfaceWithPadding {
         Column() {
@@ -59,6 +68,16 @@ fun DeveloperSettings(
             )
             Paragraph(text = stringResource(id = R.string.use_dev_server_description))
 
+            Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
+            TextEditWithCaptionButton(
+                title = stringResource(R.string.dashboard_card_timeout),
+                value = dashboardCardTimeoutSeconds.toString(),
+                icon = painterResource(R.drawable.edit_20),
+                tint = RuuviStationTheme.colors.accent,
+                editAction = { showDashboardCardTimeoutDialog = true }
+            )
+            Paragraph(text = stringResource(R.string.dashboard_card_timeout_description))
+
             Spacer(modifier = Modifier.height(48.dp))
             Subtitle("Debug info")
             val scale = LocalDensity.current.fontScale
@@ -68,6 +87,46 @@ fun DeveloperSettings(
                 viewModel.setDevModeEnabled(false)
                 onNavigate.invoke(SettingsRoutes.LIST)
             }
+        }
+    }
+
+    if (showDashboardCardTimeoutDialog) {
+        DashboardCardTimeoutDialog(
+            initialSeconds = dashboardCardTimeoutSeconds,
+            onSave = viewModel::setDashboardCardTimeoutSeconds,
+            onDismissRequest = { showDashboardCardTimeoutDialog = false }
+        )
+    }
+}
+
+@Composable
+private fun DashboardCardTimeoutDialog(
+    initialSeconds: Long,
+    onSave: (Long) -> Unit,
+    onDismissRequest: () -> Unit
+) {
+    var input by rememberSaveable { mutableStateOf(initialSeconds.toString()) }
+    val seconds = parseDashboardCardTimeoutSeconds(input)
+
+    CustomContentDialog(
+        title = stringResource(R.string.dashboard_card_timeout),
+        validation = { seconds != null },
+        onDismissRequest = onDismissRequest,
+        onOkClickAction = {
+            onSave(checkNotNull(seconds))
+            onDismissRequest()
+        }
+    ) {
+        Paragraph(text = stringResource(R.string.dashboard_card_timeout_hint))
+        TextFieldRuuvi(
+            modifier = Modifier.fillMaxWidth(),
+            value = input,
+            hint = stringResource(R.string.seconds),
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+            onValueChange = { input = it }
+        )
+        if (seconds == null) {
+            WarningText(text = stringResource(R.string.dashboard_card_timeout_invalid))
         }
     }
 }

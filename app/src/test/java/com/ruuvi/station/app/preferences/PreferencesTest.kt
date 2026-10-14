@@ -11,7 +11,9 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.unmockkStatic
+import io.mockk.verify
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertThrows
 import org.junit.After
 import org.junit.Rule
 import org.junit.Test
@@ -116,26 +118,51 @@ class PreferencesTest {
     }
 
     @Test
-    fun `stores marketing consent prompt history separately for each account`() {
-        val sharedPreferences = inMemoryPreferences()
-        val preferences = preferencesUsing(sharedPreferences)
+    fun `dashboard card timeout defaults to sixty seconds`() {
+        val sharedPreferences = mockk<SharedPreferences>(relaxed = true)
+        every {
+            sharedPreferences.getLong("pref_dashboard_card_timeout_seconds", any())
+        } answers { secondArg<Long>() }
 
-        preferences.setMarketingConsentPromptLastShown("first@example.com", 1_000L)
-        preferences.setMarketingConsentPromptLastShown("second@example.com", 2_000L)
-
-        assertEquals(1_000L, preferences.getMarketingConsentPromptLastShown("first@example.com"))
-        assertEquals(2_000L, preferences.getMarketingConsentPromptLastShown("second@example.com"))
+        assertEquals(60L, preferencesUsing(sharedPreferences).dashboardCardTimeoutSeconds)
     }
 
     @Test
-    fun `migrates the legacy marketing consent prompt history to the active account`() {
-        val sharedPreferences = inMemoryPreferences(
-            mapOf("pref_marketing_consent_prompt_last_shown" to 1_000L)
-        )
+    fun `dashboard card timeout reads the saved long value`() {
+        val sharedPreferences = mockk<SharedPreferences>(relaxed = true)
+        every {
+            sharedPreferences.getLong("pref_dashboard_card_timeout_seconds", any())
+        } returns Long.MAX_VALUE
+
+        assertEquals(Long.MAX_VALUE, preferencesUsing(sharedPreferences).dashboardCardTimeoutSeconds)
+    }
+
+    @Test
+    fun `dashboard card timeout persists the minimum and large custom values`() {
+        val sharedPreferences = mockk<SharedPreferences>(relaxed = true)
+        val editor = mockk<SharedPreferences.Editor>(relaxed = true)
+        every { sharedPreferences.edit() } returns editor
         val preferences = preferencesUsing(sharedPreferences)
 
-        assertEquals(1_000L, preferences.getMarketingConsentPromptLastShown("first@example.com"))
-        assertEquals(0L, preferences.getMarketingConsentPromptLastShown("second@example.com"))
+        for (seconds in listOf(1L, 137L, Long.MAX_VALUE)) {
+            preferences.dashboardCardTimeoutSeconds = seconds
+
+            verify { editor.putLong("pref_dashboard_card_timeout_seconds", seconds) }
+        }
+        verify(exactly = 3) { editor.apply() }
+    }
+
+    @Test
+    fun `dashboard card timeout refuses values below one second`() {
+        val sharedPreferences = mockk<SharedPreferences>(relaxed = true)
+        val preferences = preferencesUsing(sharedPreferences)
+
+        for (seconds in listOf(0L, -1L)) {
+            assertThrows(IllegalArgumentException::class.java) {
+                preferences.dashboardCardTimeoutSeconds = seconds
+            }
+        }
+        verify(exactly = 0) { sharedPreferences.edit() }
     }
 
     private fun preferencesUsing(sharedPreferences: SharedPreferences): Preferences {
@@ -143,28 +170,5 @@ class PreferencesTest {
         mockkStatic(PreferenceManager::class)
         every { PreferenceManager.getDefaultSharedPreferences(context) } returns sharedPreferences
         return Preferences(context)
-    }
-
-    private fun inMemoryPreferences(
-        initialValues: Map<String, Long> = emptyMap()
-    ): SharedPreferences {
-        val values = initialValues.toMutableMap<String, Long>()
-        val editor = mockk<SharedPreferences.Editor>(relaxed = true)
-        val preferences = mockk<SharedPreferences>(relaxed = true)
-
-        every { preferences.contains(any()) } answers { values.containsKey(firstArg()) }
-        every { preferences.getLong(any(), any()) } answers {
-            values[firstArg()] ?: secondArg()
-        }
-        every { preferences.edit() } returns editor
-        every { editor.putLong(any(), any()) } answers {
-            values[firstArg()] = secondArg()
-            editor
-        }
-        every { editor.remove(any()) } answers {
-            values.remove(firstArg())
-            editor
-        }
-        return preferences
     }
 }
