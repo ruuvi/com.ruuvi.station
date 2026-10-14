@@ -1,6 +1,6 @@
-- Uudistettu historianäkymä ja uusi koko näkymän kokoinen kaaviovaihtoehto
-- Parannetut, vapaasti skaalattavat widgetit
-- Luotettavammat hälytykset, Bluetooth-päivitykset ja pilvisynkronointi
-- Odottavat anturijaot näytetään nyt sovelluksessa
-- Parempi yhteensopivuus uudempien Android-versioiden kanssa
-- Useita käytettävyys- ja vakauskorjauksia
+* Selkeämmät hälytysmerkinnät anturikorteissa ja mittausten ponnahdusikkunoissa.
+* Uusi navigointivalikko helpottaa anturitietojen, historian ja asetusten käyttöä.
+* Estetty RuuviTagin laiteohjelmiston päivitykset vanhempaan versioon, jotka voivat rikkoa ulkoisten lämpötila-antureiden tuen.
+* Korjattu Ruuvi Airin kastepisteilmoituksista puuttuvat toimintopainikkeet.
+* Päivitetty VOC- ja NOx-ponnahdusikkunoiden tekstit.
+* Muita pienempiä bugikorjauksia ja parannuksia.
