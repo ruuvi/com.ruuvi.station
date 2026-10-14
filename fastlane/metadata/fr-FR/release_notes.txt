@@ -1,6 +1,6 @@
-- Vue Historique repensée avec une nouvelle option de graphique en plein écran
-- Widgets améliorés et librement redimensionnables
-- Alertes, mises à jour Bluetooth et synchronisation Cloud plus fiables
-- Les partages de capteurs en attente sont désormais affichés dans l’application
-- Compatibilité améliorée avec les versions récentes d’Android
-- Divers correctifs de convivialité et de stabilité
+* Indicateurs d’alerte plus clairs sur les cartes des capteurs et dans les fenêtres de mesure.
+* Nouveau menu de navigation pour accéder plus facilement aux données des capteurs, à l’historique et aux paramètres.
+* Blocage des retours à une ancienne version du firmware RuuviTag pouvant empêcher la prise en charge des capteurs de température externes.
+* Ajout des boutons de commande manquants dans les notifications de point de rosée de Ruuvi Air.
+* Mise à jour des textes des fenêtres VOC et NOx.
+* Autres corrections de bugs mineurs et améliorations.
