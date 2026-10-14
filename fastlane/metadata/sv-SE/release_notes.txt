@@ -1,6 +1,6 @@
-- Omdesignad historikvy med ett nytt diagramalternativ i full storlek
-- Förbättrade widgetar som kan storleksändras fritt
-- Tillförlitligare larm, Bluetooth-uppdateringar och molnsynkronisering
-- Väntande sensordelningar visas nu i appen
-- Förbättrad kompatibilitet med nyare Android-versioner
-- Flera förbättringar av användbarhet och stabilitet
+* Tydligare larmindikatorer på sensorkort och i popupfönster för mätvärden.
+* Ny navigeringsmeny för enklare åtkomst till sensordata, historik och inställningar.
+* Förhindrat nedgradering av RuuviTags firmware som kunde slå ut stödet för externa temperatursensorer.
+* Åtgärdat saknade kontrollknappar i Ruuvi Airs daggpunktsaviseringar.
+* Uppdaterat texterna i popupfönstren för VOC och NOx.
+* Andra mindre buggfixar och förbättringar.
