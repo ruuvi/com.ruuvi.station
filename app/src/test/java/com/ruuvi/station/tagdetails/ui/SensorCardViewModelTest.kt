@@ -29,6 +29,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertSame
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -46,7 +47,7 @@ class SensorCardViewModelTest {
     private var lastAutomaticGattSyncAttempt = 0L
     private val viewModel by lazy {
         SensorCardViewModel(
-            arguments = SensorCardViewModelArguments(),
+            arguments = SensorCardViewModelArguments(sensorId = AIR_SENSOR.id),
             tagInteractor = tagInteractor,
             tagDetailsInteractor = tagDetailsInteractor,
             networkDataSyncInteractor = networkDataSyncInteractor,
@@ -99,6 +100,16 @@ class SensorCardViewModelTest {
             )
         }
         assertTrue(attemptTime.captured <= System.currentTimeMillis())
+    }
+
+    @Test
+    fun `sensor flow publishes selected sensor before loading all sensors`() = runBlocking {
+        every { tagInteractor.getTagByID(AIR_SENSOR.id) } returns AIR_SENSOR
+
+        val sensors = viewModel.sensorsFlow.first()
+
+        assertEquals(1, sensors.size)
+        assertSame(AIR_SENSOR, sensors.single())
     }
 
     @Test

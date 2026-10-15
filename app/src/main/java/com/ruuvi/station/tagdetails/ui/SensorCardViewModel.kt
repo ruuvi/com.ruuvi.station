@@ -61,6 +61,10 @@ class SensorCardViewModel(
     ): ViewModel() {
 
     val sensorsFlow: Flow<List<RuuviTag>> = flow {
+        arguments.sensorId
+            ?.let(tagInteractor::getTagByID)
+            ?.let { sensor -> emit(listOf(sensor)) }
+
         while (true) {
             emit(tagInteractor.getTags())
             delay(1000)
