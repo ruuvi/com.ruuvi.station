@@ -67,7 +67,9 @@ class SensorCardViewModel(
         }
     }.flowOn(Dispatchers.IO)
 
-    private val _selectedSensor = MutableStateFlow<String?>(null)
+    val initialSensorId: String? get() = arguments.sensorId
+
+    private val _selectedSensor = MutableStateFlow<String?>(arguments.sensorId)
     val selectedSensor: StateFlow<String?> = _selectedSensor
 
     private val _chartViewPeriod = MutableStateFlow<Period>(getGraphViewPeriod())
@@ -389,7 +391,7 @@ class SensorCardViewModel(
         gattInteractor.getSyncStatusFlow(sensorId).filterNotNull().collect{ status ->
             Timber.d("getGattEvents sensor $sensorId $status")
             val isManual = manualSyncMap[sensorId] ?: false
-            status?.let { gattStatus ->
+            status.let { gattStatus ->
                 if (gattStatus.sensorId == sensorId) {
                     when (gattStatus.syncProgress) {
                         SyncProgress.STILL, SyncProgress.DONE -> {
@@ -403,6 +405,7 @@ class SensorCardViewModel(
                                 )
                             )
                         }
+
                         SyncProgress.NOT_SUPPORTED, SyncProgress.NOT_FOUND,
                         SyncProgress.ERROR, SyncProgress.DISCONNECTED -> {
                             emit(
@@ -416,6 +419,7 @@ class SensorCardViewModel(
                             )
                             resetGattStatus(sensorId, gattStatus.sessionId)
                         }
+
                         SyncProgress.CONNECTING -> {
                             emit(
                                 SyncStatus(
@@ -427,6 +431,7 @@ class SensorCardViewModel(
                                 )
                             )
                         }
+
                         SyncProgress.CONNECTED, SyncProgress.READING_INFO -> {
                             emit(
                                 SyncStatus(
@@ -438,6 +443,7 @@ class SensorCardViewModel(
                                 )
                             )
                         }
+
                         SyncProgress.READING_DATA -> {
                             val message = if (gattStatus.syncedDataPoints > 0) {
                                 UiText.StringResourceWithArgs(R.string.reading_history_x, arrayOf(gattStatus.syncedDataPoints))
@@ -454,6 +460,7 @@ class SensorCardViewModel(
                                 )
                             )
                         }
+
                         SyncProgress.SAVING_DATA -> {
                             val message = if (gattStatus.readDataSize > 0) {
                                 UiText.StringResourceWithArgs(R.string.data_points_read, arrayOf(gattStatus.readDataSize))
@@ -573,7 +580,8 @@ class SensorCardViewModel(
     init {
         if (arguments.sensorId != null) {
             val sensors = tagInteractor.getTags()
-            _selectedSensor.value = sensors.firstOrNull { it.id == arguments.sensorId }?.id
+            val foundId = sensors.firstOrNull { it.id == arguments.sensorId }?.id
+            _selectedSensor.value = foundId ?: arguments.sensorId
         }
     }
 
