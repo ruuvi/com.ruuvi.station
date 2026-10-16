@@ -994,14 +994,14 @@ fun ItemBottomUpdatedInfo(
                 Icon(
                     modifier = Modifier.height(RuuviStationTheme.dimensions.mediumPlus * fontScale),
                     painter = painterResource(id = icon),
-                    tint = RuuviStationTheme.colors.primary.copy(alpha = 0.8f),
+                    tint = RuuviStationTheme.colors.primary.copy(alpha = 0.5f),
                     contentDescription = null,
                 )
             } else {
                 Icon(
                     modifier = Modifier.height(RuuviStationTheme.dimensions.mediumPlus * fontScale),
                     painter = painterResource(id = icon),
-                    tint = RuuviStationTheme.colors.primary.copy(alpha = 0.8f),
+                    tint = RuuviStationTheme.colors.primary.copy(alpha = 0.5f),
                     contentDescription = null,
                 )
             }
