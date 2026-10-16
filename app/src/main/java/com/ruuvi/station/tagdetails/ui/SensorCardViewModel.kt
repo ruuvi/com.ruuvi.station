@@ -67,7 +67,9 @@ class SensorCardViewModel(
         }
     }.flowOn(Dispatchers.IO)
 
-    private val _selectedSensor = MutableStateFlow<String?>(null)
+    val initialSensorId: String? get() = arguments.sensorId
+
+    private val _selectedSensor = MutableStateFlow<String?>(arguments.sensorId)
     val selectedSensor: StateFlow<String?> = _selectedSensor
 
     private val _chartViewPeriod = MutableStateFlow<Period>(getGraphViewPeriod())
@@ -573,7 +575,8 @@ class SensorCardViewModel(
     init {
         if (arguments.sensorId != null) {
             val sensors = tagInteractor.getTags()
-            _selectedSensor.value = sensors.firstOrNull { it.id == arguments.sensorId }?.id
+            val foundId = sensors.firstOrNull { it.id == arguments.sensorId }?.id
+            _selectedSensor.value = foundId ?: arguments.sensorId
         }
     }
 

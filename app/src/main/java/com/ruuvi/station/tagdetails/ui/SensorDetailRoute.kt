@@ -154,10 +154,14 @@ internal fun SensorDetailRoute(
     }
 
     if (sensors.isNotEmpty()) {
+        val effectiveSelectedSensorId = selectedSensorId
+            ?: viewModel.initialSensorId
+            ?: sensors.firstOrNull()?.id
+
         RuuviTheme(darkTheme = useDarkTheme) {
             SensorDetailScreen(
                 sensors = sensors,
-                selectedSensorId = selectedSensorId,
+                selectedSensorId = effectiveSelectedSensorId,
                 destination = destination,
                 settingsRoute = settingsRoute,
                 scaffoldState = scaffoldState,
@@ -201,7 +205,9 @@ private fun SensorDetailScreen(
     onFinish: () -> Unit,
 ) {
     val sensorIds = remember(sensors) { sensors.map(RuuviTag::id) }
-    val initialPage = sensorIds.indexOf(selectedSensorId).takeIf { it >= 0 } ?: 0
+    val initialPage = remember(selectedSensorId, sensorIds) {
+        sensorIds.indexOf(selectedSensorId).takeIf { it >= 0 } ?: 0
+    }
     val pagerState = rememberPagerState(initialPage = initialPage) { sensors.size }
     val currentSensor = sensors.getOrNull(pagerState.currentPage)
     val latestSensorIds by rememberUpdatedState(sensorIds)
