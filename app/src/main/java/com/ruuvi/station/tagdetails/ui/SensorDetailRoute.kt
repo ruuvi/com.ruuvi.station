@@ -71,7 +71,10 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.delay
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import androidx.activity.ComponentActivity
+import androidx.activity.SystemBarStyle
+import androidx.activity.enableEdgeToEdge
+import androidx.compose.ui.graphics.toArgb
 import com.ruuvi.station.R
 import com.ruuvi.station.alarm.domain.AlarmSensorStatus
 import com.ruuvi.station.alarm.ui.AlarmItemsViewModel
@@ -205,10 +208,13 @@ private fun SensorDetailScreen(
     onFinish: () -> Unit,
 ) {
     val sensorIds = remember(sensors) { sensors.map(RuuviTag::id) }
-    val initialPage = remember(selectedSensorId, sensorIds) {
-        sensorIds.indexOf(selectedSensorId).takeIf { it >= 0 } ?: 0
+    val initialSensorId = rememberSaveable { selectedSensorId.orEmpty() }
+    val initialPage = remember(initialSensorId, sensorIds) {
+        sensorIds.indexOf(initialSensorId).takeIf { it >= 0 } ?: 0
     }
-    val pagerState = rememberPagerState(initialPage = initialPage) { sensors.size }
+    val pagerState = key(initialSensorId) {
+        rememberPagerState(initialPage = initialPage) { sensors.size }
+    }
     val currentSensor = sensors.getOrNull(pagerState.currentPage)
     val latestSensorIds by rememberUpdatedState(sensorIds)
     val nestedSettings = destination == SensorDetailDestination.SETTINGS &&
@@ -792,19 +798,23 @@ private fun SensorDetailSystemBars(
     useTransparentNavigationBar: Boolean,
     useDarkTheme: Boolean,
 ) {
-    val systemUiController = rememberSystemUiController()
-    val statusBarColor = RuuviStationTheme.colors.systemBars
-    val navigationBarColor = RuuviStationTheme.colors.background
+    val context = LocalContext.current
+    val statusBarColor = RuuviStationTheme.colors.systemBars.toArgb()
+    val navigationBarColor = RuuviStationTheme.colors.background.toArgb()
+    val transparentColor = Color.Transparent.toArgb()
+
+    val activeStatusBarColor = if (useTransparentStatusBar) transparentColor else statusBarColor
+    val activeNavigationBarColor = if (useTransparentNavigationBar) transparentColor else navigationBarColor
 
     SideEffect {
-        systemUiController.setStatusBarColor(
-            color = if (useTransparentStatusBar) Color.Transparent else statusBarColor,
-            darkIcons = false,
-        )
-        systemUiController.setNavigationBarColor(
-            color = if (useTransparentNavigationBar) Color.Transparent else navigationBarColor,
-            navigationBarContrastEnforced = !useTransparentNavigationBar,
-            darkIcons = !useTransparentNavigationBar && !useDarkTheme,
+        val activity = context as? ComponentActivity ?: return@SideEffect
+        activity.enableEdgeToEdge(
+            statusBarStyle = SystemBarStyle.dark(activeStatusBarColor),
+            navigationBarStyle = if (!useTransparentNavigationBar && !useDarkTheme) {
+                SystemBarStyle.light(activeNavigationBarColor, activeNavigationBarColor)
+            } else {
+                SystemBarStyle.dark(activeNavigationBarColor)
+            }
         )
     }
 }
