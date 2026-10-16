@@ -33,12 +33,25 @@ object BluetoothScannerInjectionModule {
 
         bind<BluetoothGattInteractor>() with singleton { BluetoothGattInteractor(instance(), instance(), instance(), instance(), instance(), instance(), instance()) }
 
+        bind<AutomaticGattSyncInteractor>() with singleton {
+            AutomaticGattSyncInteractor(instance(), instance())
+        }
+
         bind<BluetoothStateReceiver>() with singleton { BluetoothStateReceiver(instance(), instance()) }
 
         bind<IRuuviTagScanner.OnTagFoundListener>() with singleton { instance<DefaultOnTagFoundListener>() }
 
         bind<DefaultOnTagFoundListener>() with singleton {
-            DefaultOnTagFoundListener(instance(), instance(), instance(), instance(), instance(), instance(), instance())
+            DefaultOnTagFoundListener(
+                instance(),
+                instance(),
+                instance(),
+                instance(),
+                instance(),
+                instance(),
+                instance(),
+                { instance<AutomaticGattSyncInteractor>() },
+            )
         }
 
         bind<FakeScanResultsSender>() with singleton { FakeScanResultsSender(instance()) }

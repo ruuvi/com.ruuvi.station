@@ -5,6 +5,7 @@ import com.ruuvi.station.app.preferences.GlobalSettings
 import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.bluetooth.contract.FoundRuuviTag
 import com.ruuvi.station.bluetooth.contract.IRuuviTagScanner
+import com.ruuvi.station.bluetooth.domain.AutomaticGattSyncInteractor
 import com.ruuvi.station.database.domain.SensorHistoryRepository
 import com.ruuvi.station.database.domain.SensorSettingsRepository
 import com.ruuvi.station.database.domain.TagRepository
@@ -30,7 +31,8 @@ class DefaultOnTagFoundListener(
     private val repository: TagRepository,
     private val alarmCheckInteractor: AlarmCheckInteractor,
     private val sensorSettingsRepository: SensorSettingsRepository,
-    private val sensorHistoryRepository: SensorHistoryRepository
+    private val sensorHistoryRepository: SensorHistoryRepository,
+    private val automaticGattSyncInteractor: () -> AutomaticGattSyncInteractor,
 ) : IRuuviTagScanner.OnTagFoundListener {
 
     var isForeground = false
@@ -57,6 +59,14 @@ class DefaultOnTagFoundListener(
                 if (dbTag != null) {
                     dbTag.preserveData(ruuviTag)
                     val sensorSettings = sensorSettingsRepository.getSensorSettings(sensorId)
+                    if (isForeground && sensorSettings != null) {
+                        automaticGattSyncInteractor().syncIfEligible(
+                            sensorId = sensorId,
+                            lastSync = sensorSettings.lastSync,
+                            isAir = ruuviTag.isAir(),
+                            networkSensor = sensorSettings.networkSensor,
+                        )
+                    }
                     if (!shouldSkipForCloudMode(sensorSettings)) {
                         repository.updateTag(ruuviTag)
                         if (sensorSettings != null && ruuviTag.dataFormat !in legacyAirDataformats) {
