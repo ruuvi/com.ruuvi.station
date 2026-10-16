@@ -661,7 +661,10 @@ fun SensorCardBottom(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
             modifier = modifier
-                .padding(horizontal = 20.dp)
+                .padding(
+                    horizontal = RuuviStationTheme.dimensions.screenPadding,
+                    vertical = RuuviStationTheme.dimensions.mediumPlus
+                )
                 .fillMaxWidth()
         ) {
             val icon = sensor.getSource().getIconResource()
@@ -671,27 +674,19 @@ fun SensorCardBottom(
             ) {
                 Icon(
                     modifier = Modifier
-                        .size(
-                            width = if (sensor.getSource() == UpdateSource.Cloud) {
-                                22.dp
-                            } else {
-                                16.dp
-                            },
-                            height = if (sensor.getSource() == UpdateSource.Cloud) {
-                                12.dp
-                            } else {
-                                12.dp
-                            },
-                        ),
+                        .height(RuuviStationTheme.dimensions.mediumPlus.scaleUpTo(1.5f))
+                        .width(24.dp.scaleUpTo(1.5f)),
                     painter = painterResource(id = icon),
-                    tint = White80,
+                    tint = White50,
                     contentDescription = null,
                 )
-                Spacer(modifier = Modifier.width(SENSOR_VALUE_ITEM_SPACING))
+                if (sensor.getSource() == UpdateSource.Cloud) {
+                    Spacer(modifier = Modifier.width(RuuviStationTheme.dimensions.medium))
+                }
                 Text(
                     modifier = Modifier,
                     style = RuuviStationTheme.typography.dashboardSecondary,
-                    color = White80,
+                    color = White50,
                     fontSize = ruuviStationFontsSizes.petite.limitScaleTo(1.5f),
                     textAlign = TextAlign.Right,
                     text = updatedText,
