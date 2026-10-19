@@ -6,6 +6,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
@@ -33,6 +34,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -146,16 +148,6 @@ private fun SensorDetailMenu(
     modifier: Modifier = Modifier,
 ) {
     val destinations = SensorDetailDestination.entries
-    val indicatorOffset by animateDpAsState(
-        targetValue = (SENSOR_MENU_BUTTON_WIDTH + SENSOR_MENU_BUTTON_SPACING) *
-            destinations.indexOf(destination) +
-            (SENSOR_MENU_BUTTON_WIDTH - SENSOR_MENU_INDICATOR_WIDTH) / 2,
-        animationSpec = spring(
-            dampingRatio = SENSOR_MENU_INDICATOR_DAMPING_RATIO,
-            stiffness = Spring.StiffnessLow,
-        ),
-        label = "sensor detail menu indicator",
-    )
 
     Box(
         modifier = modifier
@@ -205,19 +197,6 @@ private fun SensorDetailMenu(
                 }
             }
         }
-
-        Box(
-            modifier = Modifier
-                .align(Alignment.BottomStart)
-                .offset { IntOffset(indicatorOffset.roundToPx(), 0) }
-                .padding(bottom = 4.dp)
-                .width(SENSOR_MENU_INDICATOR_WIDTH)
-                .height(2.dp)
-                .background(
-                    color = RuuviStationTheme.colors.topBarText,
-                    shape = RoundedCornerShape(1.dp),
-                ),
-        )
     }
 }
 
@@ -227,6 +206,12 @@ private fun DestinationAction(
     onClick: () -> Unit,
     content: @Composable () -> Unit,
 ) {
+    val indicatorAlpha by animateFloatAsState(
+        targetValue = if (selected) 1f else 0f,
+        animationSpec = tween(durationMillis = 200),
+        label = "indicator alpha",
+    )
+
     Box(
         modifier = Modifier
             .width(SENSOR_MENU_BUTTON_WIDTH)
@@ -242,6 +227,21 @@ private fun DestinationAction(
             onClick = onClick,
         ) {
             content()
+        }
+
+        if (indicatorAlpha > 0f) {
+            Box(
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(bottom = 4.dp)
+                    .graphicsLayer { alpha = indicatorAlpha }
+                    .width(SENSOR_MENU_INDICATOR_WIDTH)
+                    .height(2.dp)
+                    .background(
+                        color = RuuviStationTheme.colors.topBarText,
+                        shape = RoundedCornerShape(1.dp),
+                    ),
+            )
         }
     }
 }
