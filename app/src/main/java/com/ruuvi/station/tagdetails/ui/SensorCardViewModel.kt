@@ -60,6 +60,14 @@ class SensorCardViewModel(
     private val unitsConverter: UnitsConverter
     ): ViewModel() {
 
+    val initialSensors: List<RuuviTag> = tagInteractor.getCachedTags().let { sensors ->
+        if (sensors.any { it.id == arguments.sensorId }) {
+            sensors
+        } else {
+            emptyList()
+        }
+    }
+
     val sensorsFlow: Flow<List<RuuviTag>> = flow {
         while (true) {
             emit(tagInteractor.getTags())
@@ -575,14 +583,6 @@ class SensorCardViewModel(
 
     fun saveSelected(sensorId: String) {
         _selectedSensor.value = sensorId
-    }
-
-    init {
-        if (arguments.sensorId != null) {
-            val sensors = tagInteractor.getTags()
-            val foundId = sensors.firstOrNull { it.id == arguments.sensorId }?.id
-            _selectedSensor.value = foundId ?: arguments.sensorId
-        }
     }
 
     companion object {

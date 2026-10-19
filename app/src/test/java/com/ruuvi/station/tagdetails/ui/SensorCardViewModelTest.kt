@@ -29,6 +29,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -44,9 +45,11 @@ class SensorCardViewModelTest {
     private val unitsConverter = mockk<UnitsConverter>(relaxed = true)
     private val syncStatus = MutableStateFlow<GattSyncStatus?>(null)
     private var lastAutomaticGattSyncAttempt = 0L
-    private val viewModel by lazy {
+    private val viewModel by lazy { createViewModel() }
+
+    private fun createViewModel(sensorId: String? = null) =
         SensorCardViewModel(
-            arguments = SensorCardViewModelArguments(),
+            arguments = SensorCardViewModelArguments(sensorId),
             tagInteractor = tagInteractor,
             tagDetailsInteractor = tagDetailsInteractor,
             networkDataSyncInteractor = networkDataSyncInteractor,
@@ -60,7 +63,6 @@ class SensorCardViewModelTest {
             alarmRepository = mockk<AlarmRepository>(relaxed = true),
             unitsConverter = unitsConverter,
         )
-    }
 
     @Before
     fun setUp() {
@@ -68,6 +70,7 @@ class SensorCardViewModelTest {
 
         lastAutomaticGattSyncAttempt = 0L
         every { networkDataSyncInteractor.syncInProgressFlow } returns MutableStateFlow(false)
+        every { tagInteractor.getCachedTags() } returns emptyList()
         every { gattInteractor.syncStatusFlow } returns syncStatus
         every { gattInteractor.getSyncStatusFlow(AIR_SENSOR.id) } returns syncStatus
         every { gattInteractor.readLogs(any(), any()) } returns true
@@ -83,6 +86,78 @@ class SensorCardViewModelTest {
             lastAutomaticGattSyncAttempt = 0L
         }
         every { tagDetailsInteractor.getTagById(AIR_SENSOR.id) } returns AIR_SENSOR
+    }
+
+    @Test
+    fun `opening a sensor reuses the snapshot without loading any sensors`() {
+        for (sensorCount in listOf(4, 8, 12)) {
+            val sensors = List(sensorCount) { index ->
+                ruuviTagPreview.copy(id = "sensor-$index")
+            }
+            every { tagInteractor.getCachedTags() } returns sensors
+            val selectedId = sensors.last().id
+
+            val model = createViewModel(selectedId)
+
+            assertEquals(sensors, model.initialSensors)
+            assertEquals(selectedId, model.selectedSensor.value)
+            verify(exactly = 0) { tagInteractor.getTags() }
+        }
+    }
+
+    @Test
+    fun `cold opening preserves the requested sensor without synchronous loading`() {
+        val model = createViewModel(AIR_SENSOR.id)
+
+        assertTrue(model.initialSensors.isEmpty())
+        assertEquals(AIR_SENSOR.id, model.selectedSensor.value)
+        verify(exactly = 0) { tagInteractor.getTags() }
+    }
+
+    @Test
+    fun `opening without a sensor id waits for the fresh list before selecting a page`() {
+        every { tagInteractor.getCachedTags() } returns listOf(AIR_SENSOR)
+
+        val model = createViewModel()
+
+        assertTrue(model.initialSensors.isEmpty())
+        assertNull(model.selectedSensor.value)
+        verify(exactly = 0) { tagInteractor.getTags() }
+    }
+
+    @Test
+    fun `snapshot without the requested sensor waits for fresh data`() = runBlocking {
+        every { tagInteractor.getCachedTags() } returns listOf(
+            ruuviTagPreview.copy(id = "another-sensor"),
+        )
+        every { tagInteractor.getTags() } returns listOf(AIR_SENSOR)
+
+        val model = createViewModel(AIR_SENSOR.id)
+
+        assertTrue(model.initialSensors.isEmpty())
+        assertEquals(AIR_SENSOR.id, model.selectedSensor.value)
+        verify(exactly = 0) { tagInteractor.getTags() }
+        assertEquals(listOf(AIR_SENSOR), model.sensorsFlow.first())
+        assertEquals(AIR_SENSOR.id, model.selectedSensor.value)
+    }
+
+    @Test
+    fun `cached sensors are refreshed off the calling thread`() = runBlocking {
+        val callingThread = Thread.currentThread()
+        val cachedSensors = listOf(AIR_SENSOR)
+        val refreshedSensors = listOf(AIR_SENSOR.copy(displayName = "Updated sensor"))
+        every { tagInteractor.getCachedTags() } returns cachedSensors
+        every { tagInteractor.getTags() } answers {
+            assertFalse(Thread.currentThread() == callingThread)
+            refreshedSensors
+        }
+
+        val model = createViewModel(AIR_SENSOR.id)
+
+        assertEquals(cachedSensors, model.initialSensors)
+        verify(exactly = 0) { tagInteractor.getTags() }
+        assertEquals(refreshedSensors, model.sensorsFlow.first())
+        verify(exactly = 1) { tagInteractor.getTags() }
     }
 
     @Test
