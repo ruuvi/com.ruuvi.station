@@ -4,7 +4,9 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
-import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -26,13 +28,18 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.Layout
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInParent
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
@@ -144,13 +151,33 @@ private fun SensorDetailMenu(
     onDestinationSelected: (SensorDetailDestination) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val density = LocalDensity.current
     val destinations = SensorDetailDestination.entries
+    var itemCentersDp by remember {
+        mutableStateOf(List(destinations.size) { index ->
+            (SENSOR_MENU_BUTTON_WIDTH + SENSOR_MENU_BUTTON_SPACING) * index + SENSOR_MENU_BUTTON_WIDTH / 2
+        })
+    }
+
+    val selectedIndex = destinations.indexOf(destination)
+    val currentCenterDp = itemCentersDp.getOrNull(selectedIndex)
+        ?: ((SENSOR_MENU_BUTTON_WIDTH + SENSOR_MENU_BUTTON_SPACING) * selectedIndex + SENSOR_MENU_BUTTON_WIDTH / 2)
+    val targetOffsetDp = currentCenterDp - SENSOR_MENU_INDICATOR_WIDTH / 2
+
+    val indicatorOffset by animateDpAsState(
+        targetValue = targetOffsetDp,
+        animationSpec = spring(
+            dampingRatio = SENSOR_MENU_INDICATOR_DAMPING_RATIO,
+            stiffness = Spring.StiffnessLow,
+        ),
+        label = "sensor detail menu indicator",
+    )
 
     Box(
         modifier = modifier
             .width(
                 SENSOR_MENU_BUTTON_WIDTH * destinations.size +
-                    SENSOR_MENU_BUTTON_SPACING * (destinations.size - 1),
+                        SENSOR_MENU_BUTTON_SPACING * (destinations.size - 1),
             )
             .height(SENSOR_DETAIL_HEADER_HEIGHT),
     ) {
@@ -158,10 +185,19 @@ private fun SensorDetailMenu(
             modifier = Modifier.fillMaxHeight(),
             horizontalArrangement = Arrangement.spacedBy(SENSOR_MENU_BUTTON_SPACING),
         ) {
-            destinations.forEach { menuDestination ->
+            destinations.forEachIndexed { index, menuDestination ->
                 DestinationAction(
                     selected = destination == menuDestination,
                     onClick = { onDestinationSelected(menuDestination) },
+                    modifier = Modifier.onGloballyPositioned { coordinates ->
+                        val centerX = coordinates.positionInParent().x + coordinates.size.width / 2f
+                        val centerDp = with(density) { centerX.toDp() }
+                        if (itemCentersDp.getOrNull(index) != centerDp) {
+                            itemCentersDp = itemCentersDp.toMutableList().apply {
+                                this[index] = centerDp
+                            }
+                        }
+                    },
                 ) {
                     when (menuDestination) {
                         SensorDetailDestination.CARD -> Icon(
@@ -194,6 +230,19 @@ private fun SensorDetailMenu(
                 }
             }
         }
+
+        Box(
+            modifier = Modifier
+                .align(Alignment.BottomStart)
+                .offset { IntOffset(indicatorOffset.roundToPx(), 0) }
+                .padding(bottom = 4.dp)
+                .width(SENSOR_MENU_INDICATOR_WIDTH)
+                .height(2.dp)
+                .background(
+                    color = RuuviStationTheme.colors.topBarText,
+                    shape = RoundedCornerShape(1.dp),
+                ),
+        )
     }
 }
 
@@ -201,16 +250,11 @@ private fun SensorDetailMenu(
 private fun DestinationAction(
     selected: Boolean,
     onClick: () -> Unit,
+    modifier: Modifier = Modifier,
     content: @Composable () -> Unit,
 ) {
-    val indicatorAlpha by animateFloatAsState(
-        targetValue = if (selected) 1f else 0f,
-        animationSpec = tween(durationMillis = 200),
-        label = "indicator alpha",
-    )
-
     Box(
-        modifier = Modifier
+        modifier = modifier
             .width(SENSOR_MENU_BUTTON_WIDTH)
             .fillMaxHeight(),
         contentAlignment = Alignment.Center,
@@ -224,21 +268,6 @@ private fun DestinationAction(
             onClick = onClick,
         ) {
             content()
-        }
-
-        if (indicatorAlpha > 0f) {
-            Box(
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .padding(bottom = 4.dp)
-                    .graphicsLayer { alpha = indicatorAlpha }
-                    .width(SENSOR_MENU_INDICATOR_WIDTH)
-                    .height(2.dp)
-                    .background(
-                        color = RuuviStationTheme.colors.topBarText,
-                        shape = RoundedCornerShape(1.dp),
-                    ),
-            )
         }
     }
 }
@@ -288,7 +317,7 @@ internal fun SensorDetailTitle(
                 targetState = subtitle,
                 transitionSpec = {
                     fadeIn(animationSpec = tween(durationMillis = SENSOR_TITLE_FADE_IN_MILLIS)) togetherWith
-                        fadeOut(animationSpec = tween(durationMillis = SENSOR_TITLE_FADE_OUT_MILLIS))
+                            fadeOut(animationSpec = tween(durationMillis = SENSOR_TITLE_FADE_OUT_MILLIS))
                 },
                 contentAlignment = Alignment.TopCenter,
                 label = "sensor detail subtitle",
@@ -399,8 +428,8 @@ private fun SensorTitlePager(
         val firstHeight = placeables.first().height
         val lastHeight = placeables.last().height
         val interpolatedHeight = (
-            firstHeight + (lastHeight - firstHeight) * pageFraction
-        ).roundToInt()
+                firstHeight + (lastHeight - firstHeight) * pageFraction
+                ).roundToInt()
         val layoutHeight = interpolatedHeight.coerceIn(
             constraints.minHeight,
             constraints.maxHeight,
