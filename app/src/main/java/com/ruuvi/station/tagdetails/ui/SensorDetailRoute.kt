@@ -131,7 +131,9 @@ internal fun SensorDetailRoute(
     useNewSensorCard: Boolean,
     onFinish: () -> Unit,
 ) {
-    val sensors by viewModel.sensorsFlow.collectAsStateWithLifecycle(initialValue = emptyList())
+    val sensors by viewModel.sensorsFlow.collectAsStateWithLifecycle(
+        initialValue = viewModel.initialSensors,
+    )
     val selectedSensorId by viewModel.selectedSensor.collectAsStateWithLifecycle()
     val viewPeriod by viewModel.chartViewPeriod.collectAsStateWithLifecycle()
     val syncInProgress by viewModel.syncInProgress.collectAsStateWithLifecycle()
