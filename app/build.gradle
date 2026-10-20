@@ -271,6 +271,7 @@ dependencies {
 
     testImplementation libs.junit
     testImplementation libs.mockk
+    testImplementation libs.kotlinx.coroutines.test
     testImplementation "org.mockito.kotlin:mockito-kotlin:$mockitoKotlinVersion"
     mockitoAgent("org.mockito:mockito-core:$mockitoVersion") {
         transitive = false
