@@ -60,20 +60,23 @@ class SensorCardViewModel(
     private val unitsConverter: UnitsConverter
     ): ViewModel() {
 
-    val initialSensors: List<RuuviTag> = tagInteractor.getCachedTags().let { sensors ->
-        if (sensors.any { it.id == arguments.sensorId }) {
-            sensors
-        } else {
-            emptyList()
-        }
-    }
-
-    val sensorsFlow: Flow<List<RuuviTag>> = flow {
+    val sensorsFlow: StateFlow<List<RuuviTag>> = flow {
         while (true) {
             emit(tagInteractor.getTags())
             delay(1000)
         }
     }.flowOn(Dispatchers.IO)
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(1000),
+            initialValue = tagInteractor.getCachedTags().let { sensors ->
+                if (sensors.any { it.id == arguments.sensorId }) {
+                    sensors
+                } else {
+                    emptyList()
+                }
+            },
+        )
 
     val initialSensorId: String? get() = arguments.sensorId
 

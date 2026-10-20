@@ -1,5 +1,6 @@
 package com.ruuvi.station.tagdetails.ui
 
+import androidx.lifecycle.viewModelScope
 import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.app.preferences.GlobalSettings
 import com.ruuvi.station.bluetooth.domain.BluetoothGattInteractor
@@ -13,6 +14,7 @@ import com.ruuvi.station.export.XlsxExporter
 import com.ruuvi.station.network.domain.NetworkDataSyncInteractor
 import com.ruuvi.station.nfc.domain.NfcResultInteractor
 import com.ruuvi.station.settings.domain.AppSettingsInteractor
+import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tag.domain.TagInteractor
 import com.ruuvi.station.tag.domain.ruuviTagPreview
 import com.ruuvi.station.tag.domain.sensorMeasurementsPreview
@@ -24,9 +26,25 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.job
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.advanceTimeBy
+import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.runCurrent
+import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.test.setMain
+import kotlinx.coroutines.withContext
+import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
@@ -34,8 +52,13 @@ import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import java.util.Date
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.TimeUnit
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class SensorCardViewModelTest {
+    private val mainDispatcher = StandardTestDispatcher()
+    private val createdViewModels = mutableListOf<SensorCardViewModel>()
     private val tagInteractor = mockk<TagInteractor>(relaxed = true)
     private val tagDetailsInteractor = mockk<TagDetailsInteractor>()
     private val networkDataSyncInteractor = mockk<NetworkDataSyncInteractor>()
@@ -62,10 +85,11 @@ class SensorCardViewModelTest {
             nfcResultInteractor = mockk<NfcResultInteractor>(relaxed = true),
             alarmRepository = mockk<AlarmRepository>(relaxed = true),
             unitsConverter = unitsConverter,
-        )
+        ).also(createdViewModels::add)
 
     @Before
     fun setUp() {
+        Dispatchers.setMain(mainDispatcher)
         val automaticAttempt = slot<Long>()
 
         lastAutomaticGattSyncAttempt = 0L
@@ -88,6 +112,13 @@ class SensorCardViewModelTest {
         every { tagDetailsInteractor.getTagById(AIR_SENSOR.id) } returns AIR_SENSOR
     }
 
+    @After
+    fun tearDown() {
+        createdViewModels.forEach { it.viewModelScope.cancel() }
+        mainDispatcher.scheduler.runCurrent()
+        Dispatchers.resetMain()
+    }
+
     @Test
     fun `opening a sensor reuses the snapshot without loading any sensors`() {
         for (sensorCount in listOf(4, 8, 12)) {
@@ -99,7 +130,7 @@ class SensorCardViewModelTest {
 
             val model = createViewModel(selectedId)
 
-            assertEquals(sensors, model.initialSensors)
+            assertEquals(sensors, model.sensorsFlow.value)
             assertEquals(selectedId, model.selectedSensor.value)
             verify(exactly = 0) { tagInteractor.getTags() }
         }
@@ -109,7 +140,7 @@ class SensorCardViewModelTest {
     fun `cold opening preserves the requested sensor without synchronous loading`() {
         val model = createViewModel(AIR_SENSOR.id)
 
-        assertTrue(model.initialSensors.isEmpty())
+        assertTrue(model.sensorsFlow.value.isEmpty())
         assertEquals(AIR_SENSOR.id, model.selectedSensor.value)
         verify(exactly = 0) { tagInteractor.getTags() }
     }
@@ -120,13 +151,13 @@ class SensorCardViewModelTest {
 
         val model = createViewModel()
 
-        assertTrue(model.initialSensors.isEmpty())
+        assertTrue(model.sensorsFlow.value.isEmpty())
         assertNull(model.selectedSensor.value)
         verify(exactly = 0) { tagInteractor.getTags() }
     }
 
     @Test
-    fun `snapshot without the requested sensor waits for fresh data`() = runBlocking {
+    fun `snapshot without the requested sensor waits for fresh data`() = runTest {
         every { tagInteractor.getCachedTags() } returns listOf(
             ruuviTagPreview.copy(id = "another-sensor"),
         )
@@ -134,15 +165,15 @@ class SensorCardViewModelTest {
 
         val model = createViewModel(AIR_SENSOR.id)
 
-        assertTrue(model.initialSensors.isEmpty())
+        assertTrue(model.sensorsFlow.value.isEmpty())
         assertEquals(AIR_SENSOR.id, model.selectedSensor.value)
         verify(exactly = 0) { tagInteractor.getTags() }
-        assertEquals(listOf(AIR_SENSOR), model.sensorsFlow.first())
+        assertEquals(listOf(AIR_SENSOR), model.sensorsFlow.first { it.isNotEmpty() })
         assertEquals(AIR_SENSOR.id, model.selectedSensor.value)
     }
 
     @Test
-    fun `cached sensors are refreshed off the calling thread`() = runBlocking {
+    fun `cached sensors are refreshed off the calling thread`() = runTest {
         val callingThread = Thread.currentThread()
         val cachedSensors = listOf(AIR_SENSOR)
         val refreshedSensors = listOf(AIR_SENSOR.copy(displayName = "Updated sensor"))
@@ -154,10 +185,70 @@ class SensorCardViewModelTest {
 
         val model = createViewModel(AIR_SENSOR.id)
 
-        assertEquals(cachedSensors, model.initialSensors)
+        assertEquals(cachedSensors, model.sensorsFlow.value)
         verify(exactly = 0) { tagInteractor.getTags() }
-        assertEquals(refreshedSensors, model.sensorsFlow.first())
+        assertEquals(refreshedSensors, model.sensorsFlow.first { it != cachedSensors })
         verify(exactly = 1) { tagInteractor.getTags() }
+    }
+
+    @Test
+    fun `recreated collection retains a newly added selected sensor before the next refresh`() = runTest {
+        val cachedSensors = listOf(
+            ruuviTagPreview.copy(id = "sensor-a"),
+            ruuviTagPreview.copy(id = "sensor-b"),
+        )
+        val addedSensor = ruuviTagPreview.copy(id = "sensor-c")
+        val refreshedSensors = listOf(addedSensor) + cachedSensors
+        val nextRefreshedSensors = listOf(
+            addedSensor.copy(displayName = "Updated sensor"),
+        ) + cachedSensors
+        val nextRefreshStarted = CountDownLatch(1)
+        val allowNextRefresh = CountDownLatch(1)
+        every { tagInteractor.getCachedTags() } returns cachedSensors
+        every { tagInteractor.getTags() } returns refreshedSensors andThenAnswer {
+            nextRefreshStarted.countDown()
+            check(allowNextRefresh.await(5, TimeUnit.SECONDS)) {
+                "Timed out waiting to release the next sensor refresh"
+            }
+            nextRefreshedSensors
+        }
+        val model = createViewModel(cachedSensors.first().id)
+
+        try {
+            val collection = backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+                model.sensorsFlow.collect()
+            }
+            assertEquals(refreshedSensors, model.sensorsFlow.first { it == refreshedSensors })
+            model.saveSelected(addedSensor.id)
+
+            collection.cancelAndJoin()
+            advanceTimeBy(1000)
+            runCurrent()
+
+            val recreatedSensorLists = mutableListOf<List<RuuviTag>>()
+            backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+                model.sensorsFlow.collect { recreatedSensorLists.add(it) }
+            }
+            runCurrent()
+            assertTrue(
+                "The next refresh should be pending while the recreated collector reads state",
+                withContext(Dispatchers.IO) {
+                    nextRefreshStarted.await(5, TimeUnit.SECONDS)
+                },
+            )
+
+            assertEquals(refreshedSensors, recreatedSensorLists.first())
+            assertEquals(addedSensor.id, recreatedSensorLists.first()[0].id)
+            assertEquals(addedSensor.id, model.selectedSensor.value)
+            verify(exactly = 1) { tagInteractor.getCachedTags() }
+
+            allowNextRefresh.countDown()
+            assertEquals(nextRefreshedSensors, model.sensorsFlow.first { it == nextRefreshedSensors })
+            assertEquals(addedSensor.id, model.selectedSensor.value)
+        } finally {
+            allowNextRefresh.countDown()
+            model.viewModelScope.coroutineContext.job.cancelAndJoin()
+        }
     }
 
     @Test
