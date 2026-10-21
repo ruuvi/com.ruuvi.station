@@ -21,7 +21,7 @@ class AutomaticGattSyncInteractorTest {
     @Before
     fun setUp() {
         every { gattInteractor.isSyncInProgress(any()) } returns false
-        every { gattInteractor.readLogs(any(), any()) } returns true
+        every { gattInteractor.readLogs(any(), any(), any()) } returns true
         every { preferencesRepository.getLastAutomaticGattSyncAttempt(any()) } returns 0L
     }
 
@@ -36,7 +36,7 @@ class AutomaticGattSyncInteractorTest {
             networkSensor = false,
         )
 
-        verify { gattInteractor.readLogs(SENSOR_ID, OLD_LAST_SYNC) }
+        verify { gattInteractor.readLogs(SENSOR_ID, OLD_LAST_SYNC, manualSync = false) }
         verify {
             preferencesRepository.setLastAutomaticGattSyncAttempt(SENSOR_ID, capture(attemptTime))
         }
@@ -56,7 +56,7 @@ class AutomaticGattSyncInteractorTest {
             networkSensor = false,
         )
 
-        verify(exactly = 0) { gattInteractor.readLogs(any(), any()) }
+        verify(exactly = 0) { gattInteractor.readLogs(any(), any(), any()) }
     }
 
     @Test
@@ -81,7 +81,7 @@ class AutomaticGattSyncInteractorTest {
             networkSensor = false,
         )
 
-        verify(exactly = 0) { gattInteractor.readLogs(any(), any()) }
+        verify(exactly = 0) { gattInteractor.readLogs(any(), any(), any()) }
     }
 
     private companion object {

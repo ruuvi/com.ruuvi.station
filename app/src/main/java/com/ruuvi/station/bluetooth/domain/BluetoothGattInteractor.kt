@@ -38,7 +38,7 @@ class BluetoothGattInteractor (
     private val activeSessions = ConcurrentHashMap<String, Long>()
     private val sessionLock = Any()
 
-    fun readLogs(sensorId: String, from: Date?): Boolean {
+    fun readLogs(sensorId: String, from: Date?, manualSync: Boolean = true): Boolean {
         val sessionId = synchronized(sessionLock) {
             if (activeSessions.containsKey(sensorId)) {
                 Timber.d("Ignoring duplicate GATT download for $sensorId")
@@ -46,7 +46,7 @@ class BluetoothGattInteractor (
             }
             sessionIdGenerator.incrementAndGet().also { activeSessions[sensorId] = it }
         }
-        setSessionSyncStatus(sensorId, sessionId, SyncProgress.CONNECTING)
+        setSessionSyncStatus(sensorId, sessionId, SyncProgress.CONNECTING, manualSync = manualSync)
         val found= interactor.readLogs(sensorId, from, object : IRuuviGattListener {
             override fun connected(state: Boolean) {
                 Timber.d(
@@ -54,16 +54,16 @@ class BluetoothGattInteractor (
                         "${syncStatuses.value[sensorId]?.syncProgress}"
                 )
                 if (state) {
-                    setSessionSyncStatus(sensorId, sessionId, SyncProgress.CONNECTED)
-                    setSessionSyncStatus(sensorId, sessionId, SyncProgress.READING_INFO)
+                    setSessionSyncStatus(sensorId, sessionId, SyncProgress.CONNECTED, manualSync = manualSync)
+                    setSessionSyncStatus(sensorId, sessionId, SyncProgress.READING_INFO, manualSync = manualSync)
                 } else {
                     if (
                         syncStatuses.value[sensorId]?.syncProgress == SyncProgress.SAVING_DATA ||
                         syncStatuses.value[sensorId]?.syncProgress == SyncProgress.DONE
                     ) {
-                        setSessionSyncStatus(sensorId, sessionId, SyncProgress.DONE)
+                        setSessionSyncStatus(sensorId, sessionId, SyncProgress.DONE, manualSync = manualSync)
                     } else {
-                        setSessionSyncStatus(sensorId, sessionId, SyncProgress.DISCONNECTED)
+                        setSessionSyncStatus(sensorId, sessionId, SyncProgress.DISCONNECTED, manualSync = manualSync)
                     }
                 }
             }
@@ -75,7 +75,8 @@ class BluetoothGattInteractor (
                         sessionId,
                         SyncProgress.READING_DATA,
                         deviceInfoModel = model,
-                        deviceInfoFw = fw
+                        deviceInfoFw = fw,
+                        manualSync = manualSync,
                     )
                 } else {
                     setSessionSyncStatus(
@@ -83,7 +84,8 @@ class BluetoothGattInteractor (
                         sessionId,
                         SyncProgress.NOT_SUPPORTED,
                         deviceInfoModel = model,
-                        deviceInfoFw = fw
+                        deviceInfoFw = fw,
+                        manualSync = manualSync,
                     )
                 }
             }
@@ -93,7 +95,8 @@ class BluetoothGattInteractor (
                     sensorId,
                     sessionId,
                     SyncProgress.SAVING_DATA,
-                    readDataSize = data.size
+                    readDataSize = data.size,
+                    manualSync = manualSync,
                 )
                 if (!isCurrentSession(sensorId, sessionId)) return
                 saveGattReadings(sensorId, data)
@@ -110,20 +113,21 @@ class BluetoothGattInteractor (
                         sensorId,
                         sessionId,
                         SyncProgress.READING_DATA,
-                        syncedDataPoints = syncedDataPoints
+                        syncedDataPoints = syncedDataPoints,
+                        manualSync = manualSync,
                     )
                 }
             }
 
             override fun error(errorMessage: String) {
                 Timber.d("Error: $errorMessage")
-                setSessionSyncStatus(sensorId, sessionId, SyncProgress.ERROR)
+                setSessionSyncStatus(sensorId, sessionId, SyncProgress.ERROR, manualSync = manualSync)
             }
 
             override fun heartbeat(raw: String) { }
         })
         if (!found)
-            setSessionSyncStatus(sensorId, sessionId, SyncProgress.NOT_FOUND)
+            setSessionSyncStatus(sensorId, sessionId, SyncProgress.NOT_FOUND, manualSync = manualSync)
         return true
     }
 
@@ -179,7 +183,14 @@ class BluetoothGattInteractor (
                 return
             }
             activeSessions.remove(sensorId)
-            setSyncStatus(GattSyncStatus(sensorId, SyncProgress.STILL, sessionId = sessionId ?: 0))
+            setSyncStatus(
+                GattSyncStatus(
+                    sensorId = sensorId,
+                    syncProgress = SyncProgress.STILL,
+                    sessionId = sessionId ?: 0,
+                    manualSync = currentStatus?.manualSync ?: false,
+                )
+            )
         }
     }
 
@@ -190,7 +201,8 @@ class BluetoothGattInteractor (
         deviceInfoModel: String = "",
         deviceInfoFw: String = "",
         readDataSize: Int = 0,
-        syncedDataPoints: Int = 0
+        syncedDataPoints: Int = 0,
+        manualSync: Boolean,
     ) {
         synchronized(sessionLock) {
             if (!isCurrentSession(sensorId, sessionId)) {
@@ -205,7 +217,8 @@ class BluetoothGattInteractor (
                     deviceInfoFw = deviceInfoFw,
                     readDataSize = readDataSize,
                     syncedDataPoints = syncedDataPoints,
-                    sessionId = sessionId
+                    sessionId = sessionId,
+                    manualSync = manualSync,
                 )
             )
             if (!syncProgress.syncInProgress) {

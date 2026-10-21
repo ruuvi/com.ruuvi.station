@@ -70,7 +70,7 @@ class SensorCardViewModelTest {
         every { networkDataSyncInteractor.syncInProgressFlow } returns MutableStateFlow(false)
         every { gattInteractor.syncStatusFlow } returns syncStatus
         every { gattInteractor.getSyncStatusFlow(AIR_SENSOR.id) } returns syncStatus
-        every { gattInteractor.readLogs(any(), any()) } returns true
+        every { gattInteractor.readLogs(any(), any(), any()) } returns true
         every { preferencesRepository.getLastAutomaticGattSyncAttempt(any()) } answers {
             lastAutomaticGattSyncAttempt
         }
@@ -91,7 +91,7 @@ class SensorCardViewModelTest {
 
         viewModel.autoSyncGattHistory(AIR_SENSOR, selected = true)
 
-        verify { gattInteractor.readLogs(AIR_SENSOR.id, OLD_LAST_SYNC) }
+        verify { gattInteractor.readLogs(AIR_SENSOR.id, OLD_LAST_SYNC, manualSync = false) }
         verify {
             preferencesRepository.setLastAutomaticGattSyncAttempt(
                 AIR_SENSOR.id,
@@ -106,7 +106,7 @@ class SensorCardViewModelTest {
         viewModel.autoSyncGattHistory(AIR_SENSOR, selected = true)
         viewModel.autoSyncGattHistory(AIR_SENSOR, selected = true)
 
-        verify(exactly = 1) { gattInteractor.readLogs(AIR_SENSOR.id, any()) }
+        verify(exactly = 1) { gattInteractor.readLogs(AIR_SENSOR.id, any(), manualSync = false) }
     }
 
     @Test
@@ -115,7 +115,7 @@ class SensorCardViewModelTest {
 
         viewModel.autoSyncGattHistory(AIR_SENSOR, selected = true)
 
-        verify(exactly = 0) { gattInteractor.readLogs(AIR_SENSOR.id, any()) }
+        verify(exactly = 0) { gattInteractor.readLogs(AIR_SENSOR.id, any(), any()) }
     }
 
     @Test
@@ -124,12 +124,12 @@ class SensorCardViewModelTest {
 
         viewModel.autoSyncGattHistory(AIR_SENSOR, selected = true)
 
-        verify(exactly = 1) { gattInteractor.readLogs(AIR_SENSOR.id, any()) }
+        verify(exactly = 1) { gattInteractor.readLogs(AIR_SENSOR.id, any(), manualSync = false) }
     }
 
     @Test
     fun `rejected automatic GATT sync does not persist an attempt`() {
-        every { gattInteractor.readLogs(AIR_SENSOR.id, any()) } returns false
+        every { gattInteractor.readLogs(AIR_SENSOR.id, any(), manualSync = false) } returns false
 
         viewModel.autoSyncGattHistory(AIR_SENSOR, selected = true)
 
@@ -145,7 +145,7 @@ class SensorCardViewModelTest {
 
         viewModel.autoSyncGattHistory(recentSyncSensor, selected = true)
 
-        verify(exactly = 0) { gattInteractor.readLogs(any(), any()) }
+        verify(exactly = 0) { gattInteractor.readLogs(any(), any(), any()) }
     }
 
     @Test
@@ -154,7 +154,7 @@ class SensorCardViewModelTest {
 
         viewModel.autoSyncGattHistory(AIR_SENSOR, selected = true)
 
-        verify(exactly = 0) { gattInteractor.readLogs(any(), any()) }
+        verify(exactly = 0) { gattInteractor.readLogs(any(), any(), any()) }
     }
 
     @Test
@@ -169,28 +169,28 @@ class SensorCardViewModelTest {
     fun `unselected Air sensor does not start GATT history sync`() {
         viewModel.autoSyncGattHistory(AIR_SENSOR, selected = false)
 
-        verify(exactly = 0) { gattInteractor.readLogs(any(), any()) }
+        verify(exactly = 0) { gattInteractor.readLogs(any(), any(), any()) }
     }
 
     @Test
     fun `selected non-Air sensor does not start GATT history sync`() {
         viewModel.autoSyncGattHistory(ruuviTagPreview, selected = true)
 
-        verify(exactly = 0) { gattInteractor.readLogs(any(), any()) }
+        verify(exactly = 0) { gattInteractor.readLogs(any(), any(), any()) }
     }
 
     @Test
     fun `selected cloud Air sensor does not start GATT history sync`() {
         viewModel.autoSyncGattHistory(CLOUD_AIR_SENSOR, selected = true)
 
-        verify(exactly = 0) { gattInteractor.readLogs(any(), any()) }
+        verify(exactly = 0) { gattInteractor.readLogs(any(), any(), any()) }
     }
 
     @Test
     fun `manual GATT sync starts from the sensor last sync time`() {
         viewModel.syncGatt(AIR_SENSOR.id)
 
-        verify { gattInteractor.readLogs(AIR_SENSOR.id, OLD_LAST_SYNC) }
+        verify { gattInteractor.readLogs(AIR_SENSOR.id, OLD_LAST_SYNC, manualSync = true) }
         verify(exactly = 0) {
             preferencesRepository.setLastAutomaticGattSyncAttempt(AIR_SENSOR.id, any())
         }
@@ -202,7 +202,7 @@ class SensorCardViewModelTest {
 
         viewModel.syncGatt(AIR_SENSOR.id)
 
-        verify(exactly = 0) { gattInteractor.readLogs(AIR_SENSOR.id, any()) }
+        verify(exactly = 0) { gattInteractor.readLogs(AIR_SENSOR.id, any(), any()) }
     }
 
     @Test
@@ -215,7 +215,7 @@ class SensorCardViewModelTest {
 
         viewModel.syncGatt(oldSensor.id)
 
-        verify { gattInteractor.readLogs(oldSensor.id, capture(syncFrom)) }
+        verify { gattInteractor.readLogs(oldSensor.id, capture(syncFrom), manualSync = true) }
         assertTrue(syncFrom.captured.time >= earliestAllowed)
         assertTrue(syncFrom.captured.time <= System.currentTimeMillis())
     }
@@ -226,7 +226,7 @@ class SensorCardViewModelTest {
 
         viewModel.syncGatt("missing-sensor")
 
-        verify(exactly = 0) { gattInteractor.readLogs("missing-sensor", any()) }
+        verify(exactly = 0) { gattInteractor.readLogs("missing-sensor", any(), any()) }
     }
 
     @Test
@@ -242,12 +242,33 @@ class SensorCardViewModelTest {
     @Test
     fun `manual GATT failure is marked as manual`() = runBlocking {
         viewModel.syncGatt(AIR_SENSOR.id)
-        syncStatus.value = GattSyncStatus(AIR_SENSOR.id, SyncProgress.NOT_FOUND)
+        syncStatus.value = GattSyncStatus(
+            AIR_SENSOR.id,
+            SyncProgress.NOT_FOUND,
+            manualSync = true,
+        )
 
         val event = viewModel.getGattEvents(AIR_SENSOR.id).first()
 
         assertTrue(event.manualSync)
         assertEquals(SyncProgress.NOT_FOUND, event.syncProgress)
+    }
+
+    @Test
+    fun `GATT events use each session manual type`() = runBlocking {
+        syncStatus.value = GattSyncStatus(
+            AIR_SENSOR.id,
+            SyncProgress.ERROR,
+            manualSync = true,
+        )
+        assertTrue(viewModel.getGattEvents(AIR_SENSOR.id).first().manualSync)
+
+        syncStatus.value = GattSyncStatus(
+            AIR_SENSOR.id,
+            SyncProgress.ERROR,
+            manualSync = false,
+        )
+        assertFalse(viewModel.getGattEvents(AIR_SENSOR.id).first().manualSync)
     }
 
     @Test
@@ -260,6 +281,7 @@ class SensorCardViewModelTest {
                 syncProgress = progress,
                 syncedDataPoints = if (progress == SyncProgress.READING_DATA) 10 else 0,
                 readDataSize = if (progress == SyncProgress.SAVING_DATA) 2 else 0,
+                manualSync = true,
             )
 
             val event = viewModel.getGattEvents(AIR_SENSOR.id).first()

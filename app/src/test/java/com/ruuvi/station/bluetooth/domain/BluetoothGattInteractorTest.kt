@@ -112,6 +112,22 @@ class BluetoothGattInteractorTest {
     }
 
     @Test
+    fun `GATT status retains whether the download is automatic`() {
+        val sensorId = "AA:BB:CC:DD:EE:FF"
+        val listener = slot<IRuuviGattListener>()
+        every { bluetoothInteractor.readLogs(sensorId, any(), capture(listener)) } returns true
+
+        interactor.readLogs(sensorId, Date(), manualSync = false)
+        assertFalse(interactor.syncStatusFlow.value?.manualSync ?: true)
+
+        listener.captured.connected(true)
+        assertFalse(interactor.syncStatusFlow.value?.manualSync ?: true)
+
+        listener.captured.deviceInfo("Ruuvi Air", "1.0.0", false, null)
+        assertFalse(interactor.syncStatusFlow.value?.manualSync ?: true)
+    }
+
+    @Test
     fun `unsupported missing and failed GATT sessions are terminal`() {
         val sensorId = "AA:BB:CC:DD:EE:FF"
         val listener = slot<IRuuviGattListener>()

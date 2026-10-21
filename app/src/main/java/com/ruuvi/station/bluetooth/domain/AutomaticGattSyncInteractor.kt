@@ -23,7 +23,7 @@ class AutomaticGattSyncInteractor(
 
         val earliestHistory = Date(now - HISTORY_LENGTH_MILLIS)
         val syncFrom = lastSync?.takeIf { it >= earliestHistory } ?: earliestHistory
-        if (gattInteractor.readLogs(sensorId, syncFrom)) {
+        if (gattInteractor.readLogs(sensorId, syncFrom, manualSync = false)) {
             preferencesRepository.setLastAutomaticGattSyncAttempt(sensorId, now)
         }
     }
