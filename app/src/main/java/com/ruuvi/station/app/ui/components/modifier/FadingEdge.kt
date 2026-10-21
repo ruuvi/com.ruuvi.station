@@ -32,7 +32,13 @@ val bottomFade = Brush.verticalGradient(
 )
 
 fun Modifier.fadingEdge(scrollState: ScrollState) = this
-    .graphicsLayer(compositingStrategy = CompositingStrategy.Offscreen)
+    .graphicsLayer {
+        compositingStrategy = if (scrollState.maxValue > 0) {
+            CompositingStrategy.Offscreen
+        } else {
+            CompositingStrategy.Auto
+        }
+    }
     .drawWithContent {
         drawContent()
         val fadeBrush = when {
@@ -47,7 +53,13 @@ fun Modifier.fadingEdge(scrollState: ScrollState) = this
     }
 
 fun Modifier.fadingEdge(lazyListState: LazyListState) = this
-    .graphicsLayer(compositingStrategy = CompositingStrategy.Offscreen)
+    .graphicsLayer {
+        compositingStrategy = if (lazyListState.canScrollBackward || lazyListState.canScrollForward) {
+            CompositingStrategy.Offscreen
+        } else {
+            CompositingStrategy.Auto
+        }
+    }
     .drawWithContent {
         drawContent()
 

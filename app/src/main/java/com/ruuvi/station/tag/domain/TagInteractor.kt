@@ -25,13 +25,24 @@ class TagInteractor constructor(
     private val sortingInteractor: SensorsSortingInteractor,
 ) {
 
-    fun getTags(): List<RuuviTag> =
-        sortingInteractor.sortSensors(
-            tagRepository
+    @Volatile
+    private var cachedSnapshot: SensorSnapshot? = null
+
+    fun getCachedTags(): List<RuuviTag> {
+        val snapshot = cachedSnapshot ?: return emptyList()
+        if (snapshot.userEmail != preferencesRepository.getUserEmail()) return emptyList()
+        return sortingInteractor.sortSensors(snapshot.sensorsInDefaultOrder)
+    }
+
+    fun getTags(): List<RuuviTag> {
+        val userEmail = preferencesRepository.getUserEmail()
+        val sensors = tagRepository
             .getFavoriteSensors()
             .map { it.copy(alarmSensorStatus = alarmCheckInteractor.getAlarmStatus(it)) }
             .also { Timber.d("TagInteractor - getTags") }
-        )
+        return sortingInteractor.sortSensors(sensors)
+            .also { cachedSnapshot = SensorSnapshot(userEmail, sensors) }
+    }
 
     fun getTagEntities(isFavorite: Boolean = true): List<RuuviTagEntity> =
         tagRepository.getAllTags(isFavorite)
@@ -89,4 +100,9 @@ class TagInteractor constructor(
             if (sensorName.isNullOrEmpty()) MacAddressUtils.getDefaultName(sensorId, tag?.isAir()) else sensorName
         sensorSettingsRepository.updateSensorName(sensorId, name)
     }
+
+    private data class SensorSnapshot(
+        val userEmail: String,
+        val sensorsInDefaultOrder: List<RuuviTag>,
+    )
 }
