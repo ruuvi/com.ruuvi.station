@@ -74,7 +74,9 @@ fun SensorSettings(
     }
 
     Column(
-        modifier = Modifier.verticalScroll(rememberScrollState())
+        modifier = Modifier
+            .verticalScroll(rememberScrollState())
+            .navigationBarsPadding()
     ) {
         SensorSettingsImage(sensorState = sensorState) {
             BackgroundActivity.start(context, sensorState.id)
