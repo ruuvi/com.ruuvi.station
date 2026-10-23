@@ -1,11 +1,13 @@
 package com.ruuvi.station.tagdetails.ui.popup
 
+import android.os.Build
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
@@ -21,16 +23,21 @@ import androidx.compose.material3.SheetState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.DialogWindowProvider
+import androidx.core.view.WindowCompat
 import com.ruuvi.station.R
 import com.ruuvi.station.alarm.domain.AlarmSensorStatus
 import com.ruuvi.station.app.ui.components.MarkupText
@@ -67,10 +74,12 @@ fun ValueBottomSheet(
     onDismiss: () -> Unit
 ) {
     val scrollState = rememberScrollState()
+    val useDarkNavigationIcons = RuuviStationTheme.colors.popupBackground.luminance() > 0.5f
 
     ModalBottomSheet(
         containerColor = RuuviStationTheme.colors.popupBackground,
         sheetGesturesEnabled = scrollState.value == 0,
+        contentWindowInsets = { WindowInsets(0, 0, 0, 0) },
         dragHandle = {
             Box(
                 modifier = Modifier
@@ -85,6 +94,31 @@ fun ValueBottomSheet(
         sheetState = sheetState,
         modifier = modifier
     ) {
+        val dialogView = LocalView.current
+
+        SideEffect {
+            val dialogWindow =
+                (dialogView.parent as? DialogWindowProvider)?.window
+                    ?: return@SideEffect
+
+            WindowCompat.setDecorFitsSystemWindows(dialogWindow, false)
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                dialogWindow.isNavigationBarContrastEnforced = false
+            }
+
+            WindowCompat.getInsetsController(
+                dialogWindow,
+                dialogWindow.decorView
+            ).isAppearanceLightNavigationBars = useDarkNavigationIcons
+
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+                @Suppress("DEPRECATION")
+                dialogWindow.navigationBarColor =
+                    android.graphics.Color.TRANSPARENT
+            }
+        }
+
         if (sheetValue.unitType == UnitType.AirQuality.AqiIndex) {
             AirValueSheetContent(
                 sheetValue = sheetValue,

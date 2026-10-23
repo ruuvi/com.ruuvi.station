@@ -1,6 +1,8 @@
 package com.ruuvi.station.tagdetails.ui
 
+import android.app.Activity
 import android.net.Uri
+import android.os.Build
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.Crossfade
@@ -25,12 +27,9 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.navigationBarsPadding
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
-import androidx.compose.foundation.layout.systemBarsPadding
-import androidx.compose.foundation.layout.windowInsetsBottomHeight
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.windowInsetsTopHeight
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerDefaults
@@ -66,7 +65,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.LayoutDirection
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
@@ -259,7 +257,6 @@ private fun SensorDetailScreen(
 
     SensorDetailSystemBars(
         useTransparentStatusBar = useSensorBackground,
-        useTransparentNavigationBar = useSensorBackground && !destination.forcesDarkTheme,
         useDarkTheme = useDarkTheme,
     )
 
@@ -293,16 +290,6 @@ private fun SensorDetailScreen(
             enabled = useSensorBackground,
         )
 
-        if (useSensorBackground && destination.forcesDarkTheme) {
-            Box(
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .fillMaxWidth()
-                    .windowInsetsBottomHeight(WindowInsets.navigationBars)
-                    .background(RuuviStationTheme.colors.background),
-            )
-        }
-
         NfcInteractor(
             addSensor = viewModel::addSensor,
             getNfcScanResponse = viewModel::getNfcScanResponse,
@@ -312,7 +299,17 @@ private fun SensorDetailScreen(
             targetState = settingsRoute,
             modifier = Modifier
                 .fillMaxSize()
-                .systemBarsPadding(),
+                .statusBarsPadding()
+                .then(
+                    if (
+                        destination == SensorDetailDestination.SETTINGS ||
+                        destination == SensorDetailDestination.ALERTS
+                    ) {
+                        Modifier
+                    } else {
+                        Modifier.navigationBarsPadding()
+                    },
+                ),
             transitionSpec = {
                 val animationSpec = tween<IntOffset>(durationMillis = SETTINGS_NAVIGATION_ANIMATION_MILLIS)
                 if (targetState == SensorSettingsRoutes.SENSOR_SETTINGS_ROOT) {
@@ -796,26 +793,26 @@ private fun SensorDetailBackground(
 @Composable
 private fun SensorDetailSystemBars(
     useTransparentStatusBar: Boolean,
-    useTransparentNavigationBar: Boolean,
     useDarkTheme: Boolean,
 ) {
     val context = LocalContext.current
     val statusBarColor = RuuviStationTheme.colors.systemBars.toArgb()
-    val navigationBarColor = RuuviStationTheme.colors.background.toArgb()
     val transparentColor = Color.Transparent.toArgb()
 
     val activeStatusBarColor = if (useTransparentStatusBar) transparentColor else statusBarColor
-    val activeNavigationBarColor = if (useTransparentNavigationBar) transparentColor else navigationBarColor
 
     SideEffect {
         val activity = context as? ComponentActivity ?: return@SideEffect
         activity.enableEdgeToEdge(
             statusBarStyle = SystemBarStyle.dark(activeStatusBarColor),
-            navigationBarStyle = if (!useTransparentNavigationBar && !useDarkTheme) {
-                SystemBarStyle.light(activeNavigationBarColor, activeNavigationBarColor)
+            navigationBarStyle = if (useDarkTheme) {
+                SystemBarStyle.dark(transparentColor)
             } else {
-                SystemBarStyle.dark(activeNavigationBarColor)
-            }
+                SystemBarStyle.light(transparentColor, transparentColor)
+            },
         )
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            activity.window.isNavigationBarContrastEnforced = false
+        }
     }
 }

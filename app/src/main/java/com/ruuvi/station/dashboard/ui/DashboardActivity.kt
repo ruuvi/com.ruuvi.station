@@ -140,11 +140,7 @@ class DashboardActivity : NfcActivity(), DIAware {
                     onMove = dashboardViewModel::moveItem,
                     onDoneDragging = dashboardViewModel::onDoneDragging
                 )
-                val navigationColor = if (gestureNavigationEnabled()) {
-                    Color.Transparent
-                } else {
-                    colors.navigationTransparent
-                }
+                val navigationColor = Color.Transparent
 
                 if (shouldAskNotificationPermission) {
                     NotificationPermission(
