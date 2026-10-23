@@ -5,28 +5,39 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
+import android.graphics.Rect
 import android.graphics.Typeface
+import android.text.SpannableString
+import android.text.Spanned
 import android.text.TextPaint
 import android.text.TextUtils
+import android.text.style.TextAppearanceSpan
 import android.util.LruCache
 import android.util.TypedValue
+import android.view.ContextThemeWrapper
+import android.view.View
+import android.widget.TextView
 import androidx.annotation.FontRes
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.util.TypedValueCompat
 import androidx.glance.ColorFilter
 import androidx.glance.GlanceModifier
 import androidx.glance.Image
 import androidx.glance.ImageProvider
 import androidx.glance.LocalContext
+import androidx.glance.appwidget.R as GlanceR
 import androidx.glance.layout.Box
 import androidx.glance.unit.ColorProvider
 import kotlin.math.ceil
 
 private const val END_ELLIPSIS = "\u2026"
 private const val BITMAP_ROW_ALIGNMENT_BYTES = 4
+private const val NUMERIC_CAP_HEIGHT_TEXT = "0"
 
 object GlanceFontUtils {
     internal const val MAX_BITMAP_BYTES = 96 * 1024
@@ -92,37 +103,144 @@ object GlanceFontUtils {
         return (heightPx / context.resources.displayMetrics.density).dp
     }
 
+    internal fun measureCustomFontWidth(
+        context: Context,
+        text: String,
+        fontSize: TextUnit,
+        @FontRes fontResId: Int
+    ): Dp {
+        val widthPx = ceil(createTextPaint(context, fontSize, fontResId).measureText(text))
+        return (widthPx.coerceAtLeast(1f) / context.resources.displayMetrics.density).dp
+    }
+
     internal fun measureSystemFontHeight(
         context: Context,
         fontSize: TextUnit,
         bold: Boolean
-    ): Dp {
-        val paint = createSystemTextPaint(context, fontSize, bold)
-        val metrics = paint.fontMetricsInt
-        val heightPx = (metrics.bottom - metrics.top).coerceAtLeast(1)
-        return (heightPx / context.resources.displayMetrics.density).dp
-    }
+    ): Dp = measureSystemFontMetrics(context, NUMERIC_CAP_HEIGHT_TEXT, fontSize, bold).height
 
     internal fun measureSystemFontBaselineOffset(
         context: Context,
         fontSize: TextUnit,
         bold: Boolean
-    ): Dp {
-        val metrics = createSystemTextPaint(context, fontSize, bold).fontMetricsInt
-        return (-metrics.top / context.resources.displayMetrics.density).dp
-    }
+    ): Dp = measureSystemFontMetrics(context, NUMERIC_CAP_HEIGHT_TEXT, fontSize, bold).baseline
 
-    private fun createSystemTextPaint(
+    internal fun measureCustomFontMetrics(
         context: Context,
         fontSize: TextUnit,
-        bold: Boolean
-    ) = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
-        textSize = TypedValue.applyDimension(
-            TypedValue.COMPLEX_UNIT_SP,
-            fontSize.value,
-            context.resources.displayMetrics
+        @FontRes fontResId: Int
+    ): WidgetTextMetrics {
+        val paint = createTextPaint(context, fontSize, fontResId)
+        val metrics = paint.fontMetrics
+        return measureTextMetrics(
+            context = context,
+            paint = paint,
+            text = NUMERIC_CAP_HEIGHT_TEXT,
+            baseline = -metrics.ascent,
+            height = ceil(metrics.descent - metrics.ascent)
         )
-        typeface = if (bold) Typeface.DEFAULT_BOLD else Typeface.DEFAULT
+    }
+
+    internal fun measureSystemFontMetrics(
+        context: Context,
+        text: String,
+        fontSize: TextUnit,
+        bold: Boolean
+    ): WidgetTextMetrics {
+        val themedContext = ContextThemeWrapper(context, GlanceR.style.Glance_AppWidget_Theme)
+        val appearance = if (bold) {
+            TextAppearanceSpan(themedContext, GlanceR.style.Glance_AppWidget_TextAppearance_Bold)
+        } else {
+            null
+        }
+        val styledText = if (appearance == null) {
+            text
+        } else {
+            SpannableString(text).apply {
+                setSpan(appearance, 0, length, Spanned.SPAN_INCLUSIVE_EXCLUSIVE)
+            }
+        }
+        // Device-default fonts and TextView line metrics can differ from a standalone Paint.
+        val nativeText = TextView(themedContext).apply {
+            setTextSize(TypedValue.COMPLEX_UNIT_SP, fontSize.value)
+            maxLines = 1
+            textDirection = View.TEXT_DIRECTION_LOCALE
+            this.text = styledText
+            val unconstrained = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
+            measure(unconstrained, unconstrained)
+        }
+        val paint = TextPaint(nativeText.paint).apply {
+            appearance?.updateMeasureState(this)
+        }
+        return measureTextMetrics(
+            context = context,
+            paint = paint,
+            text = text,
+            baseline = nativeText.baseline.toFloat(),
+            height = nativeText.measuredHeight.toFloat(),
+            width = nativeText.measuredWidth.toFloat()
+        )
+    }
+
+    internal fun fitCustomFontSizeToBaselineHeight(
+        context: Context,
+        fontSize: TextUnit,
+        @FontRes fontResId: Int,
+        minimumHeight: Dp
+    ): TextUnit {
+        val displayMetrics = context.resources.displayMetrics
+        val minimumHeightPx = ceil(minimumHeight.value * displayMetrics.density).coerceAtLeast(1f)
+        val bounds = Rect()
+        var lowerSizeSp = 0f
+        var upperSizeSp = maxOf(
+            fontSize.value,
+            TypedValueCompat.pxToSp(minimumHeightPx * 2, displayMetrics)
+        )
+
+        fun capHeight(sizeSp: Float): Int {
+            createTextPaint(context, sizeSp.sp, fontResId).getTextBounds(
+                NUMERIC_CAP_HEIGHT_TEXT, 0, NUMERIC_CAP_HEIGHT_TEXT.length, bounds
+            )
+            return -bounds.top
+        }
+
+        while (capHeight(upperSizeSp) < minimumHeightPx) {
+            upperSizeSp *= 2
+            check(upperSizeSp.isFinite()) { "Custom numeric font must have a positive cap height" }
+        }
+
+        // Measure the actual SP candidates so pixel/SP rounding cannot undo the fit.
+        repeat(12) {
+            val candidate = (lowerSizeSp + upperSizeSp) / 2
+            if (capHeight(candidate) < minimumHeightPx) {
+                lowerSizeSp = candidate
+            } else {
+                upperSizeSp = candidate
+            }
+        }
+
+        return upperSizeSp.sp
+    }
+
+    private fun measureTextMetrics(
+        context: Context,
+        paint: TextPaint,
+        text: String,
+        baseline: Float,
+        height: Float,
+        width: Float = ceil(paint.measureText(text))
+    ): WidgetTextMetrics {
+        val density = context.resources.displayMetrics.density
+        val bounds = Rect()
+        paint.getTextBounds(text, 0, text.length, bounds)
+
+        return WidgetTextMetrics(
+            height = (height.coerceAtLeast(1f) / density).dp,
+            baseline = (baseline / density).dp,
+            glyphTop = ((baseline + bounds.top) / density).dp,
+            glyphBottom = ((baseline + bounds.bottom) / density).dp,
+            width = (width / density).dp
+        )
     }
 
     private fun createTextPaint(
@@ -150,6 +268,14 @@ object GlanceFontUtils {
         return typeface
     }
 }
+
+internal data class WidgetTextMetrics(
+    val height: Dp,
+    val baseline: Dp,
+    val glyphTop: Dp,
+    val glyphBottom: Dp,
+    val width: Dp = 0.dp
+)
 
 internal data class FontBitmapFormat(
     val config: Bitmap.Config,
