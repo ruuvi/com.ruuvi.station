@@ -376,7 +376,7 @@ private fun SensorFooter(
                 modifier = GlanceModifier.defaultWeight(),
                 style = TextStyle(
                     color = GlanceColors.widgetSensorName,
-                    fontSize = ruuviStationFontsSizes.tiny2
+                    fontSize = ruuviStationFontsSizes.miniature
                         .scaledBy(typographyScale)
                         .toWidgetSp(context)
                 ),
