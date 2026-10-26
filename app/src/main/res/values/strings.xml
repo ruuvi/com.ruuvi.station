@@ -891,9 +891,6 @@ Total used shares for your account: %3$,d/%4$,d</string>
     <string name="enable_background_service">Enable background service</string>
     <string name="use_web_version_of_share">Use web version of share</string>
     <string name="font_scaling">Font scaling %1$s%%</string>
-    <string name="marketing_consent_prompt_interval">Marketing consent prompt interval</string>
-    <string name="marketing_consent_prompt_interval_hint">Seconds</string>
-    <string name="marketing_consent_prompt_interval_description">Leave empty to use the production interval of 180 days.</string>
     <string name="disable_developer_mode">Disable developer mode</string>
     <string name="registered_fcm_tokens">Registered FCM tokens</string>
 </resources>

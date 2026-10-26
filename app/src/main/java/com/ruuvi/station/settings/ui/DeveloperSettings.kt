@@ -70,11 +70,11 @@ fun DeveloperSettings(
             Paragraph(text = stringResource(id = R.string.use_dev_server_description))
 
             Spacer(modifier = Modifier.height(24.dp))
-            Subtitle(text = stringResource(id = R.string.marketing_consent_prompt_interval))
+            Subtitle(text = "Marketing consent prompt interval")
             TextFieldRuuvi(
                 modifier = Modifier.fillMaxWidth(),
                 value = marketingConsentPromptIntervalSecondsText,
-                hint = stringResource(id = R.string.marketing_consent_prompt_interval_hint),
+                hint = "Seconds",
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 onValueChange = { value ->
                     if (value.all(Char::isDigit)) {
@@ -83,7 +83,7 @@ fun DeveloperSettings(
                     }
                 }
             )
-            Paragraph(text = stringResource(id = R.string.marketing_consent_prompt_interval_description))
+            Paragraph(text = "Leave empty to use the production interval of 180 days.")
 
             Spacer(modifier = Modifier.height(48.dp))
             Subtitle("Debug info")
