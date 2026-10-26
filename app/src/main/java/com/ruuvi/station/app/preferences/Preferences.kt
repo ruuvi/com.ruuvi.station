@@ -671,6 +671,18 @@ class Preferences (val context: Context) {
             sharedPreferences.edit { putBoolean(PREF_MARKETING_CONSENT, value) }
         }
 
+    var marketingConsentPromptLastShown: Long
+        get() = sharedPreferences.getLong(PREF_MARKETING_CONSENT_PROMPT_LAST_SHOWN, 0L)
+        set(value) {
+            sharedPreferences.edit { putLong(PREF_MARKETING_CONSENT_PROMPT_LAST_SHOWN, value) }
+        }
+
+    var marketingConsentPromptIntervalSeconds: Long
+        get() = sharedPreferences.getLong(PREF_MARKETING_CONSENT_PROMPT_INTERVAL_SECONDS, 0L)
+        set(value) {
+            sharedPreferences.edit { putLong(PREF_MARKETING_CONSENT_PROMPT_INTERVAL_SECONDS, value) }
+        }
+
     var disablePushNotifications: Boolean
         get() = sharedPreferences.getBoolean(PREF_DISABLE_PUSH_NOTIFICATIONS, false)
         set(value) {
@@ -884,6 +896,10 @@ class Preferences (val context: Context) {
         private const val PREF_TIPS_ALLOWED = "pref_tips_allowed"
         private const val PREF_TIPS_ALLOWED_LAST_UPDATED = "pref_tips_allowed_last_updated"
         private const val PREF_MARKETING_CONSENT = "pref_marketing_consent"
+        private const val PREF_MARKETING_CONSENT_PROMPT_LAST_SHOWN =
+            "pref_marketing_consent_prompt_last_shown"
+        private const val PREF_MARKETING_CONSENT_PROMPT_INTERVAL_SECONDS =
+            "pref_marketing_consent_prompt_interval_seconds"
 
         private const val PREF_USE_WEB_SHARE = "pref_use_web_share"
 

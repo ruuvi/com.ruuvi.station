@@ -24,6 +24,10 @@ class DeveloperSettingsViewModel(
     private var _useWebShare = MutableStateFlow(preferencesRepository.getUseWebShare())
     val useWebShare: StateFlow<Boolean> = _useWebShare
 
+    private val _marketingConsentPromptIntervalSeconds =
+        MutableStateFlow(preferencesRepository.getMarketingConsentPromptIntervalSeconds())
+    val marketingConsentPromptIntervalSeconds: StateFlow<Long> = _marketingConsentPromptIntervalSeconds
+
     fun setDevServerEnabled(isEnabled: Boolean) {
         preferencesRepository.setDevServerEnabled(isEnabled)
         _devServerEnabled.value = preferencesRepository.isDevServerEnabled()
@@ -35,8 +39,17 @@ class DeveloperSettingsViewModel(
         _useWebShare.value = preferencesRepository.getUseWebShare()
     }
 
+    fun setMarketingConsentPromptIntervalSeconds(intervalSeconds: Long) {
+        preferencesRepository.setMarketingConsentPromptIntervalSeconds(intervalSeconds)
+        _marketingConsentPromptIntervalSeconds.value =
+            preferencesRepository.getMarketingConsentPromptIntervalSeconds()
+    }
+
     fun setDevModeEnabled(isEnabled: Boolean) {
         preferencesRepository.setDeveloperFeaturesEnabled(isEnabled)
+        if (!isEnabled) {
+            _marketingConsentPromptIntervalSeconds.value = 0L
+        }
     }
 
     fun getWebViewToken(): String? {

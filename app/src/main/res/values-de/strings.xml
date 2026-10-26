@@ -894,6 +894,10 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="newsletter_url">https://ruuvi.com/de/beitreten</string>
     <string name="newsletter_subscription">Abonnement</string>
     <string name="newsletter_subscription_confirmation">Prüfe deine E-Mails, um dein Newsletter-Abonnement zu bestätigen.</string>
+    <string name="marketing_consent_prompt_title">Dürfen wir dir E-Mails senden?</string>
+    <string name="marketing_consent_prompt_message">Von Zeit zu Zeit haben wir Neuigkeiten über die App, unsere Produkte und aktuelle Angebote.</string>
+    <string name="marketing_consent_prompt_decline">Nein danke</string>
+    <string name="marketing_consent_prompt_saved">Vielen Dank, erfolgreich gespeichert.</string>
     <string name="communication_channels">Ruuvi-Newsletter</string>
     <string name="communication_channels_description">Erhalte nützliche Ruuvi-Tipps, Produkt-Updates, Neuigkeiten zu Funktionen und gelegentliche Sonderangebote direkt in dein Postfach.</string>
     <string name="enable_background_service">Hintergrunddienst aktivieren</string>

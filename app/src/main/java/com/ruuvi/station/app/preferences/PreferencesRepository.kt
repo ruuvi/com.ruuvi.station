@@ -165,6 +165,16 @@ class PreferencesRepository(
 
     fun setDeveloperFeaturesEnabled(developerSettingsEnabled: Boolean) {
         preferences.developerSettings = developerSettingsEnabled
+        if (!developerSettingsEnabled) {
+            preferences.marketingConsentPromptIntervalSeconds = 0L
+        }
+    }
+
+    fun getMarketingConsentPromptIntervalSeconds(): Long =
+        preferences.marketingConsentPromptIntervalSeconds
+
+    fun setMarketingConsentPromptIntervalSeconds(intervalSeconds: Long) {
+        preferences.marketingConsentPromptIntervalSeconds = intervalSeconds.coerceAtLeast(0L)
     }
 
     fun isFirstStart(): Boolean =
@@ -411,8 +421,16 @@ class PreferencesRepository(
         preferences.marketingConsent = consent
     }
 
+    fun getMarketingConsentPromptLastShown(): Long =
+        preferences.marketingConsentPromptLastShown
+
+    fun setMarketingConsentPromptLastShown(lastShown: Long) {
+        preferences.marketingConsentPromptLastShown = lastShown
+    }
+
     fun clearMarketingConsent() {
         preferences.marketingConsent = false
+        preferences.marketingConsentPromptLastShown = 0L
     }
 
     fun setNetworkSetting(settingName: String, value: String?, timestamp: Long) {
