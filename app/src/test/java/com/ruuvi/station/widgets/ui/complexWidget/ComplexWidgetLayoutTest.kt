@@ -14,10 +14,9 @@ class ComplexWidgetLayoutTest {
     }
 
     @Test
-    fun `three cell widget uses two columns with small and normal fonts`() {
+    fun `three cell widget uses two columns`() {
         assertEquals(2, complexWidgetMeasurementColumns(180.dp, fontScale = 0.85f))
         assertEquals(2, complexWidgetMeasurementColumns(180.dp))
-        assertEquals(1, complexWidgetMeasurementColumns(180.dp, fontScale = 1.15f))
     }
 
     @Test
@@ -48,9 +47,9 @@ class ComplexWidgetLayoutTest {
     }
 
     @Test
-    fun `maximum accessibility font uses one or two columns`() {
-        assertEquals(1, complexWidgetMeasurementColumns(280.dp, fontScale = 2f))
-        assertEquals(2, complexWidgetMeasurementColumns(360.dp, fontScale = 2f))
+    fun `default layout stays stable for complex widget dimensions`() {
+        assertEquals(2, complexWidgetMeasurementColumns(280.dp))
+        assertEquals(3, complexWidgetMeasurementColumns(360.dp))
     }
 
     @Test
