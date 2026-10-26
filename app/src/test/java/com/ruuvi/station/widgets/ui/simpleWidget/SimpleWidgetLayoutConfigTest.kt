@@ -9,7 +9,7 @@ import org.junit.Test
 
 class SimpleWidgetLayoutConfigTest {
     @Test
-    fun `measurement top spacing separates the unit and measurement label`() {
+    fun `measurement unit top spacing separates the unit and measurement label`() {
         val value = WidgetTextMetrics(
             height = 20.dp,
             baseline = 16.dp,
@@ -31,11 +31,10 @@ class SimpleWidgetLayoutConfigTest {
 
         val baseLayout = calculateAqiTextLayout(value, unit, measurement, indicatorSize = 0.dp)
         val spacedLayout = calculateAqiTextLayout(
-            value, unit, measurement, indicatorSize = 0.dp, measurementTopSpacing = 1.dp
+            value, unit, measurement, indicatorSize = 0.dp, measurementUnitTopSpacing = 1.dp
         )
 
-        assertEquals(1.dp, spacedLayout.measurementTopPadding - baseLayout.measurementTopPadding)
-        assertTrue(spacedLayout.height > baseLayout.height)
+        assertEquals(1.dp, baseLayout.unitTopPadding - spacedLayout.unitTopPadding)
     }
 
     @Test
