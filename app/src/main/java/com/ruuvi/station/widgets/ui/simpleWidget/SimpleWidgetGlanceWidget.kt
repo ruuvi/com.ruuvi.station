@@ -277,7 +277,7 @@ private fun SimpleWidgetContent(
                     text = displayName,
                     modifier = GlanceModifier.fillMaxWidth(),
                     style = TextStyle(
-                        color = GlanceColors.widgetSensorName,
+                        color = GlanceColors.widgetSensorTitle,
                         fontSize = displayNameFontSize,
                         fontWeight = FontWeight.Bold
                     ),
@@ -385,6 +385,7 @@ private fun GlanceMeasurementDisplay(
     layout: MeasuredSimpleWidgetLayout,
     embeddedValueColor: Int?
 ) {
+    val context = LocalContext.current
     Row(
         modifier = GlanceModifier.fillMaxWidth(),
         verticalAlignment = Alignment.Top
@@ -408,15 +409,18 @@ private fun GlanceMeasurementDisplay(
                     .height(layout.textLayout.height)
             ) {
                 if (unit.isNotBlank()) {
-                    Text(
+                    CustomFontText(
                         text = unit,
+                        fontSize = layout.labelFontSize,
+                        colorProvider = GlanceColors.valueColor,
+                        fontResId = R.font.oswald_bold,
                         modifier = GlanceModifier.padding(top = layout.textLayout.unitTopPadding),
-                        style = TextStyle(
-                            color = GlanceColors.valueColor,
+                        maxWidth = GlanceFontUtils.measureCustomFontWidth(
+                            context = context,
+                            text = unit,
                             fontSize = layout.labelFontSize,
-                            fontWeight = FontWeight.Bold
-                        ),
-                        maxLines = 1
+                            fontResId = R.font.oswald_bold
+                        )
                     )
                 }
 
@@ -545,7 +549,20 @@ private fun measureSimpleWidgetLayout(
             GlanceFontUtils.measureSystemFontMetrics(context, text, labelFontSize, bold)
         }
 
-    var unitMetrics = measureLabel(unit, bold = true)
+    fun measureUnit(): WidgetTextMetrics =
+        if (unit.isBlank()) {
+            WidgetTextMetrics(0.dp, 0.dp, 0.dp, 0.dp)
+        } else {
+            GlanceFontUtils.measureCustomFontMetrics(
+                context, labelFontSize, R.font.oswald_bold
+            ).copy(
+                width = GlanceFontUtils.measureCustomFontWidth(
+                    context, unit, labelFontSize, R.font.oswald_bold
+                )
+            )
+        }
+
+    var unitMetrics = measureUnit()
     var measurementMetrics = measureLabel(measurementName, bold = false)
     var fittedIndicatorSize = minOf(indicatorSize, unitMetrics.glyphBottom - unitMetrics.glyphTop)
 
@@ -567,7 +584,7 @@ private fun measureSimpleWidgetLayout(
             labelFontSize = TypedValueCompat.pxToSp(
                 labelSizePx * targetHeight.value / labelHeight.value, metrics
             ).sp
-            unitMetrics = measureLabel(unit, bold = true)
+            unitMetrics = measureUnit()
             measurementMetrics = measureLabel(measurementName, bold = false)
             fittedIndicatorSize = minOf(
                 indicatorSize, unitMetrics.glyphBottom - unitMetrics.glyphTop
@@ -613,6 +630,7 @@ private fun GlanceAQIDisplay(
     layout: MeasuredSimpleWidgetLayout,
     embeddedValueColor: Int?
 ) {
+    val context = LocalContext.current
     val aqiText = sensorValue.substringBefore("/")
     val aqiValue = aqiText.toDoubleOrNull()?.takeIf { it.isFinite() }
     val aqiColor = aqiValue?.let { AQI.CalculatedAQI(it).color } ?: Color.Gray
@@ -643,14 +661,17 @@ private fun GlanceAQIDisplay(
                 modifier = GlanceModifier.padding(top = layout.textLayout.unitTopPadding),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(
+                CustomFontText(
                     text = AQI_UNIT_TEXT,
-                    style = TextStyle(
-                        color = GlanceColors.valueColor,
+                    fontSize = layout.labelFontSize,
+                    colorProvider = GlanceColors.valueColor,
+                    fontResId = R.font.oswald_bold,
+                    maxWidth = GlanceFontUtils.measureCustomFontWidth(
+                        context = context,
+                        text = AQI_UNIT_TEXT,
                         fontSize = layout.labelFontSize,
-                        fontWeight = FontWeight.Bold
-                    ),
-                    maxLines = 1
+                        fontResId = R.font.oswald_bold
+                    )
                 )
                 Spacer(modifier = GlanceModifier.width(config.inlineSpacing * 2))
                 Image(
