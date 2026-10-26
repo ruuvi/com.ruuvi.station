@@ -9,6 +9,36 @@ import org.junit.Test
 
 class SimpleWidgetLayoutConfigTest {
     @Test
+    fun `measurement top spacing separates the unit and measurement label`() {
+        val value = WidgetTextMetrics(
+            height = 20.dp,
+            baseline = 16.dp,
+            glyphTop = 2.dp,
+            glyphBottom = 18.dp
+        )
+        val unit = WidgetTextMetrics(
+            height = 10.dp,
+            baseline = 8.dp,
+            glyphTop = 1.dp,
+            glyphBottom = 9.dp
+        )
+        val measurement = WidgetTextMetrics(
+            height = 14.dp,
+            baseline = 8.dp,
+            glyphTop = 1.dp,
+            glyphBottom = 13.dp
+        )
+
+        val baseLayout = calculateAqiTextLayout(value, unit, measurement, indicatorSize = 0.dp)
+        val spacedLayout = calculateAqiTextLayout(
+            value, unit, measurement, indicatorSize = 0.dp, measurementTopSpacing = 1.dp
+        )
+
+        assertEquals(1.dp, spacedLayout.measurementTopPadding - baseLayout.measurementTopPadding)
+        assertTrue(spacedLayout.height > baseLayout.height)
+    }
+
+    @Test
     fun `short widget uses compact geometry`() {
         val config = SimpleWidgetLayoutConfig.fromHeight(height = 40.dp)
 

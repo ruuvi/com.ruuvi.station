@@ -195,11 +195,12 @@ internal fun calculateAqiTextLayout(
     value: WidgetTextMetrics,
     unit: WidgetTextMetrics,
     measurement: WidgetTextMetrics,
-    indicatorSize: Dp
+    indicatorSize: Dp,
+    measurementUnitTopSpacing: Dp = 0.dp
 ): SimpleWidgetAqiTextLayout {
     val unitRowHeight = maxOf(unit.height, indicatorSize)
     val unitTextTop = (unitRowHeight - unit.height) / 2
-    val unitTop = value.glyphTop - unit.glyphTop - unitTextTop
+    val unitTop = value.glyphTop - unit.glyphTop - unitTextTop - measurementUnitTopSpacing
     val measurementTop = value.baseline - measurement.baseline
     val valueTop = maxOf(0.dp, -unitTop, -measurementTop)
 
