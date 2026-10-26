@@ -614,12 +614,20 @@ private fun measureSimpleWidgetLayout(
             value = GlanceFontUtils.measureCustomFontMetrics(context, valueFontSize, R.font.oswald_bold),
             unit = unitMetrics,
             measurement = measurementMetrics,
-            indicatorSize = fittedIndicatorSize
+            indicatorSize = fittedIndicatorSize,
+            measurementUnitTopSpacing = if (unit == ACCELERATION_UNIT) {
+                ACCELERATION_MEASUREMENT_SPACING
+            } else {
+                0.dp
+            }
         ),
         labelWidth = maxOf(unitMetrics.width + indicatorWidth, measurementMetrics.width),
         indicatorSize = fittedIndicatorSize
     )
 }
+
+private const val ACCELERATION_UNIT = "g"
+private val ACCELERATION_MEASUREMENT_SPACING = 2.dp
 
 @Composable
 private fun GlanceAQIDisplay(
