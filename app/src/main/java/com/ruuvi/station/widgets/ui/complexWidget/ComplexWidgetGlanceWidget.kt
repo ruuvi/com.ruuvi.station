@@ -51,13 +51,13 @@ import com.ruuvi.station.widgets.data.SensorValue
 import com.ruuvi.station.widgets.data.WidgetType
 import com.ruuvi.station.widgets.ui.glance.GlanceColors
 import com.ruuvi.station.widgets.ui.glance.GlanceFontUtils
+import com.ruuvi.station.widgets.ui.glance.CustomFontText
 import com.ruuvi.station.widgets.ui.glance.RefreshButton
 import com.ruuvi.station.widgets.ui.glance.WidgetContentPaddingDefaults
 import com.ruuvi.station.widgets.ui.glance.WidgetRefreshButtonDefaults
-import com.ruuvi.station.widgets.ui.glance.getEffectiveFontScale
 import com.ruuvi.station.widgets.ui.glance.getZoomFactor
 import com.ruuvi.station.widgets.ui.glance.scaledBy
-import com.ruuvi.station.widgets.ui.glance.toWidgetSp
+import com.ruuvi.station.widgets.ui.glance.toFixedWidgetSp
 import com.ruuvi.station.widgets.ui.simpleWidget.SimpleWidget
 import com.ruuvi.station.widgets.update.WidgetRefreshScheduler
 import com.ruuvi.station.widgets.update.resolveAppWidgetId
@@ -119,16 +119,8 @@ private fun ComplexWidgetContent(
     val context = LocalContext.current
     val zoomFactor = getZoomFactor(context)
     val typographyScale = if (isPreview) GENERATED_PREVIEW_TYPOGRAPHY_SCALE else 1f
-    val measurementDescriptionFontScale = getEffectiveFontScale(
-        context = context,
-        referenceFontSizeSp = ruuviStationFontsSizes.petite
-            .scaledBy(typographyScale)
-            .toWidgetSp(context)
-            .value
-    )
     val layout = complexWidgetLayoutConfig(
         width = LocalSize.current.width,
-        fontScale = measurementDescriptionFontScale,
         maximumColumns = sensors.maxOfOrNull { it.sensorValues.size } ?: 1
     )
 
@@ -154,7 +146,7 @@ private fun ComplexWidgetContent(
                         modifier = GlanceModifier.fillMaxWidth(),
                         style = TextStyle(
                             color = GlanceColors.widgetSensorName,
-                            fontSize = ruuviStationFontsSizes.normal.toWidgetSp(context),
+                            fontSize = ruuviStationFontsSizes.normal.toFixedWidgetSp(context),
                             fontWeight = FontWeight.Bold,
                             textAlign = TextAlign.Center
                         ),
@@ -294,10 +286,10 @@ private fun SensorHeader(
             text = sensor.displayName,
             modifier = GlanceModifier.defaultWeight(),
             style = TextStyle(
-                color = GlanceColors.widgetSensorName,
+                color = GlanceColors.widgetSensorTitle,
                 fontSize = ruuviStationFontsSizes.normal
                     .scaledBy(typographyScale)
-                    .toWidgetSp(context),
+                    .toFixedWidgetSp(context),
                 fontWeight = FontWeight.Bold
             ),
             maxLines = 1
@@ -378,7 +370,7 @@ private fun SensorFooter(
                     color = GlanceColors.widgetSensorName,
                     fontSize = ruuviStationFontsSizes.miniature
                         .scaledBy(typographyScale)
-                        .toWidgetSp(context)
+                        .toFixedWidgetSp(context)
                 ),
                 maxLines = 1
             )
@@ -400,10 +392,10 @@ private fun MeasurementItem(
     val context = LocalContext.current
     val valueFontSize = ruuviStationFontsSizes.compact
         .scaledBy(typographyScale)
-        .toWidgetSp(context)
+        .toFixedWidgetSp(context)
     val secondaryFontSize = ruuviStationFontsSizes.petite
         .scaledBy(typographyScale)
-        .toWidgetSp(context)
+        .toFixedWidgetSp(context)
     val valueBaselineOffset = GlanceFontUtils.measureSystemFontBaselineOffset(
         context = context,
         fontSize = valueFontSize,
@@ -411,11 +403,11 @@ private fun MeasurementItem(
     )
     val unitTopPadding = calculateBaselineTopPadding(
         referenceBaselineOffset = valueBaselineOffset,
-        textBaselineOffset = GlanceFontUtils.measureSystemFontBaselineOffset(
+        textBaselineOffset = GlanceFontUtils.measureCustomFontMetrics(
             context = context,
             fontSize = secondaryFontSize,
-            bold = true
-        )
+            fontResId = R.font.oswald_bold
+        ).baseline
     )
     val descriptionTopPadding = calculateBaselineTopPadding(
         referenceBaselineOffset = valueBaselineOffset,
@@ -445,15 +437,18 @@ private fun MeasurementItem(
                     layout.measurementUnitSpacing / zoomFactor
                 )
             )
-            Text(
+            CustomFontText(
                 text = value.unit,
+                fontSize = secondaryFontSize,
+                colorProvider = GlanceColors.widgetSensorName,
+                fontResId = R.font.oswald_bold,
                 modifier = GlanceModifier.padding(top = unitTopPadding),
-                style = TextStyle(
-                    color = GlanceColors.widgetSensorName,
+                maxWidth = GlanceFontUtils.measureCustomFontWidth(
+                    context = context,
+                    text = value.unit,
                     fontSize = secondaryFontSize,
-                    fontWeight = FontWeight.Bold
-                ),
-                maxLines = 1
+                    fontResId = R.font.oswald_bold
+                )
             )
         }
 
