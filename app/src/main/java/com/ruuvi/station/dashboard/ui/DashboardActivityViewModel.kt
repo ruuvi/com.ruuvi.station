@@ -98,17 +98,31 @@ class DashboardActivityViewModel(
         runtimeBehavior.isFeatureEnabled(FeatureFlag.MARKETING_CONSENT)
 
     fun respondToMarketingConsentPrompt(consent: Boolean) {
-        preferencesRepository.setMarketingConsentPromptLastShown(System.currentTimeMillis())
-        _marketingConsentPrompt.value = MarketingConsentPrompt.Hidden
-        if (!consent) return
+        if (!consent) {
+            preferencesRepository.setMarketingConsentPromptLastShown(System.currentTimeMillis())
+            _marketingConsentPrompt.value = MarketingConsentPrompt.Hidden
+            return
+        }
 
+        when (_marketingConsentPrompt.value) {
+            MarketingConsentPrompt.Ask,
+            MarketingConsentPrompt.Error -> Unit
+            else -> return
+        }
+
+        _marketingConsentPrompt.value = MarketingConsentPrompt.Saving
         viewModelScope.launch {
             try {
                 if (marketingConsentInteractor.update(true)?.consent == true) {
+                    preferencesRepository.setMarketingConsentPromptLastShown(System.currentTimeMillis())
                     _marketingConsentPrompt.value = MarketingConsentPrompt.Saved
+                } else {
+                    _marketingConsentPrompt.value = MarketingConsentPrompt.Error
                 }
             } catch (exception: Exception) {
+                if (exception is CancellationException) throw exception
                 Timber.e(exception, "Unable to save marketing consent")
+                _marketingConsentPrompt.value = MarketingConsentPrompt.Error
             }
         }
     }
@@ -289,5 +303,7 @@ class DashboardActivityViewModel(
 sealed interface MarketingConsentPrompt {
     data object Hidden : MarketingConsentPrompt
     data object Ask : MarketingConsentPrompt
+    data object Saving : MarketingConsentPrompt
+    data object Error : MarketingConsentPrompt
     data object Saved : MarketingConsentPrompt
 }

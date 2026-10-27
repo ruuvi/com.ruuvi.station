@@ -171,7 +171,11 @@ class DashboardActivity : NfcActivity(), DIAware {
                 }
 
                 when (marketingConsentPrompt) {
-                    MarketingConsentPrompt.Ask -> MarketingConsentPromptDialog(
+                    MarketingConsentPrompt.Ask,
+                    MarketingConsentPrompt.Saving,
+                    MarketingConsentPrompt.Error -> MarketingConsentPromptDialog(
+                        isSaving = marketingConsentPrompt == MarketingConsentPrompt.Saving,
+                        showSaveError = marketingConsentPrompt == MarketingConsentPrompt.Error,
                         onAccept = { dashboardViewModel.respondToMarketingConsentPrompt(true) },
                         onDecline = { dashboardViewModel.respondToMarketingConsentPrompt(false) }
                     )
@@ -367,10 +371,12 @@ class DashboardActivity : NfcActivity(), DIAware {
 
 @Composable
 private fun MarketingConsentPromptDialog(
+    isSaving: Boolean,
+    showSaveError: Boolean,
     onAccept: () -> Unit,
     onDecline: () -> Unit
 ) {
-    Dialog(onDismissRequest = onDecline) {
+    Dialog(onDismissRequest = { if (!isSaving) onDecline() }) {
             Card(
                 modifier = Modifier
                     .padding(horizontal = RuuviStationTheme.dimensions.medium)
@@ -413,11 +419,30 @@ private fun MarketingConsentPromptDialog(
                         textAlign = TextAlign.Center
                     )
 
+                    if (showSaveError) {
+                        Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.medium))
+
+                        Text(
+                            text = stringResource(R.string.internet_connection_problem),
+                            style = RuuviStationTheme.typography.paragraph,
+                            color = RuuviStationTheme.colors.primary,
+                            textAlign = TextAlign.Center
+                        )
+                    }
+
                     Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
 
                     RuuviButton(
-                        text = stringResource(R.string.ok),
+                        text = stringResource(
+                            if (showSaveError) {
+                                R.string.try_again
+                            } else {
+                                R.string.ok
+                            }
+                        ),
                         modifier = Modifier.fillMaxWidth(0.6f),
+                        enabled = !isSaving,
+                        loading = isSaving,
                         onClick = onAccept
                     )
 
@@ -425,6 +450,7 @@ private fun MarketingConsentPromptDialog(
 
                     RuuviTextButton(
                         text = stringResource(R.string.marketing_consent_prompt_decline),
+                        enabled = !isSaving,
                         onClick = onDecline
                     )
                 }
