@@ -615,19 +615,23 @@ private fun measureSimpleWidgetLayout(
             unit = unitMetrics,
             measurement = measurementMetrics,
             indicatorSize = fittedIndicatorSize,
-            measurementUnitTopSpacing = if (unit == ACCELERATION_UNIT) {
-                ACCELERATION_MEASUREMENT_SPACING
-            } else {
-                0.dp
-            }
+            measurementUnitTopSpacing = measurementUnitTopSpacing(unit)
         ),
         labelWidth = maxOf(unitMetrics.width + indicatorWidth, measurementMetrics.width),
         indicatorSize = fittedIndicatorSize
     )
 }
 
-private const val ACCELERATION_UNIT = "g"
-private val ACCELERATION_MEASUREMENT_SPACING = 2.dp
+internal fun measurementUnitTopSpacing(unit: String): Dp =
+    if (unit in UNITS_REQUIRING_MEASUREMENT_SPACING) {
+        MEASUREMENT_UNIT_TOP_SPACING
+    } else {
+        0.dp
+    }
+
+private val UNITS_REQUIRING_MEASUREMENT_SPACING =
+    setOf("g", "g/m³", "ppm", "µg/m³")
+private val MEASUREMENT_UNIT_TOP_SPACING = 3.dp
 
 @Composable
 private fun GlanceAQIDisplay(
