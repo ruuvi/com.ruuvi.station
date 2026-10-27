@@ -9,7 +9,6 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.MutatePriority
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.DragScope
@@ -58,11 +57,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.LayoutDirection
@@ -131,7 +128,7 @@ internal fun SensorDetailRoute(
     useNewSensorCard: Boolean,
     onFinish: () -> Unit,
 ) {
-    val sensors by viewModel.sensorsFlow.collectAsStateWithLifecycle(initialValue = emptyList())
+    val sensors by viewModel.sensorsFlow.collectAsStateWithLifecycle()
     val selectedSensorId by viewModel.selectedSensor.collectAsStateWithLifecycle()
     val viewPeriod by viewModel.chartViewPeriod.collectAsStateWithLifecycle()
     val syncInProgress by viewModel.syncInProgress.collectAsStateWithLifecycle()
@@ -755,24 +752,10 @@ private fun SensorDetailBackground(
         ?.takeIf(String::isNotBlank)
         ?.let(Uri::parse)
         ?.takeIf { !it.path.isNullOrBlank() }
-    if (backgroundUri != null) {
-        SensorCardImage(userBackground = backgroundUri)
-    } else {
-        Image(
-            modifier = Modifier.fillMaxSize(),
-            painter = painterResource(
-                if (sensor?.isAir() == true) R.drawable.new_bg_air else R.drawable.new_bg2,
-            ),
-            contentDescription = null,
-            contentScale = ContentScale.Crop,
-        )
-        Image(
-            modifier = Modifier.fillMaxSize(),
-            painter = painterResource(R.drawable.tag_bg_layer),
-            contentDescription = null,
-            contentScale = ContentScale.Crop,
-        )
-    }
+    SensorCardImage(
+        userBackground = backgroundUri,
+        defaultBackground = if (sensor?.isAir() == true) R.drawable.new_bg_air else R.drawable.new_bg2,
+    )
 
     val overlayColor by animateColorAsState(
         targetValue = when (destination) {
