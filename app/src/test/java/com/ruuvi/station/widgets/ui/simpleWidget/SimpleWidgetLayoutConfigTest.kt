@@ -9,6 +9,15 @@ import org.junit.Test
 
 class SimpleWidgetLayoutConfigTest {
     @Test
+    fun `measurement units with compact glyphs receive top spacing`() {
+        listOf("g", "g/m³", "ppm", "µg/m³").forEach { unit ->
+            assertEquals(2.dp, measurementUnitTopSpacing(unit))
+        }
+
+        assertEquals(0.dp, measurementUnitTopSpacing("°C"))
+    }
+
+    @Test
     fun `measurement unit top spacing separates the unit and measurement label`() {
         val value = WidgetTextMetrics(
             height = 20.dp,
