@@ -380,7 +380,8 @@ private fun MarketingConsentPromptDialog(
             ) {
                 Column(
                     modifier = Modifier
-                        .padding(all = RuuviStationTheme.dimensions.extended),
+                        .padding(all = RuuviStationTheme.dimensions.extended)
+                        .verticalScroll(rememberScrollState()),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
