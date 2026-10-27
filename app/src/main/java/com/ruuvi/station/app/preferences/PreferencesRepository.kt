@@ -422,15 +422,14 @@ class PreferencesRepository(
     }
 
     fun getMarketingConsentPromptLastShown(): Long =
-        preferences.marketingConsentPromptLastShown
+        preferences.getMarketingConsentPromptLastShown(preferences.networkEmail)
 
     fun setMarketingConsentPromptLastShown(lastShown: Long) {
-        preferences.marketingConsentPromptLastShown = lastShown
+        preferences.setMarketingConsentPromptLastShown(preferences.networkEmail, lastShown)
     }
 
     fun clearMarketingConsent() {
         preferences.marketingConsent = false
-        preferences.marketingConsentPromptLastShown = 0L
     }
 
     fun setNetworkSetting(settingName: String, value: String?, timestamp: Long) {

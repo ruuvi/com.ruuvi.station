@@ -12,6 +12,7 @@ import com.ruuvi.station.units.model.Accuracy
 import com.ruuvi.station.units.model.UnitType.*
 import com.ruuvi.station.util.BackgroundScanModes
 import androidx.core.content.edit
+import java.security.MessageDigest
 
 class Preferences (val context: Context) {
 
@@ -671,11 +672,30 @@ class Preferences (val context: Context) {
             sharedPreferences.edit { putBoolean(PREF_MARKETING_CONSENT, value) }
         }
 
-    var marketingConsentPromptLastShown: Long
-        get() = sharedPreferences.getLong(PREF_MARKETING_CONSENT_PROMPT_LAST_SHOWN, 0L)
-        set(value) {
-            sharedPreferences.edit { putLong(PREF_MARKETING_CONSENT_PROMPT_LAST_SHOWN, value) }
+    fun getMarketingConsentPromptLastShown(accountEmail: String): Long {
+        val accountKey = marketingConsentPromptHistoryKey(accountEmail) ?: return 0L
+        if (sharedPreferences.contains(accountKey)) {
+            return sharedPreferences.getLong(accountKey, 0L)
         }
+
+        val legacyLastShown = sharedPreferences.getLong(
+            PREF_MARKETING_CONSENT_PROMPT_LAST_SHOWN,
+            0L
+        )
+        if (legacyLastShown != 0L) {
+            sharedPreferences.edit {
+                putLong(accountKey, legacyLastShown)
+                remove(PREF_MARKETING_CONSENT_PROMPT_LAST_SHOWN)
+            }
+        }
+        return legacyLastShown
+    }
+
+    fun setMarketingConsentPromptLastShown(accountEmail: String, lastShown: Long) {
+        marketingConsentPromptHistoryKey(accountEmail)?.let { accountKey ->
+            sharedPreferences.edit { putLong(accountKey, lastShown) }
+        }
+    }
 
     var marketingConsentPromptIntervalSeconds: Long
         get() = sharedPreferences.getLong(PREF_MARKETING_CONSENT_PROMPT_INTERVAL_SECONDS, 0L)
@@ -805,6 +825,16 @@ class Preferences (val context: Context) {
         }
     }
 
+    private fun marketingConsentPromptHistoryKey(accountEmail: String): String? {
+        val normalizedEmail = accountEmail.trim().lowercase()
+        if (normalizedEmail.isEmpty()) return null
+
+        val emailHash = MessageDigest.getInstance("SHA-256")
+            .digest(normalizedEmail.toByteArray())
+            .joinToString(separator = "") { byte -> "%02x".format(byte.toInt() and 0xff) }
+        return "${PREF_MARKETING_CONSENT_PROMPT_HISTORY_PREFIX}$emailHash"
+    }
+
     companion object {
         private const val DEFAULT_SCAN_INTERVAL = 5 * 60
         private const val PREF_BACKGROUND_SCAN_INTERVAL = "pref_background_scan_interval"
@@ -898,6 +928,8 @@ class Preferences (val context: Context) {
         private const val PREF_MARKETING_CONSENT = "pref_marketing_consent"
         private const val PREF_MARKETING_CONSENT_PROMPT_LAST_SHOWN =
             "pref_marketing_consent_prompt_last_shown"
+        private const val PREF_MARKETING_CONSENT_PROMPT_HISTORY_PREFIX =
+            "pref_marketing_consent_prompt_history_"
         private const val PREF_MARKETING_CONSENT_PROMPT_INTERVAL_SECONDS =
             "pref_marketing_consent_prompt_interval_seconds"
 

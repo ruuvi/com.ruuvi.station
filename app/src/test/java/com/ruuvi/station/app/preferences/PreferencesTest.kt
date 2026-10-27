@@ -115,10 +115,56 @@ class PreferencesTest {
         liveData.removeObserver(observer)
     }
 
+    @Test
+    fun `stores marketing consent prompt history separately for each account`() {
+        val sharedPreferences = inMemoryPreferences()
+        val preferences = preferencesUsing(sharedPreferences)
+
+        preferences.setMarketingConsentPromptLastShown("first@example.com", 1_000L)
+        preferences.setMarketingConsentPromptLastShown("second@example.com", 2_000L)
+
+        assertEquals(1_000L, preferences.getMarketingConsentPromptLastShown("first@example.com"))
+        assertEquals(2_000L, preferences.getMarketingConsentPromptLastShown("second@example.com"))
+    }
+
+    @Test
+    fun `migrates the legacy marketing consent prompt history to the active account`() {
+        val sharedPreferences = inMemoryPreferences(
+            mapOf("pref_marketing_consent_prompt_last_shown" to 1_000L)
+        )
+        val preferences = preferencesUsing(sharedPreferences)
+
+        assertEquals(1_000L, preferences.getMarketingConsentPromptLastShown("first@example.com"))
+        assertEquals(0L, preferences.getMarketingConsentPromptLastShown("second@example.com"))
+    }
+
     private fun preferencesUsing(sharedPreferences: SharedPreferences): Preferences {
         val context = mockk<Context>()
         mockkStatic(PreferenceManager::class)
         every { PreferenceManager.getDefaultSharedPreferences(context) } returns sharedPreferences
         return Preferences(context)
+    }
+
+    private fun inMemoryPreferences(
+        initialValues: Map<String, Long> = emptyMap()
+    ): SharedPreferences {
+        val values = initialValues.toMutableMap<String, Long>()
+        val editor = mockk<SharedPreferences.Editor>(relaxed = true)
+        val preferences = mockk<SharedPreferences>(relaxed = true)
+
+        every { preferences.contains(any()) } answers { values.containsKey(firstArg()) }
+        every { preferences.getLong(any(), any()) } answers {
+            values[firstArg()] ?: secondArg()
+        }
+        every { preferences.edit() } returns editor
+        every { editor.putLong(any(), any()) } answers {
+            values[firstArg()] = secondArg()
+            editor
+        }
+        every { editor.remove(any()) } answers {
+            values.remove(firstArg())
+            editor
+        }
+        return preferences
     }
 }
