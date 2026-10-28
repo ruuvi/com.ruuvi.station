@@ -78,9 +78,9 @@ class ComplexWidgetLayoutTest {
             assertEquals(4.dp, layout.outerPadding)
             assertEquals(8.dp, layout.horizontalPadding)
             assertEquals(8.dp, layout.headerTopPadding)
-            assertEquals(12.dp, layout.headerBottomSpacing)
-            assertEquals(3.dp, layout.rowVerticalPadding)
-            assertEquals(8.dp, layout.footerTopSpacing)
+            assertEquals(10.dp, layout.headerBottomSpacing)
+            assertEquals(1.dp, layout.rowVerticalPadding)
+            assertEquals(10.dp, layout.footerTopSpacing)
             assertEquals(8.dp, layout.footerBottomPadding)
             assertEquals(12.dp, layout.measurementColumnSpacing)
             assertEquals(2.dp, layout.measurementUnitSpacing)
@@ -116,7 +116,7 @@ class ComplexWidgetLayoutTest {
             refreshBackingEndInset = WidgetRefreshButtonDefaults.backingEndInset
         )
 
-        assertEquals(22.dp, reservation)
+        assertEquals(20.dp, reservation)
         assertEquals(
             WidgetRefreshButtonDefaults.backingEndInset,
             contentEndInset + reservation
@@ -142,8 +142,8 @@ class ComplexWidgetLayoutTest {
         val refreshBackingStart =
             widgetWidth - WidgetRefreshButtonDefaults.backingEndInset
 
-        assertEquals(20.dp, previousTimestampWidth)
-        assertEquals(32.dp, timestampWidth)
+        assertEquals(22.dp, previousTimestampWidth)
+        assertEquals(34.dp, timestampWidth)
         assertEquals(refreshBackingStart, timestampEnd)
     }
 

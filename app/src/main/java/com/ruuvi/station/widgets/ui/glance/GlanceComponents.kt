@@ -77,8 +77,8 @@ internal fun TextUnit.scaledBy(scale: Float): TextUnit {
 fun Dp.toWidgetDp(context: Context): Dp = this / getZoomFactor(context)
 
 internal object WidgetRefreshButtonDefaults {
-    val touchTargetSize: Dp = 44.dp
-    val iconSize: Dp = 18.dp
+    val touchTargetSize: Dp = 40.dp
+    val iconSize: Dp = 16.dp
     val edgePadding: Dp = 12.dp
     val visualEndInset: Dp = iconSize + edgePadding
     val backingSize: Dp = iconSize + 4.dp
