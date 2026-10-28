@@ -133,6 +133,7 @@ rxjava = { group = "io.reactivex.rxjava2", name = "rxjava", version.ref = "rxjav
 semver = { group = "net.swiftzer.semver", name = "semver", version.ref = "semver" }
 timber = { group = "com.jakewharton.timber", name = "timber", version.ref = "timber" }
 ui = { group = "androidx.compose.ui", name = "ui", version.ref = "ui" }
+ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4", version.ref = "ui" }
 ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest", version.ref = "ui" }
 ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling", version.ref = "ui" }
 ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview", version.ref = "ui" }

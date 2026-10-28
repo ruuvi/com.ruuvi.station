@@ -370,7 +370,7 @@ class DashboardActivity : NfcActivity(), DIAware {
 }
 
 @Composable
-private fun MarketingConsentPromptDialog(
+internal fun MarketingConsentPromptDialog(
     isSaving: Boolean,
     showSaveError: Boolean,
     onAccept: () -> Unit,
@@ -459,7 +459,7 @@ private fun MarketingConsentPromptDialog(
 }
 
 @Composable
-private fun MarketingConsentSavedDialog(onDismiss: () -> Unit) {
+internal fun MarketingConsentSavedDialog(onDismiss: () -> Unit) {
     Dialog(onDismissRequest = onDismiss) {
         Card(
             modifier = Modifier

@@ -272,6 +272,9 @@ dependencies {
     testImplementation libs.junit
     testImplementation libs.mockk
     testImplementation libs.kotlinx.coroutines.test
+    testImplementation libs.ui.test.junit4
+    testImplementation "org.robolectric:robolectric:4.16.1"
+    testRuntimeOnly "org.ow2.asm:asm:9.10"
     testImplementation "org.mockito.kotlin:mockito-kotlin:$mockitoKotlinVersion"
     mockitoAgent("org.mockito:mockito-core:$mockitoVersion") {
         transitive = false
