@@ -13,10 +13,11 @@ data class SimpleWidgetLayoutConfig(
     val displayNameFontSize: TextUnit,
     val valueFontSize: TextUnit,
     val secondaryFontSize: TextUnit,
+    val timestampFontSize: TextUnit,
+    val measurementNameFontSize: TextUnit,
     val horizontalPadding: Dp,
     val verticalPadding: Dp,
     val inlineSpacing: Dp,
-    val aqiBoxHeight: Dp,
     val unitPadding: Dp,
     val aqiMeasurementPadding: Dp,
     val dotSize: Dp,
@@ -32,7 +33,6 @@ data class SimpleWidgetLayoutConfig(
             zoomFactor: Float = 1f
         ): SimpleWidgetLayoutConfig = if (
             height < SHORT_LAYOUT_HEIGHT ||
-            isWideShortSize(width, height) ||
             (!isTablet && isHorizontalSize(width, height))
         ) {
             balancedShortConfig(isTablet)
@@ -46,14 +46,32 @@ data class SimpleWidgetLayoutConfig(
             zoomFactor: Float = 1f
         ): SimpleWidgetLayoutConfig {
             val baseConfig = when {
+
+                height >= 120.dp -> SimpleWidgetLayoutConfig(
+                    displayNameFontSize = ruuviStationFontsSizes.bigger,
+                    valueFontSize = ruuviStationFontsSizes.extraHuge,
+                    secondaryFontSize = ruuviStationFontsSizes.miniature,
+                    timestampFontSize = ruuviStationFontsSizes.compact,
+                    measurementNameFontSize = ruuviStationFontsSizes.tiny2,
+                    horizontalPadding = WidgetContentPaddingDefaults.edgePadding,
+                    verticalPadding = WidgetContentPaddingDefaults.edgePadding,
+                    inlineSpacing = 2.dp,
+                    unitPadding = 6.dp,
+                    aqiMeasurementPadding = 4.dp,
+                    dotSize = 6.dp,
+                    glowSize = 12.dp,
+                    barHeight = 3.dp
+                )
+
                 height >= 90.dp -> SimpleWidgetLayoutConfig(
                     displayNameFontSize = ruuviStationFontsSizes.big,
                     valueFontSize = ruuviStationFontsSizes.huge,
                     secondaryFontSize = ruuviStationFontsSizes.petite,
+                    timestampFontSize = ruuviStationFontsSizes.miniature,
+                    measurementNameFontSize = ruuviStationFontsSizes.tiny2,
                     horizontalPadding = WidgetContentPaddingDefaults.edgePadding,
                     verticalPadding = WidgetContentPaddingDefaults.edgePadding,
                     inlineSpacing = 2.dp,
-                    aqiBoxHeight = 34.dp,
                     unitPadding = 6.dp,
                     aqiMeasurementPadding = 4.dp,
                     dotSize = 6.dp,
@@ -65,10 +83,11 @@ data class SimpleWidgetLayoutConfig(
                     displayNameFontSize = ruuviStationFontsSizes.normal,
                     valueFontSize = ruuviStationFontsSizes.bigger,
                     secondaryFontSize = ruuviStationFontsSizes.petite,
+                    timestampFontSize = ruuviStationFontsSizes.miniature,
+                    measurementNameFontSize = ruuviStationFontsSizes.tiny2,
                     horizontalPadding = WidgetContentPaddingDefaults.edgePadding,
                     verticalPadding = WidgetContentPaddingDefaults.edgePadding,
                     inlineSpacing = 2.dp,
-                    aqiBoxHeight = 27.dp,
                     unitPadding = 3.dp,
                     aqiMeasurementPadding = 2.dp,
                     dotSize = 5.dp,
@@ -80,10 +99,11 @@ data class SimpleWidgetLayoutConfig(
                     displayNameFontSize = ruuviStationFontsSizes.small,
                     valueFontSize = ruuviStationFontsSizes.big,
                     secondaryFontSize = ruuviStationFontsSizes.petite,
+                    timestampFontSize = ruuviStationFontsSizes.miniature,
+                    measurementNameFontSize = ruuviStationFontsSizes.tiny2,
                     horizontalPadding = WidgetContentPaddingDefaults.edgePadding,
                     verticalPadding = COMPACT_VERTICAL_PADDING,
                     inlineSpacing = 1.dp,
-                    aqiBoxHeight = 18.dp,
                     unitPadding = 3.dp,
                     aqiMeasurementPadding = 3.dp,
                     dotSize = 3.dp,
@@ -96,13 +116,14 @@ data class SimpleWidgetLayoutConfig(
         }
 
         private fun balancedShortConfig(isTablet: Boolean) = SimpleWidgetLayoutConfig(
-            displayNameFontSize = if (isTablet) 12.sp else 16.sp,
-            valueFontSize = if (isTablet) 18.sp else 24.sp,
-            secondaryFontSize = if (isTablet) 10.sp else 12.sp,
+            displayNameFontSize = if (isTablet) 14.sp else 16.sp,
+            valueFontSize = if (isTablet) 36.sp else 24.sp,
+            secondaryFontSize = if (isTablet) 11.sp else 12.sp,
+            timestampFontSize = if (isTablet) 11.sp else 12.sp,
+            measurementNameFontSize = if (isTablet) 10.sp else 10.sp,
             horizontalPadding = WidgetContentPaddingDefaults.edgePadding,
             verticalPadding = if (isTablet) 8.dp else 6.dp,
             inlineSpacing = 1.dp,
-            aqiBoxHeight = 20.dp,
             unitPadding = 2.dp,
             aqiMeasurementPadding = 2.dp,
             dotSize = 4.dp,
@@ -118,12 +139,6 @@ enum class SimpleWidgetLayoutStyle {
     BALANCED_SHORT
 }
 
-private fun isWideShortSize(width: Dp, height: Dp): Boolean =
-    width.value.isFinite() &&
-        height.value.isFinite() &&
-        height.value > 0f &&
-        width.value / height.value >= WIDE_SHORT_ASPECT_RATIO
-
 private fun isHorizontalSize(width: Dp, height: Dp): Boolean =
     width.value.isFinite() &&
         height.value.isFinite() &&
@@ -132,7 +147,6 @@ private fun isHorizontalSize(width: Dp, height: Dp): Boolean =
 
 private val COMPACT_VERTICAL_PADDING = 8.dp
 private val SHORT_LAYOUT_HEIGHT = 75.dp
-private const val WIDE_SHORT_ASPECT_RATIO = 1.6f
 
 internal fun calculateAqiValueFontSize(config: SimpleWidgetLayoutConfig): TextUnit {
     val stackedInfoSize = config.secondaryFontSize.value * 2f +
@@ -155,7 +169,8 @@ internal fun fitSimpleWidgetTypography(
         val candidate = config.copy(
             displayNameFontSize = config.displayNameFontSize.scaledBy(scale),
             valueFontSize = config.valueFontSize.scaledBy(scale),
-            secondaryFontSize = config.secondaryFontSize.scaledBy(scale)
+            secondaryFontSize = config.secondaryFontSize.scaledBy(scale),
+            timestampFontSize = config.timestampFontSize.scaledBy(scale)
         )
         if (fits(candidate)) {
             fitted = candidate

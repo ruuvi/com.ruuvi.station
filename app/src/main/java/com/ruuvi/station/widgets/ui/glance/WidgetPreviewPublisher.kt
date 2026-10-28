@@ -26,7 +26,7 @@ import kotlin.reflect.KClass
 
 object WidgetPreviewPublisher {
     private const val PREFERENCES_NAME = "generated_widget_previews"
-    private const val PREVIEW_SCHEMA_VERSION = 6
+    private const val PREVIEW_SCHEMA_VERSION = 8
     private const val SIMPLE_WIDGET_KEY = "simple_widget"
     private const val COMPLEX_WIDGET_KEY = "complex_widget"
     private const val APPLIED_FINGERPRINT_SUFFIX = "_applied_fingerprint"
