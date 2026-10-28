@@ -11,7 +11,7 @@ class SimpleWidgetLayoutConfigTest {
     @Test
     fun `measurement units with compact glyphs receive top spacing`() {
         listOf("g", "g/m³", "ppm", "µg/m³").forEach { unit ->
-            assertEquals(3.dp, measurementUnitTopSpacing(unit))
+            assertEquals(2.dp, measurementUnitTopSpacing(unit))
         }
 
         assertEquals(0.dp, measurementUnitTopSpacing("°C"))
@@ -85,18 +85,20 @@ class SimpleWidgetLayoutConfigTest {
     }
 
     @Test
-    fun `wide short widget has dedicated balanced style`() {
-        val config = SimpleWidgetLayoutConfig.fromSize(
+    fun `widening tablet widget keeps height based typography`() {
+        val narrowConfig = SimpleWidgetLayoutConfig.fromSize(
+            width = 160.dp,
+            height = 110.dp,
+            isTablet = true
+        )
+        val wideConfig = SimpleWidgetLayoutConfig.fromSize(
             width = 220.dp,
             height = 110.dp,
             isTablet = true
         )
 
-        assertEquals(SimpleWidgetLayoutStyle.BALANCED_SHORT, config.style)
-        assertEquals(12.sp, config.displayNameFontSize)
-        assertEquals(18.sp, config.valueFontSize)
-        assertEquals(10.sp, config.secondaryFontSize)
-        assertEquals(8.dp, config.verticalPadding)
+        assertEquals(SimpleWidgetLayoutStyle.STANDARD, wideConfig.style)
+        assertEquals(narrowConfig, wideConfig)
     }
 
     @Test
@@ -110,6 +112,7 @@ class SimpleWidgetLayoutConfigTest {
         assertEquals(16.sp, config.displayNameFontSize)
         assertEquals(24.sp, config.valueFontSize)
         assertEquals(12.sp, config.secondaryFontSize)
+        assertEquals(12.sp, config.timestampFontSize)
         assertEquals(6.dp, config.verticalPadding)
     }
 
@@ -125,6 +128,7 @@ class SimpleWidgetLayoutConfigTest {
         assertEquals(16.sp, config.displayNameFontSize)
         assertEquals(24.sp, config.valueFontSize)
         assertEquals(12.sp, config.secondaryFontSize)
+        assertEquals(12.sp, config.timestampFontSize)
     }
 
     @Test
@@ -135,7 +139,7 @@ class SimpleWidgetLayoutConfigTest {
         )
 
         assertEquals(SimpleWidgetLayoutStyle.STANDARD, config.style)
-        assertEquals(20.sp, config.displayNameFontSize)
+        assertEquals(24.sp, config.displayNameFontSize)
     }
 
     @Test
@@ -147,7 +151,7 @@ class SimpleWidgetLayoutConfigTest {
         )
 
         assertEquals(
-            24.sp,
+            32.sp,
             calculateAqiValueFontSize(config)
         )
 
@@ -178,12 +182,14 @@ class SimpleWidgetLayoutConfigTest {
         assertEquals(config.displayNameFontSize / 2, fitted.displayNameFontSize)
         assertEquals(config.valueFontSize / 2, fitted.valueFontSize)
         assertEquals(config.secondaryFontSize / 2, fitted.secondaryFontSize)
+        assertEquals(config.timestampFontSize / 2, fitted.timestampFontSize)
         assertEquals(
             config,
             fitted.copy(
                 displayNameFontSize = config.displayNameFontSize,
                 valueFontSize = config.valueFontSize,
-                secondaryFontSize = config.secondaryFontSize
+                secondaryFontSize = config.secondaryFontSize,
+                timestampFontSize = config.timestampFontSize
             )
         )
     }
@@ -222,6 +228,16 @@ class SimpleWidgetLayoutConfigTest {
             "15:15 should receive more width than subtracting the whole touch target",
             timestampWidth > previousWidth
         )
+    }
+
+    @Test
+    fun `measurement row reserves only refresh overlap inside content`() {
+        val refreshOverlap = calculateRefreshOverlap(
+            contentEndPadding = 12.dp,
+            refreshTouchTargetSize = 40.dp
+        )
+
+        assertEquals(28.dp, refreshOverlap)
     }
 
     @Test

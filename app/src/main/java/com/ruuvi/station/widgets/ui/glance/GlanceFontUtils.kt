@@ -344,7 +344,7 @@ fun CustomFontText(
     if (text.isEmpty()) return
     val context = LocalContext.current
     val density = context.resources.displayMetrics.density
-    val maxWidthPx = (maxWidth.value * density).toInt().coerceAtLeast(1)
+    val maxWidthPx = customFontBitmapMaxWidthPx(maxWidth, density)
 
     val bitmap = GlanceFontUtils.createFontBitmap(
         context = context,
@@ -366,3 +366,6 @@ fun CustomFontText(
         )
     }
 }
+
+internal fun customFontBitmapMaxWidthPx(maxWidth: Dp, density: Float): Int =
+    ceil(maxWidth.value * density).toInt().coerceAtLeast(1)

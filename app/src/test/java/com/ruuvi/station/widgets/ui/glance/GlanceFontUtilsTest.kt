@@ -1,6 +1,7 @@
 package com.ruuvi.station.widgets.ui.glance
 
 import android.graphics.Bitmap
+import androidx.compose.ui.unit.dp
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
@@ -19,6 +20,11 @@ class GlanceFontUtilsTest {
 
         assertEquals(Bitmap.Config.ARGB_8888, format.config)
         assertEquals(4, format.bytesPerPixel)
+    }
+
+    @Test
+    fun `custom font bitmap width rounds up to avoid glyph truncation`() {
+        assertEquals(21, customFontBitmapMaxWidthPx(maxWidth = 10.01.dp, density = 2f))
     }
 
     @Test

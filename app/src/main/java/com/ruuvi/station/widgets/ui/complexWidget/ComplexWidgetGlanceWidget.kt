@@ -5,6 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.core.os.ConfigurationCompat
 import androidx.datastore.preferences.core.Preferences
 import androidx.glance.GlanceId
@@ -146,7 +147,7 @@ private fun ComplexWidgetContent(
                         modifier = GlanceModifier.fillMaxWidth(),
                         style = TextStyle(
                             color = GlanceColors.widgetSensorName,
-                            fontSize = ruuviStationFontsSizes.normal.toFixedWidgetSp(context),
+                            fontSize = ruuviStationFontsSizes.extended.toFixedWidgetSp(context),
                             fontWeight = FontWeight.Bold,
                             textAlign = TextAlign.Center
                         ),
@@ -175,6 +176,9 @@ private fun ComplexWidgetContent(
                                 zoomFactor,
                                 typographyScale
                             )
+                        }
+
+                        item {
                             Spacer(
                                 modifier = GlanceModifier.height(
                                     layout.headerBottomSpacing / zoomFactor
@@ -287,7 +291,7 @@ private fun SensorHeader(
             modifier = GlanceModifier.defaultWeight(),
             style = TextStyle(
                 color = GlanceColors.widgetSensorTitle,
-                fontSize = ruuviStationFontsSizes.normal
+                fontSize = ruuviStationFontsSizes.extended
                     .scaledBy(typographyScale)
                     .toFixedWidgetSp(context),
                 fontWeight = FontWeight.Bold
@@ -368,7 +372,7 @@ private fun SensorFooter(
                 modifier = GlanceModifier.defaultWeight(),
                 style = TextStyle(
                     color = GlanceColors.widgetSensorName,
-                    fontSize = ruuviStationFontsSizes.miniature
+                    fontSize = ruuviStationFontsSizes.small
                         .scaledBy(typographyScale)
                         .toFixedWidgetSp(context)
                 ),
@@ -390,10 +394,10 @@ private fun MeasurementItem(
     typographyScale: Float
 ) {
     val context = LocalContext.current
-    val valueFontSize = ruuviStationFontsSizes.compact
+    val valueFontSize = ruuviStationFontsSizes.normal
         .scaledBy(typographyScale)
         .toFixedWidgetSp(context)
-    val secondaryFontSize = ruuviStationFontsSizes.petite
+    val secondaryFontSize = ruuviStationFontsSizes.miniature
         .scaledBy(typographyScale)
         .toFixedWidgetSp(context)
     val valueBaselineOffset = GlanceFontUtils.measureSystemFontBaselineOffset(
@@ -403,11 +407,11 @@ private fun MeasurementItem(
     )
     val unitTopPadding = calculateBaselineTopPadding(
         referenceBaselineOffset = valueBaselineOffset,
-        textBaselineOffset = GlanceFontUtils.measureCustomFontMetrics(
+        textBaselineOffset = GlanceFontUtils.measureSystemFontBaselineOffset(
             context = context,
             fontSize = secondaryFontSize,
-            fontResId = R.font.oswald_bold
-        ).baseline
+            bold = true
+        )
     )
     val descriptionTopPadding = calculateBaselineTopPadding(
         referenceBaselineOffset = valueBaselineOffset,
@@ -437,18 +441,15 @@ private fun MeasurementItem(
                     layout.measurementUnitSpacing / zoomFactor
                 )
             )
-            CustomFontText(
+            Text(
                 text = value.unit,
-                fontSize = secondaryFontSize,
-                colorProvider = GlanceColors.widgetSensorName,
-                fontResId = R.font.oswald_bold,
                 modifier = GlanceModifier.padding(top = unitTopPadding),
-                maxWidth = GlanceFontUtils.measureCustomFontWidth(
-                    context = context,
-                    text = value.unit,
+                style = TextStyle(
+                    color = GlanceColors.widgetSensorName,
                     fontSize = secondaryFontSize,
-                    fontResId = R.font.oswald_bold
-                )
+                    fontWeight = FontWeight.Bold
+                ),
+                maxLines = 1
             )
         }
 
@@ -565,9 +566,9 @@ internal fun complexWidgetLayoutConfig(
     outerPadding = COMPLEX_WIDGET_OUTER_PADDING,
     horizontalPadding = COMPLEX_WIDGET_HORIZONTAL_PADDING,
     headerTopPadding = COMPLEX_WIDGET_HORIZONTAL_PADDING,
-    headerBottomSpacing = 12.dp,
-    rowVerticalPadding = 3.dp,
-    footerTopSpacing = 8.dp,
+    headerBottomSpacing = 10.dp,
+    rowVerticalPadding = 1.dp,
+    footerTopSpacing = 10.dp,
     footerBottomPadding = COMPLEX_WIDGET_HORIZONTAL_PADDING,
     measurementColumnSpacing = COMPLEX_WIDGET_COLUMN_SPACING,
     measurementUnitSpacing = COMPLEX_WIDGET_MEASUREMENT_UNIT_SPACING,
