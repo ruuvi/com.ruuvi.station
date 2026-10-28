@@ -9,6 +9,7 @@ import com.ruuvi.station.dashboard.domain.SensorsSortingInteractor
 import com.ruuvi.station.feature.domain.RuntimeBehavior
 import com.ruuvi.station.image.ImageInteractor
 import com.ruuvi.station.network.data.response.MarketingConsentResponseBody
+import com.ruuvi.station.network.data.response.MarketingConsentStatus
 import com.ruuvi.station.network.domain.MarketingConsentInteractor
 import com.ruuvi.station.network.domain.NetworkApplicationSettings
 import com.ruuvi.station.network.domain.NetworkDataSyncInteractor
@@ -185,6 +186,43 @@ class DashboardActivityViewModelTest {
 
         assertEquals(MarketingConsentPrompt.Hidden, viewModel.marketingConsentPrompt.value)
         coVerify(exactly = 0) { marketingConsentInteractor.update(any()) }
+    }
+
+    @Test
+    fun `marketing consent prompt is shown for an address not found in the subscription list`() = runTest(dispatcher) {
+        coEvery {
+            marketingConsentInteractor.refresh()
+        } returns MarketingConsentResponseBody(
+            consent = false,
+            status = MarketingConsentStatus.NOT_FOUND.value
+        )
+
+        val viewModel = viewModel()
+
+        awaitPrompt(viewModel)
+    }
+
+    @Test
+    fun `marketing consent prompt stays hidden for ineligible subscription statuses`() = runTest(dispatcher) {
+        val ineligibleStatuses = MarketingConsentStatus.entries - setOf(
+            MarketingConsentStatus.UNSUBSCRIBED,
+            MarketingConsentStatus.NOT_FOUND
+        )
+
+        ineligibleStatuses.forEach { status ->
+            coEvery {
+                marketingConsentInteractor.refresh()
+            } returns MarketingConsentResponseBody(consent = false, status = status.value)
+
+            val viewModel = viewModel()
+            advanceUntilIdle()
+
+            assertEquals(
+                "Prompt should stay hidden for $status",
+                MarketingConsentPrompt.Hidden,
+                viewModel.marketingConsentPrompt.value
+            )
+        }
     }
 
     @Test

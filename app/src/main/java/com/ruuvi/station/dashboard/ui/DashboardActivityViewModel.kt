@@ -11,6 +11,7 @@ import com.ruuvi.station.dashboard.domain.SensorsSortingInteractor
 import com.ruuvi.station.feature.domain.RuntimeBehavior
 import com.ruuvi.station.feature.data.FeatureFlag
 import com.ruuvi.station.image.ImageInteractor
+import com.ruuvi.station.network.data.response.MarketingConsentStatus
 import com.ruuvi.station.network.domain.NetworkApplicationSettings
 import com.ruuvi.station.network.domain.NetworkDataSyncInteractor
 import com.ruuvi.station.network.domain.NetworkSettingNames
@@ -84,7 +85,13 @@ class DashboardActivityViewModel(
             viewModelScope.launch {
                 try {
                     val consent = marketingConsentInteractor.refresh() ?: return@launch
-                    if (consent.consent || !shouldShowMarketingConsentPrompt()) return@launch
+                    if (
+                        consent.consent ||
+                        consent.consentStatus !in MARKETING_CONSENT_PROMPT_ELIGIBLE_STATUSES ||
+                        !shouldShowMarketingConsentPrompt()
+                    ) {
+                        return@launch
+                    }
 
                     _marketingConsentPrompt.value = MarketingConsentPrompt.Ask
                 } catch (exception: Exception) {
@@ -297,6 +304,10 @@ class DashboardActivityViewModel(
 
     private companion object {
         const val MARKETING_CONSENT_PROMPT_INTERVAL_MILLIS = 180L * 24 * 60 * 60 * 1000
+        val MARKETING_CONSENT_PROMPT_ELIGIBLE_STATUSES = setOf(
+            MarketingConsentStatus.UNSUBSCRIBED,
+            MarketingConsentStatus.NOT_FOUND
+        )
     }
 }
 
