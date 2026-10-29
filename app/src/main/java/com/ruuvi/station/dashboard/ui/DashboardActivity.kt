@@ -39,6 +39,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.zIndex
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.Lifecycle
@@ -60,6 +62,7 @@ import com.ruuvi.station.app.ui.DashboardTopAppBar
 import com.ruuvi.station.app.ui.components.AlertBadgeIcon
 import com.ruuvi.station.app.ui.components.Paragraph
 import com.ruuvi.station.app.ui.components.RuuviButton
+import com.ruuvi.station.app.ui.components.RuuviTextButton
 import com.ruuvi.station.app.ui.components.limitScaleTo
 import com.ruuvi.station.app.ui.components.rememberResourceUri
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
@@ -128,6 +131,7 @@ class DashboardActivity : NfcActivity(), DIAware {
                 val userEmail by dashboardViewModel.userEmail.observeAsState()
                 val signedIn = !userEmail.isNullOrEmpty()
                 val marketingConsent by dashboardViewModel.marketingConsent.observeAsState(false)
+                val marketingConsentPrompt by dashboardViewModel.marketingConsentPrompt.collectAsState()
                 val signedInOnce by dashboardViewModel.signedInOnce.collectAsState(false)
                 val bannerDisabled by dashboardViewModel.bannerDisabled.collectAsState(false)
                 val sensors by dashboardViewModel.sensorsList.collectAsState()
@@ -164,6 +168,23 @@ class DashboardActivity : NfcActivity(), DIAware {
                         askForBackgroundLocation = dashboardViewModel.shouldAskForBackgroundLocationPermission,
                         preferencesRepository = preferencesRepository
                     )
+                }
+
+                when (marketingConsentPrompt) {
+                    MarketingConsentPrompt.Ask,
+                    MarketingConsentPrompt.Saving,
+                    MarketingConsentPrompt.Error -> MarketingConsentPromptDialog(
+                        isSaving = marketingConsentPrompt == MarketingConsentPrompt.Saving,
+                        showSaveError = marketingConsentPrompt == MarketingConsentPrompt.Error,
+                        onAccept = { dashboardViewModel.respondToMarketingConsentPrompt(true) },
+                        onDecline = { dashboardViewModel.respondToMarketingConsentPrompt(false) }
+                    )
+
+                    MarketingConsentPrompt.Saved -> MarketingConsentSavedDialog(
+                        onDismiss = dashboardViewModel::dismissMarketingConsentSavedMessage
+                    )
+
+                    MarketingConsentPrompt.Hidden -> Unit
                 }
 
                 Box (
@@ -344,6 +365,128 @@ class DashboardActivity : NfcActivity(), DIAware {
                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
             context.startActivity(dashboardIntent)
+        }
+    }
+}
+
+@Composable
+internal fun MarketingConsentPromptDialog(
+    isSaving: Boolean,
+    showSaveError: Boolean,
+    onAccept: () -> Unit,
+    onDecline: () -> Unit
+) {
+    Dialog(onDismissRequest = { if (!isSaving) onDecline() }) {
+            Card(
+                modifier = Modifier
+                    .padding(horizontal = RuuviStationTheme.dimensions.medium)
+                    .fillMaxWidth(),
+                shape = RoundedCornerShape(24.dp),
+                backgroundColor = RuuviStationTheme.colors.background
+            ) {
+                Column(
+                    modifier = Modifier
+                        .padding(all = RuuviStationTheme.dimensions.extended)
+                        .verticalScroll(rememberScrollState()),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = stringResource(R.string.marketing_consent_prompt_title),
+                        fontSize = RuuviStationTheme.fontSizes.big,
+                        lineHeight = 24.sp,
+                        fontFamily = RuuviStationTheme.fonts.mulishExtraBold,
+                        color = RuuviStationTheme.colors.primary,
+                        textAlign = TextAlign.Center,
+                    )
+
+                    Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
+
+                    Image(
+                        painter = painterResource(R.drawable.marketing_consent_mail),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(130.dp),
+                        contentScale = ContentScale.Fit
+                    )
+
+                    Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
+
+                    Text(
+                        text = stringResource(R.string.marketing_consent_prompt_message),
+                        style = RuuviStationTheme.typography.paragraph,
+                        color = RuuviStationTheme.colors.primary,
+                        textAlign = TextAlign.Center
+                    )
+
+                    if (showSaveError) {
+                        Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.medium))
+
+                        Text(
+                            text = stringResource(R.string.internet_connection_problem),
+                            style = RuuviStationTheme.typography.paragraph,
+                            color = RuuviStationTheme.colors.primary,
+                            textAlign = TextAlign.Center
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
+
+                    RuuviButton(
+                        text = stringResource(
+                            if (showSaveError) {
+                                R.string.try_again
+                            } else {
+                                R.string.ok
+                            }
+                        ),
+                        modifier = Modifier.fillMaxWidth(0.6f),
+                        enabled = !isSaving,
+                        loading = isSaving,
+                        onClick = onAccept
+                    )
+
+                    Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.medium))
+
+                    RuuviTextButton(
+                        text = stringResource(R.string.marketing_consent_prompt_decline),
+                        enabled = !isSaving,
+                        onClick = onDecline
+                    )
+                }
+            }
+        }
+}
+
+@Composable
+internal fun MarketingConsentSavedDialog(onDismiss: () -> Unit) {
+    Dialog(onDismissRequest = onDismiss) {
+        Card(
+            modifier = Modifier
+                .padding(horizontal = RuuviStationTheme.dimensions.medium)
+                .fillMaxWidth(),
+            shape = RoundedCornerShape(24.dp),
+            backgroundColor = RuuviStationTheme.colors.background
+        ) {
+            Column(
+                modifier = Modifier.padding(all = RuuviStationTheme.dimensions.extended),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = stringResource(R.string.marketing_consent_prompt_saved),
+                    style = RuuviStationTheme.typography.paragraph,
+                    color = RuuviStationTheme.colors.primary,
+                    textAlign = TextAlign.Center
+                )
+
+                Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
+
+                RuuviTextButton(
+                    text = stringResource(R.string.ok),
+                    modifier = Modifier.align(Alignment.End),
+                    onClick = onDismiss
+                )
+            }
         }
     }
 }
