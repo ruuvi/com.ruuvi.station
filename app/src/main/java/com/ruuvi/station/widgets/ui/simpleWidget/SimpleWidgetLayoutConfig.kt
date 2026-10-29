@@ -8,6 +8,7 @@ import com.ruuvi.station.app.ui.theme.ruuviStationFontsSizes
 import com.ruuvi.station.widgets.ui.glance.WidgetContentPaddingDefaults
 import com.ruuvi.station.widgets.ui.glance.WidgetTextMetrics
 import com.ruuvi.station.widgets.ui.glance.scaledBy
+import kotlin.math.roundToInt
 
 data class SimpleWidgetLayoutConfig(
     val displayNameFontSize: TextUnit,
@@ -157,77 +158,114 @@ internal fun calculateAqiValueFontSize(config: SimpleWidgetLayoutConfig): TextUn
 
 internal fun fitSimpleWidgetTypography(
     config: SimpleWidgetLayoutConfig,
+    maximumValueFontSize: TextUnit = config.valueFontSize,
     fits: (SimpleWidgetLayoutConfig) -> Boolean
 ): SimpleWidgetLayoutConfig {
-    if (fits(config)) return config
+    var fitted = config
+    if (!fits(config)) {
+        var lowerScale = 0f
+        var upperScale = 1f
+        var smallerConfig: SimpleWidgetLayoutConfig? = null
+        repeat(12) {
+            val scale = (lowerScale + upperScale) / 2f
+            val candidate = config.copy(
+                displayNameFontSize = config.displayNameFontSize.scaledBy(scale),
+                valueFontSize = config.valueFontSize.scaledBy(scale),
+                secondaryFontSize = config.secondaryFontSize.scaledBy(scale),
+                timestampFontSize = config.timestampFontSize.scaledBy(scale),
+                measurementNameFontSize = config.measurementNameFontSize.scaledBy(scale)
+            )
+            if (fits(candidate)) {
+                smallerConfig = candidate
+                lowerScale = scale
+            } else {
+                upperScale = scale
+            }
+        }
+        fitted = checkNotNull(smallerConfig) { "Simple widget text cannot fit within the available space" }
+    }
 
-    var lowerScale = 0f
-    var upperScale = 1f
-    var fitted: SimpleWidgetLayoutConfig? = null
+    var lowerValueSize = fitted.valueFontSize.value
+    var upperValueSize = maxOf(lowerValueSize, maximumValueFontSize.value)
+    if (upperValueSize == lowerValueSize) return fitted
+
     repeat(12) {
-        val scale = (lowerScale + upperScale) / 2f
-        val candidate = config.copy(
-            displayNameFontSize = config.displayNameFontSize.scaledBy(scale),
-            valueFontSize = config.valueFontSize.scaledBy(scale),
-            secondaryFontSize = config.secondaryFontSize.scaledBy(scale),
-            timestampFontSize = config.timestampFontSize.scaledBy(scale)
-        )
+        val candidate = fitted.copy(valueFontSize = ((lowerValueSize + upperValueSize) / 2f).sp)
         if (fits(candidate)) {
             fitted = candidate
-            lowerScale = scale
+            lowerValueSize = candidate.valueFontSize.value
         } else {
-            upperScale = scale
+            upperValueSize = candidate.valueFontSize.value
         }
     }
-    return checkNotNull(fitted) { "Simple widget text cannot fit within the available space" }
+    return fitted
 }
 
-internal data class SimpleWidgetAqiTextLayout(
-    val valueTopPadding: Dp,
-    val unitTopPadding: Dp,
-    val measurementTopPadding: Dp,
-    val height: Dp
+internal fun reduceSimpleWidgetValueFontSize(fontSize: TextUnit): TextUnit =
+    (fontSize.value - 8f).coerceAtLeast(minOf(fontSize.value, 2f)).sp
+
+internal fun fitSimpleWidgetLabelFontSize(
+    maximumFontSize: TextUnit,
+    fits: (TextUnit) -> Boolean
+): TextUnit {
+    var lowerSize = 0f
+    var upperSize = maximumFontSize.value
+    repeat(12) {
+        val candidate = (lowerSize + upperSize) / 2f
+        if (fits(candidate.sp)) {
+            lowerSize = candidate
+        } else {
+            upperSize = candidate
+        }
+    }
+    check(lowerSize > 0f) { "Simple widget label cannot fit within its half of the value height" }
+    return lowerSize.sp
+}
+
+internal data class SimpleWidgetLabelHeights(
+    val unit: Dp,
+    val measurement: Dp
 )
 
-internal fun calculateAqiMinimumValueHeight(
-    unit: WidgetTextMetrics,
-    measurement: WidgetTextMetrics,
-    indicatorSize: Dp,
-    spacing: Dp
-): Dp {
-    val unitRowHeight = maxOf(unit.height, indicatorSize)
-    val unitTextTop = (unitRowHeight - unit.height) / 2
-    val unitGlyphTop = unitTextTop + unit.glyphTop
-    val unitContentBottom = maxOf(
-        unitTextTop + unit.glyphBottom,
-        (unitRowHeight + indicatorSize) / 2
+internal fun calculateSimpleWidgetLabelHeights(
+    valueHeight: Dp,
+    density: Float
+): SimpleWidgetLabelHeights {
+    val heightPx = (valueHeight.value * density).roundToInt()
+    val unitHeightPx = (heightPx + 1) / 2
+    return SimpleWidgetLabelHeights(
+        unit = (unitHeightPx / density).dp,
+        measurement = ((heightPx - unitHeightPx) / density).dp
     )
-    return unitContentBottom - unitGlyphTop +
-        measurement.baseline - measurement.glyphTop + spacing
 }
 
-internal fun calculateAqiTextLayout(
-    value: WidgetTextMetrics,
-    unit: WidgetTextMetrics,
-    measurement: WidgetTextMetrics,
-    indicatorSize: Dp,
-    measurementUnitTopSpacing: Dp = 0.dp
-): SimpleWidgetAqiTextLayout {
-    val unitRowHeight = maxOf(unit.height, indicatorSize)
-    val unitTextTop = (unitRowHeight - unit.height) / 2
-    val unitTop = value.glyphTop - unit.glyphTop - unitTextTop - measurementUnitTopSpacing
-    val measurementTop = value.baseline - measurement.baseline
-    val valueTop = maxOf(0.dp, -unitTop, -measurementTop)
+internal data class SimpleWidgetTextLayout(
+    val height: Dp,
+    val unitTopPadding: Dp,
+    val measurementTopPadding: Dp
+)
 
-    return SimpleWidgetAqiTextLayout(
-        valueTopPadding = valueTop,
-        unitTopPadding = valueTop + unitTop,
-        measurementTopPadding = valueTop + measurementTop,
-        height = maxOf(
-            valueTop + value.height,
-            valueTop + unitTop + unitRowHeight,
-            valueTop + measurementTop + measurement.height
-        )
+internal fun calculateSimpleWidgetTextLayout(
+    valueMetrics: WidgetTextMetrics,
+    unitMetrics: WidgetTextMetrics,
+    measurementMetrics: WidgetTextMetrics,
+    density: Float
+): SimpleWidgetTextLayout {
+    fun pixels(value: Dp): Int = (value.value * density).roundToInt()
+
+    val unitTop = (pixels(valueMetrics.glyphTop) - pixels(unitMetrics.glyphTop)).coerceAtLeast(0)
+    val measurementTop = (pixels(valueMetrics.baseline) - pixels(measurementMetrics.baseline))
+        .coerceAtLeast(0)
+    // Native text can extend below the numeric baseline; keep its descenders clear of the timestamp.
+    val height = maxOf(
+        pixels(valueMetrics.height),
+        unitTop + pixels(unitMetrics.height),
+        measurementTop + pixels(measurementMetrics.height)
+    )
+    return SimpleWidgetTextLayout(
+        height = (height / density).dp,
+        unitTopPadding = (unitTop / density).dp,
+        measurementTopPadding = (measurementTop / density).dp
     )
 }
 

@@ -40,7 +40,7 @@
                 android:includeFontPadding="false"
                 android:maxLines="1"
                 android:text="21.5"
-                android:textColor="@color/widget_preview_value"
+                android:textColor="@color/widget_preview_secondary"
                 android:textSize="22dp"
                 tools:ignore="HardcodedText" />
 

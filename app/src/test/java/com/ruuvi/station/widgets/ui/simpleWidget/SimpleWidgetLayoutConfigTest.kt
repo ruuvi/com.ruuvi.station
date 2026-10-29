@@ -3,47 +3,42 @@ package com.ruuvi.station.widgets.ui.simpleWidget
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ruuvi.station.widgets.ui.glance.WidgetTextMetrics
+import kotlin.math.abs
+import kotlin.math.roundToInt
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class SimpleWidgetLayoutConfigTest {
     @Test
-    fun `measurement units with compact glyphs receive top spacing`() {
-        listOf("g", "g/m³", "ppm", "µg/m³").forEach { unit ->
-            assertEquals(2.dp, measurementUnitTopSpacing(unit))
+    fun `fitted value is reduced by eight sp`() {
+        for (size in listOf(10.sp, 12.sp, 24.sp, 60.sp)) {
+            assertEquals((size.value - 8f).sp, reduceSimpleWidgetValueFontSize(size))
         }
-
-        assertEquals(0.dp, measurementUnitTopSpacing("°C"))
     }
 
     @Test
-    fun `measurement unit top spacing separates the unit and measurement label`() {
-        val value = WidgetTextMetrics(
-            height = 20.dp,
-            baseline = 16.dp,
-            glyphTop = 2.dp,
-            glyphBottom = 18.dp
-        )
-        val unit = WidgetTextMetrics(
-            height = 10.dp,
-            baseline = 8.dp,
-            glyphTop = 1.dp,
-            glyphBottom = 9.dp
-        )
-        val measurement = WidgetTextMetrics(
-            height = 14.dp,
-            baseline = 8.dp,
-            glyphTop = 1.dp,
-            glyphBottom = 13.dp
-        )
+    fun `tiny value sizes are not increased or reduced to zero`() {
+        assertEquals(2.sp, reduceSimpleWidgetValueFontSize(9.sp))
+        assertEquals(2.sp, reduceSimpleWidgetValueFontSize(7.sp))
+        assertEquals(2.sp, reduceSimpleWidgetValueFontSize(4.sp))
+        assertEquals(2.sp, reduceSimpleWidgetValueFontSize(2.sp))
+        assertEquals(1.sp, reduceSimpleWidgetValueFontSize(1.sp))
+    }
 
-        val baseLayout = calculateAqiTextLayout(value, unit, measurement, indicatorSize = 0.dp)
-        val spacedLayout = calculateAqiTextLayout(
-            value, unit, measurement, indicatorSize = 0.dp, measurementUnitTopSpacing = 1.dp
-        )
+    @Test
+    fun `label text grows to the largest size that fits its half`() {
+        val fontSize = fitSimpleWidgetLabelFontSize(maximumFontSize = 60.sp) {
+            it.value * 1.25f <= 30f
+        }
 
-        assertEquals(1.dp, baseLayout.unitTopPadding - spacedLayout.unitTopPadding)
+        assertTrue(fontSize.value * 1.25f <= 30f)
+        assertEquals(24f, fontSize.value, 0.02f)
+    }
+
+    @Test(expected = IllegalStateException::class)
+    fun `label fitting reports when no size fits`() {
+        fitSimpleWidgetLabelFontSize(maximumFontSize = 60.sp) { false }
     }
 
     @Test
@@ -183,13 +178,15 @@ class SimpleWidgetLayoutConfigTest {
         assertEquals(config.valueFontSize / 2, fitted.valueFontSize)
         assertEquals(config.secondaryFontSize / 2, fitted.secondaryFontSize)
         assertEquals(config.timestampFontSize / 2, fitted.timestampFontSize)
+        assertEquals(config.measurementNameFontSize / 2, fitted.measurementNameFontSize)
         assertEquals(
             config,
             fitted.copy(
                 displayNameFontSize = config.displayNameFontSize,
                 valueFontSize = config.valueFontSize,
                 secondaryFontSize = config.secondaryFontSize,
-                timestampFontSize = config.timestampFontSize
+                timestampFontSize = config.timestampFontSize,
+                measurementNameFontSize = config.measurementNameFontSize
             )
         )
     }
@@ -204,6 +201,51 @@ class SimpleWidgetLayoutConfigTest {
 
         assertTrue(fitted.valueFontSize.value <= maximumValueFontSize)
         assertEquals(maximumValueFontSize, fitted.valueFontSize.value, 0.01f)
+    }
+
+    @Test
+    fun `value grows to fill the height between the title and timestamp`() {
+        val config = SimpleWidgetLayoutConfig.fromSize(220.dp, 110.dp)
+        val availableHeight = 110f - config.verticalPadding.value * 2 - 5f
+        val fitted = fitSimpleWidgetTypography(config, maximumValueFontSize = 110.sp) {
+            it.displayNameFontSize.value + it.valueFontSize.value +
+                it.timestampFontSize.value <= availableHeight
+        }
+
+        assertTrue(fitted.valueFontSize > config.valueFontSize)
+        assertEquals(
+            availableHeight - config.displayNameFontSize.value - config.timestampFontSize.value,
+            fitted.valueFontSize.value,
+            0.03f
+        )
+        assertEquals(config, fitted.copy(valueFontSize = config.valueFontSize))
+    }
+
+    @Test
+    fun `value growth stops at the available width without shrinking the title or timestamp`() {
+        val config = SimpleWidgetLayoutConfig.fromSize(220.dp, 110.dp)
+        val fitted = fitSimpleWidgetTypography(config, maximumValueFontSize = 110.sp) {
+            it.valueFontSize.value <= 35f
+        }
+
+        assertEquals(35f, fitted.valueFontSize.value, 0.03f)
+        assertEquals(config, fitted.copy(valueFontSize = config.valueFontSize))
+    }
+
+    @Test
+    fun `value still fits when all typography must shrink in a small widget`() {
+        val config = SimpleWidgetLayoutConfig.fromSize(110.dp, 40.dp)
+        val fitted = fitSimpleWidgetTypography(config, maximumValueFontSize = 40.sp) {
+            it.displayNameFontSize.value + it.valueFontSize.value +
+                it.timestampFontSize.value <= 20f
+        }
+
+        assertTrue(fitted.displayNameFontSize < config.displayNameFontSize)
+        assertTrue(fitted.timestampFontSize < config.timestampFontSize)
+        val totalHeight = fitted.displayNameFontSize.value + fitted.valueFontSize.value +
+            fitted.timestampFontSize.value
+        assertTrue(totalHeight <= 20f)
+        assertEquals(20f, totalHeight, 0.03f)
     }
 
     @Test
@@ -373,95 +415,85 @@ class SimpleWidgetLayoutConfigTest {
     }
 
     @Test
-    fun `AQI labels align to the numeric cap line and baseline across densities and font sizes`() {
-        for (density in listOf(1f, 1.5f, 2f, 3.5f)) {
-            for (fontScale in listOf(0.85f, 1f, 1.3f, 2f)) {
-                val valueScale = 1f + (fontScale - 1f) * 0.7f
-                val value = WidgetTextMetrics(
-                    height = (46f * valueScale / density).dp,
-                    baseline = (38f * valueScale / density).dp,
-                    glyphTop = (10f * valueScale / density).dp,
-                    glyphBottom = (39f * valueScale / density).dp
-                )
-                val unit = WidgetTextMetrics(
-                    height = (16f * fontScale / density).dp,
-                    baseline = (13f * fontScale / density).dp,
-                    glyphTop = (4f * fontScale / density).dp,
-                    glyphBottom = (14f * fontScale / density).dp
-                )
-                val measurement = unit.copy(
-                    baseline = (12f * fontScale / density).dp,
-                    glyphTop = (3f * fontScale / density).dp
-                )
-                val indicatorSize = 8.dp
-                val layout = calculateAqiTextLayout(value, unit, measurement, indicatorSize)
-                val unitTextTop = (maxOf(unit.height, indicatorSize) - unit.height) / 2
+    fun `unit and measurement each receive half the value height`() {
+        val heights = calculateSimpleWidgetLabelHeights(valueHeight = 40.dp, density = 1f)
 
-                assertEquals(
-                    (layout.valueTopPadding + value.glyphTop).value,
-                    (layout.unitTopPadding + unitTextTop + unit.glyphTop).value,
-                    0.001f
-                )
-                assertEquals(
-                    (layout.valueTopPadding + value.baseline).value,
-                    (layout.measurementTopPadding + measurement.baseline).value,
-                    0.001f
-                )
-                assertTrue(layout.valueTopPadding >= 0.dp)
-                assertTrue(layout.unitTopPadding >= 0.dp)
-                assertTrue(layout.measurementTopPadding >= 0.dp)
-                assertTrue(layout.height >= layout.valueTopPadding + value.height)
-                assertTrue(layout.height >= layout.unitTopPadding + maxOf(unit.height, indicatorSize))
-                assertTrue(layout.height >= layout.measurementTopPadding + measurement.height)
+        assertEquals(20.dp, heights.unit)
+        assertEquals(20.dp, heights.measurement)
+    }
+
+    @Test
+    fun `odd pixel heights keep the two label rows within the value height`() {
+        val heights = calculateSimpleWidgetLabelHeights(valueHeight = 41.dp, density = 1f)
+
+        assertEquals(21.dp, heights.unit)
+        assertEquals(20.dp, heights.measurement)
+        assertEquals(41.dp, heights.unit + heights.measurement)
+    }
+
+    @Test
+    fun `label halves use every pixel without overflow across densities`() {
+        for (density in listOf(1f, 1.5f, 2f, 2.625f, 3.5f)) {
+            for (heightPx in listOf(2, 3, 12, 45, 80, 301)) {
+                val heights = calculateSimpleWidgetLabelHeights((heightPx / density).dp, density)
+                val unitHeightPx = (heights.unit.value * density).roundToInt()
+                val measurementHeightPx = (heights.measurement.value * density).roundToInt()
+
+                assertEquals(heightPx, unitHeightPx + measurementHeightPx)
+                assertTrue(abs(unitHeightPx - measurementHeightPx) <= 1)
+                assertTrue(unitHeightPx > 0)
+                assertTrue(measurementHeightPx > 0)
             }
         }
     }
 
     @Test
-    fun `AQI minimum value height leaves space between the labels`() {
-        val unit = WidgetTextMetrics(16.dp, 13.dp, 4.dp, 14.dp)
-        val measurement = WidgetTextMetrics(16.dp, 12.dp, 3.dp, 15.dp)
-        val minimumHeight = calculateAqiMinimumValueHeight(
-            unit, measurement, indicatorSize = 8.dp, spacing = 2.dp
-        )
-        val value = WidgetTextMetrics(
-            height = minimumHeight + 12.dp,
-            baseline = minimumHeight + 8.dp,
-            glyphTop = 8.dp,
-            glyphBottom = minimumHeight + 9.dp
-        )
-        val layout = calculateAqiTextLayout(value, unit, measurement, indicatorSize = 8.dp)
+    fun `unit tops and measurement baselines align while preserving native descenders`() {
+        val value = WidgetTextMetrics(80.dp, 78.dp, 2.dp, 78.dp)
+        val unit = WidgetTextMetrics(40.dp, 36.dp, 1.dp, 37.dp)
+        val measurement = WidgetTextMetrics(40.dp, 30.dp, 8.dp, 35.dp)
+        val layout = calculateSimpleWidgetTextLayout(value, unit, measurement, density = 1f)
 
-        assertEquals(21.dp, minimumHeight)
-        assertEquals(
-            2.dp,
-            layout.measurementTopPadding + measurement.glyphTop -
-                layout.unitTopPadding - unit.glyphBottom
-        )
+        assertEquals(1.dp, layout.unitTopPadding)
+        assertEquals(value.glyphTop, layout.unitTopPadding + unit.glyphTop)
+        assertEquals(48.dp, layout.measurementTopPadding)
+        assertEquals(value.baseline, layout.measurementTopPadding + measurement.baseline)
+        assertEquals(88.dp, layout.height)
+        assertEquals(layout.height, layout.measurementTopPadding + measurement.height)
     }
 
     @Test
-    fun `AQI description descenders contribute to row height`() {
-        val value = WidgetTextMetrics(30.dp, 29.dp, 6.dp, 29.dp)
-        val unit = WidgetTextMetrics(14.dp, 11.dp, 3.dp, 12.dp)
-        val measurement = WidgetTextMetrics(16.dp, 11.dp, 3.dp, 15.dp)
+    fun `numeric descenders can contain the baseline aligned measurement`() {
+        val value = WidgetTextMetrics(50.dp, 40.dp, 1.dp, 49.dp)
+        val unit = WidgetTextMetrics(24.dp, 20.dp, 1.dp, 23.dp)
+        val measurement = WidgetTextMetrics(24.dp, 18.dp, 5.dp, 22.dp)
+        val layout = calculateSimpleWidgetTextLayout(value, unit, measurement, density = 1f)
 
-        val layout = calculateAqiTextLayout(value, unit, measurement, indicatorSize = 8.dp)
-
-        assertEquals(34.dp, layout.height)
-        assertEquals(18.dp, layout.measurementTopPadding)
-    }
-
-    @Test
-    fun `AQI retains top alignment when the indicator is taller than text`() {
-        val value = WidgetTextMetrics(12.dp, 10.dp, 1.dp, 11.dp)
-        val unit = WidgetTextMetrics(6.dp, 5.dp, 2.dp, 6.dp)
-        val measurement = WidgetTextMetrics(6.dp, 5.dp, 2.dp, 6.dp)
-
-        val layout = calculateAqiTextLayout(value, unit, measurement, indicatorSize = 10.dp)
-
-        assertEquals(3.dp, layout.valueTopPadding)
         assertEquals(0.dp, layout.unitTopPadding)
-        assertEquals(15.dp, layout.height)
+        assertEquals(22.dp, layout.measurementTopPadding)
+        assertEquals(value.baseline, layout.measurementTopPadding + measurement.baseline)
+        assertEquals(value.height, layout.height)
+    }
+
+    @Test
+    fun `baseline alignment uses exact physical pixel positions across densities`() {
+        for (density in listOf(1f, 1.5f, 2f, 2.625f, 3.5f)) {
+            fun metrics(height: Int, baseline: Int, top: Int, bottom: Int) = WidgetTextMetrics(
+                height = (height / density).dp,
+                baseline = (baseline / density).dp,
+                glyphTop = (top / density).dp,
+                glyphBottom = (bottom / density).dp
+            )
+            val layout = calculateSimpleWidgetTextLayout(
+                valueMetrics = metrics(80, 78, 2, 78),
+                unitMetrics = metrics(40, 36, 1, 37),
+                measurementMetrics = metrics(40, 30, 8, 35),
+                density = density
+            )
+
+            assertEquals(1, (layout.unitTopPadding.value * density).roundToInt())
+            assertEquals(48, (layout.measurementTopPadding.value * density).roundToInt())
+            assertEquals(88, (layout.height.value * density).roundToInt())
+        }
     }
 }
