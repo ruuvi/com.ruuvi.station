@@ -883,6 +883,10 @@ Tilillesi käytetyt jaot yhteensä: %3$,d/%4$,d</string>
     <string name="newsletter_url">https://ruuvi.com/fi/liity</string>
     <string name="newsletter_subscription">Tilaus</string>
     <string name="newsletter_subscription_confirmation">Vahvista uutiskirjeen tilaus sähköpostistasi.</string>
+    <string name="marketing_consent_prompt_title">Saammeko lähettää sinulle sähköpostia?</string>
+    <string name="marketing_consent_prompt_message">Silloin tällöin meillä on kerrottavaa sovelluksesta, tuotteistamme ja ajankohtaisista tarjouksista.</string>
+    <string name="marketing_consent_prompt_decline">En halua kirjeitä</string>
+    <string name="marketing_consent_prompt_saved">Kiitos, tallennettu onnistuneesti.</string>
     <string name="communication_channels">Ruuvin uutiskirje</string>
     <string name="communication_channels_description">Saat hyödyllisiä Ruuvi-vinkkejä, tuotepäivityksiä, ominaisuusuutisia ja satunnaisia erikoistarjouksia suoraan sähköpostiisi.</string>
     <string name="enable_background_service">Ota taustapalvelu käyttöön</string>
