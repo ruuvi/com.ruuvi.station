@@ -140,17 +140,7 @@ class DashboardActivityViewModel(
 
     private fun shouldShowMarketingConsentPrompt(now: Long = System.currentTimeMillis()): Boolean {
         val lastShown = preferencesRepository.getMarketingConsentPromptLastShown()
-        return lastShown == 0L || now - lastShown >= marketingConsentPromptIntervalMillis()
-    }
-
-    private fun marketingConsentPromptIntervalMillis(): Long {
-        val developerIntervalSeconds = preferencesRepository
-            .getMarketingConsentPromptIntervalSeconds()
-            .takeIf { it > 0L }
-        return developerIntervalSeconds
-            ?.coerceAtMost(Long.MAX_VALUE / 1_000L)
-            ?.times(1_000L)
-            ?: MARKETING_CONSENT_PROMPT_INTERVAL_MILLIS
+        return lastShown == 0L || now - lastShown >= MARKETING_CONSENT_PROMPT_INTERVAL_MILLIS
     }
 
     val _shouldAskNotificationPermission: MutableStateFlow<Boolean> = MutableStateFlow<Boolean>(permissionLogicInteractor.shouldAskNotificationPermission())

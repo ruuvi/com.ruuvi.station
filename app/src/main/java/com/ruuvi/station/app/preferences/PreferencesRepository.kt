@@ -165,16 +165,6 @@ class PreferencesRepository(
 
     fun setDeveloperFeaturesEnabled(developerSettingsEnabled: Boolean) {
         preferences.developerSettings = developerSettingsEnabled
-        if (!developerSettingsEnabled) {
-            preferences.marketingConsentPromptIntervalSeconds = 0L
-        }
-    }
-
-    fun getMarketingConsentPromptIntervalSeconds(): Long =
-        preferences.marketingConsentPromptIntervalSeconds
-
-    fun setMarketingConsentPromptIntervalSeconds(intervalSeconds: Long) {
-        preferences.marketingConsentPromptIntervalSeconds = intervalSeconds.coerceAtLeast(0L)
     }
 
     fun isFirstStart(): Boolean =

@@ -6,18 +6,15 @@ import android.webkit.WebResourceRequest
 import android.webkit.WebSettings.LOAD_DEFAULT
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.material.ScaffoldState
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.ruuvi.station.R
@@ -34,13 +31,6 @@ fun DeveloperSettings(
 ) {
     val devServerEnabled by viewModel.devServerEnabled.collectAsState()
     val useWebShare by viewModel.useWebShare.collectAsState()
-    val marketingConsentPromptIntervalSeconds by
-        viewModel.marketingConsentPromptIntervalSeconds.collectAsState()
-    var marketingConsentPromptIntervalSecondsText by remember(marketingConsentPromptIntervalSeconds) {
-        mutableStateOf(
-            marketingConsentPromptIntervalSeconds.takeIf { it > 0L }?.toString().orEmpty()
-        )
-    }
 
     PageSurfaceWithPadding {
         Column() {
@@ -68,22 +58,6 @@ fun DeveloperSettings(
                 onCheckedChange = viewModel::setDevServerEnabled
             )
             Paragraph(text = stringResource(id = R.string.use_dev_server_description))
-
-            Spacer(modifier = Modifier.height(24.dp))
-            Subtitle(text = "Marketing consent prompt interval")
-            TextFieldRuuvi(
-                modifier = Modifier.fillMaxWidth(),
-                value = marketingConsentPromptIntervalSecondsText,
-                hint = "Seconds",
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                onValueChange = { value ->
-                    if (value.all(Char::isDigit)) {
-                        marketingConsentPromptIntervalSecondsText = value
-                        viewModel.setMarketingConsentPromptIntervalSeconds(value.toLongOrNull() ?: 0L)
-                    }
-                }
-            )
-            Paragraph(text = "Leave empty to use the production interval of 180 days.")
 
             Spacer(modifier = Modifier.height(48.dp))
             Subtitle("Debug info")

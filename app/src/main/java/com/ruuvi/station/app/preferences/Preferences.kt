@@ -697,12 +697,6 @@ class Preferences (val context: Context) {
         }
     }
 
-    var marketingConsentPromptIntervalSeconds: Long
-        get() = sharedPreferences.getLong(PREF_MARKETING_CONSENT_PROMPT_INTERVAL_SECONDS, 0L)
-        set(value) {
-            sharedPreferences.edit { putLong(PREF_MARKETING_CONSENT_PROMPT_INTERVAL_SECONDS, value) }
-        }
-
     var disablePushNotifications: Boolean
         get() = sharedPreferences.getBoolean(PREF_DISABLE_PUSH_NOTIFICATIONS, false)
         set(value) {
@@ -930,9 +924,6 @@ class Preferences (val context: Context) {
             "pref_marketing_consent_prompt_last_shown"
         private const val PREF_MARKETING_CONSENT_PROMPT_HISTORY_PREFIX =
             "pref_marketing_consent_prompt_history_"
-        private const val PREF_MARKETING_CONSENT_PROMPT_INTERVAL_SECONDS =
-            "pref_marketing_consent_prompt_interval_seconds"
-
         private const val PREF_USE_WEB_SHARE = "pref_use_web_share"
 
         internal fun defaultTemperatureUnitCode(
