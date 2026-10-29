@@ -38,6 +38,7 @@ import kotlin.math.ceil
 private const val END_ELLIPSIS = "\u2026"
 private const val BITMAP_ROW_ALIGNMENT_BYTES = 4
 private const val NUMERIC_CAP_HEIGHT_TEXT = "0"
+private const val NUMERIC_LINE_HEIGHT_TEXT = "0123456789,."
 
 object GlanceFontUtils {
     internal const val MAX_BITMAP_BYTES = 96 * 1024
@@ -49,7 +50,9 @@ object GlanceFontUtils {
         fontSize: TextUnit,
         @FontRes fontResId: Int,
         maxWidth: Int,
-        embeddedColor: Int? = null
+        embeddedColor: Int? = null,
+        trimVerticalPadding: Boolean = false,
+        stableNumericBounds: Boolean = false
     ): Bitmap {
         require(maxWidth > 0) { "Custom font text requires a positive maximum width" }
 
@@ -58,8 +61,8 @@ object GlanceFontUtils {
         }
         val bitmapFormat = fontBitmapFormat(embeddedColor)
 
-        val metrics = paint.fontMetrics
-        val height = ceil(metrics.descent - metrics.ascent).toInt().coerceAtLeast(1)
+        val metrics = measureBitmapVerticalMetrics(paint, text, trimVerticalPadding, stableNumericBounds)
+        val height = metrics.height
         val bitmapMaxWidth = calculateBitmapMaxWidth(
             requestedWidth = maxWidth,
             bitmapHeight = height,
@@ -88,7 +91,7 @@ object GlanceFontUtils {
         }
         val canvas = Canvas(image)
         canvas.scale(horizontalScale, 1f)
-        canvas.drawText(textToDraw, 0f, -metrics.ascent, paint)
+        canvas.drawText(textToDraw, 0f, metrics.baseline, paint)
         return image
     }
 
@@ -128,17 +131,49 @@ object GlanceFontUtils {
     internal fun measureCustomFontMetrics(
         context: Context,
         fontSize: TextUnit,
-        @FontRes fontResId: Int
+        @FontRes fontResId: Int,
+        text: String = NUMERIC_CAP_HEIGHT_TEXT,
+        trimVerticalPadding: Boolean = false,
+        stableNumericBounds: Boolean = false
     ): WidgetTextMetrics {
         val paint = createTextPaint(context, fontSize, fontResId)
-        val metrics = paint.fontMetrics
+        val metrics = measureBitmapVerticalMetrics(paint, text, trimVerticalPadding, stableNumericBounds)
         return measureTextMetrics(
             context = context,
             paint = paint,
-            text = NUMERIC_CAP_HEIGHT_TEXT,
-            baseline = -metrics.ascent,
-            height = ceil(metrics.descent - metrics.ascent)
+            text = if (trimVerticalPadding) NUMERIC_CAP_HEIGHT_TEXT + text else NUMERIC_CAP_HEIGHT_TEXT,
+            baseline = metrics.baseline,
+            height = metrics.height.toFloat(),
+            width = ceil(paint.measureText(text)).coerceAtLeast(if (text.isEmpty()) 0f else 1f)
         )
+    }
+
+    private data class BitmapVerticalMetrics(val baseline: Float, val height: Int)
+
+    private fun measureBitmapVerticalMetrics(
+        paint: TextPaint,
+        text: String,
+        trimVerticalPadding: Boolean,
+        stableNumericBounds: Boolean
+    ): BitmapVerticalMetrics {
+        if (!trimVerticalPadding) {
+            val metrics = paint.fontMetrics
+            return BitmapVerticalMetrics(
+                baseline = -metrics.ascent,
+                height = ceil(metrics.descent - metrics.ascent).toInt().coerceAtLeast(1)
+            )
+        }
+
+        // Reserve comma descenders for whole numbers too, keeping the numeric line height consistent.
+        val reference = if (stableNumericBounds) NUMERIC_LINE_HEIGHT_TEXT else NUMERIC_CAP_HEIGHT_TEXT
+        val bounds = Rect()
+        paint.getTextBounds(reference, 0, reference.length, bounds)
+        val textBounds = Rect()
+        paint.getTextBounds(text, 0, text.length, textBounds)
+        // Keep placeholders at numeric height, retain decimal commas, and leave one pixel for antialiasing.
+        val top = minOf(bounds.top, textBounds.top) - 1
+        val bottom = maxOf(bounds.bottom, textBounds.bottom) + 1
+        return BitmapVerticalMetrics(baseline = -top.toFloat(), height = bottom - top)
     }
 
     internal fun measureSystemFontMetrics(
@@ -339,7 +374,9 @@ fun CustomFontText(
     @FontRes fontResId: Int,
     modifier: GlanceModifier = GlanceModifier,
     maxWidth: Dp,
-    embeddedColor: Int? = null
+    embeddedColor: Int? = null,
+    trimVerticalPadding: Boolean = false,
+    stableNumericBounds: Boolean = false
 ) {
     if (text.isEmpty()) return
     val context = LocalContext.current
@@ -352,7 +389,9 @@ fun CustomFontText(
         fontSize = fontSize,
         fontResId = fontResId,
         maxWidth = maxWidthPx,
-        embeddedColor = embeddedColor
+        embeddedColor = embeddedColor,
+        trimVerticalPadding = trimVerticalPadding,
+        stableNumericBounds = stableNumericBounds
     )
     Box(modifier = modifier) {
         Image(

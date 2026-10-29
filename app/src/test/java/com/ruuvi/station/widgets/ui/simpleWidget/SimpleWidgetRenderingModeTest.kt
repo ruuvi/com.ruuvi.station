@@ -16,14 +16,14 @@ class SimpleWidgetRenderingModeTest {
                 resolvedThemeColor = true
                 VALUE_COLOR
             },
-            secondaryColor = {
+            unitColor = {
                 resolvedThemeColor = true
-                SECONDARY_COLOR
+                UNIT_COLOR
             },
         )
 
         assertNull(colors.value)
-        assertNull(colors.secondary)
+        assertNull(colors.unit)
         assertFalse(resolvedThemeColor)
     }
 
@@ -32,15 +32,15 @@ class SimpleWidgetRenderingModeTest {
         val colors = resolveSimpleWidgetEmbeddedColors(
             renderingMode = SimpleWidgetRenderingMode.GENERATED_PREVIEW,
             valueColor = { VALUE_COLOR },
-            secondaryColor = { SECONDARY_COLOR },
+            unitColor = { UNIT_COLOR },
         )
 
         assertEquals(VALUE_COLOR, colors.value)
-        assertEquals(SECONDARY_COLOR, colors.secondary)
+        assertEquals(UNIT_COLOR, colors.unit)
     }
 
     private companion object {
         const val VALUE_COLOR = 0x12345678
-        const val SECONDARY_COLOR = 0x23456789
+        const val UNIT_COLOR = 0x23456789
     }
 }
