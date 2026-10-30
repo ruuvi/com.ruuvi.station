@@ -1,5 +1,6 @@
 package com.ruuvi.station.widgets.ui.simpleWidget
 
+import android.appwidget.AppWidgetManager
 import android.content.Context
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
@@ -28,6 +29,7 @@ import androidx.glance.appwidget.SizeMode
 import androidx.glance.appwidget.action.ActionCallback
 import androidx.glance.appwidget.action.actionRunCallback
 import androidx.glance.appwidget.provideContent
+import androidx.glance.appwidget.state.updateAppWidgetState
 import androidx.glance.background
 import androidx.glance.color.ColorProvider
 import androidx.glance.currentState
@@ -83,6 +85,7 @@ object SimpleWidgetGlanceWidget : GlanceAppWidget() {
         SizeMode.Responsive(setOf(DpSize(180.dp, 110.dp)))
 
     override suspend fun provideGlance(context: Context, id: GlanceId) {
+        observeTypographyHeight(context, id)
         provideContent {
             val prefs = currentState<Preferences>()
 
@@ -103,7 +106,28 @@ object SimpleWidgetGlanceWidget : GlanceAppWidget() {
                 updated = updated?.takeIf { it.isNotBlank() } ?: "-",
                 measurementType = measurementTypeCode?.toIntOrNull()?.let { WidgetType.getByCode(it) },
                 renderingMode = SimpleWidgetRenderingMode.RUNTIME,
+                observedCellHeight = prefs[SimpleWidgetPrefKeys.typographyHeight]?.dp,
             )
+        }
+    }
+
+    private suspend fun observeTypographyHeight(context: Context, glanceId: GlanceId) {
+        val applicationContext = context.applicationContext
+        val appWidgetId = GlanceAppWidgetManager(applicationContext).getAppWidgetId(glanceId)
+        val observedHeight = AppWidgetManager.getInstance(applicationContext)
+            .getAppWidgetOptions(appWidgetId)
+            .getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_HEIGHT)
+        if (observedHeight <= 0) return
+
+        updateAppWidgetState(applicationContext, glanceId) { preferences ->
+            if (preferences[SimpleWidgetPrefKeys.typographyHeightObserved] != true) {
+                preferences[SimpleWidgetPrefKeys.typographyHeightObserved] = true
+                if (shouldSetSimpleWidgetTypographyHeight(observedHeight)) {
+                    preferences[SimpleWidgetPrefKeys.typographyHeight] = observedHeight
+                } else {
+                    preferences.remove(SimpleWidgetPrefKeys.typographyHeight)
+                }
+            }
         }
     }
 
@@ -182,6 +206,7 @@ internal fun SimpleWidgetContent(
     measurementType: WidgetType?,
     renderingMode: SimpleWidgetRenderingMode,
     typographyScale: Float = 1f,
+    observedCellHeight: Dp? = null,
 ) {
     val openAction = if (!sensorId.isNullOrEmpty()) {
         actionRunCallback<OpenSimpleWidgetSensorAction>(
@@ -194,16 +219,17 @@ internal fun SimpleWidgetContent(
     val context = LocalContext.current
     val embeddedColors = resolveSimpleWidgetEmbeddedColors(
         renderingMode = renderingMode,
-        valueColor = { GlanceColors.resolvedWidgetSensorTitleColor(context) },
+        valueColor = { GlanceColors.resolvedSimpleWidgetSensorTitleColor(context) },
         unitColor = { GlanceColors.resolvedValueColor(context) },
     )
     val zoomFactor = getZoomFactor(context)
     val size = LocalSize.current
     val widgetWidth = validDimensionOrFallback(size.width, 110.dp)
     val widgetHeight = validDimensionOrFallback(size.height, 45.dp)
+    val typographyHeight = simpleWidgetTypographyHeight(widgetHeight, observedCellHeight)
     val baseConfig = SimpleWidgetLayoutConfig.fromSize(
         width = widgetWidth,
-        height = widgetHeight,
+        height = typographyHeight,
         isTablet = context.resources.configuration.smallestScreenWidthDp >= 600,
         zoomFactor = zoomFactor
     )
@@ -223,7 +249,8 @@ internal fun SimpleWidgetContent(
         unit = unit,
         measurementName = measurementName,
         isAirQuality = isAirQuality,
-        embeddedValueColor = embeddedColors.value
+        embeddedValueColor = embeddedColors.value,
+        observedCellHeight = observedCellHeight
     )
     val displayNameFontSize = config.displayNameFontSize.toWidgetSp(context)
     val timestampFontSize = config.timestampFontSize.toWidgetSp(context)
@@ -281,7 +308,7 @@ internal fun SimpleWidgetContent(
                     text = displayName,
                     modifier = GlanceModifier.fillMaxWidth(),
                     style = TextStyle(
-                        color = GlanceColors.widgetSensorTitle,
+                        color = GlanceColors.simpleWidgetSensorTitle,
                         fontSize = displayNameFontSize,
                         fontWeight = FontWeight.Bold
                     ),
@@ -395,7 +422,7 @@ private fun GlanceMeasurementDisplay(
         CustomFontText(
             text = sensorValue,
             fontSize = layout.valueFontSize,
-            colorProvider = GlanceColors.widgetSensorTitleBitmapTint,
+            colorProvider = GlanceColors.simpleWidgetSensorTitleBitmapTint,
             fontResId = R.font.oswald_bold,
             maxWidth = valueMaxWidth,
             embeddedColor = embeddedColors.value,
@@ -501,11 +528,13 @@ internal fun fitSimpleWidgetConfig(
     unit: String,
     measurementName: String,
     isAirQuality: Boolean,
-    embeddedValueColor: Int? = null
+    embeddedValueColor: Int? = null,
+    observedCellHeight: Dp? = null
 ): SimpleWidgetLayoutConfig {
     val metrics = context.resources.displayMetrics
     val density = metrics.density
-    val availableHeightPx = (size.height.value * density).roundToInt() -
+    val typographyHeight = simpleWidgetTypographyHeight(size.height, observedCellHeight)
+    val availableHeightPx = (typographyHeight.value * density).roundToInt() -
         2 * (config.verticalPadding.value * density).roundToInt() -
         (VALUE_SIZING_TITLE_SPACING.value * density).roundToInt()
     val availableWidthPx = (size.width.value * density).roundToInt() -
@@ -570,7 +599,7 @@ internal fun fitSimpleWidgetConfig(
         val availableReadingHeightPx = availableHeightPx -
             (displayNameHeight.value * density).roundToInt() -
             (timestampHeight.value * density).roundToInt()
-        // Use the size reduction's spare space for descenders before shrinking the number further.
+
         ceil(valueMetrics.height.value * density) <= availableReadingHeightPx &&
             valueMetrics.width <= valueMaxWidth &&
             fitsBitmap(valueMetrics) &&
@@ -717,7 +746,7 @@ private fun GlanceAQIDisplay(
         CustomFontText(
             text = aqiText,
             fontSize = layout.valueFontSize,
-            colorProvider = GlanceColors.widgetSensorTitleBitmapTint,
+            colorProvider = GlanceColors.simpleWidgetSensorTitleBitmapTint,
             fontResId = R.font.oswald_bold,
             maxWidth = valueMaxWidth,
             embeddedColor = embeddedColors.value,
