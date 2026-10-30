@@ -347,6 +347,7 @@ internal fun SimpleWidgetContent(
                     config = config,
                     typographyAvailableWidth = typographyAvailableWidth,
                     readingAvailableWidth = readingAvailableWidth,
+                    renderingMode = renderingMode,
                     showMeasurementDescription = visibility.showMeasurementDescription,
                     layout = readingLayout,
                     embeddedColors = embeddedColors,
@@ -419,6 +420,7 @@ private fun GlanceMeasurementDisplay(
     config: SimpleWidgetLayoutConfig,
     typographyAvailableWidth: Dp,
     readingAvailableWidth: Dp,
+    renderingMode: SimpleWidgetRenderingMode,
     showMeasurementDescription: Boolean,
     layout: MeasuredSimpleWidgetLayout,
     embeddedColors: SimpleWidgetEmbeddedColors
@@ -433,6 +435,26 @@ private fun GlanceMeasurementDisplay(
         contentEndPadding = config.horizontalPadding,
         refreshTouchTargetSize = WidgetRefreshButtonDefaults.touchTargetSize
     )
+    val renderedValueWidth = minOf(
+        valueMaxWidth,
+        GlanceFontUtils.measureCustomFontWidth(
+            context = context,
+            text = sensorValue,
+            fontSize = layout.valueFontSize,
+            fontResId = R.font.oswald_bold
+        )
+    )
+    val previewMeasurementNameMaxWidth =
+        if (renderingMode == SimpleWidgetRenderingMode.GENERATED_PREVIEW) {
+            calculatePreviewMeasurementNameMaxWidth(
+                readingAvailableWidth = readingAvailableWidth,
+                renderedValueWidth = renderedValueWidth,
+                valueLabelSpacing = config.valueLabelSpacing,
+                refreshOverlap = refreshOverlap
+            )
+        } else {
+            null
+        }
 
     Row(
         modifier = GlanceModifier.width(readingAvailableWidth),
@@ -450,7 +472,7 @@ private fun GlanceMeasurementDisplay(
         )
 
         if (unit.isNotBlank() || showMeasurementDescription) {
-            Spacer(modifier = GlanceModifier.width(config.inlineSpacing * 2))
+            Spacer(modifier = GlanceModifier.width(config.valueLabelSpacing))
 
             Box(
                 modifier = GlanceModifier
@@ -481,13 +503,21 @@ private fun GlanceMeasurementDisplay(
                 }
 
                 if (showMeasurementDescription && measurementName.isNotBlank()) {
+                    val measurementNameModifier =
+                        if (previewMeasurementNameMaxWidth != null) {
+                            GlanceModifier
+                                .width(previewMeasurementNameMaxWidth)
+                                .padding(top = layout.textLayout.measurementTopPadding)
+                        } else {
+                            GlanceModifier
+                                .fillMaxWidth()
+                                .padding(
+                                    top = layout.textLayout.measurementTopPadding,
+                                    end = refreshOverlap
+                                )
+                        }
                     Box(
-                        modifier = GlanceModifier
-                            .fillMaxWidth()
-                            .padding(
-                                top = layout.textLayout.measurementTopPadding,
-                                end = refreshOverlap
-                            )
+                        modifier = measurementNameModifier
                     ) {
                         Text(
                             text = measurementName,
@@ -514,11 +544,14 @@ internal fun measureMeasurementLayout(
 ): MeasuredSimpleWidgetLayout =
     measureSimpleWidgetLayout(context, config, unit, measurementName, 0.dp, sensorValue)
 
-private const val GENERATED_PREVIEW_TYPOGRAPHY_SCALE = 0.75f
+private const val GENERATED_PREVIEW_TYPOGRAPHY_SCALE = 0.65f
 private const val AQI_UNIT_TEXT = "/100"
 private val AQI_INDICATOR_SIZE = 8.dp
 private val TITLE_VALUE_SPACING = 7.dp
 private val VALUE_SIZING_TITLE_SPACING = 5.dp
+
+private val SimpleWidgetLayoutConfig.valueLabelSpacing: Dp
+    get() = inlineSpacing * 2 + 3.dp
 
 internal data class MeasuredSimpleWidgetLayout(
     val valueFontSize: TextUnit,
@@ -535,9 +568,18 @@ private fun simpleWidgetValueMaxWidth(
     availableWidth: Dp,
     minimumLabelWidth: Dp
 ): Dp {
-    val spacing = if (minimumLabelWidth > 0.dp) config.inlineSpacing * 2 else 0.dp
+    val spacing = if (minimumLabelWidth > 0.dp) config.valueLabelSpacing else 0.dp
     return positiveDp(availableWidth - minimumLabelWidth - spacing)
 }
+
+internal fun calculatePreviewMeasurementNameMaxWidth(
+    readingAvailableWidth: Dp,
+    renderedValueWidth: Dp,
+    valueLabelSpacing: Dp,
+    refreshOverlap: Dp
+): Dp = positiveDp(
+    readingAvailableWidth - renderedValueWidth - valueLabelSpacing - refreshOverlap - 10.dp
+)
 
 internal fun fitSimpleWidgetConfig(
     context: Context,
@@ -611,7 +653,7 @@ internal fun fitSimpleWidgetConfig(
             context, layout.labelFontSize, R.font.oswald_regular, unitText, trimVerticalPadding = true
         )
         val labelSpacing = if (isAirQuality || unit.isNotBlank() || measurementName.isNotBlank()) {
-            config.inlineSpacing * 2
+            config.valueLabelSpacing
         } else {
             0.dp
         }
@@ -805,7 +847,7 @@ private fun GlanceAQIDisplay(
             stableNumericBounds = true
         )
 
-        Spacer(modifier = GlanceModifier.width(config.inlineSpacing * 2))
+        Spacer(modifier = GlanceModifier.width(config.valueLabelSpacing))
 
         Box(
             modifier = GlanceModifier
