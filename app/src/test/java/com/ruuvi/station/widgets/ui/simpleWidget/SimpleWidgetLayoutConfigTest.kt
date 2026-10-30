@@ -1,5 +1,6 @@
 package com.ruuvi.station.widgets.ui.simpleWidget
 
+import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ruuvi.station.widgets.ui.glance.WidgetTextMetrics
@@ -10,6 +11,94 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class SimpleWidgetLayoutConfigTest {
+    @Test
+    fun `initial cell size remains the typography size after enlarging the widget`() {
+        val initialSize = DpSize(180.dp, 110.dp)
+
+        assertEquals(
+            initialSize,
+            simpleWidgetTypographySize(
+                currentSize = DpSize(360.dp, 220.dp),
+                observedSize = initialSize
+            )
+        )
+    }
+
+    @Test
+    fun `initial cell size remains the typography size after reducing the widget`() {
+        val initialSize = DpSize(180.dp, 110.dp)
+
+        assertEquals(
+            initialSize,
+            simpleWidgetTypographySize(
+                currentSize = DpSize(82.dp, 110.dp),
+                observedSize = initialSize
+            )
+        )
+    }
+
+    @Test
+    fun `reducing widget width keeps the initial value bitmap width budget`() {
+        val initialSize = DpSize(180.dp, 110.dp)
+
+        assertEquals(
+            156.dp,
+            simpleWidgetTypographyAvailableWidth(
+                currentSize = DpSize(82.dp, 110.dp),
+                observedSize = initialSize,
+                horizontalPadding = 12.dp
+            )
+        )
+    }
+
+    @Test
+    fun `reading row never becomes narrower than the initial cell`() {
+        val initialSize = DpSize(180.dp, 110.dp)
+
+        assertEquals(
+            156.dp,
+            simpleWidgetReadingAvailableWidth(
+                currentSize = DpSize(82.dp, 110.dp),
+                observedSize = initialSize,
+                horizontalPadding = 12.dp
+            )
+        )
+    }
+
+    @Test
+    fun `reading row expands to reveal truncated labels without changing typography`() {
+        val initialSize = DpSize(180.dp, 110.dp)
+
+        assertEquals(
+            336.dp,
+            simpleWidgetReadingAvailableWidth(
+                currentSize = DpSize(360.dp, 110.dp),
+                observedSize = initialSize,
+                horizontalPadding = 12.dp
+            )
+        )
+        assertEquals(
+            156.dp,
+            simpleWidgetTypographyAvailableWidth(
+                currentSize = DpSize(360.dp, 110.dp),
+                observedSize = initialSize,
+                horizontalPadding = 12.dp
+            )
+        )
+    }
+
+    @Test
+    fun `current size is used until a valid initial cell size is observed`() {
+        val currentSize = DpSize(180.dp, 110.dp)
+
+        assertEquals(currentSize, simpleWidgetTypographySize(currentSize, null))
+        assertEquals(null, observedSimpleWidgetTypographySize(width = 180, height = 0))
+        assertEquals(
+            currentSize,
+            observedSimpleWidgetTypographySize(width = 180, height = 110)
+        )
+    }
+
     @Test
     fun `fitted value is reduced by eight sp`() {
         for (size in listOf(10.sp, 12.sp, 24.sp, 60.sp)) {
