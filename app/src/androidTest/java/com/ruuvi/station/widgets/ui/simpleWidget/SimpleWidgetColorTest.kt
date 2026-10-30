@@ -74,7 +74,10 @@ class SimpleWidgetColorTest {
                             .single { it.contentDescription == unit }
                         val scenario = "$mode / $type / ${context.resources.configuration.uiMode}"
 
-                        assertEquals(GlanceColors.resolvedWidgetSensorTitleColor(context), title.currentTextColor)
+                        val isNightMode = context.resources.configuration.uiMode and
+                            Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
+                        val expectedTitleColor = if (isNightMode) Color.WHITE else GlanceColors.resolvedValueColor(context)
+                        assertEquals(expectedTitleColor, title.currentTextColor)
                         val rendered = root.drawToBitmap()
                         val background = rendered.getPixel(root.width / 2, 1)
                         assertArgbMatches(
