@@ -37,6 +37,38 @@ fun TextUnit.toWidgetSp(context: Context): TextUnit {
     return (value / zoomFactor).sp
 }
 
+fun TextUnit.toFixedWidgetSp(context: Context): TextUnit {
+    val widgetSp = toWidgetSp(context)
+    if (!widgetSp.value.isFinite() || widgetSp.value <= 0f) return widgetSp
+
+    val metrics = context.resources.displayMetrics
+    val targetPixels = TypedValue.applyDimension(
+        TypedValue.COMPLEX_UNIT_DIP,
+        widgetSp.value,
+        metrics
+    )
+    if (!targetPixels.isFinite() || targetPixels <= 0f) return widgetSp
+
+    var lowerBound = 0f
+    var upperBound = widgetSp.value
+    while (
+        TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, upperBound, metrics) < targetPixels
+    ) {
+        upperBound *= 2f
+        if (!upperBound.isFinite()) return widgetSp
+    }
+
+    repeat(16) {
+        val candidate = (lowerBound + upperBound) / 2f
+        if (TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, candidate, metrics) < targetPixels) {
+            lowerBound = candidate
+        } else {
+            upperBound = candidate
+        }
+    }
+    return upperBound.sp
+}
+
 internal fun TextUnit.scaledBy(scale: Float): TextUnit {
     val safeScale = scale.takeIf { it.isFinite() && it > 0f } ?: 1f
     return (value * safeScale).sp
@@ -44,35 +76,9 @@ internal fun TextUnit.scaledBy(scale: Float): TextUnit {
 
 fun Dp.toWidgetDp(context: Context): Dp = this / getZoomFactor(context)
 
-internal fun getEffectiveFontScale(
-    context: Context,
-    referenceFontSizeSp: Float
-): Float {
-    if (!referenceFontSizeSp.isFinite() || referenceFontSizeSp <= 0f) return 1f
-
-    val metrics = context.resources.displayMetrics
-    val scaledPixels = TypedValue.applyDimension(
-        TypedValue.COMPLEX_UNIT_SP,
-        referenceFontSizeSp,
-        metrics
-    )
-    val unscaledPixels = TypedValue.applyDimension(
-        TypedValue.COMPLEX_UNIT_DIP,
-        referenceFontSizeSp,
-        metrics
-    )
-    if (!scaledPixels.isFinite() || !unscaledPixels.isFinite() || unscaledPixels <= 0f) {
-        return 1f
-    }
-
-    return (scaledPixels / unscaledPixels)
-        .takeIf { it.isFinite() && it > 0f }
-        ?: 1f
-}
-
 internal object WidgetRefreshButtonDefaults {
-    val touchTargetSize: Dp = 44.dp
-    val iconSize: Dp = 18.dp
+    val touchTargetSize: Dp = 40.dp
+    val iconSize: Dp = 16.dp
     val edgePadding: Dp = 12.dp
     val visualEndInset: Dp = iconSize + edgePadding
     val backingSize: Dp = iconSize + 4.dp

@@ -25,7 +25,7 @@
             android:maxLines="1"
             android:text="@string/widget_preview_sensor_name"
             android:textColor="@color/widget_preview_secondary"
-            android:textSize="14sp"
+            android:textSize="14dp"
             android:textStyle="bold" />
 
         <LinearLayout
@@ -57,7 +57,7 @@
                         android:maxLines="1"
                         android:text="21.5"
                         android:textColor="@color/widget_preview_value"
-                        android:textSize="14sp"
+                        android:textSize="14dp"
                         android:textStyle="bold"
                         tools:ignore="HardcodedText" />
 
@@ -70,7 +70,7 @@
                         android:maxLines="1"
                         android:text="@string/temperature_celsius_unit"
                         android:textColor="@color/widget_preview_secondary"
-                        android:textSize="10sp"
+                        android:textSize="10dp"
                         android:textStyle="bold" />
 
                     <TextView
@@ -84,7 +84,7 @@
                         android:maxLines="1"
                         android:text="@string/temperature"
                         android:textColor="@color/widget_preview_secondary"
-                        android:textSize="10sp" />
+                        android:textSize="10dp" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -102,7 +102,7 @@
                         android:maxLines="1"
                         android:text="1000"
                         android:textColor="@color/widget_preview_value"
-                        android:textSize="14sp"
+                        android:textSize="14dp"
                         android:textStyle="bold"
                         tools:ignore="HardcodedText" />
 
@@ -115,7 +115,7 @@
                         android:maxLines="1"
                         android:text="@string/pressure_hpa_unit"
                         android:textColor="@color/widget_preview_secondary"
-                        android:textSize="10sp"
+                        android:textSize="10dp"
                         android:textStyle="bold" />
 
                     <TextView
@@ -129,7 +129,7 @@
                         android:maxLines="1"
                         android:text="@string/pressure"
                         android:textColor="@color/widget_preview_secondary"
-                        android:textSize="10sp" />
+                        android:textSize="10dp" />
                 </LinearLayout>
             </LinearLayout>
 
@@ -154,7 +154,7 @@
                         android:maxLines="1"
                         android:text="45"
                         android:textColor="@color/widget_preview_value"
-                        android:textSize="14sp"
+                        android:textSize="14dp"
                         android:textStyle="bold"
                         tools:ignore="HardcodedText" />
 
@@ -167,7 +167,7 @@
                         android:maxLines="1"
                         android:text="@string/humidity_relative_unit"
                         android:textColor="@color/widget_preview_secondary"
-                        android:textSize="10sp"
+                        android:textSize="10dp"
                         android:textStyle="bold" />
 
                     <TextView
@@ -181,7 +181,7 @@
                         android:maxLines="1"
                         android:text="@string/relative_humidity"
                         android:textColor="@color/widget_preview_secondary"
-                        android:textSize="10sp" />
+                        android:textSize="10dp" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -199,7 +199,7 @@
                         android:maxLines="1"
                         android:text="3"
                         android:textColor="@color/widget_preview_value"
-                        android:textSize="14sp"
+                        android:textSize="14dp"
                         android:textStyle="bold"
                         tools:ignore="HardcodedText" />
 
@@ -214,7 +214,7 @@
                         android:maxLines="1"
                         android:text="@string/movements"
                         android:textColor="@color/widget_preview_secondary"
-                        android:textSize="10sp" />
+                        android:textSize="10dp" />
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>
@@ -232,7 +232,7 @@
             android:maxLines="1"
             android:text="12:34"
             android:textColor="@color/widget_preview_secondary"
-            android:textSize="9sp"
+            android:textSize="9dp"
             tools:ignore="HardcodedText,RtlSymmetry,SmallSp" />
     </LinearLayout>
 
@@ -246,7 +246,7 @@
         android:paddingEnd="12dp"
         android:paddingBottom="12dp"
         android:src="@drawable/ic_widget_d_update"
-        android:tint="@color/widget_preview_secondary"
+        android:tint="@color/ruuviLight"
         tools:ignore="UseAppTint" />
 
 </FrameLayout>

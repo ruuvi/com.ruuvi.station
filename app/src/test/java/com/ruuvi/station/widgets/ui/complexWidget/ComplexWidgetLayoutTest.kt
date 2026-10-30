@@ -14,10 +14,9 @@ class ComplexWidgetLayoutTest {
     }
 
     @Test
-    fun `three cell widget uses two columns with small and normal fonts`() {
+    fun `three cell widget uses two columns`() {
         assertEquals(2, complexWidgetMeasurementColumns(180.dp, fontScale = 0.85f))
         assertEquals(2, complexWidgetMeasurementColumns(180.dp))
-        assertEquals(1, complexWidgetMeasurementColumns(180.dp, fontScale = 1.15f))
     }
 
     @Test
@@ -48,9 +47,9 @@ class ComplexWidgetLayoutTest {
     }
 
     @Test
-    fun `maximum accessibility font uses one or two columns`() {
-        assertEquals(1, complexWidgetMeasurementColumns(280.dp, fontScale = 2f))
-        assertEquals(2, complexWidgetMeasurementColumns(360.dp, fontScale = 2f))
+    fun `default layout stays stable for complex widget dimensions`() {
+        assertEquals(2, complexWidgetMeasurementColumns(280.dp))
+        assertEquals(3, complexWidgetMeasurementColumns(360.dp))
     }
 
     @Test
@@ -79,9 +78,9 @@ class ComplexWidgetLayoutTest {
             assertEquals(4.dp, layout.outerPadding)
             assertEquals(8.dp, layout.horizontalPadding)
             assertEquals(8.dp, layout.headerTopPadding)
-            assertEquals(12.dp, layout.headerBottomSpacing)
-            assertEquals(3.dp, layout.rowVerticalPadding)
-            assertEquals(8.dp, layout.footerTopSpacing)
+            assertEquals(10.dp, layout.headerBottomSpacing)
+            assertEquals(1.dp, layout.rowVerticalPadding)
+            assertEquals(10.dp, layout.footerTopSpacing)
             assertEquals(8.dp, layout.footerBottomPadding)
             assertEquals(12.dp, layout.measurementColumnSpacing)
             assertEquals(2.dp, layout.measurementUnitSpacing)
@@ -117,7 +116,7 @@ class ComplexWidgetLayoutTest {
             refreshBackingEndInset = WidgetRefreshButtonDefaults.backingEndInset
         )
 
-        assertEquals(22.dp, reservation)
+        assertEquals(20.dp, reservation)
         assertEquals(
             WidgetRefreshButtonDefaults.backingEndInset,
             contentEndInset + reservation
@@ -143,8 +142,8 @@ class ComplexWidgetLayoutTest {
         val refreshBackingStart =
             widgetWidth - WidgetRefreshButtonDefaults.backingEndInset
 
-        assertEquals(20.dp, previousTimestampWidth)
-        assertEquals(32.dp, timestampWidth)
+        assertEquals(22.dp, previousTimestampWidth)
+        assertEquals(34.dp, timestampWidth)
         assertEquals(refreshBackingStart, timestampEnd)
     }
 

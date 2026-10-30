@@ -1,5 +1,6 @@
 package com.ruuvi.station.widgets.ui.simpleWidget
 
+import android.appwidget.AppWidgetManager
 import android.content.Context
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
@@ -7,7 +8,9 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.core.os.ConfigurationCompat
+import androidx.core.util.TypedValueCompat
 import androidx.datastore.preferences.core.Preferences
 import androidx.glance.ColorFilter
 import androidx.glance.GlanceId
@@ -26,6 +29,7 @@ import androidx.glance.appwidget.SizeMode
 import androidx.glance.appwidget.action.ActionCallback
 import androidx.glance.appwidget.action.actionRunCallback
 import androidx.glance.appwidget.provideContent
+import androidx.glance.appwidget.state.updateAppWidgetState
 import androidx.glance.background
 import androidx.glance.color.ColorProvider
 import androidx.glance.currentState
@@ -56,6 +60,9 @@ import com.ruuvi.station.widgets.ui.glance.GlanceColors
 import com.ruuvi.station.widgets.ui.glance.GlanceFontUtils
 import com.ruuvi.station.widgets.ui.glance.RefreshButton
 import com.ruuvi.station.widgets.ui.glance.WidgetRefreshButtonDefaults
+import com.ruuvi.station.widgets.ui.glance.WidgetTextMetrics
+import com.ruuvi.station.widgets.ui.glance.calculateAllocationSafeBitmapWidth
+import com.ruuvi.station.widgets.ui.glance.fontBitmapFormat
 import com.ruuvi.station.widgets.ui.glance.getZoomFactor
 import com.ruuvi.station.widgets.ui.glance.scaledBy
 import com.ruuvi.station.widgets.ui.glance.toWidgetSp
@@ -63,6 +70,8 @@ import com.ruuvi.station.widgets.update.WidgetRefreshScheduler
 import com.ruuvi.station.widgets.update.resolveAppWidgetId
 import java.text.NumberFormat
 import java.util.Locale
+import kotlin.math.ceil
+import kotlin.math.roundToInt
 import kotlinx.coroutines.CancellationException
 import timber.log.Timber
 
@@ -76,6 +85,7 @@ object SimpleWidgetGlanceWidget : GlanceAppWidget() {
         SizeMode.Responsive(setOf(DpSize(180.dp, 110.dp)))
 
     override suspend fun provideGlance(context: Context, id: GlanceId) {
+        observeTypographySize(context, id)
         provideContent {
             val prefs = currentState<Preferences>()
 
@@ -96,7 +106,28 @@ object SimpleWidgetGlanceWidget : GlanceAppWidget() {
                 updated = updated?.takeIf { it.isNotBlank() } ?: "-",
                 measurementType = measurementTypeCode?.toIntOrNull()?.let { WidgetType.getByCode(it) },
                 renderingMode = SimpleWidgetRenderingMode.RUNTIME,
+                observedCellSize = observedSimpleWidgetTypographySize(
+                    width = prefs[SimpleWidgetPrefKeys.typographyWidth],
+                    height = prefs[SimpleWidgetPrefKeys.typographyHeight]
+                ),
             )
+        }
+    }
+
+    private suspend fun observeTypographySize(context: Context, glanceId: GlanceId) {
+        val applicationContext = context.applicationContext
+        val appWidgetId = GlanceAppWidgetManager(applicationContext).getAppWidgetId(glanceId)
+        val options = AppWidgetManager.getInstance(applicationContext).getAppWidgetOptions(appWidgetId)
+        val observedWidth = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH)
+        val observedHeight = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_HEIGHT)
+        if (observedWidth <= 0 || observedHeight <= 0) return
+
+        updateAppWidgetState(applicationContext, glanceId) { preferences ->
+            if (preferences[SimpleWidgetPrefKeys.typographySizeObserved] != true) {
+                preferences[SimpleWidgetPrefKeys.typographySizeObserved] = true
+                preferences[SimpleWidgetPrefKeys.typographyWidth] = observedWidth
+                preferences[SimpleWidgetPrefKeys.typographyHeight] = observedHeight
+            }
         }
     }
 
@@ -165,7 +196,7 @@ class OpenSimpleWidgetSensorAction : ActionCallback {
 }
 
 @Composable
-private fun SimpleWidgetContent(
+internal fun SimpleWidgetContent(
     sensorId: String?,
     displayName: String,
     sensorValue: String,
@@ -175,6 +206,7 @@ private fun SimpleWidgetContent(
     measurementType: WidgetType?,
     renderingMode: SimpleWidgetRenderingMode,
     typographyScale: Float = 1f,
+    observedCellSize: DpSize? = null,
 ) {
     val openAction = if (!sensorId.isNullOrEmpty()) {
         actionRunCallback<OpenSimpleWidgetSensorAction>(
@@ -187,32 +219,54 @@ private fun SimpleWidgetContent(
     val context = LocalContext.current
     val embeddedColors = resolveSimpleWidgetEmbeddedColors(
         renderingMode = renderingMode,
-        valueColor = { GlanceColors.resolvedValueColor(context) },
-        secondaryColor = { GlanceColors.resolvedWidgetSensorNameColor(context) },
+        valueColor = { GlanceColors.resolvedSimpleWidgetSensorTitleColor(context) },
+        unitColor = { GlanceColors.resolvedValueColor(context) },
     )
     val zoomFactor = getZoomFactor(context)
     val size = LocalSize.current
     val widgetWidth = validDimensionOrFallback(size.width, 110.dp)
     val widgetHeight = validDimensionOrFallback(size.height, 45.dp)
+    val typographySize = simpleWidgetTypographySize(
+        currentSize = DpSize(widgetWidth, widgetHeight),
+        observedSize = observedCellSize
+    )
     val baseConfig = SimpleWidgetLayoutConfig.fromSize(
-        width = widgetWidth,
-        height = widgetHeight,
+        width = typographySize.width,
+        height = typographySize.height,
         isTablet = context.resources.configuration.smallestScreenWidthDp >= 600,
         zoomFactor = zoomFactor
     )
-    val config = baseConfig.copy(
+    val scaledConfig = baseConfig.copy(
         displayNameFontSize = baseConfig.displayNameFontSize.scaledBy(typographyScale),
         valueFontSize = baseConfig.valueFontSize.scaledBy(typographyScale),
-        secondaryFontSize = baseConfig.secondaryFontSize.scaledBy(typographyScale)
+        secondaryFontSize = baseConfig.secondaryFontSize.scaledBy(typographyScale),
+        timestampFontSize = baseConfig.timestampFontSize.scaledBy(typographyScale),
+        measurementNameFontSize = baseConfig.measurementNameFontSize.scaledBy(typographyScale)
+    )
+    val isAirQuality = measurementType == WidgetType.AIR_QUALITY
+    val config = fitSimpleWidgetConfig(
+        context = context,
+        config = scaledConfig,
+        size = DpSize(widgetWidth, widgetHeight),
+        sensorValue = sensorValue,
+        unit = unit,
+        measurementName = measurementName,
+        isAirQuality = isAirQuality,
+        embeddedValueColor = embeddedColors.value,
+        observedCellSize = observedCellSize
     )
     val displayNameFontSize = config.displayNameFontSize.toWidgetSp(context)
-    val valueFontSize = config.valueFontSize.toWidgetSp(context)
-    val secondaryFontSize = config.secondaryFontSize.toWidgetSp(context)
-    val secondaryFontHeight = GlanceFontUtils.measureSystemFontHeight(
+    val timestampFontSize = config.timestampFontSize.toWidgetSp(context)
+    val timestampHeight = GlanceFontUtils.measureSystemFontHeight(
         context = context,
-        fontSize = secondaryFontSize,
-        bold = true
+        fontSize = timestampFontSize,
+        bold = false
     )
+    val readingLayout = if (isAirQuality) {
+        measureAqiLayout(context, config, measurementName, sensorValue.substringBefore("/"))
+    } else {
+        measureMeasurementLayout(context, config, unit, measurementName, sensorValue)
+    }
     val visibility = calculateSimpleWidgetContentVisibility(
         widgetHeight = widgetHeight,
         config = config,
@@ -222,19 +276,24 @@ private fun SimpleWidgetContent(
                 fontSize = displayNameFontSize,
                 bold = true
             ),
-            value = GlanceFontUtils.measureCustomFontHeight(
-                context,
-                valueFontSize,
-                R.font.oswald_bold
-            ),
-            secondary = secondaryFontHeight
+            value = readingLayout.textLayout.height,
+            secondary = timestampHeight
         ),
         hasUnit = unit.isNotBlank(),
         isAirQuality = measurementType == WidgetType.AIR_QUALITY,
         primaryContentMandatory = config.style == SimpleWidgetLayoutStyle.BALANCED_SHORT
     )
 
-    val availableWidth = positiveDp(widgetWidth - (config.horizontalPadding * 2))
+    val typographyAvailableWidth = simpleWidgetTypographyAvailableWidth(
+        currentSize = DpSize(widgetWidth, widgetHeight),
+        observedSize = observedCellSize,
+        horizontalPadding = config.horizontalPadding
+    )
+    val readingAvailableWidth = simpleWidgetReadingAvailableWidth(
+        currentSize = DpSize(widgetWidth, widgetHeight),
+        observedSize = observedCellSize,
+        horizontalPadding = config.horizontalPadding
+    )
     val timestampMaxWidth = calculateTimestampMaxWidth(
         widgetWidth = widgetWidth,
         contentStartPadding = config.horizontalPadding,
@@ -261,16 +320,13 @@ private fun SimpleWidgetContent(
                     text = displayName,
                     modifier = GlanceModifier.fillMaxWidth(),
                     style = TextStyle(
-                        color = GlanceColors.widgetSensorName,
+                        color = GlanceColors.simpleWidgetSensorTitle,
                         fontSize = displayNameFontSize,
                         fontWeight = FontWeight.Bold
                     ),
                     maxLines = 1
                 )
-            }
-
-            if (config.style == SimpleWidgetLayoutStyle.BALANCED_SHORT) {
-                Spacer(modifier = GlanceModifier.defaultWeight())
+                Spacer(modifier = GlanceModifier.height(TITLE_VALUE_SPACING))
             }
 
             if (measurementType == WidgetType.AIR_QUALITY) {
@@ -278,9 +334,10 @@ private fun SimpleWidgetContent(
                     sensorValue = sensorValue,
                     measurementName = measurementName,
                     config = config,
-                    availableWidth = availableWidth,
-                    visibility = visibility,
-                    embeddedValueColor = embeddedColors.value,
+                    typographyAvailableWidth = typographyAvailableWidth,
+                    readingAvailableWidth = readingAvailableWidth,
+                    layout = readingLayout,
+                    embeddedColors = embeddedColors,
                 )
             } else {
                 GlanceMeasurementDisplay(
@@ -288,26 +345,23 @@ private fun SimpleWidgetContent(
                     unit = unit,
                     measurementName = measurementName,
                     config = config,
-                    availableWidth = availableWidth,
+                    typographyAvailableWidth = typographyAvailableWidth,
+                    readingAvailableWidth = readingAvailableWidth,
+                    renderingMode = renderingMode,
                     showMeasurementDescription = visibility.showMeasurementDescription,
-                    embeddedValueColor = embeddedColors.value,
-                    embeddedUnitColor = embeddedColors.secondary,
+                    layout = readingLayout,
+                    embeddedColors = embeddedColors,
                 )
             }
 
             if (visibility.showTimestamp) {
-                if (config.style == SimpleWidgetLayoutStyle.BALANCED_SHORT) {
-                    Spacer(modifier = GlanceModifier.defaultWeight())
-                    TimestampText(updated, timestampMaxWidth, secondaryFontSize)
-                } else {
-                    Box(
-                        modifier = GlanceModifier
-                            .fillMaxWidth()
-                            .defaultWeight(),
-                        contentAlignment = Alignment.BottomStart
-                    ) {
-                        TimestampText(updated, timestampMaxWidth, secondaryFontSize)
-                    }
+                Box(
+                    modifier = GlanceModifier
+                        .fillMaxWidth()
+                        .defaultWeight(),
+                    contentAlignment = Alignment.BottomStart
+                ) {
+                    TimestampText(updated, timestampMaxWidth, timestampFontSize)
                 }
             }
         }
@@ -339,22 +393,22 @@ internal enum class SimpleWidgetRenderingMode {
 
 internal data class SimpleWidgetEmbeddedColors(
     val value: Int?,
-    val secondary: Int?,
+    val unit: Int?,
 )
 
 internal fun resolveSimpleWidgetEmbeddedColors(
     renderingMode: SimpleWidgetRenderingMode,
     valueColor: () -> Int,
-    secondaryColor: () -> Int,
+    unitColor: () -> Int,
 ): SimpleWidgetEmbeddedColors =
     when (renderingMode) {
         SimpleWidgetRenderingMode.RUNTIME -> SimpleWidgetEmbeddedColors(
             value = null,
-            secondary = null,
+            unit = null,
         )
         SimpleWidgetRenderingMode.GENERATED_PREVIEW -> SimpleWidgetEmbeddedColors(
             value = valueColor(),
-            secondary = secondaryColor(),
+            unit = unitColor(),
         )
     }
 
@@ -364,128 +418,113 @@ private fun GlanceMeasurementDisplay(
     unit: String,
     measurementName: String,
     config: SimpleWidgetLayoutConfig,
-    availableWidth: Dp,
+    typographyAvailableWidth: Dp,
+    readingAvailableWidth: Dp,
+    renderingMode: SimpleWidgetRenderingMode,
     showMeasurementDescription: Boolean,
-    embeddedValueColor: Int?,
-    embeddedUnitColor: Int?
+    layout: MeasuredSimpleWidgetLayout,
+    embeddedColors: SimpleWidgetEmbeddedColors
 ) {
     val context = LocalContext.current
-    val rowWidth = positiveDp(availableWidth - config.inlineSpacing)
-    val valueWidthFraction = if (unit.isBlank()) 1f else 0.7f
+    val valueMaxWidth = simpleWidgetValueMaxWidth(
+        config,
+        typographyAvailableWidth,
+        layout.minimumLabelWidth
+    )
+    val refreshOverlap = calculateRefreshOverlap(
+        contentEndPadding = config.horizontalPadding,
+        refreshTouchTargetSize = WidgetRefreshButtonDefaults.touchTargetSize
+    )
+    val renderedValueWidth = minOf(
+        valueMaxWidth,
+        GlanceFontUtils.measureCustomFontWidth(
+            context = context,
+            text = sensorValue,
+            fontSize = layout.valueFontSize,
+            fontResId = R.font.oswald_bold
+        )
+    )
+    val previewMeasurementNameMaxWidth =
+        if (renderingMode == SimpleWidgetRenderingMode.GENERATED_PREVIEW) {
+            calculatePreviewMeasurementNameMaxWidth(
+                readingAvailableWidth = readingAvailableWidth,
+                renderedValueWidth = renderedValueWidth,
+                valueLabelSpacing = config.valueLabelSpacing,
+                refreshOverlap = refreshOverlap
+            )
+        } else {
+            null
+        }
+
     Row(
-        modifier = GlanceModifier.fillMaxWidth(),
+        modifier = GlanceModifier.width(readingAvailableWidth),
         verticalAlignment = Alignment.Top
     ) {
         CustomFontText(
             text = sensorValue,
-            fontSize = config.valueFontSize.toWidgetSp(context),
-            colorProvider = GlanceColors.valueColor,
+            fontSize = layout.valueFontSize,
+            colorProvider = GlanceColors.simpleWidgetSensorTitleBitmapTint,
             fontResId = R.font.oswald_bold,
-            maxWidth = positiveDp(rowWidth * valueWidthFraction),
-            embeddedColor = embeddedValueColor
+            maxWidth = valueMaxWidth,
+            embeddedColor = embeddedColors.value,
+            trimVerticalPadding = true,
+            stableNumericBounds = true
         )
 
-        if (unit.isNotBlank()) {
-            Spacer(modifier = GlanceModifier.width(config.inlineSpacing))
-            CustomFontText(
-                text = unit,
-                fontSize = config.secondaryFontSize.toWidgetSp(context),
-                colorProvider = GlanceColors.widgetSensorName,
-                fontResId = R.font.oswald_regular,
-                modifier = GlanceModifier
-                    .padding(top = config.unitPadding),
-                maxWidth = positiveDp(rowWidth * (1f - valueWidthFraction)),
-                embeddedColor = embeddedUnitColor
-            )
-        }
-    }
-
-    if (showMeasurementDescription) {
-        Text(
-            text = measurementName,
-            modifier = GlanceModifier.fillMaxWidth(),
-            style = TextStyle(
-                color = GlanceColors.widgetSensorName,
-                fontSize = config.secondaryFontSize.toWidgetSp(context)
-            ),
-            maxLines = 1
-        )
-    }
-}
-
-private const val GENERATED_PREVIEW_TYPOGRAPHY_SCALE = 0.75f
-
-@Composable
-private fun GlanceAQIDisplay(
-    sensorValue: String,
-    measurementName: String,
-    config: SimpleWidgetLayoutConfig,
-    availableWidth: Dp,
-    visibility: SimpleWidgetContentVisibility,
-    embeddedValueColor: Int?
-) {
-    val context = LocalContext.current
-    val aqiText = sensorValue.substringBefore("/")
-    val aqiValue = aqiText.toDoubleOrNull()?.takeIf { it.isFinite() }
-    val aqiColor = aqiValue?.let { AQI.CalculatedAQI(it).color } ?: Color.Gray
-    val aqiColorProvider = ColorProvider(day = aqiColor, night = aqiColor)
-
-    val progressBarWidth = positiveDp(
-        availableWidth -
-            WidgetRefreshButtonDefaults.touchTargetSize -
-            (config.inlineSpacing * 2)
-    )
-
-    Column {
-        Row(
-            modifier = GlanceModifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            CustomFontText(
-                text = aqiText,
-                fontSize = calculateAqiValueFontSize(
-                    config = config,
-                    showMeasurementDescription = visibility.showMeasurementDescription
-                ).toWidgetSp(context),
-                colorProvider = GlanceColors.valueColor,
-                fontResId = R.font.oswald_bold,
-                maxWidth = positiveDp(availableWidth * 0.55f),
-                embeddedColor = embeddedValueColor
-            )
-
-            Spacer(modifier = GlanceModifier.width(config.inlineSpacing))
+        if (unit.isNotBlank() || showMeasurementDescription) {
+            Spacer(modifier = GlanceModifier.width(config.valueLabelSpacing))
 
             Box(
                 modifier = GlanceModifier
-                    .width(positiveDp(availableWidth * 0.4f))
-                    .height(visibility.aqiInfoHeight)
+                    .defaultWeight()
+                    .height(layout.textLayout.height)
             ) {
-                Text(
-                    text = "/100",
+                Box(
                     modifier = GlanceModifier
                         .fillMaxWidth()
-                        .padding(top = config.unitPadding),
-                    style = TextStyle(
-                        color = GlanceColors.valueColor,
-                        fontSize = config.secondaryFontSize.toWidgetSp(context),
-                        fontWeight = FontWeight.Bold
-                    ),
-                    maxLines = 1
-                )
+                        .padding(top = layout.textLayout.unitTopPadding)
+                ) {
+                    if (unit.isNotBlank()) {
+                        CustomFontText(
+                            text = unit,
+                            fontSize = layout.labelFontSize,
+                            colorProvider = GlanceColors.valueColor,
+                            fontResId = R.font.oswald_regular,
+                            maxWidth = GlanceFontUtils.measureCustomFontWidth(
+                                context = context,
+                                text = unit,
+                                fontSize = layout.labelFontSize,
+                                fontResId = R.font.oswald_regular
+                            ),
+                            embeddedColor = embeddedColors.unit,
+                            trimVerticalPadding = true
+                        )
+                    }
+                }
 
-                if (visibility.showMeasurementDescription) {
+                if (showMeasurementDescription && measurementName.isNotBlank()) {
+                    val measurementNameModifier =
+                        if (previewMeasurementNameMaxWidth != null) {
+                            GlanceModifier
+                                .width(previewMeasurementNameMaxWidth)
+                                .padding(top = layout.textLayout.measurementTopPadding)
+                        } else {
+                            GlanceModifier
+                                .fillMaxWidth()
+                                .padding(
+                                    top = layout.textLayout.measurementTopPadding,
+                                    end = refreshOverlap
+                                )
+                        }
                     Box(
-                        modifier = GlanceModifier.fillMaxSize(),
-                        contentAlignment = Alignment.BottomStart
+                        modifier = measurementNameModifier
                     ) {
                         Text(
                             text = measurementName,
-                            modifier = GlanceModifier
-                                .fillMaxWidth()
-                                .padding(bottom = config.aqiMeasurementPadding),
+                            modifier = GlanceModifier.fillMaxWidth(),
                             style = TextStyle(
                                 color = GlanceColors.widgetSensorName,
-                                fontSize = config.secondaryFontSize.toWidgetSp(context)
+                                fontSize = layout.measurementNameFontSize
                             ),
                             maxLines = 1
                         )
@@ -493,22 +532,378 @@ private fun GlanceAQIDisplay(
                 }
             }
         }
+    }
+}
 
-        if (visibility.showAqiProgress) {
-            GlanceProgressBarWithDot(
-                progress = (aqiValue?.toFloat() ?: 0f) / 100f,
-                activeColor = aqiColorProvider,
-                backgroundColor = ColorProvider(
-                    day = aqiColor.copy(alpha = 0.2f),
-                    night = aqiColor.copy(alpha = 0.2f)
-                ),
-                modifier = GlanceModifier.padding(
-                    start = 1.dp,
-                    bottom = SIMPLE_WIDGET_AQI_PROGRESS_BOTTOM_PADDING
-                ),
-                totalWidth = progressBarWidth,
-                config = config
+internal fun measureMeasurementLayout(
+    context: Context,
+    config: SimpleWidgetLayoutConfig,
+    unit: String,
+    measurementName: String,
+    sensorValue: String = "0"
+): MeasuredSimpleWidgetLayout =
+    measureSimpleWidgetLayout(context, config, unit, measurementName, 0.dp, sensorValue)
+
+private const val GENERATED_PREVIEW_TYPOGRAPHY_SCALE = 0.65f
+private const val AQI_UNIT_TEXT = "/100"
+private val AQI_INDICATOR_SIZE = 8.dp
+private val TITLE_VALUE_SPACING = 7.dp
+private val VALUE_SIZING_TITLE_SPACING = 5.dp
+
+private val SimpleWidgetLayoutConfig.valueLabelSpacing: Dp
+    get() = inlineSpacing * 2 + 3.dp
+
+internal data class MeasuredSimpleWidgetLayout(
+    val valueFontSize: TextUnit,
+    val labelFontSize: TextUnit,
+    val measurementNameFontSize: TextUnit,
+    val labelHeights: SimpleWidgetLabelHeights,
+    val textLayout: SimpleWidgetTextLayout,
+    val minimumLabelWidth: Dp,
+    val indicatorSize: Dp
+)
+
+private fun simpleWidgetValueMaxWidth(
+    config: SimpleWidgetLayoutConfig,
+    availableWidth: Dp,
+    minimumLabelWidth: Dp
+): Dp {
+    val spacing = if (minimumLabelWidth > 0.dp) config.valueLabelSpacing else 0.dp
+    return positiveDp(availableWidth - minimumLabelWidth - spacing)
+}
+
+internal fun calculatePreviewMeasurementNameMaxWidth(
+    readingAvailableWidth: Dp,
+    renderedValueWidth: Dp,
+    valueLabelSpacing: Dp,
+    refreshOverlap: Dp
+): Dp = positiveDp(
+    readingAvailableWidth - renderedValueWidth - valueLabelSpacing - refreshOverlap - 10.dp
+)
+
+internal fun fitSimpleWidgetConfig(
+    context: Context,
+    config: SimpleWidgetLayoutConfig,
+    size: DpSize,
+    sensorValue: String,
+    unit: String,
+    measurementName: String,
+    isAirQuality: Boolean,
+    embeddedValueColor: Int? = null,
+    observedCellSize: DpSize? = null
+): SimpleWidgetLayoutConfig {
+    val metrics = context.resources.displayMetrics
+    val density = metrics.density
+    val typographySize = simpleWidgetTypographySize(size, observedCellSize)
+    val availableHeightPx = (typographySize.height.value * density).roundToInt() -
+        2 * (config.verticalPadding.value * density).roundToInt() -
+        (VALUE_SIZING_TITLE_SPACING.value * density).roundToInt()
+    val availableWidthPx = (typographySize.width.value * density).roundToInt() -
+        2 * (config.horizontalPadding.value * density).roundToInt()
+    val valueText = if (isAirQuality) sensorValue.substringBefore("/") else sensorValue
+    val unitText = if (isAirQuality) AQI_UNIT_TEXT else unit
+    val preferredConfig = config.copy(valueFontSize = calculateAqiValueFontSize(config))
+    val bitmapBytesPerPixel = fontBitmapFormat(embeddedValueColor).bytesPerPixel
+
+    fun fitsBitmap(textMetrics: WidgetTextMetrics): Boolean {
+        val maximumWidth = calculateAllocationSafeBitmapWidth(
+            bitmapHeight = (textMetrics.height.value * density).roundToInt(),
+            bytesPerPixel = bitmapBytesPerPixel
+        )
+        return ceil(textMetrics.width.value * density) <= maximumWidth
+    }
+
+    fun measureLayout(candidate: SimpleWidgetLayoutConfig): MeasuredSimpleWidgetLayout =
+        if (isAirQuality) {
+            measureAqiLayout(context, candidate, measurementName, valueText)
+        } else {
+            measureMeasurementLayout(context, candidate, unit, measurementName, valueText)
+        }
+
+    fun withReducedValue(candidate: SimpleWidgetLayoutConfig): SimpleWidgetLayoutConfig =
+        candidate.copy(
+            valueFontSize = reduceSimpleWidgetValueFontSize(
+                candidate.valueFontSize.toWidgetSp(context)
+            ).scaledBy(getZoomFactor(context))
+        )
+
+    val maximumValueFontSize = GlanceFontUtils.fitCustomFontSizeToBaselineHeight(
+        context = context,
+        fontSize = preferredConfig.valueFontSize.toWidgetSp(context),
+        fontResId = R.font.oswald_bold,
+        minimumHeight = (availableHeightPx / density).dp
+    ).scaledBy(getZoomFactor(context))
+
+    val fitted = fitSimpleWidgetTypography(preferredConfig, maximumValueFontSize) { candidate ->
+        val displayNameHeight = GlanceFontUtils.measureSystemFontHeight(
+            context, candidate.displayNameFontSize.toWidgetSp(context), bold = true
+        )
+        val timestampHeight = GlanceFontUtils.measureSystemFontHeight(
+            context, candidate.timestampFontSize.toWidgetSp(context), bold = false
+        )
+        val layout = measureLayout(candidate)
+        val valueMaxWidth = simpleWidgetValueMaxWidth(
+            candidate, (availableWidthPx / density).dp, layout.minimumLabelWidth
+        )
+        val valueMetrics = GlanceFontUtils.measureCustomFontMetrics(
+            context, layout.valueFontSize, R.font.oswald_bold, valueText,
+            trimVerticalPadding = true, stableNumericBounds = true
+        )
+        val unitMetrics = GlanceFontUtils.measureCustomFontMetrics(
+            context, layout.labelFontSize, R.font.oswald_regular, unitText, trimVerticalPadding = true
+        )
+        val labelSpacing = if (isAirQuality || unit.isNotBlank() || measurementName.isNotBlank()) {
+            config.valueLabelSpacing
+        } else {
+            0.dp
+        }
+        val availableReadingHeightPx = availableHeightPx -
+            (displayNameHeight.value * density).roundToInt() -
+            (timestampHeight.value * density).roundToInt()
+
+        ceil(valueMetrics.height.value * density) <= availableReadingHeightPx &&
+            valueMetrics.width <= valueMaxWidth &&
+            fitsBitmap(valueMetrics) &&
+            fitsBitmap(unitMetrics) &&
+            ceil(valueMetrics.width.value * density) +
+            ceil(layout.minimumLabelWidth.value * density) +
+            (labelSpacing.value * density).roundToInt() <= availableWidthPx &&
+            (
+                ceil(layout.textLayout.height.value * density) <= availableReadingHeightPx ||
+                    ceil(measureLayout(withReducedValue(candidate)).textLayout.height.value * density) <=
+                    availableReadingHeightPx
             )
+    }
+    return withReducedValue(fitted)
+}
+
+internal fun observedSimpleWidgetTypographySize(width: Int?, height: Int?): DpSize? =
+    if (width != null && width > 0 && height != null && height > 0) {
+        DpSize(width.dp, height.dp)
+    } else {
+        null
+    }
+
+internal fun simpleWidgetTypographySize(currentSize: DpSize, observedSize: DpSize?): DpSize =
+    observedSize ?: currentSize
+
+internal fun simpleWidgetTypographyAvailableWidth(
+    currentSize: DpSize,
+    observedSize: DpSize?,
+    horizontalPadding: Dp
+): Dp = positiveDp(
+    simpleWidgetTypographySize(currentSize, observedSize).width - (horizontalPadding * 2)
+)
+
+internal fun simpleWidgetReadingAvailableWidth(
+    currentSize: DpSize,
+    observedSize: DpSize?,
+    horizontalPadding: Dp
+): Dp = maxOf(
+    positiveDp(currentSize.width - (horizontalPadding * 2)),
+    simpleWidgetTypographyAvailableWidth(currentSize, observedSize, horizontalPadding)
+)
+
+internal fun measureAqiLayout(
+    context: Context,
+    config: SimpleWidgetLayoutConfig,
+    measurementName: String,
+    sensorValue: String = "0"
+): MeasuredSimpleWidgetLayout =
+    measureSimpleWidgetLayout(context, config, AQI_UNIT_TEXT, measurementName, AQI_INDICATOR_SIZE, sensorValue)
+
+private fun measureSimpleWidgetLayout(
+    context: Context,
+    config: SimpleWidgetLayoutConfig,
+    unit: String,
+    measurementName: String,
+    indicatorSize: Dp,
+    sensorValue: String
+): MeasuredSimpleWidgetLayout {
+    val displayMetrics = context.resources.displayMetrics
+    val density = displayMetrics.density
+    var valueFontSize = config.valueFontSize.toWidgetSp(context)
+    var valueMetrics = GlanceFontUtils.measureCustomFontMetrics(
+        context, valueFontSize, R.font.oswald_bold, sensorValue,
+        trimVerticalPadding = true, stableNumericBounds = true
+    )
+    // Both label fonts need at least two physical pixels, even in the smallest widgets.
+    if ((valueMetrics.height.value * density).roundToInt() < 4) {
+        valueFontSize = GlanceFontUtils.fitCustomFontSizeToBaselineHeight(
+            context, valueFontSize, R.font.oswald_bold, minimumHeight = (2f / density).dp
+        )
+        valueMetrics = GlanceFontUtils.measureCustomFontMetrics(
+            context, valueFontSize, R.font.oswald_bold, sensorValue,
+            trimVerticalPadding = true, stableNumericBounds = true
+        )
+    }
+    val labelHeights = calculateSimpleWidgetLabelHeights(valueMetrics.height, density)
+
+    fun measureMeasurementName(fontSize: TextUnit): WidgetTextMetrics =
+        if (measurementName.isBlank()) {
+            WidgetTextMetrics(0.dp, 0.dp, 0.dp, 0.dp)
+        } else {
+            GlanceFontUtils.measureSystemFontMetrics(
+                context, measurementName, fontSize, bold = false
+            )
+        }
+
+    fun measureUnit(fontSize: TextUnit): WidgetTextMetrics =
+        if (unit.isBlank()) {
+            WidgetTextMetrics(0.dp, 0.dp, 0.dp, 0.dp)
+        } else {
+            GlanceFontUtils.measureCustomFontMetrics(
+                context, fontSize, R.font.oswald_regular, unit, trimVerticalPadding = true
+            )
+        }
+
+    fun fitLabel(
+        maximumHeightPx: Int,
+        measure: (TextUnit) -> WidgetTextMetrics
+    ): TextUnit = fitSimpleWidgetLabelFontSize(
+        maximumFontSize = TypedValueCompat.pxToSp(maximumHeightPx * 2f, displayMetrics).sp
+    ) { fontSize ->
+        (measure(fontSize).height.value * density).roundToInt() <= maximumHeightPx
+    }
+
+    val labelFontSize = if (unit.isBlank()) {
+        config.secondaryFontSize.toWidgetSp(context)
+    } else {
+        fitLabel(
+            (labelHeights.unit.value * density).roundToInt(),
+            ::measureUnit
+        )
+    }
+    val preferredMeasurementFontSize = config.measurementNameFontSize.toWidgetSp(context)
+    val measurementNameFontSize = if (measurementName.isBlank()) {
+        preferredMeasurementFontSize
+    } else {
+        fitLabel(
+            (labelHeights.measurement.value * density).roundToInt(),
+            ::measureMeasurementName
+        )
+    }
+    val unitMetrics = measureUnit(labelFontSize)
+    val measurementMetrics = measureMeasurementName(measurementNameFontSize)
+    val fittedIndicatorSize = minOf(indicatorSize, unitMetrics.height)
+    val indicatorWidth = if (indicatorSize > 0.dp) {
+        config.inlineSpacing * 2 + fittedIndicatorSize
+    } else {
+        0.dp
+    }
+    // Let long descriptions ellipsize rather than shrinking the value when their text grows vertically.
+    val minimumMeasurementWidth = minOf(
+        measurementMetrics.width,
+        measureMeasurementName(preferredMeasurementFontSize).width
+    )
+    return MeasuredSimpleWidgetLayout(
+        valueFontSize = valueFontSize,
+        labelFontSize = labelFontSize,
+        measurementNameFontSize = measurementNameFontSize,
+        labelHeights = labelHeights,
+        textLayout = calculateSimpleWidgetTextLayout(valueMetrics, unitMetrics, measurementMetrics, density),
+        minimumLabelWidth = maxOf(unitMetrics.width + indicatorWidth, minimumMeasurementWidth),
+        indicatorSize = fittedIndicatorSize
+    )
+}
+
+@Composable
+private fun GlanceAQIDisplay(
+    sensorValue: String,
+    measurementName: String,
+    config: SimpleWidgetLayoutConfig,
+    typographyAvailableWidth: Dp,
+    readingAvailableWidth: Dp,
+    layout: MeasuredSimpleWidgetLayout,
+    embeddedColors: SimpleWidgetEmbeddedColors
+) {
+    val context = LocalContext.current
+    val aqiText = sensorValue.substringBefore("/")
+    val aqiValue = aqiText.toDoubleOrNull()?.takeIf { it.isFinite() }
+    val aqiColor = aqiValue?.let { AQI.CalculatedAQI(it).color } ?: Color.Gray
+    val aqiColorProvider = ColorProvider(day = aqiColor, night = aqiColor)
+    val valueMaxWidth = simpleWidgetValueMaxWidth(
+        config,
+        typographyAvailableWidth,
+        layout.minimumLabelWidth
+    )
+    val refreshOverlap = calculateRefreshOverlap(
+        contentEndPadding = config.horizontalPadding,
+        refreshTouchTargetSize = WidgetRefreshButtonDefaults.touchTargetSize
+    )
+
+    Row(
+        modifier = GlanceModifier.width(readingAvailableWidth),
+        verticalAlignment = Alignment.Top
+    ) {
+        CustomFontText(
+            text = aqiText,
+            fontSize = layout.valueFontSize,
+            colorProvider = GlanceColors.simpleWidgetSensorTitleBitmapTint,
+            fontResId = R.font.oswald_bold,
+            maxWidth = valueMaxWidth,
+            embeddedColor = embeddedColors.value,
+            trimVerticalPadding = true,
+            stableNumericBounds = true
+        )
+
+        Spacer(modifier = GlanceModifier.width(config.valueLabelSpacing))
+
+        Box(
+            modifier = GlanceModifier
+                .defaultWeight()
+                .height(layout.textLayout.height)
+        ) {
+            Box(
+                modifier = GlanceModifier
+                    .fillMaxWidth()
+                    .padding(top = layout.textLayout.unitTopPadding)
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    CustomFontText(
+                        text = AQI_UNIT_TEXT,
+                        fontSize = layout.labelFontSize,
+                        colorProvider = GlanceColors.valueColor,
+                        fontResId = R.font.oswald_regular,
+                        maxWidth = GlanceFontUtils.measureCustomFontWidth(
+                            context = context,
+                            text = AQI_UNIT_TEXT,
+                            fontSize = layout.labelFontSize,
+                            fontResId = R.font.oswald_regular
+                        ),
+                        embeddedColor = embeddedColors.unit,
+                        trimVerticalPadding = true
+                    )
+                    Spacer(modifier = GlanceModifier.width(config.inlineSpacing * 2))
+                    Image(
+                        provider = ImageProvider(R.drawable.ic_white_circle),
+                        contentDescription = null,
+                        modifier = GlanceModifier.size(layout.indicatorSize),
+                        colorFilter = ColorFilter.tint(aqiColorProvider)
+                    )
+                }
+            }
+
+            if (measurementName.isNotBlank()) {
+                Box(
+                    modifier = GlanceModifier
+                        .fillMaxWidth()
+                        .padding(
+                            top = layout.textLayout.measurementTopPadding,
+                            end = refreshOverlap
+                        )
+                ) {
+                    Text(
+                        text = measurementName,
+                        modifier = GlanceModifier.fillMaxWidth(),
+                        style = TextStyle(
+                            color = GlanceColors.widgetSensorName,
+                            fontSize = layout.measurementNameFontSize
+                        ),
+                        maxLines = 1
+                    )
+                }
+            }
         }
     }
 }
@@ -610,6 +1005,11 @@ internal fun calculateAqiProgressGeometry(
 }
 
 private fun positiveDp(value: Dp): Dp = value.value.coerceAtLeast(1f).dp
+
+internal fun calculateRefreshOverlap(
+    contentEndPadding: Dp,
+    refreshTouchTargetSize: Dp
+): Dp = (refreshTouchTargetSize - contentEndPadding).value.coerceAtLeast(0f).dp
 
 internal fun calculateTimestampMaxWidth(
     widgetWidth: Dp,
