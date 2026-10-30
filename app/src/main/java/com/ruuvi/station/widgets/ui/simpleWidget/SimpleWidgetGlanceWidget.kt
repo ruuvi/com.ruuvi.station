@@ -85,7 +85,7 @@ object SimpleWidgetGlanceWidget : GlanceAppWidget() {
         SizeMode.Responsive(setOf(DpSize(180.dp, 110.dp)))
 
     override suspend fun provideGlance(context: Context, id: GlanceId) {
-        observeTypographyHeight(context, id)
+        observeTypographySize(context, id)
         provideContent {
             val prefs = currentState<Preferences>()
 
@@ -106,27 +106,27 @@ object SimpleWidgetGlanceWidget : GlanceAppWidget() {
                 updated = updated?.takeIf { it.isNotBlank() } ?: "-",
                 measurementType = measurementTypeCode?.toIntOrNull()?.let { WidgetType.getByCode(it) },
                 renderingMode = SimpleWidgetRenderingMode.RUNTIME,
-                observedCellHeight = prefs[SimpleWidgetPrefKeys.typographyHeight]?.dp,
+                observedCellSize = observedSimpleWidgetTypographySize(
+                    width = prefs[SimpleWidgetPrefKeys.typographyWidth],
+                    height = prefs[SimpleWidgetPrefKeys.typographyHeight]
+                ),
             )
         }
     }
 
-    private suspend fun observeTypographyHeight(context: Context, glanceId: GlanceId) {
+    private suspend fun observeTypographySize(context: Context, glanceId: GlanceId) {
         val applicationContext = context.applicationContext
         val appWidgetId = GlanceAppWidgetManager(applicationContext).getAppWidgetId(glanceId)
-        val observedHeight = AppWidgetManager.getInstance(applicationContext)
-            .getAppWidgetOptions(appWidgetId)
-            .getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_HEIGHT)
-        if (observedHeight <= 0) return
+        val options = AppWidgetManager.getInstance(applicationContext).getAppWidgetOptions(appWidgetId)
+        val observedWidth = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH)
+        val observedHeight = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_HEIGHT)
+        if (observedWidth <= 0 || observedHeight <= 0) return
 
         updateAppWidgetState(applicationContext, glanceId) { preferences ->
-            if (preferences[SimpleWidgetPrefKeys.typographyHeightObserved] != true) {
-                preferences[SimpleWidgetPrefKeys.typographyHeightObserved] = true
-                if (shouldSetSimpleWidgetTypographyHeight(observedHeight)) {
-                    preferences[SimpleWidgetPrefKeys.typographyHeight] = observedHeight
-                } else {
-                    preferences.remove(SimpleWidgetPrefKeys.typographyHeight)
-                }
+            if (preferences[SimpleWidgetPrefKeys.typographySizeObserved] != true) {
+                preferences[SimpleWidgetPrefKeys.typographySizeObserved] = true
+                preferences[SimpleWidgetPrefKeys.typographyWidth] = observedWidth
+                preferences[SimpleWidgetPrefKeys.typographyHeight] = observedHeight
             }
         }
     }
@@ -206,7 +206,7 @@ internal fun SimpleWidgetContent(
     measurementType: WidgetType?,
     renderingMode: SimpleWidgetRenderingMode,
     typographyScale: Float = 1f,
-    observedCellHeight: Dp? = null,
+    observedCellSize: DpSize? = null,
 ) {
     val openAction = if (!sensorId.isNullOrEmpty()) {
         actionRunCallback<OpenSimpleWidgetSensorAction>(
@@ -226,10 +226,13 @@ internal fun SimpleWidgetContent(
     val size = LocalSize.current
     val widgetWidth = validDimensionOrFallback(size.width, 110.dp)
     val widgetHeight = validDimensionOrFallback(size.height, 45.dp)
-    val typographyHeight = simpleWidgetTypographyHeight(widgetHeight, observedCellHeight)
+    val typographySize = simpleWidgetTypographySize(
+        currentSize = DpSize(widgetWidth, widgetHeight),
+        observedSize = observedCellSize
+    )
     val baseConfig = SimpleWidgetLayoutConfig.fromSize(
-        width = widgetWidth,
-        height = typographyHeight,
+        width = typographySize.width,
+        height = typographySize.height,
         isTablet = context.resources.configuration.smallestScreenWidthDp >= 600,
         zoomFactor = zoomFactor
     )
@@ -250,7 +253,7 @@ internal fun SimpleWidgetContent(
         measurementName = measurementName,
         isAirQuality = isAirQuality,
         embeddedValueColor = embeddedColors.value,
-        observedCellHeight = observedCellHeight
+        observedCellSize = observedCellSize
     )
     val displayNameFontSize = config.displayNameFontSize.toWidgetSp(context)
     val timestampFontSize = config.timestampFontSize.toWidgetSp(context)
@@ -281,7 +284,16 @@ internal fun SimpleWidgetContent(
         primaryContentMandatory = config.style == SimpleWidgetLayoutStyle.BALANCED_SHORT
     )
 
-    val availableWidth = positiveDp(widgetWidth - (config.horizontalPadding * 2))
+    val typographyAvailableWidth = simpleWidgetTypographyAvailableWidth(
+        currentSize = DpSize(widgetWidth, widgetHeight),
+        observedSize = observedCellSize,
+        horizontalPadding = config.horizontalPadding
+    )
+    val readingAvailableWidth = simpleWidgetReadingAvailableWidth(
+        currentSize = DpSize(widgetWidth, widgetHeight),
+        observedSize = observedCellSize,
+        horizontalPadding = config.horizontalPadding
+    )
     val timestampMaxWidth = calculateTimestampMaxWidth(
         widgetWidth = widgetWidth,
         contentStartPadding = config.horizontalPadding,
@@ -322,7 +334,8 @@ internal fun SimpleWidgetContent(
                     sensorValue = sensorValue,
                     measurementName = measurementName,
                     config = config,
-                    availableWidth = availableWidth,
+                    typographyAvailableWidth = typographyAvailableWidth,
+                    readingAvailableWidth = readingAvailableWidth,
                     layout = readingLayout,
                     embeddedColors = embeddedColors,
                 )
@@ -332,7 +345,8 @@ internal fun SimpleWidgetContent(
                     unit = unit,
                     measurementName = measurementName,
                     config = config,
-                    availableWidth = availableWidth,
+                    typographyAvailableWidth = typographyAvailableWidth,
+                    readingAvailableWidth = readingAvailableWidth,
                     showMeasurementDescription = visibility.showMeasurementDescription,
                     layout = readingLayout,
                     embeddedColors = embeddedColors,
@@ -403,20 +417,25 @@ private fun GlanceMeasurementDisplay(
     unit: String,
     measurementName: String,
     config: SimpleWidgetLayoutConfig,
-    availableWidth: Dp,
+    typographyAvailableWidth: Dp,
+    readingAvailableWidth: Dp,
     showMeasurementDescription: Boolean,
     layout: MeasuredSimpleWidgetLayout,
     embeddedColors: SimpleWidgetEmbeddedColors
 ) {
     val context = LocalContext.current
-    val valueMaxWidth = simpleWidgetValueMaxWidth(config, availableWidth, layout.minimumLabelWidth)
+    val valueMaxWidth = simpleWidgetValueMaxWidth(
+        config,
+        typographyAvailableWidth,
+        layout.minimumLabelWidth
+    )
     val refreshOverlap = calculateRefreshOverlap(
         contentEndPadding = config.horizontalPadding,
         refreshTouchTargetSize = WidgetRefreshButtonDefaults.touchTargetSize
     )
 
     Row(
-        modifier = GlanceModifier.fillMaxWidth(),
+        modifier = GlanceModifier.width(readingAvailableWidth),
         verticalAlignment = Alignment.Top
     ) {
         CustomFontText(
@@ -529,15 +548,15 @@ internal fun fitSimpleWidgetConfig(
     measurementName: String,
     isAirQuality: Boolean,
     embeddedValueColor: Int? = null,
-    observedCellHeight: Dp? = null
+    observedCellSize: DpSize? = null
 ): SimpleWidgetLayoutConfig {
     val metrics = context.resources.displayMetrics
     val density = metrics.density
-    val typographyHeight = simpleWidgetTypographyHeight(size.height, observedCellHeight)
-    val availableHeightPx = (typographyHeight.value * density).roundToInt() -
+    val typographySize = simpleWidgetTypographySize(size, observedCellSize)
+    val availableHeightPx = (typographySize.height.value * density).roundToInt() -
         2 * (config.verticalPadding.value * density).roundToInt() -
         (VALUE_SIZING_TITLE_SPACING.value * density).roundToInt()
-    val availableWidthPx = (size.width.value * density).roundToInt() -
+    val availableWidthPx = (typographySize.width.value * density).roundToInt() -
         2 * (config.horizontalPadding.value * density).roundToInt()
     val valueText = if (isAirQuality) sensorValue.substringBefore("/") else sensorValue
     val unitText = if (isAirQuality) AQI_UNIT_TEXT else unit
@@ -615,6 +634,33 @@ internal fun fitSimpleWidgetConfig(
     }
     return withReducedValue(fitted)
 }
+
+internal fun observedSimpleWidgetTypographySize(width: Int?, height: Int?): DpSize? =
+    if (width != null && width > 0 && height != null && height > 0) {
+        DpSize(width.dp, height.dp)
+    } else {
+        null
+    }
+
+internal fun simpleWidgetTypographySize(currentSize: DpSize, observedSize: DpSize?): DpSize =
+    observedSize ?: currentSize
+
+internal fun simpleWidgetTypographyAvailableWidth(
+    currentSize: DpSize,
+    observedSize: DpSize?,
+    horizontalPadding: Dp
+): Dp = positiveDp(
+    simpleWidgetTypographySize(currentSize, observedSize).width - (horizontalPadding * 2)
+)
+
+internal fun simpleWidgetReadingAvailableWidth(
+    currentSize: DpSize,
+    observedSize: DpSize?,
+    horizontalPadding: Dp
+): Dp = maxOf(
+    positiveDp(currentSize.width - (horizontalPadding * 2)),
+    simpleWidgetTypographyAvailableWidth(currentSize, observedSize, horizontalPadding)
+)
 
 internal fun measureAqiLayout(
     context: Context,
@@ -724,7 +770,8 @@ private fun GlanceAQIDisplay(
     sensorValue: String,
     measurementName: String,
     config: SimpleWidgetLayoutConfig,
-    availableWidth: Dp,
+    typographyAvailableWidth: Dp,
+    readingAvailableWidth: Dp,
     layout: MeasuredSimpleWidgetLayout,
     embeddedColors: SimpleWidgetEmbeddedColors
 ) {
@@ -733,14 +780,18 @@ private fun GlanceAQIDisplay(
     val aqiValue = aqiText.toDoubleOrNull()?.takeIf { it.isFinite() }
     val aqiColor = aqiValue?.let { AQI.CalculatedAQI(it).color } ?: Color.Gray
     val aqiColorProvider = ColorProvider(day = aqiColor, night = aqiColor)
-    val valueMaxWidth = simpleWidgetValueMaxWidth(config, availableWidth, layout.minimumLabelWidth)
+    val valueMaxWidth = simpleWidgetValueMaxWidth(
+        config,
+        typographyAvailableWidth,
+        layout.minimumLabelWidth
+    )
     val refreshOverlap = calculateRefreshOverlap(
         contentEndPadding = config.horizontalPadding,
         refreshTouchTargetSize = WidgetRefreshButtonDefaults.touchTargetSize
     )
 
     Row(
-        modifier = GlanceModifier.fillMaxWidth(),
+        modifier = GlanceModifier.width(readingAvailableWidth),
         verticalAlignment = Alignment.Top
     ) {
         CustomFontText(

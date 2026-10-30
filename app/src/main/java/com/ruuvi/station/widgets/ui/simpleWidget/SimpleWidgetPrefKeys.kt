@@ -1,5 +1,7 @@
 package com.ruuvi.station.widgets.ui.simpleWidget
 
+import androidx.datastore.preferences.core.booleanPreferencesKey
+import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 
 object SimpleWidgetPrefKeys {
@@ -10,4 +12,7 @@ object SimpleWidgetPrefKeys {
     val measurementName = stringPreferencesKey("measurement_name")
     val updated = stringPreferencesKey("updated")
     val measurementType = stringPreferencesKey("measurement_type")
+    val typographySizeObserved = booleanPreferencesKey("typography_size_observed")
+    val typographyWidth = intPreferencesKey("typography_width")
+    val typographyHeight = intPreferencesKey("typography_height")
 }
