@@ -88,6 +88,19 @@ class SimpleWidgetLayoutConfigTest {
     }
 
     @Test
+    fun `generated preview measurement name stops before refresh button`() {
+        assertEquals(
+            49.dp,
+            calculatePreviewMeasurementNameMaxWidth(
+                readingAvailableWidth = 156.dp,
+                renderedValueWidth = 64.dp,
+                valueLabelSpacing = 5.dp,
+                refreshOverlap = 28.dp
+            )
+        )
+    }
+
+    @Test
     fun `current size is used until a valid initial cell size is observed`() {
         val currentSize = DpSize(180.dp, 110.dp)
 

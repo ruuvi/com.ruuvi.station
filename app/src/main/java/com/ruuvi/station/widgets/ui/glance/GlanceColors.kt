@@ -10,14 +10,13 @@ import com.ruuvi.station.app.ui.theme.darkPalette
 import com.ruuvi.station.app.ui.theme.lightPalette
 
 object GlanceColors {
-    private val lightSensorTitle = lightPalette.widgetSensorName
     private val darkSensorTitle = Color.White
 
     val background = ColorProvider(day = lightPalette.background, night = darkPalette.background)
     val logoColor = ColorProvider(day = lightPalette.dashboardIcons, night = darkPalette.dashboardIcons)
     val widgetSensorName = ColorProvider(day = lightPalette.widgetSensorName, night = darkPalette.widgetSensorName)
-    val widgetSensorTitle = ColorProvider(day = lightSensorTitle, night = darkSensorTitle)
     val simpleWidgetSensorTitle = ColorProvider(day = lightPalette.primary, night = darkSensorTitle)
+    val widgetSensorTitle = simpleWidgetSensorTitle
     // Glance image tinting retains bitmap alpha, so precompose translucent text colors over the background.
     val simpleWidgetSensorTitleBitmapTint = ColorProvider(
         day = lightPalette.primary.compositeOver(lightPalette.background),
