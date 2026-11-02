@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <style name="AppTheme" parent="Theme.AppCompat.DayNight">
-        <item name="android:navigationBarColor">@color/ap_transparent</item>
+        <item name="android:navigationBarColor">@color/navigation_bar_color</item>
     </style>
     <style name="Widget.Comruuvistation.AppWidget.Container" parent="android:Widget">
         <item name="android:padding">?attr/appWidgetPadding</item>
