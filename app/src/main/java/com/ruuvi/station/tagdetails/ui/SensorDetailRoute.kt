@@ -302,7 +302,7 @@ private fun SensorDetailScreen(
                 .statusBarsPadding()
                 .then(
                     if (
-                        destination == SensorDetailDestination.SETTINGS ||
+                        (destination == SensorDetailDestination.SETTINGS && !nestedSettings) ||
                         destination == SensorDetailDestination.ALERTS
                     ) {
                         Modifier
