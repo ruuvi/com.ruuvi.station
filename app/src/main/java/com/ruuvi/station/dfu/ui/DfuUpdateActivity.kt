@@ -120,8 +120,7 @@ class DfuUpdateActivity : AppCompatActivity() , DIAware {
 
                 SideEffect {
                     systemUiController.setSystemBarsColor(
-                        color = systemBarsColor,
-                        darkIcons = false
+                        color = systemBarsColor
                     )
                 }
 
@@ -266,8 +265,7 @@ fun Body(
     val systemBarsColor = RuuviStationTheme.colors.systemBars
     SideEffect {
         systemUiController.setSystemBarsColor(
-            color = systemBarsColor,
-            darkIcons = false
+            color = systemBarsColor
         )
     }
 }
