@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.text.method.LinkMovementMethod
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.snackbar.BaseTransientBottomBar.LENGTH_SHORT
@@ -17,6 +18,7 @@ import com.ruuvi.station.R
 import com.ruuvi.station.about.model.AppStats
 import com.ruuvi.station.database.domain.LocalDatabase
 import com.ruuvi.station.databinding.ActivityAboutBinding
+import com.ruuvi.station.util.extensions.isDarkMode
 import com.ruuvi.station.util.extensions.makeWebLinks
 import com.ruuvi.station.util.extensions.viewModel
 import org.kodein.di.DI
@@ -43,6 +45,13 @@ class AboutActivity : AppCompatActivity(R.layout.activity_about), DIAware {
             window.statusBarColor = Color.parseColor("#01000000")
         } else {
             window.statusBarColor = Color.TRANSPARENT
+            window.isNavigationBarContrastEnforced = false
+        }
+
+        val useDarkSystemBarIcons = !isDarkMode()
+        WindowCompat.getInsetsController(window, binding.root).apply {
+            isAppearanceLightStatusBars = useDarkSystemBarIcons
+            isAppearanceLightNavigationBars = useDarkSystemBarIcons
         }
 
         setupUI()
@@ -61,6 +70,15 @@ class AboutActivity : AppCompatActivity(R.layout.activity_about), DIAware {
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
+
+        if (!isDarkMode()) {
+            binding.root.setBackgroundColor(Color.WHITE)
+            binding.appBarLayout.setBackgroundColor(Color.WHITE)
+
+            val toolbarContentColor = ContextCompat.getColor(this, R.color.titan)
+            binding.toolbar.setTitleTextColor(toolbarContentColor)
+            binding.toolbar.navigationIcon?.setTint(toolbarContentColor)
+        }
 
         with(binding.content) {
             infoText.movementMethod = LinkMovementMethod.getInstance()

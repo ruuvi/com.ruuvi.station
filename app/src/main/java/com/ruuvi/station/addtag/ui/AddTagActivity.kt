@@ -9,11 +9,13 @@ import android.os.Bundle
 import android.view.MenuItem
 import android.widget.AdapterView
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.snackbar.BaseTransientBottomBar.LENGTH_LONG
 import com.google.android.material.snackbar.Snackbar
+import com.ruuvi.station.util.extensions.isDarkMode
 import com.ruuvi.station.util.extensions.viewModel
 import com.ruuvi.station.R
 import com.ruuvi.station.app.preferences.PreferencesRepository
@@ -55,6 +57,13 @@ class AddTagActivity : NfcActivity(R.layout.activity_add_tag), DIAware {
             window.statusBarColor = Color.parseColor("#01000000")
         } else {
             window.statusBarColor = Color.TRANSPARENT
+            window.isNavigationBarContrastEnforced = false
+        }
+
+        val useDarkSystemBarIcons = !isDarkMode()
+        WindowCompat.getInsetsController(window, binding.root).apply {
+            isAppearanceLightStatusBars = useDarkSystemBarIcons
+            isAppearanceLightNavigationBars = useDarkSystemBarIcons
         }
 
         requestPermission()
@@ -115,6 +124,16 @@ class AddTagActivity : NfcActivity(R.layout.activity_add_tag), DIAware {
 
     private fun setupUI() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+        if (!isDarkMode()) {
+            binding.root.setBackgroundColor(Color.WHITE)
+            binding.toolbarContainer.setBackgroundColor(Color.WHITE)
+            binding.appBarLayout.setBackgroundColor(Color.WHITE)
+
+            val toolbarContentColor = ContextCompat.getColor(this, R.color.titan)
+            binding.toolbar.setTitleTextColor(toolbarContentColor)
+            binding.toolbar.navigationIcon?.setTint(toolbarContentColor)
+        }
 
         binding.content.tagListView.adapter = adapter
 
