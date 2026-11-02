@@ -121,8 +121,7 @@ class MyAccountActivity : AppCompatActivity(), DIAware {
                 val systemBarsColor = RuuviStationTheme.colors.systemBars
                 SideEffect {
                     systemUiController.setSystemBarsColor(
-                        color = systemBarsColor,
-                        darkIcons = false
+                        color = systemBarsColor
                     )
                 }
             }
