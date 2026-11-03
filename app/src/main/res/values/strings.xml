@@ -701,10 +701,6 @@ Total used shares for your account: %3$,d/%4$,d</string>
     <string name="signing_in_is_optional">(Signing in is optional)</string>
     <string name="use_dev_server">Use Dev server</string>
     <string name="use_dev_server_description">To apply changes simply sync data from dashboard or wait till next sync.</string>
-    <string name="dashboard_card_timeout">Sensor card timeout (seconds)</string>
-    <string name="dashboard_card_timeout_description" formatted="false">Fade the entire dashboard card to 50% opacity when its measurements are not updated within this period.</string>
-    <string name="dashboard_card_timeout_hint">Enter a whole number of seconds. Minimum: 1 second.</string>
-    <string name="dashboard_card_timeout_invalid">Enter a valid whole number of at least 1 second.</string>
     <string name="sensor_details">Sensor details</string>
     <string name="previous_sensor">Previous sensor</string>
     <string name="next_sensor">Next sensor</string>

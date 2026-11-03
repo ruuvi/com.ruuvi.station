@@ -91,6 +91,8 @@ import com.ruuvi.station.units.domain.aqi.AQI
 import com.ruuvi.station.units.model.UnitType
 import com.ruuvi.station.util.base.NfcActivity
 import com.ruuvi.station.util.extensions.*
+import com.ruuvi.station.util.ui.RuuviSnackbarHost
+import com.ruuvi.station.util.ui.showBottomSnackbar
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -205,17 +207,9 @@ class DashboardActivity : NfcActivity(), DIAware {
                     Scaffold(
                         scaffoldState = scaffoldState,
                         snackbarHost = {
-                            SnackbarHost(
+                            RuuviSnackbarHost(
                                 hostState = it,
-                                snackbar = { snackbarData ->
-                                    Box(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .navigationBarsPadding()
-                                    ) {
-                                        Snackbar(snackbarData)
-                                    }
-                                }
+                                modifier = Modifier.navigationBarsPadding(),
                             )
                         },
                         modifier = Modifier.fillMaxSize(),
