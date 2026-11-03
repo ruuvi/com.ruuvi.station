@@ -701,10 +701,6 @@ Totalt antal använda delningar för ditt konto: %3$,d/%4$,d</string>
     <string name="signing_in_is_optional">(Inloggning är inte obligatoriskt)</string>
     <string name="use_dev_server">Använd dev-server</string>
     <string name="use_dev_server_description">För att tillämpa ändringar synkronisera helt enkelt data från instrumentpanelen eller vänta till nästa synkronisering.</string>
-    <string name="dashboard_card_timeout">Tidsgräns för sensorkort (sekunder)</string>
-    <string name="dashboard_card_timeout_description" formatted="false">Tonar ned hela kortet på instrumentpanelen till 50 % opacitet om dess mätvärden inte uppdateras inom den här tiden.</string>
-    <string name="dashboard_card_timeout_hint">Ange ett helt antal sekunder. Minst: 1 sekund.</string>
-    <string name="dashboard_card_timeout_invalid">Ange ett giltigt heltal på minst 1 sekund.</string>
     <string name="sensor_details">Sensordetaljer</string>
     <string name="previous_sensor">Föregående sensor</string>
     <string name="next_sensor">Nästa sensor</string>
@@ -894,5 +890,6 @@ Totalt antal använda delningar för ditt konto: %3$,d/%4$,d</string>
     <string name="use_web_version_of_share">Använd webbversionen för delning</string>
     <string name="font_scaling">Teckenskalning %1$s%%</string>
     <string name="disable_developer_mode">Inaktivera utvecklarläge</string>
+    <string name="sensor_measurements_outdated">Mätvärdena kan vara inaktuella.</string>
     <string name="registered_fcm_tokens">Registrerade FCM-token</string>
 </resources>

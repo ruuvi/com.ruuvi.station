@@ -701,10 +701,6 @@ Tilillesi käytetyt jaot yhteensä: %3$,d/%4$,d</string>
     <string name="signing_in_is_optional">(Kirjautuminen ei ole pakollista)</string>
     <string name="use_dev_server">Käytä dev-palvelinta</string>
     <string name="use_dev_server_description">Ota muutokset käyttöön yksinkertaisesti synkronoimalla koontinäytöllä tai odota seuraavaa synkronointia.</string>
-    <string name="dashboard_card_timeout">Anturikortin aikakatkaisu (sekuntia)</string>
-    <string name="dashboard_card_timeout_description" formatted="false">Häivyttää koko koontinäytön kortin 50 %:n läpinäkyvyyteen, jos sen mittaustietoja ei päivitetä tämän ajan kuluessa.</string>
-    <string name="dashboard_card_timeout_hint">Syötä sekunteina kokonaisluku. Vähintään: 1 sekunti.</string>
-    <string name="dashboard_card_timeout_invalid">Syötä kelvollinen kokonaisluku, joka on vähintään 1 sekunti.</string>
     <string name="sensor_details">Anturin tiedot</string>
     <string name="previous_sensor">Edellinen anturi</string>
     <string name="next_sensor">Seuraava anturi</string>
@@ -893,5 +889,6 @@ Tilillesi käytetyt jaot yhteensä: %3$,d/%4$,d</string>
     <string name="use_web_version_of_share">Käytä jakamisen verkkoversiota</string>
     <string name="font_scaling">Fontin skaalaus %1$s%%</string>
     <string name="disable_developer_mode">Poista kehittäjätila käytöstä</string>
+    <string name="sensor_measurements_outdated">Mittaustiedot saattavat olla vanhentuneita.</string>
     <string name="registered_fcm_tokens">Rekisteröidyt FCM-tunnukset</string>
 </resources>

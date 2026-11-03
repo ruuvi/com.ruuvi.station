@@ -59,7 +59,7 @@ class DashboardActivityViewModelTest {
     }
 
     @Test
-    fun `one second timeout does not dim a card early`() {
+    fun `one second timeout does not mark a card stale early`() {
         timeoutSeconds = 1L
 
         viewModel.refreshSensorFreshness(UPDATED_AT + 999)

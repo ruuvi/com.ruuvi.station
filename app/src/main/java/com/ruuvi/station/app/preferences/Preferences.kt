@@ -914,7 +914,7 @@ class Preferences (val context: Context) {
         private const val DEFAULT_REQUEST_FOR_REVIEW_DATE = 0L
         private const val DEFAULT_REQUEST_FOR_APP_UPDATE_DATE = 0L
         private const val DEFAULT_DARKMODE = AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
-        private const val DEFAULT_DASHBOARD_CARD_TIMEOUT_SECONDS = 60L
+        private const val DEFAULT_DASHBOARD_CARD_TIMEOUT_SECONDS = 120L
         private const val CHART_SIZE_LEVEL_NORMAL = 1
         private const val CHART_SIZE_LEVEL_INCREASED = 2
         private const val CHART_SIZE_LEVEL_MAX = 3
