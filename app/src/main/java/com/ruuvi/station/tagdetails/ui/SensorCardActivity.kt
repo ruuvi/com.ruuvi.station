@@ -11,6 +11,7 @@ import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -76,6 +77,7 @@ import org.kodein.di.DIAware
 import org.kodein.di.android.closestDI
 import com.ruuvi.station.util.extensions.*
 import com.ruuvi.station.util.ui.pxToDp
+import com.ruuvi.station.util.ui.showBottomSnackbar
 import com.ruuvi.station.vico.model.ChartData
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
@@ -634,14 +636,24 @@ fun SensorCardImage(
 @Composable
 fun SensorCardBottom(
     sensor: RuuviTag,
+    staleTimeoutSeconds: Long,
     modifier: Modifier = Modifier
 ) {
     if (sensor.latestMeasurement != null) {
         val context = LocalContext.current
         val lifecycleOwner = LocalLifecycleOwner.current
+        val measurementUpdatedAt = sensor.latestMeasurement.updatedAt
+        val source = sensor.getSource()
+        val sourceIconHeight = if (source == UpdateSource.Cloud) 16.dp else 24.dp
 
-        var updatedText by remember {
-            mutableStateOf(sensor.latestMeasurement.updatedAt.describingTimeSince(context))
+        fun measurementIsStale(): Boolean =
+            (System.currentTimeMillis() - measurementUpdatedAt.time) / 1000 >= staleTimeoutSeconds
+
+        var updatedText by remember(measurementUpdatedAt) {
+            mutableStateOf(measurementUpdatedAt.describingTimeSince(context))
+        }
+        var isStale by remember(measurementUpdatedAt, staleTimeoutSeconds) {
+            mutableStateOf(measurementIsStale())
         }
 
         Row(
@@ -654,30 +666,41 @@ fun SensorCardBottom(
                 )
                 .fillMaxWidth()
         ) {
-            val icon = sensor.getSource().getIconResource()
-            Row (
+            val icon = source.getIconResource()
+            Row(
                 horizontalArrangement = Arrangement.Start,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Icon(
                     modifier = Modifier
-                        .height(RuuviStationTheme.dimensions.mediumPlus.scaleUpTo(1.5f))
-                        .width(24.dp.scaleUpTo(1.5f)),
+                        .size(
+                            width = if (source == UpdateSource.Cloud) 22.dp else 16.dp,
+                            height = sourceIconHeight,
+                        ),
                     painter = painterResource(id = icon),
                     tint = White50,
                     contentDescription = null,
                 )
-                if (sensor.getSource() == UpdateSource.Cloud) {
-                    Spacer(modifier = Modifier.width(RuuviStationTheme.dimensions.medium))
-                }
+                Spacer(modifier = Modifier.width(SENSOR_VALUE_ITEM_SPACING))
                 Text(
-                    modifier = Modifier,
                     style = RuuviStationTheme.typography.dashboardSecondary,
                     color = White50,
                     fontSize = ruuviStationFontsSizes.petite.limitScaleTo(1.5f),
                     textAlign = TextAlign.Right,
                     text = updatedText,
                 )
+                if (isStale) {
+                    Spacer(modifier = Modifier.width(SENSOR_VALUE_ITEM_SPACING))
+                    Image(
+                        modifier = Modifier
+                            .height(sourceIconHeight * 0.8f)
+                            .clickable {
+                                context.showBottomSnackbar(R.string.sensor_measurements_outdated)
+                            },
+                        painter = painterResource(R.drawable.icon_warning),
+                        contentDescription = stringResource(R.string.sensor_measurements_outdated),
+                    )
+                }
             }
 
             if (sensor.isLowBattery()) {
@@ -685,11 +708,17 @@ fun SensorCardBottom(
             }
         }
 
-        LaunchedEffect(lifecycleOwner, sensor.latestMeasurement.updatedAt) {
+        LaunchedEffect(sensor.id, isStale) {
+            if (isStale) {
+                context.showBottomSnackbar(R.string.sensor_measurements_outdated)
+            }
+        }
+
+        LaunchedEffect(lifecycleOwner, measurementUpdatedAt, staleTimeoutSeconds) {
             lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 while (isActive) {
-                    updatedText =
-                        sensor.latestMeasurement.updatedAt.describingTimeSince(context)
+                    updatedText = measurementUpdatedAt.describingTimeSince(context)
+                    isStale = measurementIsStale()
                     delay(SENSOR_STATUS_REFRESH_DELAY_MILLIS)
                 }
             }

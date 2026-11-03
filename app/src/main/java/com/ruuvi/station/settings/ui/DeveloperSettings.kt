@@ -70,13 +70,13 @@ fun DeveloperSettings(
 
             Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
             TextEditWithCaptionButton(
-                title = stringResource(R.string.dashboard_card_timeout),
+                title = "Sensor card timeout (seconds)",
                 value = dashboardCardTimeoutSeconds.toString(),
                 icon = painterResource(R.drawable.edit_20),
                 tint = RuuviStationTheme.colors.accent,
                 editAction = { showDashboardCardTimeoutDialog = true }
             )
-            Paragraph(text = stringResource(R.string.dashboard_card_timeout_description))
+            Paragraph(text = "Show a warning icon when dashboard card measurements are not updated within this period.")
 
             Spacer(modifier = Modifier.height(48.dp))
             Subtitle("Debug info")
@@ -109,7 +109,7 @@ private fun DashboardCardTimeoutDialog(
     val seconds = parseDashboardCardTimeoutSeconds(input)
 
     CustomContentDialog(
-        title = stringResource(R.string.dashboard_card_timeout),
+        title = "Sensor card timeout (seconds)",
         validation = { seconds != null },
         onDismissRequest = onDismissRequest,
         onOkClickAction = {
@@ -117,7 +117,7 @@ private fun DashboardCardTimeoutDialog(
             onDismissRequest()
         }
     ) {
-        Paragraph(text = stringResource(R.string.dashboard_card_timeout_hint))
+        Paragraph(text = "Enter a whole number of seconds. Minimum: 1 second.")
         TextFieldRuuvi(
             modifier = Modifier.fillMaxWidth(),
             value = input,
@@ -126,7 +126,7 @@ private fun DashboardCardTimeoutDialog(
             onValueChange = { input = it }
         )
         if (seconds == null) {
-            WarningText(text = stringResource(R.string.dashboard_card_timeout_invalid))
+            WarningText(text = "Enter a valid whole number of at least 1 second.")
         }
     }
 }
