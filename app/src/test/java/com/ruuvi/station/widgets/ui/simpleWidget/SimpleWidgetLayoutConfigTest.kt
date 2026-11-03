@@ -12,6 +12,72 @@ import org.junit.Test
 
 class SimpleWidgetLayoutConfigTest {
     @Test
+    fun `initial widget state keeps default typography`() {
+        assertTrue(
+            !shouldFitSimpleWidgetTypography(
+                renderingMode = SimpleWidgetRenderingMode.RUNTIME,
+                observedSize = null
+            )
+        )
+    }
+
+    @Test
+    fun `initial widget state uses slightly larger default typography`() {
+        assertEquals(
+            1.15f,
+            simpleWidgetTypographyScale(
+                renderingMode = SimpleWidgetRenderingMode.RUNTIME,
+                observedSize = null,
+                requestedScale = 1f
+            )
+        )
+    }
+
+    @Test
+    fun `unlocked runtime typography ignores larger live widget sizes`() {
+        assertEquals(
+            DpSize(180.dp, 110.dp),
+            simpleWidgetBaseTypographySize(
+                renderingMode = SimpleWidgetRenderingMode.RUNTIME,
+                currentSize = DpSize(360.dp, 360.dp),
+                observedSize = null
+            )
+        )
+    }
+
+    @Test
+    fun `configured widget fits typography after its baseline is captured`() {
+        assertTrue(
+            shouldFitSimpleWidgetTypography(
+                renderingMode = SimpleWidgetRenderingMode.RUNTIME,
+                observedSize = DpSize(180.dp, 110.dp)
+            )
+        )
+    }
+
+    @Test
+    fun `configured widget does not retain initial typography enlargement`() {
+        assertEquals(
+            1f,
+            simpleWidgetTypographyScale(
+                renderingMode = SimpleWidgetRenderingMode.RUNTIME,
+                observedSize = DpSize(180.dp, 110.dp),
+                requestedScale = 1f
+            )
+        )
+    }
+
+    @Test
+    fun `generated preview keeps fitted typography`() {
+        assertTrue(
+            shouldFitSimpleWidgetTypography(
+                renderingMode = SimpleWidgetRenderingMode.GENERATED_PREVIEW,
+                observedSize = null
+            )
+        )
+    }
+
+    @Test
     fun `initial cell size remains the typography size after enlarging the widget`() {
         val initialSize = DpSize(180.dp, 110.dp)
 

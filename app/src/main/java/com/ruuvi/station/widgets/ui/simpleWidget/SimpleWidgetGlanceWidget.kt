@@ -1,6 +1,5 @@
 package com.ruuvi.station.widgets.ui.simpleWidget
 
-import android.appwidget.AppWidgetManager
 import android.content.Context
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
@@ -29,7 +28,6 @@ import androidx.glance.appwidget.SizeMode
 import androidx.glance.appwidget.action.ActionCallback
 import androidx.glance.appwidget.action.actionRunCallback
 import androidx.glance.appwidget.provideContent
-import androidx.glance.appwidget.state.updateAppWidgetState
 import androidx.glance.background
 import androidx.glance.color.ColorProvider
 import androidx.glance.currentState
@@ -85,7 +83,6 @@ object SimpleWidgetGlanceWidget : GlanceAppWidget() {
         SizeMode.Responsive(setOf(DpSize(180.dp, 110.dp)))
 
     override suspend fun provideGlance(context: Context, id: GlanceId) {
-        observeTypographySize(context, id)
         provideContent {
             val prefs = currentState<Preferences>()
 
@@ -111,23 +108,6 @@ object SimpleWidgetGlanceWidget : GlanceAppWidget() {
                     height = prefs[SimpleWidgetPrefKeys.typographyHeight]
                 ),
             )
-        }
-    }
-
-    private suspend fun observeTypographySize(context: Context, glanceId: GlanceId) {
-        val applicationContext = context.applicationContext
-        val appWidgetId = GlanceAppWidgetManager(applicationContext).getAppWidgetId(glanceId)
-        val options = AppWidgetManager.getInstance(applicationContext).getAppWidgetOptions(appWidgetId)
-        val observedWidth = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH)
-        val observedHeight = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_HEIGHT)
-        if (observedWidth <= 0 || observedHeight <= 0) return
-
-        updateAppWidgetState(applicationContext, glanceId) { preferences ->
-            if (preferences[SimpleWidgetPrefKeys.typographySizeObserved] != true) {
-                preferences[SimpleWidgetPrefKeys.typographySizeObserved] = true
-                preferences[SimpleWidgetPrefKeys.typographyWidth] = observedWidth
-                preferences[SimpleWidgetPrefKeys.typographyHeight] = observedHeight
-            }
         }
     }
 
@@ -226,7 +206,8 @@ internal fun SimpleWidgetContent(
     val size = LocalSize.current
     val widgetWidth = validDimensionOrFallback(size.width, 110.dp)
     val widgetHeight = validDimensionOrFallback(size.height, 45.dp)
-    val typographySize = simpleWidgetTypographySize(
+    val typographySize = simpleWidgetBaseTypographySize(
+        renderingMode = renderingMode,
         currentSize = DpSize(widgetWidth, widgetHeight),
         observedSize = observedCellSize
     )
@@ -236,25 +217,34 @@ internal fun SimpleWidgetContent(
         isTablet = context.resources.configuration.smallestScreenWidthDp >= 600,
         zoomFactor = zoomFactor
     )
+    val effectiveTypographyScale = simpleWidgetTypographyScale(
+        renderingMode = renderingMode,
+        observedSize = observedCellSize,
+        requestedScale = typographyScale
+    )
     val scaledConfig = baseConfig.copy(
-        displayNameFontSize = baseConfig.displayNameFontSize.scaledBy(typographyScale),
-        valueFontSize = baseConfig.valueFontSize.scaledBy(typographyScale),
-        secondaryFontSize = baseConfig.secondaryFontSize.scaledBy(typographyScale),
-        timestampFontSize = baseConfig.timestampFontSize.scaledBy(typographyScale),
-        measurementNameFontSize = baseConfig.measurementNameFontSize.scaledBy(typographyScale)
+        displayNameFontSize = baseConfig.displayNameFontSize.scaledBy(effectiveTypographyScale),
+        valueFontSize = baseConfig.valueFontSize.scaledBy(effectiveTypographyScale),
+        secondaryFontSize = baseConfig.secondaryFontSize.scaledBy(effectiveTypographyScale),
+        timestampFontSize = baseConfig.timestampFontSize.scaledBy(effectiveTypographyScale),
+        measurementNameFontSize = baseConfig.measurementNameFontSize.scaledBy(effectiveTypographyScale)
     )
     val isAirQuality = measurementType == WidgetType.AIR_QUALITY
-    val config = fitSimpleWidgetConfig(
-        context = context,
-        config = scaledConfig,
-        size = DpSize(widgetWidth, widgetHeight),
-        sensorValue = sensorValue,
-        unit = unit,
-        measurementName = measurementName,
-        isAirQuality = isAirQuality,
-        embeddedValueColor = embeddedColors.value,
-        observedCellSize = observedCellSize
-    )
+    val config = if (shouldFitSimpleWidgetTypography(renderingMode, observedCellSize)) {
+        fitSimpleWidgetConfig(
+            context = context,
+            config = scaledConfig,
+            size = DpSize(widgetWidth, widgetHeight),
+            sensorValue = sensorValue,
+            unit = unit,
+            measurementName = measurementName,
+            isAirQuality = isAirQuality,
+            embeddedValueColor = embeddedColors.value,
+            observedCellSize = observedCellSize
+        )
+    } else {
+        scaledConfig
+    }
     val displayNameFontSize = config.displayNameFontSize.toWidgetSp(context)
     val timestampFontSize = config.timestampFontSize.toWidgetSp(context)
     val timestampHeight = GlanceFontUtils.measureSystemFontHeight(
@@ -545,7 +535,9 @@ internal fun measureMeasurementLayout(
     measureSimpleWidgetLayout(context, config, unit, measurementName, 0.dp, sensorValue)
 
 private const val GENERATED_PREVIEW_TYPOGRAPHY_SCALE = 0.65f
+private const val INITIAL_RUNTIME_TYPOGRAPHY_SCALE = 1.15f
 private const val AQI_UNIT_TEXT = "/100"
+private val DEFAULT_RUNTIME_TYPOGRAPHY_SIZE = DpSize(180.dp, 110.dp)
 private val AQI_INDICATOR_SIZE = 8.dp
 private val TITLE_VALUE_SPACING = 7.dp
 private val VALUE_SIZING_TITLE_SPACING = 5.dp
@@ -686,6 +678,33 @@ internal fun observedSimpleWidgetTypographySize(width: Int?, height: Int?): DpSi
 
 internal fun simpleWidgetTypographySize(currentSize: DpSize, observedSize: DpSize?): DpSize =
     observedSize ?: currentSize
+
+internal fun simpleWidgetBaseTypographySize(
+    renderingMode: SimpleWidgetRenderingMode,
+    currentSize: DpSize,
+    observedSize: DpSize?
+): DpSize =
+    if (renderingMode == SimpleWidgetRenderingMode.RUNTIME && observedSize == null) {
+        DEFAULT_RUNTIME_TYPOGRAPHY_SIZE
+    } else {
+        simpleWidgetTypographySize(currentSize, observedSize)
+    }
+
+internal fun shouldFitSimpleWidgetTypography(
+    renderingMode: SimpleWidgetRenderingMode,
+    observedSize: DpSize?
+): Boolean = renderingMode == SimpleWidgetRenderingMode.GENERATED_PREVIEW || observedSize != null
+
+internal fun simpleWidgetTypographyScale(
+    renderingMode: SimpleWidgetRenderingMode,
+    observedSize: DpSize?,
+    requestedScale: Float
+): Float =
+    if (renderingMode == SimpleWidgetRenderingMode.RUNTIME && observedSize == null) {
+        requestedScale * INITIAL_RUNTIME_TYPOGRAPHY_SCALE
+    } else {
+        requestedScale
+    }
 
 internal fun simpleWidgetTypographyAvailableWidth(
     currentSize: DpSize,
