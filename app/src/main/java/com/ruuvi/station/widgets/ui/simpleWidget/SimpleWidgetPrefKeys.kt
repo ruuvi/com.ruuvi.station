@@ -15,4 +15,6 @@ object SimpleWidgetPrefKeys {
     val typographySizeObserved = booleanPreferencesKey("typography_size_observed")
     val typographyWidth = intPreferencesKey("typography_width")
     val typographyHeight = intPreferencesKey("typography_height")
+    val typographySizeVersion = intPreferencesKey("typography_size_version")
+    val typographyOrientation = intPreferencesKey("typography_orientation")
 }
