@@ -712,10 +712,6 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="signing_in_is_optional">(Die Anmeldung ist optional)</string>
     <string name="use_dev_server">Verwenden Sie einen Entwicklungsserver</string>
     <string name="use_dev_server_description">Um Änderungen zu übernehmen, synchronisieren Sie einfach die Daten vom Dashboard oder warten Sie bis zur nächsten Synchronisierung.</string>
-    <string name="dashboard_card_timeout">Zeitüberschreitung der Sensorkarte (Sekunden)</string>
-    <string name="dashboard_card_timeout_description" formatted="false">Blendet die gesamte Dashboard-Karte auf 50 % Deckkraft ab, wenn ihre Messwerte innerhalb dieses Zeitraums nicht aktualisiert werden.</string>
-    <string name="dashboard_card_timeout_hint">Gib eine ganze Zahl in Sekunden ein. Minimum: 1 Sekunde.</string>
-    <string name="dashboard_card_timeout_invalid">Gib eine gültige ganze Zahl von mindestens 1 Sekunde ein.</string>
     <string name="sensor_details">Sensordetails</string>
     <string name="previous_sensor">Vorheriger Sensor</string>
     <string name="next_sensor">Nächster Sensor</string>
@@ -908,5 +904,6 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="use_web_version_of_share">Webversion der Freigabe verwenden</string>
     <string name="font_scaling">Schriftskalierung %1$s%%</string>
     <string name="disable_developer_mode">Entwicklermodus deaktivieren</string>
+    <string name="sensor_measurements_outdated">Die Messwerte sind möglicherweise veraltet.</string>
     <string name="registered_fcm_tokens">Registrierte FCM-Token</string>
 </resources>

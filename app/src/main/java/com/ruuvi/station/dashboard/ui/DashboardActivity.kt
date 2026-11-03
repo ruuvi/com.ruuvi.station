@@ -90,6 +90,8 @@ import com.ruuvi.station.units.domain.aqi.AQI
 import com.ruuvi.station.units.model.UnitType
 import com.ruuvi.station.util.base.NfcActivity
 import com.ruuvi.station.util.extensions.*
+import com.ruuvi.station.util.ui.RuuviSnackbarHost
+import com.ruuvi.station.util.ui.showBottomSnackbar
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -204,17 +206,9 @@ class DashboardActivity : NfcActivity(), DIAware {
                     Scaffold(
                         scaffoldState = scaffoldState,
                         snackbarHost = {
-                            SnackbarHost(
+                            RuuviSnackbarHost(
                                 hostState = it,
-                                snackbar = { snackbarData ->
-                                    Box(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .navigationBarsPadding()
-                                    ) {
-                                        Snackbar(snackbarData)
-                                    }
-                                }
+                                modifier = Modifier.navigationBarsPadding(),
                             )
                         },
                         modifier = Modifier.fillMaxSize(),
@@ -744,11 +738,7 @@ fun DashboardItem(
                 translationX = displacementOffset?.x?.toFloat() ?: 0f
                 scaleX = if (itemIsDragged) 1.04f else 1f
                 scaleY = if (itemIsDragged) 1.04f else 1f
-                alpha = when {
-                    isStale -> 0.5f
-                    itemIsDragged -> 0.7f
-                    else -> 1f
-                }
+                alpha = if (itemIsDragged) 0.7f else 1f
             }
             .clickableSingle(enabled = interactionEnabled) {
                 SensorCardActivity.start(
@@ -849,6 +839,7 @@ fun DashboardItem(
                             Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.small))
                             ItemBottom(
                                 sensor = sensor,
+                                isStale = isStale,
                                 modifier = Modifier,
                             )
                         } else {
@@ -890,11 +881,7 @@ fun DashboardItemSimple(
                 translationX = displacementOffset?.x?.toFloat() ?: 0f
                 scaleX = if (itemIsDragged) 1.04f else 1f
                 scaleY = if (itemIsDragged) 1.04f else 1f
-                alpha = when {
-                    isStale -> 0.5f
-                    itemIsDragged -> 0.7f
-                    else -> 1f
-                }
+                alpha = if (itemIsDragged) 0.7f else 1f
             }
             .clickableSingle(interactionEnabled) {
                 SensorCardActivity.start(
@@ -944,6 +931,7 @@ fun DashboardItemSimple(
 
                 ItemBottom(
                     sensor = sensor,
+                    isStale = isStale,
                     modifier = Modifier
                 )
             }
@@ -1099,10 +1087,15 @@ fun ItemValues(
 @Composable
 fun ItemBottom(
     sensor: RuuviTag,
+    isStale: Boolean = false,
     modifier: Modifier = Modifier
 ) {
     if (sensor.latestMeasurement != null) {
-        ItemBottomUpdatedInfo(sensor = sensor, modifier = modifier)
+        ItemBottomUpdatedInfo(
+            sensor = sensor,
+            isStale = isStale,
+            modifier = modifier,
+        )
     } else {
         ItemBottomNoData(modifier = modifier)
     }
@@ -1130,6 +1123,7 @@ fun ItemBottomNoData(
 @Composable
 fun ItemBottomUpdatedInfo(
     sensor: RuuviTag,
+    isStale: Boolean = false,
     modifier: Modifier = Modifier
 ) {
     if (sensor.latestMeasurement != null) {
@@ -1169,14 +1163,28 @@ fun ItemBottomUpdatedInfo(
             Spacer(modifier = Modifier.width(RuuviStationTheme.dimensions.small))
 
             Text(
-                modifier = Modifier.weight(1f),
                 style = RuuviStationTheme.typography.dashboardSecondary,
                 fontSize = ruuviStationFontsSizes.petite.limitScaleTo(1.5f),
                 text = updatedText,
             )
 
+            if (isStale) {
+                Spacer(modifier = Modifier.width(RuuviStationTheme.dimensions.small))
+                Image(
+                    modifier = Modifier
+                        .height(RuuviStationTheme.dimensions.mediumPlus * fontScale)
+                        .clickable {
+                            context.showBottomSnackbar(R.string.sensor_measurements_outdated)
+                        },
+                    painter = painterResource(R.drawable.icon_warning),
+                    contentDescription = stringResource(R.string.sensor_measurements_outdated),
+                )
+            }
+
+            Spacer(modifier = Modifier.weight(1f))
+
             if (sensor.isLowBattery()) {
-                LowBattery(modifier = Modifier.weight(1f))
+                LowBattery()
             }
         }
 

@@ -124,7 +124,7 @@ class PreferencesTest {
             sharedPreferences.getLong("pref_dashboard_card_timeout_seconds", any())
         } answers { secondArg<Long>() }
 
-        assertEquals(60L, preferencesUsing(sharedPreferences).dashboardCardTimeoutSeconds)
+        assertEquals(120L, preferencesUsing(sharedPreferences).dashboardCardTimeoutSeconds)
     }
 
     @Test
