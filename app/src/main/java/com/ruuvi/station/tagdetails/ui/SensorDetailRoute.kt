@@ -23,12 +23,15 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.layout.windowInsetsTopHeight
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerDefaults
@@ -297,6 +300,9 @@ private fun SensorDetailScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .statusBarsPadding()
+                .windowInsetsPadding(
+                    WindowInsets.navigationBars.only(WindowInsetsSides.Horizontal),
+                )
                 .then(
                     if (
                         (destination == SensorDetailDestination.SETTINGS && !nestedSettings) ||
@@ -304,7 +310,9 @@ private fun SensorDetailScreen(
                     ) {
                         Modifier
                     } else {
-                        Modifier.navigationBarsPadding()
+                        Modifier.windowInsetsPadding(
+                            WindowInsets.navigationBars.only(WindowInsetsSides.Bottom),
+                        )
                     },
                 ),
             transitionSpec = {
@@ -437,7 +445,7 @@ private fun SensorDetailScreen(
             hostState = scaffoldState.snackbarHostState,
             modifier = Modifier
                 .align(Alignment.BottomCenter)
-                .navigationBarsPadding(),
+                .windowInsetsPadding(WindowInsets.navigationBars),
         )
     }
 }
