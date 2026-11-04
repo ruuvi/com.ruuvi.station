@@ -31,20 +31,14 @@
 
   </com.google.android.material.appbar.AppBarLayout>
 
-  <ScrollView
+  <FrameLayout
+      android:id="@+id/calibration_frame"
       android:layout_width="0dp"
       android:layout_height="0dp"
-      android:fillViewport="true"
+      android:background="?android:attr/colorBackground"
       app:layout_constraintStart_toStartOf="parent"
       app:layout_constraintEnd_toEndOf="parent"
       app:layout_constraintBottom_toBottomOf="parent"
-      app:layout_constraintTop_toBottomOf="@id/appBarLayout">
-
-    <FrameLayout
-        android:id="@+id/calibration_frame"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="?android:attr/colorBackground"/>
-  </ScrollView>
+      app:layout_constraintTop_toBottomOf="@id/appBarLayout"/>
 
   </androidx.constraintlayout.widget.ConstraintLayout>
