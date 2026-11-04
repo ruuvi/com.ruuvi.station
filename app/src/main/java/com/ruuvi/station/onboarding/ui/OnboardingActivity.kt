@@ -34,6 +34,7 @@ import com.ruuvi.station.app.ui.components.RuuviCheckboxHypertext
 import com.ruuvi.station.app.ui.components.rememberResourceUri
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.RuuviTheme
+import com.ruuvi.station.app.ui.theme.White80
 import com.ruuvi.station.app.ui.theme.ruuviStationFontsSizes
 import com.ruuvi.station.network.ui.SignInActivity
 import com.ruuvi.station.onboarding.domain.OnboardingPages
@@ -561,6 +562,7 @@ fun OnboardingTopBar(
                     .align(Alignment.CenterEnd)
                     .clickable { actionCallBack.invoke() },
                 style = RuuviStationTheme.typography.topBarText,
+                color = White80,
                 text = stringResource(id = R.string.onboarding_skip),
                 fontSize = ruuviStationFontsSizes.normal,
                 textDecoration = TextDecoration.Underline
