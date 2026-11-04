@@ -128,7 +128,7 @@ class BluetoothGattInteractor (
         })
         if (!found)
             setSessionSyncStatus(sensorId, sessionId, SyncProgress.NOT_FOUND, manualSync = manualSync)
-        return true
+        return found
     }
 
     fun disconnect(id: String): Boolean {

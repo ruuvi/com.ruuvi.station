@@ -44,6 +44,27 @@ class AutomaticGattSyncInteractorTest {
     }
 
     @Test
+    fun `not found sensor remains eligible for immediate retry`() {
+        every { gattInteractor.readLogs(SENSOR_ID, any(), manualSync = false) } returns false
+
+        repeat(2) {
+            automaticGattSyncInteractor.syncIfEligible(
+                sensorId = SENSOR_ID,
+                lastSync = OLD_LAST_SYNC,
+                isAir = true,
+                networkSensor = false,
+            )
+        }
+
+        verify(exactly = 2) {
+            gattInteractor.readLogs(SENSOR_ID, OLD_LAST_SYNC, manualSync = false)
+        }
+        verify(exactly = 0) {
+            preferencesRepository.setLastAutomaticGattSyncAttempt(SENSOR_ID, any())
+        }
+    }
+
+    @Test
     fun `does not sync a recently attempted sensor`() {
         every {
             preferencesRepository.getLastAutomaticGattSyncAttempt(SENSOR_ID)

@@ -144,7 +144,7 @@ class BluetoothGattInteractorTest {
         assertFalse(interactor.isSyncInProgress(sensorId))
 
         every { bluetoothInteractor.readLogs(sensorId, any(), any()) } returns false
-        interactor.readLogs(sensorId, Date())
+        assertFalse(interactor.readLogs(sensorId, Date()))
         assertEquals(SyncProgress.NOT_FOUND, interactor.syncStatusFlow.value?.syncProgress)
         assertFalse(interactor.isSyncInProgress(sensorId))
     }
