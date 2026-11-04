@@ -1,6 +1,6 @@
-- Przeprojektowany widok historii z nową opcją wykresu w pełnym rozmiarze
-- Ulepszone widżety z możliwością swobodnej zmiany rozmiaru
-- Bardziej niezawodne alerty, aktualizacje Bluetooth i synchronizacja z chmurą
-- Oczekujące udostępnienia czujników są teraz wyświetlane w aplikacji
-- Lepsza zgodność z nowszymi wersjami systemu Android
-- Różne poprawki użyteczności i stabilności
+* Czytelniejsze wskaźniki alertów na kartach czujników i w oknach pomiarów.
+* Nowe menu nawigacji ułatwiające dostęp do danych czujników, historii i ustawień.
+* Zablokowano instalację starszych wersji oprogramowania RuuviTag, które mogły uniemożliwić obsługę zewnętrznych czujników temperatury.
+* Dodano brakujące przyciski sterowania w powiadomieniach o punkcie rosy Ruuvi Air.
+* Zaktualizowano teksty w oknach VOC i NOx.
+* Inne drobne poprawki błędów i ulepszenia.

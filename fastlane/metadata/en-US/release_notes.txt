@@ -1,6 +1,6 @@
-- Redesigned History view with a new full-size chart option
-- Improved, freely resizable widgets
-- More reliable alerts, Bluetooth updates, and cloud synchronization
-- Pending sensor shares are now displayed
-- Improved compatibility with newer Android versions
-- Various usability and stability fixes
+* Clearer alert indicators on sensor cards and measurement popups.
+* New navigation menu for easier access to sensor data, history and settings.
+* Prevented RuuviTag firmware downgrades that could break external temperature sensor support.
+* Fixed missing controls in Ruuvi Air dew point notifications.
+* Updated VOC and NOx popup text.
+* Other minor bug fixes and improvements.

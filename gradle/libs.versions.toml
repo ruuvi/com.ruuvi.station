@@ -102,6 +102,7 @@ kotlin-compose-compiler-plugin-embeddable = { group = "org.jetbrains.kotlin", na
 kotlin-gradle-plugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlinVersion" }
 kotlin-stdlib = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib", version.ref = "kotlinVersion" }
 kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "kotlinx" }
+kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "kotlinx" }
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinx" }
 legacy-support-v4 = { group = "androidx.legacy", name = "legacy-support-v4", version.ref = "legacySupportV4" }
 lifecycle-extensions1 = { group = "androidx.lifecycle", name = "lifecycle-extensions", version.ref = "lifecycleExtensions" }
@@ -132,6 +133,7 @@ rxjava = { group = "io.reactivex.rxjava2", name = "rxjava", version.ref = "rxjav
 semver = { group = "net.swiftzer.semver", name = "semver", version.ref = "semver" }
 timber = { group = "com.jakewharton.timber", name = "timber", version.ref = "timber" }
 ui = { group = "androidx.compose.ui", name = "ui", version.ref = "ui" }
+ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4", version.ref = "ui" }
 ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest", version.ref = "ui" }
 ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling", version.ref = "ui" }
 ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview", version.ref = "ui" }

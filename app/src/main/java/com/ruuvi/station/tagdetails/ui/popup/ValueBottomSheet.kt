@@ -2,6 +2,7 @@ package com.ruuvi.station.tagdetails.ui.popup
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -65,8 +66,11 @@ fun ValueBottomSheet(
     onChangeValue: (EnvironmentValue) -> Unit,
     onDismiss: () -> Unit
 ) {
+    val scrollState = rememberScrollState()
+
     ModalBottomSheet(
         containerColor = RuuviStationTheme.colors.popupBackground,
+        sheetGesturesEnabled = scrollState.value == 0,
         dragHandle = {
             Box(
                 modifier = Modifier
@@ -90,7 +94,8 @@ fun ValueBottomSheet(
                 lastUpdate = lastUpdate,
                 chartHistory = chartHistory,
                 scrollToChart = scrollToChart,
-                onChangeValue = onChangeValue
+                onChangeValue = onChangeValue,
+                scrollState = scrollState,
             )
         } else {
             ValueSheetContent(
@@ -99,6 +104,7 @@ fun ValueBottomSheet(
                 maxHeight = maxHeight,
                 chartHistory = chartHistory,
                 scrollToChart = scrollToChart,
+                scrollState = scrollState,
             )
         }
     }
@@ -110,9 +116,9 @@ fun ValueSheetContent(
     alertActive: Boolean = false,
     maxHeight: Int,
     chartHistory: ChartData?,
-    scrollToChart: (UnitType) -> Unit
+    scrollToChart: (UnitType) -> Unit,
+    scrollState: ScrollState,
 ) {
-    val scrollState = rememberScrollState()
     val columnModifier = Modifier.fadingEdge(scrollState)
     Column (
         modifier = columnModifier
@@ -172,10 +178,10 @@ fun AirValueSheetContent(
     lastUpdate: Date?,
     chartHistory: ChartData?,
     scrollToChart: (UnitType) -> Unit,
-    onChangeValue: (EnvironmentValue) -> Unit
+    onChangeValue: (EnvironmentValue) -> Unit,
+    scrollState: ScrollState,
 ) {
     val context = LocalContext.current
-    val scrollState = rememberScrollState()
     val coroutineScope = rememberCoroutineScope()
     val columnModifier = Modifier.fadingEdge(scrollState)
     Column(
@@ -283,7 +289,8 @@ private fun ValueBottomSheetPreview() {
                 sheetValue = value,
                 maxHeight = 700,
                 scrollToChart = {},
-                chartHistory = null
+                chartHistory = null,
+                scrollState = rememberScrollState(),
             )
         }
     }

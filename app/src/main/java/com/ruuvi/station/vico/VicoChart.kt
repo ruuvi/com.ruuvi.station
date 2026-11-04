@@ -3,14 +3,10 @@ package com.ruuvi.station.vico
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.booleanResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
@@ -51,8 +47,6 @@ fun VicoChartNoInteraction(
     val maxY = minMaxLocked?.second ?: chartHistory.maxValue
     val modelProducer = remember { CartesianChartModelProducer() }
 
-    var lineStyles by remember { mutableStateOf<List<LineCartesianLayer.Line>>(emptyList()) }
-
     val solidLine =
         LineCartesianLayer.rememberLine(
             fill = LineCartesianLayer.LineFill.single(Fill(RuuviStationTheme.colors.chartLine)),
@@ -82,22 +76,15 @@ fun VicoChartNoInteraction(
             )
         )
 
-    LaunchedEffect(chartHistory) {
-        if (chartHistory.segments.isEmpty()) {
-            lineStyles = emptyList()
-            modelProducer.runTransaction { lineModel {  } }
-            return@LaunchedEffect
+    val lineStyles = chartHistory.segments.map {
+        when (it.segmentType) {
+            SegmentType.Dotted -> dottedLine
+            SegmentType.Single -> pointsOnlyLine
+            SegmentType.Solid -> solidLine
         }
+    }
 
-        // 2) Update styles to match segment order
-        lineStyles = chartHistory.segments.map {
-            when (it.segmentType) {
-                SegmentType.Dotted -> dottedLine
-                SegmentType.Single -> pointsOnlyLine
-                SegmentType.Solid -> solidLine
-            }
-        }
-        // 3) Feed the series to the model (order must match lineStyles)
+    LaunchedEffect(chartHistory) {
         modelProducer.runTransaction {
             lineModel {
                 chartHistory.segments.forEach { seg ->

@@ -11,6 +11,7 @@ import com.ruuvi.station.dashboard.domain.SensorsSortingInteractor
 import com.ruuvi.station.feature.domain.RuntimeBehavior
 import com.ruuvi.station.feature.data.FeatureFlag
 import com.ruuvi.station.image.ImageInteractor
+import com.ruuvi.station.network.data.response.MarketingConsentStatus
 import com.ruuvi.station.network.domain.NetworkApplicationSettings
 import com.ruuvi.station.network.domain.NetworkDataSyncInteractor
 import com.ruuvi.station.network.domain.NetworkSettingNames
@@ -76,11 +77,23 @@ class DashboardActivityViewModel(
     val userEmail = preferencesRepository.getUserEmailLiveData()
     val marketingConsent = preferencesRepository.getMarketingConsentLiveData()
 
+    private val _marketingConsentPrompt = MutableStateFlow<MarketingConsentPrompt>(MarketingConsentPrompt.Hidden)
+    val marketingConsentPrompt: StateFlow<MarketingConsentPrompt> = _marketingConsentPrompt
+
     init {
         if (networkInteractor.signedIn && marketingConsentInteractor.isEnabled()) {
             viewModelScope.launch {
                 try {
-                    marketingConsentInteractor.refresh()
+                    val consent = marketingConsentInteractor.refresh() ?: return@launch
+                    if (
+                        consent.consent ||
+                        consent.consentStatus !in MARKETING_CONSENT_PROMPT_ELIGIBLE_STATUSES ||
+                        !shouldShowMarketingConsentPrompt()
+                    ) {
+                        return@launch
+                    }
+
+                    _marketingConsentPrompt.value = MarketingConsentPrompt.Ask
                 } catch (exception: Exception) {
                     Timber.e(exception, "Unable to refresh marketing consent")
                 }
@@ -90,6 +103,45 @@ class DashboardActivityViewModel(
 
     fun isMarketingConsentEnabled(): Boolean =
         runtimeBehavior.isFeatureEnabled(FeatureFlag.MARKETING_CONSENT)
+
+    fun respondToMarketingConsentPrompt(consent: Boolean) {
+        if (!consent) {
+            preferencesRepository.setMarketingConsentPromptLastShown(System.currentTimeMillis())
+            _marketingConsentPrompt.value = MarketingConsentPrompt.Hidden
+            return
+        }
+
+        when (_marketingConsentPrompt.value) {
+            MarketingConsentPrompt.Ask,
+            MarketingConsentPrompt.Error -> Unit
+            else -> return
+        }
+
+        _marketingConsentPrompt.value = MarketingConsentPrompt.Saving
+        viewModelScope.launch {
+            try {
+                if (marketingConsentInteractor.update(true)?.consent == true) {
+                    preferencesRepository.setMarketingConsentPromptLastShown(System.currentTimeMillis())
+                    _marketingConsentPrompt.value = MarketingConsentPrompt.Saved
+                } else {
+                    _marketingConsentPrompt.value = MarketingConsentPrompt.Error
+                }
+            } catch (exception: Exception) {
+                if (exception is CancellationException) throw exception
+                Timber.e(exception, "Unable to save marketing consent")
+                _marketingConsentPrompt.value = MarketingConsentPrompt.Error
+            }
+        }
+    }
+
+    fun dismissMarketingConsentSavedMessage() {
+        _marketingConsentPrompt.value = MarketingConsentPrompt.Hidden
+    }
+
+    private fun shouldShowMarketingConsentPrompt(now: Long = System.currentTimeMillis()): Boolean {
+        val lastShown = preferencesRepository.getMarketingConsentPromptLastShown()
+        return lastShown == 0L || now - lastShown >= MARKETING_CONSENT_PROMPT_INTERVAL_MILLIS
+    }
 
     val _shouldAskNotificationPermission: MutableStateFlow<Boolean> = MutableStateFlow<Boolean>(permissionLogicInteractor.shouldAskNotificationPermission())
     val shouldAskNotificationPermission: StateFlow<Boolean> = _shouldAskNotificationPermission
@@ -239,4 +291,20 @@ class DashboardActivityViewModel(
     fun getDefaultImageResource(sensor: RuuviTag): Int {
         return imageInteractor.getDefaultBackgroundById(sensor.defaultBackground, sensor.isAir())
     }
+
+    private companion object {
+        const val MARKETING_CONSENT_PROMPT_INTERVAL_MILLIS = 180L * 24 * 60 * 60 * 1000
+        val MARKETING_CONSENT_PROMPT_ELIGIBLE_STATUSES = setOf(
+            MarketingConsentStatus.UNSUBSCRIBED,
+            MarketingConsentStatus.NOT_FOUND
+        )
+    }
+}
+
+sealed interface MarketingConsentPrompt {
+    data object Hidden : MarketingConsentPrompt
+    data object Ask : MarketingConsentPrompt
+    data object Saving : MarketingConsentPrompt
+    data object Error : MarketingConsentPrompt
+    data object Saved : MarketingConsentPrompt
 }

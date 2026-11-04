@@ -1,6 +1,6 @@
-- Neu gestaltete Verlaufsansicht mit einer neuen Diagrammoption in voller Größe
-- Verbesserte, frei skalierbare Widgets
-- Zuverlässigere Warnungen, Bluetooth-Aktualisierungen und Cloud-Synchronisierung
-- Ausstehende Sensorfreigaben werden jetzt in der App angezeigt
-- Verbesserte Kompatibilität mit neueren Android-Versionen
-- Verschiedene Verbesserungen der Benutzerfreundlichkeit und Stabilität
+* Klarere Alarmanzeigen auf Sensorkarten und in Messwert-Popups.
+* Neues Navigationsmenü für einfacheren Zugriff auf Sensordaten, Verlauf und Einstellungen.
+* Verhindert, dass RuuviTag-Firmware auf ältere Versionen zurückgesetzt wird, die die Unterstützung externer Temperatursensoren beeinträchtigen könnten.
+* Fehlende Bedienelemente in Ruuvi Air-Taupunktbenachrichtigungen ergänzt.
+* Texte in VOC- und NOx-Popups aktualisiert.
+* Weitere kleinere Fehlerbehebungen und Verbesserungen.

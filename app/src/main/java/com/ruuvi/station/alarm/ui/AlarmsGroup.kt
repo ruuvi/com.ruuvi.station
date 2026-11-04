@@ -39,6 +39,7 @@ import com.ruuvi.station.alarm.domain.AlarmType
 import com.ruuvi.station.app.ui.components.*
 import com.ruuvi.station.app.ui.components.dialog.CustomContentDialog
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
+import com.ruuvi.station.app.ui.theme.White
 import com.ruuvi.station.bluetooth.util.extensions.roundHalfUp
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tagsettings.ui.SensorSettingsTitle
@@ -486,7 +487,7 @@ private fun AlarmHeader(
                     modifier = Modifier.padding(horizontal = RuuviStationTheme.dimensions.mediumPlus),
                     painter = painterResource(id = R.drawable.ic_notifications_on_24px),
                     contentDescription = null,
-                    tint = RuuviStationTheme.colors.accent
+                    tint = White
                 )
             }
         }

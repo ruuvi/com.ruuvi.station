@@ -411,6 +411,13 @@ class PreferencesRepository(
         preferences.marketingConsent = consent
     }
 
+    fun getMarketingConsentPromptLastShown(): Long =
+        preferences.getMarketingConsentPromptLastShown(preferences.networkEmail)
+
+    fun setMarketingConsentPromptLastShown(lastShown: Long) {
+        preferences.setMarketingConsentPromptLastShown(preferences.networkEmail, lastShown)
+    }
+
     fun clearMarketingConsent() {
         preferences.marketingConsent = false
     }

@@ -60,14 +60,27 @@ class SensorCardViewModel(
     private val unitsConverter: UnitsConverter
     ): ViewModel() {
 
-    val sensorsFlow: Flow<List<RuuviTag>> = flow {
+    val sensorsFlow: StateFlow<List<RuuviTag>> = flow {
         while (true) {
             emit(tagInteractor.getTags())
             delay(1000)
         }
     }.flowOn(Dispatchers.IO)
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(1000),
+            initialValue = tagInteractor.getCachedTags().let { sensors ->
+                if (sensors.any { it.id == arguments.sensorId }) {
+                    sensors
+                } else {
+                    emptyList()
+                }
+            },
+        )
 
-    private val _selectedSensor = MutableStateFlow<String?>(null)
+    val initialSensorId: String? get() = arguments.sensorId
+
+    private val _selectedSensor = MutableStateFlow<String?>(arguments.sensorId)
     val selectedSensor: StateFlow<String?> = _selectedSensor
 
     private val _chartViewPeriod = MutableStateFlow<Period>(getGraphViewPeriod())
@@ -387,7 +400,8 @@ class SensorCardViewModel(
     fun getGattEvents(sensorId: String): Flow<SyncStatus> = flow{
         gattInteractor.getSyncStatusFlow(sensorId).filterNotNull().collect{ status ->
             Timber.d("getGattEvents sensor $sensorId $status")
-            status?.let { gattStatus ->
+            val isManual = manualSyncMap[sensorId] ?: false
+            status.let { gattStatus ->
                 if (gattStatus.sensorId == sensorId) {
                     when (gattStatus.syncProgress) {
                         SyncProgress.STILL, SyncProgress.DONE -> {
@@ -401,6 +415,7 @@ class SensorCardViewModel(
                                 )
                             )
                         }
+
                         SyncProgress.NOT_SUPPORTED, SyncProgress.NOT_FOUND,
                         SyncProgress.ERROR, SyncProgress.DISCONNECTED -> {
                             emit(
@@ -414,6 +429,7 @@ class SensorCardViewModel(
                             )
                             resetGattStatus(sensorId, gattStatus.sessionId)
                         }
+
                         SyncProgress.CONNECTING -> {
                             emit(
                                 SyncStatus(
@@ -425,6 +441,7 @@ class SensorCardViewModel(
                                 )
                             )
                         }
+
                         SyncProgress.CONNECTED, SyncProgress.READING_INFO -> {
                             emit(
                                 SyncStatus(
@@ -436,6 +453,7 @@ class SensorCardViewModel(
                                 )
                             )
                         }
+
                         SyncProgress.READING_DATA -> {
                             val message = if (gattStatus.syncedDataPoints > 0) {
                                 UiText.StringResourceWithArgs(R.string.reading_history_x, arrayOf(gattStatus.syncedDataPoints))
@@ -452,6 +470,7 @@ class SensorCardViewModel(
                                 )
                             )
                         }
+
                         SyncProgress.SAVING_DATA -> {
                             val message = if (gattStatus.readDataSize > 0) {
                                 UiText.StringResourceWithArgs(R.string.data_points_read, arrayOf(gattStatus.readDataSize))
@@ -565,13 +584,6 @@ class SensorCardViewModel(
 
     fun saveSelected(sensorId: String) {
         _selectedSensor.value = sensorId
-    }
-
-    init {
-        if (arguments.sensorId != null) {
-            val sensors = tagInteractor.getTags()
-            _selectedSensor.value = sensors.firstOrNull { it.id == arguments.sensorId }?.id
-        }
     }
 
     companion object {
