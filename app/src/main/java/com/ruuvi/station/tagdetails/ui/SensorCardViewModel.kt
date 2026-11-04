@@ -400,7 +400,6 @@ class SensorCardViewModel(
     fun getGattEvents(sensorId: String): Flow<SyncStatus> = flow{
         gattInteractor.getSyncStatusFlow(sensorId).filterNotNull().collect{ status ->
             Timber.d("getGattEvents sensor $sensorId $status")
-            val isManual = manualSyncMap[sensorId] ?: false
             status.let { gattStatus ->
                 if (gattStatus.sensorId == sensorId) {
                     when (gattStatus.syncProgress) {
