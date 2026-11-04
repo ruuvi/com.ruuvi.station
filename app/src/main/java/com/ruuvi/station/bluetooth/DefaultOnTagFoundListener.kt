@@ -19,7 +19,6 @@ import com.ruuvi.station.widgets.update.WidgetRefreshScheduler
 import android.content.Context
 import kotlinx.coroutines.*
 import timber.log.Timber
-import java.util.Calendar
 import java.util.Date
 import java.util.HashMap
 
@@ -33,13 +32,19 @@ class DefaultOnTagFoundListener(
     private val sensorSettingsRepository: SensorSettingsRepository,
     private val sensorHistoryRepository: SensorHistoryRepository,
     private val automaticGattSyncInteractor: () -> AutomaticGattSyncInteractor,
+    private val ioScope: CoroutineScope = CoroutineScope(Dispatchers.IO),
+    private val currentTimeMillis: () -> Long = System::currentTimeMillis,
+    private val persistReading: (TagSensorReading) -> Unit = { it.save() },
+    private val refreshWidgets: (Context, String) -> Unit = { context, sensorId ->
+        WidgetRefreshScheduler.enqueueSimpleRefreshForSensor(context, sensorId)
+        WidgetRefreshScheduler.enqueueComplexRefreshForSensor(context, sensorId)
+    },
 ) : IRuuviTagScanner.OnTagFoundListener {
 
     var isForeground = false
 
     private var lastLogged: MutableMap<String, Long> = HashMap()
-    private var lastCleanedDate: Long = Date().time
-    private val ioScope = CoroutineScope(Dispatchers.IO)
+    private var lastCleanedDate: Long = currentTimeMillis()
 
     override fun onTagFound(tag: FoundRuuviTag) {
         Timber.d("onTagFound: ${tag.logData()}")
@@ -77,7 +82,7 @@ class DefaultOnTagFoundListener(
                         }
                     }
                 } else {
-                    ruuviTag.updateAt = Date()
+                    ruuviTag.updateAt = Date(currentTimeMillis())
                     repository.saveTag(ruuviTag)
                 }
             }
@@ -89,10 +94,9 @@ class DefaultOnTagFoundListener(
             if (shouldSaveReading(sensorId)) {
                 Timber.d("saveFavoriteReading actual SAVING for ${ruuviTag.id}")
                 val reading = TagSensorReading(ruuviTag)
-                reading.save()
+                persistReading(reading)
                 dataForwardingSender.sendData(ruuviTag, sensorSettings)
-                WidgetRefreshScheduler.enqueueSimpleRefreshForSensor(context, sensorId)
-                WidgetRefreshScheduler.enqueueComplexRefreshForSensor(context, sensorId)
+                refreshWidgets(context, sensorId)
             } else {
                 Timber.d("saveFavoriteReading SKIPPED ${ruuviTag.id}")
             }
@@ -106,23 +110,21 @@ class DefaultOnTagFoundListener(
             preferencesRepository.getBackgroundScanInterval()
         }
         Timber.d("saveFavoriteReading (interval = $interval)")
-        val calendar = Calendar.getInstance()
-        calendar.add(Calendar.SECOND, -interval)
-        val loggingThreshold = calendar.time.time
+        val now = currentTimeMillis()
+        val loggingThreshold = now - interval.toLong() * 1_000L
         val lastLoggedDate = lastLogged[sensorId]
         val shouldSave = lastLoggedDate == null || lastLoggedDate < loggingThreshold
-        if (shouldSave) lastLogged[sensorId] = Date().time
+        if (shouldSave) lastLogged[sensorId] = now
         return shouldSave
     }
 
     private fun cleanUpOldData() {
-        val calendar = Calendar.getInstance()
-        calendar.add(Calendar.MINUTE, -10)
-        val cleaningThreshold = calendar.time.time
+        val now = currentTimeMillis()
+        val cleaningThreshold = now - CLEANUP_INTERVAL_MILLIS
         if (lastCleanedDate < cleaningThreshold) {
             Timber.d("Cleaning DB from old tag readings")
             sensorHistoryRepository.removeOlderThan(GlobalSettings.historyLengthHours)
-            lastCleanedDate = Date().time
+            lastCleanedDate = now
         }
     }
 
@@ -145,6 +147,7 @@ class DefaultOnTagFoundListener(
 
     companion object {
         private const val DATA_LOG_INTERVAL = 0
+        private const val CLEANUP_INTERVAL_MILLIS = 10 * 60 * 1_000L
         val legacyAirDataformats = listOf(0xF0, 0x06)
     }
 }
