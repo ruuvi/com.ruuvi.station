@@ -886,6 +886,10 @@
     <string name="newsletter_url">https://ruuvi.com/join</string>
     <string name="newsletter_subscription">Subskrypcja</string>
     <string name="newsletter_subscription_confirmation">Sprawdź swoją pocztę e-mail, aby potwierdzić subskrypcję newslettera.</string>
+    <string name="marketing_consent_prompt_title">Czy możemy wysyłać Ci e-maile?</string>
+    <string name="marketing_consent_prompt_message">Od czasu do czasu mamy wiadomości o aplikacji, naszych produktach i aktualnych ofertach.</string>
+    <string name="marketing_consent_prompt_decline">Nie, dziękuję</string>
+    <string name="marketing_consent_prompt_saved">Dziękujemy, zapisano pomyślnie.</string>
     <string name="communication_channels">Newsletter Ruuvi</string>
     <string name="communication_channels_description">Otrzymuj przydatne wskazówki Ruuvi, aktualizacje produktów, informacje o funkcjach i okazjonalne oferty specjalne prosto na swoją skrzynkę.</string>
     <string name="enable_background_service">Włącz usługę działającą w tle</string>

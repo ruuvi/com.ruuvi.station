@@ -29,7 +29,7 @@
 
   </com.google.android.material.appbar.AppBarLayout>
 
-  <ScrollView
+   <ScrollView
       android:id="@+id/calibrationScroll"
       android:background="?android:attr/colorBackground"
       android:layout_width="0dp"

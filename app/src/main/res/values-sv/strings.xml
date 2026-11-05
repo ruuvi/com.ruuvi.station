@@ -884,6 +884,10 @@ Totalt antal använda delningar för ditt konto: %3$,d/%4$,d</string>
     <string name="newsletter_url">https://ruuvi.com/join</string>
     <string name="newsletter_subscription">Prenumeration</string>
     <string name="newsletter_subscription_confirmation">Kontrollera din e-post för att bekräfta din prenumeration på nyhetsbrevet.</string>
+    <string name="marketing_consent_prompt_title">Får vi skicka e-post till dig?</string>
+    <string name="marketing_consent_prompt_message">Då och då har vi nyheter att dela om appen, våra produkter och aktuella erbjudanden.</string>
+    <string name="marketing_consent_prompt_decline">Nej tack</string>
+    <string name="marketing_consent_prompt_saved">Tack, sparat.</string>
     <string name="communication_channels">Ruuvís nyhetsbrev</string>
     <string name="communication_channels_description">Få användbara Ruuvi-tips, produktuppdateringar, funktionsnyheter och enstaka specialerbjudanden direkt till din inkorg.</string>
     <string name="enable_background_service">Aktivera bakgrundstjänst</string>

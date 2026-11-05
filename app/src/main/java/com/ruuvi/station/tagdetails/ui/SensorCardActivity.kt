@@ -7,6 +7,7 @@ import android.content.res.Configuration
 import android.net.Uri
 import android.os.Bundle
 import androidx.activity.compose.setContent
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
@@ -20,7 +21,10 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.Layout
+import androidx.compose.ui.layout.MeasurePolicy
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
@@ -28,9 +32,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.IntSize
+import androidx.compose.ui.unit.constrainHeight
+import androidx.compose.ui.unit.constrainWidth
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.times
 import androidx.core.app.TaskStackBuilder
 import androidx.core.content.IntentCompat
 import androidx.core.view.WindowCompat
@@ -80,8 +84,6 @@ import org.kodein.di.instance
 import org.kodein.di.direct
 import org.kodein.di.factory
 import timber.log.Timber
-import kotlin.math.ceil
-import kotlin.math.floor
 
 private const val MAXIMUM_FONT_SCALE = 1.5f
 private const val TABLET_MINIMUM_WIDTH_DP = 600
@@ -315,41 +317,29 @@ fun SensorCard(
     var showBottomSheet by remember { mutableStateOf(false) }
     var sheetUnitType by remember(sensor.id) { mutableStateOf<UnitType?>(null) }
     val itemHeight = 48.dp.scaleUpTo(MAXIMUM_FONT_SCALE)
-    var size by remember { mutableStateOf(IntSize.Zero) }
-    var topSize by remember { mutableStateOf(IntSize.Zero) }
-    val halfSize = (size.height / 2).pxToDp()
     val scrollState = rememberScrollState()
-    val valuesWithoutFirst = if (sensor.valuesToDisplay.isNotEmpty()) {
-        sensor.valuesToDisplay.subList(1, sensor.valuesToDisplay.size)
-    } else {
-        listOf()
+    val configuration = LocalConfiguration.current
+    val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+    val isTablet = configuration.smallestScreenWidthDp >= TABLET_MINIMUM_WIDTH_DP
+    val columnCount = when {
+        isTablet && isLandscape -> TABLET_LANDSCAPE_COLUMNS
+        isTablet -> TABLET_COLUMNS
+        isLandscape -> LANDSCAPE_COLUMNS
+        else -> PHONE_COLUMNS
     }
-    val padding = if (halfSize < 200.dp) 8.dp else 32.dp
-    val itemSeparator = SENSOR_VALUE_ITEM_SPACING
-    val bottomSize = floor(((size.height - topSize.height).pxToDp() - padding - itemSeparator).value).dp
+    val horizontalPadding = when {
+        isTablet && isLandscape -> 80.dp
+        isTablet -> 60.dp
+        else -> 20.dp
+    }
 
-    val columnModifier = modifier.fadingEdge(scrollState)
-
-    Column(
-        modifier = columnModifier
+    Layout(
+        modifier = modifier
+            .fadingEdge(scrollState)
             .fillMaxSize()
-            .onGloballyPositioned { layoutCoordinates ->
-                size = layoutCoordinates.size
-            }
             .verticalScroll(scrollState),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Top
-    ) {
-
-        if (size.height > 0) {
-            Box(
-                modifier = Modifier
-                    .defaultMinSize(minHeight = halfSize)
-                    .padding(top = padding, bottom = itemSeparator)
-                    .onGloballyPositioned { layoutCoordinates ->
-                        topSize = layoutCoordinates.size
-                    }
-            ) {
+        content = {
+            Box {
                 val firstValue = sensor.valuesToDisplay.firstOrNull()
                 if (firstValue != null) {
                     TopMeasurement(
@@ -361,43 +351,7 @@ fun SensorCard(
                     }
                 }
             }
-
-            val configuration = LocalConfiguration.current
-            val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
-            val isTablet = configuration.smallestScreenWidthDp >= TABLET_MINIMUM_WIDTH_DP
-            val columnCount = when {
-                isTablet && isLandscape -> TABLET_LANDSCAPE_COLUMNS
-                isTablet -> TABLET_COLUMNS
-                isLandscape -> LANDSCAPE_COLUMNS
-                else -> PHONE_COLUMNS
-            }
-            val horizontalPadding = when {
-                isTablet && isLandscape -> 80.dp
-                isTablet -> 60.dp
-                else -> 20.dp
-            }
-            val rowCount = ceil(valuesWithoutFirst.size / columnCount.toFloat())
-
-            if (rowCount * (itemHeight + itemSeparator) <= bottomSize) {
-                Column(
-                    verticalArrangement = Arrangement.Bottom,
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier
-                        .height(bottomSize)
-                        .fillMaxWidth()
-                ) {
-                    SensorValues(
-                        modifier = Modifier,
-                        sensor = sensor,
-                        itemHeight = itemHeight,
-                        columnCount = columnCount,
-                        horizontalPadding = horizontalPadding,
-                    ) {
-                        showBottomSheet = true
-                        sheetUnitType = it.unitType
-                    }
-                }
-            } else {
+            Box {
                 SensorValues(
                     modifier = Modifier,
                     sensor = sensor,
@@ -409,8 +363,9 @@ fun SensorCard(
                     sheetUnitType = it.unitType
                 }
             }
-        }
-    }
+        },
+        measurePolicy = sensorCardMeasurePolicy,
+    )
 
     if (showBottomSheet) {
         val value = resolveCurrentSheetValue(sensor, sheetUnitType)
@@ -437,7 +392,7 @@ fun SensorCard(
                 extraValues = extraValues,
                 alarmStatus = sensor.alarmSensorStatus,
                 chartHistory = chartHistory,
-                maxHeight = size.height,
+                maxHeight = scrollState.viewportSize,
                 lastUpdate = sensor.latestMeasurement?.updatedAt,
                 modifier = Modifier,
                 scrollToChart = scrollToChart,
@@ -446,6 +401,31 @@ fun SensorCard(
                 showBottomSheet = false
             }
         }
+    }
+}
+
+internal val sensorCardMeasurePolicy = MeasurePolicy { measurables, constraints ->
+    val viewportHeight = constraints.minHeight
+    val topPadding = if (viewportHeight / 2 < 200.dp.roundToPx()) 8.dp else 32.dp
+    val childConstraints = constraints.copy(minWidth = 0, minHeight = 0)
+    val top = measurables[0].measure(childConstraints)
+    val values = measurables[1].measure(childConstraints)
+    val topAreaHeight = maxOf(
+        viewportHeight / 2,
+        top.height + topPadding.roundToPx() + SENSOR_VALUE_ITEM_SPACING.roundToPx(),
+    )
+    val width = constraints.constrainWidth(maxOf(top.width, values.width))
+    val height = constraints.constrainHeight(topAreaHeight + values.height)
+
+    layout(width, height) {
+        top.placeRelative(
+            x = (width - top.width) / 2,
+            y = topPadding.roundToPx(),
+        )
+        values.placeRelative(
+            x = (width - values.width) / 2,
+            y = height - values.height,
+        )
     }
 }
 
@@ -623,24 +603,31 @@ fun SensorCardLowBattery(modifier: Modifier = Modifier) {
 
 @Composable
 fun SensorCardImage(
-    userBackground: Uri,
+    userBackground: Uri?,
+    @DrawableRes defaultBackground: Int,
 ) {
-    Timber.d("Image path $userBackground")
+    val context = LocalContext.current
+    val backgroundRequest = remember(context, userBackground, defaultBackground) {
+        ImageRequest.Builder(context)
+            .data(userBackground ?: defaultBackground)
+            .crossfade(userBackground != null)
+            .build()
+    }
 
     AsyncImage(
         modifier = Modifier.fillMaxSize(),
-        model = ImageRequest.Builder(LocalContext.current)
-            .data(userBackground)
-            .crossfade(true)
-            .build(),
+        model = backgroundRequest,
         contentDescription = null,
-        contentScale = ContentScale.Crop
+        contentScale = ContentScale.Crop,
+        onError = { Timber.e(it.result.throwable, "Failed to load sensor background") },
     )
-    Image(
+    AsyncImage(
         modifier = Modifier.fillMaxSize(),
-        painter = painterResource(R.drawable.tag_bg_layer),
+        model = R.drawable.tag_bg_layer,
+        placeholder = ColorPainter(DefaultSensorBackgroundDark),
         contentDescription = null,
-        contentScale = ContentScale.Crop
+        contentScale = ContentScale.Crop,
+        onError = { Timber.e(it.result.throwable, "Failed to load sensor background overlay") },
     )
 }
 

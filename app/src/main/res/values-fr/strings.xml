@@ -889,6 +889,10 @@ Total des partages utilisés pour votre compte : %3$,d/%4$,d</string>
     <string name="newsletter_url">https://ruuvi.com/join</string>
     <string name="newsletter_subscription">Abonnement</string>
     <string name="newsletter_subscription_confirmation">Consultez votre messagerie pour confirmer votre abonnement à la newsletter.</string>
+    <string name="marketing_consent_prompt_title">Pouvons-nous vous envoyer des e-mails ?</string>
+    <string name="marketing_consent_prompt_message">De temps en temps, nous avons des nouveautés à partager sur l’application, nos produits et nos offres du moment.</string>
+    <string name="marketing_consent_prompt_decline">Non merci</string>
+    <string name="marketing_consent_prompt_saved">Merci, votre préférence a été enregistrée.</string>
     <string name="communication_channels">Newsletter Ruuvi</string>
     <string name="communication_channels_description">Recevez des conseils Ruuvi utiles, des actualités sur les produits et les fonctionnalités, ainsi que des offres spéciales occasionnelles directement dans votre boîte de réception.</string>
     <string name="enable_background_service">Activer le service en arrière-plan</string>
