@@ -2,18 +2,23 @@ package com.ruuvi.station.network.ui.claim
 
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.compose.setContent
 import androidx.compose.animation.*
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Scaffold
+import androidx.compose.material.SnackbarHost
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.core.view.WindowCompat
+import androidx.compose.ui.res.colorResource
 import androidx.navigation.NavBackStackEntry
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
@@ -46,7 +51,7 @@ class ClaimSensorActivity : NfcActivity(), DIAware {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        WindowCompat.setDecorFitsSystemWindows(window, true)
+        enableEdgeToEdge()
 
         setContent {
             RuuviTheme {
@@ -67,6 +72,12 @@ class ClaimSensorActivity : NfcActivity(), DIAware {
         val scaffoldState = rememberScaffoldState()
         val systemUiController = rememberSystemUiController()
         val systemBarsColor = RuuviStationTheme.colors.systemBars
+        val darkNavigationIcons = !isSystemInDarkTheme()
+        val navigationBarColor = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            Color.Transparent
+        } else {
+            colorResource(R.color.titan)
+        }
         var title by remember { mutableStateOf(titleString) }
 
         LaunchedEffect(null) {
@@ -104,15 +115,18 @@ class ClaimSensorActivity : NfcActivity(), DIAware {
 
         Scaffold(
             modifier = Modifier
-                .systemBarsPadding()
+                .windowInsetsPadding(
+                    WindowInsets.systemBars.only(WindowInsetsSides.Top + WindowInsetsSides.Horizontal)
+                )
                 .fillMaxSize(),
             backgroundColor = RuuviStationTheme.colors.background,
             topBar = { RuuviTopAppBar(title = title) },
             scaffoldState = scaffoldState,
-            snackbarHost = { RuuviSnackbarHost(it) },
+            snackbarHost = { SnackbarHost(it, Modifier.navigationBarsPadding()) }
         ) { padding ->
 
             AnimatedNavHost(
+                modifier = Modifier.padding(padding).navigationBarsPadding(),
                 navController = navController,
                 startDestination = ClaimRoutes.CHECK_CLAIM_STATE
             ) {
@@ -183,8 +197,11 @@ class ClaimSensorActivity : NfcActivity(), DIAware {
         }
 
         SideEffect {
-            systemUiController.setSystemBarsColor(
-                color = systemBarsColor
+            systemUiController.setStatusBarColor(color = systemBarsColor)
+            systemUiController.setNavigationBarColor(
+                color = navigationBarColor,
+                darkIcons = darkNavigationIcons,
+                navigationBarContrastEnforced = false
             )
         }
     }

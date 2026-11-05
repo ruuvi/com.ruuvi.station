@@ -47,10 +47,11 @@
 
     </LinearLayout>
 
-    <ListView
+    <com.ruuvi.station.util.ui.BottomFadingEdgeListView
         android:id="@+id/tagListView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:cacheColorHint="@android:color/transparent"
         android:divider="?attr/colorDivider"
         android:footerDividersEnabled="true"
         android:dividerHeight="@dimen/divider"

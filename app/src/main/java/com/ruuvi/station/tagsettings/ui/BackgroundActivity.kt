@@ -4,32 +4,39 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
+import android.os.Build
 import android.os.Bundle
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material.Scaffold
 import androidx.compose.material.ScaffoldState
+import androidx.compose.material.SnackbarHost
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.core.view.WindowCompat
+import androidx.compose.ui.res.colorResource
 import coil.compose.AsyncImage
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.ruuvi.station.R
 import com.ruuvi.station.app.ui.RuuviTopAppBar
 import com.ruuvi.station.app.ui.UiEvent
 import com.ruuvi.station.app.ui.components.*
+import com.ruuvi.station.app.ui.components.modifier.bottomFadingEdge
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.RuuviTheme
 import com.ruuvi.station.util.extensions.viewModel
@@ -51,7 +58,7 @@ class BackgroundActivity : AppCompatActivity(), DIAware {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        WindowCompat.setDecorFitsSystemWindows(window, true)
+        enableEdgeToEdge()
 
         setContent {
             RuuviTheme {
@@ -107,20 +114,34 @@ class BackgroundActivity : AppCompatActivity(), DIAware {
         val context = LocalContext.current
         val systemUiController = rememberSystemUiController()
         val systemBarsColor = RuuviStationTheme.colors.systemBars
+        val gridState = rememberLazyGridState()
+        val darkNavigationIcons = !isSystemInDarkTheme()
+        val navigationBarColor = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            Color.Transparent
+        } else {
+            colorResource(R.color.titan)
+        }
 
         Scaffold(
             modifier = Modifier
                 .fillMaxSize()
-                .systemBarsPadding(),
+                .windowInsetsPadding(
+                    WindowInsets.systemBars.only(WindowInsetsSides.Top + WindowInsetsSides.Horizontal)
+                ),
             backgroundColor = RuuviStationTheme.colors.background,
             topBar = { RuuviTopAppBar(title = stringResource(id = R.string.change_background)) },
             scaffoldState = scaffoldState,
-        snackbarHost = { RuuviSnackbarHost(it) },
+            snackbarHost = { SnackbarHost(it, Modifier.navigationBarsPadding()) }
         ) { paddingValues ->
 
             LazyVerticalGrid(
                 columns = GridCells.Fixed(3),
-                modifier = Modifier.padding(paddingValues)
+                state = gridState,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues)
+                    .bottomFadingEdge(gridState),
+                contentPadding = WindowInsets.navigationBars.only(WindowInsetsSides.Bottom).asPaddingValues()
             ) {
                 item(span = { GridItemSpan(3) }) {
                     PageHeader(
@@ -144,8 +165,11 @@ class BackgroundActivity : AppCompatActivity(), DIAware {
         }
 
         SideEffect {
-            systemUiController.setSystemBarsColor(
-                color = systemBarsColor
+            systemUiController.setStatusBarColor(color = systemBarsColor)
+            systemUiController.setNavigationBarColor(
+                color = navigationBarColor,
+                darkIcons = darkNavigationIcons,
+                navigationBarContrastEnforced = false
             )
         }
     }
