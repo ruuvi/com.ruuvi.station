@@ -114,6 +114,9 @@ object SimpleWidgetGlanceWidget : GlanceAppWidget() {
     override suspend fun providePreview(context: Context, widgetCategory: Int) {
         val locale = ConfigurationCompat.getLocales(context.resources.configuration)[0]
             ?: Locale.getDefault()
+        val previewTypography = resolveSimpleWidgetPreviewTypography(
+            isTablet = context.resources.configuration.smallestScreenWidthDp >= 600
+        )
         val previewValue = NumberFormat.getNumberInstance(locale).run {
             minimumFractionDigits = 1
             maximumFractionDigits = 1
@@ -130,7 +133,8 @@ object SimpleWidgetGlanceWidget : GlanceAppWidget() {
                 updated = "12:34",
                 measurementType = WidgetType.TEMPERATURE,
                 renderingMode = SimpleWidgetRenderingMode.GENERATED_PREVIEW,
-                typographyScale = GENERATED_PREVIEW_TYPOGRAPHY_SCALE,
+                typographyScale = previewTypography.scale,
+                previewMaximumValueFontSize = previewTypography.maximumValueFontSize,
             )
         }
     }
@@ -186,6 +190,7 @@ internal fun SimpleWidgetContent(
     measurementType: WidgetType?,
     renderingMode: SimpleWidgetRenderingMode,
     typographyScale: Float = 1f,
+    previewMaximumValueFontSize: TextUnit? = null,
     observedCellSize: DpSize? = null,
 ) {
     val openAction = if (!sensorId.isNullOrEmpty()) {
@@ -222,15 +227,18 @@ internal fun SimpleWidgetContent(
         observedSize = observedCellSize,
         requestedScale = typographyScale
     )
+    val scaledValueFontSize = baseConfig.valueFontSize.scaledBy(effectiveTypographyScale)
     val scaledConfig = baseConfig.copy(
         displayNameFontSize = baseConfig.displayNameFontSize.scaledBy(effectiveTypographyScale),
-        valueFontSize = baseConfig.valueFontSize.scaledBy(effectiveTypographyScale),
+        valueFontSize = previewMaximumValueFontSize?.let { maximum ->
+            minOf(scaledValueFontSize.value, maximum.value).sp
+        } ?: scaledValueFontSize,
         secondaryFontSize = baseConfig.secondaryFontSize.scaledBy(effectiveTypographyScale),
         timestampFontSize = baseConfig.timestampFontSize.scaledBy(effectiveTypographyScale),
         measurementNameFontSize = baseConfig.measurementNameFontSize.scaledBy(effectiveTypographyScale)
     )
     val isAirQuality = measurementType == WidgetType.AIR_QUALITY
-    val config = if (shouldFitSimpleWidgetTypography(renderingMode, observedCellSize)) {
+    val fittedConfig = if (shouldFitSimpleWidgetTypography(renderingMode, observedCellSize)) {
         fitSimpleWidgetConfig(
             context = context,
             config = scaledConfig,
@@ -245,6 +253,11 @@ internal fun SimpleWidgetContent(
     } else {
         scaledConfig
     }
+    val config = previewMaximumValueFontSize?.let { maximum ->
+        fittedConfig.copy(
+            valueFontSize = minOf(fittedConfig.valueFontSize.value, maximum.value).sp
+        )
+    } ?: fittedConfig
     val displayNameFontSize = config.displayNameFontSize.toWidgetSp(context)
     val timestampFontSize = config.timestampFontSize.toWidgetSp(context)
     val timestampHeight = GlanceFontUtils.measureSystemFontHeight(
@@ -380,6 +393,26 @@ internal enum class SimpleWidgetRenderingMode {
     RUNTIME,
     GENERATED_PREVIEW,
 }
+
+internal data class SimpleWidgetPreviewTypography(
+    val scale: Float,
+    val maximumValueFontSize: TextUnit?,
+)
+
+internal fun resolveSimpleWidgetPreviewTypography(
+    isTablet: Boolean
+): SimpleWidgetPreviewTypography =
+    if (isTablet) {
+        SimpleWidgetPreviewTypography(
+            scale = GENERATED_PREVIEW_TYPOGRAPHY_SCALE,
+            maximumValueFontSize = TABLET_PREVIEW_MAXIMUM_VALUE_FONT_SIZE,
+        )
+    } else {
+        SimpleWidgetPreviewTypography(
+            scale = GENERATED_PREVIEW_TYPOGRAPHY_SCALE,
+            maximumValueFontSize = null,
+        )
+    }
 
 internal data class SimpleWidgetEmbeddedColors(
     val value: Int?,
@@ -538,6 +571,7 @@ private const val GENERATED_PREVIEW_TYPOGRAPHY_SCALE = 0.65f
 private const val INITIAL_RUNTIME_TYPOGRAPHY_SCALE = 1.15f
 private const val AQI_UNIT_TEXT = "/100"
 private val DEFAULT_RUNTIME_TYPOGRAPHY_SIZE = DpSize(180.dp, 110.dp)
+private val TABLET_PREVIEW_MAXIMUM_VALUE_FONT_SIZE = 40.sp
 private val AQI_INDICATOR_SIZE = 8.dp
 private val TITLE_VALUE_SPACING = 7.dp
 private val VALUE_SIZING_TITLE_SPACING = 5.dp
