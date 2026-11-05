@@ -25,7 +25,7 @@
             android:includeFontPadding="false"
             android:text="@string/widgets_loading"
             android:textColor="?attr/colorOnSecondary"
-            android:textSize="16sp" />
+            android:textSize="16dp" />
 
     </RelativeLayout>
 
@@ -52,7 +52,7 @@
                 android:contentDescription="@null"
                 android:scaleType="fitCenter"
                 android:src="@drawable/ic_widget_d_update"
-                android:tint="?attr/colorOnSecondary"
+                android:tint="?attr/colorPrimary"
                 android:tintMode="src_in"
                 tools:ignore="UseAppTint" />
 
