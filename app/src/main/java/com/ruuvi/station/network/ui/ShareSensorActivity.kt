@@ -3,7 +3,9 @@ package com.ruuvi.station.network.ui
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
+import android.os.Build
 import android.os.Bundle
+import androidx.activity.enableEdgeToEdge
 import android.view.ViewGroup
 import android.webkit.WebResourceRequest
 import android.webkit.WebSettings.LOAD_DEFAULT
@@ -11,6 +13,17 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.only
+import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -19,9 +32,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
@@ -30,6 +43,7 @@ import androidx.compose.material.LocalMinimumInteractiveComponentEnforcement
 import androidx.compose.material.Scaffold
 import androidx.compose.material.ScaffoldState
 import androidx.compose.material.SnackbarDuration
+import androidx.compose.material.SnackbarHost
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -43,6 +57,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -50,7 +65,7 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.viewinterop.AndroidView
-import androidx.core.view.WindowCompat
+import androidx.compose.ui.res.colorResource
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.ruuvi.station.R
 import com.ruuvi.station.app.ui.RuuviTopAppBar
@@ -64,6 +79,7 @@ import com.ruuvi.station.app.ui.components.dialog.CustomContentDialog
 import com.ruuvi.station.app.ui.components.StatusBarFill
 import com.ruuvi.station.app.ui.components.SubtitleWithPadding
 import com.ruuvi.station.app.ui.components.TextFieldRuuvi
+import com.ruuvi.station.app.ui.components.modifier.bottomFadingEdge
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.RuuviTheme
 import com.ruuvi.station.util.extensions.viewModel
@@ -89,7 +105,7 @@ class ShareSensorActivity : AppCompatActivity() , DIAware {
             return
         }
 
-        WindowCompat.setDecorFitsSystemWindows(window, true)
+        enableEdgeToEdge()
 
         setContent {
             RuuviTheme {
@@ -99,18 +115,43 @@ class ShareSensorActivity : AppCompatActivity() , DIAware {
                 val token = viewModel.getWebViewToken()
                 val url = viewModel.getUrl()
                 val scaffoldState = rememberScaffoldState()
+                val systemUiController = rememberSystemUiController()
+                val systemBarsColor = RuuviStationTheme.colors.systemBars
+                val darkNavigationIcons = !isSystemInDarkTheme()
+                val navigationBarColor = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    Color.Transparent
+                } else {
+                    colorResource(R.color.titan)
+                }
+                SideEffect {
+                    systemUiController.setStatusBarColor(color = systemBarsColor)
+                    systemUiController.setNavigationBarColor(
+                        color = navigationBarColor,
+                        darkIcons = darkNavigationIcons,
+                        navigationBarContrastEnforced = false
+                    )
+                }
 
                 StatusBarFill {
                     if (useWebShare) {
                         Scaffold(
                             modifier = Modifier
-                                .systemBarsPadding()
+                                .windowInsetsPadding(
+                                    WindowInsets.systemBars.only(WindowInsetsSides.Top + WindowInsetsSides.Horizontal)
+                                )
+                                .imePadding()
                                 .fillMaxSize(),
                             backgroundColor = RuuviStationTheme.colors.background,
                             topBar = { RuuviTopAppBar(title = stringResource(id = R.string.share_sensor_title)) },
-                            scaffoldState = scaffoldState
+                            scaffoldState = scaffoldState,
+                            snackbarHost = { SnackbarHost(it, Modifier.navigationBarsPadding()) }
                         ) { paddingValues ->
-                            SharingWebView(scaffoldState, token, url)
+                            SharingWebView(
+                                scaffoldState,
+                                token,
+                                url,
+                                modifier = Modifier.padding(paddingValues).navigationBarsPadding()
+                            )
                         }
                     } else {
                         val pendingEmails by viewModel.pendingEmailsObserve.observeAsState(emptyList())
@@ -174,21 +215,34 @@ fun ShareBody(
     shareToUser: (String) -> Unit,
     unshare: (String) -> Unit
 ) {
-    val systemUiController = rememberSystemUiController()
-    val systemBarsColor = RuuviStationTheme.colors.systemBars
+    val listState = rememberLazyListState()
+    val screenPadding = RuuviStationTheme.dimensions.screenPadding
+    val navigationPadding = WindowInsets.navigationBars.asPaddingValues()
 
     Scaffold(
         modifier = Modifier
-            .systemBarsPadding()
+            .windowInsetsPadding(
+                WindowInsets.systemBars.only(WindowInsetsSides.Top + WindowInsetsSides.Horizontal)
+            )
+            .imePadding()
             .fillMaxSize(),
         backgroundColor = RuuviStationTheme.colors.background,
         topBar = { RuuviTopAppBar(title = stringResource(id = R.string.share_sensor_title)) },
-        scaffoldState = scaffoldState
+        scaffoldState = scaffoldState,
+        snackbarHost = { SnackbarHost(it, Modifier.navigationBarsPadding()) }
     ) { paddingValues ->
         LazyColumn(
             modifier = Modifier
+                .fillMaxSize()
                 .padding(paddingValues)
-                .padding(RuuviStationTheme.dimensions.screenPadding)
+                .bottomFadingEdge(listState),
+            state = listState,
+            contentPadding = PaddingValues(
+                start = screenPadding,
+                top = screenPadding,
+                end = screenPadding,
+                bottom = screenPadding + navigationPadding.calculateBottomPadding()
+            )
         ) {
             if (canShare) {
                 item {
@@ -240,11 +294,6 @@ fun ShareBody(
             }
         }
 
-        SideEffect {
-            systemUiController.setSystemBarsColor(
-                color = systemBarsColor
-            )
-        }
     }
 }
 
@@ -337,11 +386,12 @@ fun SharedEmailItem(
 fun SharingWebView(
     scaffoldState: ScaffoldState,
     userToken: String?,
-    url: String
+    url: String,
+    modifier: Modifier = Modifier
 ) {
     val script = "window.localStorage.setItem('user','$userToken')"
     var webView: WebView? = null
-    PageSurface {
+    PageSurface(modifier = modifier) {
         Column(modifier = Modifier.fillMaxSize()) {
             AndroidView(
                 modifier = Modifier.fillMaxSize(),

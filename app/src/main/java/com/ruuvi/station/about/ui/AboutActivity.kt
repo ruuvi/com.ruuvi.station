@@ -7,9 +7,12 @@ import android.os.Build
 import android.os.Bundle
 import android.text.method.LinkMovementMethod
 import android.view.MenuItem
+import androidx.activity.SystemBarStyle
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import androidx.core.view.WindowCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.snackbar.BaseTransientBottomBar.LENGTH_SHORT
 import com.google.android.material.snackbar.Snackbar
@@ -36,23 +39,39 @@ class AboutActivity : AppCompatActivity(R.layout.activity_about), DIAware {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        WindowCompat.setDecorFitsSystemWindows(window, false)
+        val darkTheme = isDarkMode()
+        val legacyNavigationBarColor = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+            ContextCompat.getColor(this, R.color.titan)
+        } else {
+            Color.TRANSPARENT
+        }
+        enableEdgeToEdge(
+            statusBarStyle = SystemBarStyle.auto(Color.TRANSPARENT, Color.TRANSPARENT) {
+                darkTheme
+            },
+            navigationBarStyle = SystemBarStyle.auto(Color.TRANSPARENT, legacyNavigationBarColor) {
+                darkTheme
+            },
+        )
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            window.isNavigationBarContrastEnforced = false
+        }
 
         binding = ActivityAboutBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
-            window.statusBarColor = Color.parseColor("#01000000")
-        } else {
-            window.statusBarColor = Color.TRANSPARENT
-            window.isNavigationBarContrastEnforced = false
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { view, insets ->
+            val safeInsets = insets.getInsets(
+                WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout()
+            )
+            view.setPadding(safeInsets.left, safeInsets.top, safeInsets.right, 0)
+            binding.content.root.apply {
+                setPadding(paddingLeft, paddingTop, paddingRight, safeInsets.bottom)
+                clipToPadding = false
+            }
+            insets
         }
-
-        val useDarkSystemBarIcons = !isDarkMode()
-        WindowCompat.getInsetsController(window, binding.root).apply {
-            isAppearanceLightStatusBars = useDarkSystemBarIcons
-            isAppearanceLightNavigationBars = useDarkSystemBarIcons
-        }
+        ViewCompat.requestApplyInsets(binding.root)
 
         setupUI()
         setupViewModel()

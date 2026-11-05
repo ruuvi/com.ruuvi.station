@@ -2,19 +2,23 @@ package com.ruuvi.station.network.ui
 
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
+import androidx.activity.enableEdgeToEdge
 import android.text.format.DateUtils
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.core.view.WindowCompat
+import androidx.compose.ui.res.colorResource
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.messaging.FirebaseMessaging
@@ -44,7 +48,7 @@ class MyAccountActivity : AppCompatActivity(), DIAware {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        WindowCompat.setDecorFitsSystemWindows(window, true)
+        enableEdgeToEdge()
 
         FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
             if (!task.isSuccessful) {
@@ -119,9 +123,18 @@ class MyAccountActivity : AppCompatActivity(), DIAware {
                 }
 
                 val systemBarsColor = RuuviStationTheme.colors.systemBars
+                val darkNavigationIcons = !isSystemInDarkTheme()
+                val navigationBarColor = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    Color.Transparent
+                } else {
+                    colorResource(R.color.titan)
+                }
                 SideEffect {
-                    systemUiController.setSystemBarsColor(
-                        color = systemBarsColor
+                    systemUiController.setStatusBarColor(color = systemBarsColor)
+                    systemUiController.setNavigationBarColor(
+                        color = navigationBarColor,
+                        darkIcons = darkNavigationIcons,
+                        navigationBarContrastEnforced = false
                     )
                 }
             }
@@ -152,7 +165,9 @@ fun MyAccountBody(
 
     Column(modifier = Modifier
         .fillMaxSize()
-        .systemBarsPadding()
+        .windowInsetsPadding(
+            WindowInsets.systemBars.only(WindowInsetsSides.Top + WindowInsetsSides.Horizontal)
+        )
         .background(RuuviStationTheme.colors.background)
     ) {
         RuuviTopAppBar(title = stringResource(id = R.string.my_ruuvi_account))
@@ -221,6 +236,7 @@ fun MyAccountBody(
                                 RuuviStationTheme.dimensions.big * 2
                         )
                     )
+                    Spacer(Modifier.windowInsetsBottomHeight(WindowInsets.navigationBars))
                 }
             }
 
@@ -229,6 +245,7 @@ fun MyAccountBody(
                     .align(Alignment.BottomCenter)
                     .fillMaxWidth()
                     .background(RuuviStationTheme.colors.background)
+                    .navigationBarsPadding()
                     .padding(
                         horizontal = RuuviStationTheme.dimensions.screenPadding,
                         vertical = RuuviStationTheme.dimensions.big

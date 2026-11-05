@@ -3,7 +3,9 @@ package com.ruuvi.station.dfu.ui
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import androidx.activity.enableEdgeToEdge
 import android.provider.OpenableColumns
 import androidx.activity.compose.LocalActivity
 import androidx.activity.compose.setContent
@@ -25,7 +27,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.core.view.WindowCompat
+import androidx.compose.ui.res.colorResource
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -104,7 +106,7 @@ class DfuUpdateActivity : AppCompatActivity() , DIAware {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        WindowCompat.setDecorFitsSystemWindows(window, false)
+        enableEdgeToEdge()
         val sensorId = intent.getStringExtra(SENSOR_ID)
         permissionsInteractor = PermissionsInteractor(this)
 
@@ -117,10 +119,18 @@ class DfuUpdateActivity : AppCompatActivity() , DIAware {
                 val systemUiController = rememberSystemUiController()
 
                 val systemBarsColor = RuuviStationTheme.colors.systemBars
-
+                val darkNavigationIcons = !isSystemInDarkTheme()
+                val navigationBarColor = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    Color.Transparent
+                } else {
+                    colorResource(R.color.titan)
+                }
                 SideEffect {
-                    systemUiController.setSystemBarsColor(
-                        color = systemBarsColor
+                    systemUiController.setStatusBarColor(color = systemBarsColor)
+                    systemUiController.setNavigationBarColor(
+                        color = navigationBarColor,
+                        darkIcons = darkNavigationIcons,
+                        navigationBarContrastEnforced = false
                     )
                 }
 
@@ -153,14 +163,17 @@ class DfuUpdateActivity : AppCompatActivity() , DIAware {
 
                         Scaffold(
                             modifier = Modifier
-                                .systemBarsPadding()
+                                .windowInsetsPadding(
+                                    WindowInsets.systemBars.only(WindowInsetsSides.Top + WindowInsetsSides.Horizontal)
+                                )
                                 .fillMaxSize(),
                             backgroundColor = RuuviStationTheme.colors.background,
                             topBar = { RuuviTopAppBar(title = stringResource(R.string.title_activity_dfu_update)) },
-                            scaffoldState = scaffoldState
+                            scaffoldState = scaffoldState,
+                            snackbarHost = { SnackbarHost(it, Modifier.navigationBarsPadding()) }
                         ) { padding ->
                             NavHost(
-                                modifier = Modifier.padding(padding),
+                                modifier = Modifier.padding(padding).navigationBarsPadding(),
                                 navController = navController,
                                 startDestination = if (deviceType == DeviceType.AIR) UpdateAir else UpdateTag
                             ) {
@@ -242,12 +255,12 @@ fun Body(
     title: String,
     content: @Composable () -> Unit
 ) {
-    val systemUiController = rememberSystemUiController()
-
     Surface(
         color = RuuviStationTheme.colors.background,
         modifier = Modifier
-            .systemBarsPadding()
+            .windowInsetsPadding(
+                WindowInsets.systemBars.only(WindowInsetsSides.Top + WindowInsetsSides.Horizontal)
+            )
             .fillMaxSize()
     ) {
         Column() {
@@ -255,6 +268,7 @@ fun Body(
             Column(
                 modifier = Modifier
                     .verticalScroll(rememberScrollState())
+                    .navigationBarsPadding()
                     .padding(RuuviStationTheme.dimensions.screenPadding)
             ) {
                 content()
@@ -262,12 +276,6 @@ fun Body(
         }
     }
 
-    val systemBarsColor = RuuviStationTheme.colors.systemBars
-    SideEffect {
-        systemUiController.setSystemBarsColor(
-            color = systemBarsColor
-        )
-    }
 }
 
 @Composable

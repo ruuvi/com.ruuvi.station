@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
@@ -159,6 +160,7 @@ fun ValueSheetContent(
             .heightIn(max = maxHeight.pxToDp())
             .padding(horizontal = RuuviStationTheme.dimensions.screenPadding)
             .verticalScroll(scrollState)
+            .navigationBarsPadding()
     ) {
         ValueSheetHeader(
             sheetValue = sheetValue,
@@ -223,6 +225,7 @@ fun AirValueSheetContent(
             .heightIn(max = maxHeight.pxToDp())
             .padding(horizontal = RuuviStationTheme.dimensions.screenPadding)
             .verticalScroll(scrollState)
+            .navigationBarsPadding()
     ) {
         ValueSheetHeader(
             sheetValue = sheetValue,
