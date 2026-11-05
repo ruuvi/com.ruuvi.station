@@ -1,27 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fillViewport="true"
     tools:context=".calibration.ui.CalibrateTemperatureFragment">
 
-    <ScrollView
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/valuesLayout"
+        android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/calibrationInstructionsTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
         android:layout_margin="@dimen/screenPadding"
-        style="@style/Scrollbars">
-        <TextView
-            android:id="@+id/calibrationInstructionsTextView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text=""
-            style="@style/ParagraphLink"
-            tools:text="@string/calibration_description"/>
-    </ScrollView>
+        android:text=""
+        style="@style/ParagraphLink"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="@string/calibration_description"/>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/valuesLayout"
@@ -32,6 +32,7 @@
         android:paddingStart="@dimen/screenStart"
         android:paddingEnd="@dimen/screenEnd"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/calibrationInstructionsTextView"
         app:layout_constraintBottom_toTopOf="@+id/calibrateButton"
         android:layout_marginBottom="@dimen/extended">
 
@@ -114,6 +115,7 @@
         android:layout_marginEnd="@dimen/normal"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/clearButton"
+        app:layout_constraintTop_toBottomOf="@id/valuesLayout"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintHorizontal_chainStyle="packed"
         />
@@ -124,12 +126,13 @@
         android:layout_height="wrap_content"
         style="@style/RoundButton"
         android:text="@string/clear"
-        android:layout_marginBottom="@dimen/button_bottom_padding"
         android:layout_marginStart="@dimen/normal"
         app:layout_constraintStart_toEndOf="@+id/calibrateButton"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="@id/calibrateButton"
+        app:layout_constraintBottom_toBottomOf="@id/calibrateButton"
         />
 
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>
