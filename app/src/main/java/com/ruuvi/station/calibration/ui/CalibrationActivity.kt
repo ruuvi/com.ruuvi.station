@@ -7,11 +7,16 @@ import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MenuItem
-import androidx.core.view.WindowCompat
+import androidx.activity.SystemBarStyle
+import androidx.activity.enableEdgeToEdge
+import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 import com.ruuvi.station.R
 import com.ruuvi.station.calibration.model.CalibrationType
 import com.ruuvi.station.databinding.ActivityCalibrationBinding
+import com.ruuvi.station.util.extensions.isDarkMode
 
 class CalibrationActivity : AppCompatActivity() {
 
@@ -23,7 +28,23 @@ class CalibrationActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        WindowCompat.setDecorFitsSystemWindows(window, false)
+        val useLightTheme = !isDarkMode()
+        val legacyNavigationBarColor = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+            ContextCompat.getColor(this, R.color.titan)
+        } else {
+            Color.TRANSPARENT
+        }
+        enableEdgeToEdge(
+            statusBarStyle = SystemBarStyle.auto(Color.TRANSPARENT, Color.TRANSPARENT) {
+                !useLightTheme
+            },
+            navigationBarStyle = SystemBarStyle.auto(Color.TRANSPARENT, legacyNavigationBarColor) {
+                !useLightTheme
+            }
+        )
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            window.isNavigationBarContrastEnforced = false
+        }
 
         binding = ActivityCalibrationBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -32,11 +53,26 @@ class CalibrationActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
 
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
-            window.statusBarColor = Color.parseColor("#01000000") // 1% black — invisible but not transparent
-        } else {
-            window.statusBarColor = Color.TRANSPARENT
+        if (useLightTheme) {
+            binding.root.setBackgroundColor(Color.WHITE)
+            binding.appBarLayout.setBackgroundColor(Color.WHITE)
+            val toolbarContentColor = ContextCompat.getColor(this, R.color.titan)
+            binding.toolbar.setTitleTextColor(toolbarContentColor)
+            binding.toolbar.navigationIcon?.setTint(toolbarContentColor)
         }
+
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { view, insets ->
+            val safeInsets = insets.getInsets(
+                WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout()
+            )
+            view.setPadding(safeInsets.left, safeInsets.top, safeInsets.right, 0)
+            binding.calibrationScroll.apply {
+                setPadding(paddingLeft, paddingTop, paddingRight, safeInsets.bottom)
+                clipToPadding = false
+            }
+            insets
+        }
+        ViewCompat.requestApplyInsets(binding.root)
 
         sensorId = intent.getStringExtra(SENSOR_ID) ?: ""
         calibrationType = intent.getSerializableExtra(CALIBRATION_TYPE) as CalibrationType

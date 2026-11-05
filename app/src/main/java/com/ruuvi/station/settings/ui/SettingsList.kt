@@ -68,7 +68,10 @@ fun SettingsList(
     val pressureUnit = viewModel.pressureUnit.observeAsState(viewModel.getPressureUnit())
     val globalUnitsSettingsEnabled = viewModel.shouldShowGlobalUnitsSettings()
 
-    LazyColumn(modifier = Modifier.fillMaxSize()) {
+    LazyColumn(
+        modifier = Modifier.fillMaxSize(),
+        contentPadding = WindowInsets.navigationBars.only(WindowInsetsSides.Bottom).asPaddingValues()
+    ) {
         if (shouldShowLanguageSelection()) {
             item {
                 SettingsElement(
