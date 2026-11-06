@@ -7,7 +7,7 @@ import android.widget.ScrollView
 
 /**
  * Bottom-only fade for XML scrolling content, including behind transparent navigation.
- * Defaults to 48dp; android:fadingEdgeLength can override it. No fade at the end.
+ * Defaults to 64sp plus navigation inset; android:fadingEdgeLength can override it. No fade at the end.
  */
 class BottomFadingEdgeScrollView @JvmOverloads constructor(
     context: Context,

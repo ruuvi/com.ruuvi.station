@@ -7,7 +7,7 @@ import android.widget.ListView
 
 /**
  * Bottom-only fade for XML lists, including behind transparent navigation.
- * Defaults to 48dp; android:fadingEdgeLength can override it. No fade at the end.
+ * Defaults to 64sp plus navigation inset; android:fadingEdgeLength can override it. No fade at the end.
  */
 class BottomFadingEdgeListView @JvmOverloads constructor(
     context: Context,

@@ -64,6 +64,8 @@ import com.ruuvi.station.app.ui.components.Paragraph
 import com.ruuvi.station.app.ui.components.RuuviButton
 import com.ruuvi.station.app.ui.components.RuuviTextButton
 import com.ruuvi.station.app.ui.components.limitScaleTo
+import com.ruuvi.station.app.ui.components.modifier.bottomFadingEdge
+import com.ruuvi.station.app.ui.components.modifier.defaultBottomFadeLength
 import com.ruuvi.station.app.ui.components.rememberResourceUri
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme.colors
@@ -584,6 +586,10 @@ fun DashboardItems(
     Box(modifier = pullToRefreshModifier) {
         LazyVerticalStaggeredGrid(
             modifier = Modifier
+                .bottomFadingEdge(
+                    dragDropListState.getLazyListState(),
+                    length = defaultBottomFadeLength() * 0.4f,
+                )
                 .dragGestureHandler(coroutineScope, dragDropListState, overscrollJob),
             columns = StaggeredGridCells.Adaptive(300.dp),
             contentPadding = PaddingValues(

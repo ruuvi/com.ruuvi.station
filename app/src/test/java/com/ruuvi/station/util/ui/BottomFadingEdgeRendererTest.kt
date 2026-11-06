@@ -19,6 +19,21 @@ import org.robolectric.annotation.GraphicsMode
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 class BottomFadingEdgeRendererTest {
     @Test
+    fun `default renderer fades across at least two text lines`() {
+        val bitmap = Bitmap.createBitmap(100, 200, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(bitmap)
+        canvas.drawColor(Color.WHITE)
+
+        BottomFadingEdgeRenderer(RuntimeEnvironment.getApplication(), null)
+            .draw(canvas, viewport()) { canvas.drawColor(Color.BLACK) }
+
+        assertEquals(Color.BLACK, bitmap.getPixel(50, 135))
+        assertTrue(Color.red(bitmap.getPixel(50, 151)) in 1..254)
+        assertTrue(Color.red(bitmap.getPixel(50, 199)) > Color.red(bitmap.getPixel(50, 151)))
+        bitmap.recycle()
+    }
+
+    @Test
     fun `XML length overrides the shared default and zero disables fading`() {
         for (length in listOf(0, 24, 300)) {
             val renderer = renderer(length)

@@ -10,6 +10,9 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.*
@@ -42,6 +45,25 @@ class BottomFadingEdgeComposeTest {
     @Test fun `scrolling column fades only at bottom and restores final content`() = verifyScrollable("column")
     @Test fun `lazy list fades only at bottom and restores final content`() = verifyScrollable("list")
     @Test fun `lazy grid fades only at bottom and restores final content`() = verifyScrollable("grid")
+    @Test fun `dashboard staggered grid fades only at bottom and restores final content`() = verifyScrollable("staggered")
+
+    @Test
+    fun `dashboard staggered grid uses its shorter custom fade height`() {
+        setContent("staggered", length = 64.dp * 0.4f)
+        val pixels = capture()
+
+        assertEquals(0f, pixels[50, 173].red, 0.01f)
+        assertTrue(pixels[50, 188].red in 0.05f..0.95f)
+        assertTrue(pixels[50, 199].red > pixels[50, 188].red)
+    }
+
+    @Test
+    fun `short dashboard staggered grid does not fade`() {
+        setContent("staggered", count = 1, length = 64.dp * 0.4f)
+        val pixels = capture()
+        assertEquals(0f, pixels[50, 20].red, 0.01f)
+        assertEquals(1f, pixels[50, 190].red, 0.01f)
+    }
 
     @Test fun `existing column fade handles the start middle and end`() = verifyExistingFade("column")
     @Test fun `existing list fade handles the start middle and end`() = verifyExistingFade("list")
@@ -51,6 +73,7 @@ class BottomFadingEdgeComposeTest {
     private fun verifyExistingFade(kind: String) {
         setContent(kind, existingFade = true)
         assertEquals(0f, capture()[50, 0].red, 0.01f)
+        assertTrue(capture()[50, 150].red in 0.05f..0.95f)
         assertTrue(capture()[50, 199].red > 0.8f)
         compose.runOnIdle { scrollToMiddle() }
         assertTrue(capture()[50, 0].red > 0.8f)
@@ -121,7 +144,8 @@ class BottomFadingEdgeComposeTest {
         setContent(kind)
         val pixels = capture()
         assertEquals(0f, pixels[50, 20].red, 0.01f)
-        assertEquals(0f, pixels[50, 151].red, 0.01f)
+        assertEquals(0f, pixels[50, 135].red, 0.01f)
+        assertTrue(pixels[50, 151].red in 0.05f..0.95f)
         assertTrue(pixels[50, 176].red in 0.05f..0.95f)
         assertTrue(pixels[50, 199].red > pixels[50, 176].red)
         compose.runOnIdle { scrollToEnd() }
@@ -133,7 +157,7 @@ class BottomFadingEdgeComposeTest {
     private fun setContent(
         kind: String,
         count: Int = 12,
-        length: Dp = 48.dp,
+        length: Dp? = null,
         customLength: (() -> Dp)? = null,
         background: Color = Color.White,
         foreground: Color = Color.Black,
@@ -141,7 +165,7 @@ class BottomFadingEdgeComposeTest {
     ) {
         compose.setContent {
             val scope = rememberCoroutineScope()
-            val requestedLength = customLength?.invoke() ?: length
+            val requestedLength = customLength?.invoke() ?: length ?: defaultBottomFadeLength()
             Box(Modifier.size(100.dp, 200.dp).background(background).testTag("viewport")) {
                 when (kind) {
                     "column" -> {
@@ -166,6 +190,16 @@ class BottomFadingEdgeComposeTest {
                             state = state,
                             contentPadding = PaddingValues(bottom = if (existingFade) 0.dp else 24.dp),
                         ) { items(count) { Box(Modifier.fillMaxWidth().height(50.dp).background(foreground)) } }
+                    }
+                    "staggered" -> {
+                        val state = rememberLazyStaggeredGridState()
+                        scrollToEnd = { scope.launch { state.scrollToItem(count * 2 - 1) } }
+                        LazyVerticalStaggeredGrid(
+                            columns = StaggeredGridCells.Fixed(2),
+                            modifier = Modifier.fillMaxSize().bottomFadingEdge(state, requestedLength),
+                            state = state,
+                            contentPadding = PaddingValues(bottom = 24.dp),
+                        ) { items(count * 2) { Box(Modifier.fillMaxWidth().height(50.dp).background(foreground)) } }
                     }
                     "grid" -> {
                         val state = rememberLazyGridState()

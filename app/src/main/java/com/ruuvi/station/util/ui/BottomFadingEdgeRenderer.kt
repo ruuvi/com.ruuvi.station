@@ -9,7 +9,10 @@ import android.graphics.PorterDuff
 import android.graphics.PorterDuffXfermode
 import android.graphics.Shader
 import android.util.AttributeSet
+import android.util.TypedValue
 import android.view.View
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 
 /** Shared View renderer; masks children without changing the background or system bars. */
 internal class BottomFadingEdgeRenderer(context: Context, attrs: AttributeSet?) {
@@ -19,10 +22,7 @@ internal class BottomFadingEdgeRenderer(context: Context, attrs: AttributeSet?) 
         intArrayOf(android.R.attr.fadingEdgeLength),
     ).let { attributes ->
         try {
-            attributes.getDimension(
-                0,
-                BottomFadingEdgeDefaults.LENGTH_DP * context.resources.displayMetrics.density,
-            )
+            if (attributes.hasValue(0)) attributes.getDimension(0, 0f) else null
         } finally {
             attributes.recycle()
         }
@@ -35,7 +35,16 @@ internal class BottomFadingEdgeRenderer(context: Context, attrs: AttributeSet?) 
 
     fun draw(canvas: Canvas, view: View, drawContent: () -> Unit) {
         val end = view.height.toFloat()
-        val start = (end - length).coerceAtLeast(0f)
+        val fadeLength = length ?: run {
+            val navigationBarInset = ViewCompat.getRootWindowInsets(view)
+                ?.getInsets(WindowInsetsCompat.Type.navigationBars())?.bottom ?: 0
+            TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_SP,
+                BottomFadingEdgeDefaults.LENGTH_SP.toFloat(),
+                view.resources.displayMetrics,
+            ) + navigationBarInset
+        }
+        val start = (end - fadeLength).coerceAtLeast(0f)
         if (!view.canScrollVertically(1) || end <= start) {
             drawContent()
             return
