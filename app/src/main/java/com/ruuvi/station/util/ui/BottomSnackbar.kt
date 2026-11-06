@@ -18,7 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.dp
 import com.google.android.material.snackbar.Snackbar as ViewSnackbar
-import com.ruuvi.station.app.ui.theme.Titan
+import com.ruuvi.station.app.ui.theme.SnackbarBackground
 import com.ruuvi.station.app.ui.theme.White
 
 private const val DEFAULT_SNACKBAR_DURATION_MILLIS = 2_000
@@ -44,7 +44,7 @@ fun Context.showBottomSnackbar(
 
         val density = resources.displayMetrics.density
         view.background = GradientDrawable().apply {
-            setColor(Titan.toArgb())
+            setColor(SnackbarBackground.toArgb())
             cornerRadius = SNACKBAR_CORNER_RADIUS_DP * density
         }
         (view.layoutParams as? ViewGroup.MarginLayoutParams)?.let { layoutParams ->
@@ -90,7 +90,7 @@ private fun RuuviSnackbar(snackbarData: SnackbarData) {
         snackbarData = snackbarData,
         modifier = Modifier.padding(horizontal = SNACKBAR_HORIZONTAL_MARGIN_DP.dp),
         shape = RoundedCornerShape(SNACKBAR_CORNER_RADIUS_DP.dp),
-        backgroundColor = Titan,
+        backgroundColor = SnackbarBackground,
         contentColor = White,
         actionColor = White,
     )
