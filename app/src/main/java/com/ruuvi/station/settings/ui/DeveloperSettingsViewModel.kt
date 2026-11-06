@@ -40,7 +40,9 @@ class DeveloperSettingsViewModel(
     }
 
     fun setDashboardCardTimeoutSeconds(seconds: Long) {
-        require(seconds >= 1) { "Dashboard card timeout must be at least 1 second" }
+        require(seconds >= MIN_DASHBOARD_CARD_TIMEOUT_SECONDS) {
+            "Dashboard card timeout must be at least 1 second"
+        }
         preferencesRepository.setDashboardCardTimeoutSeconds(seconds)
         _dashboardCardTimeoutSeconds.value = preferencesRepository.getDashboardCardTimeoutSeconds()
     }
@@ -69,5 +71,4 @@ class DeveloperSettingsViewModel(
     }
 }
 
-internal fun parseDashboardCardTimeoutSeconds(value: String): Long? =
-    value.toLongOrNull()?.takeIf { it >= 1 }
+private const val MIN_DASHBOARD_CARD_TIMEOUT_SECONDS = 1L

@@ -614,12 +614,23 @@ fun SensorCardLowBattery(modifier: Modifier = Modifier) {
             fontSize = ruuviStationFontsSizes.petite.limitScaleTo(1.5f),
         )
         Spacer(modifier = Modifier.width(4.dp))
-        Image(
-            modifier = Modifier.size(20.dp),
-            painter = painterResource(id = R.drawable.icon_battery_low),
-            contentDescription = null,
-            contentScale = ContentScale.Fit,
-        )
+        Box(
+            modifier = Modifier.size(24.dp),
+            contentAlignment = Alignment.Center,
+        ) {
+            Icon(
+                modifier = Modifier.size(24.dp),
+                painter = painterResource(id = R.drawable.icon_battery_low_body),
+                tint = White80,
+                contentDescription = null,
+            )
+            Image(
+                modifier = Modifier.size(24.dp),
+                painter = painterResource(id = R.drawable.icon_battery_low),
+                contentDescription = null,
+                contentScale = ContentScale.Fit,
+            )
+        }
     }
 }
 
@@ -657,7 +668,7 @@ fun SensorCardBottom(
         val lifecycleOwner = LocalLifecycleOwner.current
         val measurementUpdatedAt = sensor.latestMeasurement.updatedAt
         val source = sensor.getSource()
-        val sourceIconHeight = if (source == UpdateSource.Cloud) 16.dp else 24.dp
+        val sourceIconHeight = if (source == UpdateSource.Cloud) 16.dp else 12.dp
 
         fun measurementIsStale(): Boolean =
             (System.currentTimeMillis() - measurementUpdatedAt.time) / 1000 >= staleTimeoutSeconds
@@ -676,21 +687,60 @@ fun SensorCardBottom(
                 .padding(horizontal = 20.dp)
                 .fillMaxWidth()
         ) {
-            val icon = source.getIconResource()
+            val normalIcon = source.getIconResource()
+            val warningBadge = source.getIconResource(isStale = true)
+            val normalIconWidth = if (source == UpdateSource.Cloud) 22.dp else 12.dp
             Row(
                 horizontalArrangement = Arrangement.Start,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Icon(
-                    modifier = Modifier
-                        .size(
-                            width = if (source == UpdateSource.Cloud) 22.dp else 16.dp,
+                if (isStale) {
+                    val fontScale = LocalConfiguration.current.fontScale.coerceAtMost(1.5f)
+                    val isBluetooth = source == UpdateSource.Advertisement
+                    val warningIconHeight = if (isBluetooth) 20.dp * fontScale else 20.dp
+                    val staleSourceIconHeight = if (isBluetooth) {
+                        RuuviStationTheme.dimensions.mediumPlus * fontScale
+                    } else {
+                        sourceIconHeight
+                    }
+                    Box(
+                        modifier = Modifier
+                            .height(maxOf(staleSourceIconHeight, warningIconHeight))
+                            .clickable {
+                                context.showBottomSnackbar(R.string.sensor_measurements_outdated)
+                            },
+                        contentAlignment = Alignment.CenterStart,
+                    ) {
+                        Icon(
+                            modifier = if (isBluetooth) {
+                                Modifier.height(staleSourceIconHeight)
+                            } else {
+                                Modifier.size(
+                                    width = normalIconWidth,
+                                    height = staleSourceIconHeight,
+                                )
+                            },
+                            painter = painterResource(id = normalIcon),
+                            tint = White80,
+                            contentDescription = null,
+                        )
+                        Image(
+                            modifier = Modifier.height(warningIconHeight),
+                            painter = painterResource(id = warningBadge),
+                            contentDescription = stringResource(R.string.sensor_measurements_outdated),
+                        )
+                    }
+                } else {
+                    Icon(
+                        modifier = Modifier.size(
+                            width = normalIconWidth,
                             height = sourceIconHeight,
                         ),
-                    painter = painterResource(id = icon),
-                    tint = White80,
-                    contentDescription = null,
-                )
+                        painter = painterResource(id = normalIcon),
+                        tint = White80,
+                        contentDescription = null,
+                    )
+                }
                 Spacer(modifier = Modifier.width(SENSOR_VALUE_ITEM_SPACING))
                 Text(
                     style = RuuviStationTheme.typography.dashboardSecondary,
@@ -699,18 +749,7 @@ fun SensorCardBottom(
                     textAlign = TextAlign.Right,
                     text = updatedText,
                 )
-                if (isStale) {
-                    Spacer(modifier = Modifier.width(SENSOR_VALUE_ITEM_SPACING))
-                    Image(
-                        modifier = Modifier
-                            .height(sourceIconHeight * 0.8f)
-                            .clickable {
-                                context.showBottomSnackbar(R.string.sensor_measurements_outdated)
-                            },
-                        painter = painterResource(R.drawable.icon_warning),
-                        contentDescription = stringResource(R.string.sensor_measurements_outdated),
-                    )
-                }
+
             }
 
             if (sensor.isLowBattery()) {

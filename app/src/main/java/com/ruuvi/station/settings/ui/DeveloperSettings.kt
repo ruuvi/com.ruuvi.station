@@ -6,25 +6,34 @@ import android.webkit.WebResourceRequest
 import android.webkit.WebSettings.LOAD_DEFAULT
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material.ScaffoldState
+import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Remove
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.ruuvi.station.R
 import com.ruuvi.station.app.ui.components.*
-import com.ruuvi.station.app.ui.components.dialog.CustomContentDialog
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.feature.data.Feature
 import com.ruuvi.station.feature.data.FeatureFlag
@@ -39,7 +48,6 @@ fun DeveloperSettings(
     val devServerEnabled by viewModel.devServerEnabled.collectAsState()
     val useWebShare by viewModel.useWebShare.collectAsState()
     val dashboardCardTimeoutSeconds by viewModel.dashboardCardTimeoutSeconds.collectAsState()
-    var showDashboardCardTimeoutDialog by rememberSaveable { mutableStateOf(false) }
 
     PageSurfaceWithPadding {
         Column() {
@@ -69,12 +77,9 @@ fun DeveloperSettings(
             Paragraph(text = stringResource(id = R.string.use_dev_server_description))
 
             Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.extended))
-            TextEditWithCaptionButton(
-                title = "Sensor card timeout (seconds)",
-                value = dashboardCardTimeoutSeconds.toString(),
-                icon = painterResource(R.drawable.edit_20),
-                tint = RuuviStationTheme.colors.accent,
-                editAction = { showDashboardCardTimeoutDialog = true }
+            DashboardCardTimeoutCounter(
+                timeoutSeconds = dashboardCardTimeoutSeconds,
+                onTimeoutChanged = viewModel::setDashboardCardTimeoutSeconds,
             )
             Paragraph(text = "Show a warning icon when dashboard card measurements are not updated within this period.")
 
@@ -90,46 +95,114 @@ fun DeveloperSettings(
         }
     }
 
-    if (showDashboardCardTimeoutDialog) {
-        DashboardCardTimeoutDialog(
-            initialSeconds = dashboardCardTimeoutSeconds,
-            onSave = viewModel::setDashboardCardTimeoutSeconds,
-            onDismissRequest = { showDashboardCardTimeoutDialog = false }
+}
+
+@Composable
+private fun DashboardCardTimeoutCounter(
+    timeoutSeconds: Long,
+    onTimeoutChanged: (Long) -> Unit,
+) {
+    val canDecrease = timeoutSeconds > DASHBOARD_CARD_TIMEOUT_STEPS.first()
+    val canIncrease = timeoutSeconds < DASHBOARD_CARD_TIMEOUT_STEPS.last()
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .defaultMinSize(minHeight = RuuviStationTheme.dimensions.sensorSettingTitleHeight)
+            .padding(vertical = RuuviStationTheme.dimensions.mediumPlus),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(
+            modifier = Modifier
+                .weight(1f)
+                .padding(horizontal = RuuviStationTheme.dimensions.screenPadding),
+            text = "Sensor card timeout",
+            style = RuuviStationTheme.typography.subtitle,
+            maxLines = 2,
         )
+        Row(
+            horizontalArrangement = Arrangement.End,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            TimeoutCounterButton(
+                enabled = canDecrease,
+                onClick = {
+                    onTimeoutChanged(previousDashboardCardTimeout(timeoutSeconds))
+                },
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Remove,
+                    contentDescription = "Decrease sensor card timeout",
+                )
+            }
+            Text(
+                modifier = Modifier.widthIn(min = 72.dp),
+                text = formatDashboardCardTimeout(timeoutSeconds),
+                style = RuuviStationTheme.typography.paragraph,
+                textAlign = TextAlign.Center,
+                maxLines = 1,
+            )
+            TimeoutCounterButton(
+                enabled = canIncrease,
+                onClick = {
+                    onTimeoutChanged(nextDashboardCardTimeout(timeoutSeconds))
+                },
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = "Increase sensor card timeout",
+                )
+            }
+        }
     }
 }
 
 @Composable
-private fun DashboardCardTimeoutDialog(
-    initialSeconds: Long,
-    onSave: (Long) -> Unit,
-    onDismissRequest: () -> Unit
+private fun TimeoutCounterButton(
+    enabled: Boolean,
+    onClick: () -> Unit,
+    content: @Composable () -> Unit,
 ) {
-    var input by rememberSaveable { mutableStateOf(initialSeconds.toString()) }
-    val seconds = parseDashboardCardTimeoutSeconds(input)
-
-    CustomContentDialog(
-        title = "Sensor card timeout (seconds)",
-        validation = { seconds != null },
-        onDismissRequest = onDismissRequest,
-        onOkClickAction = {
-            onSave(checkNotNull(seconds))
-            onDismissRequest()
-        }
+    IconButton(
+        modifier = Modifier.size(48.dp),
+        enabled = enabled,
+        onClick = onClick,
     ) {
-        Paragraph(text = "Enter a whole number of seconds. Minimum: 1 second.")
-        TextFieldRuuvi(
-            modifier = Modifier.fillMaxWidth(),
-            value = input,
-            hint = stringResource(R.string.seconds),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-            onValueChange = { input = it }
-        )
-        if (seconds == null) {
-            WarningText(text = "Enter a valid whole number of at least 1 second.")
+        CompositionLocalProvider(
+            androidx.compose.material.LocalContentColor provides RuuviStationTheme.colors.accent,
+            androidx.compose.material.LocalContentAlpha provides if (enabled) 1f else 0.3f,
+        ) {
+            content()
         }
     }
 }
+
+internal fun previousDashboardCardTimeout(seconds: Long): Long =
+    DASHBOARD_CARD_TIMEOUT_STEPS.lastOrNull { it < seconds }
+        ?: DASHBOARD_CARD_TIMEOUT_STEPS.first()
+
+internal fun nextDashboardCardTimeout(seconds: Long): Long =
+    DASHBOARD_CARD_TIMEOUT_STEPS.firstOrNull { it > seconds }
+        ?: DASHBOARD_CARD_TIMEOUT_STEPS.last()
+
+internal fun formatDashboardCardTimeout(seconds: Long): String =
+    if (seconds < 60) {
+        "${seconds}s"
+    } else {
+        "${seconds / 60} min"
+    }
+
+private val DASHBOARD_CARD_TIMEOUT_STEPS = listOf(
+    1L,
+    10L,
+    30L,
+    60L,
+    5 * 60L,
+    10 * 60L,
+    15 * 60L,
+    30 * 60L,
+    60 * 60L,
+)
 
 @Composable
 fun FeatureSwitch(

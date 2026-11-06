@@ -8,7 +8,6 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNull
 import org.junit.Assert.assertThrows
 import org.junit.Before
 import org.junit.Test
@@ -98,16 +97,22 @@ class DeveloperSettingsViewModelTest {
     }
 
     @Test
-    fun `dashboard timeout input accepts custom whole seconds without preset limits`() {
-        for (seconds in listOf(1L, 60L, 137L, Long.MAX_VALUE)) {
-            assertEquals(seconds, parseDashboardCardTimeoutSeconds(seconds.toString()))
-        }
+    fun `dashboard timeout counter moves through readable preset periods`() {
+        assertEquals(1L, previousDashboardCardTimeout(1L))
+        assertEquals(10L, nextDashboardCardTimeout(1L))
+        assertEquals(1L, previousDashboardCardTimeout(10L))
+        assertEquals(30L, nextDashboardCardTimeout(10L))
+        assertEquals(60L, previousDashboardCardTimeout(137L))
+        assertEquals(300L, nextDashboardCardTimeout(137L))
+        assertEquals(1_800L, previousDashboardCardTimeout(3_600L))
+        assertEquals(3_600L, nextDashboardCardTimeout(3_600L))
     }
 
     @Test
-    fun `dashboard timeout input rejects empty invalid and overflowing values`() {
-        for (input in listOf("", "0", "-1", "1.5", "abc", "9223372036854775808")) {
-            assertNull(input, parseDashboardCardTimeoutSeconds(input))
-        }
+    fun `dashboard timeout counter formats seconds and minutes`() {
+        assertEquals("1s", formatDashboardCardTimeout(1L))
+        assertEquals("10s", formatDashboardCardTimeout(10L))
+        assertEquals("1 min", formatDashboardCardTimeout(60L))
+        assertEquals("60 min", formatDashboardCardTimeout(3_600L))
     }
 }
