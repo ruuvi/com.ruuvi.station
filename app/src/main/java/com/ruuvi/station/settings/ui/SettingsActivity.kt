@@ -3,28 +3,39 @@ package com.ruuvi.station.settings.ui
 import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
+import android.os.Build
 import android.os.Bundle
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.compose.setContent
 import androidx.compose.animation.*
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.only
+import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.platform.LocalContext
-import androidx.core.view.WindowCompat
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.ruuvi.station.R
 import com.ruuvi.station.app.ui.RuuviTopAppBar
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.RuuviTheme
@@ -41,11 +52,13 @@ class SettingsActivity : AppCompatActivity(), DIAware {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        WindowCompat.setDecorFitsSystemWindows(window, false)
+        enableEdgeToEdge()
 
         setContent {
             RuuviTheme() {
                 val navController = rememberNavController()
+                val backStackEntry by navController.currentBackStackEntryAsState()
+                val isSettingsRoot = (backStackEntry?.destination?.route ?: SettingsRoutes.LIST) == SettingsRoutes.LIST
                 val scaffoldState = rememberScaffoldState()
                 val systemUiController = rememberSystemUiController()
                 val context = LocalContext.current
@@ -67,14 +80,18 @@ class SettingsActivity : AppCompatActivity(), DIAware {
                 ) {
                     Scaffold(
                         modifier = Modifier
-                            .systemBarsPadding()
+                            .windowInsetsPadding(
+                                WindowInsets.systemBars.only(WindowInsetsSides.Top + WindowInsetsSides.Horizontal)
+                            )
                             .fillMaxSize(),
                         backgroundColor = RuuviStationTheme.colors.background,
                         topBar = { RuuviTopAppBar(title = title) },
                         scaffoldState = scaffoldState
                     ) { padding ->
                         NavHost(
-                            modifier = Modifier.padding(padding),
+                            modifier = Modifier
+                                .padding(padding)
+                                .then(if (isSettingsRoot) Modifier else Modifier.navigationBarsPadding()),
                             navController = navController,
                             startDestination = SettingsRoutes.LIST
                         ) {
@@ -297,10 +314,18 @@ class SettingsActivity : AppCompatActivity(), DIAware {
                 }
 
                 val systemBarsColor = RuuviStationTheme.colors.systemBars
+                val darkNavigationIcons = !isSystemInDarkTheme()
+                val navigationBarColor = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    Color.Transparent
+                } else {
+                    colorResource(R.color.titan)
+                }
                 SideEffect {
-                    systemUiController.setSystemBarsColor(
-                        color = systemBarsColor,
-                        darkIcons = false
+                    systemUiController.setStatusBarColor(color = systemBarsColor)
+                    systemUiController.setNavigationBarColor(
+                        color = navigationBarColor,
+                        darkIcons = darkNavigationIcons,
+                        navigationBarContrastEnforced = false
                     )
                 }
             }

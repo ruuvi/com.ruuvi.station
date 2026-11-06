@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -43,6 +44,7 @@ import com.ruuvi.station.R
 import com.ruuvi.station.app.ui.components.Paragraph
 import com.ruuvi.station.app.ui.components.Subtitle
 import com.ruuvi.station.app.ui.components.SwitchIndicatorRuuvi
+import com.ruuvi.station.app.ui.components.modifier.bottomFadingEdge
 import com.ruuvi.station.app.ui.components.dialog.MessageDialog
 import com.ruuvi.station.app.ui.components.dialog.RuuviConfirmDialog
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
@@ -87,6 +89,7 @@ fun VisibleMeasurements(
     allOptions: List<ListOption>
 ) {
     val context = LocalContext.current
+    val scrollState = rememberScrollState()
     var lastElementDialog by remember { mutableStateOf(false) }
     var confirmAlertDisableDialogUnit by remember { mutableStateOf<UnitType?>(null) }
     var confirmUseDefault by remember { mutableStateOf<List<UnitType>?>(null) }
@@ -163,7 +166,9 @@ fun VisibleMeasurements(
     Column (
         modifier = modifier
             .fillMaxSize()
-            .verticalScroll(rememberScrollState())
+            .bottomFadingEdge(scrollState)
+            .verticalScroll(scrollState)
+            .navigationBarsPadding()
     ) {
         Paragraph(
             text = stringResource(R.string.visible_measurements_description),

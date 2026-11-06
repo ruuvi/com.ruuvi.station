@@ -106,6 +106,7 @@ xmlns:tools="http://schemas.android.com/tools">
 
     <activity
         android:name=".network.ui.ShareSensorActivity"
+        android:windowSoftInputMode="adjustResize"
         android:exported="false"
         android:label="@string/share_sensor_title"
         android:theme="@style/AppTheme.NoActionBar" />

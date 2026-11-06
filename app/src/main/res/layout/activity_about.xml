@@ -6,7 +6,6 @@
     android:id="@+id/about_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
     android:background="?attr/colorToolbar"
     tools:context="com.ruuvi.station.about.ui.AboutActivity">
 
@@ -15,7 +14,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?attr/colorToolbar"
-        android:fitsSystemWindows="true"
         android:theme="@style/AppTheme.AppBarOverlay"
         app:elevation="0dp"
         app:layout_constraintEnd_toEndOf="parent"

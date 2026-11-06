@@ -9,11 +9,16 @@ import android.os.Bundle
 import android.view.MenuItem
 import android.widget.AdapterView
 import android.widget.Toast
-import androidx.core.view.WindowCompat
+import androidx.activity.SystemBarStyle
+import androidx.activity.enableEdgeToEdge
+import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.snackbar.BaseTransientBottomBar.LENGTH_LONG
 import com.google.android.material.snackbar.Snackbar
+import com.ruuvi.station.util.extensions.isDarkMode
 import com.ruuvi.station.util.extensions.viewModel
 import com.ruuvi.station.R
 import com.ruuvi.station.app.preferences.PreferencesRepository
@@ -44,18 +49,41 @@ class AddTagActivity : NfcActivity(R.layout.activity_add_tag), DIAware {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        WindowCompat.setDecorFitsSystemWindows(window, false)
+        val darkTheme = isDarkMode()
+        val legacyNavigationBarColor = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+            ContextCompat.getColor(this, R.color.titan)
+        } else {
+            Color.TRANSPARENT
+        }
+        enableEdgeToEdge(
+            statusBarStyle = SystemBarStyle.auto(Color.TRANSPARENT, Color.TRANSPARENT) {
+                darkTheme
+            },
+            navigationBarStyle = SystemBarStyle.auto(Color.TRANSPARENT, legacyNavigationBarColor) {
+                darkTheme
+            },
+        )
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            window.isNavigationBarContrastEnforced = false
+        }
 
         binding = ActivityAddTagBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setSupportActionBar(binding.toolbar)
         permissionsInteractor = PermissionsInteractor(this)
 
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
-            window.statusBarColor = Color.parseColor("#01000000")
-        } else {
-            window.statusBarColor = Color.TRANSPARENT
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { view, insets ->
+            val safeInsets = insets.getInsets(
+                WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout()
+            )
+            view.setPadding(safeInsets.left, safeInsets.top, safeInsets.right, 0)
+            binding.content.tagListView.apply {
+                setPadding(paddingLeft, paddingTop, paddingRight, safeInsets.bottom)
+                clipToPadding = false
+            }
+            insets
         }
+        ViewCompat.requestApplyInsets(binding.root)
 
         requestPermission()
         setupViewmodel()
@@ -116,7 +144,18 @@ class AddTagActivity : NfcActivity(R.layout.activity_add_tag), DIAware {
     private fun setupUI() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
+        if (!isDarkMode()) {
+            binding.root.setBackgroundColor(Color.WHITE)
+            binding.toolbarContainer.setBackgroundColor(Color.WHITE)
+            binding.appBarLayout.setBackgroundColor(Color.WHITE)
+
+            val toolbarContentColor = ContextCompat.getColor(this, R.color.titan)
+            binding.toolbar.setTitleTextColor(toolbarContentColor)
+            binding.toolbar.navigationIcon?.setTint(toolbarContentColor)
+        }
+
         binding.content.tagListView.adapter = adapter
+        binding.content.noSensorsLayout.isVisible = tags.isEmpty()
 
         binding.content.tagListView.onItemClickListener = AdapterView.OnItemClickListener { _, _, i, _ ->
             val tag = binding.content.tagListView.getItemAtPosition(i) as RuuviTagEntity
