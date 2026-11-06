@@ -109,6 +109,15 @@ sealed class UpdateSource() {
     abstract fun getDescriptionResource(): Int
     abstract fun getIconResource(): Int
 
+    fun getIconResource(isStale: Boolean): Int = if (isStale) {
+        when (this) {
+            Cloud -> R.drawable.gw_icon_warning
+            Advertisement -> R.drawable.bt_icon_warning
+        }
+    } else {
+        getIconResource()
+    }
+
     data object Cloud: UpdateSource() {
         override fun getDescriptionResource(): Int {
             return R.string.cloud

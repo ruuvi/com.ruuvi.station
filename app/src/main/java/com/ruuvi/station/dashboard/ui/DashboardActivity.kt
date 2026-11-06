@@ -28,6 +28,7 @@ import androidx.compose.ui.Alignment.Companion.TopEnd
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
@@ -1142,20 +1143,38 @@ fun ItemBottomUpdatedInfo(
         ) {
             val fontScale = min(LocalConfiguration.current.fontScale, 1.5f)
 
-            // Do not simplify this - glitches are possible due to gateway and bluetooth icon differences
-            val icon = sensor.getSource().getIconResource()
-            if (sensor.getSource() == UpdateSource.Cloud) {
-                Icon(
-                    modifier = Modifier.height(RuuviStationTheme.dimensions.mediumPlus * fontScale),
-                    painter = painterResource(id = icon),
-                    tint = RuuviStationTheme.colors.primary.copy(alpha = 0.5f),
-                    contentDescription = null,
-                )
+            val source = sensor.getSource()
+            val normalIcon = source.getIconResource()
+            val warningBadge = source.getIconResource(isStale = true)
+            val iconHeight = RuuviStationTheme.dimensions.mediumPlus * fontScale
+            val iconTint = RuuviStationTheme.colors.primary.copy(alpha = 0.8f)
+            if (isStale) {
+                val warningIconHeight = 20.dp * fontScale
+                Box(
+                    modifier = Modifier
+                        .height(warningIconHeight)
+                        .clickable {
+                            context.showBottomSnackbar(R.string.sensor_measurements_outdated)
+                        },
+                    contentAlignment = Alignment.CenterStart,
+                ) {
+                    Icon(
+                        modifier = Modifier.height(iconHeight),
+                        painter = painterResource(id = normalIcon),
+                        tint = iconTint,
+                        contentDescription = null,
+                    )
+                    Image(
+                        modifier = Modifier.height(warningIconHeight),
+                        painter = painterResource(id = warningBadge),
+                        contentDescription = stringResource(R.string.sensor_measurements_outdated),
+                    )
+                }
             } else {
                 Icon(
-                    modifier = Modifier.height(RuuviStationTheme.dimensions.mediumPlus * fontScale),
-                    painter = painterResource(id = icon),
-                    tint = RuuviStationTheme.colors.primary.copy(alpha = 0.5f),
+                    modifier = Modifier.height(iconHeight),
+                    painter = painterResource(id = normalIcon),
+                    tint = iconTint,
                     contentDescription = null,
                 )
             }
@@ -1167,19 +1186,6 @@ fun ItemBottomUpdatedInfo(
                 fontSize = ruuviStationFontsSizes.petite.limitScaleTo(1.5f),
                 text = updatedText,
             )
-
-            if (isStale) {
-                Spacer(modifier = Modifier.width(RuuviStationTheme.dimensions.small))
-                Image(
-                    modifier = Modifier
-                        .height(RuuviStationTheme.dimensions.mediumPlus * fontScale)
-                        .clickable {
-                            context.showBottomSnackbar(R.string.sensor_measurements_outdated)
-                        },
-                    painter = painterResource(R.drawable.icon_warning),
-                    contentDescription = stringResource(R.string.sensor_measurements_outdated),
-                )
-            }
 
             Spacer(modifier = Modifier.weight(1f))
 
@@ -1428,13 +1434,26 @@ fun LowBattery(modifier: Modifier = Modifier) {
             text = stringResource(id = R.string.low_battery),
         )
         Spacer(modifier = Modifier.width(RuuviStationTheme.dimensions.medium))
-        Image(
+        Box(
             modifier = Modifier
-                .height(12.dp)
+                .height(16.dp)
                 .align(CenterVertically),
-            painter = painterResource(id = R.drawable.icon_battery_low),
-            contentDescription = null
-        )
+            contentAlignment = Alignment.Center,
+        ) {
+            if (RuuviStationTheme.colors.dashboardCardBackground.luminance() < 0.5f) {
+                Icon(
+                    modifier = Modifier.height(16.dp),
+                    painter = painterResource(id = R.drawable.icon_battery_low_body),
+                    tint = RuuviStationTheme.colors.primary.copy(alpha = 0.8f),
+                    contentDescription = null,
+                )
+            }
+            Image(
+                modifier = Modifier.height(16.dp),
+                painter = painterResource(id = R.drawable.icon_battery_low),
+                contentDescription = null,
+            )
+        }
         Spacer(modifier = Modifier.width(RuuviStationTheme.dimensions.mediumPlus))
     }
 }
