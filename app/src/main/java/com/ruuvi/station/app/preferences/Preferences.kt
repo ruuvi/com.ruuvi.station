@@ -470,9 +470,11 @@ class Preferences (val context: Context) {
         get() = sharedPreferences.getLong(
             PREF_DASHBOARD_CARD_TIMEOUT_SECONDS,
             DEFAULT_DASHBOARD_CARD_TIMEOUT_SECONDS
-        )
+        ).coerceAtLeast(MIN_DASHBOARD_CARD_TIMEOUT_SECONDS)
         set(seconds) {
-            require(seconds >= 1) { "Dashboard card timeout must be at least 1 second" }
+            require(seconds >= MIN_DASHBOARD_CARD_TIMEOUT_SECONDS) {
+                "Dashboard card timeout must be at least 1 second"
+            }
             sharedPreferences.edit { putLong(PREF_DASHBOARD_CARD_TIMEOUT_SECONDS, seconds) }
         }
 
@@ -953,7 +955,8 @@ class Preferences (val context: Context) {
         private const val DEFAULT_REQUEST_FOR_REVIEW_DATE = 0L
         private const val DEFAULT_REQUEST_FOR_APP_UPDATE_DATE = 0L
         private const val DEFAULT_DARKMODE = AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
-        private const val DEFAULT_DASHBOARD_CARD_TIMEOUT_SECONDS = 120L
+        private const val MIN_DASHBOARD_CARD_TIMEOUT_SECONDS = 1L
+        private const val DEFAULT_DASHBOARD_CARD_TIMEOUT_SECONDS = 60 * 60L
         private const val CHART_SIZE_LEVEL_NORMAL = 1
         private const val CHART_SIZE_LEVEL_INCREASED = 2
         private const val CHART_SIZE_LEVEL_MAX = 3

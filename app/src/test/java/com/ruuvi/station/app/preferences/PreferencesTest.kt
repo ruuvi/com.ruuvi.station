@@ -118,13 +118,13 @@ class PreferencesTest {
     }
 
     @Test
-    fun `dashboard card timeout defaults to sixty seconds`() {
+    fun `dashboard card timeout defaults to sixty minutes`() {
         val sharedPreferences = mockk<SharedPreferences>(relaxed = true)
         every {
             sharedPreferences.getLong("pref_dashboard_card_timeout_seconds", any())
         } answers { secondArg<Long>() }
 
-        assertEquals(120L, preferencesUsing(sharedPreferences).dashboardCardTimeoutSeconds)
+        assertEquals(3_600L, preferencesUsing(sharedPreferences).dashboardCardTimeoutSeconds)
     }
 
     @Test
