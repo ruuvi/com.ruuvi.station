@@ -67,6 +67,7 @@ import com.ruuvi.station.app.ui.components.TextFieldRuuvi
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.RuuviTheme
 import com.ruuvi.station.util.extensions.viewModel
+import com.ruuvi.station.util.ui.RuuviSnackbarHost
 import org.kodein.di.DI
 import org.kodein.di.DIAware
 import org.kodein.di.android.closestDI
@@ -108,7 +109,8 @@ class ShareSensorActivity : AppCompatActivity() , DIAware {
                                 .fillMaxSize(),
                             backgroundColor = RuuviStationTheme.colors.background,
                             topBar = { RuuviTopAppBar(title = stringResource(id = R.string.share_sensor_title)) },
-                            scaffoldState = scaffoldState
+                            scaffoldState = scaffoldState,
+            snackbarHost = { RuuviSnackbarHost(it) },
                         ) { paddingValues ->
                             SharingWebView(scaffoldState, token, url)
                         }
@@ -183,7 +185,8 @@ fun ShareBody(
             .fillMaxSize(),
         backgroundColor = RuuviStationTheme.colors.background,
         topBar = { RuuviTopAppBar(title = stringResource(id = R.string.share_sensor_title)) },
-        scaffoldState = scaffoldState
+        scaffoldState = scaffoldState,
+        snackbarHost = { RuuviSnackbarHost(it) },
     ) { paddingValues ->
         LazyColumn(
             modifier = Modifier
