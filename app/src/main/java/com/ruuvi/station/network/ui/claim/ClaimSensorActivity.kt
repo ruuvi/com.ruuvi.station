@@ -27,6 +27,7 @@ import com.ruuvi.station.app.ui.components.dialog.CustomContentDialog
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.RuuviTheme
 import com.ruuvi.station.network.ui.SignInActivity
+import com.ruuvi.station.util.ui.RuuviSnackbarHost
 import com.ruuvi.station.util.base.NfcActivity
 import com.ruuvi.station.util.extensions.viewModel
 import org.kodein.di.DI
@@ -107,7 +108,8 @@ class ClaimSensorActivity : NfcActivity(), DIAware {
                 .fillMaxSize(),
             backgroundColor = RuuviStationTheme.colors.background,
             topBar = { RuuviTopAppBar(title = title) },
-            scaffoldState = scaffoldState
+            scaffoldState = scaffoldState,
+            snackbarHost = { RuuviSnackbarHost(it) },
         ) { padding ->
 
             AnimatedNavHost(
