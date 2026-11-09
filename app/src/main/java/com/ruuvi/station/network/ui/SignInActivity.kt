@@ -41,7 +41,6 @@ import com.ruuvi.station.app.ui.theme.Orange2
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.RuuviTheme
 import com.ruuvi.station.network.ui.components.SignInEmailTextField
-import com.ruuvi.station.util.ui.RuuviSnackbarHost
 import com.ruuvi.station.onboarding.ui.*
 import com.ruuvi.station.startup.ui.StartupActivity
 import com.ruuvi.station.util.extensions.scaledSp
@@ -87,8 +86,7 @@ class SignInActivity: AppCompatActivity(), DIAware {
                         .fillMaxSize()
                         .systemBarsPadding(),
                     backgroundColor = Color.Transparent,
-                    scaffoldState = scaffoldState,
-            snackbarHost = { RuuviSnackbarHost(it) },
+                    scaffoldState = scaffoldState
                 ) { padding ->
                     NavHost(
                         navController = navController,
