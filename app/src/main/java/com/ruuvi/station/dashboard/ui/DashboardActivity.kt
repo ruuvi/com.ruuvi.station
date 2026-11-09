@@ -37,6 +37,7 @@ import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
@@ -1203,12 +1204,13 @@ fun ItemBottomUpdatedInfo(
             Spacer(modifier = Modifier.width(RuuviStationTheme.dimensions.small))
 
             Text(
+                modifier = Modifier.weight(1f),
                 style = RuuviStationTheme.typography.dashboardSecondary,
                 fontSize = ruuviStationFontsSizes.petite.limitScaleTo(1.5f),
                 text = updatedText,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
             )
-
-            Spacer(modifier = Modifier.weight(1f))
 
             if (sensor.isLowBattery()) {
                 LowBattery()
