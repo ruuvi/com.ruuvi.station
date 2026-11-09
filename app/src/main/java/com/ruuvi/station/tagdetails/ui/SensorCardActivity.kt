@@ -77,7 +77,6 @@ import org.kodein.di.DIAware
 import org.kodein.di.android.closestDI
 import com.ruuvi.station.util.extensions.*
 import com.ruuvi.station.util.ui.pxToDp
-import com.ruuvi.station.util.ui.showBottomSnackbar
 import com.ruuvi.station.vico.model.ChartData
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow

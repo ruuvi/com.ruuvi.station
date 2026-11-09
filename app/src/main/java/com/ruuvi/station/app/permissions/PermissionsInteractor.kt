@@ -17,7 +17,6 @@ import androidx.core.content.ContextCompat
 import com.google.android.material.snackbar.Snackbar
 import com.ruuvi.station.BuildConfig
 import com.ruuvi.station.R
-import com.ruuvi.station.util.ui.showBottomSnackbar
 import timber.log.Timber
 
 
@@ -93,17 +92,15 @@ class PermissionsInteractor(private val activity: Activity) {
 
     fun showPermissionSnackbar() {
         val messageText = activity.getString(getPermissionsMissedMessage())
-        activity.showBottomSnackbar(
-            message = messageText,
-            duration = Snackbar.LENGTH_LONG,
-            actionLabel = activity.getString(R.string.settings),
-        ) {
+        val snackBar = Snackbar.make(activity.findViewById(android.R.id.content), messageText, Snackbar.LENGTH_LONG)
+        snackBar.setAction(activity.getString(R.string.settings)) {
             val intent = Intent()
             val uri = Uri.fromParts("package", activity.packageName, null)
             intent.action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
             intent.data = uri
             activity.startActivity(intent)
         }
+        snackBar.show()
     }
 
     private fun showLocationPermissionDialog(action: Runnable) {
