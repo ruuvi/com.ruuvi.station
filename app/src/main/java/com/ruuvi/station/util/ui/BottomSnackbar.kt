@@ -3,7 +3,6 @@ package com.ruuvi.station.util.ui
 import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
-import android.graphics.Color as AndroidColor
 import android.graphics.drawable.GradientDrawable
 import android.view.View
 import android.view.ViewGroup
@@ -16,17 +15,15 @@ import androidx.compose.material.SnackbarHost
 import androidx.compose.material.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.dp
 import com.google.android.material.snackbar.Snackbar as ViewSnackbar
+import com.ruuvi.station.app.ui.theme.SnackbarBackground
+import com.ruuvi.station.app.ui.theme.White
 
 private const val DEFAULT_SNACKBAR_DURATION_MILLIS = 2_000
 private const val SNACKBAR_CORNER_RADIUS_DP = 6f
-private const val SNACKBAR_HORIZONTAL_MARGIN_DP = 16
-private val SNACKBAR_BACKGROUND_COLOR = AndroidColor.rgb(67, 196, 181)
-private val SNACKBAR_TEXT_COLOR = AndroidColor.rgb(8, 60, 61)
-private val SnackbarBackgroundColor = Color(0xFF43C4B5)
-private val SnackbarContentColor = Color(0xFF083C3D)
+private const val SNACKBAR_HORIZONTAL_MARGIN_DP = 6
 
 fun Context.showBottomSnackbar(
     message: CharSequence,
@@ -38,8 +35,8 @@ fun Context.showBottomSnackbar(
     val content = activity.findViewById<View>(android.R.id.content) ?: return
 
     ViewSnackbar.make(content, message, duration).apply {
-        setTextColor(SNACKBAR_TEXT_COLOR)
-        setActionTextColor(SNACKBAR_TEXT_COLOR)
+        setTextColor(White.toArgb())
+        setActionTextColor(White.toArgb())
         setTextMaxLines(4)
         if (actionLabel != null && onAction != null) {
             setAction(actionLabel) { onAction() }
@@ -47,7 +44,7 @@ fun Context.showBottomSnackbar(
 
         val density = resources.displayMetrics.density
         view.background = GradientDrawable().apply {
-            setColor(SNACKBAR_BACKGROUND_COLOR)
+            setColor(SnackbarBackground.toArgb())
             cornerRadius = SNACKBAR_CORNER_RADIUS_DP * density
         }
         (view.layoutParams as? ViewGroup.MarginLayoutParams)?.let { layoutParams ->
@@ -93,9 +90,9 @@ private fun RuuviSnackbar(snackbarData: SnackbarData) {
         snackbarData = snackbarData,
         modifier = Modifier.padding(horizontal = SNACKBAR_HORIZONTAL_MARGIN_DP.dp),
         shape = RoundedCornerShape(SNACKBAR_CORNER_RADIUS_DP.dp),
-        backgroundColor = SnackbarBackgroundColor,
-        contentColor = SnackbarContentColor,
-        actionColor = SnackbarContentColor,
+        backgroundColor = SnackbarBackground,
+        contentColor = White,
+        actionColor = White,
     )
 }
 
