@@ -523,10 +523,14 @@ class NetworkDataSyncInteractorTest {
     }
 
     @Test
-    fun `empty cloud picture preserves a local user background`() = runBlocking {
+    fun `newer empty cloud picture clears a local user background`() = runBlocking {
         stubSensor(
-            denseSensor(),
-            localSettings().copy(userBackground = "file:///local-photo.jpg", imageUrl = "https://example.com/old.jpg"),
+            denseSensor().copy(lastUpdated = 200L),
+            localSettings().copy(
+                userBackground = "file:///local-photo.jpg",
+                imageUrl = "https://example.com/old.jpg",
+                backgroundTimestamp = 100L,
+            ),
         )
 
         syncAndJoin()
@@ -534,12 +538,31 @@ class NetworkDataSyncInteractorTest {
         verify {
             sensorSettingsRepository.updateSensorBackground(
                 sensorId = SYNC_SENSOR_ID,
-                userBackground = "file:///local-photo.jpg",
+                userBackground = null,
                 defaultBackground = 0,
                 networkBackground = null,
-                timestamp = 100L,
+                timestamp = 200L,
                 imageUrl = "",
             )
+        }
+        verify(exactly = 0) { sensorSettingsRepository.setDefaultSensorBackground(any(), any()) }
+    }
+
+    @Test
+    fun `older empty cloud picture preserves a newer local user background`() = runBlocking {
+        stubSensor(
+            denseSensor(),
+            localSettings().copy(
+                userBackground = "file:///local-photo.jpg",
+                imageUrl = "https://example.com/old.jpg",
+                backgroundTimestamp = 200L,
+            ),
+        )
+
+        syncAndJoin()
+
+        verify(exactly = 0) {
+            sensorSettingsRepository.updateSensorBackground(any(), any(), any(), any(), any(), any())
         }
         verify(exactly = 0) { sensorSettingsRepository.setDefaultSensorBackground(any(), any()) }
     }

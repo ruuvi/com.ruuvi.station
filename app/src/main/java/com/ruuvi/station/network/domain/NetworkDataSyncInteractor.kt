@@ -541,7 +541,7 @@ class NetworkDataSyncInteractor (
 
             if (sensorSettings != null) {
                 if (sensor.picture.isBlank()) {
-                    setDefaultBackgroundLocally(sensor.sensor, sensorSettings)
+                    applyNetworkDefaultBackground(sensor, sensorSettings)
                 } else {
                     setSensorImage(sensor, sensorSettings)
                 }
@@ -603,6 +603,22 @@ class NetworkDataSyncInteractor (
         } catch (e: Exception) {
             null
         }
+    }
+
+    private fun applyNetworkDefaultBackground(
+        sensor: SensorsDenseInfo,
+        sensorSettings: SensorSettings,
+    ) {
+        if (sensor.lastUpdated < sensorSettings.backgroundTimestamp) return
+
+        sensorSettingsRepository.updateSensorBackground(
+            sensorId = sensor.sensor,
+            userBackground = null,
+            defaultBackground = 0,
+            networkBackground = null,
+            timestamp = sensor.lastUpdated,
+            imageUrl = "",
+        )
     }
 
     private fun setDefaultBackgroundLocally(sensorId: String, sensorSettings: SensorSettings) {
