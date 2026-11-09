@@ -77,7 +77,6 @@ import org.kodein.di.DIAware
 import org.kodein.di.android.closestDI
 import com.ruuvi.station.util.extensions.*
 import com.ruuvi.station.util.ui.pxToDp
-import com.ruuvi.station.util.ui.showBottomSnackbar
 import com.ruuvi.station.vico.model.ChartData
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
@@ -648,7 +647,8 @@ fun SensorCardImage(
 fun SensorCardBottom(
     sensor: RuuviTag,
     staleTimeoutSeconds: Long,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onShowStaleSnackbar: () -> Unit = {},
 ) {
     if (sensor.latestMeasurement != null) {
         val context = LocalContext.current
@@ -696,9 +696,7 @@ fun SensorCardBottom(
                     Box(
                         modifier = Modifier
                             .height(maxOf(staleSourceIconHeight, warningIconHeight))
-                            .clickable {
-                                context.showBottomSnackbar(R.string.sensor_measurements_outdated)
-                            },
+                            .clickable(onClick = onShowStaleSnackbar),
                         contentAlignment = Alignment.CenterStart,
                     ) {
                         Icon(
@@ -753,7 +751,7 @@ fun SensorCardBottom(
 
         LaunchedEffect(sensor.id, isStale) {
             if (isStale) {
-                context.showBottomSnackbar(R.string.sensor_measurements_outdated)
+                onShowStaleSnackbar()
             }
         }
 

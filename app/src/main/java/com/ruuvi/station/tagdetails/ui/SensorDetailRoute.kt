@@ -82,7 +82,6 @@ import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.RuuviTheme
 import com.ruuvi.station.app.ui.theme.Titan70
 import com.ruuvi.station.graph.ChartControlElement2
-import com.ruuvi.station.util.ui.RuuviSnackbarHost
 import com.ruuvi.station.graph.ChartsView
 import com.ruuvi.station.nfc.ui.NfcInteractor
 import com.ruuvi.station.tag.domain.RuuviTag
@@ -230,6 +229,7 @@ private fun SensorDetailScreen(
     val pagerFlingBehavior = PagerDefaults.flingBehavior(state = pagerState)
     val titlePagePosition = pagerState.currentPage + pagerState.currentPageOffsetFraction
     val context = LocalContext.current
+    val staleSnackbarMessage = stringResource(R.string.sensor_measurements_outdated)
 
     LaunchedEffect(selectedSensorId, sensorIds) {
         val selectedPage = sensorIds.indexOf(selectedSensorId)
@@ -247,10 +247,6 @@ private fun SensorDetailScreen(
             .collect { page ->
                 latestSensorIds.getOrNull(page)?.let(viewModel::saveSelected)
             }
-    }
-
-    LaunchedEffect(currentSensor?.id, destination) {
-        scaffoldState.snackbarHostState.currentSnackbarData?.dismiss()
     }
 
     BackHandler(enabled = nestedSettings) {
@@ -434,6 +430,13 @@ private fun SensorDetailScreen(
                             sensor = currentSensor,
                             staleTimeoutSeconds = staleTimeoutSeconds,
                             modifier = Modifier.height(24.dp),
+                            onShowStaleSnackbar = {
+                                coroutineScope.launch {
+                                    scaffoldState.snackbarHostState.showSnackbar(
+                                        staleSnackbarMessage
+                                    )
+                                }
+                            },
                         )
                     }
                 }

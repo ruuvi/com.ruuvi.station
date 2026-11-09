@@ -43,7 +43,6 @@ val Orange2 = Color(0xFFF8B075)
 val Milky = Color(0xFFD6EAE7)
 val Milky2 = Color(0xFFEEF2F2)
 val MintMist70 = Color(0xB3D9EFEB)
-val SnackbarBackground = Color(0xFF323232)
 val DefaultSensorBackgroundDark = Color(0xFF2D605C)
 val DefaultSensorBackgroundLight = Color(0xFFD8EDEA)
 
