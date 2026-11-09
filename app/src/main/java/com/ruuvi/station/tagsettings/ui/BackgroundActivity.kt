@@ -33,7 +33,6 @@ import com.ruuvi.station.app.ui.components.*
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.RuuviTheme
 import com.ruuvi.station.util.extensions.viewModel
-import com.ruuvi.station.util.ui.RuuviSnackbarHost
 import org.kodein.di.DI
 import org.kodein.di.DIAware
 import org.kodein.di.android.closestDI
@@ -114,8 +113,7 @@ class BackgroundActivity : AppCompatActivity(), DIAware {
                 .systemBarsPadding(),
             backgroundColor = RuuviStationTheme.colors.background,
             topBar = { RuuviTopAppBar(title = stringResource(id = R.string.change_background)) },
-            scaffoldState = scaffoldState,
-        snackbarHost = { RuuviSnackbarHost(it) },
+            scaffoldState = scaffoldState
         ) { paddingValues ->
 
             LazyVerticalGrid(

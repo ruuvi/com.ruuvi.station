@@ -10,6 +10,8 @@ import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.lifecycleScope
+import com.google.android.material.snackbar.BaseTransientBottomBar.LENGTH_SHORT
+import com.google.android.material.snackbar.Snackbar
 import com.ruuvi.station.BuildConfig
 import com.ruuvi.station.R
 import com.ruuvi.station.about.model.AppStats
@@ -17,7 +19,6 @@ import com.ruuvi.station.database.domain.LocalDatabase
 import com.ruuvi.station.databinding.ActivityAboutBinding
 import com.ruuvi.station.util.extensions.makeWebLinks
 import com.ruuvi.station.util.extensions.viewModel
-import com.ruuvi.station.util.ui.showBottomSnackbar
 import org.kodein.di.DI
 import org.kodein.di.DIAware
 import org.kodein.di.android.closestDI
@@ -95,14 +96,14 @@ class AboutActivity : AppCompatActivity(R.layout.activity_about), DIAware {
             counter++
             val developerSettingsEnabled = viewModel.isDeveloperSettingsEnabled()
             if (counter == 15 && !developerSettingsEnabled) {
-                showBottomSnackbar("You're almost there")
+                Snackbar.make(binding.root, "You're almost there", LENGTH_SHORT).show()
             }
             if (counter == 20 && !developerSettingsEnabled) {
-                showBottomSnackbar("You can see developer settings now")
+                Snackbar.make(binding.root, "You can see developer settings now", LENGTH_SHORT).show()
                 viewModel.enableDeveloperSettings()
             }
             if (counter == 15 && developerSettingsEnabled) {
-                showBottomSnackbar("You already can see settings options")
+                Snackbar.make(binding.root, "You already can see settings options", LENGTH_SHORT).show()
             }
         }
     }
