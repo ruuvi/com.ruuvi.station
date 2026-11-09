@@ -101,13 +101,13 @@ class RuuviScannerApplication : Application(), DIAware {
         foreground.addListener(listener)
 
         applyDarkModeSettings()
-        scheduleLegacySimpleWidgetRerender()
+        scheduleSimpleWidgetRerender()
         scheduleWidgetPreviewPublication()
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
-        scheduleLegacySimpleWidgetRerender()
+        scheduleSimpleWidgetRerender()
         scheduleWidgetPreviewPublication()
     }
 
@@ -140,11 +140,9 @@ class RuuviScannerApplication : Application(), DIAware {
         }
     }
 
-    private fun scheduleLegacySimpleWidgetRerender() {
-        // Android 12+ can retain both day and night image tints in RemoteViews.
-        // Older hosts resolve the tint while composing, so they need a state-only rerender.
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) return
-
+    private fun scheduleSimpleWidgetRerender() {
+        // Bitmap values and native labels must share the current font scale and density.
+        // Older hosts also need their resolved day/night image tints refreshed.
         simpleWidgetRerenderJob?.cancel()
         simpleWidgetRerenderJob = widgetUpdateScope.launch {
             delay(WIDGET_CONFIGURATION_SETTLE_DELAY_MILLIS)

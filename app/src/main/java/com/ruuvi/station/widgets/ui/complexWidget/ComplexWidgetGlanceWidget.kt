@@ -5,6 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.core.os.ConfigurationCompat
 import androidx.datastore.preferences.core.Preferences
 import androidx.glance.GlanceId
@@ -51,13 +52,13 @@ import com.ruuvi.station.widgets.data.SensorValue
 import com.ruuvi.station.widgets.data.WidgetType
 import com.ruuvi.station.widgets.ui.glance.GlanceColors
 import com.ruuvi.station.widgets.ui.glance.GlanceFontUtils
+import com.ruuvi.station.widgets.ui.glance.CustomFontText
 import com.ruuvi.station.widgets.ui.glance.RefreshButton
 import com.ruuvi.station.widgets.ui.glance.WidgetContentPaddingDefaults
 import com.ruuvi.station.widgets.ui.glance.WidgetRefreshButtonDefaults
-import com.ruuvi.station.widgets.ui.glance.getEffectiveFontScale
 import com.ruuvi.station.widgets.ui.glance.getZoomFactor
 import com.ruuvi.station.widgets.ui.glance.scaledBy
-import com.ruuvi.station.widgets.ui.glance.toWidgetSp
+import com.ruuvi.station.widgets.ui.glance.toFixedWidgetSp
 import com.ruuvi.station.widgets.ui.simpleWidget.SimpleWidget
 import com.ruuvi.station.widgets.update.WidgetRefreshScheduler
 import com.ruuvi.station.widgets.update.resolveAppWidgetId
@@ -119,16 +120,8 @@ private fun ComplexWidgetContent(
     val context = LocalContext.current
     val zoomFactor = getZoomFactor(context)
     val typographyScale = if (isPreview) GENERATED_PREVIEW_TYPOGRAPHY_SCALE else 1f
-    val measurementDescriptionFontScale = getEffectiveFontScale(
-        context = context,
-        referenceFontSizeSp = ruuviStationFontsSizes.petite
-            .scaledBy(typographyScale)
-            .toWidgetSp(context)
-            .value
-    )
     val layout = complexWidgetLayoutConfig(
         width = LocalSize.current.width,
-        fontScale = measurementDescriptionFontScale,
         maximumColumns = sensors.maxOfOrNull { it.sensorValues.size } ?: 1
     )
 
@@ -154,7 +147,7 @@ private fun ComplexWidgetContent(
                         modifier = GlanceModifier.fillMaxWidth(),
                         style = TextStyle(
                             color = GlanceColors.widgetSensorName,
-                            fontSize = ruuviStationFontsSizes.normal.toWidgetSp(context),
+                            fontSize = ruuviStationFontsSizes.extended.toFixedWidgetSp(context),
                             fontWeight = FontWeight.Bold,
                             textAlign = TextAlign.Center
                         ),
@@ -183,6 +176,9 @@ private fun ComplexWidgetContent(
                                 zoomFactor,
                                 typographyScale
                             )
+                        }
+
+                        item {
                             Spacer(
                                 modifier = GlanceModifier.height(
                                     layout.headerBottomSpacing / zoomFactor
@@ -294,10 +290,10 @@ private fun SensorHeader(
             text = sensor.displayName,
             modifier = GlanceModifier.defaultWeight(),
             style = TextStyle(
-                color = GlanceColors.widgetSensorName,
-                fontSize = ruuviStationFontsSizes.normal
+                color = GlanceColors.widgetSensorTitle,
+                fontSize = ruuviStationFontsSizes.extended
                     .scaledBy(typographyScale)
-                    .toWidgetSp(context),
+                    .toFixedWidgetSp(context),
                 fontWeight = FontWeight.Bold
             ),
             maxLines = 1
@@ -376,9 +372,9 @@ private fun SensorFooter(
                 modifier = GlanceModifier.defaultWeight(),
                 style = TextStyle(
                     color = GlanceColors.widgetSensorName,
-                    fontSize = ruuviStationFontsSizes.tiny2
+                    fontSize = ruuviStationFontsSizes.small
                         .scaledBy(typographyScale)
-                        .toWidgetSp(context)
+                        .toFixedWidgetSp(context)
                 ),
                 maxLines = 1
             )
@@ -398,12 +394,12 @@ private fun MeasurementItem(
     typographyScale: Float
 ) {
     val context = LocalContext.current
-    val valueFontSize = ruuviStationFontsSizes.compact
+    val valueFontSize = ruuviStationFontsSizes.normal
         .scaledBy(typographyScale)
-        .toWidgetSp(context)
-    val secondaryFontSize = ruuviStationFontsSizes.petite
+        .toFixedWidgetSp(context)
+    val secondaryFontSize = ruuviStationFontsSizes.miniature
         .scaledBy(typographyScale)
-        .toWidgetSp(context)
+        .toFixedWidgetSp(context)
     val valueBaselineOffset = GlanceFontUtils.measureSystemFontBaselineOffset(
         context = context,
         fontSize = valueFontSize,
@@ -570,9 +566,9 @@ internal fun complexWidgetLayoutConfig(
     outerPadding = COMPLEX_WIDGET_OUTER_PADDING,
     horizontalPadding = COMPLEX_WIDGET_HORIZONTAL_PADDING,
     headerTopPadding = COMPLEX_WIDGET_HORIZONTAL_PADDING,
-    headerBottomSpacing = 12.dp,
-    rowVerticalPadding = 3.dp,
-    footerTopSpacing = 8.dp,
+    headerBottomSpacing = 10.dp,
+    rowVerticalPadding = 1.dp,
+    footerTopSpacing = 10.dp,
     footerBottomPadding = COMPLEX_WIDGET_HORIZONTAL_PADDING,
     measurementColumnSpacing = COMPLEX_WIDGET_COLUMN_SPACING,
     measurementUnitSpacing = COMPLEX_WIDGET_MEASUREMENT_UNIT_SPACING,
