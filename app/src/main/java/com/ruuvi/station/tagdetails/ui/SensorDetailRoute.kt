@@ -249,6 +249,10 @@ private fun SensorDetailScreen(
             }
     }
 
+    LaunchedEffect(currentSensor?.id, destination) {
+        scaffoldState.snackbarHostState.currentSnackbarData?.dismiss()
+    }
+
     BackHandler(enabled = nestedSettings) {
         onNestedSettingsBack()
     }
