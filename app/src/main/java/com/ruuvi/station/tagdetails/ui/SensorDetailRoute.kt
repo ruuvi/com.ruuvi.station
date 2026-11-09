@@ -429,7 +429,7 @@ private fun SensorDetailScreen(
                         SensorCardBottom(
                             sensor = currentSensor,
                             staleTimeoutSeconds = staleTimeoutSeconds,
-                            modifier = Modifier.height(24.dp),
+                            modifier = Modifier.height(44.dp),
                             onShowStaleSnackbar = {
                                 coroutineScope.launch {
                                     scaffoldState.snackbarHostState.showSnackbar(
@@ -784,7 +784,7 @@ private fun SensorDetailBackground(
 }
 
 @Composable
-private fun SensorDetailSystemBars(
+internal fun SensorDetailSystemBars(
     useTransparentStatusBar: Boolean,
     useTransparentNavigationBar: Boolean,
     useDarkTheme: Boolean,
