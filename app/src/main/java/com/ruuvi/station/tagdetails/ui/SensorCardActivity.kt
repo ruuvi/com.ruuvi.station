@@ -136,7 +136,7 @@ class SensorCardActivity : NfcActivity(), DIAware {
         argument = TagSettingsViewModelArgs(
             tagId = sensorId,
             newSensor = intent.getBooleanExtra(ARGUMENT_NEW_SENSOR, false) &&
-                sensorId == intent.getStringExtra(ARGUMENT_SENSOR_ID),
+                    sensorId == intent.getStringExtra(ARGUMENT_SENSOR_ID),
             openRemove = false,
         )
     )
@@ -151,10 +151,11 @@ class SensorCardActivity : NfcActivity(), DIAware {
         argument = RemoveSensorViewModelArgs(sensorId),
     )
 
-    private fun visibleMeasurementsViewModel(sensorId: String): VisibleMeasurementsViewModel = keyedViewModel(
-        key = "visible-measurements:$sensorId",
-        argument = sensorId,
-    )
+    private fun visibleMeasurementsViewModel(sensorId: String): VisibleMeasurementsViewModel =
+        keyedViewModel(
+            key = "visible-measurements:$sensorId",
+            argument = sensorId,
+        )
 
     private fun ledControlViewModel(sensorId: String): LedControlViewModel = keyedViewModel(
         key = "led-control:$sensorId",
@@ -284,7 +285,10 @@ class SensorCardActivity : NfcActivity(), DIAware {
                     data = identity
                 },
             )
-                .getPendingIntent(requestCode, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+                .getPendingIntent(
+                    requestCode,
+                    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+                )
         }
 
         private fun createIntent(
@@ -504,13 +508,19 @@ fun SensorValues(
             .fillMaxWidth()
             .padding(horizontal = horizontalPadding),
         verticalAlignment = Alignment.Top,
-        horizontalArrangement = Arrangement.spacedBy(SENSOR_VALUE_ITEM_SPACING, Alignment.CenterHorizontally)
+        horizontalArrangement = Arrangement.spacedBy(
+            SENSOR_VALUE_ITEM_SPACING,
+            Alignment.CenterHorizontally
+        )
     ) {
         for (columnValues in valuesDistributed) {
             Column(
                 modifier = Modifier
                     .weight(1f),
-                verticalArrangement = Arrangement.spacedBy(SENSOR_VALUE_ITEM_SPACING, Alignment.Top),
+                verticalArrangement = Arrangement.spacedBy(
+                    SENSOR_VALUE_ITEM_SPACING,
+                    Alignment.Top
+                ),
                 horizontalAlignment = Alignment.Start
             ) {
                 if (columnValues.isEmpty()) {
@@ -724,12 +734,8 @@ fun SensorCardBottom(
                             width = normalIconWidth,
                             height = sourceIconHeight,
                         ),
-                    painter = painterResource(id = icon),
-                    tint = White50,
-                    contentDescription = null,
-                )
                         painter = painterResource(id = normalIcon),
-                        tint = White80,
+                        tint = White50,
                         contentDescription = null,
                     )
                 }

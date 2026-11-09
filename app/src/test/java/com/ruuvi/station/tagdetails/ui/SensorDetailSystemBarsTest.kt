@@ -29,6 +29,7 @@ class SensorDetailSystemBarsTest {
             RuuviTheme(darkTheme = darkTheme) {
                 SensorDetailSystemBars(
                     useTransparentStatusBar = sensorBackdrop,
+                    useTransparentNavigationBar = sensorBackdrop,
                     useDarkTheme = darkTheme,
                 )
             }
