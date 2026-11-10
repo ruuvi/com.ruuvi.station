@@ -1,5 +1,6 @@
 package com.ruuvi.station.bluetooth.di
 
+import android.app.Application
 import android.app.PendingIntent
 import android.content.Context
 import com.ruuvi.station.R
@@ -19,6 +20,8 @@ import com.ruuvi.station.util.test.FakeScanResultsSender
 import com.ruuvi.station.widgets.ui.complexWidget.ComplexWidgetProvider
 import com.ruuvi.station.widgets.ui.simpleWidget.SimpleWidget
 import org.kodein.di.DI
+import org.kodein.di.DIAware
+import org.kodein.di.direct
 import org.kodein.di.bind
 import org.kodein.di.instance
 import org.kodein.di.singleton
@@ -42,6 +45,7 @@ object BluetoothScannerInjectionModule {
         bind<IRuuviTagScanner.OnTagFoundListener>() with singleton { instance<DefaultOnTagFoundListener>() }
 
         bind<DefaultOnTagFoundListener>() with singleton {
+            val application = instance<Application>()
             DefaultOnTagFoundListener(
                 instance(),
                 instance(),
@@ -50,7 +54,7 @@ object BluetoothScannerInjectionModule {
                 instance(),
                 instance(),
                 instance(),
-                { instance<AutomaticGattSyncInteractor>() },
+                { (application as DIAware).di.direct.instance<AutomaticGattSyncInteractor>() },
             )
         }
 
