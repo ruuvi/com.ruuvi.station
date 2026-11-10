@@ -86,7 +86,13 @@ class SettingsActivity : AppCompatActivity(), DIAware {
                             .fillMaxSize(),
                         backgroundColor = RuuviStationTheme.colors.background,
                         topBar = { RuuviTopAppBar(title = title) },
-                        scaffoldState = scaffoldState
+                        scaffoldState = scaffoldState,
+                        snackbarHost = {
+                            SnackbarHost(
+                                hostState = it,
+                                modifier = Modifier.navigationBarsPadding(),
+                            )
+                        },
                     ) { padding ->
                         NavHost(
                             modifier = Modifier
