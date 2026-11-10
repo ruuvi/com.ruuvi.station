@@ -6,9 +6,11 @@ import android.content.ContextWrapper
 import android.graphics.drawable.GradientDrawable
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Snackbar
 import androidx.compose.material.SnackbarData
 import androidx.compose.material.SnackbarHost
@@ -16,10 +18,16 @@ import androidx.compose.material.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.core.content.res.ResourcesCompat
+import androidx.core.graphics.TypefaceCompat
+import com.ruuvi.station.R
 import com.google.android.material.snackbar.Snackbar as ViewSnackbar
 import com.ruuvi.station.app.ui.theme.SnackbarBackground
-import com.ruuvi.station.app.ui.theme.White
+import com.ruuvi.station.app.ui.theme.Titan
 
 private const val DEFAULT_SNACKBAR_DURATION_MILLIS = 2_000
 private const val SNACKBAR_CORNER_RADIUS_DP = 6f
@@ -35,12 +43,17 @@ fun Context.showBottomSnackbar(
     val content = activity.findViewById<View>(android.R.id.content) ?: return
 
     ViewSnackbar.make(content, message, duration).apply {
-        setTextColor(White.toArgb())
-        setActionTextColor(White.toArgb())
+        setTextColor(Titan.toArgb())
+        setActionTextColor(Titan.toArgb())
         setTextMaxLines(4)
         if (actionLabel != null && onAction != null) {
             setAction(actionLabel) { onAction() }
         }
+
+        val font = ResourcesCompat.getFont(context, R.font.mulish_regular)
+        val semibold = TypefaceCompat.create(context, font, 600, false)
+        view.findViewById<TextView>(com.google.android.material.R.id.snackbar_text).typeface = semibold
+        view.findViewById<TextView>(com.google.android.material.R.id.snackbar_action).typeface = semibold
 
         val density = resources.displayMetrics.density
         view.background = GradientDrawable().apply {
@@ -86,14 +99,28 @@ fun RuuviSnackbarHost(
 
 @Composable
 private fun RuuviSnackbar(snackbarData: SnackbarData) {
-    Snackbar(
-        snackbarData = snackbarData,
-        modifier = Modifier.padding(horizontal = SNACKBAR_HORIZONTAL_MARGIN_DP.dp),
-        shape = RoundedCornerShape(SNACKBAR_CORNER_RADIUS_DP.dp),
-        backgroundColor = SnackbarBackground,
-        contentColor = White,
-        actionColor = White,
-    )
+    val fontFamily = FontFamily(Font(R.font.mulish_regular))
+    MaterialTheme(
+        typography = MaterialTheme.typography.copy(
+            body2 = MaterialTheme.typography.body2.copy(
+                fontFamily = fontFamily,
+                fontWeight = FontWeight.SemiBold,
+            ),
+            button = MaterialTheme.typography.button.copy(
+                fontFamily = fontFamily,
+                fontWeight = FontWeight.SemiBold,
+            ),
+        ),
+    ) {
+        Snackbar(
+            snackbarData = snackbarData,
+            modifier = Modifier.padding(horizontal = SNACKBAR_HORIZONTAL_MARGIN_DP.dp),
+            shape = RoundedCornerShape(SNACKBAR_CORNER_RADIUS_DP.dp),
+            backgroundColor = SnackbarBackground,
+            contentColor = Titan,
+            actionColor = Titan,
+        )
+    }
 }
 
 private tailrec fun Context.findSnackbarActivity(): Activity? = when (this) {
