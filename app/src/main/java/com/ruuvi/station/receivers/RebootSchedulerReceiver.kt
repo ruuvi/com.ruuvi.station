@@ -23,7 +23,9 @@ class RebootSchedulerReceiver : BroadcastReceiver() {
         Timber.d("onReceive $intent")
 
         // The receiver is exported so the system can deliver boot broadcasts,
-        // which also lets other apps target it with explicit intents.
+        // which also lets other apps target it with explicit intents. Only
+        // protected broadcasts are accepted, and the system rejects those
+        // from any sender other than itself.
         if (!isExpectedAction(intent?.action)) {
             Timber.w("Ignoring unexpected action ${intent?.action}")
             return
@@ -53,11 +55,11 @@ class RebootSchedulerReceiver : BroadcastReceiver() {
     }
 
     companion object {
-        // Keep in sync with the receiver's intent-filter in AndroidManifest.xml.
-        private val EXPECTED_ACTIONS = setOf(
+        // Must match the receiver's intent-filter in AndroidManifest.xml
+        // (checked by RebootSchedulerReceiverTest). Add only actions that
+        // are <protected-broadcast> in the Android framework.
+        internal val EXPECTED_ACTIONS = setOf(
             Intent.ACTION_BOOT_COMPLETED,
-            "android.intent.action.QUICKBOOT_POWERON",
-            "com.htc.intent.action.QUICKBOOT_POWERON",
             Intent.ACTION_MY_PACKAGE_REPLACED,
         )
 
