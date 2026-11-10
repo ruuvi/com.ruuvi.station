@@ -22,6 +22,13 @@ class RebootSchedulerReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
         Timber.d("onReceive $intent")
 
+        // The receiver is exported so the system can deliver boot broadcasts,
+        // which also lets other apps target it with explicit intents.
+        if (!isExpectedAction(intent?.action)) {
+            Timber.w("Ignoring unexpected action ${intent?.action}")
+            return
+        }
+
         context?.let {
             if (isInForeground()) {
                 Timber.d("Ignoring since app is in foreground")
@@ -43,5 +50,17 @@ class RebootSchedulerReceiver : BroadcastReceiver() {
     private fun startForegroundService(context: Context) {
         Timber.d("startForegroundService after reboot")
         BluetoothForegroundService.start(context)
+    }
+
+    companion object {
+        // Keep in sync with the receiver's intent-filter in AndroidManifest.xml.
+        private val EXPECTED_ACTIONS = setOf(
+            Intent.ACTION_BOOT_COMPLETED,
+            "android.intent.action.QUICKBOOT_POWERON",
+            "com.htc.intent.action.QUICKBOOT_POWERON",
+            Intent.ACTION_MY_PACKAGE_REPLACED,
+        )
+
+        internal fun isExpectedAction(action: String?): Boolean = action in EXPECTED_ACTIONS
     }
 }
