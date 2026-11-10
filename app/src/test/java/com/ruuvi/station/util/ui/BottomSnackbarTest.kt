@@ -3,22 +3,29 @@ package com.ruuvi.station.util.ui
 import android.app.Application
 import android.content.Context
 import android.content.ContextWrapper
+import android.os.Looper
+import android.view.View
+import android.widget.TextView
 import androidx.activity.ComponentActivity
 import androidx.compose.material.SnackbarHostState
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.test.core.app.ApplicationProvider
 import com.ruuvi.station.R
 import com.ruuvi.station.app.ui.theme.RuuviTheme
+import org.junit.Assert.assertSame
 import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.Robolectric
+import org.robolectric.Shadows
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
+import java.util.concurrent.TimeUnit
 
 @RunWith(RobolectricTestRunner::class)
 @Config(application = BottomSnackbarTestApplication::class, sdk = [35])
@@ -76,8 +83,24 @@ class BottomSnackbarTest {
             onAction = {}
         )
 
-        val contentView = activity.findViewById<android.view.View>(android.R.id.content)
+        val contentView = activity.findViewById<View>(android.R.id.content)
         assertTrue(contentView != null)
+    }
+
+    @Test
+    fun `showBottomSnackbar uses activity layout root to find CoordinatorLayout`() {
+        val activity = createThemedActivity()
+        val coordinatorLayout = CoordinatorLayout(activity)
+        activity.setContentView(coordinatorLayout)
+
+        activity.showBottomSnackbar("Coordinator snackbar")
+        Shadows.shadowOf(Looper.getMainLooper()).idleFor(100, TimeUnit.MILLISECONDS)
+
+        val snackbarText = activity.findViewById<TextView>(
+            com.google.android.material.R.id.snackbar_text,
+        )
+        val snackbarLayout = (snackbarText.parent as View).parent as View
+        assertSame(coordinatorLayout, snackbarLayout.parent)
     }
 
     @Test
@@ -90,7 +113,7 @@ class BottomSnackbarTest {
             onAction = {}
         )
 
-        val contentView = activity.findViewById<android.view.View>(android.R.id.content)
+        val contentView = activity.findViewById<View>(android.R.id.content)
         assertTrue(contentView != null)
     }
 
