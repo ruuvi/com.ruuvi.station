@@ -32,6 +32,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.constrainHeight
 import androidx.compose.ui.unit.constrainWidth
@@ -589,7 +590,10 @@ fun VerticalScrollbarOverlay(
 }
 
 @Composable
-fun SensorCardLowBattery(modifier: Modifier = Modifier) {
+fun SensorCardLowBattery(
+    useDarkBackground: Boolean,
+    modifier: Modifier = Modifier,
+) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.End,
@@ -603,23 +607,17 @@ fun SensorCardLowBattery(modifier: Modifier = Modifier) {
             fontSize = ruuviStationFontsSizes.petite.limitScaleTo(1.5f),
         )
         Spacer(modifier = Modifier.width(4.dp))
-        Box(
-            modifier = Modifier.size(24.dp),
-            contentAlignment = Alignment.Center,
-        ) {
-            Icon(
-                modifier = Modifier.size(24.dp),
-                painter = painterResource(id = R.drawable.icon_battery_low_body),
-                tint = White80,
-                contentDescription = null,
-            )
-            Image(
-                modifier = Modifier.size(24.dp),
-                painter = painterResource(id = R.drawable.icon_battery_low),
-                contentDescription = null,
-                contentScale = ContentScale.Fit,
-            )
-        }
+        Image(
+            modifier = Modifier.height(20.dp),
+            painter = painterResource(
+                id = if (useDarkBackground) {
+                    R.drawable.icon_battery_low_dark
+                } else {
+                    R.drawable.icon_battery_low_light
+                },
+            ),
+            contentDescription = null,
+        )
     }
 }
 
@@ -657,15 +655,17 @@ fun SensorCardImage(
 fun SensorCardBottom(
     sensor: RuuviTag,
     staleTimeoutSeconds: Long,
+    useDarkBackground: Boolean,
     modifier: Modifier = Modifier,
     onShowStaleSnackbar: () -> Unit = {},
+    onShowInitialStaleSnackbar: () -> Unit = {},
+    onDismissStaleSnackbar: () -> Unit = {},
 ) {
     if (sensor.latestMeasurement != null) {
         val context = LocalContext.current
         val lifecycleOwner = LocalLifecycleOwner.current
         val measurementUpdatedAt = sensor.latestMeasurement.updatedAt
         val source = sensor.getSource()
-        val sourceIconHeight = if (source == UpdateSource.Cloud) 16.dp else 12.dp
 
         fun measurementIsStale(): Boolean =
             (System.currentTimeMillis() - measurementUpdatedAt.time) / 1000 >= staleTimeoutSeconds
@@ -687,77 +687,51 @@ fun SensorCardBottom(
                 )
                 .fillMaxWidth()
         ) {
-            val normalIcon = source.getIconResource()
-            val warningBadge = source.getIconResource(isStale = true)
-            val normalIconWidth = if (source == UpdateSource.Cloud) 22.dp else 12.dp
+            val iconRes = source.getIconResource(
+                isStale = isStale,
+                isDarkTheme = useDarkBackground,
+            )
             Row(
+                modifier = Modifier.then(
+                    if (isStale) Modifier.clickable(onClick = onShowStaleSnackbar) else Modifier
+                ),
                 horizontalArrangement = Arrangement.Start,
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
             ) {
-                if (isStale) {
-                    val fontScale = LocalConfiguration.current.fontScale.coerceAtMost(1.5f)
-                    val isBluetooth = source == UpdateSource.Advertisement
-                    val warningIconHeight = if (isBluetooth) 20.dp * fontScale else 20.dp
-                    val staleSourceIconHeight = if (isBluetooth) {
-                        RuuviStationTheme.dimensions.mediumPlus * fontScale
-                    } else {
-                        sourceIconHeight
-                    }
-                    Box(
-                        modifier = Modifier
-                            .height(maxOf(staleSourceIconHeight, warningIconHeight))
-                            .clickable(onClick = onShowStaleSnackbar),
-                        contentAlignment = Alignment.CenterStart,
-                    ) {
-                        Icon(
-                            modifier = if (isBluetooth) {
-                                Modifier.height(staleSourceIconHeight)
-                            } else {
-                                Modifier.size(
-                                    width = normalIconWidth,
-                                    height = staleSourceIconHeight,
-                                )
-                            },
-                            painter = painterResource(id = normalIcon),
-                            tint = White80,
-                            contentDescription = null,
-                        )
-                        Image(
-                            modifier = Modifier.height(warningIconHeight),
-                            painter = painterResource(id = warningBadge),
-                            contentDescription = stringResource(R.string.sensor_measurements_outdated),
-                        )
-                    }
-                } else {
-                    Icon(
-                        modifier = Modifier.size(
-                            width = normalIconWidth,
-                            height = sourceIconHeight,
-                        ),
-                        painter = painterResource(id = normalIcon),
-                        tint = White50,
-                        contentDescription = null,
-                    )
-                }
+                val fontScale = LocalConfiguration.current.fontScale.coerceAtMost(1.5f)
+                val iconHeight = 20.dp * fontScale
+                Image(
+                    modifier = Modifier.height(iconHeight),
+                    painter = painterResource(id = iconRes),
+                    contentDescription = if (isStale) stringResource(R.string.sensor_measurements_outdated) else null,
+                )
                 Spacer(modifier = Modifier.width(SENSOR_VALUE_ITEM_SPACING))
                 Text(
                     style = RuuviStationTheme.typography.dashboardSecondary,
-                    color = White50,
+                    color = if (useDarkBackground) {
+                        RuuviStationTheme.colors.topBarText.copy(alpha = 0.5f)
+                    } else {
+                        RuuviStationTheme.colors.secondaryTextColor
+                    },
                     fontSize = ruuviStationFontsSizes.petite.limitScaleTo(1.5f),
                     textAlign = TextAlign.Right,
                     text = updatedText,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
                 )
 
             }
 
             if (sensor.isLowBattery()) {
-                SensorCardLowBattery()
+                SensorCardLowBattery(useDarkBackground = useDarkBackground)
             }
         }
 
         LaunchedEffect(sensor.id, isStale) {
             if (isStale) {
-                onShowStaleSnackbar()
+                onShowInitialStaleSnackbar()
+            } else {
+                onDismissStaleSnackbar()
             }
         }
 

@@ -32,7 +32,7 @@ class DefaultOnTagFoundListener(
     private val sensorSettingsRepository: SensorSettingsRepository,
     private val sensorHistoryRepository: SensorHistoryRepository,
     private val automaticGattSyncInteractor: () -> AutomaticGattSyncInteractor,
-    private val ioScope: CoroutineScope = CoroutineScope(Dispatchers.IO),
+    private val ioScope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.IO),
     private val currentTimeMillis: () -> Long = System::currentTimeMillis,
     private val persistReading: (TagSensorReading) -> Unit = { it.save() },
     private val refreshWidgets: (Context, String) -> Unit = { context, sensorId ->
@@ -55,7 +55,7 @@ class DefaultOnTagFoundListener(
     private fun saveReading(ruuviTag: RuuviTagEntity) {
         Timber.d("saveReading for tag(${ruuviTag.id})")
         val coroutineExceptionHandler = CoroutineExceptionHandler { _, throwable ->
-            Timber.d("Error while saving advertisement: ${throwable.message}")
+            Timber.e(throwable, "Error while saving advertisement")
         }
         (ioScope + coroutineExceptionHandler).launch {
             ruuviTag.id?.let { sensorId ->

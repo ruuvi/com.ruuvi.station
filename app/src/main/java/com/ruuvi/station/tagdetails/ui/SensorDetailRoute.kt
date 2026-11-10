@@ -19,14 +19,12 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.navigationBarsPadding
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.windowInsetsBottomHeight
@@ -230,6 +228,7 @@ private fun SensorDetailScreen(
     val titlePagePosition = pagerState.currentPage + pagerState.currentPageOffsetFraction
     val context = LocalContext.current
     val staleSnackbarMessage = stringResource(R.string.sensor_measurements_outdated)
+    var automaticallyShownStaleSensorId by remember { mutableStateOf<String?>(null) }
 
     LaunchedEffect(selectedSensorId, sensorIds) {
         val selectedPage = sensorIds.indexOf(selectedSensorId)
@@ -429,13 +428,32 @@ private fun SensorDetailScreen(
                         SensorCardBottom(
                             sensor = currentSensor,
                             staleTimeoutSeconds = staleTimeoutSeconds,
-                            modifier = Modifier.height(44.dp),
+                            useDarkBackground = useSensorBackground,
+                            modifier = Modifier.heightIn(min = 44.dp),
                             onShowStaleSnackbar = {
                                 coroutineScope.launch {
                                     scaffoldState.snackbarHostState.showSnackbar(
-                                        staleSnackbarMessage
+                                        staleSnackbarMessage,
                                     )
                                 }
+                            },
+                            onShowInitialStaleSnackbar = {
+                                if (automaticallyShownStaleSensorId != currentSensor.id) {
+                                    automaticallyShownStaleSensorId = currentSensor.id
+                                    coroutineScope.launch {
+                                        scaffoldState.snackbarHostState.showSnackbar(
+                                            staleSnackbarMessage,
+                                        )
+                                    }
+                                }
+                            },
+                            onDismissStaleSnackbar = {
+                                if (automaticallyShownStaleSensorId == currentSensor.id) {
+                                    automaticallyShownStaleSensorId = null
+                                }
+                                scaffoldState.snackbarHostState.currentSnackbarData
+                                    ?.takeIf { it.message == staleSnackbarMessage }
+                                    ?.dismiss()
                             },
                         )
                     }
