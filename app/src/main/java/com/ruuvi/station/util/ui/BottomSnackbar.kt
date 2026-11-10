@@ -4,17 +4,19 @@ import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
 import android.graphics.drawable.GradientDrawable
-import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Snackbar
 import androidx.compose.material.SnackbarData
 import androidx.compose.material.SnackbarHost
 import androidx.compose.material.SnackbarHostState
+import androidx.compose.material.Text
+import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
@@ -31,7 +33,7 @@ import com.ruuvi.station.app.ui.theme.Titan
 
 private const val DEFAULT_SNACKBAR_DURATION_MILLIS = 2_000
 private const val SNACKBAR_CORNER_RADIUS_DP = 6f
-private const val SNACKBAR_HORIZONTAL_MARGIN_DP = 6
+private const val SNACKBAR_HORIZONTAL_MARGIN_DP = 12
 
 fun Context.showBottomSnackbar(
     message: CharSequence,
@@ -40,9 +42,10 @@ fun Context.showBottomSnackbar(
     onAction: (() -> Unit)? = null,
 ) {
     val activity = findSnackbarActivity() ?: return
-    val content = activity.findViewById<View>(android.R.id.content) ?: return
+    val content = activity.findViewById<ViewGroup>(android.R.id.content) ?: return
+    val layoutRoot = content.getChildAt(0) ?: content
 
-    ViewSnackbar.make(content, message, duration).apply {
+    ViewSnackbar.make(layoutRoot, message, duration).apply {
         setTextColor(Titan.toArgb())
         setActionTextColor(Titan.toArgb())
         setTextMaxLines(4)
@@ -113,13 +116,23 @@ private fun RuuviSnackbar(snackbarData: SnackbarData) {
         ),
     ) {
         Snackbar(
-            snackbarData = snackbarData,
             modifier = Modifier.padding(horizontal = SNACKBAR_HORIZONTAL_MARGIN_DP.dp),
+            action = snackbarData.actionLabel?.let { actionLabel ->
+                {
+                    TextButton(
+                        onClick = snackbarData::performAction,
+                        colors = ButtonDefaults.textButtonColors(contentColor = Titan),
+                    ) {
+                        Text(actionLabel)
+                    }
+                }
+            },
             shape = RoundedCornerShape(SNACKBAR_CORNER_RADIUS_DP.dp),
             backgroundColor = SnackbarBackground,
             contentColor = Titan,
-            actionColor = Titan,
-        )
+        ) {
+            Text(snackbarData.message)
+        }
     }
 }
 
