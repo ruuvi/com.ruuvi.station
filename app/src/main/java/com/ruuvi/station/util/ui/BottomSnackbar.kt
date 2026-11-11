@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
 import android.graphics.drawable.GradientDrawable
+import android.os.SystemClock
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.annotation.StringRes
@@ -13,8 +14,10 @@ import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Snackbar
 import androidx.compose.material.SnackbarData
+import androidx.compose.material.SnackbarDuration
 import androidx.compose.material.SnackbarHost
 import androidx.compose.material.SnackbarHostState
+import androidx.compose.material.SnackbarResult
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
@@ -84,6 +87,38 @@ fun Context.showBottomSnackbar(
         actionLabel = actionLabelRes?.let(::getText),
         onAction = onAction,
     )
+}
+
+object StaleSnackbarDebouncer {
+    const val DEFAULT_DEBOUNCE_INTERVAL_MS = 5_000L
+    private var lastShownTimeMs: Long? = null
+
+    @Synchronized
+    fun shouldShow(debounceMs: Long = DEFAULT_DEBOUNCE_INTERVAL_MS): Boolean {
+        val now = SystemClock.elapsedRealtime()
+        val lastShown = lastShownTimeMs
+        if (lastShown != null && now - lastShown < debounceMs) {
+            return false
+        }
+        lastShownTimeMs = now
+        return true
+    }
+
+    @Synchronized
+    fun reset() {
+        lastShownTimeMs = null
+    }
+}
+
+suspend fun SnackbarHostState.showSnackbarIfNoneVisible(
+    message: String,
+    actionLabel: String? = null,
+    duration: SnackbarDuration = SnackbarDuration.Short,
+    debounceMs: Long = StaleSnackbarDebouncer.DEFAULT_DEBOUNCE_INTERVAL_MS,
+): SnackbarResult? {
+    if (currentSnackbarData != null) return null
+    if (!StaleSnackbarDebouncer.shouldShow(debounceMs)) return null
+    return showSnackbar(message, actionLabel, duration)
 }
 
 @Composable

@@ -658,7 +658,6 @@ fun SensorCardBottom(
     useDarkBackground: Boolean,
     modifier: Modifier = Modifier,
     onShowStaleSnackbar: () -> Unit = {},
-    onShowInitialStaleSnackbar: () -> Unit = {},
     onDismissStaleSnackbar: () -> Unit = {},
 ) {
     if (sensor.latestMeasurement != null) {
@@ -728,9 +727,7 @@ fun SensorCardBottom(
         }
 
         LaunchedEffect(sensor.id, isStale) {
-            if (isStale) {
-                onShowInitialStaleSnackbar()
-            } else {
+            if (!isStale) {
                 onDismissStaleSnackbar()
             }
         }
