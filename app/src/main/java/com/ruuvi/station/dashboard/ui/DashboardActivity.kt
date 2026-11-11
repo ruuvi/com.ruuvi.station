@@ -46,6 +46,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.zIndex
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.whenStarted
@@ -94,6 +95,7 @@ import com.ruuvi.station.util.base.NfcActivity
 import com.ruuvi.station.util.extensions.*
 import com.ruuvi.station.util.ui.RuuviSnackbarHost
 import com.ruuvi.station.util.ui.showBottomSnackbar
+import com.ruuvi.station.util.ui.showSnackbarIfNoneVisible
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -153,6 +155,18 @@ class DashboardActivity : NfcActivity(), DIAware {
                     Color.Transparent
                 } else {
                     colors.navigationTransparent
+                }
+
+                DisposableEffect(scaffoldState.snackbarHostState) {
+                    val observer = LifecycleEventObserver { _, event ->
+                        if (event == Lifecycle.Event.ON_PAUSE) {
+                            scaffoldState.snackbarHostState.currentSnackbarData?.dismiss()
+                        }
+                    }
+                    lifecycle.addObserver(observer)
+                    onDispose {
+                        lifecycle.removeObserver(observer)
+                    }
                 }
 
                 if (shouldAskNotificationPermission) {
@@ -275,7 +289,7 @@ class DashboardActivity : NfcActivity(), DIAware {
                                             dragDropListState = dragDropListState,
                                             onShowStaleSnackbar = {
                                                 scope.launch {
-                                                    scaffoldState.snackbarHostState.showSnackbar(
+                                                    scaffoldState.snackbarHostState.showSnackbarIfNoneVisible(
                                                         staleSnackbarMessage
                                                     )
                                                 }

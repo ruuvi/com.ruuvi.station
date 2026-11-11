@@ -8,6 +8,7 @@ import android.view.View
 import android.widget.TextView
 import androidx.activity.ComponentActivity
 import androidx.compose.material.SnackbarHostState
+import androidx.compose.material.SnackbarResult
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.v2.createComposeRule
@@ -16,8 +17,12 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.test.core.app.ApplicationProvider
 import com.ruuvi.station.R
 import com.ruuvi.station.app.ui.theme.RuuviTheme
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertSame
 import org.junit.Assert.assertTrue
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -37,6 +42,11 @@ class BottomSnackbarTest {
     private val context: Context
         get() = ApplicationProvider.getApplicationContext()
 
+    @Before
+    fun setUp() {
+        StaleSnackbarDebouncer.reset()
+    }
+
     @Test
     fun `RuuviSnackbarHost renders snackbar message`() {
         val hostState = SnackbarHostState()
@@ -51,6 +61,28 @@ class BottomSnackbarTest {
         }
 
         composeTestRule.onNodeWithText("Hello Snackbar").assertIsDisplayed()
+    }
+
+    @Test
+    fun `showSnackbarIfNoneVisible ignores another request while snackbar is visible`() {
+        val hostState = SnackbarHostState()
+        var secondResult: SnackbarResult? = SnackbarResult.ActionPerformed
+
+        composeTestRule.setContent {
+            RuuviTheme {
+                LaunchedEffect(hostState) {
+                    launch {
+                        hostState.showSnackbarIfNoneVisible("First Message")
+                    }
+                    delay(50)
+                    secondResult = hostState.showSnackbarIfNoneVisible("Second Message")
+                }
+                RuuviSnackbarHost(hostState = hostState)
+            }
+        }
+
+        composeTestRule.onNodeWithText("First Message").assertIsDisplayed()
+        assertNull(secondResult)
     }
 
     @Test
