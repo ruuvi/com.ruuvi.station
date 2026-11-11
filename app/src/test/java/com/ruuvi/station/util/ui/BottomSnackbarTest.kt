@@ -1,5 +1,6 @@
 package com.ruuvi.station.util.ui
 
+import android.app.Activity
 import android.app.Application
 import android.content.Context
 import android.content.ContextWrapper
@@ -8,19 +9,23 @@ import android.view.View
 import android.widget.TextView
 import androidx.activity.ComponentActivity
 import androidx.compose.material.SnackbarHostState
+import androidx.compose.material.SnackbarResult
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.test.core.app.ApplicationProvider
 import com.ruuvi.station.R
 import com.ruuvi.station.app.ui.theme.RuuviTheme
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertSame
 import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.kotlin.mock
 import org.robolectric.Robolectric
 import org.robolectric.Shadows
 import org.robolectric.RobolectricTestRunner
@@ -54,15 +59,16 @@ class BottomSnackbarTest {
     }
 
     @Test
-    fun `RuuviSnackbarHost renders snackbar with action label`() {
+    fun `RuuviSnackbarHost performs snackbar action`() {
         val hostState = SnackbarHostState()
+        var result: SnackbarResult? = null
 
         composeTestRule.setContent {
             RuuviTheme {
                 LaunchedEffect(hostState) {
-                    hostState.showSnackbar(
+                    result = hostState.showSnackbar(
                         message = "Message with Action",
-                        actionLabel = "RETRY"
+                        actionLabel = "RETRY",
                     )
                 }
                 RuuviSnackbarHost(hostState = hostState)
@@ -70,21 +76,30 @@ class BottomSnackbarTest {
         }
 
         composeTestRule.onNodeWithText("Message with Action").assertIsDisplayed()
-        composeTestRule.onNodeWithText("RETRY").assertIsDisplayed()
+        composeTestRule.onNodeWithText("RETRY").performClick()
+
+        composeTestRule.runOnIdle {
+            assertEquals(SnackbarResult.ActionPerformed, result)
+        }
     }
 
     @Test
-    fun `showBottomSnackbar on Activity executes without exception`() {
+    fun `showBottomSnackbar on Activity performs action`() {
         val activity = createThemedActivity()
+        var actionPerformed = false
 
         activity.showBottomSnackbar(
             message = "Test Activity Snackbar",
             actionLabel = "UNDO",
-            onAction = {}
+            onAction = { actionPerformed = true },
         )
+        Shadows.shadowOf(Looper.getMainLooper()).idleFor(100, TimeUnit.MILLISECONDS)
 
-        val contentView = activity.findViewById<View>(android.R.id.content)
-        assertTrue(contentView != null)
+        activity.findViewById<View>(
+            com.google.android.material.R.id.snackbar_action,
+        ).performClick()
+
+        assertTrue(actionPerformed)
     }
 
     @Test
@@ -104,17 +119,62 @@ class BottomSnackbarTest {
     }
 
     @Test
-    fun `showBottomSnackbar with StringRes executes without exception`() {
+    fun `showBottomSnackbar resolves StringRes message and action`() {
         val activity = createThemedActivity()
+        var actionPerformed = false
 
         activity.showBottomSnackbar(
             messageRes = R.string.ok,
             actionLabelRes = R.string.cancel,
-            onAction = {}
+            onAction = { actionPerformed = true },
         )
+        Shadows.shadowOf(Looper.getMainLooper()).idleFor(100, TimeUnit.MILLISECONDS)
 
-        val contentView = activity.findViewById<View>(android.R.id.content)
-        assertTrue(contentView != null)
+        assertEquals(
+            activity.getString(R.string.ok),
+            activity.findViewById<TextView>(
+                com.google.android.material.R.id.snackbar_text,
+            ).text.toString(),
+        )
+        val action = activity.findViewById<TextView>(
+            com.google.android.material.R.id.snackbar_action,
+        )
+        assertEquals(activity.getString(R.string.cancel), action.text.toString())
+
+        action.performClick()
+
+        assertTrue(actionPerformed)
+    }
+
+    @Test
+    fun `showBottomSnackbar with StringRes supports no action`() {
+        val activity = createThemedActivity()
+
+        activity.showBottomSnackbar(messageRes = R.string.ok)
+        Shadows.shadowOf(Looper.getMainLooper()).idleFor(100, TimeUnit.MILLISECONDS)
+
+        assertEquals(
+            activity.getString(R.string.ok),
+            activity.findViewById<TextView>(
+                com.google.android.material.R.id.snackbar_text,
+            ).text.toString(),
+        )
+    }
+
+    @Test
+    fun `showBottomSnackbar ignores action label without callback`() {
+        val activity = createThemedActivity()
+
+        activity.showBottomSnackbar(
+            message = "No callback",
+            actionLabel = "IGNORED",
+        )
+        Shadows.shadowOf(Looper.getMainLooper()).idleFor(100, TimeUnit.MILLISECONDS)
+
+        val action = activity.findViewById<TextView>(
+            com.google.android.material.R.id.snackbar_action,
+        )
+        assertTrue(action.text.isEmpty())
     }
 
     @Test
@@ -128,6 +188,22 @@ class BottomSnackbarTest {
     @Test
     fun `showBottomSnackbar safely handles non activity context`() {
         context.showBottomSnackbar("App Context Message")
+    }
+
+    @Test
+    fun `showBottomSnackbar safely handles activity without content`() {
+        val activity = mock<Activity>()
+
+        activity.showBottomSnackbar("Missing content")
+    }
+
+    @Test
+    fun `showBottomSnackbar safely handles self referencing ContextWrapper`() {
+        val wrapper = object : ContextWrapper(context) {
+            override fun getBaseContext(): Context = this
+        }
+
+        wrapper.showBottomSnackbar("Self-referencing wrapper")
     }
 
     private fun createThemedActivity(): ComponentActivity =
