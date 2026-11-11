@@ -34,7 +34,6 @@ import androidx.compose.foundation.pager.PagerDefaults
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.ScaffoldState
-import androidx.compose.material.SnackbarHost
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -80,6 +79,8 @@ import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.RuuviTheme
 import com.ruuvi.station.app.ui.theme.Titan70
 import com.ruuvi.station.graph.ChartControlElement2
+import com.ruuvi.station.util.ui.RuuviSnackbarHost
+import com.ruuvi.station.util.ui.showSnackbarIfNoneVisible
 import com.ruuvi.station.graph.ChartsView
 import com.ruuvi.station.nfc.ui.NfcInteractor
 import com.ruuvi.station.tag.domain.RuuviTag
@@ -228,7 +229,6 @@ private fun SensorDetailScreen(
     val titlePagePosition = pagerState.currentPage + pagerState.currentPageOffsetFraction
     val context = LocalContext.current
     val staleSnackbarMessage = stringResource(R.string.sensor_measurements_outdated)
-    var automaticallyShownStaleSensorId by remember { mutableStateOf<String?>(null) }
 
     LaunchedEffect(selectedSensorId, sensorIds) {
         val selectedPage = sensorIds.indexOf(selectedSensorId)
@@ -436,25 +436,12 @@ private fun SensorDetailScreen(
                             modifier = Modifier.heightIn(min = 44.dp),
                             onShowStaleSnackbar = {
                                 coroutineScope.launch {
-                                    scaffoldState.snackbarHostState.showSnackbar(
+                                    scaffoldState.snackbarHostState.showSnackbarIfNoneVisible(
                                         staleSnackbarMessage,
                                     )
                                 }
                             },
-                            onShowInitialStaleSnackbar = {
-                                if (automaticallyShownStaleSensorId != currentSensor.id) {
-                                    automaticallyShownStaleSensorId = currentSensor.id
-                                    coroutineScope.launch {
-                                        scaffoldState.snackbarHostState.showSnackbar(
-                                            staleSnackbarMessage,
-                                        )
-                                    }
-                                }
-                            },
                             onDismissStaleSnackbar = {
-                                if (automaticallyShownStaleSensorId == currentSensor.id) {
-                                    automaticallyShownStaleSensorId = null
-                                }
                                 scaffoldState.snackbarHostState.currentSnackbarData
                                     ?.takeIf { it.message == staleSnackbarMessage }
                                     ?.dismiss()
@@ -465,7 +452,7 @@ private fun SensorDetailScreen(
             }
         }
 
-        SnackbarHost(
+        RuuviSnackbarHost(
             hostState = scaffoldState.snackbarHostState,
             modifier = Modifier
                 .align(Alignment.BottomCenter)

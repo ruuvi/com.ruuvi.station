@@ -46,6 +46,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.zIndex
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.whenStarted
@@ -92,6 +93,9 @@ import com.ruuvi.station.units.domain.aqi.AQI
 import com.ruuvi.station.units.model.UnitType
 import com.ruuvi.station.util.base.NfcActivity
 import com.ruuvi.station.util.extensions.*
+import com.ruuvi.station.util.ui.RuuviSnackbarHost
+import com.ruuvi.station.util.ui.showBottomSnackbar
+import com.ruuvi.station.util.ui.showSnackbarIfNoneVisible
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -130,6 +134,7 @@ class DashboardActivity : NfcActivity(), DIAware {
                 val staleSnackbarMessage = stringResource(R.string.sensor_measurements_outdated)
                 val isDarkTheme = isSystemInDarkTheme()
                 val scope = rememberCoroutineScope()
+                val lifecycleOwner = LocalLifecycleOwner.current
                 val userEmail by dashboardViewModel.userEmail.observeAsState()
                 val signedIn = !userEmail.isNullOrEmpty()
                 val marketingConsent by dashboardViewModel.marketingConsent.observeAsState(false)
@@ -151,6 +156,18 @@ class DashboardActivity : NfcActivity(), DIAware {
                     Color.Transparent
                 } else {
                     colors.navigationTransparent
+                }
+
+                DisposableEffect(lifecycleOwner, scaffoldState.snackbarHostState) {
+                    val observer = LifecycleEventObserver { _, event ->
+                        if (event == Lifecycle.Event.ON_PAUSE) {
+                            scaffoldState.snackbarHostState.currentSnackbarData?.dismiss()
+                        }
+                    }
+                    lifecycleOwner.lifecycle.addObserver(observer)
+                    onDispose {
+                        lifecycleOwner.lifecycle.removeObserver(observer)
+                    }
                 }
 
                 if (shouldAskNotificationPermission) {
@@ -206,17 +223,9 @@ class DashboardActivity : NfcActivity(), DIAware {
                     Scaffold(
                         scaffoldState = scaffoldState,
                         snackbarHost = {
-                            SnackbarHost(
+                            RuuviSnackbarHost(
                                 hostState = it,
-                                snackbar = { snackbarData ->
-                                    Box(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .navigationBarsPadding()
-                                    ) {
-                                        Snackbar(snackbarData)
-                                    }
-                                }
+                                modifier = Modifier.navigationBarsPadding(),
                             )
                         },
                         modifier = Modifier.fillMaxSize(),
@@ -281,7 +290,7 @@ class DashboardActivity : NfcActivity(), DIAware {
                                             dragDropListState = dragDropListState,
                                             onShowStaleSnackbar = {
                                                 scope.launch {
-                                                    scaffoldState.snackbarHostState.showSnackbar(
+                                                    scaffoldState.snackbarHostState.showSnackbarIfNoneVisible(
                                                         staleSnackbarMessage
                                                     )
                                                 }

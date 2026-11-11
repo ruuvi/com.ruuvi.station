@@ -29,6 +29,7 @@ import com.ruuvi.station.app.ui.RuuviTopAppBar
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.RuuviTheme
 import com.ruuvi.station.util.extensions.viewModel
+import com.ruuvi.station.util.ui.RuuviSnackbarHost
 import org.kodein.di.DI
 import org.kodein.di.DIAware
 import org.kodein.di.android.closestDI
@@ -71,7 +72,8 @@ class SettingsActivity : AppCompatActivity(), DIAware {
                             .fillMaxSize(),
                         backgroundColor = RuuviStationTheme.colors.background,
                         topBar = { RuuviTopAppBar(title = title) },
-                        scaffoldState = scaffoldState
+                        scaffoldState = scaffoldState,
+                snackbarHost = { RuuviSnackbarHost(it) },
                     ) { padding ->
                         NavHost(
                             modifier = Modifier.padding(padding),
