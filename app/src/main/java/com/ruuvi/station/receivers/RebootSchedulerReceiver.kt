@@ -22,6 +22,15 @@ class RebootSchedulerReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
         Timber.d("onReceive $intent")
 
+        // The receiver is exported so the system can deliver boot broadcasts,
+        // which also lets other apps target it with explicit intents. Only
+        // protected broadcasts are accepted, and the system rejects those
+        // from any sender other than itself.
+        if (!isExpectedAction(intent?.action)) {
+            Timber.w("Ignoring unexpected action ${intent?.action}")
+            return
+        }
+
         context?.let {
             if (isInForeground()) {
                 Timber.d("Ignoring since app is in foreground")
@@ -43,5 +52,17 @@ class RebootSchedulerReceiver : BroadcastReceiver() {
     private fun startForegroundService(context: Context) {
         Timber.d("startForegroundService after reboot")
         BluetoothForegroundService.start(context)
+    }
+
+    companion object {
+        // Must match the receiver's intent-filter in AndroidManifest.xml
+        // (checked by RebootSchedulerReceiverTest). Add only actions that
+        // are <protected-broadcast> in the Android framework.
+        internal val EXPECTED_ACTIONS = setOf(
+            Intent.ACTION_BOOT_COMPLETED,
+            Intent.ACTION_MY_PACKAGE_REPLACED,
+        )
+
+        internal fun isExpectedAction(action: String?): Boolean = action in EXPECTED_ACTIONS
     }
 }
