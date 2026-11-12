@@ -13,8 +13,10 @@ import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Snackbar
 import androidx.compose.material.SnackbarData
+import androidx.compose.material.SnackbarDuration
 import androidx.compose.material.SnackbarHost
 import androidx.compose.material.SnackbarHostState
+import androidx.compose.material.SnackbarResult
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
@@ -84,6 +86,15 @@ fun Context.showBottomSnackbar(
         actionLabel = actionLabelRes?.let(::getText),
         onAction = onAction,
     )
+}
+
+suspend fun SnackbarHostState.showSnackbarIfNoneVisible(
+    message: String,
+    actionLabel: String? = null,
+    duration: SnackbarDuration = SnackbarDuration.Short,
+): SnackbarResult? {
+    if (currentSnackbarData != null) return null
+    return showSnackbar(message = message, actionLabel = actionLabel, duration = duration)
 }
 
 @Composable

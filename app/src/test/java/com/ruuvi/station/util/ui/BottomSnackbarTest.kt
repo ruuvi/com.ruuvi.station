@@ -20,6 +20,7 @@ import androidx.test.core.app.ApplicationProvider
 import com.ruuvi.station.R
 import com.ruuvi.station.app.ui.theme.RuuviTheme
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertSame
 import org.junit.Assert.assertTrue
 import org.junit.Rule
@@ -204,6 +205,51 @@ class BottomSnackbarTest {
         }
 
         wrapper.showBottomSnackbar("Self-referencing wrapper")
+    }
+
+    @Test
+    fun `showSnackbarIfNoneVisible shows snackbar when no snackbar is visible`() {
+        val hostState = SnackbarHostState()
+
+        composeTestRule.setContent {
+            RuuviTheme {
+                LaunchedEffect(hostState) {
+                    hostState.showSnackbarIfNoneVisible("First Message")
+                }
+                RuuviSnackbarHost(hostState = hostState)
+            }
+        }
+
+        composeTestRule.onNodeWithText("First Message").assertIsDisplayed()
+    }
+
+    @Test
+    fun `showSnackbarIfNoneVisible returns null when snackbar is already visible`() {
+        val hostState = SnackbarHostState()
+        var secondResult: SnackbarResult? = SnackbarResult.Dismissed
+
+        composeTestRule.setContent {
+            RuuviTheme {
+                LaunchedEffect(hostState) {
+                    hostState.showSnackbar(
+                        "First Message",
+                        duration = androidx.compose.material.SnackbarDuration.Indefinite
+                    )
+                }
+                RuuviSnackbarHost(hostState = hostState)
+            }
+        }
+
+        composeTestRule.onNodeWithText("First Message").assertIsDisplayed()
+
+        composeTestRule.runOnIdle {
+            kotlinx.coroutines.runBlocking {
+                secondResult = hostState.showSnackbarIfNoneVisible("Second Message")
+            }
+        }
+
+        assertNull(secondResult)
+        composeTestRule.onNodeWithText("Second Message").assertDoesNotExist()
     }
 
     private fun createThemedActivity(): ComponentActivity =
