@@ -3,12 +3,9 @@ package com.ruuvi.station.calibration.ui
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
-import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MenuItem
-import androidx.activity.SystemBarStyle
-import androidx.activity.enableEdgeToEdge
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -16,6 +13,7 @@ import androidx.fragment.app.Fragment
 import com.ruuvi.station.R
 import com.ruuvi.station.calibration.model.CalibrationType
 import com.ruuvi.station.databinding.ActivityCalibrationBinding
+import com.ruuvi.station.util.extensions.enableRuuviEdgeToEdge
 import com.ruuvi.station.util.extensions.isDarkMode
 
 class CalibrationActivity : AppCompatActivity() {
@@ -29,22 +27,7 @@ class CalibrationActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         val useLightTheme = !isDarkMode()
-        val legacyNavigationBarColor = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
-            ContextCompat.getColor(this, R.color.titan)
-        } else {
-            Color.TRANSPARENT
-        }
-        enableEdgeToEdge(
-            statusBarStyle = SystemBarStyle.auto(Color.TRANSPARENT, Color.TRANSPARENT) {
-                !useLightTheme
-            },
-            navigationBarStyle = SystemBarStyle.auto(Color.TRANSPARENT, legacyNavigationBarColor) {
-                !useLightTheme
-            }
-        )
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            window.isNavigationBarContrastEnforced = false
-        }
+        enableRuuviEdgeToEdge()
 
         binding = ActivityCalibrationBinding.inflate(layoutInflater)
         setContentView(binding.root)

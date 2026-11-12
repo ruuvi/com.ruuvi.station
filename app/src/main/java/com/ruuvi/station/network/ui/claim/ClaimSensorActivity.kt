@@ -2,28 +2,22 @@ package com.ruuvi.station.network.ui.claim
 
 import android.content.Context
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
 import androidx.activity.compose.setContent
 import androidx.compose.animation.*
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Scaffold
 import androidx.compose.material.SnackbarHost
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.colorResource
 import androidx.navigation.NavBackStackEntry
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.ruuvi.station.R
 import com.ruuvi.station.app.ui.RuuviTopAppBar
 import com.ruuvi.station.app.ui.UiEvent
@@ -33,6 +27,7 @@ import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.RuuviTheme
 import com.ruuvi.station.network.ui.SignInActivity
 import com.ruuvi.station.util.base.NfcActivity
+import com.ruuvi.station.util.extensions.enableRuuviEdgeToEdge
 import com.ruuvi.station.util.extensions.viewModel
 import org.kodein.di.DI
 import org.kodein.di.DIAware
@@ -50,7 +45,7 @@ class ClaimSensorActivity : NfcActivity(), DIAware {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+        enableRuuviEdgeToEdge()
 
         setContent {
             RuuviTheme {
@@ -69,14 +64,6 @@ class ClaimSensorActivity : NfcActivity(), DIAware {
         val navController = rememberAnimatedNavController()
         val titleString = stringResource(id = R.string.claim_sensor)
         val scaffoldState = rememberScaffoldState()
-        val systemUiController = rememberSystemUiController()
-        val systemBarsColor = RuuviStationTheme.colors.systemBars
-        val darkNavigationIcons = !isSystemInDarkTheme()
-        val navigationBarColor = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            Color.Transparent
-        } else {
-            colorResource(R.color.titan)
-        }
         var title by remember { mutableStateOf(titleString) }
 
         LaunchedEffect(null) {
@@ -195,14 +182,6 @@ class ClaimSensorActivity : NfcActivity(), DIAware {
             }
         }
 
-        SideEffect {
-            systemUiController.setStatusBarColor(color = systemBarsColor)
-            systemUiController.setNavigationBarColor(
-                color = navigationBarColor,
-                darkIcons = darkNavigationIcons,
-                navigationBarContrastEnforced = false
-            )
-        }
     }
 
     @Composable

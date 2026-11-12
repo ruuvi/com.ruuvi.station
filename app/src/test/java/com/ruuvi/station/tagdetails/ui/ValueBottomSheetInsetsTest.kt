@@ -5,20 +5,33 @@ import android.view.View
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalView
-import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
+import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
 import androidx.core.graphics.Insets
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
+import com.ruuvi.station.alarm.domain.AlarmSensorStatus
 import com.ruuvi.station.app.ui.theme.RuuviTheme
 import com.ruuvi.station.tagdetails.ui.popup.AirValueSheetContent
+import com.ruuvi.station.tagdetails.ui.popup.ValueBottomSheet
 import com.ruuvi.station.tagdetails.ui.popup.ValueSheetContent
+import com.ruuvi.station.tagdetails.ui.popup.got2DaysOfHistory
 import com.ruuvi.station.units.model.Accuracy
 import com.ruuvi.station.units.model.EnvironmentValue
 import com.ruuvi.station.units.model.UnitType
+import com.ruuvi.station.vico.model.ChartData
+import com.ruuvi.station.vico.model.Segment
+import com.ruuvi.station.vico.model.SegmentType
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
@@ -32,10 +45,101 @@ class ValueBottomSheetInsetsTest {
     @get:Rule val compose = createAndroidComposeRule<ComponentActivity>()
 
     @Test
-    fun `humidity sheet adds navigation space inside its scrolling content`() = verifyInsets(false)
+    fun `humidity sheet adds navigation space inside its scrolling content`() = verifyInsets(airQuality = false)
 
     @Test
-    fun `air quality sheet adds navigation space inside its scrolling content`() = verifyInsets(true)
+    fun `air quality sheet adds navigation space inside its scrolling content`() = verifyInsets(airQuality = true)
+
+    @OptIn(ExperimentalMaterial3Api::class)
+    @Test
+    fun `bottom sheet routes standard and air quality values through their matching content`() {
+        var value by mutableStateOf(environmentValue(UnitType.HumidityUnit.Relative, "50"))
+        val particulateMatter = environmentValue(UnitType.PM.PM25, "12.3")
+
+        compose.setContent {
+            RuuviTheme {
+                ValueBottomSheet(
+                    sheetValue = value,
+                    extraValues = listOf(particulateMatter),
+                    alarmStatus = AlarmSensorStatus.NoAlarms,
+                    chartHistory = null,
+                    maxHeight = 800,
+                    lastUpdate = null,
+                    scrollToChart = {},
+                    onChangeValue = {},
+                    onDismiss = {},
+                )
+            }
+        }
+
+        compose.onNodeWithText(particulateMatter.valueWithoutUnit).assertDoesNotExist()
+
+        compose.runOnIdle {
+            value = environmentValue(UnitType.AirQuality.AqiIndex, "42")
+        }
+        compose.onNodeWithText(particulateMatter.valueWithoutUnit).assertExists()
+    }
+
+    @Test
+    fun `history age requires a sample older than thirty six hours`() {
+        val now = System.currentTimeMillis()
+
+        assertFalse(got2DaysOfHistory(null))
+        assertFalse(got2DaysOfHistory(chartData()))
+        assertFalse(got2DaysOfHistory(chartData(now - (35 * HOUR_MILLIS))))
+        assertTrue(got2DaysOfHistory(chartData(now - (37 * HOUR_MILLIS))))
+    }
+
+    @Test
+    fun `movement values skip history while measurements show the empty history state`() {
+        var value by mutableStateOf(environmentValue(UnitType.MovementUnit.MovementsCount, "4"))
+
+        compose.setContent {
+            RuuviTheme {
+                ValueSheetContent(
+                    sheetValue = value,
+                    maxHeight = 800,
+                    chartHistory = null,
+                    scrollToChart = {},
+                    scrollState = rememberScrollState(),
+                )
+            }
+        }
+
+        compose.onNodeWithText(compose.activity.getString(com.ruuvi.station.R.string.popup_no_data))
+            .assertDoesNotExist()
+
+        compose.runOnIdle {
+            value = environmentValue(UnitType.HumidityUnit.Relative, "50")
+        }
+        compose.onNodeWithText(compose.activity.getString(com.ruuvi.station.R.string.popup_no_data))
+            .assertExists()
+    }
+
+    @Test
+    fun `air quality extra measurement can become the selected value`() {
+        val aqi = environmentValue(UnitType.AirQuality.AqiIndex, "42")
+        val particulateMatter = environmentValue(UnitType.PM.PM25, "12.3")
+        var selected: EnvironmentValue? = null
+
+        compose.setContent {
+            RuuviTheme {
+                AirValueSheetContent(
+                    sheetValue = aqi,
+                    extraValues = listOf(particulateMatter),
+                    maxHeight = 800,
+                    lastUpdate = null,
+                    chartHistory = null,
+                    scrollToChart = {},
+                    onChangeValue = { selected = it },
+                    scrollState = rememberScrollState(),
+                )
+            }
+        }
+
+        compose.onNodeWithText(particulateMatter.valueWithoutUnit).performClick()
+        compose.runOnIdle { assertEquals(particulateMatter, selected) }
+    }
 
     private fun verifyInsets(airQuality: Boolean) {
         lateinit var contentView: View
@@ -94,5 +198,35 @@ class ValueBottomSheetInsetsTest {
         compose.runOnIdle {
             assertEquals("Inset changes must not accumulate padding", initialScrollRange, scrollState.maxValue)
         }
+    }
+
+    private fun environmentValue(unitType: UnitType, value: String) = EnvironmentValue(
+        original = value.toDouble(),
+        value = value.toDouble(),
+        accuracy = Accuracy.Accuracy1,
+        valueWithUnit = "$value ${unitType.unitCode}",
+        valueWithoutUnit = value,
+        unitString = unitType.unitCode,
+        unitType = unitType,
+    )
+
+    private fun chartData(vararg timestamps: Long) = ChartData(
+        segments = if (timestamps.isEmpty()) {
+            emptyList()
+        } else {
+            listOf(
+                Segment(
+                    timestamps = timestamps.toList(),
+                    values = List(timestamps.size) { 1.0 },
+                    segmentType = SegmentType.Solid,
+                ),
+            )
+        },
+        minValue = 0.0,
+        maxValue = 1.0,
+    )
+
+    private companion object {
+        const val HOUR_MILLIS = 60L * 60L * 1000L
     }
 }
