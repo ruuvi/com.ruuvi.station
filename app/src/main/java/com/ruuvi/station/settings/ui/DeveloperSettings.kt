@@ -33,6 +33,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.ruuvi.station.R
+import com.ruuvi.station.app.preferences.MIN_DASHBOARD_CARD_TIMEOUT_SECONDS
 import com.ruuvi.station.app.ui.components.*
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.feature.data.Feature
@@ -193,7 +194,7 @@ internal fun formatDashboardCardTimeout(seconds: Long): String =
     }
 
 private val DASHBOARD_CARD_TIMEOUT_STEPS = listOf(
-    1L,
+    MIN_DASHBOARD_CARD_TIMEOUT_SECONDS,
     10L,
     30L,
     60L,

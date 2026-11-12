@@ -22,6 +22,7 @@ import com.ruuvi.station.nfc.domain.NfcResultInteractor
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tag.domain.TagInteractor
 import com.ruuvi.station.tag.domain.isAir
+import com.ruuvi.station.tag.domain.isMeasurementStale
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import timber.log.Timber
@@ -244,8 +245,7 @@ class DashboardActivityViewModel(
         val timeoutSeconds = preferencesRepository.getDashboardCardTimeoutSeconds()
         _staleSensorIds.value = _sensorsList.value
             .filter { sensor ->
-                val updatedAt = sensor.latestMeasurement?.updatedAt
-                updatedAt == null || (currentTimeMillis - updatedAt.time) / 1000 >= timeoutSeconds
+                sensor.isMeasurementStale(currentTimeMillis, timeoutSeconds)
             }
             .mapTo(mutableSetOf()) { it.id }
     }

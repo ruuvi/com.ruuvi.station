@@ -121,7 +121,7 @@ class DashboardActivityViewModelTest {
 
         viewModel.refreshSensorFreshness(UPDATED_AT)
 
-        assertEquals(setOf("local-stale", "cloud-stale", "no-data"), viewModel.staleSensorIds.value)
+        assertEquals(setOf("local-stale", "cloud-stale"), viewModel.staleSensorIds.value)
     }
 
     @Test

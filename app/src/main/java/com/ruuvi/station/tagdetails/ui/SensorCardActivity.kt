@@ -58,6 +58,7 @@ import com.ruuvi.station.feature.domain.RuntimeBehavior
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tag.domain.UpdateSource
 import com.ruuvi.station.tag.domain.isLowBattery
+import com.ruuvi.station.tag.domain.isMeasurementStale
 import com.ruuvi.station.tagdetails.ui.elements.BigValueDisplay
 import com.ruuvi.station.tagdetails.ui.elements.CircularAQIDisplay
 import com.ruuvi.station.tagdetails.ui.elements.SensorValueItem
@@ -591,7 +592,6 @@ fun VerticalScrollbarOverlay(
 
 @Composable
 fun SensorCardLowBattery(
-    useDarkBackground: Boolean,
     modifier: Modifier = Modifier,
 ) {
     Row(
@@ -609,13 +609,7 @@ fun SensorCardLowBattery(
         Spacer(modifier = Modifier.width(4.dp))
         Image(
             modifier = Modifier.height(20.dp),
-            painter = painterResource(
-                id = if (useDarkBackground) {
-                    R.drawable.icon_battery_low_dark
-                } else {
-                    R.drawable.icon_battery_low_light
-                },
-            ),
+            painter = painterResource(R.drawable.icon_battery_low_dark),
             contentDescription = null,
         )
     }
@@ -667,14 +661,13 @@ fun SensorCardBottom(
         val measurementUpdatedAt = sensor.latestMeasurement.updatedAt
         val source = sensor.getSource()
 
-        fun measurementIsStale(): Boolean =
-            (System.currentTimeMillis() - measurementUpdatedAt.time) / 1000 >= staleTimeoutSeconds
-
         var updatedText by remember(measurementUpdatedAt) {
             mutableStateOf(measurementUpdatedAt.describingTimeSince(context))
         }
         var isStale by remember(measurementUpdatedAt, staleTimeoutSeconds) {
-            mutableStateOf(measurementIsStale())
+            mutableStateOf(
+                sensor.isMeasurementStale(System.currentTimeMillis(), staleTimeoutSeconds),
+            )
         }
 
         Row(
@@ -692,21 +685,65 @@ fun SensorCardBottom(
                 isDarkTheme = useDarkBackground,
             )
             Row(
-                modifier = Modifier.then(
-                    if (isStale) Modifier.clickable(onClick = onShowStaleSnackbar) else Modifier
-                ),
+                modifier = Modifier
+                    .weight(1f, fill = false)
+                    .then(
+                        if (isStale) Modifier.clickable(onClick = onShowStaleSnackbar) else Modifier
+                    ),
                 horizontalArrangement = Arrangement.Start,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 val fontScale = LocalConfiguration.current.fontScale.coerceAtMost(1.5f)
                 val iconHeight = 20.dp * fontScale
-                Image(
-                    modifier = Modifier.height(iconHeight),
-                    painter = painterResource(id = iconRes),
-                    contentDescription = if (isStale) stringResource(R.string.sensor_measurements_outdated) else null,
+                val sourceIconWidth = when {
+                    source == UpdateSource.Cloud -> 26.dp
+                    isStale -> 18.5.dp
+                    else -> 8.9.dp
+                } * fontScale
+                // Anchor the leading edge; scaled icons grow only toward the text.
+                Box(
+                    modifier = Modifier.width(26.dp * fontScale),
+                    contentAlignment = Alignment.CenterStart,
+                ) {
+                    if (source == UpdateSource.Cloud) {
+                        Image(
+                            modifier = Modifier
+                                .requiredSize(width = sourceIconWidth, height = iconHeight),
+                            painter = painterResource(id = iconRes),
+                            contentDescription = if (isStale) {
+                                stringResource(R.string.sensor_measurements_outdated)
+                            } else {
+                                null
+                            },
+                        )
+                    } else {
+                        Image(
+                            modifier = Modifier
+                                .requiredSize(width = sourceIconWidth, height = iconHeight),
+                            painter = painterResource(id = iconRes),
+                            contentDescription = if (isStale) {
+                                stringResource(R.string.sensor_measurements_outdated)
+                            } else {
+                                null
+                            },
+                        )
+                    }
+                }
+                Spacer(
+                    modifier = Modifier.width(
+                        if (source == UpdateSource.Cloud) 4.dp else 0.dp,
+                    ),
                 )
-                Spacer(modifier = Modifier.width(SENSOR_VALUE_ITEM_SPACING))
                 Text(
+                    modifier = Modifier
+                        .offset(
+                            x = if (source != UpdateSource.Cloud) {
+                                if (isStale) (-4).dp else (-12).dp
+                            } else {
+                                0.dp
+                            },
+                        )
+                        .weight(1f),
                     style = RuuviStationTheme.typography.dashboardSecondary,
                     color = if (useDarkBackground) {
                         RuuviStationTheme.colors.topBarText.copy(alpha = 0.5f)
@@ -714,7 +751,7 @@ fun SensorCardBottom(
                         RuuviStationTheme.colors.secondaryTextColor
                     },
                     fontSize = ruuviStationFontsSizes.petite.limitScaleTo(1.5f),
-                    textAlign = TextAlign.Right,
+                    textAlign = TextAlign.Start,
                     text = updatedText,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
@@ -723,7 +760,7 @@ fun SensorCardBottom(
             }
 
             if (sensor.isLowBattery()) {
-                SensorCardLowBattery(useDarkBackground = useDarkBackground)
+                SensorCardLowBattery()
             }
         }
 
@@ -739,7 +776,10 @@ fun SensorCardBottom(
             lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 while (isActive) {
                     updatedText = measurementUpdatedAt.describingTimeSince(context)
-                    isStale = measurementIsStale()
+                    isStale = sensor.isMeasurementStale(
+                        System.currentTimeMillis(),
+                        staleTimeoutSeconds,
+                    )
                     delay(SENSOR_STATUS_REFRESH_DELAY_MILLIS)
                 }
             }

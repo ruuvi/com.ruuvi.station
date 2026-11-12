@@ -85,6 +85,31 @@ class RuuviTagTest {
     }
 
     @Test
+    fun `sensor without a measurement is not stale`() {
+        val sensor = ruuviTagPreview.copy(latestMeasurement = null)
+
+        assertFalse(sensor.isMeasurementStale(currentTimeMillis = 60_000L, timeoutSeconds = 60L))
+    }
+
+    @Test
+    fun `measurement is fresh immediately before timeout`() {
+        val sensor = ruuviTagPreview.copy(
+            latestMeasurement = sensorMeasurementsPreview.copy(updatedAt = Date(1_000L)),
+        )
+
+        assertFalse(sensor.isMeasurementStale(currentTimeMillis = 60_999L, timeoutSeconds = 60L))
+    }
+
+    @Test
+    fun `measurement becomes stale exactly at timeout`() {
+        val sensor = ruuviTagPreview.copy(
+            latestMeasurement = sensorMeasurementsPreview.copy(updatedAt = Date(1_000L)),
+        )
+
+        assertTrue(sensor.isMeasurementStale(currentTimeMillis = 61_000L, timeoutSeconds = 60L))
+    }
+
+    @Test
     fun `air formats include current and legacy variants`() {
         listOf(0xE0, 0xF0, 0xE1, 0x06).forEach {
             assertTrue(RuuviTag.dataFormatIsAir(it))

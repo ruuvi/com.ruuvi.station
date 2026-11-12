@@ -20,7 +20,7 @@ import android.content.Context
 import kotlinx.coroutines.*
 import timber.log.Timber
 import java.util.Date
-import java.util.HashMap
+import java.util.concurrent.ConcurrentHashMap
 
 @Suppress("NAME_SHADOWING")
 class DefaultOnTagFoundListener(
@@ -31,7 +31,7 @@ class DefaultOnTagFoundListener(
     private val alarmCheckInteractor: AlarmCheckInteractor,
     private val sensorSettingsRepository: SensorSettingsRepository,
     private val sensorHistoryRepository: SensorHistoryRepository,
-    private val automaticGattSyncInteractor: () -> AutomaticGattSyncInteractor,
+    private val automaticGattSyncInteractor: AutomaticGattSyncInteractor,
     private val ioScope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.IO),
     private val currentTimeMillis: () -> Long = System::currentTimeMillis,
     private val persistReading: (TagSensorReading) -> Unit = { it.save() },
@@ -41,9 +41,10 @@ class DefaultOnTagFoundListener(
     },
 ) : IRuuviTagScanner.OnTagFoundListener {
 
+    @Volatile
     var isForeground = false
 
-    private var lastLogged: MutableMap<String, Long> = HashMap()
+    private val lastLogged = ConcurrentHashMap<String, Long>()
     private var lastCleanedDate: Long = currentTimeMillis()
 
     override fun onTagFound(tag: FoundRuuviTag) {
@@ -64,14 +65,6 @@ class DefaultOnTagFoundListener(
                 if (dbTag != null) {
                     dbTag.preserveData(ruuviTag)
                     val sensorSettings = sensorSettingsRepository.getSensorSettings(sensorId)
-                    if (isForeground && sensorSettings != null) {
-                        automaticGattSyncInteractor().syncIfEligible(
-                            sensorId = sensorId,
-                            lastSync = sensorSettings.lastSync,
-                            isAir = ruuviTag.isAir(),
-                            networkSensor = sensorSettings.networkSensor,
-                        )
-                    }
                     if (!shouldSkipForCloudMode(sensorSettings)) {
                         repository.updateTag(ruuviTag)
                         if (sensorSettings != null && ruuviTag.dataFormat !in legacyAirDataformats) {
@@ -80,6 +73,14 @@ class DefaultOnTagFoundListener(
                         sensorSettings?.let {
                             alarmCheckInteractor.checkAlarmsForSensor(ruuviTag, sensorSettings)
                         }
+                    }
+                    if (isForeground && sensorSettings != null) {
+                        automaticGattSyncInteractor.syncIfEligible(
+                            sensorId = sensorId,
+                            lastSync = sensorSettings.lastSync,
+                            isAir = ruuviTag.isAir(),
+                            networkSensor = sensorSettings.networkSensor,
+                        )
                     }
                 } else {
                     ruuviTag.updateAt = Date(currentTimeMillis())

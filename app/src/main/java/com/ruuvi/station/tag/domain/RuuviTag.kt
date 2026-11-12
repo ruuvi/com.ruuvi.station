@@ -99,6 +99,13 @@ fun RuuviTag.isLowBattery(): Boolean {
     return !this.isAir() && this.latestMeasurement?.isLowBattery() ?: false
 }
 
+fun RuuviTag.isMeasurementStale(
+    currentTimeMillis: Long,
+    timeoutSeconds: Long,
+): Boolean = latestMeasurement?.updatedAt?.let { updatedAt ->
+    (currentTimeMillis - updatedAt.time) / 1_000 >= timeoutSeconds
+} ?: false
+
 fun RuuviTag.canUseCloudAlerts(): Boolean {
     return !this.subscriptionName.isNullOrEmpty() && this.subscriptionName != "Free" && this.subscriptionName != "Basic"
 }

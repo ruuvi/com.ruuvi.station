@@ -228,7 +228,7 @@ private fun SensorDetailScreen(
     val titlePagePosition = pagerState.currentPage + pagerState.currentPageOffsetFraction
     val context = LocalContext.current
     val staleSnackbarMessage = stringResource(R.string.sensor_measurements_outdated)
-    var automaticallyShownStaleSensorId by remember { mutableStateOf<String?>(null) }
+    var automaticallyShownStaleSensorId by rememberSaveable { mutableStateOf<String?>(null) }
 
     LaunchedEffect(selectedSensorId, sensorIds) {
         val selectedPage = sensorIds.indexOf(selectedSensorId)
@@ -452,9 +452,6 @@ private fun SensorDetailScreen(
                                 }
                             },
                             onDismissStaleSnackbar = {
-                                if (automaticallyShownStaleSensorId == currentSensor.id) {
-                                    automaticallyShownStaleSensorId = null
-                                }
                                 scaffoldState.snackbarHostState.currentSnackbarData
                                     ?.takeIf { it.message == staleSnackbarMessage }
                                     ?.dismiss()

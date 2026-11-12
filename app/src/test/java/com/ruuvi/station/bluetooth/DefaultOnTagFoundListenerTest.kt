@@ -232,7 +232,7 @@ class DefaultOnTagFoundListenerTest {
         alarmCheckInteractor = alarmCheckInteractor,
         sensorSettingsRepository = sensorSettingsRepository,
         sensorHistoryRepository = sensorHistoryRepository,
-        automaticGattSyncInteractor = { automaticGattSyncInteractor },
+        automaticGattSyncInteractor = automaticGattSyncInteractor,
         ioScope = CoroutineScope(scope.coroutineContext),
         currentTimeMillis = { now },
         persistReading = persistedReadings::add,

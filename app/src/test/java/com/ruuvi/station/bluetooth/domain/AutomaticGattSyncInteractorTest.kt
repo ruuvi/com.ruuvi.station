@@ -14,7 +14,7 @@ class AutomaticGattSyncInteractorTest {
     private val gattInteractor = mockk<BluetoothGattInteractor>(relaxed = true)
     private val preferencesRepository = mockk<PreferencesRepository>(relaxed = true)
     private val automaticGattSyncInteractor = AutomaticGattSyncInteractor(
-        gattInteractor,
+        { gattInteractor },
         preferencesRepository,
     )
 

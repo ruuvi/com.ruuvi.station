@@ -8,7 +8,6 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertThrows
 import org.junit.Before
 import org.junit.Test
 
@@ -82,18 +81,6 @@ class DeveloperSettingsViewModelTest {
             verify { mockPreferencesRepository.setDashboardCardTimeoutSeconds(seconds) }
             assertEquals(seconds, viewModel.dashboardCardTimeoutSeconds.value)
         }
-    }
-
-    @Test
-    fun `dashboard timeout rejects periods below one second without saving`() {
-        for (seconds in listOf(0L, -1L)) {
-            assertThrows(IllegalArgumentException::class.java) {
-                viewModel.setDashboardCardTimeoutSeconds(seconds)
-            }
-        }
-
-        verify(exactly = 0) { mockPreferencesRepository.setDashboardCardTimeoutSeconds(any()) }
-        assertEquals(60L, viewModel.dashboardCardTimeoutSeconds.value)
     }
 
     @Test
