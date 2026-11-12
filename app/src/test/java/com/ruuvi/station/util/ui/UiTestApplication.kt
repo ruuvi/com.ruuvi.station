@@ -4,15 +4,28 @@ import android.app.Application
 import com.ruuvi.station.about.ui.AboutActivityViewModel
 import com.ruuvi.station.addtag.ui.AddTagActivityViewModel
 import com.ruuvi.station.app.preferences.PreferencesRepository
+import com.ruuvi.station.calibration.domain.CalibrationViewModelArgs
+import com.ruuvi.station.calibration.ui.CalibrateHumidityViewModel
+import com.ruuvi.station.calibration.ui.CalibratePressureViewModel
+import com.ruuvi.station.calibration.ui.CalibrateTemperatureViewModel
+import com.ruuvi.station.settings.ui.AppSettingsListViewModel
+import com.ruuvi.station.settings.ui.AppearanceSettingsViewModel
 import org.kodein.di.DI
 import org.kodein.di.DIAware
+import org.kodein.di.bind
 import org.kodein.di.bindProvider
+import org.kodein.di.factory
 
 /** Isolates activity UI tests from production startup, databases, Bluetooth and Firebase. */
 class UiTestApplication : Application(), DIAware {
     lateinit var aboutViewModel: AboutActivityViewModel
     lateinit var addTagViewModel: AddTagActivityViewModel
     lateinit var preferences: PreferencesRepository
+    lateinit var calibrateHumidityViewModel: CalibrateHumidityViewModel
+    lateinit var calibratePressureViewModel: CalibratePressureViewModel
+    lateinit var calibrateTemperatureViewModel: CalibrateTemperatureViewModel
+    lateinit var appSettingsListViewModel: AppSettingsListViewModel
+    lateinit var appearanceSettingsViewModel: AppearanceSettingsViewModel
 
     override fun onCreate() {
         super.onCreate()
@@ -23,5 +36,16 @@ class UiTestApplication : Application(), DIAware {
         bindProvider { aboutViewModel }
         bindProvider { addTagViewModel }
         bindProvider { preferences }
+        bind<CalibrateHumidityViewModel>() with factory { _: CalibrationViewModelArgs ->
+            calibrateHumidityViewModel
+        }
+        bind<CalibratePressureViewModel>() with factory { _: CalibrationViewModelArgs ->
+            calibratePressureViewModel
+        }
+        bind<CalibrateTemperatureViewModel>() with factory { _: CalibrationViewModelArgs ->
+            calibrateTemperatureViewModel
+        }
+        bindProvider { appSettingsListViewModel }
+        bindProvider { appearanceSettingsViewModel }
     }
 }
