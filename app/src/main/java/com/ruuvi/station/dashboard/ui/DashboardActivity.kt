@@ -56,7 +56,6 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.ruuvi.station.R
 import com.ruuvi.station.addtag.ui.AddTagActivity
 import com.ruuvi.station.alarm.domain.AlarmSensorStatus
-import com.ruuvi.station.alarm.domain.AlarmType
 import com.ruuvi.station.app.permissions.BluetoothPermissions
 import com.ruuvi.station.app.permissions.NotificationPermission
 import com.ruuvi.station.app.preferences.PreferencesRepository
@@ -68,7 +67,6 @@ import com.ruuvi.station.app.ui.components.RuuviButton
 import com.ruuvi.station.app.ui.components.RuuviTextButton
 import com.ruuvi.station.app.ui.components.limitScaleTo
 import com.ruuvi.station.app.ui.components.rememberResourceUri
-import com.ruuvi.station.app.ui.theme.Red
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme.colors
 import com.ruuvi.station.app.ui.theme.RuuviTheme
@@ -94,6 +92,7 @@ import com.ruuvi.station.units.domain.aqi.AQI
 import com.ruuvi.station.units.model.UnitType
 import com.ruuvi.station.util.base.NfcActivity
 import com.ruuvi.station.util.extensions.*
+import com.ruuvi.station.util.ui.RuuviSnackbarHost
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
