@@ -3,9 +3,7 @@ package com.ruuvi.station.dfu.ui
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
 import android.provider.OpenableColumns
 import androidx.activity.compose.LocalActivity
 import androidx.activity.compose.setContent
@@ -27,13 +25,12 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.res.colorResource
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.ruuvi.station.tagsettings.di.TagSettingsViewModelArgs
+import com.ruuvi.station.util.extensions.enableRuuviEdgeToEdge
 import com.ruuvi.station.util.extensions.viewModel
 import org.kodein.di.DI
 import org.kodein.di.DIAware
@@ -107,7 +104,7 @@ class DfuUpdateActivity : AppCompatActivity() , DIAware {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+        enableRuuviEdgeToEdge()
         val sensorId = intent.getStringExtra(SENSOR_ID)
         permissionsInteractor = PermissionsInteractor(this)
 
@@ -117,24 +114,6 @@ class DfuUpdateActivity : AppCompatActivity() , DIAware {
             RuuviTheme {
                 val navController = rememberNavController()
                 val scaffoldState = rememberScaffoldState()
-                val systemUiController = rememberSystemUiController()
-
-                val systemBarsColor = RuuviStationTheme.colors.systemBars
-                val darkNavigationIcons = !isSystemInDarkTheme()
-                val navigationBarColor = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    Color.Transparent
-                } else {
-                    colorResource(R.color.titan)
-                }
-                SideEffect {
-                    systemUiController.setStatusBarColor(color = systemBarsColor)
-                    systemUiController.setNavigationBarColor(
-                        color = navigationBarColor,
-                        darkIcons = darkNavigationIcons,
-                        navigationBarContrastEnforced = false
-                    )
-                }
-
                 StatusBarFill {
                     if (deviceType == DeviceType.AIR) {
                         LaunchedEffect(null) {

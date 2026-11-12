@@ -1,6 +1,5 @@
 package com.ruuvi.station.tagdetails.ui
 
-import android.app.Activity
 import android.net.Uri
 import android.os.Build
 import android.view.animation.AccelerateDecelerateInterpolator
@@ -265,7 +264,8 @@ private fun SensorDetailScreen(
     }
 
     SensorDetailSystemBars(
-        useTransparentStatusBar = useSensorBackground && !nestedSettings,
+        destination = destination,
+        settingsRoute = settingsRoute,
         useDarkTheme = useDarkTheme,
     )
 
@@ -804,6 +804,20 @@ private fun SensorDetailBackground(
                 .background(overlayColor),
         )
     }
+}
+
+@Composable
+internal fun SensorDetailSystemBars(
+    destination: SensorDetailDestination,
+    settingsRoute: String,
+    useDarkTheme: Boolean,
+) {
+    val nestedSettings = destination == SensorDetailDestination.SETTINGS &&
+        settingsRoute != SensorSettingsRoutes.SENSOR_SETTINGS_ROOT
+    SensorDetailSystemBars(
+        useTransparentStatusBar = destination.usesSensorBackground && !nestedSettings,
+        useDarkTheme = useDarkTheme,
+    )
 }
 
 @Composable

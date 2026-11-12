@@ -3,14 +3,11 @@ package com.ruuvi.station.settings.ui
 import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
-import android.os.Build
 import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
 import androidx.activity.compose.setContent
 import androidx.compose.animation.*
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -24,8 +21,6 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavType
@@ -34,11 +29,11 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.ruuvi.station.R
 import com.ruuvi.station.app.ui.RuuviTopAppBar
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.RuuviTheme
+import com.ruuvi.station.util.extensions.enableRuuviEdgeToEdge
 import com.ruuvi.station.util.extensions.viewModel
 import org.kodein.di.DI
 import org.kodein.di.DIAware
@@ -52,7 +47,7 @@ class SettingsActivity : AppCompatActivity(), DIAware {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+        enableRuuviEdgeToEdge()
 
         setContent {
             RuuviTheme() {
@@ -60,7 +55,6 @@ class SettingsActivity : AppCompatActivity(), DIAware {
                 val backStackEntry by navController.currentBackStackEntryAsState()
                 val isSettingsRoot = (backStackEntry?.destination?.route ?: SettingsRoutes.LIST) == SettingsRoutes.LIST
                 val scaffoldState = rememberScaffoldState()
-                val systemUiController = rememberSystemUiController()
                 val context = LocalContext.current
                 var title: String by rememberSaveable { mutableStateOf("") }
 
@@ -317,22 +311,6 @@ class SettingsActivity : AppCompatActivity(), DIAware {
                             }
                         }
                     }
-                }
-
-                val systemBarsColor = RuuviStationTheme.colors.systemBars
-                val darkNavigationIcons = !isSystemInDarkTheme()
-                val navigationBarColor = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    Color.Transparent
-                } else {
-                    colorResource(R.color.titan)
-                }
-                SideEffect {
-                    systemUiController.setStatusBarColor(color = systemBarsColor)
-                    systemUiController.setNavigationBarColor(
-                        color = navigationBarColor,
-                        darkIcons = darkNavigationIcons,
-                        navigationBarContrastEnforced = false
-                    )
                 }
             }
         }
