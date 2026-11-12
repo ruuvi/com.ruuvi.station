@@ -33,7 +33,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -46,6 +46,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.zIndex
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.whenStarted
@@ -92,6 +93,7 @@ import com.ruuvi.station.units.domain.aqi.AQI
 import com.ruuvi.station.units.model.UnitType
 import com.ruuvi.station.util.base.NfcActivity
 import com.ruuvi.station.util.extensions.*
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -103,6 +105,39 @@ import org.kodein.di.instance
 import kotlin.math.min
 
 private val DASHBOARD_ALERT_CONTAINER_SIZE = 36.dp
+
+internal fun isDarkDashboardCard(backgroundColor: Color): Boolean =
+    backgroundColor.luminance() < 0.5f
+
+internal fun UpdateSource.dashboardIconResource(
+    isStale: Boolean,
+    backgroundColor: Color,
+): Int = getIconResource(
+    isStale = isStale,
+    isDarkTheme = isDarkDashboardCard(backgroundColor),
+)
+
+internal fun showSnackbarIfIdle(
+    scope: CoroutineScope,
+    hostState: SnackbarHostState,
+    message: String,
+    activeJob: Job?,
+): Job? {
+    if (activeJob?.isActive == true || hostState.currentSnackbarData != null) {
+        return activeJob
+    }
+    return scope.launch {
+        hostState.showSnackbar(message)
+    }
+}
+
+internal fun dismissDashboardSnackbar(
+    hostState: SnackbarHostState,
+    activeJob: Job?,
+) {
+    activeJob?.cancel()
+    hostState.currentSnackbarData?.dismiss()
+}
 
 class DashboardActivity : NfcActivity(), DIAware {
 
@@ -130,6 +165,23 @@ class DashboardActivity : NfcActivity(), DIAware {
                 val staleSnackbarMessage = stringResource(R.string.sensor_measurements_outdated)
                 val isDarkTheme = isSystemInDarkTheme()
                 val scope = rememberCoroutineScope()
+                var staleSnackbarJob by remember { mutableStateOf<Job?>(null) }
+                val lifecycleOwner = LocalLifecycleOwner.current
+                DisposableEffect(lifecycleOwner, scaffoldState) {
+                    val observer = LifecycleEventObserver { _, event ->
+                        if (event == Lifecycle.Event.ON_STOP) {
+                            dismissDashboardSnackbar(
+                                hostState = scaffoldState.snackbarHostState,
+                                activeJob = staleSnackbarJob,
+                            )
+                            staleSnackbarJob = null
+                        }
+                    }
+                    lifecycleOwner.lifecycle.addObserver(observer)
+                    onDispose {
+                        lifecycleOwner.lifecycle.removeObserver(observer)
+                    }
+                }
                 val userEmail by dashboardViewModel.userEmail.observeAsState()
                 val signedIn = !userEmail.isNullOrEmpty()
                 val marketingConsent by dashboardViewModel.marketingConsent.observeAsState(false)
@@ -280,11 +332,12 @@ class DashboardActivity : NfcActivity(), DIAware {
                                             refreshing = refreshing,
                                             dragDropListState = dragDropListState,
                                             onShowStaleSnackbar = {
-                                                scope.launch {
-                                                    scaffoldState.snackbarHostState.showSnackbar(
-                                                        staleSnackbarMessage
-                                                    )
-                                                }
+                                                staleSnackbarJob = showSnackbarIfIdle(
+                                                    scope = scope,
+                                                    hostState = scaffoldState.snackbarHostState,
+                                                    message = staleSnackbarMessage,
+                                                    activeJob = staleSnackbarJob,
+                                                )
                                             },
                                         )
                                     }
@@ -860,6 +913,7 @@ fun DashboardItem(
                                 sensor = sensor,
                                 isStale = isStale,
                                 modifier = Modifier,
+                                interactionEnabled = interactionEnabled,
                                 onShowStaleSnackbar = onShowStaleSnackbar,
                             )
                         } else {
@@ -954,6 +1008,7 @@ fun DashboardItemSimple(
                     sensor = sensor,
                     isStale = isStale,
                     modifier = Modifier,
+                    interactionEnabled = interactionEnabled,
                     onShowStaleSnackbar = onShowStaleSnackbar,
                 )
             }
@@ -1111,6 +1166,7 @@ fun ItemBottom(
     sensor: RuuviTag,
     isStale: Boolean = false,
     modifier: Modifier = Modifier,
+    interactionEnabled: Boolean = true,
     onShowStaleSnackbar: () -> Unit = {},
 ) {
     if (sensor.latestMeasurement != null) {
@@ -1118,6 +1174,7 @@ fun ItemBottom(
             sensor = sensor,
             isStale = isStale,
             modifier = modifier,
+            interactionEnabled = interactionEnabled,
             onShowStaleSnackbar = onShowStaleSnackbar,
         )
     } else {
@@ -1149,6 +1206,7 @@ fun ItemBottomUpdatedInfo(
     sensor: RuuviTag,
     isStale: Boolean = false,
     modifier: Modifier = Modifier,
+    interactionEnabled: Boolean = true,
     onShowStaleSnackbar: () -> Unit = {},
 ) {
     if (sensor.latestMeasurement != null) {
@@ -1167,20 +1225,29 @@ fun ItemBottomUpdatedInfo(
         ) {
             val fontScale = min(LocalConfiguration.current.fontScale, 1.5f)
 
-            val isDarkTheme = isSystemInDarkTheme()
             val source = sensor.getSource()
-            val iconRes = source.getIconResource(isStale = isStale, isDarkTheme = isDarkTheme)
+            val iconRes = source.dashboardIconResource(
+                isStale = isStale,
+                backgroundColor = RuuviStationTheme.colors.dashboardCardBackground,
+            )
             val iconHeight = 20.dp * fontScale
             Row(
-                modifier = Modifier
-                    .weight(1f)
-                    .then(
-                        if (isStale) Modifier.clickable(onClick = onShowStaleSnackbar) else Modifier
-                    ),
+                modifier = Modifier.weight(1f),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Image(
-                    modifier = Modifier.height(iconHeight),
+                    modifier = Modifier
+                        .height(iconHeight)
+                        .then(
+                            if (isStale) {
+                                Modifier.clickableSingle(
+                                    enabled = interactionEnabled,
+                                    onClick = onShowStaleSnackbar,
+                                )
+                            } else {
+                                Modifier
+                            },
+                        ),
                     painter = painterResource(id = iconRes),
                     contentDescription = if (isStale) {
                         stringResource(R.string.sensor_measurements_outdated)
@@ -1451,7 +1518,7 @@ fun LowBattery(modifier: Modifier = Modifier) {
                 .height(20.dp)
                 .align(CenterVertically),
             painter = painterResource(
-                id = if (RuuviStationTheme.colors.dashboardCardBackground.luminance() < 0.5f) {
+                id = if (isDarkDashboardCard(RuuviStationTheme.colors.dashboardCardBackground)) {
                     R.drawable.icon_battery_low_dark
                 } else {
                     R.drawable.icon_battery_low_light
