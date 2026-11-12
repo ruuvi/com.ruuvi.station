@@ -80,6 +80,7 @@ import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.RuuviTheme
 import com.ruuvi.station.app.ui.theme.Titan70
 import com.ruuvi.station.graph.ChartControlElement2
+import com.ruuvi.station.util.ui.RuuviSnackbarHost
 import com.ruuvi.station.graph.ChartsView
 import com.ruuvi.station.nfc.ui.NfcInteractor
 import com.ruuvi.station.tag.domain.RuuviTag
@@ -462,7 +463,7 @@ private fun SensorDetailScreen(
             }
         }
 
-        SnackbarHost(
+        RuuviSnackbarHost(
             hostState = scaffoldState.snackbarHostState,
             modifier = Modifier
                 .align(Alignment.BottomCenter)

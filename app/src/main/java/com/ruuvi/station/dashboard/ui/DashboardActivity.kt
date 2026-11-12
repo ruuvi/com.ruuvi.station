@@ -259,17 +259,9 @@ class DashboardActivity : NfcActivity(), DIAware {
                     Scaffold(
                         scaffoldState = scaffoldState,
                         snackbarHost = {
-                            SnackbarHost(
+                            RuuviSnackbarHost(
                                 hostState = it,
-                                snackbar = { snackbarData ->
-                                    Box(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .navigationBarsPadding()
-                                    ) {
-                                        Snackbar(snackbarData)
-                                    }
-                                }
+                                modifier = Modifier.navigationBarsPadding(),
                             )
                         },
                         modifier = Modifier.fillMaxSize(),

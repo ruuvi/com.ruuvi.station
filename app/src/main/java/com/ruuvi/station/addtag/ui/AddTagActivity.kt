@@ -13,7 +13,6 @@ import androidx.core.view.WindowCompat
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.snackbar.BaseTransientBottomBar.LENGTH_LONG
-import com.google.android.material.snackbar.Snackbar
 import com.ruuvi.station.util.extensions.viewModel
 import com.ruuvi.station.R
 import com.ruuvi.station.app.preferences.PreferencesRepository
@@ -24,6 +23,7 @@ import com.ruuvi.station.databinding.ActivityAddTagBinding
 import com.ruuvi.station.nfc.NfcScanReciever
 import com.ruuvi.station.tagdetails.ui.SensorCardActivity
 import com.ruuvi.station.util.base.NfcActivity
+import com.ruuvi.station.util.ui.showBottomSnackbar
 import org.kodein.di.DI
 import org.kodein.di.DIAware
 import org.kodein.di.android.closestDI
@@ -106,7 +106,10 @@ class AddTagActivity : NfcActivity(R.layout.activity_add_tag), DIAware {
                         viewModel.addSensor(response.sensorId)
                         SensorCardActivity.startAfterAddingNewSensor(this@AddTagActivity, response.sensorId)
                     } else {
-                        Snackbar.make(this@AddTagActivity, binding.content.root, getText(R.string.nfc_enable_bt_to_add_sensor), LENGTH_LONG).show()
+                        this@AddTagActivity.showBottomSnackbar(
+                            message = getText(R.string.nfc_enable_bt_to_add_sensor),
+                            duration = LENGTH_LONG,
+                        )
                     }
                 }
             }
