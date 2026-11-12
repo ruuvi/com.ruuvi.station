@@ -149,6 +149,7 @@ android {
             includeAndroidResources = true
             returnDefaultValues = true
             all {
+                maxHeapSize = '1g'
                 jacoco {
                     includeNoLocationClasses = true
                     excludes = ['jdk.internal.*']
