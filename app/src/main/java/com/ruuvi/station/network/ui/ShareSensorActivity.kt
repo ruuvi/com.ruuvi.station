@@ -77,6 +77,7 @@ import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.RuuviTheme
 import com.ruuvi.station.util.extensions.enableRuuviEdgeToEdge
 import com.ruuvi.station.util.extensions.viewModel
+import com.ruuvi.station.util.ui.RuuviSnackbarHost
 import org.kodein.di.DI
 import org.kodein.di.DIAware
 import org.kodein.di.android.closestDI
@@ -121,7 +122,7 @@ class ShareSensorActivity : AppCompatActivity() , DIAware {
                             backgroundColor = RuuviStationTheme.colors.background,
                             topBar = { RuuviTopAppBar(title = stringResource(id = R.string.share_sensor_title)) },
                             scaffoldState = scaffoldState,
-                            snackbarHost = { SnackbarHost(it, Modifier.navigationBarsPadding()) }
+            snackbarHost = { RuuviSnackbarHost(it) },
                         ) { paddingValues ->
                             SharingWebView(
                                 scaffoldState,
@@ -206,7 +207,7 @@ fun ShareBody(
         backgroundColor = RuuviStationTheme.colors.background,
         topBar = { RuuviTopAppBar(title = stringResource(id = R.string.share_sensor_title)) },
         scaffoldState = scaffoldState,
-        snackbarHost = { SnackbarHost(it, Modifier.navigationBarsPadding()) }
+        snackbarHost = { RuuviSnackbarHost(it) },
     ) { paddingValues ->
         LazyColumn(
             modifier = Modifier

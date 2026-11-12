@@ -42,6 +42,7 @@ import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.permissions.PermissionsInteractor
 import com.ruuvi.station.app.ui.RuuviTopAppBar
 import com.ruuvi.station.app.ui.UiEvent
+import com.ruuvi.station.util.ui.RuuviSnackbarHost
 import timber.log.Timber
 
 class DfuUpdateActivity : AppCompatActivity() , DIAware {
@@ -149,7 +150,7 @@ class DfuUpdateActivity : AppCompatActivity() , DIAware {
                             backgroundColor = RuuviStationTheme.colors.background,
                             topBar = { RuuviTopAppBar(title = stringResource(R.string.title_activity_dfu_update)) },
                             scaffoldState = scaffoldState,
-                            snackbarHost = { SnackbarHost(it, Modifier.navigationBarsPadding()) }
+        snackbarHost = { RuuviSnackbarHost(it) },
                         ) { padding ->
                             NavHost(
                                 modifier = Modifier.padding(padding).navigationBarsPadding(),

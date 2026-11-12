@@ -104,7 +104,6 @@ class SensorCardViewModel(
 
     private val _scrollToChartEvent = Channel<UnitType>(Channel.BUFFERED)
     val scrollToChartEvent = _scrollToChartEvent.receiveAsFlow()
-    private val manualSyncMap = mutableMapOf<String, Boolean>()
 
 
     fun getChartData(sensorId: String, unitType: UnitType, hours: Int): Flow<ChartData> =
@@ -401,7 +400,6 @@ class SensorCardViewModel(
     fun getGattEvents(sensorId: String): Flow<SyncStatus> = flow{
         gattInteractor.getSyncStatusFlow(sensorId).filterNotNull().collect{ status ->
             Timber.d("getGattEvents sensor $sensorId $status")
-            val isManual = manualSyncMap[sensorId] ?: false
             status.let { gattStatus ->
                 if (gattStatus.sensorId == sensorId) {
                     when (gattStatus.syncProgress) {
@@ -412,7 +410,7 @@ class SensorCardViewModel(
                                     syncProgress = gattStatus.syncProgress,
                                     syncInProgress = gattStatus.syncProgress.syncInProgress,
                                     statusMessage = UiText.EmptyString,
-                                    manualSync = isManual
+                                    manualSync = gattStatus.manualSync
                                 )
                             )
                         }
@@ -425,7 +423,7 @@ class SensorCardViewModel(
                                     syncProgress = gattStatus.syncProgress,
                                     syncInProgress = gattStatus.syncProgress.syncInProgress,
                                     statusMessage = UiText.EmptyString,
-                                    manualSync = isManual
+                                    manualSync = gattStatus.manualSync
                                 )
                             )
                             resetGattStatus(sensorId, gattStatus.sessionId)
@@ -438,7 +436,7 @@ class SensorCardViewModel(
                                     syncProgress = gattStatus.syncProgress,
                                     syncInProgress = gattStatus.syncProgress.syncInProgress,
                                     statusMessage = UiText.StringResource(R.string.connecting),
-                                    manualSync = isManual
+                                    manualSync = gattStatus.manualSync
                                 )
                             )
                         }
@@ -450,7 +448,7 @@ class SensorCardViewModel(
                                     syncProgress = gattStatus.syncProgress,
                                     syncInProgress = gattStatus.syncProgress.syncInProgress,
                                     statusMessage = UiText.StringResource(R.string.connected_reading_info),
-                                    manualSync = isManual
+                                    manualSync = gattStatus.manualSync
                                 )
                             )
                         }
@@ -467,7 +465,7 @@ class SensorCardViewModel(
                                     syncProgress = gattStatus.syncProgress,
                                     syncInProgress = gattStatus.syncProgress.syncInProgress,
                                     statusMessage = message,
-                                    manualSync = isManual
+                                    manualSync = gattStatus.manualSync
                                 )
                             )
                         }
@@ -484,7 +482,7 @@ class SensorCardViewModel(
                                     syncProgress = gattStatus.syncProgress,
                                     syncInProgress = gattStatus.syncProgress.syncInProgress,
                                     statusMessage = message,
-                                    manualSync = isManual
+                                    manualSync = gattStatus.manualSync
                                 )
                             )
                         }
@@ -515,8 +513,7 @@ class SensorCardViewModel(
                 syncFrom = historyLength
             }
             Timber.d("sync logs from: %s", syncFrom)
-            if (gattInteractor.readLogs(sensorId, syncFrom)) {
-                manualSyncMap[sensorId] = manual
+            if (gattInteractor.readLogs(sensorId, syncFrom, manualSync = manual)) {
                 if (!manual) {
                     preferencesRepository.setLastAutomaticGattSyncAttempt(
                         sensorId,

@@ -25,7 +25,7 @@
             android:maxLines="1"
             android:text="@string/widget_preview_sensor_name"
             android:textColor="@color/widget_preview_secondary"
-            android:textSize="14sp"
+            android:textSize="14dp"
             android:textStyle="bold" />
 
         <RelativeLayout
@@ -40,35 +40,42 @@
                 android:includeFontPadding="false"
                 android:maxLines="1"
                 android:text="21.5"
-                android:textColor="@color/widget_preview_value"
-                android:textSize="22sp"
+                android:textColor="@color/widget_preview_secondary"
+                android:textSize="22dp"
                 tools:ignore="HardcodedText" />
 
             <TextView
+                android:id="@+id/simplePreviewUnit"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignBaseline="@id/simplePreviewValue"
+                android:layout_alignTop="@id/simplePreviewValue"
+                android:layout_toEndOf="@id/simplePreviewValue"
                 android:layout_marginStart="2dp"
+                android:layout_marginTop="4dp"
+                android:fontFamily="@font/oswald_bold"
+                android:includeFontPadding="false"
+                android:maxLines="1"
+                android:text="@string/temperature_celsius_unit"
+                android:textColor="@color/widget_preview_secondary"
+                android:textSize="10dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@id/simplePreviewValue"
+                android:layout_alignParentEnd="true"
+                android:layout_marginStart="2dp"
+                android:layout_marginEnd="40dp"
                 android:layout_toEndOf="@id/simplePreviewValue"
                 android:ellipsize="end"
                 android:fontFamily="@font/oswald_regular"
                 android:includeFontPadding="false"
                 android:maxLines="1"
-                android:text="@string/temperature_celsius_unit"
+                android:text="@string/temperature"
                 android:textColor="@color/widget_preview_secondary"
-                android:textSize="10sp" />
+                android:textSize="10dp" />
         </RelativeLayout>
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ellipsize="end"
-            android:fontFamily="sans-serif"
-            android:includeFontPadding="false"
-            android:maxLines="1"
-            android:text="@string/temperature"
-            android:textColor="@color/widget_preview_secondary"
-            android:textSize="10sp" />
 
         <TextView
             android:layout_width="match_parent"
@@ -83,13 +90,13 @@
             android:maxLines="1"
             android:text="12:34"
             android:textColor="@color/widget_preview_secondary"
-            android:textSize="9sp"
+            android:textSize="9dp"
             tools:ignore="HardcodedText,RtlSymmetry,SmallSp" />
     </LinearLayout>
 
     <ImageView
-        android:layout_width="44dp"
-        android:layout_height="44dp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:layout_gravity="end|bottom"
         android:contentDescription="@null"
         android:paddingStart="14dp"
@@ -97,7 +104,7 @@
         android:paddingEnd="12dp"
         android:paddingBottom="12dp"
         android:src="@drawable/ic_widget_d_update"
-        android:tint="@color/widget_preview_secondary"
+        android:tint="@color/ruuviLight"
         tools:ignore="UseAppTint" />
 
 </FrameLayout>

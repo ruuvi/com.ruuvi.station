@@ -173,7 +173,7 @@ class TagViewModel(
                 syncFrom = historyLength
             }
             Timber.d("sync logs from: %s", syncFrom)
-            gattInteractor.readLogs(tag.id, syncFrom)
+            gattInteractor.readLogs(tag.id, syncFrom, manualSync = true)
         }
     }
 
