@@ -10,6 +10,7 @@ import com.ruuvi.station.calibration.ui.CalibratePressureViewModel
 import com.ruuvi.station.calibration.ui.CalibrateTemperatureViewModel
 import com.ruuvi.station.settings.ui.AppSettingsListViewModel
 import com.ruuvi.station.settings.ui.AppearanceSettingsViewModel
+import com.ruuvi.station.network.ui.ShareSensorViewModel
 import org.kodein.di.DI
 import org.kodein.di.DIAware
 import org.kodein.di.bind
@@ -26,6 +27,7 @@ class UiTestApplication : Application(), DIAware {
     lateinit var calibrateTemperatureViewModel: CalibrateTemperatureViewModel
     lateinit var appSettingsListViewModel: AppSettingsListViewModel
     lateinit var appearanceSettingsViewModel: AppearanceSettingsViewModel
+    lateinit var shareSensorViewModel: ShareSensorViewModel
 
     override fun onCreate() {
         super.onCreate()
@@ -47,5 +49,6 @@ class UiTestApplication : Application(), DIAware {
         }
         bindProvider { appSettingsListViewModel }
         bindProvider { appearanceSettingsViewModel }
+        bind<ShareSensorViewModel>() with factory { _: String -> shareSensorViewModel }
     }
 }
