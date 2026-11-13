@@ -8,11 +8,9 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.core.view.WindowCompat
-import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.RuuviTheme
 import com.ruuvi.station.tagsettings.ui.SensorSettingsRoutes
 import org.junit.Assert.assertEquals
@@ -59,18 +57,17 @@ class SensorDetailSystemBarsTest {
     @Suppress("DEPRECATION")
     @Test
     @Config(sdk = [30])
-    fun `status bar is transparent for sensor destinations but opaque in nested settings`() {
+    fun `window status bar stays transparent while page backgrounds transition`() {
         var destination by mutableStateOf(SensorDetailDestination.CARD)
         var settingsRoute by mutableStateOf(SensorSettingsRoutes.SENSOR_SETTINGS_ROOT)
-        var expectedOpaqueStatusBarColor = Color.TRANSPARENT
 
         compose.setContent {
             val useDarkTheme = destination.forcesDarkTheme
             RuuviTheme(darkTheme = useDarkTheme) {
-                expectedOpaqueStatusBarColor = RuuviStationTheme.colors.systemBars.toArgb()
+                val nestedSettings = destination == SensorDetailDestination.SETTINGS &&
+                    settingsRoute != SensorSettingsRoutes.SENSOR_SETTINGS_ROOT
                 SensorDetailSystemBars(
-                    destination = destination,
-                    settingsRoute = settingsRoute,
+                    useTransparentStatusBar = destination.usesSensorBackground && !nestedSettings,
                     useDarkTheme = useDarkTheme,
                 )
             }
@@ -92,9 +89,30 @@ class SensorDetailSystemBarsTest {
         assertTransparentStatusBar()
 
         compose.runOnIdle { destination = SensorDetailDestination.SETTINGS }
-        compose.runOnIdle {
-            assertEquals(expectedOpaqueStatusBarColor, compose.activity.window.statusBarColor)
+        assertTransparentStatusBar()
+    }
+
+    @Suppress("DEPRECATION")
+    @Test
+    @Config(sdk = [30])
+    fun `nested light settings keep a transparent window with dark icons`() {
+        compose.setContent {
+            RuuviTheme(darkTheme = true) {
+                SensorDetailContentTheme(
+                    nestedSettings = true,
+                    appDarkTheme = false,
+                    rootDarkTheme = true,
+                ) {
+                    SensorDetailSystemBars(
+                        useTransparentStatusBar = false,
+                        useDarkTheme = false,
+                    )
+                }
+            }
         }
+
+        assertTransparentStatusBar()
+        assertSystemBarIcons(darkIcons = true)
     }
 
     @Test
