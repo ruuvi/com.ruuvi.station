@@ -66,6 +66,7 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.LayoutDirection
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
@@ -287,8 +288,7 @@ private fun SensorDetailScreen(
     }
 
     SensorDetailSystemBars(
-        destination = destination,
-        settingsRoute = settingsRoute,
+        useTransparentStatusBar = useSensorBackground && !nestedSettings,
         useDarkTheme = useDarkTheme,
     )
 
