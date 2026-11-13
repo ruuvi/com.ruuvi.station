@@ -65,22 +65,25 @@ class DefaultOnTagFoundListener(
                 if (dbTag != null) {
                     dbTag.preserveData(ruuviTag)
                     val sensorSettings = sensorSettingsRepository.getSensorSettings(sensorId)
-                    if (!shouldSkipForCloudMode(sensorSettings)) {
-                        repository.updateTag(ruuviTag)
-                        if (sensorSettings != null && ruuviTag.dataFormat !in legacyAirDataformats) {
-                            saveFavoriteReading(ruuviTag, sensorSettings)
+                    try {
+                        if (!shouldSkipForCloudMode(sensorSettings)) {
+                            repository.updateTag(ruuviTag)
+                            if (sensorSettings != null && ruuviTag.dataFormat !in legacyAirDataformats) {
+                                saveFavoriteReading(ruuviTag, sensorSettings)
+                            }
+                            sensorSettings?.let {
+                                alarmCheckInteractor.checkAlarmsForSensor(ruuviTag, sensorSettings)
+                            }
                         }
-                        sensorSettings?.let {
-                            alarmCheckInteractor.checkAlarmsForSensor(ruuviTag, sensorSettings)
+                    } finally {
+                        if (isForeground && sensorSettings != null) {
+                            automaticGattSyncInteractor.syncIfEligible(
+                                sensorId = sensorId,
+                                lastSync = sensorSettings.lastSync,
+                                isAir = ruuviTag.isAir(),
+                                networkSensor = sensorSettings.networkSensor,
+                            )
                         }
-                    }
-                    if (isForeground && sensorSettings != null) {
-                        automaticGattSyncInteractor.syncIfEligible(
-                            sensorId = sensorId,
-                            lastSync = sensorSettings.lastSync,
-                            isAir = ruuviTag.isAir(),
-                            networkSensor = sensorSettings.networkSensor,
-                        )
                     }
                 } else {
                     ruuviTag.updateAt = Date(currentTimeMillis())

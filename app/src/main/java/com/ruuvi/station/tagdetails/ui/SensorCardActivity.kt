@@ -700,50 +700,25 @@ fun SensorCardBottom(
                     isStale -> 18.5.dp
                     else -> 8.9.dp
                 } * fontScale
-                // Anchor the leading edge; scaled icons grow only toward the text.
+
                 Box(
-                    modifier = Modifier.width(26.dp * fontScale),
+                    modifier = Modifier.width(sourceIconWidth),
                     contentAlignment = Alignment.CenterStart,
                 ) {
-                    if (source == UpdateSource.Cloud) {
-                        Image(
-                            modifier = Modifier
-                                .requiredSize(width = sourceIconWidth, height = iconHeight),
-                            painter = painterResource(id = iconRes),
-                            contentDescription = if (isStale) {
-                                stringResource(R.string.sensor_measurements_outdated)
-                            } else {
-                                null
-                            },
-                        )
-                    } else {
-                        Image(
-                            modifier = Modifier
-                                .requiredSize(width = sourceIconWidth, height = iconHeight),
-                            painter = painterResource(id = iconRes),
-                            contentDescription = if (isStale) {
-                                stringResource(R.string.sensor_measurements_outdated)
-                            } else {
-                                null
-                            },
-                        )
-                    }
+                    Image(
+                        modifier = Modifier
+                            .requiredSize(width = sourceIconWidth, height = iconHeight),
+                        painter = painterResource(id = iconRes),
+                        contentDescription = if (isStale) {
+                            stringResource(R.string.sensor_measurements_outdated)
+                        } else {
+                            null
+                        },
+                    )
                 }
-                Spacer(
-                    modifier = Modifier.width(
-                        if (source == UpdateSource.Cloud) 4.dp else 0.dp,
-                    ),
-                )
+                Spacer(modifier = Modifier.width(4.dp))
                 Text(
-                    modifier = Modifier
-                        .offset(
-                            x = if (source != UpdateSource.Cloud) {
-                                if (isStale) (-4).dp else (-12).dp
-                            } else {
-                                0.dp
-                            },
-                        )
-                        .weight(1f),
+                    modifier = Modifier.weight(1f),
                     style = RuuviStationTheme.typography.dashboardSecondary,
                     color = if (useDarkBackground) {
                         RuuviStationTheme.colors.topBarText.copy(alpha = 0.5f)

@@ -1210,18 +1210,20 @@ fun ItemBottomUpdatedInfo(
             mutableStateOf(sensor.latestMeasurement.updatedAt?.describingTimeSince(context) ?: "")
         }
 
+        val fontScale = min(LocalConfiguration.current.fontScale, 1.5f)
+        val iconHeight = 20.dp * fontScale
+
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            modifier = modifier
-                .height(RuuviStationTheme.dimensions.big)
+            modifier = modifier.heightIn(
+                min = maxOf(RuuviStationTheme.dimensions.big, iconHeight),
+            ),
         ) {
             val source = sensor.getSource()
             val iconRes = source.dashboardIconResource(
                 isStale = isStale,
                 backgroundColor = RuuviStationTheme.colors.dashboardCardBackground,
             )
-            val fontScale = min(LocalConfiguration.current.fontScale, 1.5f)
-            val iconHeight = 20.dp * fontScale
             Row(
                 modifier = Modifier.weight(1f),
                 verticalAlignment = Alignment.CenterVertically,
@@ -1233,64 +1235,35 @@ fun ItemBottomUpdatedInfo(
                 } * fontScale
 
                 Box(
-                    modifier = Modifier.width(26.dp * fontScale),
+                    modifier = Modifier.width(sourceIconWidth),
                     contentAlignment = Alignment.CenterStart,
                 ) {
-                    if (source == UpdateSource.Cloud) {
-                        Image(
-                            modifier = Modifier
-                                .requiredSize(width = sourceIconWidth, height = iconHeight)
-                                .then(
-                                    if (isStale) {
-                                        Modifier.clickableSingle(
-                                            enabled = interactionEnabled,
-                                            onClick = onShowStaleSnackbar,
-                                        )
-                                    } else {
-                                        Modifier
-                                    },
-                                ),
-                            painter = painterResource(id = iconRes),
-                            contentDescription = if (isStale) {
-                                stringResource(R.string.sensor_measurements_outdated)
-                            } else {
-                                null
-                            },
-                        )
-                    } else {
-                        Image(
-                            modifier = Modifier
-                                .requiredSize(width = sourceIconWidth, height = iconHeight)
-                                .then(
-                                    if (isStale) {
-                                        Modifier.clickableSingle(
-                                            enabled = interactionEnabled,
-                                            onClick = onShowStaleSnackbar,
-                                        )
-                                    } else {
-                                        Modifier
-                                    },
-                                ),
-                            painter = painterResource(id = iconRes),
-                            contentDescription = if (isStale) {
-                                stringResource(R.string.sensor_measurements_outdated)
-                            } else {
-                                null
-                            },
-                        )
-                    }
+                    Image(
+                        modifier = Modifier
+                            .requiredSize(width = sourceIconWidth, height = iconHeight)
+                            .then(
+                                if (isStale) {
+                                    Modifier.clickableSingle(
+                                        enabled = interactionEnabled,
+                                        onClick = onShowStaleSnackbar,
+                                    )
+                                } else {
+                                    Modifier
+                                },
+                            ),
+                        painter = painterResource(id = iconRes),
+                        contentDescription = if (isStale) {
+                            stringResource(R.string.sensor_measurements_outdated)
+                        } else {
+                            null
+                        },
+                    )
                 }
 
-                Spacer(
-                    modifier = Modifier.width(
-                        if (source == UpdateSource.Cloud) 4.dp else 0.dp,
-                    ),
-                )
+                Spacer(modifier = Modifier.width(4.dp))
 
                 Text(
-                    modifier = Modifier
-                        .offset(x = if (source != UpdateSource.Cloud) if(isStale) (-4).dp else (-12).dp else 0.dp)
-                        .weight(1f),
+                    modifier = Modifier.weight(1f),
                     style = RuuviStationTheme.typography.dashboardSecondary,
                     fontSize = ruuviStationFontsSizes.petite.limitScaleTo(1.5f),
                     text = updatedText,

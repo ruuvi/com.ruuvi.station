@@ -66,6 +66,7 @@ import androidx.compose.ui.unit.toSize
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
@@ -230,6 +231,22 @@ private fun SensorDetailScreen(
     val context = LocalContext.current
     val staleSnackbarMessage = stringResource(R.string.sensor_measurements_outdated)
     var automaticallyShownStaleSensorId by rememberSaveable { mutableStateOf<String?>(null) }
+    var staleSnackbarJob by remember { mutableStateOf<Job?>(null) }
+
+    fun showStaleSnackbar() {
+        if (staleSnackbarJob?.isActive == true) return
+        staleSnackbarJob = coroutineScope.launch {
+            scaffoldState.snackbarHostState.showSnackbar(staleSnackbarMessage)
+        }
+    }
+
+    fun dismissStaleSnackbar() {
+        staleSnackbarJob?.cancel()
+        staleSnackbarJob = null
+        scaffoldState.snackbarHostState.currentSnackbarData
+            ?.takeIf { it.message == staleSnackbarMessage }
+            ?.dismiss()
+    }
 
     LaunchedEffect(selectedSensorId, sensorIds) {
         val selectedPage = sensorIds.indexOf(selectedSensorId)
@@ -250,6 +267,8 @@ private fun SensorDetailScreen(
     }
 
     LaunchedEffect(currentSensor?.id, destination) {
+        staleSnackbarJob?.cancel()
+        staleSnackbarJob = null
         scaffoldState.snackbarHostState.currentSnackbarData?.dismiss()
     }
 
@@ -435,28 +454,14 @@ private fun SensorDetailScreen(
                             staleTimeoutSeconds = staleTimeoutSeconds,
                             useDarkBackground = useSensorBackground,
                             modifier = Modifier.heightIn(min = 44.dp),
-                            onShowStaleSnackbar = {
-                                coroutineScope.launch {
-                                    scaffoldState.snackbarHostState.showSnackbar(
-                                        staleSnackbarMessage,
-                                    )
-                                }
-                            },
+                            onShowStaleSnackbar = ::showStaleSnackbar,
                             onShowInitialStaleSnackbar = {
                                 if (automaticallyShownStaleSensorId != currentSensor.id) {
                                     automaticallyShownStaleSensorId = currentSensor.id
-                                    coroutineScope.launch {
-                                        scaffoldState.snackbarHostState.showSnackbar(
-                                            staleSnackbarMessage,
-                                        )
-                                    }
+                                    showStaleSnackbar()
                                 }
                             },
-                            onDismissStaleSnackbar = {
-                                scaffoldState.snackbarHostState.currentSnackbarData
-                                    ?.takeIf { it.message == staleSnackbarMessage }
-                                    ?.dismiss()
-                            },
+                            onDismissStaleSnackbar = ::dismissStaleSnackbar,
                         )
                     }
                 }
