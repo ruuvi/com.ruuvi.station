@@ -21,7 +21,7 @@ import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.only
-import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -116,7 +116,7 @@ class ShareSensorActivity : AppCompatActivity() , DIAware {
                         Scaffold(
                             modifier = Modifier
                                 .windowInsetsPadding(
-                                    WindowInsets.systemBars.only(WindowInsetsSides.Top + WindowInsetsSides.Horizontal)
+                                    WindowInsets.safeDrawing.only(WindowInsetsSides.Top + WindowInsetsSides.Horizontal)
                                 )
                                 .imePadding()
                                 .fillMaxSize(),
@@ -203,7 +203,7 @@ fun ShareBody(
     Scaffold(
         modifier = Modifier
             .windowInsetsPadding(
-                WindowInsets.systemBars.only(WindowInsetsSides.Top + WindowInsetsSides.Horizontal)
+                WindowInsets.safeDrawing.only(WindowInsetsSides.Top + WindowInsetsSides.Horizontal)
             )
             .imePadding()
             .fillMaxSize(),

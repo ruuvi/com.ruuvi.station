@@ -144,7 +144,7 @@ fun MyAccountBody(
     Column(modifier = Modifier
         .fillMaxSize()
         .windowInsetsPadding(
-            WindowInsets.systemBars.only(WindowInsetsSides.Top + WindowInsetsSides.Horizontal)
+            WindowInsets.safeDrawing.only(WindowInsetsSides.Top + WindowInsetsSides.Horizontal)
         )
         .background(RuuviStationTheme.colors.background)
     ) {

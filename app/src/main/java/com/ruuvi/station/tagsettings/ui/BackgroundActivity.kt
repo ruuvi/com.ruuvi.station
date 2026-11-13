@@ -112,7 +112,7 @@ class BackgroundActivity : AppCompatActivity(), DIAware {
             modifier = Modifier
                 .fillMaxSize()
                 .windowInsetsPadding(
-                    WindowInsets.systemBars.only(WindowInsetsSides.Top + WindowInsetsSides.Horizontal)
+                    WindowInsets.safeDrawing.only(WindowInsetsSides.Top + WindowInsetsSides.Horizontal)
                 ),
             backgroundColor = RuuviStationTheme.colors.background,
             topBar = { RuuviTopAppBar(title = stringResource(id = R.string.change_background)) },

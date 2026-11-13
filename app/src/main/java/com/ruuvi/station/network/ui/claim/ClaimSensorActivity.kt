@@ -102,7 +102,7 @@ class ClaimSensorActivity : NfcActivity(), DIAware {
         Scaffold(
             modifier = Modifier
                 .windowInsetsPadding(
-                    WindowInsets.systemBars.only(WindowInsetsSides.Top + WindowInsetsSides.Horizontal)
+                    WindowInsets.safeDrawing.only(WindowInsetsSides.Top + WindowInsetsSides.Horizontal)
                 )
                 .fillMaxSize(),
             backgroundColor = RuuviStationTheme.colors.background,

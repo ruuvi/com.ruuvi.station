@@ -15,7 +15,7 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.only
-import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material.*
 import androidx.compose.runtime.*
@@ -72,7 +72,7 @@ class SettingsActivity : AppCompatActivity(), DIAware {
                     Scaffold(
                         modifier = Modifier
                             .windowInsetsPadding(
-                                WindowInsets.systemBars.only(WindowInsetsSides.Top + WindowInsetsSides.Horizontal)
+                                WindowInsets.safeDrawing.only(WindowInsetsSides.Top + WindowInsetsSides.Horizontal)
                             )
                             .fillMaxSize(),
                         backgroundColor = RuuviStationTheme.colors.background,
