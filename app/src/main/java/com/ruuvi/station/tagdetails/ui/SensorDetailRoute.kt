@@ -834,7 +834,11 @@ internal fun SensorDetailSystemBars(
     SideEffect {
         val activity = context as? ComponentActivity ?: return@SideEffect
         activity.enableEdgeToEdge(
-            statusBarStyle = SystemBarStyle.dark(activeStatusBarColor),
+            statusBarStyle = if (useTransparentStatusBar || useDarkTheme) {
+                SystemBarStyle.dark(activeStatusBarColor)
+            } else {
+                SystemBarStyle.light(activeStatusBarColor, activeStatusBarColor)
+            },
             navigationBarStyle = if (useTransparentStatusBar || useDarkTheme) {
                 SystemBarStyle.dark(transparentColor)
             } else {

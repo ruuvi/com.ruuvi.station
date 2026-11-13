@@ -101,12 +101,17 @@ class CalibrationActivityUiTest {
                 .build()
             ViewCompat.dispatchApplyWindowInsets(activity.binding.root, insets)
 
+            val fragment = activity.supportFragmentManager
+                .findFragmentById(R.id.calibration_frame) as CalibrationFragment
+            val calibrationScroll = fragment.binding.calibrationScroll
+
+            assertEquals(activity.binding.root, activity.binding.calibrationFrame.parent)
             assertEquals(12, activity.binding.root.paddingLeft)
             assertEquals(24, activity.binding.root.paddingTop)
             assertEquals(14, activity.binding.root.paddingRight)
             assertEquals(0, activity.binding.root.paddingBottom)
-            assertEquals(48, activity.binding.calibrationScroll.paddingBottom)
-            assertFalse(activity.binding.calibrationScroll.clipToPadding)
+            assertEquals(48, calibrationScroll.paddingBottom)
+            assertFalse(calibrationScroll.clipToPadding)
         }
     }
 

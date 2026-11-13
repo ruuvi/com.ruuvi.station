@@ -15,6 +15,8 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.exclude
+import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -40,7 +42,6 @@ import androidx.compose.material.LocalMinimumInteractiveComponentEnforcement
 import androidx.compose.material.Scaffold
 import androidx.compose.material.ScaffoldState
 import androidx.compose.material.SnackbarDuration
-import androidx.compose.material.SnackbarHost
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -195,7 +196,9 @@ fun ShareBody(
 ) {
     val listState = rememberLazyListState()
     val screenPadding = RuuviStationTheme.dimensions.screenPadding
-    val navigationPadding = WindowInsets.navigationBars.asPaddingValues()
+    val navigationPadding = WindowInsets.navigationBars
+        .exclude(WindowInsets.ime)
+        .asPaddingValues()
 
     Scaffold(
         modifier = Modifier

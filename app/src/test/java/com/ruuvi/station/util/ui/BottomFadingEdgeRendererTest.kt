@@ -34,6 +34,35 @@ class BottomFadingEdgeRendererTest {
     }
 
     @Test
+    fun `inset changes refresh the cached default fade length`() {
+        val renderer = BottomFadingEdgeRenderer(RuntimeEnvironment.getApplication(), null)
+        val view = viewport()
+        for (navigationBarHeight in listOf(0, 48, 0)) {
+            val insets = androidx.core.view.WindowInsetsCompat.Builder()
+                .setInsets(
+                    androidx.core.view.WindowInsetsCompat.Type.navigationBars(),
+                    androidx.core.graphics.Insets.of(0, 0, 0, navigationBarHeight),
+                )
+                .build()
+            renderer.refreshFadeLength(view, insets)
+
+            repeat(2) {
+                val bitmap = Bitmap.createBitmap(100, 200, Bitmap.Config.ARGB_8888)
+                val canvas = Canvas(bitmap)
+                canvas.drawColor(Color.WHITE)
+                renderer.draw(canvas, view) { canvas.drawColor(Color.BLACK) }
+
+                if (navigationBarHeight == 0) {
+                    assertEquals(Color.BLACK, bitmap.getPixel(50, 120))
+                } else {
+                    assertTrue(Color.red(bitmap.getPixel(50, 120)) in 1..254)
+                }
+                bitmap.recycle()
+            }
+        }
+    }
+
+    @Test
     fun `XML length overrides the shared default and zero disables fading`() {
         for (length in listOf(0, 24, 300)) {
             val renderer = renderer(length)

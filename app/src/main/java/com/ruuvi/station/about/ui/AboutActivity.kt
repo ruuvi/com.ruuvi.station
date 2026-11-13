@@ -2,22 +2,18 @@ package com.ruuvi.station.about.ui
 
 import android.content.Context
 import android.content.Intent
-import android.graphics.Color
 import android.os.Bundle
 import android.text.method.LinkMovementMethod
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
 import com.ruuvi.station.BuildConfig
 import com.ruuvi.station.R
 import com.ruuvi.station.about.model.AppStats
 import com.ruuvi.station.database.domain.LocalDatabase
 import com.ruuvi.station.databinding.ActivityAboutBinding
+import com.ruuvi.station.util.extensions.applyRuuviEdgeToEdgeInsets
 import com.ruuvi.station.util.extensions.enableRuuviEdgeToEdge
-import com.ruuvi.station.util.extensions.isDarkMode
 import com.ruuvi.station.util.extensions.makeWebLinks
 import com.ruuvi.station.util.extensions.viewModel
 import com.ruuvi.station.util.ui.showBottomSnackbar
@@ -41,18 +37,7 @@ class AboutActivity : AppCompatActivity(R.layout.activity_about), DIAware {
         binding = ActivityAboutBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { view, insets ->
-            val safeInsets = insets.getInsets(
-                WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout()
-            )
-            view.setPadding(safeInsets.left, safeInsets.top, safeInsets.right, 0)
-            binding.content.root.apply {
-                setPadding(paddingLeft, paddingTop, paddingRight, safeInsets.bottom)
-                clipToPadding = false
-            }
-            insets
-        }
-        ViewCompat.requestApplyInsets(binding.root)
+        binding.root.applyRuuviEdgeToEdgeInsets(binding.content.root)
 
         setupUI()
         setupViewModel()
@@ -70,15 +55,6 @@ class AboutActivity : AppCompatActivity(R.layout.activity_about), DIAware {
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
-
-        if (!isDarkMode()) {
-            binding.root.setBackgroundColor(Color.WHITE)
-            binding.appBarLayout.setBackgroundColor(Color.WHITE)
-
-            val toolbarContentColor = ContextCompat.getColor(this, R.color.titan)
-            binding.toolbar.setTitleTextColor(toolbarContentColor)
-            binding.toolbar.navigationIcon?.setTint(toolbarContentColor)
-        }
 
         with(binding.content) {
             infoText.movementMethod = LinkMovementMethod.getInstance()

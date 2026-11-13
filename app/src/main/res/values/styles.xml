@@ -21,7 +21,11 @@
         <item name="android:navigationBarColor">@android:color/transparent</item>
     </style>
 
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Light">
+        <item name="android:textColorPrimary">@color/titan</item>
+        <item name="colorControlNormal">@color/titan</item>
+        <item name="actionMenuTextColor">@color/titan</item>
+    </style>
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 

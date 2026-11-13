@@ -30,7 +30,7 @@ class SensorDetailSystemBarsTest {
     @get:Rule val compose = createAndroidComposeRule<ComponentActivity>()
 
     @Test
-    fun `navigation icons follow the dark sensor backdrop and update when leaving it`() {
+    fun `system bar icons follow the active backdrop and theme`() {
         var sensorBackdrop by mutableStateOf(true)
         var darkTheme by mutableStateOf(false)
         compose.setContent {
@@ -42,18 +42,18 @@ class SensorDetailSystemBarsTest {
             }
         }
 
-        // Card and history keep light buttons over their dark backdrop in light mode.
-        assertSystemBarIcons(darkNavigationIcons = false)
+        // Card and history keep light system-bar icons over their dark backdrop in light mode.
+        assertSystemBarIcons(darkIcons = false)
 
-        // Leaving that backdrop for a light surface restores dark navigation buttons.
+        // Leaving that backdrop for a light surface restores dark system-bar icons.
         compose.runOnIdle { sensorBackdrop = false }
-        assertSystemBarIcons(darkNavigationIcons = true)
+        assertSystemBarIcons(darkIcons = true)
 
-        // Both dark surfaces and the sensor backdrop keep light buttons in dark mode.
+        // Both dark surfaces and the sensor backdrop keep light system-bar icons in dark mode.
         compose.runOnIdle { darkTheme = true }
-        assertSystemBarIcons(darkNavigationIcons = false)
+        assertSystemBarIcons(darkIcons = false)
         compose.runOnIdle { sensorBackdrop = true }
-        assertSystemBarIcons(darkNavigationIcons = false)
+        assertSystemBarIcons(darkIcons = false)
     }
 
     @Suppress("DEPRECATION")
@@ -120,12 +120,12 @@ class SensorDetailSystemBarsTest {
         }
     }
 
-    private fun assertSystemBarIcons(darkNavigationIcons: Boolean) {
+    private fun assertSystemBarIcons(darkIcons: Boolean) {
         compose.runOnIdle {
             val window = compose.activity.window
             val insetsController = WindowCompat.getInsetsController(window, window.decorView)
-            assertFalse("The status bar must keep light icons", insetsController.isAppearanceLightStatusBars)
-            assertEquals(darkNavigationIcons, insetsController.isAppearanceLightNavigationBars)
+            assertEquals(darkIcons, insetsController.isAppearanceLightStatusBars)
+            assertEquals(darkIcons, insetsController.isAppearanceLightNavigationBars)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 assertFalse("The navigation bar must stay transparent", window.isNavigationBarContrastEnforced)
             }

@@ -2,19 +2,15 @@ package com.ruuvi.station.calibration.ui
 
 import android.content.Context
 import android.content.Intent
-import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MenuItem
-import androidx.core.content.ContextCompat
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 import com.ruuvi.station.R
 import com.ruuvi.station.calibration.model.CalibrationType
 import com.ruuvi.station.databinding.ActivityCalibrationBinding
+import com.ruuvi.station.util.extensions.applyRuuviEdgeToEdgeInsets
 import com.ruuvi.station.util.extensions.enableRuuviEdgeToEdge
-import com.ruuvi.station.util.extensions.isDarkMode
 
 class CalibrationActivity : AppCompatActivity() {
 
@@ -26,7 +22,6 @@ class CalibrationActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val useLightTheme = !isDarkMode()
         enableRuuviEdgeToEdge()
 
         binding = ActivityCalibrationBinding.inflate(layoutInflater)
@@ -36,26 +31,7 @@ class CalibrationActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
 
-        if (useLightTheme) {
-            binding.root.setBackgroundColor(Color.WHITE)
-            binding.appBarLayout.setBackgroundColor(Color.WHITE)
-            val toolbarContentColor = ContextCompat.getColor(this, R.color.titan)
-            binding.toolbar.setTitleTextColor(toolbarContentColor)
-            binding.toolbar.navigationIcon?.setTint(toolbarContentColor)
-        }
-
-        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { view, insets ->
-            val safeInsets = insets.getInsets(
-                WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout()
-            )
-            view.setPadding(safeInsets.left, safeInsets.top, safeInsets.right, 0)
-            binding.calibrationScroll.apply {
-                setPadding(paddingLeft, paddingTop, paddingRight, safeInsets.bottom)
-                clipToPadding = false
-            }
-            insets
-        }
-        ViewCompat.requestApplyInsets(binding.root)
+        binding.root.applyRuuviEdgeToEdgeInsets()
 
         sensorId = intent.getStringExtra(SENSOR_ID) ?: ""
         calibrationType = intent.getSerializableExtra(CALIBRATION_TYPE) as CalibrationType

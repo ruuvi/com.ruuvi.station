@@ -3,20 +3,15 @@ package com.ruuvi.station.addtag.ui
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Color
 import android.os.Bundle
 import android.view.MenuItem
 import android.widget.AdapterView
 import android.widget.Toast
-import androidx.core.content.ContextCompat
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.snackbar.BaseTransientBottomBar.LENGTH_LONG
-import com.google.android.material.snackbar.Snackbar
+import com.ruuvi.station.util.extensions.applyRuuviEdgeToEdgeInsets
 import com.ruuvi.station.util.extensions.enableRuuviEdgeToEdge
-import com.ruuvi.station.util.extensions.isDarkMode
 import com.ruuvi.station.util.extensions.viewModel
 import com.ruuvi.station.R
 import com.ruuvi.station.app.preferences.PreferencesRepository
@@ -55,18 +50,7 @@ class AddTagActivity : NfcActivity(R.layout.activity_add_tag), DIAware {
         setSupportActionBar(binding.toolbar)
         permissionsInteractor = PermissionsInteractor(this)
 
-        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { view, insets ->
-            val safeInsets = insets.getInsets(
-                WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout()
-            )
-            view.setPadding(safeInsets.left, safeInsets.top, safeInsets.right, 0)
-            binding.content.tagListView.apply {
-                setPadding(paddingLeft, paddingTop, paddingRight, safeInsets.bottom)
-                clipToPadding = false
-            }
-            insets
-        }
-        ViewCompat.requestApplyInsets(binding.root)
+        binding.root.applyRuuviEdgeToEdgeInsets(binding.content.tagListView)
 
         requestPermission()
         setupViewmodel()
@@ -129,16 +113,6 @@ class AddTagActivity : NfcActivity(R.layout.activity_add_tag), DIAware {
 
     private fun setupUI() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
-        if (!isDarkMode()) {
-            binding.root.setBackgroundColor(Color.WHITE)
-            binding.toolbarContainer.setBackgroundColor(Color.WHITE)
-            binding.appBarLayout.setBackgroundColor(Color.WHITE)
-
-            val toolbarContentColor = ContextCompat.getColor(this, R.color.titan)
-            binding.toolbar.setTitleTextColor(toolbarContentColor)
-            binding.toolbar.navigationIcon?.setTint(toolbarContentColor)
-        }
 
         binding.content.tagListView.adapter = adapter
         binding.content.noSensorsLayout.isVisible = tags.isEmpty()

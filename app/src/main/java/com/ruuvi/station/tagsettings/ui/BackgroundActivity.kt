@@ -17,7 +17,6 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material.Scaffold
 import androidx.compose.material.ScaffoldState
-import androidx.compose.material.SnackbarHost
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier

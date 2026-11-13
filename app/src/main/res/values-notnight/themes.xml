@@ -11,7 +11,7 @@
         <item name="colorOnSurfaceVariant">@color/black</item>
         <item name="colorHeaderSurface">@color/backgroundLight</item>
         <item name="colorOnHeaderSurface">@color/mainDark</item>
-        <item name="colorToolbar">@color/titan</item>
+        <item name="colorToolbar">@color/white</item>
         <item name="android:navigationBarColor">@color/navigation_bar_color</item>
 
         <item name="colorPrimaryText">@color/titan</item>

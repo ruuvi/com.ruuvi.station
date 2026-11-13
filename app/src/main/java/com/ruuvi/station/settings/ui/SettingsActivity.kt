@@ -25,11 +25,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.ruuvi.station.R
 import com.ruuvi.station.app.ui.RuuviTopAppBar
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.RuuviTheme
@@ -53,8 +51,6 @@ class SettingsActivity : AppCompatActivity(), DIAware {
         setContent {
             RuuviTheme() {
                 val navController = rememberNavController()
-                val backStackEntry by navController.currentBackStackEntryAsState()
-                val isSettingsRoot = (backStackEntry?.destination?.route ?: SettingsRoutes.LIST) == SettingsRoutes.LIST
                 val scaffoldState = rememberScaffoldState()
                 val context = LocalContext.current
                 var title: String by rememberSaveable { mutableStateOf("") }
@@ -85,9 +81,7 @@ class SettingsActivity : AppCompatActivity(), DIAware {
                 snackbarHost = { RuuviSnackbarHost(it) },
                     ) { padding ->
                         NavHost(
-                            modifier = Modifier
-                                .padding(padding)
-                                .then(if (isSettingsRoot) Modifier else Modifier.navigationBarsPadding()),
+                            modifier = Modifier.padding(padding),
                             navController = navController,
                             startDestination = SettingsRoutes.LIST
                         ) {
@@ -112,10 +106,12 @@ class SettingsActivity : AppCompatActivity(), DIAware {
                                 popExitTransition = popExitTransition
                             ) {
                                 val appearanceSettingsViewModel: AppearanceSettingsViewModel by viewModel()
-                                AppearanceSettings(
-                                    scaffoldState = scaffoldState,
-                                    viewModel = appearanceSettingsViewModel
-                                )
+                                SettingsSubPage {
+                                    AppearanceSettings(
+                                        scaffoldState = scaffoldState,
+                                        viewModel = appearanceSettingsViewModel
+                                    )
+                                }
                             }
                             composable(
                                 route = SettingsRoutes.ALERT_NOTIFICATIONS,
@@ -125,10 +121,12 @@ class SettingsActivity : AppCompatActivity(), DIAware {
                                 popExitTransition = popExitTransition
                             ) {
                                 val alertNotificationsSettingsViewModel: AlertNotificationsSettingsViewModel by viewModel()
-                                AlertNotificationsSettings(
-                                    scaffoldState = scaffoldState,
-                                    viewModel = alertNotificationsSettingsViewModel
-                                )
+                                SettingsSubPage {
+                                    AlertNotificationsSettings(
+                                        scaffoldState = scaffoldState,
+                                        viewModel = alertNotificationsSettingsViewModel
+                                    )
+                                }
                             }
                             composable(
                                 SettingsRoutes.BACKGROUNDSCAN,
@@ -138,10 +136,12 @@ class SettingsActivity : AppCompatActivity(), DIAware {
                                 popExitTransition = popExitTransition
                             ) {
                                 val backgroundScanSettingsViewModel: BackgroundScanSettingsViewModel by viewModel()
-                                BackgroundScanSettings(
-                                    scaffoldState = scaffoldState,
-                                    viewModel = backgroundScanSettingsViewModel
-                                )
+                                SettingsSubPage {
+                                    BackgroundScanSettings(
+                                        scaffoldState = scaffoldState,
+                                        viewModel = backgroundScanSettingsViewModel
+                                    )
+                                }
                             }
                             composable(
                                 SettingsRoutes.TEMPERATURE,
@@ -151,10 +151,12 @@ class SettingsActivity : AppCompatActivity(), DIAware {
                                 popExitTransition = popExitTransition
                             ) {
                                 val temperatureSettingsViewModel: TemperatureSettingsViewModel by viewModel()
-                                TemperatureSettings(
-                                    scaffoldState = scaffoldState,
-                                    viewModel = temperatureSettingsViewModel
-                                )
+                                SettingsSubPage {
+                                    TemperatureSettings(
+                                        scaffoldState = scaffoldState,
+                                        viewModel = temperatureSettingsViewModel
+                                    )
+                                }
                             }
                             composable(
                                 SettingsRoutes.HUMIDITY,
@@ -164,10 +166,12 @@ class SettingsActivity : AppCompatActivity(), DIAware {
                                 popExitTransition = popExitTransition
                             ) {
                                 val humiditySettingsViewModel: HumiditySettingsViewModel by viewModel()
-                                HumiditySettings(
-                                    scaffoldState = scaffoldState,
-                                    viewModel = humiditySettingsViewModel
-                                )
+                                SettingsSubPage {
+                                    HumiditySettings(
+                                        scaffoldState = scaffoldState,
+                                        viewModel = humiditySettingsViewModel
+                                    )
+                                }
                             }
                             composable(
                                 SettingsRoutes.PRESSURE,
@@ -177,10 +181,12 @@ class SettingsActivity : AppCompatActivity(), DIAware {
                                 popExitTransition = popExitTransition
                             ) {
                                 val pressureSettingsViewModel: PressureSettingsViewModel by viewModel()
-                                PressureSettings(
-                                    scaffoldState = scaffoldState,
-                                    viewModel = pressureSettingsViewModel
-                                )
+                                SettingsSubPage {
+                                    PressureSettings(
+                                        scaffoldState = scaffoldState,
+                                        viewModel = pressureSettingsViewModel
+                                    )
+                                }
                             }
                             composable(
                                 SettingsRoutes.GLOBAL_UNITS,
@@ -190,11 +196,13 @@ class SettingsActivity : AppCompatActivity(), DIAware {
                                 popExitTransition = popExitTransition
                             ) {
                                 val globalUnitsAndResolutionViewModel: GlobalUnitsAndResolutionViewModel by viewModel()
-                                GlobalUnitsSettings(
-                                    scaffoldState = scaffoldState,
-                                    onNavigate = navController::navigate,
-                                    viewModel = globalUnitsAndResolutionViewModel
-                                )
+                                SettingsSubPage {
+                                    GlobalUnitsSettings(
+                                        scaffoldState = scaffoldState,
+                                        onNavigate = navController::navigate,
+                                        viewModel = globalUnitsAndResolutionViewModel
+                                    )
+                                }
                             }
                             composable(
                                 route = SettingsRoutes.GLOBAL_UNIT_SELECT,
@@ -209,13 +217,15 @@ class SettingsActivity : AppCompatActivity(), DIAware {
                                 popExitTransition = popExitTransition
                             ) { backStackEntry ->
                                 val globalUnitsAndResolutionViewModel: GlobalUnitsAndResolutionViewModel by viewModel()
-                                GlobalUnitSelectionSettings(
-                                    scaffoldState = scaffoldState,
-                                    unitType = backStackEntry.arguments?.getString(
-                                        SettingsRoutes.GLOBAL_UNIT_TYPE_ARG
-                                    ),
-                                    viewModel = globalUnitsAndResolutionViewModel
-                                )
+                                SettingsSubPage {
+                                    GlobalUnitSelectionSettings(
+                                        scaffoldState = scaffoldState,
+                                        unitType = backStackEntry.arguments?.getString(
+                                            SettingsRoutes.GLOBAL_UNIT_TYPE_ARG
+                                        ),
+                                        viewModel = globalUnitsAndResolutionViewModel
+                                    )
+                                }
                             }
                             composable(
                                 SettingsRoutes.RESOLUTION,
@@ -225,11 +235,13 @@ class SettingsActivity : AppCompatActivity(), DIAware {
                                 popExitTransition = popExitTransition
                             ) {
                                 val globalUnitsAndResolutionViewModel: GlobalUnitsAndResolutionViewModel by viewModel()
-                                ResolutionSettings(
-                                    scaffoldState = scaffoldState,
-                                    onNavigate = navController::navigate,
-                                    viewModel = globalUnitsAndResolutionViewModel
-                                )
+                                SettingsSubPage {
+                                    ResolutionSettings(
+                                        scaffoldState = scaffoldState,
+                                        onNavigate = navController::navigate,
+                                        viewModel = globalUnitsAndResolutionViewModel
+                                    )
+                                }
                             }
                             composable(
                                 route = SettingsRoutes.RESOLUTION_SELECT,
@@ -244,13 +256,15 @@ class SettingsActivity : AppCompatActivity(), DIAware {
                                 popExitTransition = popExitTransition
                             ) { backStackEntry ->
                                 val globalUnitsAndResolutionViewModel: GlobalUnitsAndResolutionViewModel by viewModel()
-                                ResolutionSelectionSettings(
-                                    scaffoldState = scaffoldState,
-                                    target = backStackEntry.arguments?.getString(
-                                        SettingsRoutes.RESOLUTION_TARGET_ARG
-                                    ),
-                                    viewModel = globalUnitsAndResolutionViewModel
-                                )
+                                SettingsSubPage {
+                                    ResolutionSelectionSettings(
+                                        scaffoldState = scaffoldState,
+                                        target = backStackEntry.arguments?.getString(
+                                            SettingsRoutes.RESOLUTION_TARGET_ARG
+                                        ),
+                                        viewModel = globalUnitsAndResolutionViewModel
+                                    )
+                                }
                             }
                             composable(
                                 SettingsRoutes.CLOUD,
@@ -260,10 +274,12 @@ class SettingsActivity : AppCompatActivity(), DIAware {
                                 popExitTransition = popExitTransition
                             ) {
                                 val cloudSettingsViewModel: CloudSettingsViewModel by viewModel()
-                                CloudSettings(
-                                    scaffoldState = scaffoldState,
-                                    viewModel = cloudSettingsViewModel
-                                )
+                                SettingsSubPage {
+                                    CloudSettings(
+                                        scaffoldState = scaffoldState,
+                                        viewModel = cloudSettingsViewModel
+                                    )
+                                }
                             }
                             composable(
                                 SettingsRoutes.CHARTS,
@@ -273,10 +289,12 @@ class SettingsActivity : AppCompatActivity(), DIAware {
                                 popExitTransition = popExitTransition
                             ) {
                                 val chartSettingsViewModel: ChartSettingsViewModel by viewModel()
-                                ChartSettings(
-                                    scaffoldState = scaffoldState,
-                                    viewModel = chartSettingsViewModel
-                                )
+                                SettingsSubPage {
+                                    ChartSettings(
+                                        scaffoldState = scaffoldState,
+                                        viewModel = chartSettingsViewModel
+                                    )
+                                }
                             }
                             composable(
                                 SettingsRoutes.DATAFORWARDING,
@@ -286,10 +304,12 @@ class SettingsActivity : AppCompatActivity(), DIAware {
                                 popExitTransition = popExitTransition
                             ) {
                                 val dataForwardingSettingsViewModel: DataForwardingSettingsViewModel by viewModel()
-                                DataForwardingSettings(
-                                    scaffoldState = scaffoldState,
-                                    viewModel = dataForwardingSettingsViewModel
-                                )
+                                SettingsSubPage {
+                                    DataForwardingSettings(
+                                        scaffoldState = scaffoldState,
+                                        viewModel = dataForwardingSettingsViewModel
+                                    )
+                                }
                             }
                             composable(
                                 SettingsRoutes.DEVELOPER,
@@ -299,16 +319,29 @@ class SettingsActivity : AppCompatActivity(), DIAware {
                                 popExitTransition = popExitTransition
                             ) {
                                 val developerSettingsViewModel: DeveloperSettingsViewModel by viewModel()
-                                DeveloperSettings(
-                                    scaffoldState = scaffoldState,
-                                    onNavigate = navController::navigate,
-                                    viewModel = developerSettingsViewModel
-                                )
+                                SettingsSubPage {
+                                    DeveloperSettings(
+                                        scaffoldState = scaffoldState,
+                                        onNavigate = navController::navigate,
+                                        viewModel = developerSettingsViewModel
+                                    )
+                                }
                             }
                         }
                     }
                 }
             }
+        }
+    }
+
+    @Composable
+    private fun SettingsSubPage(content: @Composable () -> Unit) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .navigationBarsPadding(),
+        ) {
+            content()
         }
     }
 
