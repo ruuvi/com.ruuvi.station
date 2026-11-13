@@ -127,6 +127,16 @@ class SettingsActivityComposeTest {
     }
 
     @Test
+    fun `dark theme configures dark status bar icons`() {
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+        withActivity { activity ->
+            val icons = WindowCompat.getInsetsController(activity.window, activity.window.decorView)
+            assertFalse(icons.isAppearanceLightStatusBars)
+            assertFalse(icons.isAppearanceLightNavigationBars)
+        }
+    }
+
+    @Test
     fun `back from settings root finishes activity`() {
         withActivity { activity ->
             activity.onBackPressedDispatcher.onBackPressed()
