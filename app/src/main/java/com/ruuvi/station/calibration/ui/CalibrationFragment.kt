@@ -4,6 +4,8 @@ import android.os.Bundle
 import android.view.View
 import androidx.annotation.LayoutRes
 import androidx.appcompat.app.AlertDialog
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isInvisible
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
@@ -27,6 +29,21 @@ abstract class CalibrationFragment(@LayoutRes contentLayoutId: Int ): Fragment(c
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentCalibrateBinding.bind(view)
+
+        ViewCompat.setOnApplyWindowInsetsListener(binding.calibrationScroll) { scrollView, insets ->
+            val safeInsets = insets.getInsets(
+                WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout()
+            )
+            scrollView.setPadding(
+                scrollView.paddingLeft,
+                scrollView.paddingTop,
+                scrollView.paddingRight,
+                safeInsets.bottom,
+            )
+            binding.calibrationScroll.clipToPadding = false
+            insets
+        }
+        ViewCompat.requestApplyInsets(binding.calibrationScroll)
 
         setupViewModel()
         setupUI()

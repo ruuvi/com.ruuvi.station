@@ -148,7 +148,6 @@ class DashboardActivity : NfcActivity(), DIAware {
                     onMove = dashboardViewModel::moveItem,
                     onDoneDragging = dashboardViewModel::onDoneDragging
                 )
-                val navigationColor = Color.Transparent
 
                 if (shouldAskNotificationPermission) {
                     NotificationPermission(
@@ -286,7 +285,7 @@ class DashboardActivity : NfcActivity(), DIAware {
                         darkIcons = !isDarkTheme
                     )
                     systemUiController.setNavigationBarColor(
-                        color = navigationColor,
+                        color = Color.Transparent,
                         navigationBarContrastEnforced = false,
                         darkIcons = !isDarkTheme
                     )

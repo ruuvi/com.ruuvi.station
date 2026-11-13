@@ -32,20 +32,35 @@ internal class BottomFadingEdgeRenderer(context: Context, attrs: AttributeSet?) 
     }
     private var cachedStart = Float.NaN
     private var cachedEnd = Float.NaN
+    private var fadeLength = length ?: TypedValue.applyDimension(
+        TypedValue.COMPLEX_UNIT_SP,
+        BottomFadingEdgeDefaults.LENGTH_SP.toFloat(),
+        context.resources.displayMetrics,
+    )
+
+    fun refreshFadeLength(
+        view: View,
+        insets: WindowInsetsCompat? = ViewCompat.getRootWindowInsets(view),
+    ) {
+        if (length != null) return
+        val navigationBarInset = insets
+            ?.getInsets(WindowInsetsCompat.Type.navigationBars())?.bottom ?: 0
+        fadeLength = TypedValue.applyDimension(
+            TypedValue.COMPLEX_UNIT_SP,
+            BottomFadingEdgeDefaults.LENGTH_SP.toFloat(),
+            view.resources.displayMetrics,
+        ) + navigationBarInset
+        view.invalidate()
+    }
 
     fun draw(canvas: Canvas, view: View, drawContent: () -> Unit) {
-        val end = view.height.toFloat()
-        val fadeLength = length ?: run {
-            val navigationBarInset = ViewCompat.getRootWindowInsets(view)
-                ?.getInsets(WindowInsetsCompat.Type.navigationBars())?.bottom ?: 0
-            TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_SP,
-                BottomFadingEdgeDefaults.LENGTH_SP.toFloat(),
-                view.resources.displayMetrics,
-            ) + navigationBarInset
+        if (!view.canScrollVertically(1)) {
+            drawContent()
+            return
         }
+        val end = view.height.toFloat()
         val start = (end - fadeLength).coerceAtLeast(0f)
-        if (!view.canScrollVertically(1) || end <= start) {
+        if (end <= start) {
             drawContent()
             return
         }

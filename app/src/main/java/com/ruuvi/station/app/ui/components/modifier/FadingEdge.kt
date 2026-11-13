@@ -50,7 +50,13 @@ fun Modifier.bottomFadingEdge(lazyStaggeredGridState: LazyStaggeredGridState, le
     bottomFadingEdge(length) { lazyStaggeredGridState.canScrollForward }
 
 private fun Modifier.bottomFadingEdge(length: Dp, canScrollForward: () -> Boolean) = this
-    .graphicsLayer(compositingStrategy = CompositingStrategy.Offscreen)
+    .graphicsLayer {
+        compositingStrategy = if (canScrollForward()) {
+            CompositingStrategy.Offscreen
+        } else {
+            CompositingStrategy.Auto
+        }
+    }
     .drawWithCache {
         val fadeHeight = length.toPx().coerceIn(0f, size.height)
         val fadeBrush = if (fadeHeight > 0f) {
