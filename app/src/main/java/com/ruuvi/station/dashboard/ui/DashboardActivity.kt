@@ -131,12 +131,30 @@ internal fun showSnackbarIfIdle(
     }
 }
 
-internal fun dismissDashboardSnackbar(
-    hostState: SnackbarHostState,
-    activeJob: Job?,
-) {
+internal fun dismissDashboardSnackbar(activeJob: Job?) {
     activeJob?.cancel()
-    hostState.currentSnackbarData?.dismiss()
+}
+
+@Composable
+internal fun DashboardSnackbarLifecycleEffect(
+    staleSnackbarJob: Job?,
+    onStopped: () -> Unit,
+) {
+    val lifecycleOwner = LocalLifecycleOwner.current
+    val currentJob by rememberUpdatedState(staleSnackbarJob)
+    val currentOnStopped by rememberUpdatedState(onStopped)
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_STOP) {
+                dismissDashboardSnackbar(currentJob)
+                currentOnStopped()
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
+    }
 }
 
 class DashboardActivity : NfcActivity(), DIAware {
@@ -166,21 +184,8 @@ class DashboardActivity : NfcActivity(), DIAware {
                 val isDarkTheme = isSystemInDarkTheme()
                 val scope = rememberCoroutineScope()
                 var staleSnackbarJob by remember { mutableStateOf<Job?>(null) }
-                val lifecycleOwner = LocalLifecycleOwner.current
-                DisposableEffect(lifecycleOwner, scaffoldState) {
-                    val observer = LifecycleEventObserver { _, event ->
-                        if (event == Lifecycle.Event.ON_STOP) {
-                            dismissDashboardSnackbar(
-                                hostState = scaffoldState.snackbarHostState,
-                                activeJob = staleSnackbarJob,
-                            )
-                            staleSnackbarJob = null
-                        }
-                    }
-                    lifecycleOwner.lifecycle.addObserver(observer)
-                    onDispose {
-                        lifecycleOwner.lifecycle.removeObserver(observer)
-                    }
+                DashboardSnackbarLifecycleEffect(staleSnackbarJob) {
+                    staleSnackbarJob = null
                 }
                 val userEmail by dashboardViewModel.userEmail.observeAsState()
                 val signedIn = !userEmail.isNullOrEmpty()

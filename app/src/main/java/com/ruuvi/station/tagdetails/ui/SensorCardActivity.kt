@@ -652,7 +652,6 @@ fun SensorCardBottom(
     useDarkBackground: Boolean,
     modifier: Modifier = Modifier,
     onShowStaleSnackbar: () -> Unit = {},
-    onShowInitialStaleSnackbar: () -> Unit = {},
     onDismissStaleSnackbar: () -> Unit = {},
 ) {
     if (sensor.latestMeasurement != null) {
@@ -685,11 +684,7 @@ fun SensorCardBottom(
                 isDarkTheme = useDarkBackground,
             )
             Row(
-                modifier = Modifier
-                    .weight(1f, fill = false)
-                    .then(
-                        if (isStale) Modifier.clickable(onClick = onShowStaleSnackbar) else Modifier
-                    ),
+                modifier = Modifier.weight(1f, fill = false),
                 horizontalArrangement = Arrangement.Start,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
@@ -702,7 +697,15 @@ fun SensorCardBottom(
                 } * fontScale
 
                 Box(
-                    modifier = Modifier.width(sourceIconWidth),
+                    modifier = Modifier
+                        .width(sourceIconWidth)
+                        .then(
+                            if (isStale) {
+                                Modifier.clickable(onClick = onShowStaleSnackbar)
+                            } else {
+                                Modifier
+                            }
+                        ),
                     contentAlignment = Alignment.CenterStart,
                 ) {
                     Image(
@@ -740,9 +743,7 @@ fun SensorCardBottom(
         }
 
         LaunchedEffect(sensor.id, isStale) {
-            if (isStale) {
-                onShowInitialStaleSnackbar()
-            } else {
+            if (!isStale) {
                 onDismissStaleSnackbar()
             }
         }

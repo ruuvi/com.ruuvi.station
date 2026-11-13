@@ -230,7 +230,6 @@ private fun SensorDetailScreen(
     val titlePagePosition = pagerState.currentPage + pagerState.currentPageOffsetFraction
     val context = LocalContext.current
     val staleSnackbarMessage = stringResource(R.string.sensor_measurements_outdated)
-    var automaticallyShownStaleSensorId by rememberSaveable { mutableStateOf<String?>(null) }
     var staleSnackbarJob by remember { mutableStateOf<Job?>(null) }
 
     fun showStaleSnackbar() {
@@ -455,12 +454,6 @@ private fun SensorDetailScreen(
                             useDarkBackground = useSensorBackground,
                             modifier = Modifier.heightIn(min = 44.dp),
                             onShowStaleSnackbar = ::showStaleSnackbar,
-                            onShowInitialStaleSnackbar = {
-                                if (automaticallyShownStaleSensorId != currentSensor.id) {
-                                    automaticallyShownStaleSensorId = currentSensor.id
-                                    showStaleSnackbar()
-                                }
-                            },
                             onDismissStaleSnackbar = ::dismissStaleSnackbar,
                         )
                     }
