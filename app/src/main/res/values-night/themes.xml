@@ -12,7 +12,7 @@
         <item name="colorHeaderSurface">@color/dark_emerald</item>
         <item name="colorOnHeaderSurface">@color/backgroundLight</item>
         <item name="colorToolbar">@color/titan</item>
-        <item name="android:navigationBarColor">@color/titan</item>
+        <item name="android:navigationBarColor">@color/navigation_bar_color</item>
 
         <item name="colorPrimaryText">@color/white80</item>
         <item name="colorPrimary">@color/white</item>
@@ -53,4 +53,9 @@
         <item name="android:textAppearanceMedium">@style/Paragraph</item>
     </style>
 
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
+        <item name="android:textColorPrimary">@color/white</item>
+        <item name="colorControlNormal">@color/white</item>
+        <item name="actionMenuTextColor">@color/white</item>
+    </style>
 </resources>

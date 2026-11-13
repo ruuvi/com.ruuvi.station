@@ -56,6 +56,8 @@ import com.ruuvi.station.alarm.domain.AlarmSensorStatus
 import com.ruuvi.station.app.ui.components.AlertBadgeIcon
 import com.ruuvi.station.app.ui.components.CircularIndicator
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
+import com.ruuvi.station.app.ui.theme.Titan
+import com.ruuvi.station.app.ui.theme.White
 import com.ruuvi.station.tag.domain.RuuviTag
 import kotlin.math.ceil
 import kotlin.math.floor
@@ -86,14 +88,14 @@ internal fun SensorDetailTopAppBar(
     onBack: () -> Unit,
     onDestinationSelected: (SensorDetailDestination) -> Unit,
 ) {
-    val iconColor = RuuviStationTheme.colors.topBarText
+    val iconColor = White
 
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .height(SENSOR_DETAIL_HEADER_HEIGHT)
             .background(
-                if (useOpaqueBackground) RuuviStationTheme.colors.topBar else Color.Transparent,
+                if (useOpaqueBackground) Titan else Color.Transparent,
             ),
     ) {
         Row(
@@ -239,7 +241,7 @@ private fun SensorDetailMenu(
                 .width(SENSOR_MENU_INDICATOR_WIDTH)
                 .height(2.dp)
                 .background(
-                    color = RuuviStationTheme.colors.topBarText,
+                    color = White,
                     shape = RoundedCornerShape(1.dp),
                 ),
         )

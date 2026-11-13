@@ -34,6 +34,7 @@ import coil.compose.AsyncImage
 import com.ruuvi.station.R
 import com.ruuvi.station.app.ui.UiText
 import com.ruuvi.station.app.ui.components.*
+import com.ruuvi.station.app.ui.components.modifier.bottomFadingEdge
 import com.ruuvi.station.app.ui.components.dialog.CustomContentDialog
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.RuuviTheme
@@ -58,6 +59,7 @@ fun SensorSettings(
     viewModel: TagSettingsViewModel,
 ) {
     val context = LocalContext.current
+    val scrollState = rememberScrollState()
     val sensorState by viewModel.sensorState.collectAsStateWithLifecycle()
     val userLoggedIn by viewModel.userLoggedIn.collectAsStateWithLifecycle()
     val sensorOwnedByUser by viewModel.sensorOwnedByUser.collectAsStateWithLifecycle(
@@ -74,7 +76,11 @@ fun SensorSettings(
     }
 
     Column(
-        modifier = Modifier.verticalScroll(rememberScrollState())
+        modifier = Modifier
+            .fillMaxSize()
+            .bottomFadingEdge(scrollState)
+            .verticalScroll(scrollState)
+            .navigationBarsPadding()
     ) {
         SensorSettingsImage(sensorState = sensorState) {
             BackgroundActivity.start(context, sensorState.id)

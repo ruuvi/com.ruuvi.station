@@ -5,7 +5,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_height="match_parent"
     android:layout_width="match_parent"
-    android:fitsSystemWindows="true"
     android:background="?attr/colorToolbar"
     tools:context="com.ruuvi.station.addtag.ui.AddTagActivity">
 
@@ -14,7 +13,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="?attr/colorToolbar"
-        android:fitsSystemWindows="true"
         android:orientation="vertical">
 
         <com.google.android.material.appbar.AppBarLayout
@@ -36,6 +34,9 @@
 
         <include
             android:id="@+id/content"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
             layout="@layout/content_add_tag" />
 
     </LinearLayout>

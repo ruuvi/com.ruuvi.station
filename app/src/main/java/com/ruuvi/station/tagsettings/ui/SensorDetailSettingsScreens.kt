@@ -2,6 +2,7 @@ package com.ruuvi.station.tagsettings.ui
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ScaffoldState
@@ -13,6 +14,7 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.repeatOnLifecycle
 import com.ruuvi.station.alarm.ui.AlarmItemsViewModel
 import com.ruuvi.station.alarm.ui.AlarmsGroup
+import com.ruuvi.station.app.ui.components.modifier.bottomFadingEdge
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 
@@ -47,10 +49,13 @@ fun SensorAlertsScreen(
     scaffoldState: ScaffoldState,
     viewModel: AlarmItemsViewModel,
 ) {
+    val scrollState = rememberScrollState()
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .verticalScroll(rememberScrollState())
+            .bottomFadingEdge(scrollState)
+            .verticalScroll(scrollState)
+            .navigationBarsPadding()
     ) {
         AlarmsGroup(
             scaffoldState = scaffoldState,

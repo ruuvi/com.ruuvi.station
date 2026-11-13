@@ -2,19 +2,18 @@ package com.ruuvi.station.about.ui
 
 import android.content.Context
 import android.content.Intent
-import android.graphics.Color
-import android.os.Build
 import android.os.Bundle
 import android.text.method.LinkMovementMethod
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.WindowCompat
 import androidx.lifecycle.lifecycleScope
 import com.ruuvi.station.BuildConfig
 import com.ruuvi.station.R
 import com.ruuvi.station.about.model.AppStats
 import com.ruuvi.station.database.domain.LocalDatabase
 import com.ruuvi.station.databinding.ActivityAboutBinding
+import com.ruuvi.station.util.extensions.applyRuuviEdgeToEdgeInsets
+import com.ruuvi.station.util.extensions.enableRuuviEdgeToEdge
 import com.ruuvi.station.util.extensions.makeWebLinks
 import com.ruuvi.station.util.extensions.viewModel
 import com.ruuvi.station.util.ui.showBottomSnackbar
@@ -33,16 +32,12 @@ class AboutActivity : AppCompatActivity(R.layout.activity_about), DIAware {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        WindowCompat.setDecorFitsSystemWindows(window, false)
+        enableRuuviEdgeToEdge()
 
         binding = ActivityAboutBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
-            window.statusBarColor = Color.parseColor("#01000000")
-        } else {
-            window.statusBarColor = Color.TRANSPARENT
-        }
+        binding.root.applyRuuviEdgeToEdgeInsets(binding.content.root)
 
         setupUI()
         setupViewModel()
