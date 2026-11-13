@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.activity.ComponentActivity
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
+import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.swipeLeft
@@ -93,6 +94,31 @@ class SensorDetailRouteComposeTest {
         verify(atLeast = 2) { viewModel.saveSelected("two") }
     }
 
+    @Test
+    fun `nested settings renders removal screen`() {
+        val sensor = sensor("one", "Sensor One")
+        val removeSensorViewModel = mockk<RemoveSensorViewModel>(relaxed = true) {
+            every { sensorState } returns MutableStateFlow(sensor)
+            every { sensorOwnedByUser } returns MutableStateFlow(false)
+            every { removeWithCloudData } returns MutableStateFlow(false)
+        }
+        sensors.value = listOf(sensor)
+        selectedSensorFlow.value = sensor.id
+
+        compose.setContent {
+            SensorDetailRoute(
+                viewModel = viewModel,
+                startDestination = SensorCardOpenType.REMOVE.resolveStartDestination(false),
+                viewModelProvider = viewModelProvider(removeSensorViewModel),
+                unitsConverter = mockk(relaxed = true),
+                useNewSensorCard = true,
+                onFinish = {},
+            )
+        }
+
+        compose.onNodeWithText(compose.activity.getString(R.string.remove)).assertExists()
+    }
+
     private fun settleAnimations() {
         compose.mainClock.advanceTimeBy(1_000)
         compose.waitForIdle()
@@ -123,10 +149,12 @@ class SensorDetailRouteComposeTest {
         latestMeasurement = null,
     )
 
-    private fun viewModelProvider() = SensorDetailViewModelProvider(
+    private fun viewModelProvider(
+        removeSensorViewModel: RemoveSensorViewModel = mockk(relaxed = true),
+    ) = SensorDetailViewModelProvider(
         settings = { mockk<TagSettingsViewModel>(relaxed = true) },
         alerts = { mockk<AlarmItemsViewModel>(relaxed = true) },
-        removeSensor = { mockk<RemoveSensorViewModel>(relaxed = true) },
+        removeSensor = { removeSensorViewModel },
         visibleMeasurements = { mockk<VisibleMeasurementsViewModel>(relaxed = true) },
         ledControl = { mockk<LedControlViewModel>(relaxed = true) },
         notes = { mockk<NotesViewModel>(relaxed = true) },
