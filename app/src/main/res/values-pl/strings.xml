@@ -896,5 +896,6 @@
     <string name="use_web_version_of_share">Użyj internetowej wersji udostępniania</string>
     <string name="font_scaling">Skalowanie czcionki %1$s%%</string>
     <string name="disable_developer_mode">Wyłącz tryb deweloperski</string>
+    <string name="sensor_measurements_outdated">Pomiary mogą być nieaktualne.</string>
     <string name="registered_fcm_tokens">Zarejestrowane tokeny FCM</string>
 </resources>

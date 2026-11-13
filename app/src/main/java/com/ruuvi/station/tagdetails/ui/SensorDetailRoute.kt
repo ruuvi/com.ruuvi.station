@@ -22,13 +22,13 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -66,10 +66,12 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.LayoutDirection
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
@@ -172,6 +174,7 @@ internal fun SensorDetailRoute(
                 syncInProgress = syncInProgress,
                 showChartStats = showChartStats,
                 chartSizeLevel = chartSizeLevel,
+                staleTimeoutSeconds = viewModel.sensorDataTimeoutSeconds,
                 viewPeriod = viewPeriod,
                 unitsConverter = unitsConverter,
                 useNewSensorCard = useNewSensorCard,
@@ -197,6 +200,7 @@ private fun SensorDetailScreen(
     syncInProgress: Boolean,
     showChartStats: Boolean,
     chartSizeLevel: Int,
+    staleTimeoutSeconds: Long,
     viewPeriod: Period,
     unitsConverter: UnitsConverter,
     useNewSensorCard: Boolean,
@@ -231,6 +235,24 @@ private fun SensorDetailScreen(
     val pagerFlingBehavior = PagerDefaults.flingBehavior(state = pagerState)
     val titlePagePosition = pagerState.currentPage + pagerState.currentPageOffsetFraction
     val context = LocalContext.current
+    val staleSnackbarMessage = stringResource(R.string.sensor_measurements_outdated)
+    var staleSnackbarJob by remember { mutableStateOf<Job?>(null) }
+
+    fun showStaleSnackbar() {
+        if (staleSnackbarJob?.isActive == true) return
+        staleSnackbarJob = coroutineScope.launch {
+            scaffoldState.snackbarHostState.showSnackbar(staleSnackbarMessage)
+        }
+    }
+
+    fun dismissStaleSnackbar() {
+        staleSnackbarJob?.cancel()
+        staleSnackbarJob = null
+        scaffoldState.snackbarHostState.currentSnackbarData
+            ?.takeIf { it.message == staleSnackbarMessage }
+            ?.dismiss()
+    }
+    
     // Match the activity transition used by Share Sensor (@anim/enter_right, exit_left).
     val settingsNavigationEasing = remember {
         val interpolator = AccelerateDecelerateInterpolator()
@@ -256,6 +278,8 @@ private fun SensorDetailScreen(
     }
 
     LaunchedEffect(currentSensor?.id, destination) {
+        staleSnackbarJob?.cancel()
+        staleSnackbarJob = null
         scaffoldState.snackbarHostState.currentSnackbarData?.dismiss()
     }
 
@@ -264,8 +288,7 @@ private fun SensorDetailScreen(
     }
 
     SensorDetailSystemBars(
-        destination = destination,
-        settingsRoute = settingsRoute,
+        useTransparentStatusBar = useSensorBackground && !nestedSettings,
         useDarkTheme = useDarkTheme,
     )
 
@@ -459,7 +482,11 @@ private fun SensorDetailScreen(
                     if (destination.showsSensorFooter && currentSensor != null) {
                         SensorCardBottom(
                             sensor = currentSensor,
-                            modifier = Modifier.height(IntrinsicSize.Min),
+                            staleTimeoutSeconds = staleTimeoutSeconds,
+                            useDarkBackground = useSensorBackground,
+                            modifier = Modifier.heightIn(min = 44.dp),
+                            onShowStaleSnackbar = ::showStaleSnackbar,
+                            onDismissStaleSnackbar = ::dismissStaleSnackbar,
                         )
                     }
                 }
@@ -804,20 +831,6 @@ private fun SensorDetailBackground(
                 .background(overlayColor),
         )
     }
-}
-
-@Composable
-internal fun SensorDetailSystemBars(
-    destination: SensorDetailDestination,
-    settingsRoute: String,
-    useDarkTheme: Boolean,
-) {
-    val nestedSettings = destination == SensorDetailDestination.SETTINGS &&
-        settingsRoute != SensorSettingsRoutes.SENSOR_SETTINGS_ROOT
-    SensorDetailSystemBars(
-        useTransparentStatusBar = destination.usesSensorBackground && !nestedSettings,
-        useDarkTheme = useDarkTheme,
-    )
 }
 
 @Composable

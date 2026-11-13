@@ -894,5 +894,6 @@ Totalt antal använda delningar för ditt konto: %3$,d/%4$,d</string>
     <string name="use_web_version_of_share">Använd webbversionen för delning</string>
     <string name="font_scaling">Teckenskalning %1$s%%</string>
     <string name="disable_developer_mode">Inaktivera utvecklarläge</string>
+    <string name="sensor_measurements_outdated">Mätvärdena kan vara inaktuella.</string>
     <string name="registered_fcm_tokens">Registrerade FCM-token</string>
 </resources>

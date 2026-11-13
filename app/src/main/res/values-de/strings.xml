@@ -904,5 +904,6 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="use_web_version_of_share">Webversion der Freigabe verwenden</string>
     <string name="font_scaling">Schriftskalierung %1$s%%</string>
     <string name="disable_developer_mode">Entwicklermodus deaktivieren</string>
+    <string name="sensor_measurements_outdated">Die Messwerte sind möglicherweise veraltet.</string>
     <string name="registered_fcm_tokens">Registrierte FCM-Token</string>
 </resources>

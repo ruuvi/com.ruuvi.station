@@ -11,6 +11,7 @@ import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -31,6 +32,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.constrainHeight
 import androidx.compose.ui.unit.constrainWidth
@@ -56,6 +58,7 @@ import com.ruuvi.station.feature.domain.RuntimeBehavior
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tag.domain.UpdateSource
 import com.ruuvi.station.tag.domain.isLowBattery
+import com.ruuvi.station.tag.domain.isMeasurementStale
 import com.ruuvi.station.tagdetails.ui.elements.BigValueDisplay
 import com.ruuvi.station.tagdetails.ui.elements.CircularAQIDisplay
 import com.ruuvi.station.tagdetails.ui.elements.SensorValueItem
@@ -135,7 +138,7 @@ class SensorCardActivity : NfcActivity(), DIAware {
         argument = TagSettingsViewModelArgs(
             tagId = sensorId,
             newSensor = intent.getBooleanExtra(ARGUMENT_NEW_SENSOR, false) &&
-                sensorId == intent.getStringExtra(ARGUMENT_SENSOR_ID),
+                    sensorId == intent.getStringExtra(ARGUMENT_SENSOR_ID),
             openRemove = false,
         )
     )
@@ -150,10 +153,11 @@ class SensorCardActivity : NfcActivity(), DIAware {
         argument = RemoveSensorViewModelArgs(sensorId),
     )
 
-    private fun visibleMeasurementsViewModel(sensorId: String): VisibleMeasurementsViewModel = keyedViewModel(
-        key = "visible-measurements:$sensorId",
-        argument = sensorId,
-    )
+    private fun visibleMeasurementsViewModel(sensorId: String): VisibleMeasurementsViewModel =
+        keyedViewModel(
+            key = "visible-measurements:$sensorId",
+            argument = sensorId,
+        )
 
     private fun ledControlViewModel(sensorId: String): LedControlViewModel = keyedViewModel(
         key = "led-control:$sensorId",
@@ -283,7 +287,10 @@ class SensorCardActivity : NfcActivity(), DIAware {
                     data = identity
                 },
             )
-                .getPendingIntent(requestCode, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+                .getPendingIntent(
+                    requestCode,
+                    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+                )
         }
 
         private fun createIntent(
@@ -503,13 +510,19 @@ fun SensorValues(
             .fillMaxWidth()
             .padding(horizontal = horizontalPadding),
         verticalAlignment = Alignment.Top,
-        horizontalArrangement = Arrangement.spacedBy(SENSOR_VALUE_ITEM_SPACING, Alignment.CenterHorizontally)
+        horizontalArrangement = Arrangement.spacedBy(
+            SENSOR_VALUE_ITEM_SPACING,
+            Alignment.CenterHorizontally
+        )
     ) {
         for (columnValues in valuesDistributed) {
             Column(
                 modifier = Modifier
                     .weight(1f),
-                verticalArrangement = Arrangement.spacedBy(SENSOR_VALUE_ITEM_SPACING, Alignment.Top),
+                verticalArrangement = Arrangement.spacedBy(
+                    SENSOR_VALUE_ITEM_SPACING,
+                    Alignment.Top
+                ),
                 horizontalAlignment = Alignment.Start
             ) {
                 if (columnValues.isEmpty()) {
@@ -578,7 +591,9 @@ fun VerticalScrollbarOverlay(
 }
 
 @Composable
-fun SensorCardLowBattery(modifier: Modifier = Modifier) {
+fun SensorCardLowBattery(
+    modifier: Modifier = Modifier,
+) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.End,
@@ -593,10 +608,9 @@ fun SensorCardLowBattery(modifier: Modifier = Modifier) {
         )
         Spacer(modifier = Modifier.width(4.dp))
         Image(
-            modifier = Modifier.size(20.dp),
-            painter = painterResource(id = R.drawable.icon_battery_low),
+            modifier = Modifier.height(20.dp),
+            painter = painterResource(R.drawable.icon_battery_low_dark),
             contentDescription = null,
-            contentScale = ContentScale.Fit,
         )
     }
 }
@@ -634,14 +648,25 @@ fun SensorCardImage(
 @Composable
 fun SensorCardBottom(
     sensor: RuuviTag,
-    modifier: Modifier = Modifier
+    staleTimeoutSeconds: Long,
+    useDarkBackground: Boolean,
+    modifier: Modifier = Modifier,
+    onShowStaleSnackbar: () -> Unit = {},
+    onDismissStaleSnackbar: () -> Unit = {},
 ) {
     if (sensor.latestMeasurement != null) {
         val context = LocalContext.current
         val lifecycleOwner = LocalLifecycleOwner.current
+        val measurementUpdatedAt = sensor.latestMeasurement.updatedAt
+        val source = sensor.getSource()
 
-        var updatedText by remember {
-            mutableStateOf(sensor.latestMeasurement.updatedAt.describingTimeSince(context))
+        var updatedText by remember(measurementUpdatedAt) {
+            mutableStateOf(measurementUpdatedAt.describingTimeSince(context))
+        }
+        var isStale by remember(measurementUpdatedAt, staleTimeoutSeconds) {
+            mutableStateOf(
+                sensor.isMeasurementStale(System.currentTimeMillis(), staleTimeoutSeconds),
+            )
         }
 
         Row(
@@ -654,30 +679,62 @@ fun SensorCardBottom(
                 )
                 .fillMaxWidth()
         ) {
-            val icon = sensor.getSource().getIconResource()
-            Row (
+            val iconRes = source.getIconResource(
+                isStale = isStale,
+                isDarkTheme = useDarkBackground,
+            )
+            Row(
+                modifier = Modifier.weight(1f, fill = false),
                 horizontalArrangement = Arrangement.Start,
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
             ) {
-                Icon(
+                val fontScale = LocalConfiguration.current.fontScale.coerceAtMost(1.5f)
+                val iconHeight = 20.dp * fontScale
+                val sourceIconWidth = when {
+                    source == UpdateSource.Cloud -> 26.dp
+                    isStale -> 18.5.dp
+                    else -> 8.9.dp
+                } * fontScale
+
+                Box(
                     modifier = Modifier
-                        .height(RuuviStationTheme.dimensions.mediumPlus.scaleUpTo(1.5f))
-                        .width(24.dp.scaleUpTo(1.5f)),
-                    painter = painterResource(id = icon),
-                    tint = White50,
-                    contentDescription = null,
-                )
-                if (sensor.getSource() == UpdateSource.Cloud) {
-                    Spacer(modifier = Modifier.width(RuuviStationTheme.dimensions.medium))
+                        .width(sourceIconWidth)
+                        .then(
+                            if (isStale) {
+                                Modifier.clickable(onClick = onShowStaleSnackbar)
+                            } else {
+                                Modifier
+                            }
+                        ),
+                    contentAlignment = Alignment.CenterStart,
+                ) {
+                    Image(
+                        modifier = Modifier
+                            .requiredSize(width = sourceIconWidth, height = iconHeight),
+                        painter = painterResource(id = iconRes),
+                        contentDescription = if (isStale) {
+                            stringResource(R.string.sensor_measurements_outdated)
+                        } else {
+                            null
+                        },
+                    )
                 }
+                Spacer(modifier = Modifier.width(4.dp))
                 Text(
-                    modifier = Modifier,
+                    modifier = Modifier.weight(1f),
                     style = RuuviStationTheme.typography.dashboardSecondary,
-                    color = White50,
+                    color = if (useDarkBackground) {
+                        RuuviStationTheme.colors.topBarText.copy(alpha = 0.5f)
+                    } else {
+                        RuuviStationTheme.colors.secondaryTextColor
+                    },
                     fontSize = ruuviStationFontsSizes.petite.limitScaleTo(1.5f),
-                    textAlign = TextAlign.Right,
+                    textAlign = TextAlign.Start,
                     text = updatedText,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
                 )
+
             }
 
             if (sensor.isLowBattery()) {
@@ -685,11 +742,20 @@ fun SensorCardBottom(
             }
         }
 
-        LaunchedEffect(lifecycleOwner, sensor.latestMeasurement.updatedAt) {
+        LaunchedEffect(sensor.id, isStale) {
+            if (!isStale) {
+                onDismissStaleSnackbar()
+            }
+        }
+
+        LaunchedEffect(lifecycleOwner, measurementUpdatedAt, staleTimeoutSeconds) {
             lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 while (isActive) {
-                    updatedText =
-                        sensor.latestMeasurement.updatedAt.describingTimeSince(context)
+                    updatedText = measurementUpdatedAt.describingTimeSince(context)
+                    isStale = sensor.isMeasurementStale(
+                        System.currentTimeMillis(),
+                        staleTimeoutSeconds,
+                    )
                     delay(SENSOR_STATUS_REFRESH_DELAY_MILLIS)
                 }
             }

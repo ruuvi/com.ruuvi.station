@@ -28,14 +28,16 @@ import androidx.compose.ui.Alignment.Companion.TopEnd
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
@@ -44,6 +46,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.zIndex
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.whenStarted
@@ -53,7 +56,6 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.ruuvi.station.R
 import com.ruuvi.station.addtag.ui.AddTagActivity
 import com.ruuvi.station.alarm.domain.AlarmSensorStatus
-import com.ruuvi.station.alarm.domain.AlarmType
 import com.ruuvi.station.app.permissions.BluetoothPermissions
 import com.ruuvi.station.app.permissions.NotificationPermission
 import com.ruuvi.station.app.preferences.PreferencesRepository
@@ -93,7 +95,7 @@ import com.ruuvi.station.units.model.UnitType
 import com.ruuvi.station.util.base.NfcActivity
 import com.ruuvi.station.util.extensions.*
 import com.ruuvi.station.util.ui.RuuviSnackbarHost
-import com.ruuvi.station.util.ui.showBottomSnackbar
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -105,6 +107,57 @@ import org.kodein.di.instance
 import kotlin.math.min
 
 private val DASHBOARD_ALERT_CONTAINER_SIZE = 36.dp
+
+internal fun isDarkDashboardCard(backgroundColor: Color): Boolean =
+    backgroundColor.luminance() < 0.5f
+
+internal fun UpdateSource.dashboardIconResource(
+    isStale: Boolean,
+    backgroundColor: Color,
+): Int = getIconResource(
+    isStale = isStale,
+    isDarkTheme = isDarkDashboardCard(backgroundColor),
+)
+
+internal fun showSnackbarIfIdle(
+    scope: CoroutineScope,
+    hostState: SnackbarHostState,
+    message: String,
+    activeJob: Job?,
+): Job? {
+    if (activeJob?.isActive == true || hostState.currentSnackbarData != null) {
+        return activeJob
+    }
+    return scope.launch {
+        hostState.showSnackbar(message)
+    }
+}
+
+internal fun dismissDashboardSnackbar(activeJob: Job?) {
+    activeJob?.cancel()
+}
+
+@Composable
+internal fun DashboardSnackbarLifecycleEffect(
+    staleSnackbarJob: Job?,
+    onStopped: () -> Unit,
+) {
+    val lifecycleOwner = LocalLifecycleOwner.current
+    val currentJob by rememberUpdatedState(staleSnackbarJob)
+    val currentOnStopped by rememberUpdatedState(onStopped)
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_STOP) {
+                dismissDashboardSnackbar(currentJob)
+                currentOnStopped()
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
+    }
+}
 
 class DashboardActivity : NfcActivity(), DIAware {
 
@@ -129,9 +182,13 @@ class DashboardActivity : NfcActivity(), DIAware {
                 val systemUiController = rememberSystemUiController()
                 val systemBarsColor = colors.dashboardBackground
                 val configuration = LocalConfiguration.current
-                val context = LocalContext.current
+                val staleSnackbarMessage = stringResource(R.string.sensor_measurements_outdated)
                 val isDarkTheme = isSystemInDarkTheme()
                 val scope = rememberCoroutineScope()
+                var staleSnackbarJob by remember { mutableStateOf<Job?>(null) }
+                DashboardSnackbarLifecycleEffect(staleSnackbarJob) {
+                    staleSnackbarJob = null
+                }
                 val userEmail by dashboardViewModel.userEmail.observeAsState()
                 val signedIn = !userEmail.isNullOrEmpty()
                 val marketingConsent by dashboardViewModel.marketingConsent.observeAsState(false)
@@ -139,6 +196,7 @@ class DashboardActivity : NfcActivity(), DIAware {
                 val signedInOnce by dashboardViewModel.signedInOnce.collectAsState(false)
                 val bannerDisabled by dashboardViewModel.bannerDisabled.collectAsState(false)
                 val sensors by dashboardViewModel.sensorsList.collectAsState()
+                val staleSensorIds by dashboardViewModel.staleSensorIds.collectAsState()
                 val refreshing by dashboardViewModel.dataRefreshing.collectAsState(false)
                 val syncInProgress by dashboardViewModel.syncInProgress.collectAsState(false)
                 val dashboardType by dashboardViewModel.dashboardType.collectAsState()
@@ -257,6 +315,7 @@ class DashboardActivity : NfcActivity(), DIAware {
                                         }
                                         DashboardItems(
                                             items = it,
+                                            staleSensorIds = staleSensorIds,
                                             userEmail = userEmail,
                                             dashboardType = dashboardType,
                                             dashboardTapAction = dashboardTapAction,
@@ -265,7 +324,15 @@ class DashboardActivity : NfcActivity(), DIAware {
                                             onMove = dashboardViewModel::moveItem,
                                             getDefaultImageResource = dashboardViewModel::getDefaultImageResource,
                                             refreshing = refreshing,
-                                            dragDropListState = dragDropListState
+                                            dragDropListState = dragDropListState,
+                                            onShowStaleSnackbar = {
+                                                staleSnackbarJob = showSnackbarIfIdle(
+                                                    scope = scope,
+                                                    hostState = scaffoldState.snackbarHostState,
+                                                    message = staleSnackbarMessage,
+                                                    activeJob = staleSnackbarJob,
+                                                )
+                                            },
                                         )
                                     }
                                 }
@@ -316,6 +383,8 @@ class DashboardActivity : NfcActivity(), DIAware {
                                     !dragDropListState.getLazyListState().isScrollInProgress
                                 ) {
                                     dashboardViewModel.refreshSensors()
+                                } else {
+                                    dashboardViewModel.refreshSensorFreshness()
                                 }
                                 delay(1000)
                             }
@@ -552,6 +621,7 @@ fun EmptyDashboard(
 @Composable
 fun DashboardItems(
     items: List<RuuviTag>,
+    staleSensorIds: Set<String>,
     userEmail: String?,
     dashboardType: DashboardType,
     dashboardTapAction: DashboardTapAction,
@@ -560,7 +630,8 @@ fun DashboardItems(
     onMove: (Int, Int, Boolean) -> Unit,
     getDefaultImageResource: (RuuviTag) -> Int,
     dragDropListState: ItemStaggeredGridDragAndDropState,
-    refreshing: Boolean
+    refreshing: Boolean,
+    onShowStaleSnackbar: () -> Unit,
 ) {
     val itemHeight = 160.dp * LocalDensity.current.fontScale
 
@@ -616,8 +687,10 @@ fun DashboardItems(
                             setName = setName,
                             displacementOffset = displacementOffset,
                             itemIsDragged = itemIsDragged,
-                            moveItem = onMove
-                            )
+                            isStale = sensor.id in staleSensorIds,
+                            moveItem = onMove,
+                            onShowStaleSnackbar = onShowStaleSnackbar,
+                        )
                     DashboardType.IMAGE_VIEW ->
                         DashboardItem(
                             lazyGridState = dragDropListState.getLazyListState(),
@@ -626,9 +699,11 @@ fun DashboardItems(
                             userEmail = userEmail,
                             displacementOffset = displacementOffset,
                             itemIsDragged = itemIsDragged,
+                            isStale = sensor.id in staleSensorIds,
                             setName = setName,
                             moveItem = onMove,
                             getDefaultImageResource = getDefaultImageResource,
+                            onShowStaleSnackbar = onShowStaleSnackbar,
                         )
                 }
             }
@@ -711,7 +786,9 @@ fun DashboardItem(
     moveItem: (Int, Int, Boolean) -> Unit,
     getDefaultImageResource: (RuuviTag) -> Int,
     modifier: Modifier = Modifier,
-    interactionEnabled: Boolean = true
+    interactionEnabled: Boolean = true,
+    isStale: Boolean = false,
+    onShowStaleSnackbar: () -> Unit = {},
 ) {
     val context = LocalContext.current
     val modifier = if (itemIsDragged) {
@@ -832,7 +909,10 @@ fun DashboardItem(
                             Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.small))
                             ItemBottom(
                                 sensor = sensor,
+                                isStale = isStale,
                                 modifier = Modifier,
+                                interactionEnabled = interactionEnabled,
+                                onShowStaleSnackbar = onShowStaleSnackbar,
                             )
                         } else {
                             Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.huge))
@@ -855,7 +935,9 @@ fun DashboardItemSimple(
     moveItem: (Int, Int, Boolean) -> Unit,
     displacementOffset: IntOffset?,
     itemIsDragged: Boolean,
-    interactionEnabled: Boolean = true
+    interactionEnabled: Boolean = true,
+    isStale: Boolean = false,
+    onShowStaleSnackbar: () -> Unit = {},
 ) {
     val context = LocalContext.current
     val modifier = if (itemIsDragged) {
@@ -922,7 +1004,10 @@ fun DashboardItemSimple(
 
                 ItemBottom(
                     sensor = sensor,
-                    modifier = Modifier
+                    isStale = isStale,
+                    modifier = Modifier,
+                    interactionEnabled = interactionEnabled,
+                    onShowStaleSnackbar = onShowStaleSnackbar,
                 )
             }
         }
@@ -1077,10 +1162,19 @@ fun ItemValues(
 @Composable
 fun ItemBottom(
     sensor: RuuviTag,
-    modifier: Modifier = Modifier
+    isStale: Boolean = false,
+    modifier: Modifier = Modifier,
+    interactionEnabled: Boolean = true,
+    onShowStaleSnackbar: () -> Unit = {},
 ) {
     if (sensor.latestMeasurement != null) {
-        ItemBottomUpdatedInfo(sensor = sensor, modifier = modifier)
+        ItemBottomUpdatedInfo(
+            sensor = sensor,
+            isStale = isStale,
+            modifier = modifier,
+            interactionEnabled = interactionEnabled,
+            onShowStaleSnackbar = onShowStaleSnackbar,
+        )
     } else {
         ItemBottomNoData(modifier = modifier)
     }
@@ -1108,7 +1202,10 @@ fun ItemBottomNoData(
 @Composable
 fun ItemBottomUpdatedInfo(
     sensor: RuuviTag,
-    modifier: Modifier = Modifier
+    isStale: Boolean = false,
+    modifier: Modifier = Modifier,
+    interactionEnabled: Boolean = true,
+    onShowStaleSnackbar: () -> Unit = {},
 ) {
     if (sensor.latestMeasurement != null) {
 
@@ -1119,42 +1216,70 @@ fun ItemBottomUpdatedInfo(
             mutableStateOf(sensor.latestMeasurement.updatedAt?.describingTimeSince(context) ?: "")
         }
 
+        val fontScale = min(LocalConfiguration.current.fontScale, 1.5f)
+        val iconHeight = 20.dp * fontScale
+
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            modifier = modifier
-                .height(RuuviStationTheme.dimensions.big)
+            modifier = modifier.heightIn(
+                min = maxOf(RuuviStationTheme.dimensions.big, iconHeight),
+            ),
         ) {
-            val fontScale = min(LocalConfiguration.current.fontScale, 1.5f)
+            val source = sensor.getSource()
+            val iconRes = source.dashboardIconResource(
+                isStale = isStale,
+                backgroundColor = RuuviStationTheme.colors.dashboardCardBackground,
+            )
+            Row(
+                modifier = Modifier.weight(1f),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                val sourceIconWidth = when {
+                    source == UpdateSource.Cloud -> 26.dp
+                    isStale -> 18.5.dp
+                    else -> 8.9.dp
+                } * fontScale
 
-            // Do not simplify this - glitches are possible due to gateway and bluetooth icon differences
-            val icon = sensor.getSource().getIconResource()
-            if (sensor.getSource() == UpdateSource.Cloud) {
-                Icon(
-                    modifier = Modifier.height(RuuviStationTheme.dimensions.mediumPlus * fontScale),
-                    painter = painterResource(id = icon),
-                    tint = RuuviStationTheme.colors.primary.copy(alpha = 0.5f),
-                    contentDescription = null,
-                )
-            } else {
-                Icon(
-                    modifier = Modifier.height(RuuviStationTheme.dimensions.mediumPlus * fontScale),
-                    painter = painterResource(id = icon),
-                    tint = RuuviStationTheme.colors.primary.copy(alpha = 0.5f),
-                    contentDescription = null,
+                Box(
+                    modifier = Modifier.width(sourceIconWidth),
+                    contentAlignment = Alignment.CenterStart,
+                ) {
+                    Image(
+                        modifier = Modifier
+                            .requiredSize(width = sourceIconWidth, height = iconHeight)
+                            .then(
+                                if (isStale) {
+                                    Modifier.clickableSingle(
+                                        enabled = interactionEnabled,
+                                        onClick = onShowStaleSnackbar,
+                                    )
+                                } else {
+                                    Modifier
+                                },
+                            ),
+                        painter = painterResource(id = iconRes),
+                        contentDescription = if (isStale) {
+                            stringResource(R.string.sensor_measurements_outdated)
+                        } else {
+                            null
+                        },
+                    )
+                }
+
+                Spacer(modifier = Modifier.width(4.dp))
+
+                Text(
+                    modifier = Modifier.weight(1f),
+                    style = RuuviStationTheme.typography.dashboardSecondary,
+                    fontSize = ruuviStationFontsSizes.petite.limitScaleTo(1.5f),
+                    text = updatedText,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
                 )
             }
 
-            Spacer(modifier = Modifier.width(RuuviStationTheme.dimensions.small))
-
-            Text(
-                modifier = Modifier.weight(1f),
-                style = RuuviStationTheme.typography.dashboardSecondary,
-                fontSize = ruuviStationFontsSizes.petite.limitScaleTo(1.5f),
-                text = updatedText,
-            )
-
             if (sensor.isLowBattery()) {
-                LowBattery(modifier = Modifier.weight(1f))
+                LowBattery()
             }
         }
 
@@ -1400,10 +1525,16 @@ fun LowBattery(modifier: Modifier = Modifier) {
         Spacer(modifier = Modifier.width(RuuviStationTheme.dimensions.medium))
         Image(
             modifier = Modifier
-                .height(12.dp)
+                .height(20.dp)
                 .align(CenterVertically),
-            painter = painterResource(id = R.drawable.icon_battery_low),
-            contentDescription = null
+            painter = painterResource(
+                id = if (isDarkDashboardCard(RuuviStationTheme.colors.dashboardCardBackground)) {
+                    R.drawable.icon_battery_low_dark
+                } else {
+                    R.drawable.icon_battery_low_light
+                },
+            ),
+            contentDescription = null,
         )
         Spacer(modifier = Modifier.width(RuuviStationTheme.dimensions.mediumPlus))
     }
