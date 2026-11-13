@@ -5,16 +5,14 @@ import android.graphics.Color
 import android.os.Build
 import androidx.activity.ComponentActivity
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.core.view.WindowCompat
-import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.RuuviTheme
+import com.ruuvi.station.tagsettings.ui.SensorSettingsRoutes
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Rule
@@ -59,15 +57,10 @@ class SensorDetailSystemBarsTest {
     @Suppress("DEPRECATION")
     @Test
     @Config(sdk = [30])
-    fun `status bar switches between transparent and themed opaque colors`() {
+    fun `status bar stays transparent when the transparent flag toggles`() {
         var useTransparentStatusBar by mutableStateOf(true)
-        var expectedOpaqueColor = Color.TRANSPARENT
         compose.setContent {
             RuuviTheme(darkTheme = false) {
-                val systemBarColor = RuuviStationTheme.colors.systemBars.toArgb()
-                SideEffect {
-                    expectedOpaqueColor = systemBarColor
-                }
                 SensorDetailSystemBars(
                     useTransparentStatusBar = useTransparentStatusBar,
                     useDarkTheme = false,
@@ -78,7 +71,68 @@ class SensorDetailSystemBarsTest {
         assertStatusBarColor(Color.TRANSPARENT)
 
         compose.runOnIdle { useTransparentStatusBar = false }
-        assertStatusBarColor(expectedOpaqueColor)
+        assertStatusBarColor(Color.TRANSPARENT)
+    }
+
+    @Suppress("DEPRECATION")
+    @Test
+    @Config(sdk = [30])
+    fun `window status bar stays transparent while page backgrounds transition`() {
+        var destination by mutableStateOf(SensorDetailDestination.CARD)
+        var settingsRoute by mutableStateOf(SensorSettingsRoutes.SENSOR_SETTINGS_ROOT)
+
+        compose.setContent {
+            val useDarkTheme = destination.forcesDarkTheme
+            RuuviTheme(darkTheme = useDarkTheme) {
+                val nestedSettings = destination == SensorDetailDestination.SETTINGS &&
+                    settingsRoute != SensorSettingsRoutes.SENSOR_SETTINGS_ROOT
+                SensorDetailSystemBars(
+                    useTransparentStatusBar = destination.usesSensorBackground && !nestedSettings,
+                    useDarkTheme = useDarkTheme,
+                )
+            }
+        }
+
+        SensorDetailDestination.entries.forEach { rootDestination ->
+            compose.runOnIdle {
+                destination = rootDestination
+                settingsRoute = SensorSettingsRoutes.SENSOR_SETTINGS_ROOT
+            }
+            assertStatusBarColor(Color.TRANSPARENT)
+        }
+
+        // A non-root route is only nested when SETTINGS is the active destination.
+        compose.runOnIdle {
+            destination = SensorDetailDestination.CARD
+            settingsRoute = SensorSettingsRoutes.SENSOR_REMOVE
+        }
+        assertStatusBarColor(Color.TRANSPARENT)
+
+        compose.runOnIdle { destination = SensorDetailDestination.SETTINGS }
+        assertStatusBarColor(Color.TRANSPARENT)
+    }
+
+    @Suppress("DEPRECATION")
+    @Test
+    @Config(sdk = [30])
+    fun `nested light settings keep a transparent window with dark icons`() {
+        compose.setContent {
+            RuuviTheme(darkTheme = true) {
+                SensorDetailContentTheme(
+                    nestedSettings = true,
+                    appDarkTheme = false,
+                    rootDarkTheme = true,
+                ) {
+                    SensorDetailSystemBars(
+                        useTransparentStatusBar = false,
+                        useDarkTheme = false,
+                    )
+                }
+            }
+        }
+
+        assertStatusBarColor(Color.TRANSPARENT)
+        assertSystemBarIcons(darkIcons = true)
     }
 
     @Test

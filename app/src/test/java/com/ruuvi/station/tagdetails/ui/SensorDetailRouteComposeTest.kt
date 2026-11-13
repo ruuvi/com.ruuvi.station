@@ -2,6 +2,10 @@ package com.ruuvi.station.tagdetails.ui
 
 import android.app.Application
 import androidx.activity.ComponentActivity
+import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
@@ -13,6 +17,9 @@ import com.ruuvi.station.R
 import com.ruuvi.station.alarm.domain.AlarmSensorStatus
 import com.ruuvi.station.alarm.ui.AlarmItemsViewModel
 import com.ruuvi.station.app.ui.UiText
+import com.ruuvi.station.app.ui.theme.RuuviStationTheme
+import com.ruuvi.station.app.ui.theme.darkPalette
+import com.ruuvi.station.app.ui.theme.lightPalette
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tag.domain.ruuviTagPreview
 import com.ruuvi.station.tagsettings.ui.RemoveSensorViewModel
@@ -100,6 +107,60 @@ class SensorDetailRouteComposeTest {
 
         compose.onNodeWithContentDescription("Sensor Two").assertExists()
         verify(atLeast = 2) { viewModel.saveSelected("two") }
+    }
+
+    @Test
+    fun `card destination renders through navigation bar inset path`() {
+        val sensor = sensor("one", "Sensor One")
+        sensors.value = listOf(sensor)
+        selectedSensorFlow.value = sensor.id
+
+        compose.setContent {
+            SensorDetailRoute(
+                viewModel = viewModel,
+                startDestination = SensorDetailStartDestination(SensorDetailDestination.CARD),
+                viewModelProvider = viewModelProvider(),
+                unitsConverter = mockk(relaxed = true),
+                useNewSensorCard = true,
+                onFinish = {},
+            )
+        }
+
+        settleAnimations()
+        compose.onNodeWithContentDescription("Sensor One").assertExists()
+    }
+
+    @Test
+    fun `nested settings follow app theme while root keeps forced dark theme`() {
+        var nestedSettings by mutableStateOf(true)
+        var appDarkTheme by mutableStateOf(false)
+        var observedBackground = lightPalette.background
+
+        compose.setContent {
+            SensorDetailContentTheme(
+                nestedSettings = nestedSettings,
+                appDarkTheme = appDarkTheme,
+                rootDarkTheme = true,
+            ) {
+                val background = RuuviStationTheme.colors.background
+                SideEffect {
+                    observedBackground = background
+                }
+            }
+        }
+
+        compose.runOnIdle {
+            assertEquals(lightPalette.background, observedBackground)
+            appDarkTheme = true
+        }
+        compose.runOnIdle {
+            assertEquals(darkPalette.background, observedBackground)
+            appDarkTheme = false
+            nestedSettings = false
+        }
+        compose.runOnIdle {
+            assertEquals(darkPalette.background, observedBackground)
+        }
     }
 
     @Test

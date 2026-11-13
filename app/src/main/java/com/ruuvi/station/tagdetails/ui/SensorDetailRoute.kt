@@ -33,7 +33,6 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.statusBars
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.layout.windowInsetsTopHeight
 import androidx.compose.foundation.pager.HorizontalPager
@@ -141,7 +140,8 @@ internal fun SensorDetailRoute(
     var destination by rememberSaveable { mutableStateOf(startDestination.root) }
     var settingsRoute by rememberSaveable { mutableStateOf(startDestination.settingsRoute) }
     val scaffoldState = rememberScaffoldState()
-    val useDarkTheme = destination.forcesDarkTheme || isSystemInDarkTheme()
+    val appDarkTheme = isSystemInDarkTheme()
+    val useDarkTheme = destination.forcesDarkTheme || appDarkTheme
 
     fun selectDestination(newDestination: SensorDetailDestination) {
         if (newDestination == destination) return
@@ -177,6 +177,7 @@ internal fun SensorDetailRoute(
                 unitsConverter = unitsConverter,
                 useNewSensorCard = useNewSensorCard,
                 useDarkTheme = useDarkTheme,
+                appDarkTheme = appDarkTheme,
                 viewModel = viewModel,
                 viewModelProvider = viewModelProvider,
                 onDestinationSelected = ::selectDestination,
@@ -203,6 +204,7 @@ private fun SensorDetailScreen(
     unitsConverter: UnitsConverter,
     useNewSensorCard: Boolean,
     useDarkTheme: Boolean,
+    appDarkTheme: Boolean,
     viewModel: SensorCardViewModel,
     viewModelProvider: SensorDetailViewModelProvider,
     onDestinationSelected: (SensorDetailDestination) -> Unit,
@@ -285,10 +287,16 @@ private fun SensorDetailScreen(
         onNestedSettingsBack()
     }
 
-    SensorDetailSystemBars(
-        useTransparentStatusBar = useSensorBackground && !nestedSettings,
-        useDarkTheme = useDarkTheme,
-    )
+    SensorDetailContentTheme(
+        nestedSettings = nestedSettings,
+        appDarkTheme = appDarkTheme,
+        rootDarkTheme = useDarkTheme,
+    ) {
+        SensorDetailSystemBars(
+            useTransparentStatusBar = useSensorBackground && !nestedSettings,
+            useDarkTheme = if (nestedSettings) appDarkTheme else useDarkTheme,
+        )
+    }
 
     Box(
         modifier = Modifier
@@ -305,15 +313,6 @@ private fun SensorDetailScreen(
                 },
             ),
     ) {
-        if (!useSensorBackground || nestedSettings) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .windowInsetsTopHeight(WindowInsets.statusBars)
-                    .background(RuuviStationTheme.colors.topBar),
-            )
-        }
-
         SensorDetailBackground(
             sensor = currentSensor,
             destination = destination,
@@ -329,7 +328,6 @@ private fun SensorDetailScreen(
             targetState = settingsRoute,
             modifier = Modifier
                 .fillMaxSize()
-                .statusBarsPadding()
                 .windowInsetsPadding(
                     WindowInsets.navigationBars.only(WindowInsetsSides.Horizontal),
                 ),
@@ -356,27 +354,49 @@ private fun SensorDetailScreen(
                 visibleSettingsRoute != SensorSettingsRoutes.SENSOR_SETTINGS_ROOT
             val visibleUseSensorBackground = useSensorBackground && !visibleNestedSettings
 
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(
-                        if (visibleNestedSettings) RuuviStationTheme.colors.background else Color.Transparent,
-                    )
-                    .then(
-                        if (
-                            (destination == SensorDetailDestination.SETTINGS &&
-                                (!visibleNestedSettings ||
-                                    visibleSettingsRoute == SensorSettingsRoutes.VISIBLE_MEASUREMENTS)) ||
-                            destination == SensorDetailDestination.ALERTS
-                        ) {
-                            Modifier
-                        } else {
-                            Modifier.windowInsetsPadding(
-                                WindowInsets.navigationBars.only(WindowInsetsSides.Bottom),
-                            )
-                        },
-                    ),
+            SensorDetailContentTheme(
+                nestedSettings = visibleNestedSettings,
+                appDarkTheme = appDarkTheme,
+                rootDarkTheme = useDarkTheme,
             ) {
+                val contentBackgroundColor = if (visibleNestedSettings) {
+                    RuuviStationTheme.colors.background
+                } else {
+                    Color.Transparent
+                }
+
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(contentBackgroundColor)
+                        .then(
+                            if (
+                                (destination == SensorDetailDestination.SETTINGS &&
+                                    (!visibleNestedSettings ||
+                                        visibleSettingsRoute == SensorSettingsRoutes.VISIBLE_MEASUREMENTS)) ||
+                                destination == SensorDetailDestination.ALERTS
+                            ) {
+                                Modifier
+                            } else {
+                                Modifier.windowInsetsPadding(
+                                    WindowInsets.navigationBars.only(WindowInsetsSides.Bottom),
+                                )
+                            },
+                        ),
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .windowInsetsTopHeight(WindowInsets.statusBars)
+                            .background(
+                                if (visibleNestedSettings) {
+                                    RuuviStationTheme.colors.systemBars
+                                } else {
+                                    Color.Transparent
+                                },
+                            ),
+                    )
+
                 if (visibleNestedSettings) {
                     RuuviTopAppBar(
                         title = SensorSettingsRoutes.getTitleByRoute(context, visibleSettingsRoute),
@@ -490,13 +510,20 @@ private fun SensorDetailScreen(
                 }
             }
         }
+        }
 
-        RuuviSnackbarHost(
-            hostState = scaffoldState.snackbarHostState,
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .windowInsetsPadding(WindowInsets.navigationBars),
-        )
+        SensorDetailContentTheme(
+            nestedSettings = nestedSettings,
+            appDarkTheme = appDarkTheme,
+            rootDarkTheme = useDarkTheme,
+        ) {
+            RuuviSnackbarHost(
+                hostState = scaffoldState.snackbarHostState,
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .windowInsetsPadding(WindowInsets.navigationBars),
+            )
+        }
     }
 }
 
@@ -832,23 +859,33 @@ private fun SensorDetailBackground(
 }
 
 @Composable
+internal fun SensorDetailContentTheme(
+    nestedSettings: Boolean,
+    appDarkTheme: Boolean,
+    rootDarkTheme: Boolean,
+    content: @Composable () -> Unit,
+) {
+    RuuviTheme(
+        darkTheme = if (nestedSettings) appDarkTheme else rootDarkTheme,
+        content = content,
+    )
+}
+
+@Composable
 internal fun SensorDetailSystemBars(
     useTransparentStatusBar: Boolean,
     useDarkTheme: Boolean,
 ) {
     val context = LocalContext.current
-    val statusBarColor = RuuviStationTheme.colors.systemBars.toArgb()
     val transparentColor = Color.Transparent.toArgb()
-
-    val activeStatusBarColor = if (useTransparentStatusBar) transparentColor else statusBarColor
 
     SideEffect {
         val activity = context as? ComponentActivity ?: return@SideEffect
         activity.enableEdgeToEdge(
             statusBarStyle = if (useTransparentStatusBar || useDarkTheme) {
-                SystemBarStyle.dark(activeStatusBarColor)
+                SystemBarStyle.dark(transparentColor)
             } else {
-                SystemBarStyle.light(activeStatusBarColor, activeStatusBarColor)
+                SystemBarStyle.light(transparentColor, transparentColor)
             },
             navigationBarStyle = if (useTransparentStatusBar || useDarkTheme) {
                 SystemBarStyle.dark(transparentColor)
