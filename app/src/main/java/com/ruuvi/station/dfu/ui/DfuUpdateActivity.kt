@@ -25,13 +25,12 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.core.view.WindowCompat
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.ruuvi.station.tagsettings.di.TagSettingsViewModelArgs
+import com.ruuvi.station.util.extensions.enableRuuviEdgeToEdge
 import com.ruuvi.station.util.extensions.viewModel
 import org.kodein.di.DI
 import org.kodein.di.DIAware
@@ -105,7 +104,7 @@ class DfuUpdateActivity : AppCompatActivity() , DIAware {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        WindowCompat.setDecorFitsSystemWindows(window, false)
+        enableRuuviEdgeToEdge()
         val sensorId = intent.getStringExtra(SENSOR_ID)
         permissionsInteractor = PermissionsInteractor(this)
 
@@ -115,17 +114,6 @@ class DfuUpdateActivity : AppCompatActivity() , DIAware {
             RuuviTheme {
                 val navController = rememberNavController()
                 val scaffoldState = rememberScaffoldState()
-                val systemUiController = rememberSystemUiController()
-
-                val systemBarsColor = RuuviStationTheme.colors.systemBars
-
-                SideEffect {
-                    systemUiController.setSystemBarsColor(
-                        color = systemBarsColor,
-                        darkIcons = false
-                    )
-                }
-
                 StatusBarFill {
                     if (deviceType == DeviceType.AIR) {
                         LaunchedEffect(null) {
@@ -155,7 +143,9 @@ class DfuUpdateActivity : AppCompatActivity() , DIAware {
 
                         Scaffold(
                             modifier = Modifier
-                                .systemBarsPadding()
+                                .windowInsetsPadding(
+                                    WindowInsets.safeDrawing.only(WindowInsetsSides.Top + WindowInsetsSides.Horizontal)
+                                )
                                 .fillMaxSize(),
                             backgroundColor = RuuviStationTheme.colors.background,
                             topBar = { RuuviTopAppBar(title = stringResource(R.string.title_activity_dfu_update)) },
@@ -163,7 +153,7 @@ class DfuUpdateActivity : AppCompatActivity() , DIAware {
         snackbarHost = { RuuviSnackbarHost(it) },
                         ) { padding ->
                             NavHost(
-                                modifier = Modifier.padding(padding),
+                                modifier = Modifier.padding(padding).navigationBarsPadding(),
                                 navController = navController,
                                 startDestination = if (deviceType == DeviceType.AIR) UpdateAir else UpdateTag
                             ) {
@@ -245,12 +235,12 @@ fun Body(
     title: String,
     content: @Composable () -> Unit
 ) {
-    val systemUiController = rememberSystemUiController()
-
     Surface(
         color = RuuviStationTheme.colors.background,
         modifier = Modifier
-            .systemBarsPadding()
+            .windowInsetsPadding(
+                WindowInsets.safeDrawing.only(WindowInsetsSides.Top + WindowInsetsSides.Horizontal)
+            )
             .fillMaxSize()
     ) {
         Column() {
@@ -258,6 +248,7 @@ fun Body(
             Column(
                 modifier = Modifier
                     .verticalScroll(rememberScrollState())
+                    .navigationBarsPadding()
                     .padding(RuuviStationTheme.dimensions.screenPadding)
             ) {
                 content()
@@ -265,13 +256,6 @@ fun Body(
         }
     }
 
-    val systemBarsColor = RuuviStationTheme.colors.systemBars
-    SideEffect {
-        systemUiController.setSystemBarsColor(
-            color = systemBarsColor,
-            darkIcons = false
-        )
-    }
 }
 
 @Composable

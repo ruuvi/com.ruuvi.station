@@ -14,8 +14,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.core.view.WindowCompat
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.messaging.FirebaseMessaging
 import com.ruuvi.station.BuildConfig
@@ -30,6 +28,7 @@ import com.ruuvi.station.tagsettings.ui.MoreInfoItem
 import org.kodein.di.DI
 import org.kodein.di.DIAware
 import org.kodein.di.android.closestDI
+import com.ruuvi.station.util.extensions.enableRuuviEdgeToEdge
 import com.ruuvi.station.util.extensions.viewModel
 import timber.log.Timber
 
@@ -44,7 +43,7 @@ class MyAccountActivity : AppCompatActivity(), DIAware {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        WindowCompat.setDecorFitsSystemWindows(window, true)
+        enableRuuviEdgeToEdge()
 
         FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
             if (!task.isSuccessful) {
@@ -85,8 +84,6 @@ class MyAccountActivity : AppCompatActivity(), DIAware {
             }
 
             RuuviTheme {
-                val systemUiController = rememberSystemUiController()
-
                 StatusBarFill {
                     MyAccountBody(
                         user = username,
@@ -118,13 +115,6 @@ class MyAccountActivity : AppCompatActivity(), DIAware {
                     )
                 }
 
-                val systemBarsColor = RuuviStationTheme.colors.systemBars
-                SideEffect {
-                    systemUiController.setSystemBarsColor(
-                        color = systemBarsColor,
-                        darkIcons = false
-                    )
-                }
             }
         }
     }
@@ -153,7 +143,9 @@ fun MyAccountBody(
 
     Column(modifier = Modifier
         .fillMaxSize()
-        .systemBarsPadding()
+        .windowInsetsPadding(
+            WindowInsets.safeDrawing.only(WindowInsetsSides.Top + WindowInsetsSides.Horizontal)
+        )
         .background(RuuviStationTheme.colors.background)
     ) {
         RuuviTopAppBar(title = stringResource(id = R.string.my_ruuvi_account))
@@ -222,6 +214,7 @@ fun MyAccountBody(
                                 RuuviStationTheme.dimensions.big * 2
                         )
                     )
+                    Spacer(Modifier.windowInsetsBottomHeight(WindowInsets.navigationBars))
                 }
             }
 
@@ -230,6 +223,7 @@ fun MyAccountBody(
                     .align(Alignment.BottomCenter)
                     .fillMaxWidth()
                     .background(RuuviStationTheme.colors.background)
+                    .navigationBarsPadding()
                     .padding(
                         horizontal = RuuviStationTheme.dimensions.screenPadding,
                         vertical = RuuviStationTheme.dimensions.big

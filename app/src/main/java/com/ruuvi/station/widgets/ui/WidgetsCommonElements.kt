@@ -64,8 +64,7 @@ fun WidgetConfigTopAppBar(
     val systemBarsColor = RuuviStationTheme.colors.topBar
     SideEffect {
         systemUiController.setSystemBarsColor(
-            color = systemBarsColor,
-            darkIcons = false
+            color = systemBarsColor
         )
     }
 }

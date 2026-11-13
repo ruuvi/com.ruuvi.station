@@ -1,10 +1,13 @@
 package com.ruuvi.station.tagdetails.ui
 
 import android.net.Uri
+import android.os.Build
+import android.view.animation.AccelerateDecelerateInterpolator
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.Easing
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
@@ -21,15 +24,15 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBars
-import androidx.compose.foundation.layout.navigationBarsPadding
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.statusBars
-import androidx.compose.foundation.layout.systemBarsPadding
-import androidx.compose.foundation.layout.windowInsetsBottomHeight
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.layout.windowInsetsTopHeight
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerDefaults
@@ -63,7 +66,6 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.LayoutDirection
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
@@ -218,7 +220,8 @@ private fun SensorDetailScreen(
     val latestSensorIds by rememberUpdatedState(sensorIds)
     val nestedSettings = destination == SensorDetailDestination.SETTINGS &&
         settingsRoute != SensorSettingsRoutes.SENSOR_SETTINGS_ROOT
-    val useSensorBackground = destination.usesSensorBackground && !nestedSettings
+    // Keep the sensor backdrop stable while nested settings slide over it.
+    val useSensorBackground = destination.usesSensorBackground
     val saveableStateHolder = rememberSaveableStateHolder()
     val coroutineScope = rememberCoroutineScope()
     val reverseTitleSwipeDirection = LocalLayoutDirection.current == LayoutDirection.Rtl
@@ -228,6 +231,11 @@ private fun SensorDetailScreen(
     val pagerFlingBehavior = PagerDefaults.flingBehavior(state = pagerState)
     val titlePagePosition = pagerState.currentPage + pagerState.currentPageOffsetFraction
     val context = LocalContext.current
+    // Match the activity transition used by Share Sensor (@anim/enter_right, exit_left).
+    val settingsNavigationEasing = remember {
+        val interpolator = AccelerateDecelerateInterpolator()
+        Easing { fraction -> interpolator.getInterpolation(fraction) }
+    }
 
     LaunchedEffect(selectedSensorId, sensorIds) {
         val selectedPage = sensorIds.indexOf(selectedSensorId)
@@ -256,8 +264,8 @@ private fun SensorDetailScreen(
     }
 
     SensorDetailSystemBars(
-        useTransparentStatusBar = useSensorBackground,
-        useTransparentNavigationBar = useSensorBackground && !destination.forcesDarkTheme,
+        destination = destination,
+        settingsRoute = settingsRoute,
         useDarkTheme = useDarkTheme,
     )
 
@@ -276,7 +284,7 @@ private fun SensorDetailScreen(
                 },
             ),
     ) {
-        if (!useSensorBackground) {
+        if (!useSensorBackground || nestedSettings) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -291,16 +299,6 @@ private fun SensorDetailScreen(
             enabled = useSensorBackground,
         )
 
-        if (useSensorBackground && destination.forcesDarkTheme) {
-            Box(
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .fillMaxWidth()
-                    .windowInsetsBottomHeight(WindowInsets.navigationBars)
-                    .background(RuuviStationTheme.colors.background),
-            )
-        }
-
         NfcInteractor(
             addSensor = viewModel::addSensor,
             getNfcScanResponse = viewModel::getNfcScanResponse,
@@ -310,23 +308,54 @@ private fun SensorDetailScreen(
             targetState = settingsRoute,
             modifier = Modifier
                 .fillMaxSize()
-                .systemBarsPadding(),
+                .statusBarsPadding()
+                .windowInsetsPadding(
+                    WindowInsets.navigationBars.only(WindowInsetsSides.Horizontal),
+                ),
             transitionSpec = {
-                val animationSpec = tween<IntOffset>(durationMillis = SETTINGS_NAVIGATION_ANIMATION_MILLIS)
+                val animationSpec = tween<IntOffset>(
+                    durationMillis = SETTINGS_NAVIGATION_ANIMATION_MILLIS,
+                    easing = settingsNavigationEasing,
+                )
                 if (targetState == SensorSettingsRoutes.SENSOR_SETTINGS_ROOT) {
-                    slideInHorizontally(animationSpec) { -it } togetherWith
-                        slideOutHorizontally(animationSpec) { it }
+                    (slideInHorizontally(animationSpec) { -it } togetherWith
+                        slideOutHorizontally(animationSpec) { it }).apply {
+                        targetContentZIndex = -1f
+                    }
                 } else {
-                    slideInHorizontally(animationSpec) { it } togetherWith
-                        slideOutHorizontally(animationSpec) { -it }
+                    (slideInHorizontally(animationSpec) { it } togetherWith
+                        slideOutHorizontally(animationSpec) { -it }).apply {
+                        targetContentZIndex = 1f
+                    }
                 }
             },
             label = "sensor settings navigation",
         ) { visibleSettingsRoute ->
             val visibleNestedSettings = destination == SensorDetailDestination.SETTINGS &&
                 visibleSettingsRoute != SensorSettingsRoutes.SENSOR_SETTINGS_ROOT
+            val visibleUseSensorBackground = useSensorBackground && !visibleNestedSettings
 
-            Column(modifier = Modifier.fillMaxSize()) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(
+                        if (visibleNestedSettings) RuuviStationTheme.colors.background else Color.Transparent,
+                    )
+                    .then(
+                        if (
+                            (destination == SensorDetailDestination.SETTINGS &&
+                                (!visibleNestedSettings ||
+                                    visibleSettingsRoute == SensorSettingsRoutes.VISIBLE_MEASUREMENTS)) ||
+                            destination == SensorDetailDestination.ALERTS
+                        ) {
+                            Modifier
+                        } else {
+                            Modifier.windowInsetsPadding(
+                                WindowInsets.navigationBars.only(WindowInsetsSides.Bottom),
+                            )
+                        },
+                    ),
+            ) {
                 if (visibleNestedSettings) {
                     RuuviTopAppBar(
                         title = SensorSettingsRoutes.getTitleByRoute(context, visibleSettingsRoute),
@@ -337,7 +366,7 @@ private fun SensorDetailScreen(
                         destination = destination,
                         syncInProgress = syncInProgress,
                         alarmStatus = currentSensor?.alarmSensorStatus ?: AlarmSensorStatus.NoAlarms,
-                        useOpaqueBackground = !useSensorBackground,
+                        useOpaqueBackground = !visibleUseSensorBackground,
                         onBack = onFinish,
                         onDestinationSelected = onDestinationSelected,
                     )
@@ -366,7 +395,7 @@ private fun SensorDetailScreen(
                                 )
                             }
                         },
-                        modifier = if (useSensorBackground) {
+                        modifier = if (visibleUseSensorBackground) {
                             Modifier
                         } else {
                             Modifier.background(RuuviStationTheme.colors.topBar)
@@ -441,7 +470,7 @@ private fun SensorDetailScreen(
             hostState = scaffoldState.snackbarHostState,
             modifier = Modifier
                 .align(Alignment.BottomCenter)
-                .navigationBarsPadding(),
+                .windowInsetsPadding(WindowInsets.navigationBars),
         )
     }
 }
@@ -778,28 +807,46 @@ private fun SensorDetailBackground(
 }
 
 @Composable
-private fun SensorDetailSystemBars(
+internal fun SensorDetailSystemBars(
+    destination: SensorDetailDestination,
+    settingsRoute: String,
+    useDarkTheme: Boolean,
+) {
+    val nestedSettings = destination == SensorDetailDestination.SETTINGS &&
+        settingsRoute != SensorSettingsRoutes.SENSOR_SETTINGS_ROOT
+    SensorDetailSystemBars(
+        useTransparentStatusBar = destination.usesSensorBackground && !nestedSettings,
+        useDarkTheme = useDarkTheme,
+    )
+}
+
+@Composable
+internal fun SensorDetailSystemBars(
     useTransparentStatusBar: Boolean,
-    useTransparentNavigationBar: Boolean,
     useDarkTheme: Boolean,
 ) {
     val context = LocalContext.current
     val statusBarColor = RuuviStationTheme.colors.systemBars.toArgb()
-    val navigationBarColor = RuuviStationTheme.colors.background.toArgb()
     val transparentColor = Color.Transparent.toArgb()
 
     val activeStatusBarColor = if (useTransparentStatusBar) transparentColor else statusBarColor
-    val activeNavigationBarColor = if (useTransparentNavigationBar) transparentColor else navigationBarColor
 
     SideEffect {
         val activity = context as? ComponentActivity ?: return@SideEffect
         activity.enableEdgeToEdge(
-            statusBarStyle = SystemBarStyle.dark(activeStatusBarColor),
-            navigationBarStyle = if (!useTransparentNavigationBar && !useDarkTheme) {
-                SystemBarStyle.light(activeNavigationBarColor, activeNavigationBarColor)
+            statusBarStyle = if (useTransparentStatusBar || useDarkTheme) {
+                SystemBarStyle.dark(activeStatusBarColor)
             } else {
-                SystemBarStyle.dark(activeNavigationBarColor)
-            }
+                SystemBarStyle.light(activeStatusBarColor, activeStatusBarColor)
+            },
+            navigationBarStyle = if (useTransparentStatusBar || useDarkTheme) {
+                SystemBarStyle.dark(transparentColor)
+            } else {
+                SystemBarStyle.light(transparentColor, transparentColor)
+            },
         )
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            activity.window.isNavigationBarContrastEnforced = false
+        }
     }
 }

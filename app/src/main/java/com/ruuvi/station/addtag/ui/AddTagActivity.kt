@@ -3,16 +3,15 @@ package com.ruuvi.station.addtag.ui
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Color
-import android.os.Build
 import android.os.Bundle
 import android.view.MenuItem
 import android.widget.AdapterView
 import android.widget.Toast
-import androidx.core.view.WindowCompat
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.snackbar.BaseTransientBottomBar.LENGTH_LONG
+import com.ruuvi.station.util.extensions.applyRuuviEdgeToEdgeInsets
+import com.ruuvi.station.util.extensions.enableRuuviEdgeToEdge
 import com.ruuvi.station.util.extensions.viewModel
 import com.ruuvi.station.R
 import com.ruuvi.station.app.preferences.PreferencesRepository
@@ -44,18 +43,14 @@ class AddTagActivity : NfcActivity(R.layout.activity_add_tag), DIAware {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        WindowCompat.setDecorFitsSystemWindows(window, false)
+        enableRuuviEdgeToEdge()
 
         binding = ActivityAddTagBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setSupportActionBar(binding.toolbar)
         permissionsInteractor = PermissionsInteractor(this)
 
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
-            window.statusBarColor = Color.parseColor("#01000000")
-        } else {
-            window.statusBarColor = Color.TRANSPARENT
-        }
+        binding.root.applyRuuviEdgeToEdgeInsets(binding.content.tagListView)
 
         requestPermission()
         setupViewmodel()
@@ -120,6 +115,7 @@ class AddTagActivity : NfcActivity(R.layout.activity_add_tag), DIAware {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         binding.content.tagListView.adapter = adapter
+        binding.content.noSensorsLayout.isVisible = tags.isEmpty()
 
         binding.content.tagListView.onItemClickListener = AdapterView.OnItemClickListener { _, _, i, _ ->
             val tag = binding.content.tagListView.getItemAtPosition(i) as RuuviTagEntity
