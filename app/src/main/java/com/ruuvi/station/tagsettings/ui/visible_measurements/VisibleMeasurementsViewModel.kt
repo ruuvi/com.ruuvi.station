@@ -24,7 +24,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.mapNotNull
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -50,11 +50,11 @@ class VisibleMeasurementsViewModel(
 
     val useDefaultOrder: StateFlow<Boolean> =
         _sensorState
-            .mapNotNull { it.defaultDisplayOrder }
+            .map { it.defaultDisplayOrder }
             .stateIn(
                 viewModelScope,
                 SharingStarted.WhileSubscribed(1000),
-                true
+                _sensorState.value.defaultDisplayOrder,
             )
 
     private val _selected = MutableStateFlow(
@@ -70,19 +70,11 @@ class VisibleMeasurementsViewModel(
 
     val possibleOptions: StateFlow<List<ListOption>> =
         _sensorState
-            .mapNotNull {
-                it.possibleDisplayOptions.mapNotNull { unitType ->
-                    ListOption(
-                        id = unitType.getCode(),
-                        title = getUnitName(unitType),
-                        unit = unitType,
-                    )
-                }
-            }
+            .map(::getPossibleOptions)
             .stateIn(
                 viewModelScope,
                 SharingStarted.WhileSubscribed(1000),
-                listOf()
+                getPossibleOptions(_sensorState.value),
             )
 
     val dashBoardType = preferencesRepository.getDashboardType()
@@ -130,6 +122,15 @@ class VisibleMeasurementsViewModel(
             }
         }
     }
+
+    private fun getPossibleOptions(sensor: RuuviTag): List<ListOption> =
+        sensor.possibleDisplayOptions.map { unitType ->
+            ListOption(
+                id = unitType.getCode(),
+                title = getUnitName(unitType),
+                unit = unitType,
+            )
+        }
 
     fun getUnitName(unit: UnitType): String {
         return unitsConverter.getTitleForUnitType(unit)
