@@ -108,7 +108,7 @@ class ClaimSensorActivity : NfcActivity(), DIAware {
             backgroundColor = RuuviStationTheme.colors.background,
             topBar = { RuuviTopAppBar(title = title) },
             scaffoldState = scaffoldState,
-            snackbarHost = { SnackbarHost(it, Modifier.navigationBarsPadding()) }
+            snackbarHost = { RuuviSnackbarHost(it, Modifier.navigationBarsPadding()) }
         ) { padding ->
 
             AnimatedNavHost(

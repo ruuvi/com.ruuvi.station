@@ -101,7 +101,7 @@ class AddTagActivity : NfcActivity(R.layout.activity_add_tag), DIAware {
                         viewModel.addSensor(response.sensorId)
                         SensorCardActivity.startAfterAddingNewSensor(this@AddTagActivity, response.sensorId)
                     } else {
-                        Snackbar.make(this@AddTagActivity, binding.content.root, getText(R.string.nfc_enable_bt_to_add_sensor), LENGTH_LONG).show()
+                        showBottomSnackbar(getString(R.string.nfc_enable_bt_to_add_sensor), duration = LENGTH_LONG)
                     }
                 }
             }

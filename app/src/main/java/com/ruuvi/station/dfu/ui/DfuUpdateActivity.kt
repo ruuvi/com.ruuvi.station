@@ -150,7 +150,7 @@ class DfuUpdateActivity : AppCompatActivity() , DIAware {
                             backgroundColor = RuuviStationTheme.colors.background,
                             topBar = { RuuviTopAppBar(title = stringResource(R.string.title_activity_dfu_update)) },
                             scaffoldState = scaffoldState,
-                            snackbarHost = { SnackbarHost(it, Modifier.navigationBarsPadding()) }
+                            snackbarHost = { RuuviSnackbarHost(it, Modifier.navigationBarsPadding()) }
                         ) { padding ->
                             NavHost(
                                 modifier = Modifier.padding(padding).navigationBarsPadding(),

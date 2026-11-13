@@ -117,7 +117,7 @@ class BackgroundActivity : AppCompatActivity(), DIAware {
             backgroundColor = RuuviStationTheme.colors.background,
             topBar = { RuuviTopAppBar(title = stringResource(id = R.string.change_background)) },
             scaffoldState = scaffoldState,
-            snackbarHost = { SnackbarHost(it, Modifier.navigationBarsPadding()) }
+            snackbarHost = { RuuviSnackbarHost(it, Modifier.navigationBarsPadding()) }
         ) { paddingValues ->
 
             LazyVerticalGrid(

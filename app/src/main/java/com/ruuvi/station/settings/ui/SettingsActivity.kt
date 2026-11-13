@@ -29,6 +29,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.ruuvi.station.app.ui.RuuviTopAppBar
+import com.ruuvi.station.util.ui.RuuviSnackbarHost
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.RuuviTheme
 import com.ruuvi.station.util.extensions.enableRuuviEdgeToEdge
@@ -78,7 +79,7 @@ class SettingsActivity : AppCompatActivity(), DIAware {
                         topBar = { RuuviTopAppBar(title = title) },
                         scaffoldState = scaffoldState,
                         snackbarHost = {
-                            SnackbarHost(
+                            RuuviSnackbarHost(
                                 hostState = it,
                                 modifier = Modifier.navigationBarsPadding(),
                             )

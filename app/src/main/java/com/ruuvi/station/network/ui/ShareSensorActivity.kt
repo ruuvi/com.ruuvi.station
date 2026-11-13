@@ -123,7 +123,7 @@ class ShareSensorActivity : AppCompatActivity() , DIAware {
                             backgroundColor = RuuviStationTheme.colors.background,
                             topBar = { RuuviTopAppBar(title = stringResource(id = R.string.share_sensor_title)) },
                             scaffoldState = scaffoldState,
-                            snackbarHost = { SnackbarHost(it, Modifier.navigationBarsPadding()) }
+                            snackbarHost = { RuuviSnackbarHost(it, Modifier.navigationBarsPadding()) }
                         ) { paddingValues ->
                             SharingWebView(
                                 scaffoldState,
@@ -210,7 +210,7 @@ fun ShareBody(
         backgroundColor = RuuviStationTheme.colors.background,
         topBar = { RuuviTopAppBar(title = stringResource(id = R.string.share_sensor_title)) },
         scaffoldState = scaffoldState,
-        snackbarHost = { SnackbarHost(it, Modifier.navigationBarsPadding()) }
+        snackbarHost = { RuuviSnackbarHost(it, Modifier.navigationBarsPadding()) }
     ) { paddingValues ->
         LazyColumn(
             modifier = Modifier
