@@ -3,6 +3,7 @@ package com.ruuvi.station.network.ui
 import com.ruuvi.station.R
 import com.ruuvi.station.app.ui.UiEvent
 import com.ruuvi.station.app.ui.UiText
+import com.ruuvi.station.network.data.NetworkSyncEvent
 import com.ruuvi.station.network.data.request.UserRegisterRequest
 import com.ruuvi.station.network.domain.NetworkDataSyncInteractor
 import com.ruuvi.station.network.domain.NetworkSignInInteractor
@@ -13,6 +14,7 @@ import io.mockk.slot
 import io.mockk.verify
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.TestScope
@@ -76,6 +78,34 @@ class SignInViewModelTest {
 
         verify(exactly = 0) { networkSignInInteractor.signIn(any(), any(), any()) }
         assertEquals(listOf<UiEvent>(UiEvent.NavigateUp), events)
+    }
+
+    @Test
+    fun `successful verification finishes after sensors sync and clears the code`() = runTest(dispatcher) {
+        val syncEvents = MutableSharedFlow<NetworkSyncEvent>()
+        every { networkDataSyncInteractor.syncEvents } returns syncEvents
+        every { networkSignInInteractor.signIn(CODE, EMAIL, any()) } answers {
+            thirdArg<(UiText?) -> Unit>()(null)
+        }
+        viewModel.submitEmail(EMAIL)
+        val events = collectEvents()
+        val tokenProcessed = mutableListOf<Boolean>()
+        backgroundScope.launch(dispatcher) { viewModel.tokenProcessed.toList(tokenProcessed) }
+
+        viewModel.verifyCode(CODE)
+
+        verify(exactly = 1) { networkDataSyncInteractor.syncNetworkData() }
+        assertEquals(listOf<UiEvent>(UiEvent.Progress(true, null)), events)
+        assertTrue(tokenProcessed.isEmpty())
+
+        syncEvents.emit(NetworkSyncEvent.SensorsSynced)
+
+        assertEquals(
+            listOf(UiEvent.Progress(true, null), UiEvent.Progress(false, null), UiEvent.Finish),
+            events,
+        )
+        assertEquals(listOf(true), tokenProcessed)
+        assertEquals(0, syncEvents.subscriptionCount.value)
     }
 
     @Test

@@ -71,11 +71,36 @@ class NetworkResponseLocalizerTest {
     }
 
     @Test
-    fun `unknown sub code falls back to the code`() {
-        assertEquals(
-            context.getString(R.string.cloud_er_token_expired),
-            localize(NetworkResponseLocalizer.ER_TOKEN_EXPIRED, "ER_SUB_SOMETHING_NEW")
+    fun `missing or unknown sub code preserves existing error messages`() {
+        val messages = listOf(
+            NetworkResponseLocalizer.ER_FORBIDDEN to R.string.cloud_er_forbidden,
+            NetworkResponseLocalizer.ER_UNAUTHORIZED to R.string.cloud_er_unauthorized,
+            NetworkResponseLocalizer.ER_INTERNAL to R.string.cloud_er_internal,
+            NetworkResponseLocalizer.ER_INVALID_FORMAT to R.string.cloud_er_invalid_format,
+            NetworkResponseLocalizer.ER_USER_NOT_FOUND to R.string.cloud_er_user_not_found,
+            NetworkResponseLocalizer.ER_SENSOR_NOT_FOUND to R.string.cloud_er_sensor_not_found,
+            NetworkResponseLocalizer.ER_TOKEN_EXPIRED to R.string.cloud_er_token_expired,
+            NetworkResponseLocalizer.ER_SUBSCRIPTION_NOT_FOUND to R.string.cloud_er_subscription_not_found,
+            NetworkResponseLocalizer.ER_SHARE_COUNT_REACHED to R.string.cloud_er_share_count_reached,
+            NetworkResponseLocalizer.ER_SENSOR_SHARE_COUNT_REACHED to R.string.cloud_er_sensor_share_count_reached,
+            NetworkResponseLocalizer.ER_NO_DATA_TO_SHARE to R.string.cloud_er_no_data_to_share,
+            NetworkResponseLocalizer.ER_SENSOR_ALREADY_SHARED to R.string.cloud_er_sensor_already_shared,
+            NetworkResponseLocalizer.ER_UNABLE_TO_SEND_EMAIL to R.string.cloud_er_unable_to_send_email,
+            NetworkResponseLocalizer.ER_MISSING_ARGUMENT to R.string.cloud_er_missing_argument,
+            NetworkResponseLocalizer.ER_INVALID_DENSITY_MODE to R.string.cloud_er_invalid_density_mode,
+            NetworkResponseLocalizer.ER_INVALID_SORT_MODE to R.string.cloud_er_invalid_sort_mode,
+            NetworkResponseLocalizer.ER_INVALID_TIME_RANGE to R.string.cloud_er_invalid_time_range,
+            NetworkResponseLocalizer.ER_INVALID_EMAIL_ADDRESS to R.string.cloud_er_invalid_email_address,
+            NetworkResponseLocalizer.ER_INVALID_MAC_ADDRESS to R.string.cloud_er_invalid_mac_address,
+            NetworkResponseLocalizer.ER_SUB_DATA_STORAGE_ERROR to R.string.cloud_er_sub_data_storage_error,
+            NetworkResponseLocalizer.ER_SUB_NO_USER to R.string.cloud_er_sub_no_user,
         )
+
+        for ((code, message) in messages) {
+            for (subCode in listOf(null, "ER_SUB_SOMETHING_NEW")) {
+                assertEquals("code=$code, subCode=$subCode", context.getString(message), localize(code, subCode))
+            }
+        }
     }
 
     @Test
