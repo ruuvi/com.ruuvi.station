@@ -74,7 +74,7 @@ class CodeEditView @JvmOverloads
                 binding.code2EditText.text.toString() +
                 binding.code3EditText.text.toString() +
                 binding.code4EditText.text.toString()
-        Timber.d("processChanges $code")
+        Timber.d("processChanges ${code.length}")
         if (code.length == 4) {
             onCodeEntered?.invoke(code)
         }
@@ -84,12 +84,12 @@ class CodeEditView @JvmOverloads
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
         override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-            Timber.d("onTextChanged $s $start $before $count")
+            Timber.d("onTextChanged $start $before $count")
             if (count > 0 && nextControl != null) nextControl.requestFocus()
         }
 
         override fun afterTextChanged(s: Editable) {
-            Timber.d("afterTextChanged $s")
+            Timber.d("afterTextChanged ${s.length}")
 
             val input = s.toString().trim().uppercase(Locale.getDefault())
             when {

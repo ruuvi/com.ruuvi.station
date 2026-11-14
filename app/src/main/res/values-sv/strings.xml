@@ -385,6 +385,10 @@ Totalt antal använda delningar för ditt konto: %3$,d/%4$,d</string>
     <string name="cloud_er_invalid_mac_address">Ogiltig MAC-address</string>
     <string name="cloud_er_sub_data_storage_error">Datalagringsfel</string>
     <string name="cloud_er_sub_no_user">Ingen användare</string>
+    <string name="cloud_er_sub_invalid_code">Koden är felaktig. Kontrollera koden i ditt e-postmeddelande och försök igen.</string>
+    <string name="cloud_er_sub_code_used">Den här koden har redan använts. Begär en ny kod för att logga in.</string>
+    <string name="cloud_er_sub_code_expired">Den här koden har gått ut. Begär en ny kod för att logga in.</string>
+    <string name="cloud_er_sub_too_many_attempts">För många felaktiga koder. Vänta 15 minuter och försök igen.</string>
     <string name="settings_experimental">Experimentella funktioner</string>
     <string name="settings_developer">Utvecklarinställningar</string>
     <string name="calibration_description">Vid normal användning är det inte nödvändigt att kalibrera sensorerna.\n\nOm du är en avancerad användare och vill kalibrera manuellt är det möjligt att göra det.\n\nKalibreringstips finns på ruuvi.com/support</string>

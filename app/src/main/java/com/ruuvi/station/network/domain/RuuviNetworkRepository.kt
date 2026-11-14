@@ -27,16 +27,15 @@ class RuuviNetworkRepository
     @VisibleForTesting internal constructor(
         private val dispatcher: CoroutineDispatcher,
         private val imageInteractor: ImageInteractor,
-        private val preferencesRepository: PreferencesRepository
+        private val preferencesRepository: PreferencesRepository,
+        httpClient: OkHttpClient? = null
     )
 {
     val ioScope = CoroutineScope(Dispatchers.IO)
 
-    private val interceptor: HttpLoggingInterceptor = HttpLoggingInterceptor().also {
-        it.level = HttpLoggingInterceptor.Level.BODY
-    }
+    private val interceptor: HttpLoggingInterceptor = createHttpLoggingInterceptor()
 
-    private val client = OkHttpClient
+    private val client = httpClient ?: OkHttpClient
         .Builder()
         .addNetworkInterceptor { chain ->
             chain.proceed(
@@ -91,11 +90,11 @@ class RuuviNetworkRepository
         }
     }
 
-    fun verifyUser(token: String, onResult: (UserVerifyResponse?) -> Unit) {
+    fun verifyUser(token: String, email: String, onResult: (UserVerifyResponse?) -> Unit) {
         ioScope.launch {
             var result: UserVerifyResponse?
             try {
-                val response = retrofitService.verifyUser(token)
+                val response = retrofitService.verifyUser(token, email)
                 if (response.isSuccessful) {
                     result = response.body()
                 } else {

@@ -9,7 +9,7 @@ class NetworkResponseLocalizer (
     ) {
     fun localizeResponse(response: RuuviNetworkResponse<*>?) {
         if (response?.isError() == true) {
-            response.error = when (response.code) {
+            response.error = localizeSubCode(response.subCode) ?: when (response.code) {
                 ER_FORBIDDEN -> context.getString(R.string.cloud_er_forbidden)
                 ER_UNAUTHORIZED -> context.getString(R.string.cloud_er_unauthorized)
                 ER_INTERNAL -> context.getString(R.string.cloud_er_internal)
@@ -36,6 +36,14 @@ class NetworkResponseLocalizer (
         }
     }
 
+    private fun localizeSubCode(subCode: String?): String? = when (subCode) {
+        ER_SUB_INVALID_CODE -> context.getString(R.string.cloud_er_sub_invalid_code)
+        ER_SUB_CODE_USED -> context.getString(R.string.cloud_er_sub_code_used)
+        ER_SUB_CODE_EXPIRED -> context.getString(R.string.cloud_er_sub_code_expired)
+        ER_SUB_TOO_MANY_ATTEMPTS -> context.getString(R.string.cloud_er_sub_too_many_attempts)
+        else -> null
+    }
+
     companion object {
         const val ER_FORBIDDEN = "ER_FORBIDDEN"
         const val ER_UNAUTHORIZED = "ER_UNAUTHORIZED"
@@ -58,5 +66,9 @@ class NetworkResponseLocalizer (
         const val ER_INVALID_MAC_ADDRESS = "ER_INVALID_MAC_ADDRESS"
         const val ER_SUB_DATA_STORAGE_ERROR = "ER_SUB_DATA_STORAGE_ERROR"
         const val ER_SUB_NO_USER = "ER_SUB_NO_USER"
+        const val ER_SUB_INVALID_CODE = "ER_SUB_INVALID_CODE"
+        const val ER_SUB_CODE_USED = "ER_SUB_CODE_USED"
+        const val ER_SUB_CODE_EXPIRED = "ER_SUB_CODE_EXPIRED"
+        const val ER_SUB_TOO_MANY_ATTEMPTS = "ER_SUB_TOO_MANY_ATTEMPTS"
     }
 }

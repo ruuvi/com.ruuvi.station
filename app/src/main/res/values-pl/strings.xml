@@ -385,6 +385,10 @@
     <string name="cloud_er_invalid_mac_address">Nieprawidłowy adres MAC</string>
     <string name="cloud_er_sub_data_storage_error">Błąd w zapisie danych</string>
     <string name="cloud_er_sub_no_user">Brak użytkownika</string>
+    <string name="cloud_er_sub_invalid_code">Ten kod jest nieprawidłowy. Sprawdź kod w wiadomości e-mail i spróbuj ponownie.</string>
+    <string name="cloud_er_sub_code_used">Ten kod został już użyty. Poproś o nowy kod, aby się zalogować.</string>
+    <string name="cloud_er_sub_code_expired">Ten kod wygasł. Poproś o nowy kod, aby się zalogować.</string>
+    <string name="cloud_er_sub_too_many_attempts">Zbyt wiele nieprawidłowych kodów. Odczekaj 15 minut i spróbuj ponownie.</string>
     <string name="settings_experimental">Funkcje eksperymentalne</string>
     <string name="settings_developer">Ustawienia programisty</string>
     <string name="calibration_description">W codziennym użytkowaniu nie jest konieczna regulacja wyrównania.\n\nJeśli jesteś zaawansowanym użytkownikiem i chciałbyś ręcznie skonfigurować fabrycznie skalibrowane czujniki, jest to możliwe.\n\nWskazówki dotyczące kalibracji są dostępne na stronie ruuvi.com/support.</string>

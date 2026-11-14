@@ -385,6 +385,10 @@ Total used shares for your account: %3$,d/%4$,d</string>
     <string name="cloud_er_invalid_mac_address">Invalid MAC address</string>
     <string name="cloud_er_sub_data_storage_error">Data storage error</string>
     <string name="cloud_er_sub_no_user">No user</string>
+    <string name="cloud_er_sub_invalid_code">That code is incorrect. Check the code in your email and try again.</string>
+    <string name="cloud_er_sub_code_used">This code has already been used. Request a new code to sign in.</string>
+    <string name="cloud_er_sub_code_expired">This code has expired. Request a new code to sign in.</string>
+    <string name="cloud_er_sub_too_many_attempts">Too many incorrect codes. Please wait 15 minutes and try again.</string>
     <string name="settings_experimental">Experimental features</string>
     <string name="settings_developer">Developer settings</string>
     <string name="calibration_description">In normal use, it\'s not necessary to adjust the offset.\n\nIf you\'re an advanced user and you\'d like to manually configure the factory calibrated sensors, it\'s possible to do so.\n\nCalibration tips are available on ruuvi.com/support</string>

@@ -13,7 +13,10 @@ interface RuuviNetworkApi{
 
     @Headers("Content-Type: application/json")
     @GET("verify")
-    suspend fun verifyUser(@Query("token") token: String): Response<UserVerifyResponse>
+    suspend fun verifyUser(
+        @Query("token") token: String,
+        @Query("email") email: String
+    ): Response<UserVerifyResponse>
 
     @Headers("Content-Type: application/json")
     @GET("user")

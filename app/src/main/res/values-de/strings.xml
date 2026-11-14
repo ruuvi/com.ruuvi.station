@@ -385,6 +385,10 @@ Insgesamt verwendete Freigaben für Ihr Konto: %3$,d/%4$,d</string>
     <string name="cloud_er_invalid_mac_address">Ungültige MAC-Adresse</string>
     <string name="cloud_er_sub_data_storage_error">Datenspeicherfehler</string>
     <string name="cloud_er_sub_no_user">Kein Benutzer</string>
+    <string name="cloud_er_sub_invalid_code">Dieser Code ist falsch. Bitte überprüfen Sie den Code in Ihrer E-Mail und versuchen Sie es erneut.</string>
+    <string name="cloud_er_sub_code_used">Dieser Code wurde bereits verwendet. Fordern Sie einen neuen Code an, um sich anzumelden.</string>
+    <string name="cloud_er_sub_code_expired">Dieser Code ist abgelaufen. Fordern Sie einen neuen Code an, um sich anzumelden.</string>
+    <string name="cloud_er_sub_too_many_attempts">Zu viele falsche Codes. Bitte warten Sie 15 Minuten und versuchen Sie es erneut.</string>
     <string name="settings_experimental">Experimentelle Funktionen</string>
     <string name="settings_developer">Entwicklereinstellungen</string>
     <string name="calibration_description">Bei normalem Gebrauch ist es nicht erforderlich, den Offset anzupassen.\n\nWenn Sie ein fortgeschrittener Benutzer sind und die werkseitig kalibrierten Sensoren manuell konfigurieren möchten, ist dies möglich.\n\nTipps zur Kalibrierung sind auf ruuvi.com/support verfügbar</string>
