@@ -42,11 +42,11 @@ class RuuviNetworkInteractor (
         }
     }
 
-    fun verifyUser(token: String, onResult: (UserVerifyResponse?) -> Unit) {
-        networkRepository.verifyUser(token) { response ->
+    fun verifyUser(token: String, email: String, onResult: (UserVerifyResponse?) -> Unit) {
+        networkRepository.verifyUser(token, email) { response ->
             networkResponseLocalizer.localizeResponse(response)
             response?.let {
-                if (response.error.isNullOrEmpty() && response.data != null) {
+                if (response.isSuccess() && response.data != null) {
                     tokenRepository.saveTokenInfo(
                         NetworkTokenInfo(response.data.email, response.data.accessToken))
                     firebaseInteractor.logSignIn()

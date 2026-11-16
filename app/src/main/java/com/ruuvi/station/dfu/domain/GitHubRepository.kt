@@ -1,6 +1,7 @@
 package com.ruuvi.station.dfu.domain
 
 import com.ruuvi.station.dfu.data.LatestReleaseResponse
+import com.ruuvi.station.network.domain.createHttpLoggingInterceptor
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
@@ -13,9 +14,7 @@ class GitHubRepository(
     private val dispatcher: CoroutineDispatcher
 ) {
 
-    private val interceptor: HttpLoggingInterceptor = HttpLoggingInterceptor().also {
-        it.level = HttpLoggingInterceptor.Level.BODY
-    }
+    private val interceptor: HttpLoggingInterceptor = createHttpLoggingInterceptor()
 
     private val client = OkHttpClient.Builder().addInterceptor(interceptor).build()
 

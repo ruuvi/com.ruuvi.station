@@ -1,6 +1,8 @@
 package com.ruuvi.station.network.domain
 
+import com.ruuvi.station.R
 import com.ruuvi.station.app.preferences.PreferencesRepository
+import com.ruuvi.station.app.ui.UiText
 import com.ruuvi.station.database.domain.NetworkRequestRepository
 import com.ruuvi.station.database.domain.SensorSettingsRepository
 import com.ruuvi.station.database.domain.TagRepository
@@ -20,20 +22,17 @@ class NetworkSignInInteractor (
     private val pushRegisterInteractor: PushRegisterInteractor,
     private val preferencesRepository: PreferencesRepository,
 ) {
-    fun signIn(token: String, response: (String) -> Unit) {
-        networkInteractor.verifyUser(token) {response->
-            if (response?.isSuccess() == true) {
+    fun signIn(token: String, email: String, onResult: (UiText?) -> Unit) {
+        networkInteractor.verifyUser(token, email) { response ->
+            val error = response?.error
+            if (response?.isSuccess() == true && response.data != null) {
                 pushRegisterInteractor.checkAndRegisterDeviceToken()
+                onResult(null)
+            } else if (error.isNullOrEmpty()) {
+                onResult(UiText.StringResource(R.string.unknown_error))
+            } else {
+                onResult(UiText.DynamicString(error))
             }
-
-            var  errorText = ""
-            // TODO LOCALIZE
-            if (response == null) {
-                errorText = "Unknown error"
-            } else if (!response.error.isNullOrEmpty()) {
-                errorText = response.error
-            }
-            response(errorText)
         }
     }
 

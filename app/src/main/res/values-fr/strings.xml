@@ -385,6 +385,10 @@ Total des partages utilisés pour votre compte : %3$,d/%4$,d</string>
     <string name="cloud_er_invalid_mac_address">Adresse MAC invalide</string>
     <string name="cloud_er_sub_data_storage_error">Erreur d\'enregistrement</string>
     <string name="cloud_er_sub_no_user">Pas d\'utilisateur</string>
+    <string name="cloud_er_sub_invalid_code">Ce code est incorrect. Vérifiez le code reçu par e-mail et réessayez.</string>
+    <string name="cloud_er_sub_code_used">Ce code a déjà été utilisé. Demandez un nouveau code pour vous connecter.</string>
+    <string name="cloud_er_sub_code_expired">Ce code a expiré. Demandez un nouveau code pour vous connecter.</string>
+    <string name="cloud_er_sub_too_many_attempts">Trop de codes incorrects. Veuillez patienter 15 minutes et réessayer.</string>
     <string name="settings_experimental">Options avancées</string>
     <string name="settings_developer">Paramètres du développeur</string>
     <string name="calibration_description">En utilisation normale, il n\'est pas nécessaire de calibrer le capteur.\n\nSi vous souhaitez tout de même calibrer calibrer le capteur \n\n les instructions sont trouvables ici ruuvi.com/support</string>

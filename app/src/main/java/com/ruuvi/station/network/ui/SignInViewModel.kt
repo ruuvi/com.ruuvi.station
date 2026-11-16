@@ -44,7 +44,7 @@ class SignInViewModel(
         }
         setProgress(true)
 
-        _email.value = email
+        _email.value = email.trim()
 
         networkInteractor.registerUser(UserRegisterRequest(email = email.trim())) {
             if (it == null) {
@@ -62,10 +62,18 @@ class SignInViewModel(
     }
 
     fun verifyCode(token: String) {
+        val email = _email.value
+        if (email.isBlank()) {
+            // the address does not survive process death, go back to the e-mail page to ask for it again
+            viewModelScope.launch {
+                _uiEvent.emit(UiEvent.NavigateUp)
+            }
+            return
+        }
         setProgress(true)
 
-        networkSignInInteractor.signIn(token) { response ->
-            if (response.isNullOrEmpty()) {
+        networkSignInInteractor.signIn(token, email) { error ->
+            if (error == null) {
                 viewModelScope.launch {
                     var retry = true
                     networkDataSyncInteractor.syncNetworkData()
@@ -97,7 +105,7 @@ class SignInViewModel(
                     }
                 }
             } else {
-                showError(UiText.DynamicString(response))
+                showError(error)
                 setProgress(false)
                 viewModelScope.launch {
                     _tokenProcessed.emit(true)

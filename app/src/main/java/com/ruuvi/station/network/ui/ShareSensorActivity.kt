@@ -409,7 +409,7 @@ fun SharingWebView(
                             ) {
                                 super.onPageStarted(view, url, favicon)
                                 evaluateJavascript(script) {
-                                    Timber.d("evaluateJavascript $script RESULT $it")
+                                    Timber.d("evaluateJavascript RESULT $it")
                                 }
 
                             }
@@ -417,7 +417,7 @@ fun SharingWebView(
                             override fun onPageFinished(view: WebView?, url: String?) {
                                 super.onPageFinished(view, url)
                                 evaluateJavascript(script) {
-                                    Timber.d("evaluateJavascript $script RESULT $it")
+                                    Timber.d("evaluateJavascript RESULT $it")
                                 }
                             }
                         })

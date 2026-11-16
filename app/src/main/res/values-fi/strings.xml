@@ -385,6 +385,10 @@ Tilillesi käytetyt jaot yhteensä: %3$,d/%4$,d</string>
     <string name="cloud_er_invalid_mac_address">Virheellinen MAC-osoite</string>
     <string name="cloud_er_sub_data_storage_error">Tallennusvirhe</string>
     <string name="cloud_er_sub_no_user">Ei käyttäjää</string>
+    <string name="cloud_er_sub_invalid_code">Koodi on väärä. Tarkista sähköpostiisi saamasi koodi ja yritä uudelleen.</string>
+    <string name="cloud_er_sub_code_used">Tämä koodi on jo käytetty. Pyydä uusi koodi kirjautuaksesi sisään.</string>
+    <string name="cloud_er_sub_code_expired">Tämä koodi on vanhentunut. Pyydä uusi koodi kirjautuaksesi sisään.</string>
+    <string name="cloud_er_sub_too_many_attempts">Liian monta väärää koodia. Odota 15 minuuttia ja yritä uudelleen.</string>
     <string name="settings_experimental">Kokeelliset ominaisuudet</string>
     <string name="settings_developer">Kehittäjäasetukset</string>
     <string name="calibration_description">Anturin kalibrointi ei ole tarpeellista normaalissa käytössä.\n\nTämä ominaisuus on tarkoitettu edistyneille käyttäjille.\n\nKalibroinnin lisäohjeet löytyvät osoitteesta ruuvi.com/fi/tuki</string>
