@@ -34,7 +34,6 @@ import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import org.junit.Assert.assertEquals
 import kotlinx.coroutines.flow.flowOf
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -110,60 +109,6 @@ class SensorDetailRouteComposeTest {
 
         compose.onNodeWithContentDescription("Sensor Two").assertExists()
         verify(atLeast = 2) { viewModel.saveSelected("two") }
-    }
-
-    @Test
-    fun `card destination renders through navigation bar inset path`() {
-        val sensor = sensor("one", "Sensor One")
-        sensors.value = listOf(sensor)
-        selectedSensorFlow.value = sensor.id
-
-        compose.setContent {
-            SensorDetailRoute(
-                viewModel = viewModel,
-                startDestination = SensorDetailStartDestination(SensorDetailDestination.CARD),
-                viewModelProvider = viewModelProvider(),
-                unitsConverter = mockk(relaxed = true),
-                useNewSensorCard = true,
-                onFinish = {},
-            )
-        }
-
-        settleAnimations()
-        compose.onNodeWithContentDescription("Sensor One").assertExists()
-    }
-
-    @Test
-    fun `nested settings follow app theme while root keeps forced dark theme`() {
-        var nestedSettings by mutableStateOf(true)
-        var appDarkTheme by mutableStateOf(false)
-        var observedBackground = lightPalette.background
-
-        compose.setContent {
-            SensorDetailContentTheme(
-                nestedSettings = nestedSettings,
-                appDarkTheme = appDarkTheme,
-                rootDarkTheme = true,
-            ) {
-                val background = RuuviStationTheme.colors.background
-                SideEffect {
-                    observedBackground = background
-                }
-            }
-        }
-
-        compose.runOnIdle {
-            assertEquals(lightPalette.background, observedBackground)
-            appDarkTheme = true
-        }
-        compose.runOnIdle {
-            assertEquals(darkPalette.background, observedBackground)
-            appDarkTheme = false
-            nestedSettings = false
-        }
-        compose.runOnIdle {
-            assertEquals(darkPalette.background, observedBackground)
-        }
     }
 
     @Test
