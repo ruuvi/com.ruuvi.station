@@ -524,6 +524,7 @@ private fun SensorDetailScreen(
                 }
             }
         }
+        }
 
         RuuviSnackbarHost(
             hostState = scaffoldState.snackbarHostState,

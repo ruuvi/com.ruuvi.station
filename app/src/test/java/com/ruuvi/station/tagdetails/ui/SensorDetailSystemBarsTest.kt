@@ -133,6 +133,30 @@ class SensorDetailSystemBarsTest {
 
         assertStatusBarColor(Color.TRANSPARENT)
         assertSystemBarIcons(darkIcons = true)
+        assertTransparentStatusBar()
+    }
+
+    @Suppress("DEPRECATION")
+    @Test
+    @Config(sdk = [30])
+    fun `nested light settings keep a transparent window with dark icons`() {
+        compose.setContent {
+            RuuviTheme(darkTheme = true) {
+                SensorDetailContentTheme(
+                    nestedSettings = true,
+                    appDarkTheme = false,
+                    rootDarkTheme = true,
+                ) {
+                    SensorDetailSystemBars(
+                        useTransparentStatusBar = false,
+                        useDarkTheme = false,
+                    )
+                }
+            }
+        }
+
+        assertTransparentStatusBar()
+        assertSystemBarIcons(darkIcons = true)
     }
 
     @Test
