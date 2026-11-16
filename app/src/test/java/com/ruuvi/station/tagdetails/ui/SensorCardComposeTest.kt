@@ -16,6 +16,8 @@ import androidx.compose.ui.unit.dp
 import androidx.test.core.app.ApplicationProvider
 import com.ruuvi.station.R
 import com.ruuvi.station.app.ui.theme.RuuviTheme
+import com.ruuvi.station.app.ui.theme.White50
+import com.ruuvi.station.app.ui.theme.lightPalette
 import com.ruuvi.station.tag.domain.ruuviTagPreview
 import com.ruuvi.station.units.model.Accuracy
 import com.ruuvi.station.units.model.EnvironmentValue
@@ -38,6 +40,24 @@ class SensorCardComposeTest {
 
     private val context: Application
         get() = ApplicationProvider.getApplicationContext()
+
+    @Test
+    fun `updated text stays light over sensor artwork in light theme`() {
+        assertEquals(
+            White50,
+            sensorCardUpdatedTextColor(
+                useDarkBackground = true,
+                secondaryTextColor = lightPalette.secondaryTextColor,
+            ),
+        )
+        assertEquals(
+            lightPalette.secondaryTextColor,
+            sensorCardUpdatedTextColor(
+                useDarkBackground = false,
+                secondaryTextColor = lightPalette.secondaryTextColor,
+            ),
+        )
+    }
 
     @Test
     fun `footer renders no data state without a measurement`() {

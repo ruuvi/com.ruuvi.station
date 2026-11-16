@@ -645,6 +645,11 @@ fun SensorCardImage(
     )
 }
 
+internal fun sensorCardUpdatedTextColor(
+    useDarkBackground: Boolean,
+    secondaryTextColor: Color,
+): Color = if (useDarkBackground) White50 else secondaryTextColor
+
 @Composable
 fun SensorCardBottom(
     sensor: RuuviTag,
@@ -723,11 +728,10 @@ fun SensorCardBottom(
                 Text(
                     modifier = Modifier.weight(1f),
                     style = RuuviStationTheme.typography.dashboardSecondary,
-                    color = if (useDarkBackground) {
-                        RuuviStationTheme.colors.topBarText.copy(alpha = 0.5f)
-                    } else {
-                        RuuviStationTheme.colors.secondaryTextColor
-                    },
+                    color = sensorCardUpdatedTextColor(
+                        useDarkBackground = useDarkBackground,
+                        secondaryTextColor = RuuviStationTheme.colors.secondaryTextColor,
+                    ),
                     fontSize = ruuviStationFontsSizes.petite.limitScaleTo(1.5f),
                     textAlign = TextAlign.Start,
                     text = updatedText,

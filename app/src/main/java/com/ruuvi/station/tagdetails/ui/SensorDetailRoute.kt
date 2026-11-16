@@ -3,7 +3,10 @@ package com.ruuvi.station.tagdetails.ui
 import android.net.Uri
 import android.os.Build
 import android.view.animation.AccelerateDecelerateInterpolator
+import androidx.activity.ComponentActivity
+import androidx.activity.SystemBarStyle
 import androidx.activity.compose.BackHandler
+import androidx.activity.enableEdgeToEdge
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.animateColorAsState
@@ -28,7 +31,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBars
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -39,7 +41,6 @@ import androidx.compose.foundation.pager.PagerDefaults
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.ScaffoldState
-import androidx.compose.material.SnackbarHost
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -60,6 +61,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
@@ -71,12 +73,6 @@ import androidx.compose.ui.unit.toSize
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
-import androidx.activity.ComponentActivity
-import androidx.activity.SystemBarStyle
-import androidx.activity.enableEdgeToEdge
-import androidx.compose.ui.graphics.toArgb
 import com.ruuvi.station.R
 import com.ruuvi.station.alarm.domain.AlarmSensorStatus
 import com.ruuvi.station.alarm.ui.AlarmItemsViewModel
@@ -86,7 +82,6 @@ import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.RuuviTheme
 import com.ruuvi.station.app.ui.theme.Titan70
 import com.ruuvi.station.graph.ChartControlElement2
-import com.ruuvi.station.util.ui.RuuviSnackbarHost
 import com.ruuvi.station.graph.ChartsView
 import com.ruuvi.station.nfc.ui.NfcInteractor
 import com.ruuvi.station.tag.domain.RuuviTag
@@ -106,6 +101,9 @@ import com.ruuvi.station.tagsettings.ui.visible_measurements.VisibleMeasurements
 import com.ruuvi.station.tagsettings.ui.visible_measurements.VisibleMeasurementsViewModel
 import com.ruuvi.station.units.domain.UnitsConverter
 import com.ruuvi.station.util.Period
+import com.ruuvi.station.util.ui.RuuviSnackbarHost
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 
