@@ -13,6 +13,7 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.swipeLeft
+import androidx.core.view.WindowCompat
 import com.ruuvi.station.R
 import com.ruuvi.station.alarm.domain.AlarmSensorStatus
 import com.ruuvi.station.alarm.ui.AlarmItemsViewModel
@@ -35,6 +36,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -254,7 +256,7 @@ class SensorDetailRouteComposeTest {
     }
 
     @Test
-    fun `nested settings renders removal screen and back finishes launch flow`() {
+    fun `nested light settings use dark status bar icons and back finishes launch flow`() {
         val sensor = sensor("one", "Sensor One")
         val removeSensorViewModel = removeSensorViewModel(sensor)
         var finishCalls = 0
@@ -276,6 +278,11 @@ class SensorDetailRouteComposeTest {
 
         compose.onNodeWithText(compose.activity.getString(R.string.remove)).assertExists()
         compose.runOnIdle {
+            val window = compose.activity.window
+            assertTrue(
+                WindowCompat.getInsetsController(window, window.decorView)
+                    .isAppearanceLightStatusBars,
+            )
             compose.activity.onBackPressedDispatcher.onBackPressed()
         }
         compose.runOnIdle { assertEquals(1, finishCalls) }
