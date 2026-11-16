@@ -22,6 +22,7 @@ import com.ruuvi.station.nfc.domain.NfcResultInteractor
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tag.domain.TagInteractor
 import com.ruuvi.station.tag.domain.isAir
+import com.ruuvi.station.tag.domain.isMeasurementStale
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import timber.log.Timber
@@ -44,6 +45,8 @@ class DashboardActivityViewModel(
 
     private val _sensorsList = MutableStateFlow(tagInteractor.getTags())
     val sensorsList: StateFlow<List<RuuviTag>> = _sensorsList
+    private val _staleSensorIds = MutableStateFlow<Set<String>>(emptySet())
+    val staleSensorIds: StateFlow<Set<String>> = _staleSensorIds
     private var sensorListScrolling = false
     private var sensorListDragging = false
     private var sensorListOrderGeneration = 0
@@ -81,6 +84,8 @@ class DashboardActivityViewModel(
     val marketingConsentPrompt: StateFlow<MarketingConsentPrompt> = _marketingConsentPrompt
 
     init {
+        refreshSensorFreshness()
+
         if (networkInteractor.signedIn && marketingConsentInteractor.isEnabled()) {
             viewModelScope.launch {
                 try {
@@ -236,6 +241,15 @@ class DashboardActivityViewModel(
         networkInteractor.updateSensorName(sensorId)
     }
 
+    fun refreshSensorFreshness(currentTimeMillis: Long = System.currentTimeMillis()) {
+        val timeoutSeconds = preferencesRepository.getDashboardCardTimeoutSeconds()
+        _staleSensorIds.value = _sensorsList.value
+            .filter { sensor ->
+                sensor.isMeasurementStale(currentTimeMillis, timeoutSeconds)
+            }
+            .mapTo(mutableSetOf()) { it.id }
+    }
+
     suspend fun refreshSensors() {
         val orderGeneration = sensorListOrderGeneration
         val refreshedSensors = withContext(Dispatchers.IO) {
@@ -250,6 +264,7 @@ class DashboardActivityViewModel(
             pendingSensorsList = null
             _sensorsList.value = refreshedSensors
         }
+        refreshSensorFreshness()
     }
 
     fun setSensorListScrolling(scrolling: Boolean) {
@@ -282,6 +297,7 @@ class DashboardActivityViewModel(
             pendingSensorsList?.let { sensors ->
                 pendingSensorsList = null
                 _sensorsList.value = sensors
+                refreshSensorFreshness()
             }
         }
     }

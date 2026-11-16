@@ -99,6 +99,13 @@ fun RuuviTag.isLowBattery(): Boolean {
     return !this.isAir() && this.latestMeasurement?.isLowBattery() ?: false
 }
 
+fun RuuviTag.isMeasurementStale(
+    currentTimeMillis: Long,
+    timeoutSeconds: Long,
+): Boolean = latestMeasurement?.updatedAt?.let { updatedAt ->
+    (currentTimeMillis - updatedAt.time) / 1_000 >= timeoutSeconds
+} ?: false
+
 fun RuuviTag.canUseCloudAlerts(): Boolean {
     return !this.subscriptionName.isNullOrEmpty() && this.subscriptionName != "Free" && this.subscriptionName != "Basic"
 }
@@ -107,15 +114,24 @@ fun RuuviTag.isAir(): Boolean = dataFormatIsAir(latestMeasurement?.dataFormat)
 
 sealed class UpdateSource() {
     abstract fun getDescriptionResource(): Int
-    abstract fun getIconResource(): Int
+    abstract fun getIconResource(isDarkTheme: Boolean = false): Int
+
+    fun getIconResource(isStale: Boolean, isDarkTheme: Boolean): Int = if (isStale) {
+        when (this) {
+            Cloud -> if (isDarkTheme) R.drawable.gw_icon_warning_dark else R.drawable.gw_icon_warning_light
+            Advertisement -> if (isDarkTheme) R.drawable.bt_icon_warning_dark else R.drawable.bt_icon_warning_light
+        }
+    } else {
+        getIconResource(isDarkTheme)
+    }
 
     data object Cloud: UpdateSource() {
         override fun getDescriptionResource(): Int {
             return R.string.cloud
         }
 
-        override fun getIconResource(): Int {
-            return R.drawable.ic_icon_gateway
+        override fun getIconResource(isDarkTheme: Boolean): Int {
+            return if (isDarkTheme) R.drawable.ic_icon_gateway_dark else R.drawable.ic_icon_gateway_light
         }
     }
 
@@ -124,8 +140,8 @@ sealed class UpdateSource() {
             return R.string.advertisement
         }
 
-        override fun getIconResource(): Int {
-            return R.drawable.ic_icon_bluetooth
+        override fun getIconResource(isDarkTheme: Boolean): Int {
+            return if (isDarkTheme) R.drawable.ic_icon_bluetooth_dark else R.drawable.ic_icon_bluetooth_light
         }
     }
 }

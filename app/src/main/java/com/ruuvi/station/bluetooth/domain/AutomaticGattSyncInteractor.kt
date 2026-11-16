@@ -5,9 +5,11 @@ import com.ruuvi.station.app.preferences.PreferencesRepository
 import java.util.Date
 
 class AutomaticGattSyncInteractor(
-    private val gattInteractor: BluetoothGattInteractor,
+    gattInteractor: () -> BluetoothGattInteractor,
     private val preferencesRepository: PreferencesRepository,
 ) {
+    private val gattInteractor by lazy(gattInteractor)
+
     fun syncIfEligible(
         sensorId: String,
         lastSync: Date?,

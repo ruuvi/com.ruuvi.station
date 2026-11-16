@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.os.Build
 import androidx.activity.ComponentActivity
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -14,7 +15,6 @@ import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.core.view.WindowCompat
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.RuuviTheme
-import com.ruuvi.station.tagsettings.ui.SensorSettingsRoutes
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Rule
@@ -59,42 +59,26 @@ class SensorDetailSystemBarsTest {
     @Suppress("DEPRECATION")
     @Test
     @Config(sdk = [30])
-    fun `status bar is transparent for sensor destinations but opaque in nested settings`() {
-        var destination by mutableStateOf(SensorDetailDestination.CARD)
-        var settingsRoute by mutableStateOf(SensorSettingsRoutes.SENSOR_SETTINGS_ROOT)
-        var expectedOpaqueStatusBarColor = Color.TRANSPARENT
-
+    fun `status bar switches between transparent and themed opaque colors`() {
+        var useTransparentStatusBar by mutableStateOf(true)
+        var expectedOpaqueColor = Color.TRANSPARENT
         compose.setContent {
-            val useDarkTheme = destination.forcesDarkTheme
-            RuuviTheme(darkTheme = useDarkTheme) {
-                expectedOpaqueStatusBarColor = RuuviStationTheme.colors.systemBars.toArgb()
+            RuuviTheme(darkTheme = false) {
+                val systemBarColor = RuuviStationTheme.colors.systemBars.toArgb()
+                SideEffect {
+                    expectedOpaqueColor = systemBarColor
+                }
                 SensorDetailSystemBars(
-                    destination = destination,
-                    settingsRoute = settingsRoute,
-                    useDarkTheme = useDarkTheme,
+                    useTransparentStatusBar = useTransparentStatusBar,
+                    useDarkTheme = false,
                 )
             }
         }
 
-        SensorDetailDestination.entries.forEach { rootDestination ->
-            compose.runOnIdle {
-                destination = rootDestination
-                settingsRoute = SensorSettingsRoutes.SENSOR_SETTINGS_ROOT
-            }
-            assertTransparentStatusBar()
-        }
+        assertStatusBarColor(Color.TRANSPARENT)
 
-        // A non-root route is only nested when SETTINGS is the active destination.
-        compose.runOnIdle {
-            destination = SensorDetailDestination.CARD
-            settingsRoute = SensorSettingsRoutes.SENSOR_REMOVE
-        }
-        assertTransparentStatusBar()
-
-        compose.runOnIdle { destination = SensorDetailDestination.SETTINGS }
-        compose.runOnIdle {
-            assertEquals(expectedOpaqueStatusBarColor, compose.activity.window.statusBarColor)
-        }
+        compose.runOnIdle { useTransparentStatusBar = false }
+        assertStatusBarColor(expectedOpaqueColor)
     }
 
     @Test
@@ -114,9 +98,9 @@ class SensorDetailSystemBarsTest {
     }
 
     @Suppress("DEPRECATION")
-    private fun assertTransparentStatusBar() {
+    private fun assertStatusBarColor(expectedColor: Int) {
         compose.runOnIdle {
-            assertEquals(Color.TRANSPARENT, compose.activity.window.statusBarColor)
+            assertEquals(expectedColor, compose.activity.window.statusBarColor)
         }
     }
 

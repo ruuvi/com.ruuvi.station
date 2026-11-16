@@ -24,6 +24,10 @@ class DeveloperSettingsViewModel(
     private var _useWebShare = MutableStateFlow(preferencesRepository.getUseWebShare())
     val useWebShare: StateFlow<Boolean> = _useWebShare
 
+    private val _dashboardCardTimeoutSeconds =
+        MutableStateFlow(preferencesRepository.getDashboardCardTimeoutSeconds())
+    val dashboardCardTimeoutSeconds: StateFlow<Long> = _dashboardCardTimeoutSeconds
+
     fun setDevServerEnabled(isEnabled: Boolean) {
         preferencesRepository.setDevServerEnabled(isEnabled)
         _devServerEnabled.value = preferencesRepository.isDevServerEnabled()
@@ -33,6 +37,11 @@ class DeveloperSettingsViewModel(
     fun setUseWebShare(isEnabled: Boolean) {
         preferencesRepository.setUseWebShare(isEnabled)
         _useWebShare.value = preferencesRepository.getUseWebShare()
+    }
+
+    fun setDashboardCardTimeoutSeconds(seconds: Long) {
+        preferencesRepository.setDashboardCardTimeoutSeconds(seconds)
+        _dashboardCardTimeoutSeconds.value = preferencesRepository.getDashboardCardTimeoutSeconds()
     }
 
     fun setDevModeEnabled(isEnabled: Boolean) {

@@ -93,6 +93,9 @@ class SensorCardViewModel(
 
     val graphDrawDots = preferencesRepository.graphDrawDots()
 
+    val sensorDataTimeoutSeconds: Long
+        get() = preferencesRepository.getDashboardCardTimeoutSeconds()
+
     private val _showChartStats = MutableStateFlow<Boolean>(preferencesRepository.getShowChartStats())
     val showChartStats: StateFlow<Boolean> = _showChartStats
 

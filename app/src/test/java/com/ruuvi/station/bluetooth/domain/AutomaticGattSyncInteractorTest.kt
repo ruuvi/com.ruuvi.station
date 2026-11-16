@@ -1,6 +1,8 @@
 package com.ruuvi.station.bluetooth.domain
 
+import android.app.Application
 import com.ruuvi.station.app.preferences.PreferencesRepository
+import com.ruuvi.station.bluetooth.di.BluetoothScannerInjectionModule
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
@@ -8,13 +10,19 @@ import io.mockk.verify
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
+import org.kodein.di.DI
+import org.kodein.di.DIAware
+import org.kodein.di.bind
+import org.kodein.di.direct
+import org.kodein.di.instance
+import org.kodein.di.singleton
 import java.util.Date
 
 class AutomaticGattSyncInteractorTest {
     private val gattInteractor = mockk<BluetoothGattInteractor>(relaxed = true)
     private val preferencesRepository = mockk<PreferencesRepository>(relaxed = true)
     private val automaticGattSyncInteractor = AutomaticGattSyncInteractor(
-        gattInteractor,
+        { gattInteractor },
         preferencesRepository,
     )
 
@@ -103,6 +111,38 @@ class AutomaticGattSyncInteractorTest {
         )
 
         verify(exactly = 0) { gattInteractor.readLogs(any(), any(), any()) }
+    }
+
+    @Test
+    fun `cold first sync resolves GATT from root without retaining the binding dependency chain`() {
+        val application = mockk<TestApplication>()
+        val di = DI {
+            import(BluetoothScannerInjectionModule.module)
+            bind<Application>() with singleton { application }
+            bind<PreferencesRepository>() with singleton { preferencesRepository }
+            bind<BluetoothGattInteractor>(overrides = true) with singleton {
+                // Model the GATT -> Bluetooth -> listener -> automatic sync dependency.
+                instance<AutomaticGattSyncInteractor>()
+                gattInteractor
+            }
+        }
+        every { application.di } returns di
+
+        val automaticSync = di.direct.instance<AutomaticGattSyncInteractor>()
+        verify(exactly = 0) { gattInteractor.isSyncInProgress(any()) }
+
+        automaticSync.syncIfEligible(
+            sensorId = SENSOR_ID,
+            lastSync = OLD_LAST_SYNC,
+            isAir = true,
+            networkSensor = false,
+        )
+
+        verify { gattInteractor.readLogs(SENSOR_ID, OLD_LAST_SYNC, manualSync = false) }
+    }
+
+    private class TestApplication : Application(), DIAware {
+        override lateinit var di: DI
     }
 
     private companion object {

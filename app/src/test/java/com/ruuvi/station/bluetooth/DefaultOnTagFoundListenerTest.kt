@@ -195,6 +195,72 @@ class DefaultOnTagFoundListenerTest {
     }
 
     @Test
+    fun `automatic sync is attempted when updating the tag throws`() {
+        val settings = SensorSettings(id = SENSOR_ID, lastSync = Date(500L))
+        whenever(repository.getTagById(SENSOR_ID)).thenReturn(RuuviTagEntity(id = SENSOR_ID))
+        whenever(repository.updateTag(anyMockito())).thenThrow(IllegalStateException())
+        every { sensorSettingsRepository.getSensorSettings(SENSOR_ID) } returns settings
+        val listener = listener().apply { isForeground = true }
+
+        listener.onTagFound(tag(dataFormat = AIR_DATA_FORMAT))
+        scope.advanceUntilIdle()
+
+        verify {
+            automaticGattSyncInteractor.syncIfEligible(
+                SENSOR_ID,
+                settings.lastSync,
+                true,
+                false,
+            )
+        }
+    }
+
+    @Test
+    fun `automatic sync is attempted when saving a favorite reading throws`() {
+        val settings = SensorSettings(id = SENSOR_ID, lastSync = Date(500L))
+        whenever(repository.getTagById(SENSOR_ID)).thenReturn(RuuviTagEntity(id = SENSOR_ID))
+        every { sensorSettingsRepository.getSensorSettings(SENSOR_ID) } returns settings
+        val listener = listener(
+            persistReading = { throw IllegalStateException() },
+        ).apply { isForeground = true }
+
+        listener.onTagFound(tag(dataFormat = AIR_DATA_FORMAT))
+        scope.advanceUntilIdle()
+
+        verify {
+            automaticGattSyncInteractor.syncIfEligible(
+                SENSOR_ID,
+                settings.lastSync,
+                true,
+                false,
+            )
+        }
+    }
+
+    @Test
+    fun `automatic sync is attempted when checking alarms throws`() {
+        val settings = SensorSettings(id = SENSOR_ID, lastSync = Date(500L))
+        whenever(repository.getTagById(SENSOR_ID)).thenReturn(RuuviTagEntity(id = SENSOR_ID))
+        every { sensorSettingsRepository.getSensorSettings(SENSOR_ID) } returns settings
+        every {
+            alarmCheckInteractor.checkAlarmsForSensor(any(), settings)
+        } throws IllegalStateException()
+        val listener = listener().apply { isForeground = true }
+
+        listener.onTagFound(tag(dataFormat = AIR_DATA_FORMAT))
+        scope.advanceUntilIdle()
+
+        verify {
+            automaticGattSyncInteractor.syncIfEligible(
+                SENSOR_ID,
+                settings.lastSync,
+                true,
+                false,
+            )
+        }
+    }
+
+    @Test
     fun `legacy air format updates sensor and alarms without saving history`() {
         val settings = SensorSettings(id = SENSOR_ID)
         whenever(repository.getTagById(SENSOR_ID)).thenReturn(RuuviTagEntity(id = SENSOR_ID))
@@ -224,7 +290,9 @@ class DefaultOnTagFoundListenerTest {
         }
     }
 
-    private fun listener(): DefaultOnTagFoundListener = DefaultOnTagFoundListener(
+    private fun listener(
+        persistReading: (TagSensorReading) -> Unit = persistedReadings::add,
+    ): DefaultOnTagFoundListener = DefaultOnTagFoundListener(
         context = context,
         preferencesRepository = preferencesRepository,
         dataForwardingSender = dataForwardingSender,
@@ -232,10 +300,10 @@ class DefaultOnTagFoundListenerTest {
         alarmCheckInteractor = alarmCheckInteractor,
         sensorSettingsRepository = sensorSettingsRepository,
         sensorHistoryRepository = sensorHistoryRepository,
-        automaticGattSyncInteractor = { automaticGattSyncInteractor },
+        automaticGattSyncInteractor = automaticGattSyncInteractor,
         ioScope = CoroutineScope(scope.coroutineContext),
         currentTimeMillis = { now },
-        persistReading = persistedReadings::add,
+        persistReading = persistReading,
         refreshWidgets = { _, sensorId -> refreshedSensors.add(sensorId) },
     )
 
