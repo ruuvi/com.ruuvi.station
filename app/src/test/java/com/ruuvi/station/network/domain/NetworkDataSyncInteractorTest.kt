@@ -32,6 +32,9 @@ import io.mockk.coVerifyOrder
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkObject
+import io.mockk.mockkStatic
+import io.mockk.unmockkStatic
+import android.net.Uri
 import io.mockk.slot
 import io.mockk.spyk
 import io.mockk.unmockkObject
@@ -532,14 +535,29 @@ class NetworkDataSyncInteractorTest {
         )
         val sensor = denseSensor().copy(picture = CLOUD_PICTURE)
         val saved = stubSensor(sensor, local)
+        // Run the real repository mutation against the stubbed settings row.
+        every {
+            sensorSettingsRepository.updateSensorBackground(any(), any(), any(), any(), any(), any())
+        } answers { callOriginal() }
+        mockkStatic(Uri::class)
+        try {
+            every { Uri.fromFile(any()) } returns mockk { every { this@mockk.toString() } returns CLOUD_FILE_URI }
 
-        syncAndJoin()
+            syncAndJoin()
+        } finally {
+            unmockkStatic(Uri::class)
+        }
 
         verify(exactly = 1) { networkInteractor.updateSensorToCloud(SYNC_SENSOR_ID) }
-        assertEquals("Local default name", saved.name)
-        assertEquals(300L, saved.lastUpdated)
-        assertEquals(CLOUD_PICTURE, saved.imageUrl)
         coVerify(exactly = 1) { imageInteractor.downloadImage(any(), CLOUD_PICTURE) }
+        assertEquals("Local default name", saved.name)
+        assertEquals(CLOUD_PICTURE, saved.imageUrl)
+        assertEquals(CLOUD_FILE_URI, saved.userBackground)
+        assertEquals("cloud-guid", saved.networkBackground)
+        assertEquals(sensor.lastUpdated, saved.backgroundTimestamp)
+        // The older cloud image timestamp must not roll back the pending local metadata.
+        assertEquals(300L, saved.lastUpdated)
+        verify(exactly = 0) { sensorSettingsRepository.setDefaultSensorBackground(any(), any()) }
     }
 
     @Test
@@ -853,5 +871,6 @@ class NetworkDataSyncInteractorTest {
     companion object {
         private const val TIMEOUT = 5_000L
         private const val CLOUD_PICTURE = "https://example.com/images/cloud-guid.jpg"
+        private const val CLOUD_FILE_URI = "file:///cloud-guid.jpg"
     }
 }

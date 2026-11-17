@@ -112,7 +112,7 @@ class SensorSettingsRepository {
         settings.defaultBackground = defaultBackground ?: 0
         settings.networkBackground = networkBackground
         settings.backgroundTimestamp = timestamp
-        settings.lastUpdated = timestamp
+        settings.lastUpdated = maxOf(settings.lastUpdated, timestamp)
         imageUrl?.let {
             settings.imageUrl = it
         }
