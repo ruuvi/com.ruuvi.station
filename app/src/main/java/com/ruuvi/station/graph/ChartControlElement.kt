@@ -27,6 +27,7 @@ import com.ruuvi.station.app.ui.components.*
 import com.ruuvi.station.app.ui.components.dialog.RuuviConfirmDialog
 import com.ruuvi.station.app.ui.components.dialog.MessageDialog
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
+import com.ruuvi.station.app.ui.theme.RuuviTheme
 import com.ruuvi.station.bluetooth.model.SyncProgress
 import com.ruuvi.station.tagdetails.ui.SyncStatus
 import com.ruuvi.station.util.Period
@@ -273,49 +274,46 @@ fun ViewPeriodMenu(
                 tint = RuuviStationTheme.colors.accent
             )
         }
-        CompositionLocalProvider(LocalElevationOverlay provides null) {
-            MaterialTheme(colors = MaterialTheme.colors.copy(surface = RuuviStationTheme.colors.background)) {
-                DropdownMenu(
-                    expanded = daysMenuExpanded,
-                    onDismissRequest = { daysMenuExpanded = false }) {
-                    val periodOptions = listOf(
-                        Period.All,
-                        Period.Hour1,
-                        Period.Hour2,
-                        Period.Hour3,
-                        Period.Hour6,
-                        Period.Hour12,
-                        Period.Day1,
-                        Period.Day2,
-                        Period.Day3,
-                        Period.Day4,
-                        Period.Day5,
-                        Period.Day6,
-                        Period.Day7,
-                        Period.Day8,
-                        Period.Day9,
-                        Period.Day10,
-                    )
-                    for (day in periodOptions) {
-                        DropdownMenuItem(onClick = {
-                            setViewPeriod.invoke(day.value)
-                            daysMenuExpanded = false
-                        }) {
-                            Paragraph(text = stringResource(id = day.stringResourceId))
-                        }
-                    }
-
-                    DropdownMenuItem(onClick = {
-                        showMoreDialog = true
-                        daysMenuExpanded = false
-                    }) {
-                        Paragraph(text = stringResource(id = R.string.more))
-                    }
+        DarkChartDropdownMenu(
+            expanded = daysMenuExpanded,
+            onDismissRequest = { daysMenuExpanded = false },
+        ) {
+            val periodOptions = listOf(
+                Period.All,
+                Period.Hour1,
+                Period.Hour2,
+                Period.Hour3,
+                Period.Hour6,
+                Period.Hour12,
+                Period.Day1,
+                Period.Day2,
+                Period.Day3,
+                Period.Day4,
+                Period.Day5,
+                Period.Day6,
+                Period.Day7,
+                Period.Day8,
+                Period.Day9,
+                Period.Day10,
+            )
+            for (day in periodOptions) {
+                DropdownMenuItem(onClick = {
+                    setViewPeriod.invoke(day.value)
+                    daysMenuExpanded = false
+                }) {
+                    Paragraph(text = stringResource(id = day.stringResourceId))
                 }
+            }
+
+            DropdownMenuItem(onClick = {
+                showMoreDialog = true
+                daysMenuExpanded = false
+            }) {
+                Paragraph(text = stringResource(id = R.string.more))
             }
         }
     }
-    
+
     if (showMoreDialog) {
         MessageDialog(
             title = stringResource(id = R.string.longer_history_title),
@@ -359,69 +357,65 @@ fun ThreeDotsMenu(
             )
         }
 
-        CompositionLocalProvider(LocalElevationOverlay provides null) {
-            MaterialTheme(colors = MaterialTheme.colors.copy(surface = RuuviStationTheme.colors.background)) {
-                DropdownMenu(
-                    expanded = threeDotsMenuExpanded,
-                    onDismissRequest = { threeDotsMenuExpanded = false }
-                ) {
-                    DropdownMenuItem(onClick = {
-                        val uri = exportToCsv.invoke()
-                        if (uri != null) {
-                            sendCsv(sensorId, uri, context)
-                        }
-                        threeDotsMenuExpanded = false
-                    }) {
-                        Paragraph(text = stringResource(id = R.string.export_history))
+        DarkChartDropdownMenu(
+            expanded = threeDotsMenuExpanded,
+            onDismissRequest = { threeDotsMenuExpanded = false },
+        ) {
+            DropdownMenuItem(onClick = {
+                val uri = exportToCsv.invoke()
+                if (uri != null) {
+                    sendCsv(sensorId, uri, context)
+                }
+                threeDotsMenuExpanded = false
+            }) {
+                Paragraph(text = stringResource(id = R.string.export_history))
+            }
+            DropdownMenuItem(onClick = {
+                if (VERSION.SDK_INT < 26) {
+                    android26RequiredDialog = true
+                } else {
+                    val uri = exportToXlsx.invoke()
+                    if (uri != null) {
+                        sendXlsx(sensorId, uri, context)
                     }
-                    DropdownMenuItem(onClick = {
-                        if (VERSION.SDK_INT < 26) {
-                            android26RequiredDialog = true
-                        } else {
-                            val uri = exportToXlsx.invoke()
-                            if (uri != null) {
-                                sendXlsx(sensorId, uri, context)
-                            }
-                            threeDotsMenuExpanded = false
-                        }
-                    }) {
-                        Paragraph(text = stringResource(id = R.string.export_history_xlsx))
-                    }
-                    DropdownMenuItem(onClick = {
-                        clearConfirmOpened = true
-                        threeDotsMenuExpanded = false
-                    }) {
-                        Paragraph(text = stringResource(id = R.string.clear_view))
-                    }
-                    DropdownMenuItem(onClick = {
-                        threeDotsMenuExpanded = false
-                        changeShowStats()
-                    }) {
-                        val caption = if (showChartStats) {
-                            stringResource(id = R.string.chart_stat_hide)
-                        } else {
-                            stringResource(id = R.string.chart_stat_show)
-                        }
-                        Paragraph(text = caption)
-                    }
-                    if (LocalConfiguration.current.orientation == Configuration.ORIENTATION_PORTRAIT &&
-                        !hideIncreaseChartSize && chartSizeLevel < CHART_SIZE_LEVEL_MAX) {
-                        DropdownMenuItem(onClick = {
-                            threeDotsMenuExpanded = false
-                            increaseChartSize()
-                        }) {
-                            Paragraph(text = stringResource(id = R.string.increase_graph_size))
-                        }
-                    }
-                    if (LocalConfiguration.current.orientation == Configuration.ORIENTATION_PORTRAIT &&
-                        !hideIncreaseChartSize && chartSizeLevel > CHART_SIZE_LEVEL_NORMAL) {
-                        DropdownMenuItem(onClick = {
-                            threeDotsMenuExpanded = false
-                            decreaseChartSize()
-                        }) {
-                            Paragraph(text = stringResource(id = R.string.decrease_graph_size))
-                        }
-                    }
+                    threeDotsMenuExpanded = false
+                }
+            }) {
+                Paragraph(text = stringResource(id = R.string.export_history_xlsx))
+            }
+            DropdownMenuItem(onClick = {
+                clearConfirmOpened = true
+                threeDotsMenuExpanded = false
+            }) {
+                Paragraph(text = stringResource(id = R.string.clear_view))
+            }
+            DropdownMenuItem(onClick = {
+                threeDotsMenuExpanded = false
+                changeShowStats()
+            }) {
+                val caption = if (showChartStats) {
+                    stringResource(id = R.string.chart_stat_hide)
+                } else {
+                    stringResource(id = R.string.chart_stat_show)
+                }
+                Paragraph(text = caption)
+            }
+            if (LocalConfiguration.current.orientation == Configuration.ORIENTATION_PORTRAIT &&
+                !hideIncreaseChartSize && chartSizeLevel < CHART_SIZE_LEVEL_MAX) {
+                DropdownMenuItem(onClick = {
+                    threeDotsMenuExpanded = false
+                    increaseChartSize()
+                }) {
+                    Paragraph(text = stringResource(id = R.string.increase_graph_size))
+                }
+            }
+            if (LocalConfiguration.current.orientation == Configuration.ORIENTATION_PORTRAIT &&
+                !hideIncreaseChartSize && chartSizeLevel > CHART_SIZE_LEVEL_NORMAL) {
+                DropdownMenuItem(onClick = {
+                    threeDotsMenuExpanded = false
+                    decreaseChartSize()
+                }) {
+                    Paragraph(text = stringResource(id = R.string.decrease_graph_size))
                 }
             }
         }
@@ -439,6 +433,29 @@ fun ThreeDotsMenu(
             message = stringResource(id = R.string.android_8_required),
             onDismissRequest = { android26RequiredDialog = false }
         )
+    }
+}
+
+@Composable
+private fun DarkChartDropdownMenu(
+    expanded: Boolean,
+    onDismissRequest: () -> Unit,
+    content: @Composable ColumnScope.() -> Unit,
+) {
+    RuuviTheme(darkTheme = true) {
+        CompositionLocalProvider(LocalElevationOverlay provides null) {
+            MaterialTheme(
+                colors = MaterialTheme.colors.copy(
+                    surface = RuuviStationTheme.colors.background,
+                ),
+            ) {
+                DropdownMenu(
+                    expanded = expanded,
+                    onDismissRequest = onDismissRequest,
+                    content = content,
+                )
+            }
+        }
     }
 }
 

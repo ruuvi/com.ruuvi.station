@@ -32,8 +32,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.only
+import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.statusBars
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.layout.windowInsetsTopHeight
 import androidx.compose.foundation.pager.HorizontalPager
@@ -141,7 +141,8 @@ internal fun SensorDetailRoute(
     var destination by rememberSaveable { mutableStateOf(startDestination.root) }
     var settingsRoute by rememberSaveable { mutableStateOf(startDestination.settingsRoute) }
     val scaffoldState = rememberScaffoldState()
-    val useDarkTheme = destination.forcesDarkTheme || isSystemInDarkTheme()
+    val appDarkTheme = isSystemInDarkTheme()
+    val useDarkTheme = destination.forcesDarkTheme || appDarkTheme
 
     fun selectDestination(newDestination: SensorDetailDestination) {
         if (newDestination == destination) return
@@ -177,6 +178,7 @@ internal fun SensorDetailRoute(
                 unitsConverter = unitsConverter,
                 useNewSensorCard = useNewSensorCard,
                 useDarkTheme = useDarkTheme,
+                appDarkTheme = appDarkTheme,
                 viewModel = viewModel,
                 viewModelProvider = viewModelProvider,
                 onDestinationSelected = ::selectDestination,
@@ -203,6 +205,7 @@ private fun SensorDetailScreen(
     unitsConverter: UnitsConverter,
     useNewSensorCard: Boolean,
     useDarkTheme: Boolean,
+    appDarkTheme: Boolean,
     viewModel: SensorCardViewModel,
     viewModelProvider: SensorDetailViewModelProvider,
     onDestinationSelected: (SensorDetailDestination) -> Unit,
@@ -221,7 +224,7 @@ private fun SensorDetailScreen(
     val currentSensor = sensors.getOrNull(pagerState.currentPage)
     val latestSensorIds by rememberUpdatedState(sensorIds)
     val nestedSettings = destination == SensorDetailDestination.SETTINGS &&
-        settingsRoute != SensorSettingsRoutes.SENSOR_SETTINGS_ROOT
+            settingsRoute != SensorSettingsRoutes.SENSOR_SETTINGS_ROOT
     // Keep the sensor backdrop stable while nested settings slide over it.
     val useSensorBackground = destination.usesSensorBackground
     val saveableStateHolder = rememberSaveableStateHolder()
@@ -250,7 +253,7 @@ private fun SensorDetailScreen(
             ?.takeIf { it.message == staleSnackbarMessage }
             ?.dismiss()
     }
-    
+
     // Match the activity transition used by Share Sensor (@anim/enter_right, exit_left).
     val settingsNavigationEasing = remember {
         val interpolator = AccelerateDecelerateInterpolator()
@@ -287,7 +290,7 @@ private fun SensorDetailScreen(
 
     SensorDetailSystemBars(
         useTransparentStatusBar = useSensorBackground && !nestedSettings,
-        useDarkTheme = useDarkTheme,
+        useDarkTheme = if (nestedSettings) appDarkTheme else useDarkTheme,
     )
 
     Box(
@@ -305,15 +308,6 @@ private fun SensorDetailScreen(
                 },
             ),
     ) {
-        if (!useSensorBackground || nestedSettings) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .windowInsetsTopHeight(WindowInsets.statusBars)
-                    .background(RuuviStationTheme.colors.topBar),
-            )
-        }
-
         SensorDetailBackground(
             sensor = currentSensor,
             destination = destination,
@@ -327,12 +321,7 @@ private fun SensorDetailScreen(
 
         AnimatedContent(
             targetState = settingsRoute,
-            modifier = Modifier
-                .fillMaxSize()
-                .statusBarsPadding()
-                .windowInsetsPadding(
-                    WindowInsets.navigationBars.only(WindowInsetsSides.Horizontal),
-                ),
+            modifier = Modifier.fillMaxSize(),
             transitionSpec = {
                 val animationSpec = tween<IntOffset>(
                     durationMillis = SETTINGS_NAVIGATION_ANIMATION_MILLIS,
@@ -340,12 +329,12 @@ private fun SensorDetailScreen(
                 )
                 if (targetState == SensorSettingsRoutes.SENSOR_SETTINGS_ROOT) {
                     (slideInHorizontally(animationSpec) { -it } togetherWith
-                        slideOutHorizontally(animationSpec) { it }).apply {
+                            slideOutHorizontally(animationSpec) { it }).apply {
                         targetContentZIndex = -1f
                     }
                 } else {
                     (slideInHorizontally(animationSpec) { it } togetherWith
-                        slideOutHorizontally(animationSpec) { -it }).apply {
+                            slideOutHorizontally(animationSpec) { -it }).apply {
                         targetContentZIndex = 1f
                     }
                 }
@@ -353,139 +342,184 @@ private fun SensorDetailScreen(
             label = "sensor settings navigation",
         ) { visibleSettingsRoute ->
             val visibleNestedSettings = destination == SensorDetailDestination.SETTINGS &&
-                visibleSettingsRoute != SensorSettingsRoutes.SENSOR_SETTINGS_ROOT
+                    visibleSettingsRoute != SensorSettingsRoutes.SENSOR_SETTINGS_ROOT
             val visibleUseSensorBackground = useSensorBackground && !visibleNestedSettings
 
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(
-                        if (visibleNestedSettings) RuuviStationTheme.colors.background else Color.Transparent,
-                    )
-                    .then(
-                        if (
-                            (destination == SensorDetailDestination.SETTINGS &&
-                                (!visibleNestedSettings ||
-                                    visibleSettingsRoute == SensorSettingsRoutes.VISIBLE_MEASUREMENTS)) ||
-                            destination == SensorDetailDestination.ALERTS
-                        ) {
-                            Modifier
-                        } else {
-                            Modifier.windowInsetsPadding(
-                                WindowInsets.navigationBars.only(WindowInsetsSides.Bottom),
-                            )
-                        },
-                    ),
+            SensorDetailContentTheme(
+                nestedSettings = visibleNestedSettings,
+                appDarkTheme = appDarkTheme,
+                rootDarkTheme = useDarkTheme,
             ) {
-                if (visibleNestedSettings) {
-                    RuuviTopAppBar(
-                        title = SensorSettingsRoutes.getTitleByRoute(context, visibleSettingsRoute),
-                        navigationAction = onNestedSettingsBack,
-                    )
+                val contentBackgroundColor = if (visibleNestedSettings) {
+                    RuuviStationTheme.colors.background
                 } else {
-                    SensorDetailTopAppBar(
-                        destination = destination,
-                        syncInProgress = syncInProgress,
-                        alarmStatus = currentSensor?.alarmSensorStatus ?: AlarmSensorStatus.NoAlarms,
-                        useOpaqueBackground = !visibleUseSensorBackground,
-                        onBack = onFinish,
-                        onDestinationSelected = onDestinationSelected,
-                    )
+                    Color.Transparent
+                }
+                val useStandaloneSettingsSafeArea = visibleNestedSettings &&
+                        (visibleSettingsRoute == SensorSettingsRoutes.VISIBLE_MEASUREMENTS ||
+                                visibleSettingsRoute == SensorSettingsRoutes.LED_CONTROL ||
+                                visibleSettingsRoute == SensorSettingsRoutes.NOTES)
+                val horizontalSystemBarBackgroundColor = if (useStandaloneSettingsSafeArea) {
+                    RuuviStationTheme.colors.systemBars
+                } else {
+                    Color.Transparent
+                }
+                val horizontalInsets = if (useStandaloneSettingsSafeArea) {
+                    WindowInsets.safeDrawing
+                } else {
+                    WindowInsets.navigationBars
                 }
 
-                if (!visibleNestedSettings && currentSensor != null) {
-                    SensorDetailTitle(
-                        sensors = sensors,
-                        pagePosition = titlePagePosition,
-                        subtitle = destination.subtitleRes?.let { stringResource(id = it) },
-                        canSelectPrevious = pagerState.canScrollBackward,
-                        canSelectNext = pagerState.canScrollForward,
-                        onSelectPrevious = {
-                            coroutineScope.launch {
-                                pagerState.selectSensorPage(
-                                    page = pagerState.currentPage - 1,
-                                    destination = destination,
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(horizontalSystemBarBackgroundColor)
+                        .windowInsetsPadding(
+                            horizontalInsets.only(WindowInsetsSides.Horizontal),
+                        )
+                        .background(contentBackgroundColor)
+                        .then(
+                            if (
+                                (destination == SensorDetailDestination.SETTINGS &&
+                                        (!visibleNestedSettings ||
+                                                visibleSettingsRoute == SensorSettingsRoutes.VISIBLE_MEASUREMENTS)) ||
+                                destination == SensorDetailDestination.ALERTS
+                            ) {
+                                Modifier
+                            } else {
+                                Modifier.windowInsetsPadding(
+                                    WindowInsets.navigationBars.only(WindowInsetsSides.Bottom),
                                 )
-                            }
-                        },
-                        onSelectNext = {
-                            coroutineScope.launch {
-                                pagerState.selectSensorPage(
-                                    page = pagerState.currentPage + 1,
-                                    destination = destination,
-                                )
-                            }
-                        },
-                        modifier = if (visibleUseSensorBackground) {
-                            Modifier
-                        } else {
-                            Modifier.background(RuuviStationTheme.colors.topBar)
-                        },
-                        swipeModifier = if (
-                            destination.allowsTitleSensorSwipe && sensors.size > 1
-                        ) {
-                            Modifier.draggable(
-                                state = titlePagerDraggableState,
-                                orientation = Orientation.Horizontal,
-                                reverseDirection = reverseTitleSwipeDirection,
-                                onDragStopped = { velocity ->
-                                    pagerState.scroll {
-                                        with(pagerFlingBehavior) {
-                                            performFling(-velocity)
-                                        }
-                                    }
+                            },
+                        ),
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .windowInsetsTopHeight(WindowInsets.statusBars)
+                            .background(
+                                if (visibleNestedSettings) {
+                                    RuuviStationTheme.colors.systemBars
+                                } else {
+                                    Color.Transparent
                                 },
-                            )
-                        } else {
-                            Modifier
-                        },
+                            ),
                     )
-                }
 
-                if (visibleNestedSettings && currentSensor != null) {
-                    key(currentSensor.id, visibleSettingsRoute) {
-                        saveableStateHolder.SaveableStateProvider(
-                            "${currentSensor.id}:$visibleSettingsRoute",
-                        ) {
-                            SensorSettingsNestedScreen(
-                                sensorId = currentSensor.id,
-                                route = visibleSettingsRoute,
-                                scaffoldState = scaffoldState,
-                                viewModelProvider = viewModelProvider,
-                                onSettingsRouteSelected = onSettingsRouteSelected,
-                                onFinish = onFinish,
+                    if (visibleNestedSettings) {
+                        RuuviTopAppBar(
+                            title = SensorSettingsRoutes.getTitleByRoute(
+                                context,
+                                visibleSettingsRoute
+                            ),
+                            navigationAction = onNestedSettingsBack,
+                        )
+                    } else {
+                        SensorDetailTopAppBar(
+                            destination = destination,
+                            syncInProgress = syncInProgress,
+                            alarmStatus = currentSensor?.alarmSensorStatus
+                                ?: AlarmSensorStatus.NoAlarms,
+                            useOpaqueBackground = !visibleUseSensorBackground,
+                            onBack = onFinish,
+                            onDestinationSelected = onDestinationSelected,
+                        )
+                    }
+
+                    if (!visibleNestedSettings && currentSensor != null) {
+                        SensorDetailTitle(
+                            sensors = sensors,
+                            pagePosition = titlePagePosition,
+                            subtitle = destination.subtitleRes?.let { stringResource(id = it) },
+                            canSelectPrevious = pagerState.canScrollBackward,
+                            canSelectNext = pagerState.canScrollForward,
+                            onSelectPrevious = {
+                                coroutineScope.launch {
+                                    pagerState.selectSensorPage(
+                                        page = pagerState.currentPage - 1,
+                                        destination = destination,
+                                    )
+                                }
+                            },
+                            onSelectNext = {
+                                coroutineScope.launch {
+                                    pagerState.selectSensorPage(
+                                        page = pagerState.currentPage + 1,
+                                        destination = destination,
+                                    )
+                                }
+                            },
+                            modifier = if (visibleUseSensorBackground) {
+                                Modifier
+                            } else {
+                                Modifier.background(RuuviStationTheme.colors.topBar)
+                            },
+                            swipeModifier = if (
+                                destination.allowsTitleSensorSwipe && sensors.size > 1
+                            ) {
+                                Modifier.draggable(
+                                    state = titlePagerDraggableState,
+                                    orientation = Orientation.Horizontal,
+                                    reverseDirection = reverseTitleSwipeDirection,
+                                    onDragStopped = { velocity ->
+                                        pagerState.scroll {
+                                            with(pagerFlingBehavior) {
+                                                performFling(-velocity)
+                                            }
+                                        }
+                                    },
+                                )
+                            } else {
+                                Modifier
+                            },
+                        )
+                    }
+
+                    if (visibleNestedSettings && currentSensor != null) {
+                        key(currentSensor.id, visibleSettingsRoute) {
+                            saveableStateHolder.SaveableStateProvider(
+                                "${currentSensor.id}:$visibleSettingsRoute",
+                            ) {
+                                SensorSettingsNestedScreen(
+                                    sensorId = currentSensor.id,
+                                    route = visibleSettingsRoute,
+                                    scaffoldState = scaffoldState,
+                                    viewModelProvider = viewModelProvider,
+                                    onSettingsRouteSelected = onSettingsRouteSelected,
+                                    onFinish = onFinish,
+                                )
+                            }
+                        }
+                    } else {
+                        SensorRootPager(
+                            modifier = Modifier.weight(1f),
+                            sensors = sensors,
+                            currentSensorId = currentSensor?.id,
+                            destination = destination,
+                            pagerState = pagerState,
+                            scaffoldState = scaffoldState,
+                            showChartStats = showChartStats,
+                            chartSizeLevel = chartSizeLevel,
+                            viewPeriod = viewPeriod,
+                            unitsConverter = unitsConverter,
+                            useNewSensorCard = useNewSensorCard,
+                            viewModel = viewModel,
+                            viewModelProvider = viewModelProvider,
+                            saveableStateHolder = saveableStateHolder,
+                            onDestinationSelected = onDestinationSelected,
+                            onSettingsRouteSelected = onSettingsRouteSelected,
+                        )
+
+                        if (destination.showsSensorFooter && currentSensor != null) {
+                            SensorCardBottom(
+                                sensor = currentSensor,
+                                staleTimeoutSeconds = staleTimeoutSeconds,
+                                useDarkBackground = useSensorBackground,
+                                modifier = Modifier.heightIn(min = 44.dp),
+                                onShowStaleSnackbar = ::showStaleSnackbar,
+                                onDismissStaleSnackbar = ::dismissStaleSnackbar,
                             )
                         }
-                    }
-                } else {
-                    SensorRootPager(
-                        modifier = Modifier.weight(1f),
-                        sensors = sensors,
-                        currentSensorId = currentSensor?.id,
-                        destination = destination,
-                        pagerState = pagerState,
-                        scaffoldState = scaffoldState,
-                        showChartStats = showChartStats,
-                        chartSizeLevel = chartSizeLevel,
-                        viewPeriod = viewPeriod,
-                        unitsConverter = unitsConverter,
-                        useNewSensorCard = useNewSensorCard,
-                        viewModel = viewModel,
-                        viewModelProvider = viewModelProvider,
-                        saveableStateHolder = saveableStateHolder,
-                        onDestinationSelected = onDestinationSelected,
-                        onSettingsRouteSelected = onSettingsRouteSelected,
-                    )
-
-                    if (destination.showsSensorFooter && currentSensor != null) {
-                        SensorCardBottom(
-                            sensor = currentSensor,
-                            staleTimeoutSeconds = staleTimeoutSeconds,
-                            useDarkBackground = useSensorBackground,
-                            modifier = Modifier.heightIn(min = 44.dp),
-                            onShowStaleSnackbar = ::showStaleSnackbar,
-                            onDismissStaleSnackbar = ::dismissStaleSnackbar,
-                        )
                     }
                 }
             }
@@ -634,6 +668,7 @@ private fun SensorDestinationContent(
                     )
                 }
             }
+
             SensorDetailDestination.HISTORY -> SensorHistoryContent(
                 sensor = sensor,
                 selected = selected,
@@ -643,6 +678,7 @@ private fun SensorDestinationContent(
                 unitsConverter = unitsConverter,
                 viewModel = viewModel,
             )
+
             SensorDetailDestination.ALERTS -> Box(
                 modifier = Modifier
                     .weight(1f)
@@ -654,6 +690,7 @@ private fun SensorDestinationContent(
                     viewModel = viewModelProvider.alerts(sensor.id),
                 )
             }
+
             SensorDetailDestination.SETTINGS -> Box(
                 modifier = Modifier
                     .weight(1f)
@@ -755,6 +792,7 @@ private fun SensorSettingsNestedScreen(
             viewModel = viewModelProvider.removeSensor(sensorId),
             onRemoved = onFinish,
         )
+
         SensorSettingsRoutes.VISIBLE_MEASUREMENTS -> {
             val viewModel = viewModelProvider.visibleMeasurements(sensorId)
             val useDefault by viewModel.useDefaultOrder.collectAsStateWithLifecycle()
@@ -774,9 +812,11 @@ private fun SensorSettingsNestedScreen(
                 allOptions = possibleOptions,
             )
         }
+
         SensorSettingsRoutes.LED_CONTROL -> LedControlScreen(
             viewModel = viewModelProvider.ledControl(sensorId),
         )
+
         SensorSettingsRoutes.NOTES -> {
             val viewModel = viewModelProvider.notes(sensorId)
             val note by viewModel.note.collectAsStateWithLifecycle()
@@ -832,23 +872,33 @@ private fun SensorDetailBackground(
 }
 
 @Composable
+internal fun SensorDetailContentTheme(
+    nestedSettings: Boolean,
+    appDarkTheme: Boolean,
+    rootDarkTheme: Boolean,
+    content: @Composable () -> Unit,
+) {
+    RuuviTheme(
+        darkTheme = if (nestedSettings) appDarkTheme else rootDarkTheme,
+        content = content,
+    )
+}
+
+@Composable
 internal fun SensorDetailSystemBars(
     useTransparentStatusBar: Boolean,
     useDarkTheme: Boolean,
 ) {
     val context = LocalContext.current
-    val statusBarColor = RuuviStationTheme.colors.systemBars.toArgb()
     val transparentColor = Color.Transparent.toArgb()
-
-    val activeStatusBarColor = if (useTransparentStatusBar) transparentColor else statusBarColor
 
     SideEffect {
         val activity = context as? ComponentActivity ?: return@SideEffect
         activity.enableEdgeToEdge(
             statusBarStyle = if (useTransparentStatusBar || useDarkTheme) {
-                SystemBarStyle.dark(activeStatusBarColor)
+                SystemBarStyle.dark(transparentColor)
             } else {
-                SystemBarStyle.light(activeStatusBarColor, activeStatusBarColor)
+                SystemBarStyle.light(transparentColor, transparentColor)
             },
             navigationBarStyle = if (useTransparentStatusBar || useDarkTheme) {
                 SystemBarStyle.dark(transparentColor)
