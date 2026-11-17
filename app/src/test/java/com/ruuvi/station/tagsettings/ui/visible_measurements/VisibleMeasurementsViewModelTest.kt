@@ -69,15 +69,15 @@ class VisibleMeasurementsViewModelTest {
             imageInteractor = mockk<ImageInteractor>(relaxed = true),
         )
 
-        backgroundScope.launch { viewModel.useDefaultOrder.collect {} }
-        backgroundScope.launch { viewModel.possibleOptions.collect {} }
-        advanceUntilIdle()
-
         assertFalse(viewModel.useDefaultOrder.value)
         assertEquals(
             listOf(ListOption(possibleUnit.getCode(), UNIT_TITLE, possibleUnit)),
             viewModel.possibleOptions.value,
         )
+
+        backgroundScope.launch { viewModel.useDefaultOrder.collect {} }
+        backgroundScope.launch { viewModel.possibleOptions.collect {} }
+        advanceUntilIdle()
     }
 
     private companion object {
