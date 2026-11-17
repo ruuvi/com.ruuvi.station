@@ -336,18 +336,16 @@ class NetworkDataSyncInteractor (
             val shouldUpdateFromNetwork = sensor.lastUpdated > sensorSettings.lastUpdated
             val shouldUpdateImageUrl = sensor.picture.takeIf { it.isNotBlank() } !=
                     sensorSettings.imageUrl?.takeIf { it.isNotBlank() }
-            if (shouldUpload) {
-                networkInteractor.updateSensorToCloud(sensor.sensor)
-            } else {
-                if (shouldUpdateFromNetwork) {
-                    sensorSettings.updateFromNetwork(sensor)
-                }
-                if (shouldUpdateImageUrl) {
-                    sensorSettings.updateImageUrlFromNetwork(sensor.picture)
-                }
-                if (shouldUpdateFromNetwork || shouldUpdateImageUrl) {
-                    sensorsResult.add(sensor)
-                }
+
+            when {
+                shouldUpload -> networkInteractor.updateSensorToCloud(sensor.sensor)
+                shouldUpdateFromNetwork -> sensorSettings.updateFromNetwork(sensor)
+            }
+            if (shouldUpdateImageUrl) {
+                sensorSettings.updateImageUrlFromNetwork(sensor.picture)
+            }
+            if (shouldUpdateFromNetwork || shouldUpdateImageUrl) {
+                sensorsResult.add(sensor)
             }
 
             val tagEntry = tagRepository.getTagById(sensor.sensor)

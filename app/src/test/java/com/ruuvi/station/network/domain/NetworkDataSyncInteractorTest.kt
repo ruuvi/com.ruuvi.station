@@ -523,6 +523,51 @@ class NetworkDataSyncInteractorTest {
     }
 
     @Test
+    fun `first sync of a newer local sensor uploads metadata and applies the cloud image`() = runBlocking {
+        val local = localSettings().copy(
+            owner = null,
+            networkSensor = false,
+            name = "Local default name",
+            lastUpdated = 300L,
+        )
+        val sensor = denseSensor().copy(picture = CLOUD_PICTURE)
+        val saved = stubSensor(sensor, local)
+
+        syncAndJoin()
+
+        verify(exactly = 1) { networkInteractor.updateSensorToCloud(SYNC_SENSOR_ID) }
+        assertEquals("Local default name", saved.name)
+        assertEquals(300L, saved.lastUpdated)
+        assertEquals(CLOUD_PICTURE, saved.imageUrl)
+        coVerify(exactly = 1) { imageInteractor.downloadImage(any(), CLOUD_PICTURE) }
+    }
+
+    @Test
+    fun `newer local metadata with an unchanged cloud image does not download it again`() = runBlocking {
+        val local = localSettings().copy(lastUpdated = 300L, imageUrl = CLOUD_PICTURE)
+        stubSensor(denseSensor().copy(picture = CLOUD_PICTURE), local)
+
+        syncAndJoin()
+
+        verify(exactly = 1) { networkInteractor.updateSensorToCloud(SYNC_SENSOR_ID) }
+        coVerify(exactly = 0) { imageInteractor.downloadImage(any(), any()) }
+        verify(exactly = 0) { sensorSettingsRepository.setDefaultSensorBackground(any(), any()) }
+    }
+
+    @Test
+    fun `newer cloud metadata and a new cloud image are both applied`() = runBlocking {
+        val sensor = denseSensor().copy(name = "Cloud name", lastUpdated = 200L, picture = CLOUD_PICTURE)
+        val saved = stubSensor(sensor)
+
+        syncAndJoin()
+
+        verify(exactly = 0) { networkInteractor.updateSensorToCloud(any()) }
+        assertEquals("Cloud name", saved.name)
+        assertEquals(CLOUD_PICTURE, saved.imageUrl)
+        coVerify(exactly = 1) { imageInteractor.downloadImage(any(), CLOUD_PICTURE) }
+    }
+
+    @Test
     fun `empty cloud picture preserves a local user background`() = runBlocking {
         stubSensor(
             denseSensor(),
@@ -807,5 +852,6 @@ class NetworkDataSyncInteractorTest {
 
     companion object {
         private const val TIMEOUT = 5_000L
+        private const val CLOUD_PICTURE = "https://example.com/images/cloud-guid.jpg"
     }
 }
