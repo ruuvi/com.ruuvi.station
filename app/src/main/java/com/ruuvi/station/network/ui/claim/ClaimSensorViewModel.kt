@@ -144,12 +144,14 @@ class ClaimSensorViewModel (
     private var nfcJob: Job? = null
     private var bluetoothJob: Job? = null
     private var contestStarted = false
+    private var forceClaimStarted = false
 
     fun getSensorId() {
-        if (contestStarted || nfcJob?.isActive == true || bluetoothJob?.isActive == true) {
+        if (forceClaimStarted) {
             Timber.d("getSensorId already in progress")
             return
         }
+        forceClaimStarted = true
         viewModelScope.launch {
             _uiEvent.emit(UiEvent.Navigate(ClaimRoutes.FORCE_CLAIM_GETTING_ID, true))
         }
