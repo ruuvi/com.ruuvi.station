@@ -1,12 +1,17 @@
 package com.ruuvi.station.network.ui.claim
 
+import android.bluetooth.BluetoothAdapter
+import android.bluetooth.BluetoothManager
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.nfc.NfcAdapter
 import android.os.Bundle
 import android.provider.Settings
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.*
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.*
@@ -20,10 +25,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.core.content.ContextCompat
 import androidx.navigation.NavBackStackEntry
-import com.google.accompanist.navigation.animation.AnimatedNavHost
-import com.google.accompanist.navigation.animation.composable
-import com.google.accompanist.navigation.animation.rememberAnimatedNavController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.ruuvi.station.R
 import com.ruuvi.station.app.permissions.PermissionsInteractor
 import com.ruuvi.station.app.ui.RuuviTopAppBar
@@ -42,7 +48,6 @@ import org.kodein.di.DIAware
 import org.kodein.di.android.closestDI
 import timber.log.Timber
 
-@OptIn(ExperimentalAnimationApi::class)
 class ClaimSensorActivity : NfcActivity(), DIAware {
 
     override val di: DI by closestDI()
@@ -71,7 +76,7 @@ class ClaimSensorActivity : NfcActivity(), DIAware {
     @Composable
     fun Body() {
         val context = LocalContext.current
-        val navController = rememberAnimatedNavController()
+        val navController = rememberNavController()
         val titleString = stringResource(id = R.string.claim_sensor)
         val scaffoldState = rememberScaffoldState()
         var title by remember { mutableStateOf(titleString) }
@@ -121,7 +126,7 @@ class ClaimSensorActivity : NfcActivity(), DIAware {
             snackbarHost = { RuuviSnackbarHost(hostState = it, modifier = Modifier.navigationBarsPadding()) },
         ) { padding ->
 
-            AnimatedNavHost(
+            NavHost(
                 modifier = Modifier.padding(padding).navigationBarsPadding(),
                 navController = navController,
                 startDestination = ClaimRoutes.CHECK_CLAIM_STATE
@@ -285,6 +290,40 @@ class ClaimSensorActivity : NfcActivity(), DIAware {
         val bluetoothInProgress by viewModel.bluetoothInProgress.collectAsState()
         val nfcInProgress by viewModel.nfcInProgress.collectAsState()
         val buttonsEnabled = !bluetoothInProgress && !nfcInProgress
+        val bluetoothPermissions = remember { ForceClaimBluetooth.requiredPermissions() }
+
+        val enableBluetoothLauncher = rememberLauncherForActivityResult(
+            ActivityResultContracts.StartActivityForResult()
+        ) {
+            if (bluetoothAdapter(context)?.isEnabled == true) {
+                viewModel.useBluetooth()
+            } else {
+                Timber.d("Bluetooth was not enabled, force claim read not started")
+            }
+        }
+
+        fun startBluetoothWhenReady() {
+            val adapter = bluetoothAdapter(context)
+            when (
+                ForceClaimBluetooth.nextStep(
+                    permissionsGranted = bluetoothPermissions.all { isPermissionGranted(context, it) },
+                    adapterAvailable = adapter != null,
+                    adapterEnabled = adapter?.isEnabled == true,
+                )
+            ) {
+                ForceClaimBluetooth.Step.REQUEST_PERMISSIONS -> permissionsInteractor.showPermissionSnackbar()
+                ForceClaimBluetooth.Step.BLUETOOTH_UNAVAILABLE -> Timber.w("No Bluetooth adapter")
+                ForceClaimBluetooth.Step.ENABLE_BLUETOOTH ->
+                    enableBluetoothLauncher.launch(Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE))
+                ForceClaimBluetooth.Step.START_READ -> viewModel.useBluetooth()
+            }
+        }
+
+        val bluetoothPermissionLauncher = rememberLauncherForActivityResult(
+            ActivityResultContracts.RequestMultiplePermissions()
+        ) {
+            startBluetoothWhenReady()
+        }
 
         Surface(
             color = RuuviStationTheme.colors.background,
@@ -305,7 +344,7 @@ class ClaimSensorActivity : NfcActivity(), DIAware {
                 }
                 Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.big))
                 // Like iOS: without NFC hardware only the Bluetooth option is offered.
-                val hasNfc = remember { NfcAdapter.getDefaultAdapter(context) != null }
+                val hasNfc = remember { nfcAdapter(context) != null }
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = if (hasNfc) {
@@ -321,11 +360,7 @@ class ClaimSensorActivity : NfcActivity(), DIAware {
                             enabled = buttonsEnabled,
                             loading = nfcInProgress,
                         ) {
-                            if (NfcAdapter.getDefaultAdapter(context)?.isEnabled != true) {
-                                openNfcSettings()
-                            } else {
-                                viewModel.useNfc()
-                            }
+                            startNfcWhenReady(context)
                         }
                     }
                     RuuviButton(
@@ -334,11 +369,36 @@ class ClaimSensorActivity : NfcActivity(), DIAware {
                         enabled = buttonsEnabled,
                         loading = bluetoothInProgress,
                     ) {
-                        permissionsInteractor.requestPermissions(needBackground = false, askForBluetooth = true)
-                        viewModel.useBluetooth()
+                        if (bluetoothPermissions.all { isPermissionGranted(context, it) }) {
+                            startBluetoothWhenReady()
+                        } else {
+                            bluetoothPermissionLauncher.launch(bluetoothPermissions)
+                        }
                     }
                 }
             }
+        }
+    }
+
+    private fun bluetoothAdapter(context: Context): BluetoothAdapter? =
+        context.getSystemService(BluetoothManager::class.java)?.adapter
+
+    private fun isPermissionGranted(context: Context, permission: String): Boolean =
+        ContextCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_GRANTED
+
+    private fun nfcAdapter(context: Context): NfcAdapter? = NfcAdapter.getDefaultAdapter(context)
+
+    private fun startNfcWhenReady(context: Context) {
+        val adapter = nfcAdapter(context)
+        when (
+            ForceClaimNfc.nextStep(
+                adapterAvailable = adapter != null,
+                adapterEnabled = adapter?.isEnabled == true,
+            )
+        ) {
+            ForceClaimNfc.Step.NFC_UNAVAILABLE -> Timber.w("No NFC adapter")
+            ForceClaimNfc.Step.ENABLE_NFC -> openNfcSettings()
+            ForceClaimNfc.Step.START_WAIT -> viewModel.useNfc()
         }
     }
 

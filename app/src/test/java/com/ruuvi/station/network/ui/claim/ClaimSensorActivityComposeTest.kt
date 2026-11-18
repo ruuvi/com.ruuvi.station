@@ -1,5 +1,8 @@
 package com.ruuvi.station.network.ui.claim
 
+import android.app.Activity
+import android.bluetooth.BluetoothAdapter
+import android.bluetooth.BluetoothManager
 import android.content.pm.PackageManager
 import android.nfc.NfcAdapter
 import android.provider.Settings
@@ -16,6 +19,7 @@ import com.ruuvi.station.app.ui.UiEvent
 import com.ruuvi.station.util.ui.UiTestApplication
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import org.junit.Assert.assertArrayEquals
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
@@ -30,6 +34,7 @@ import org.robolectric.RobolectricTestRunner
 import org.robolectric.RuntimeEnvironment
 import org.robolectric.Shadows.shadowOf
 import org.robolectric.annotation.Config
+import org.robolectric.shadows.ShadowActivity
 import org.robolectric.shadows.ShadowNfcAdapter
 
 @RunWith(RobolectricTestRunner::class)
@@ -42,6 +47,7 @@ class ClaimSensorActivityComposeTest {
     private val events = MutableSharedFlow<UiEvent>(replay = 1)
     private val bluetoothInProgress = MutableStateFlow(false)
     private val nfcInProgress = MutableStateFlow(false)
+    private lateinit var activity: ClaimSensorActivity
 
     @Before
     fun setUp() {
@@ -67,11 +73,78 @@ class ClaimSensorActivityComposeTest {
     fun `without NFC hardware the tag instructions only offer Bluetooth`() {
         setNfcHardwareExists(false)
 
+        grantBluetoothPermissions()
+        setBluetoothEnabled(true)
+
         withActivity { viewModel ->
             instructions(R.string.force_claim_sensor_description2)
             button(R.string.use_nfc).assertDoesNotExist()
             button(R.string.use_bluetooth).assertIsDisplayed().assertIsEnabled().performClick()
             verify(viewModel).useBluetooth()
+        }
+    }
+
+    @Test
+    fun `Use BT asks for permissions first and starts the read only after they are granted`() =
+        withActivity { viewModel ->
+            setBluetoothEnabled(true)
+            button(R.string.use_bluetooth).performClick()
+
+            val request = checkNotNull(shadowOf(activity).lastRequestedPermission)
+            assertArrayEquals(ForceClaimBluetooth.requiredPermissions(), request.requestedPermissions)
+            verify(viewModel, never()).useBluetooth()
+
+            // The user may take any time in the dialog; the read starts only after granting.
+            grantBluetoothPermissions()
+            deliverPermissionResult(request, PackageManager.PERMISSION_GRANTED)
+            verify(viewModel).useBluetooth()
+        }
+
+    @Test
+    fun `denied Bluetooth permissions never start the read`() =
+        withActivity { viewModel ->
+            setBluetoothEnabled(true)
+            button(R.string.use_bluetooth).performClick()
+            val request = checkNotNull(shadowOf(activity).lastRequestedPermission)
+
+            deliverPermissionResult(request, PackageManager.PERMISSION_DENIED)
+
+            verify(viewModel, never()).useBluetooth()
+            button(R.string.use_bluetooth).assertIsEnabled()
+        }
+
+    @Test
+    fun `Use BT asks to enable Bluetooth and starts the read only once it is on`() {
+        grantBluetoothPermissions()
+        setBluetoothEnabled(false)
+
+        withActivity { viewModel ->
+            button(R.string.use_bluetooth).performClick()
+
+            val enableRequest = checkNotNull(shadowOf(activity).nextStartedActivityForResult)
+            assertEquals(BluetoothAdapter.ACTION_REQUEST_ENABLE, enableRequest.intent.action)
+            verify(viewModel, never()).useBluetooth()
+
+            setBluetoothEnabled(true)
+            shadowOf(activity).receiveResult(enableRequest.intent, Activity.RESULT_OK, null)
+            compose.waitForIdle()
+            verify(viewModel).useBluetooth()
+        }
+    }
+
+    @Test
+    fun `declining to enable Bluetooth never starts the read`() {
+        grantBluetoothPermissions()
+        setBluetoothEnabled(false)
+
+        withActivity { viewModel ->
+            button(R.string.use_bluetooth).performClick()
+            val enableRequest = checkNotNull(shadowOf(activity).nextStartedActivityForResult)
+
+            shadowOf(activity).receiveResult(enableRequest.intent, Activity.RESULT_CANCELED, null)
+            compose.waitForIdle()
+
+            verify(viewModel, never()).useBluetooth()
         }
     }
 
@@ -121,6 +194,24 @@ class ClaimSensorActivityComposeTest {
             assertMethodsEnabled()
         }
 
+    private fun grantBluetoothPermissions() {
+        shadowOf(application).grantPermissions(*ForceClaimBluetooth.requiredPermissions())
+    }
+
+    private fun setBluetoothEnabled(enabled: Boolean) {
+        val adapter = checkNotNull(application.getSystemService(BluetoothManager::class.java).adapter)
+        shadowOf(adapter).setEnabled(enabled)
+    }
+
+    private fun deliverPermissionResult(request: ShadowActivity.PermissionsRequest, result: Int) {
+        activity.onRequestPermissionsResult(
+            request.requestCode,
+            request.requestedPermissions,
+            IntArray(request.requestedPermissions.size) { result },
+        )
+        compose.waitForIdle()
+    }
+
     private fun setNfcHardwareExists(exists: Boolean) {
         ShadowNfcAdapter.setNfcHardwareExists(exists)
         shadowOf(application.packageManager).setSystemFeature(PackageManager.FEATURE_NFC, exists)
@@ -162,6 +253,7 @@ class ClaimSensorActivityComposeTest {
         application.claimSensorViewModel = viewModel
         showRoute(route)
         val controller = Robolectric.buildActivity(ClaimSensorActivity::class.java).setup().visible()
+        activity = controller.get()
         try {
             compose.waitForIdle()
             assertions(viewModel)
