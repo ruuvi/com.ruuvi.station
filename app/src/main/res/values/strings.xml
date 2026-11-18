@@ -605,6 +605,9 @@ Total used shares for your account: %3$,d/%4$,d</string>
     <string name="force_claim_sensor_description2">Force claim is done by using Near-Field Communication (NFC). Make sure NFC is enabled on your mobile device.\n\n\t1. Touch your Ruuvi sensor with your mobile device to start the claiming process.\n\n\t2. When successfully claimed, you will be sent back to sensor settings.\n\nIf claiming was unsuccessful or NFC is not available on your device:\n\n\t1. Open the cover of your Ruuvi sensor.\n\n\t2. Locate the round black button (or button \"B\" in case your sensor has 2 buttons) on the white circuit board and press it briefly to start the claiming process.\n\n\t3. When successfully claimed you will be sent back to sensor settings.</string>
     <string name="force_claim_air_description2">Forced ownership transfer is performed using the Near-Field Communication (NFC) feature. Make sure NFC is enabled on your mobile device.\n\n\t1. Start the forced ownership transfer by tapping the Ruuvi Air sensor with your mobile device.\n\n\t2. You will be redirected back to the sensor settings page once the transfer is successful.\n\nIf the forced transfer fails or NFC is not available on your mobile device:\n\n\t1. Turn the Ruuvi Air upside down.\n\n\t2. Locate the pinhole button on the bottom of the device and briefly press the button to initiate the forced transfer.\n\n\t3. You will be redirected back to the sensor settings page once the transfer is successful.</string>
     <string name="force_claim">Force claim</string>
+    <string name="use_nfc">Use NFC</string>
+    <string name="use_bluetooth">Use BT</string>
+    <string name="sensor_not_found_error">Sensor not found. Try again.</string>
     <string name="claim_wrong_sensor_scanned">You are scanning the wrong Ruuvi sensor</string>
     <string name="view">View</string>
     <string name="card_type">Card type</string>

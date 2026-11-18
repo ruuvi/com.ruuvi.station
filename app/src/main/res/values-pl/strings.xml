@@ -605,6 +605,9 @@
     <string name="force_claim_sensor_description2">Wymuszone przejęcie odbywa się za pomocą komunikacji zbliżeniowej (NFC). Upewnij się, że NFC jest włączone na urządzeniu mobilnym.\n\n\t1. Dotknij czujnika Ruuvi urządzeniem mobilnym, aby rozpocząć proces przejmowania.\n\n\t2. Po pomyślnym przejęciu wrócisz do ustawień czujnika.\n\nJeśli przejęcie nie powiodło się lub NFC nie jest dostępne na Twoim urządzeniu:\n\n\t1. Otwórz obudowę czujnika Ruuvi.\n\n\t2. Znajdź okrągły czarny przycisk (lub przycisk \"B\", jeśli czujnik ma 2 przyciski) na białej płytce drukowanej i naciśnij go krótko, aby rozpocząć proces przejmowania.\n\n\t3. Po pomyślnym przejęciu wrócisz do ustawień czujnika.</string>
     <string name="force_claim_air_description2">Wymuszona zmiana właściciela odbywa się przy użyciu funkcji Near-Field Communication (NFC). Upewnij się, że NFC jest włączone na Twoim urządzeniu mobilnym.\n\n\t1. Rozpocznij wymuszoną zmianę właściciela, dotykając czujnika Ruuvi Air urządzeniem mobilnym.\n\n\t2. Po pomyślnym zakończeniu zmiany zostaniesz przekierowany z powrotem na stronę ustawień czujnika.\n\nJeśli wymuszona zmiana się nie powiedzie lub funkcja NFC nie jest dostępna na Twoim urządzeniu mobilnym:\n\n\t1. Odwróć Ruuvi Air do góry nogami.\n\n\t2. Zlokalizuj przycisk w otworze na spodzie urządzenia i krótko go naciśnij, aby rozpocząć wymuszoną zmianę.\n\n\t3. Po pomyślnym zakończeniu zmiany zostaniesz przekierowany z powrotem na stronę ustawień czujnika.</string>
     <string name="force_claim">Wymuś przejęcie</string>
+    <string name="use_nfc">Użyj NFC</string>
+    <string name="use_bluetooth">Użyj BT</string>
+    <string name="sensor_not_found_error">Nie znaleziono czujnika. Spróbuj ponownie.</string>
     <string name="claim_wrong_sensor_scanned">Skanujesz niewłaściwy czujnik Ruuvi</string>
     <string name="view">Widok</string>
     <string name="card_type">Typ karty</string>

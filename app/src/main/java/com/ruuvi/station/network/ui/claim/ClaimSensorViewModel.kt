@@ -13,7 +13,9 @@ import com.ruuvi.station.nfc.NfcScanReciever
 import com.ruuvi.station.tagsettings.domain.TagSettingsInteractor
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.StateFlow
 import timber.log.Timber
 
 class ClaimSensorViewModel (
@@ -29,7 +31,15 @@ class ClaimSensorViewModel (
 
     val isAir = interactor.getTagById(sensorId)?.isAir()
 
+    private var claimStateChecked = false
+
+    /**
+     * Picks the first claim page. Runs once per ViewModel: the Activity calls it from onCreate, and
+     * a rotation must not send the user back from the force claim instructions to the start.
+     */
     fun checkClaimState() {
+        if (claimStateChecked) return
+        claimStateChecked = true
         Timber.d("checkClaimState")
         if (!ruuviNetworkInteractor.signedIn) {
             emitUiEvent(UiEvent.Navigate(ClaimRoutes.NOT_SIGNED_IN, true))
@@ -108,73 +118,140 @@ class ClaimSensorViewModel (
         }
     }
 
-    fun contestSensor(secret: String) {
+    private var nfcJob: Job? = null
+    private var bluetoothJob: Job? = null
+    private var contestStarted = false
+
+    private val _bluetoothInProgress = MutableStateFlow(false)
+    val bluetoothInProgress: StateFlow<Boolean> = _bluetoothInProgress
+
+    private var nfcTimeoutJob: Job? = null
+    private val _nfcInProgress = MutableStateFlow(false)
+    /** True after "Use NFC" was tapped while waiting for the sensor to be touched. */
+    val nfcInProgress: StateFlow<Boolean> = _nfcInProgress
+
+    private fun contestSensor(secret: String) {
         Timber.d("contestSensor")
         emitUiEvent(UiEvent.Navigate(ClaimRoutes.CLAIM_IN_PROGRESS, true))
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                withContext(Dispatchers.IO) {
-                    val settings = interactor.getSensorSettings(sensorId)
-                    settings?.let {
-                        sensorClaimInteractor.contestSensor(sensorId = sensorId, name = it.displayName, secret = secret) {
-                            if (it?.isSuccess() == true) {
-                                emitUiEvent(UiEvent.NavigateUp)
-                            } else {
-                                emitUiEvent(UiEvent.ShowSnackbar(UiText.DynamicString(it?.error ?: "Error")))
-                                emitUiEvent(UiEvent.NavigateUp)
-                            }
-                        }
+                val settings = interactor.getSensorSettings(sensorId)
+                if (settings == null) {
+                    onContestFailed(null)
+                    return@launch
+                }
+                sensorClaimInteractor.contestSensor(sensorId = sensorId, name = settings.displayName, secret = secret) {
+                    if (it?.isSuccess() == true) {
+                        emitUiEvent(UiEvent.NavigateUp)
+                    } else {
+                        onContestFailed(it?.error)
                     }
                 }
             } catch (e: Exception) {
                 Timber.d(e)
-                emitUiEvent(UiEvent.ShowSnackbar(UiText.DynamicString(e.message ?: "Error")))
+                onContestFailed(e.message)
             }
         }
     }
 
-    fun getSensorId() {
+    private fun onContestFailed(error: String?) {
         viewModelScope.launch {
-            _uiEvent.emit(UiEvent.Navigate(ClaimRoutes.FORCE_CLAIM_GETTING_ID, true))
+            contestStarted = false
+            openForceClaimInstructions()
+            _uiEvent.emit(UiEvent.ShowSnackbar(UiText.DynamicString(error?.takeIf { it.isNotBlank() } ?: "Error")))
         }
-        var bluetoothJob: Job? = null
+    }
 
-        val nfcJob = viewModelScope.launch {
-            NfcScanReciever.nfcSensorScanned.collect{ scanInfo ->
+    fun getSensorId() {
+        viewModelScope.launch { openForceClaimInstructions() }
+    }
+
+    private suspend fun openForceClaimInstructions() {
+        _uiEvent.emit(UiEvent.Navigate(ClaimRoutes.FORCE_CLAIM_GETTING_ID, true))
+        if (nfcJob?.isActive == true) return
+
+        nfcJob = viewModelScope.launch {
+            NfcScanReciever.nfcSensorScanned.collect { scanInfo ->
                 Timber.d("nfc scanned: $scanInfo")
                 if (scanInfo != null && scanInfo.mac != sensorId) {
-                    viewModelScope.launch {
-                        _uiEvent.emit(UiEvent.ShowSnackbar(UiText.StringResource(R.string.claim_wrong_sensor_scanned)))
-                    }
+                    stopWaitingForNfc()
+                    _uiEvent.emit(UiEvent.ShowSnackbar(UiText.StringResource(R.string.claim_wrong_sensor_scanned)))
                 }
                 if (scanInfo?.mac == sensorId && !scanInfo.id.isNullOrEmpty()) {
-                    bluetoothJob?.cancel()
-                    contestSensor(scanInfo.id)
+                    startContest(scanInfo.id)
                 }
             }
         }
+    }
+
+    /**
+     * Reads the sensor ID over Bluetooth. A RuuviTag only exposes its ID for a while after its
+     * button is pressed (Ruuvi Air reports a masked ID), so reading is retried until the ID shows
+     * up or [BLUETOOTH_TIMEOUT] passes (same timeout as iOS); then the user is asked to try again.
+     */
+    fun useBluetooth() {
+        if (contestStarted || _nfcInProgress.value || bluetoothJob?.isActive == true) return
+
+        _bluetoothInProgress.value = true
         bluetoothJob = viewModelScope.launch {
-            var id: String? = null
-            while (id == null) {
-                if (!this.isActive) break
-                val sensorInfo = sensorInfoInteractor.getSensorFirmwareVersion(sensorId)
-                Timber.d("SensorInfo $sensorInfo")
-                if (sensorInfo.id == null || sensorInfo.id == "XX:XX:XX:XX:XX:XX:XX:XX") {
-                    delay(3000)
-                } else {
-                    id = sensorInfo.id
-                    if (this.isActive) {
-                        contestSensor(id)
-                        nfcJob.cancel()
+            try {
+                val id = withTimeoutOrNull(BLUETOOTH_TIMEOUT) {
+                    var id: String? = null
+                    while (id == null) {
+                        val sensorInfo = sensorInfoInteractor.getSensorFirmwareVersion(sensorId)
+                        Timber.d("SensorInfo $sensorInfo")
+                        id = sensorInfo.id?.takeIf { it != UNKNOWN_SENSOR_ID }
+                        if (id == null) delay(BLUETOOTH_RETRY_DELAY)
                     }
+                    id
                 }
+                if (id != null) {
+                    startContest(id)
+                } else if (!contestStarted) {
+                    _uiEvent.emit(UiEvent.ShowSnackbar(UiText.StringResource(R.string.sensor_not_found_error)))
+                }
+            } finally {
+                _bluetoothInProgress.value = false
             }
         }
+    }
+
+    fun useNfc() {
+        if (contestStarted || _nfcInProgress.value || _bluetoothInProgress.value) return
+
+        _nfcInProgress.value = true
+        nfcTimeoutJob = viewModelScope.launch {
+            delay(NFC_TIMEOUT)
+            _nfcInProgress.value = false
+            _uiEvent.emit(UiEvent.ShowSnackbar(UiText.StringResource(R.string.sensor_not_found_error)))
+        }
+    }
+
+    private fun stopWaitingForNfc() {
+        nfcTimeoutJob?.cancel()
+        _nfcInProgress.value = false
+    }
+
+    private fun startContest(secret: String) {
+        if (contestStarted) return
+        contestStarted = true
+        stopWaitingForNfc()
+        bluetoothJob?.cancel()
+        nfcJob?.cancel()
+        contestSensor(secret)
     }
 
     private fun emitUiEvent (event: UiEvent) {
         viewModelScope.launch {
             _uiEvent.emit(event)
         }
+    }
+
+    companion object {
+        private const val NFC_TIMEOUT = 60_000L
+        /** Matches the iOS GATT timeout for reading the sensor ID. */
+        private const val BLUETOOTH_TIMEOUT = 15_000L
+        private const val BLUETOOTH_RETRY_DELAY = 1_000L
+        private const val UNKNOWN_SENSOR_ID = "XX:XX:XX:XX:XX:XX:XX:XX"
     }
 }

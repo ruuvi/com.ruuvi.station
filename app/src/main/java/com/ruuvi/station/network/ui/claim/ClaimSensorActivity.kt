@@ -1,16 +1,23 @@
 package com.ruuvi.station.network.ui.claim
 
+import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
+import android.nfc.NfcAdapter
 import android.os.Bundle
+import android.provider.Settings
 import androidx.activity.compose.setContent
 import androidx.compose.animation.*
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Scaffold
+import androidx.compose.material.Surface
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavBackStackEntry
@@ -18,6 +25,7 @@ import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.ruuvi.station.R
+import com.ruuvi.station.app.permissions.PermissionsInteractor
 import com.ruuvi.station.app.ui.RuuviTopAppBar
 import com.ruuvi.station.app.ui.UiEvent
 import com.ruuvi.station.app.ui.components.*
@@ -43,9 +51,12 @@ class ClaimSensorActivity : NfcActivity(), DIAware {
         intent.getStringExtra(SENSOR_ID) ?: ""
     }
 
+    private lateinit var permissionsInteractor: PermissionsInteractor
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableRuuviEdgeToEdge()
+        permissionsInteractor = PermissionsInteractor(this)
 
         setContent {
             RuuviTheme {
@@ -54,7 +65,6 @@ class ClaimSensorActivity : NfcActivity(), DIAware {
                 }
             }
         }
-
         viewModel.checkClaimState()
     }
 
@@ -108,7 +118,7 @@ class ClaimSensorActivity : NfcActivity(), DIAware {
             backgroundColor = RuuviStationTheme.colors.background,
             topBar = { RuuviTopAppBar(title = title) },
             scaffoldState = scaffoldState,
-            snackbarHost = { RuuviSnackbarHost(it) },
+            snackbarHost = { RuuviSnackbarHost(hostState = it, modifier = Modifier.navigationBarsPadding()) },
         ) { padding ->
 
             AnimatedNavHost(
@@ -271,17 +281,74 @@ class ClaimSensorActivity : NfcActivity(), DIAware {
 
     @Composable
     fun ForceClaimGettingId() {
-        PageSurfaceWithPadding() {
-            Column() {
-                val instruction = if (viewModel.isAir == true) {
-                    stringResource(R.string.force_claim_air_description2)
-                } else {
-                    stringResource(id = R.string.force_claim_sensor_description2)
+        val context = LocalContext.current
+        val bluetoothInProgress by viewModel.bluetoothInProgress.collectAsState()
+        val nfcInProgress by viewModel.nfcInProgress.collectAsState()
+        val buttonsEnabled = !bluetoothInProgress && !nfcInProgress
+
+        Surface(
+            color = RuuviStationTheme.colors.background,
+            modifier = Modifier.fillMaxSize()
+        ) {
+            Column(modifier = Modifier.padding(RuuviStationTheme.dimensions.screenPadding)) {
+                Column(
+                    modifier = Modifier
+                        .weight(1f)
+                        .verticalScroll(rememberScrollState())
+                ) {
+                    val instruction = if (viewModel.isAir == true) {
+                        stringResource(R.string.force_claim_air_description2)
+                    } else {
+                        stringResource(id = R.string.force_claim_sensor_description2)
+                    }
+                    Paragraph(text = instruction)
                 }
-                Paragraph(text = instruction)
+                Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.big))
+                // Like iOS: without NFC hardware only the Bluetooth option is offered.
+                val hasNfc = remember { NfcAdapter.getDefaultAdapter(context) != null }
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = if (hasNfc) {
+                        Arrangement.spacedBy(RuuviStationTheme.dimensions.extended)
+                    } else {
+                        Arrangement.Center
+                    }
+                ) {
+                    if (hasNfc) {
+                        RuuviButton(
+                            modifier = Modifier.weight(1f),
+                            text = stringResource(id = R.string.use_nfc),
+                            enabled = buttonsEnabled,
+                            loading = nfcInProgress,
+                        ) {
+                            if (NfcAdapter.getDefaultAdapter(context)?.isEnabled != true) {
+                                openNfcSettings()
+                            } else {
+                                viewModel.useNfc()
+                            }
+                        }
+                    }
+                    RuuviButton(
+                        modifier = if (hasNfc) Modifier.weight(1f) else Modifier.widthIn(min = 180.dp),
+                        text = stringResource(id = R.string.use_bluetooth),
+                        enabled = buttonsEnabled,
+                        loading = bluetoothInProgress,
+                    ) {
+                        permissionsInteractor.requestPermissions(needBackground = false, askForBluetooth = true)
+                        viewModel.useBluetooth()
+                    }
+                }
             }
         }
+    }
 
+    private fun openNfcSettings() {
+        try {
+            startActivity(Intent(Settings.ACTION_NFC_SETTINGS))
+        } catch (e: ActivityNotFoundException) {
+            Timber.e(e)
+            startActivity(Intent(Settings.ACTION_WIRELESS_SETTINGS))
+        }
     }
 
     @Composable

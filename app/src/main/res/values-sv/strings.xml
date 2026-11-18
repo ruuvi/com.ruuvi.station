@@ -605,6 +605,9 @@ Totalt antal använda delningar för ditt konto: %3$,d/%4$,d</string>
     <string name="force_claim_sensor_description2">Tvingat anspråk görs genom att använda närfältskommunikation (NFC). Se till att NFC är aktiverat på din mobil.\n\n\t1. Rör din Ruuvi-givare med din mobila enhet för att starta kravprocessen.\n\n\t2. När det lyckats förs du tillbaka till sensorinställningar.\n\nOm det misslyckades eller om NFC inte är tillgängligt på din enhet:\n\n\t1. Öppna locket på sensorn. Leta upp den runda svarta knappen (eller knapp B om din sensor har två knappar) på det vita kretskortet och tryck kort för att starta processen.\n\n\t3. När det har gått igenom framgångsrikt förs du tillbaka till sensorinställningar.</string>
     <string name="force_claim_air_description2">Tvingad överföring av ägarskap utförs med hjälp av Near-Field Communication (NFC). Kontrollera att NFC är aktiverat på din mobila enhet.\n\n\t1. Starta den tvingade ägarskapsöverföringen genom att nudda Ruuvi Air-sensorn med din mobila enhet.\n\n\t2. När överföringen har slutförts framgångsrikt skickas du tillbaka till sensorsidans inställningar.\n\nOm den tvingade överföringen misslyckas eller NFC inte är tillgängligt på din mobila enhet:\n\n\t1. Vänd Ruuvi Air upp och ner.\n\n\t2. Leta reda på den försänkta knappen på undersidan av enheten och tryck kort på den för att starta den tvingade överföringen.\n\n\t3. När överföringen har slutförts framgångsrikt skickas du tillbaka till sensorsidans inställningar.</string>
     <string name="force_claim">Tvinga fram anspråk</string>
+    <string name="use_nfc">Använd NFC</string>
+    <string name="use_bluetooth">Använd BT</string>
+    <string name="sensor_not_found_error">Sensorn hittades inte. Försök igen.</string>
     <string name="claim_wrong_sensor_scanned">Du skannar av fel Ruuvi-sensor</string>
     <string name="view">Vy</string>
     <string name="card_type">Kort typ</string>

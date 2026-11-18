@@ -616,6 +616,9 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
 \n\t3. Nach erfolgreicher Beanspruchung werden Sie zu den Sensoreinstellungen zurückgeschickt.</string>
     <string name="force_claim_air_description2">Die erzwungene Übertragung des Besitzes erfolgt mithilfe der Near-Field Communication (NFC)-Funktion. Stellen Sie sicher, dass NFC auf Ihrem Mobilgerät aktiviert ist.\n\n\t1. Starten Sie die erzwungene Besitzübertragung, indem Sie den Ruuvi Air-Sensor mit Ihrem Mobilgerät berühren.\n\n\t2. Nach erfolgreicher Übertragung werden Sie zurück zur Einstellungsseite des Sensors weitergeleitet.\n\nFalls die erzwungene Übertragung fehlschlägt oder die NFC-Funktion auf Ihrem Mobilgerät nicht verfügbar ist:\n\n\t1. Drehen Sie den Ruuvi Air um.\n\n\t2. Suchen Sie die versenkte Taste an der Unterseite des Geräts und drücken Sie diese kurz, um die erzwungene Übertragung zu starten.\n\n\t3. Nach erfolgreicher Übertragung werden Sie zurück zur Einstellungsseite des Sensors weitergeleitet.</string>
     <string name="force_claim">Kraft-Anspruch</string>
+    <string name="use_nfc">Verwenden Sie NFC</string>
+    <string name="use_bluetooth">Verwenden Sie BT</string>
+    <string name="sensor_not_found_error">Sensor nicht gefunden. Versuchen Sie es erneut.</string>
     <string name="claim_wrong_sensor_scanned">Sie scannen gerade verschiedene Ruuvi-Sensor</string>
     <string name="view">Ansicht</string>
     <string name="card_type">Speicherkarten-Typ</string>

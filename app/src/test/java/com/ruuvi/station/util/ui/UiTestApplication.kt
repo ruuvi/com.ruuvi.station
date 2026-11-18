@@ -18,6 +18,7 @@ import com.ruuvi.station.settings.ui.DataForwardingSettingsViewModel
 import com.ruuvi.station.settings.ui.DeveloperSettingsViewModel
 import com.ruuvi.station.settings.ui.GlobalUnitsAndResolutionViewModel
 import com.ruuvi.station.network.ui.ShareSensorViewModel
+import com.ruuvi.station.network.ui.claim.ClaimSensorViewModel
 import org.kodein.di.DI
 import org.kodein.di.DIAware
 import org.kodein.di.bind
@@ -42,6 +43,7 @@ class UiTestApplication : Application(), DIAware {
     lateinit var developerSettingsViewModel: DeveloperSettingsViewModel
     lateinit var globalUnitsAndResolutionViewModel: GlobalUnitsAndResolutionViewModel
     lateinit var shareSensorViewModel: ShareSensorViewModel
+    lateinit var claimSensorViewModel: ClaimSensorViewModel
 
     override fun onCreate() {
         super.onCreate()
@@ -71,5 +73,6 @@ class UiTestApplication : Application(), DIAware {
         bindProvider { developerSettingsViewModel }
         bindProvider { globalUnitsAndResolutionViewModel }
         bind<ShareSensorViewModel>() with factory { _: String -> shareSensorViewModel }
+        bind<ClaimSensorViewModel>() with factory { _: String -> claimSensorViewModel }
     }
 }

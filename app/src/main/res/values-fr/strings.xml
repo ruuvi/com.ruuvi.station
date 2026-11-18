@@ -610,6 +610,9 @@ Total des partages utilisés pour votre compte : %3$,d/%4$,d</string>
 	3. Une fois la réclamation réussie, vous serez renvoyé aux paramètres du capteur.</string>
     <string name="force_claim_air_description2">Le transfert forcé de propriété s’effectue à l’aide de la fonction Near-Field Communication (NFC). Assurez-vous que la NFC est activée sur votre appareil mobile.\n\n\t1. Démarrez le transfert forcé de propriété en approchant votre appareil mobile du capteur Ruuvi Air.\n\n\t2. Une fois le transfert réussi, vous serez redirigé vers la page des paramètres du capteur.\n\nSi le transfert forcé échoue ou si la fonction NFC n’est pas disponible sur votre appareil mobile :\n\n\t1. Retournez le Ruuvi Air.\n\n\t2. Localisez le bouton encastré situé sous l’appareil et appuyez brièvement dessus pour lancer le transfert forcé.\n\n\t3. Une fois le transfert réussi, vous serez redirigé vers la page des paramètres du capteur.</string>
     <string name="force_claim">Revendication de force</string>
+    <string name="use_nfc">Utiliser NFC</string>
+    <string name="use_bluetooth">Utiliser BT</string>
+    <string name="sensor_not_found_error">Capteur introuvable. Essayer à nouveau.</string>
     <string name="claim_wrong_sensor_scanned">Vous scannez différents capteur Ruuvi</string>
     <string name="view">Voir</string>
     <string name="card_type">Type de carte</string>
