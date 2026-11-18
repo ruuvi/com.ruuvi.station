@@ -29,7 +29,15 @@ class ClaimSensorViewModel (
 
     val isAir = interactor.getTagById(sensorId)?.isAir()
 
+    private var claimStateChecked = false
+
+    /**
+     * Picks the first claim page. Runs once per ViewModel: the Activity calls it from onCreate, and
+     * a rotation must not send the user back from the force claim instructions to the start.
+     */
     fun checkClaimState() {
+        if (claimStateChecked) return
+        claimStateChecked = true
         Timber.d("checkClaimState")
         if (!ruuviNetworkInteractor.signedIn) {
             emitUiEvent(UiEvent.Navigate(ClaimRoutes.NOT_SIGNED_IN, true))
@@ -133,13 +141,22 @@ class ClaimSensorViewModel (
         }
     }
 
+    private var nfcJob: Job? = null
+    private var bluetoothJob: Job? = null
+    private var contestStarted = false
+    private var forceClaimStarted = false
+
     fun getSensorId() {
+        if (forceClaimStarted) {
+            Timber.d("getSensorId already in progress")
+            return
+        }
+        forceClaimStarted = true
         viewModelScope.launch {
             _uiEvent.emit(UiEvent.Navigate(ClaimRoutes.FORCE_CLAIM_GETTING_ID, true))
         }
-        var bluetoothJob: Job? = null
 
-        val nfcJob = viewModelScope.launch {
+        nfcJob = viewModelScope.launch {
             NfcScanReciever.nfcSensorScanned.collect{ scanInfo ->
                 Timber.d("nfc scanned: $scanInfo")
                 if (scanInfo != null && scanInfo.mac != sensorId) {
@@ -148,8 +165,7 @@ class ClaimSensorViewModel (
                     }
                 }
                 if (scanInfo?.mac == sensorId && !scanInfo.id.isNullOrEmpty()) {
-                    bluetoothJob?.cancel()
-                    contestSensor(scanInfo.id)
+                    startContest(scanInfo.id)
                 }
             }
         }
@@ -164,12 +180,23 @@ class ClaimSensorViewModel (
                 } else {
                     id = sensorInfo.id
                     if (this.isActive) {
-                        contestSensor(id)
-                        nfcJob.cancel()
+                        startContest(id)
                     }
                 }
             }
         }
+    }
+
+    /**
+     * Sends the force claim request once. Both the NFC and Bluetooth jobs are stopped first, so
+     * touching the sensor again (or a late Bluetooth result) cannot send a second request.
+     */
+    private fun startContest(secret: String) {
+        if (contestStarted) return
+        contestStarted = true
+        nfcJob?.cancel()
+        bluetoothJob?.cancel()
+        contestSensor(secret)
     }
 
     private fun emitUiEvent (event: UiEvent) {
