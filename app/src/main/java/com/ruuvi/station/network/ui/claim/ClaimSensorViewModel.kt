@@ -31,10 +31,6 @@ class ClaimSensorViewModel (
 
     private var claimStateChecked = false
 
-    /**
-     * Picks the first claim page. Runs once per ViewModel: the Activity calls it from onCreate, and
-     * a rotation must not send the user back from the force claim instructions to the start.
-     */
     fun checkClaimState() {
         if (claimStateChecked) return
         claimStateChecked = true
@@ -141,13 +137,19 @@ class ClaimSensorViewModel (
         }
     }
 
+    private var nfcJob: Job? = null
+    private var bluetoothJob: Job? = null
+
     fun getSensorId() {
+        if (nfcJob?.isActive == true || bluetoothJob?.isActive == true) {
+            Timber.d("getSensorId already in progress")
+            return
+        }
         viewModelScope.launch {
             _uiEvent.emit(UiEvent.Navigate(ClaimRoutes.FORCE_CLAIM_GETTING_ID, true))
         }
-        var bluetoothJob: Job? = null
 
-        val nfcJob = viewModelScope.launch {
+        nfcJob = viewModelScope.launch {
             NfcScanReciever.nfcSensorScanned.collect{ scanInfo ->
                 Timber.d("nfc scanned: $scanInfo")
                 if (scanInfo != null && scanInfo.mac != sensorId) {
@@ -173,7 +175,7 @@ class ClaimSensorViewModel (
                     id = sensorInfo.id
                     if (this.isActive) {
                         contestSensor(id)
-                        nfcJob.cancel()
+                        nfcJob?.cancel()
                     }
                 }
             }
