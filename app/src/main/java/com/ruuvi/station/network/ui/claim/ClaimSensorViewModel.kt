@@ -31,6 +31,10 @@ class ClaimSensorViewModel (
 
     private var claimStateChecked = false
 
+    /**
+     * Picks the first claim page. Runs once per ViewModel: the Activity calls it from onCreate, and
+     * a rotation must not send the user back from the force claim instructions to the start.
+     */
     fun checkClaimState() {
         if (claimStateChecked) return
         claimStateChecked = true
@@ -139,9 +143,10 @@ class ClaimSensorViewModel (
 
     private var nfcJob: Job? = null
     private var bluetoothJob: Job? = null
+    private var contestStarted = false
 
     fun getSensorId() {
-        if (nfcJob?.isActive == true || bluetoothJob?.isActive == true) {
+        if (contestStarted || nfcJob?.isActive == true || bluetoothJob?.isActive == true) {
             Timber.d("getSensorId already in progress")
             return
         }
@@ -158,8 +163,7 @@ class ClaimSensorViewModel (
                     }
                 }
                 if (scanInfo?.mac == sensorId && !scanInfo.id.isNullOrEmpty()) {
-                    bluetoothJob?.cancel()
-                    contestSensor(scanInfo.id)
+                    startContest(scanInfo.id)
                 }
             }
         }
@@ -174,12 +178,23 @@ class ClaimSensorViewModel (
                 } else {
                     id = sensorInfo.id
                     if (this.isActive) {
-                        contestSensor(id)
-                        nfcJob?.cancel()
+                        startContest(id)
                     }
                 }
             }
         }
+    }
+
+    /**
+     * Sends the force claim request once. Both the NFC and Bluetooth jobs are stopped first, so
+     * touching the sensor again (or a late Bluetooth result) cannot send a second request.
+     */
+    private fun startContest(secret: String) {
+        if (contestStarted) return
+        contestStarted = true
+        nfcJob?.cancel()
+        bluetoothJob?.cancel()
+        contestSensor(secret)
     }
 
     private fun emitUiEvent (event: UiEvent) {
