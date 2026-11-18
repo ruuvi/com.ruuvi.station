@@ -191,6 +191,24 @@ class ClaimSensorViewModelTest {
     }
 
     @Test
+    fun `claimSensor uses fallback error when API response is null`() = runBlocking {
+        val sensorClaimInteractor = mockk<SensorClaimInteractor> {
+            coEvery { claimSensor(SENSOR_ID, SENSOR_NAME, any()) } answers {
+                thirdArg<(ClaimSensorResponse?) -> Unit>()(null)
+            }
+        }
+        val viewModel = viewModel(sensorClaimInteractor = sensorClaimInteractor)
+        val events = mutableListOf<UiEvent>()
+        val collector = launch(mainDispatcher) { viewModel.uiEvent.collect { events.add(it) } }
+
+        viewModel.claimSensor()
+        withTimeout(5.seconds) { while (events.size < 3) delay(10) }
+
+        assertEquals(UiEvent.ShowSnackbar(UiText.DynamicString("Error")), events[1])
+        collector.cancel()
+    }
+
+    @Test
     fun `claimSensor shows error snackbar when exception occurs`() = runBlocking {
         val tagSettingsInteractor = mock<TagSettingsInteractor> {
             on { getSensorSettings(SENSOR_ID) } doThrow RuntimeException("Settings error")
@@ -264,6 +282,24 @@ class ClaimSensorViewModelTest {
             events.toList()
         )
         coVerify { sensorClaimInteractor.unclaimSensor(SENSOR_ID, false, any()) }
+        collector.cancel()
+    }
+
+    @Test
+    fun `unclaimSensor uses fallback error when API response is null`() = runBlocking {
+        val sensorClaimInteractor = mockk<SensorClaimInteractor> {
+            coEvery { unclaimSensor(SENSOR_ID, true, any()) } answers {
+                thirdArg<(ClaimSensorResponse?) -> Unit>()(null)
+            }
+        }
+        val viewModel = viewModel(sensorClaimInteractor = sensorClaimInteractor)
+        val events = mutableListOf<UiEvent>()
+        val collector = launch(mainDispatcher) { viewModel.uiEvent.collect { events.add(it) } }
+
+        viewModel.unclaimSensor(deleteData = true)
+        withTimeout(5.seconds) { while (events.size < 3) delay(10) }
+
+        assertEquals(UiEvent.ShowSnackbar(UiText.DynamicString("Error")), events[1])
         collector.cancel()
     }
 
@@ -343,6 +379,24 @@ class ClaimSensorViewModelTest {
     }
 
     @Test
+    fun `contestSensor uses fallback error when API response is null`() = runBlocking {
+        val sensorClaimInteractor = mockk<SensorClaimInteractor> {
+            coEvery { contestSensor(SENSOR_ID, SENSOR_NAME, SECRET, any()) } answers {
+                arg<(ContestSensorResponse?) -> Unit>(3)(null)
+            }
+        }
+        val viewModel = viewModel(sensorClaimInteractor = sensorClaimInteractor)
+        val events = mutableListOf<UiEvent>()
+        val collector = launch(mainDispatcher) { viewModel.uiEvent.collect { events.add(it) } }
+
+        viewModel.contestSensor(SECRET)
+        withTimeout(5.seconds) { while (events.size < 3) delay(10) }
+
+        assertEquals(UiEvent.ShowSnackbar(UiText.DynamicString("Error")), events[1])
+        collector.cancel()
+    }
+
+    @Test
     fun `contestSensor shows error snackbar when exception occurs`() = runBlocking {
         val tagSettingsInteractor = mock<TagSettingsInteractor> {
             on { getSensorSettings(SENSOR_ID) } doThrow RuntimeException("Settings error")
@@ -360,6 +414,56 @@ class ClaimSensorViewModelTest {
                 UiEvent.ShowSnackbar(UiText.DynamicString("Settings error"))
             ),
             events.toList()
+        )
+        collector.cancel()
+    }
+
+    @Test
+    fun `claim operations stop when sensor settings are missing`() = runBlocking {
+        val tagSettingsInteractor = mock<TagSettingsInteractor> {
+            on { getSensorSettings(SENSOR_ID) } doReturn null
+        }
+        val sensorClaimInteractor = mockk<SensorClaimInteractor>(relaxed = true)
+        val viewModel = viewModel(
+            sensorClaimInteractor = sensorClaimInteractor,
+            tagSettingsInteractor = tagSettingsInteractor,
+        )
+        val events = mutableListOf<UiEvent>()
+        val collector = launch(mainDispatcher) { viewModel.uiEvent.collect { events.add(it) } }
+
+        viewModel.claimSensor()
+        withTimeout(5.seconds) { while (events.size < 1) delay(10) }
+        viewModel.unclaimSensor(deleteData = true)
+        withTimeout(5.seconds) { while (events.size < 2) delay(10) }
+        viewModel.contestSensor(SECRET)
+        withTimeout(5.seconds) { while (events.size < 3) delay(10) }
+
+        assertEquals(3, events.count { it == UiEvent.Navigate(ClaimRoutes.CLAIM_IN_PROGRESS, true) })
+        coVerify(exactly = 0) { sensorClaimInteractor.claimSensor(any(), any(), any()) }
+        coVerify(exactly = 0) { sensorClaimInteractor.unclaimSensor(any(), any(), any()) }
+        coVerify(exactly = 0) { sensorClaimInteractor.contestSensor(any(), any(), any(), any()) }
+        collector.cancel()
+    }
+
+    @Test
+    fun `claim operations use fallback error when exception message is null`() = runBlocking {
+        val tagSettingsInteractor = mock<TagSettingsInteractor> {
+            on { getSensorSettings(SENSOR_ID) } doThrow RuntimeException()
+        }
+        val viewModel = viewModel(tagSettingsInteractor = tagSettingsInteractor)
+        val events = mutableListOf<UiEvent>()
+        val collector = launch(mainDispatcher) { viewModel.uiEvent.collect { events.add(it) } }
+
+        viewModel.claimSensor()
+        withTimeout(5.seconds) { while (events.size < 2) delay(10) }
+        viewModel.unclaimSensor(deleteData = true)
+        withTimeout(5.seconds) { while (events.size < 4) delay(10) }
+        viewModel.contestSensor(SECRET)
+        withTimeout(5.seconds) { while (events.size < 6) delay(10) }
+
+        assertEquals(
+            3,
+            events.count { it == UiEvent.ShowSnackbar(UiText.DynamicString("Error")) },
         )
         collector.cancel()
     }
