@@ -24,6 +24,7 @@ class ClaimSensorViewModel (
     private val interactor: TagSettingsInteractor,
     private val sensorInfoInteractor: SensorInfoInteractor,
     private val sensorClaimInteractor: SensorClaimInteractor,
+    private val contestDispatcher: CoroutineDispatcher = Dispatchers.IO,
     ): ViewModel() {
 
     private val _uiEvent = MutableSharedFlow<UiEvent> (1)
@@ -132,21 +133,25 @@ class ClaimSensorViewModel (
 
     private fun contestSensor(secret: String) {
         Timber.d("contestSensor")
-        emitUiEvent(UiEvent.Navigate(ClaimRoutes.CLAIM_IN_PROGRESS, true))
-        CoroutineScope(Dispatchers.IO).launch {
+        viewModelScope.launch {
+            _uiEvent.emit(UiEvent.Navigate(ClaimRoutes.CLAIM_IN_PROGRESS, true))
             try {
-                val settings = interactor.getSensorSettings(sensorId)
-                if (settings == null) {
-                    onContestFailed(null)
-                    return@launch
-                }
-                sensorClaimInteractor.contestSensor(sensorId = sensorId, name = settings.displayName, secret = secret) {
-                    if (it?.isSuccess() == true) {
-                        emitUiEvent(UiEvent.NavigateUp)
-                    } else {
-                        onContestFailed(it?.error)
+                withContext(contestDispatcher) {
+                    val settings = interactor.getSensorSettings(sensorId)
+                    if (settings == null) {
+                        onContestFailed(null)
+                        return@withContext
+                    }
+                    sensorClaimInteractor.contestSensor(sensorId = sensorId, name = settings.displayName, secret = secret) {
+                        if (it?.isSuccess() == true) {
+                            emitUiEvent(UiEvent.NavigateUp)
+                        } else {
+                            onContestFailed(it?.error)
+                        }
                     }
                 }
+            } catch (e: CancellationException) {
+                throw e
             } catch (e: Exception) {
                 Timber.d(e)
                 onContestFailed(e.message)

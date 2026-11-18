@@ -22,9 +22,11 @@ import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.first
@@ -32,6 +34,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import kotlinx.coroutines.withTimeout
 import org.junit.After
@@ -161,7 +164,7 @@ class ClaimSensorViewModelTest {
     }
 
     @Test
-    fun `failed force claim returns to the instructions with the error and can be retried`() = runBlocking {
+    fun `failed force claim returns to the instructions with the error and can be retried`() = runTest(mainDispatcher) {
         coEvery { sensorClaimInteractor.contestSensor(any(), any(), any(), any()) } answers {
             arg<(ContestSensorResponse?) -> Unit>(3)(
                 RuuviNetworkResponse(RuuviNetworkResponse.errorResult, CONTEST_ERROR, null, null)
@@ -172,31 +175,32 @@ class ClaimSensorViewModelTest {
             )
         }
         val viewModel = forceClaimViewModel()
-        val events = mutableListOf<UiEvent>()
-        val collector = launch(mainDispatcher) { viewModel.uiEvent.collect { events.add(it) } }
-        viewModel.getSensorId()
-
-        nfcScans().emit(SCAN)
-
+        val events = Channel<UiEvent>(Channel.UNLIMITED)
+        backgroundScope.launch(start = CoroutineStart.UNDISPATCHED) {
+            viewModel.uiEvent.collect { events.send(it) }
+        }
+        val scans = nfcScans()
         val instructions = UiEvent.Navigate(ClaimRoutes.FORCE_CLAIM_GETTING_ID, true)
+        val progress = UiEvent.Navigate(ClaimRoutes.CLAIM_IN_PROGRESS, true)
         val error = UiEvent.ShowSnackbar(UiText.DynamicString(CONTEST_ERROR))
-        withTimeout(5.seconds) { while (error !in events) delay(10) }
-        assertEquals(
-            listOf(
-                instructions,
-                UiEvent.Navigate(ClaimRoutes.CLAIM_IN_PROGRESS, true),
-                instructions,
-                error,
-            ),
-            events.toList(),
-        )
 
-        // NFC is listened to again after the failure, so the user can retry right away.
-        nfcScans().emit(SCAN)
+        withTimeout(5.seconds) {
+            viewModel.getSensorId()
+            assertEquals(instructions, events.receive())
+            scans.subscriptionCount.first { it > 0 }
+            scans.emit(SCAN)
 
-        withTimeout(5.seconds) { while (UiEvent.NavigateUp !in events) delay(10) }
+            assertEquals(progress, events.receive())
+            assertEquals(instructions, events.receive())
+            assertEquals(error, events.receive())
+
+            scans.subscriptionCount.first { it > 0 }
+            scans.emit(SCAN)
+
+            assertEquals(progress, events.receive())
+            assertEquals(UiEvent.NavigateUp, events.receive())
+        }
         coVerify(exactly = 2) { sensorClaimInteractor.contestSensor(SENSOR_ID, SENSOR_NAME, SECRET, any()) }
-        collector.cancel()
     }
 
     @Test
@@ -423,6 +427,7 @@ class ClaimSensorViewModelTest {
         },
         sensorInfoInteractor = sensorInfoInteractor,
         sensorClaimInteractor = sensorClaimInteractor,
+        contestDispatcher = mainDispatcher,
     ).also(viewModels::add)
 
     @Suppress("UNCHECKED_CAST")
