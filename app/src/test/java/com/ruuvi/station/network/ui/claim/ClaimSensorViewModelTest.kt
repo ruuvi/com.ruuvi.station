@@ -409,7 +409,7 @@ class ClaimSensorViewModelTest {
         )
 
         viewModel.getSensorId()
-        mainDispatcher.scheduler.advanceTimeBy(3000)
+        mainDispatcher.scheduler.advanceUntilIdle()
 
         coVerify(timeout = 5_000, exactly = 1) {
             sensorClaimInteractor.contestSensor(SENSOR_ID, SENSOR_NAME, SECRET, any())
