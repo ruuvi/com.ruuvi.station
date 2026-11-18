@@ -586,6 +586,75 @@ class NetworkDataSyncInteractorTest {
     }
 
     @Test
+    fun `image upload finishing during history sync keeps the newer local background`() = runBlocking {
+        val sensor = denseSensor().copy(
+            picture = CLOUD_PICTURE,
+            subscription = denseSensor().subscription.copy(maxHistoryDays = 7),
+        )
+        val saved = stubSensor(sensor)
+        every { requestExecutor.gotAnyImagesInSync(SYNC_SENSOR_ID) } returns false
+        coEvery { networkInteractor.getSensorData(any()) } answers {
+            simulateCompletedUpload(saved)
+            null
+        }
+
+        syncAndJoin()
+
+        coVerify(exactly = 1) { networkInteractor.getSensorData(any()) }
+        coVerify(exactly = 0) { imageInteractor.downloadImage(any(), any()) }
+        verify(exactly = 0) {
+            sensorSettingsRepository.updateSensorBackground(any(), any(), any(), any(), any(), any())
+        }
+        verify(exactly = 0) { sensorSettingsRepository.setDefaultSensorBackground(any(), any()) }
+        assertEquals(UPLOADED_FILE_URI, saved.userBackground)
+        assertEquals(UPLOADED_GUID, saved.networkBackground)
+        assertEquals(UPLOADED_TIMESTAMP, saved.backgroundTimestamp)
+    }
+
+    @Test
+    fun `image upload finishing during history sync is not reset by an empty cloud picture`() = runBlocking {
+        val sensor = denseSensor().copy(subscription = denseSensor().subscription.copy(maxHistoryDays = 7))
+        val saved = stubSensor(sensor, localSettings().copy(imageUrl = "https://example.com/old.jpg"))
+        coEvery { networkInteractor.getSensorData(any()) } answers {
+            simulateCompletedUpload(saved)
+            null
+        }
+
+        syncAndJoin()
+
+        verify(exactly = 0) {
+            sensorSettingsRepository.updateSensorBackground(any(), any(), any(), any(), any(), any())
+        }
+        verify(exactly = 0) { sensorSettingsRepository.setDefaultSensorBackground(any(), any()) }
+        assertEquals(UPLOADED_FILE_URI, saved.userBackground)
+        assertEquals(UPLOADED_GUID, saved.networkBackground)
+    }
+
+    @Test
+    fun `image upload finishing during cloud image download keeps the newer local background`() = runBlocking {
+        val saved = stubSensor(denseSensor().copy(picture = CLOUD_PICTURE))
+        coEvery { imageInteractor.downloadImage(any(), CLOUD_PICTURE) } answers {
+            simulateCompletedUpload(saved)
+            mockk(relaxed = true)
+        }
+
+        syncAndJoin()
+
+        coVerify(exactly = 1) { imageInteractor.downloadImage(any(), CLOUD_PICTURE) }
+        verify(exactly = 0) {
+            sensorSettingsRepository.updateSensorBackground(any(), any(), any(), any(), any(), any())
+        }
+        assertEquals(UPLOADED_FILE_URI, saved.userBackground)
+    }
+
+    /** Mirrors the local state after a user photo is set and its cloud upload completes. */
+    private fun simulateCompletedUpload(settings: SensorSettings) {
+        settings.userBackground = UPLOADED_FILE_URI
+        settings.networkBackground = UPLOADED_GUID
+        settings.backgroundTimestamp = UPLOADED_TIMESTAMP
+    }
+
+    @Test
     fun `empty cloud picture preserves a local user background`() = runBlocking {
         stubSensor(
             denseSensor(),
@@ -872,5 +941,8 @@ class NetworkDataSyncInteractorTest {
         private const val TIMEOUT = 5_000L
         private const val CLOUD_PICTURE = "https://example.com/images/cloud-guid.jpg"
         private const val CLOUD_FILE_URI = "file:///cloud-guid.jpg"
+        private const val UPLOADED_FILE_URI = "file:///uploaded-photo.jpg"
+        private const val UPLOADED_GUID = "uploaded-guid"
+        private const val UPLOADED_TIMESTAMP = 500L
     }
 }

@@ -538,7 +538,9 @@ class NetworkDataSyncInteractor (
             val sensorSettings = sensorSettingsRepository.getSensorSettings(sensor.sensor)
 
             if (sensorSettings != null) {
-                if (sensor.picture.isBlank()) {
+                if (hasNewerLocalBackground(sensor, sensorSettings)) {
+                    Timber.d("Keeping newer local background for ${sensor.sensor}")
+                } else if (sensor.picture.isBlank()) {
                     setDefaultBackgroundLocally(sensor.sensor, sensorSettings)
                 } else {
                     setSensorImage(sensor, sensorSettings)
@@ -580,6 +582,12 @@ class NetworkDataSyncInteractor (
                     imageInteractor.getFilename(sensor.sensor, ImageSource.CLOUD),
                     sensor.picture
                 )
+                // A local upload may have finished while the image was downloading.
+                val currentSettings = sensorSettingsRepository.getSensorSettings(sensor.sensor)
+                if (currentSettings != null && hasNewerLocalBackground(sensor, currentSettings)) {
+                    Timber.d("Discarding downloaded cloud image, local background is newer for ${sensor.sensor}")
+                    return
+                }
                 sensorSettingsRepository.updateSensorBackground(
                     sensor.sensor,
                     Uri.fromFile(imageFile).toString(),
@@ -593,6 +601,10 @@ class NetworkDataSyncInteractor (
             }
         }
     }
+
+
+    private fun hasNewerLocalBackground(sensor: SensorsDenseInfo, sensorSettings: SensorSettings): Boolean =
+        sensorSettings.userBackground != null && sensorSettings.backgroundTimestamp > sensor.lastUpdated
 
     private fun getNetworkImageGuid(pictureUrl: String): String? {
         return try {
