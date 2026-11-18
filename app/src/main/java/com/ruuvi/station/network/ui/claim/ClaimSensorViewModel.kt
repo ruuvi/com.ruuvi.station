@@ -29,7 +29,15 @@ class ClaimSensorViewModel (
 
     val isAir = interactor.getTagById(sensorId)?.isAir()
 
+    private var claimStateChecked = false
+
+    /**
+     * Picks the first claim page. Runs once per ViewModel: the Activity calls it from onCreate, and
+     * a rotation must not send the user back from the force claim instructions to the start.
+     */
     fun checkClaimState() {
+        if (claimStateChecked) return
+        claimStateChecked = true
         Timber.d("checkClaimState")
         if (!ruuviNetworkInteractor.signedIn) {
             emitUiEvent(UiEvent.Navigate(ClaimRoutes.NOT_SIGNED_IN, true))
