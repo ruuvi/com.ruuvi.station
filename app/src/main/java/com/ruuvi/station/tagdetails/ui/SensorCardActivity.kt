@@ -22,7 +22,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.MeasurePolicy
@@ -49,6 +48,7 @@ import com.ruuvi.station.alarm.ui.AlarmItemsViewModel
 import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.app.ui.components.limitScaleTo
 import com.ruuvi.station.app.ui.components.modifier.fadingEdge
+import com.ruuvi.station.app.ui.components.SensorBackgroundGradientLayer
 import com.ruuvi.station.app.ui.components.scaleUpTo
 import com.ruuvi.station.app.ui.theme.*
 import com.ruuvi.station.dashboard.DashboardTapAction
@@ -635,14 +635,7 @@ fun SensorCardImage(
         contentScale = ContentScale.Crop,
         onError = { Timber.e(it.result.throwable, "Failed to load sensor background") },
     )
-    AsyncImage(
-        modifier = Modifier.fillMaxSize(),
-        model = R.drawable.tag_bg_layer,
-        placeholder = ColorPainter(DefaultSensorBackgroundDark),
-        contentDescription = null,
-        contentScale = ContentScale.Crop,
-        onError = { Timber.e(it.result.throwable, "Failed to load sensor background overlay") },
-    )
+    SensorBackgroundGradientLayer(modifier = Modifier.fillMaxSize())
 }
 
 internal fun sensorCardUpdatedTextColor(
