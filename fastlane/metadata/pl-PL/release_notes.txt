@@ -1,6 +1,7 @@
-* Czytelniejsze wskaźniki alertów na kartach czujników i w oknach pomiarów.
-* Nowe menu nawigacji ułatwiające dostęp do danych czujników, historii i ustawień.
-* Zablokowano instalację starszych wersji oprogramowania RuuviTag, które mogły uniemożliwić obsługę zewnętrznych czujników temperatury.
-* Dodano brakujące przyciski sterowania w powiadomieniach o punkcie rosy Ruuvi Air.
-* Zaktualizowano teksty w oknach VOC i NOx.
-* Inne drobne poprawki błędów i ulepszenia.
+* Lepiej dopasowany rozmiar tekstu i wskaźnik jakości powietrza w widżetach.
+* Przy starcie aplikacja synchronizuje historię pobliskich Ruuvi Air przez Bluetooth.
+* Odświeżone menu pomiarów, historii, alertów i ustawień czujnika.
+* Czytelniejsze alerty i ikona ostrzegająca o nieaktualnych pomiarach.
+* Blokada powrotu do wersji oprogramowania RuuviTag bez obsługi zewnętrznych czujników temperatury.
+* Czytelniejsze komunikaty o odrzuceniu kodu logowania.
+* Inne usprawnienia i poprawki błędów.

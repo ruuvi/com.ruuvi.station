@@ -1,6 +1,7 @@
-* Indicateurs d’alerte plus clairs sur les cartes des capteurs et dans les fenêtres de mesure.
-* Nouveau menu de navigation pour accéder plus facilement aux données des capteurs, à l’historique et aux paramètres.
-* Blocage des retours à une ancienne version du firmware RuuviTag pouvant empêcher la prise en charge des capteurs de température externes.
-* Ajout des boutons de commande manquants dans les notifications de point de rosée de Ruuvi Air.
-* Mise à jour des textes des fenêtres VOC et NOx.
-* Autres corrections de bugs mineurs et améliorations.
+* Widgets avec taille du texte mieux adaptée et affichage de la qualité de l’air.
+* Au lancement, l’historique des Ruuvi Air proches se synchronise par Bluetooth.
+* Menu revu pour les mesures, l’historique, les alertes et les réglages.
+* Alertes plus claires et icône d’alerte pour les relevés périmés.
+* Blocage des retours à un firmware RuuviTag incompatible avec les sondes de température externes.
+* Erreurs plus claires si le code de connexion est refusé.
+* Autres améliorations et corrections.
