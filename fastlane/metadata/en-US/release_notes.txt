@@ -1,6 +1,7 @@
-* Clearer alert indicators on sensor cards and measurement popups.
-* New navigation menu for easier access to sensor data, history and settings.
-* Prevented RuuviTag firmware downgrades that could break external temperature sensor support.
-* Fixed missing controls in Ruuvi Air dew point notifications.
-* Updated VOC and NOx popup text.
-* Other minor bug fixes and improvements.
+* Widgets now adapt text size better and show air quality.
+* Nearby Ruuvi Air sensors now sync measurement history over Bluetooth when you open the app.
+* Redesigned menu for measurements, history, alerts and sensor settings.
+* Clearer alert indicators and a warning icon for out-of-date readings.
+* RuuviTag firmware downgrades that could disable external temperature sensors are blocked.
+* Clearer errors when a sign-in code is rejected.
+* Other improvements and bug fixes.
