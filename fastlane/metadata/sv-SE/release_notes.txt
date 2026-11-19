@@ -1,6 +1,7 @@
-* Tydligare larmindikatorer på sensorkort och i popupfönster för mätvärden.
-* Ny navigeringsmeny för enklare åtkomst till sensordata, historik och inställningar.
-* Förhindrat nedgradering av RuuviTags firmware som kunde slå ut stödet för externa temperatursensorer.
-* Åtgärdat saknade kontrollknappar i Ruuvi Airs daggpunktsaviseringar.
-* Uppdaterat texterna i popupfönstren för VOC och NOx.
-* Andra mindre buggfixar och förbättringar.
+* Widgetar med bättre anpassad textstorlek och visning av luftkvalitet.
+* Mäthistorik från Ruuvi Air i närheten synkas nu via Bluetooth när appen öppnas.
+* Uppdaterad meny för mätvärden, historik, larm och sensorinställningar.
+* Tydligare larmindikatorer och en varningsikon för inaktuella mätvärden.
+* RuuviTag-nedgraderingar som kan slå ut stödet för externa temperatursensorer blockeras.
+* Tydligare felmeddelanden när en inloggningskod avvisas.
+* Övriga förbättringar och buggfixar.

@@ -1,6 +1,7 @@
-* Selkeämmät hälytysmerkinnät anturikorteissa ja mittausten ponnahdusikkunoissa.
-* Uusi navigointivalikko helpottaa anturitietojen, historian ja asetusten käyttöä.
-* Estetty RuuviTagin laiteohjelmiston päivitykset vanhempaan versioon, jotka voivat rikkoa ulkoisten lämpötila-antureiden tuen.
-* Korjattu Ruuvi Airin kastepisteilmoituksista puuttuvat toimintopainikkeet.
-* Päivitetty VOC- ja NOx-ponnahdusikkunoiden tekstit.
-* Muita pienempiä bugikorjauksia ja parannuksia.
+* Paremmin mukautuva kirjasinkoko ja ilmanlaadun näyttö widgeteissä.
+* Lähellä olevien Ruuvi Air -anturien mittaushistoria synkronoituu nyt Bluetooth-yhteydellä, kun avaat sovelluksen.
+* Uudistunut valikko mittauksille, historialle, hälytyksille ja anturiasetuksille.
+* Selkeämmät hälytysmerkinnät ja varoituskuvake vanhentuneille mittauksille.
+* Estetty paluu RuuviTag-laiteohjelmistoon, joka mahdollistaisi ulkoisen lämpötila-anturin tuen poistamisen.
+* Selkeämmät virheilmoitukset kirjautumiskoodin hylkäykselle.
+* Muita parannuksia ja bugikorjauksia.

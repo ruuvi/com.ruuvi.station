@@ -1,6 +1,7 @@
-* Klarere Alarmanzeigen auf Sensorkarten und in Messwert-Popups.
-* Neues Navigationsmenü für einfacheren Zugriff auf Sensordaten, Verlauf und Einstellungen.
-* Verhindert, dass RuuviTag-Firmware auf ältere Versionen zurückgesetzt wird, die die Unterstützung externer Temperatursensoren beeinträchtigen könnten.
-* Fehlende Bedienelemente in Ruuvi Air-Taupunktbenachrichtigungen ergänzt.
-* Texte in VOC- und NOx-Popups aktualisiert.
-* Weitere kleinere Fehlerbehebungen und Verbesserungen.
+* Widgets mit flexiblerer Schriftgröße und Luftqualitätsanzeige.
+* Beim App-Start wird der Messverlauf naher Ruuvi Air-Sensoren per Bluetooth synchronisiert.
+* Überarbeitetes Menü für Messwerte, Verlauf, Alarme und Sensoreinstellungen.
+* Klarere Alarmanzeigen und ein Warnsymbol bei veralteten Messwerten.
+* Schutz vor RuuviTag-Downgrades, die externe Temperatursensoren deaktivieren könnten.
+* Klarere Fehlermeldungen bei abgelehnten Anmeldecodes.
+* Weitere Verbesserungen und Fehlerbehebungen.
