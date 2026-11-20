@@ -88,6 +88,7 @@ import com.ruuvi.station.tag.domain.UpdateSource
 import com.ruuvi.station.tag.domain.isLowBattery
 import com.ruuvi.station.tagdetails.ui.SensorCardActivity
 import com.ruuvi.station.app.ui.components.SensorBackgroundGradientLayer
+import com.ruuvi.station.app.ui.components.SensorBackgroundOverlay
 import com.ruuvi.station.tagdetails.ui.SensorCardOpenType
 import com.ruuvi.station.tagsettings.ui.BackgroundActivity
 import com.ruuvi.station.tagsettings.ui.SetSensorName
@@ -1311,7 +1312,10 @@ fun DashboardImage(
             contentDescription = null,
             contentScale = ContentScale.Crop
         )
-        SensorBackgroundGradientLayer(modifier = Modifier.matchParentSize())
+        SensorBackgroundGradientLayer(
+            overlay = SensorBackgroundOverlay.Dashboard,
+            modifier = Modifier.matchParentSize(),
+        )
     }
 }
 

@@ -49,6 +49,7 @@ import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.app.ui.components.limitScaleTo
 import com.ruuvi.station.app.ui.components.modifier.fadingEdge
 import com.ruuvi.station.app.ui.components.SensorBackgroundGradientLayer
+import com.ruuvi.station.app.ui.components.SensorBackgroundOverlay
 import com.ruuvi.station.app.ui.components.scaleUpTo
 import com.ruuvi.station.app.ui.theme.*
 import com.ruuvi.station.dashboard.DashboardTapAction
@@ -635,7 +636,10 @@ fun SensorCardImage(
         contentScale = ContentScale.Crop,
         onError = { Timber.e(it.result.throwable, "Failed to load sensor background") },
     )
-    SensorBackgroundGradientLayer(modifier = Modifier.fillMaxSize())
+    SensorBackgroundGradientLayer(
+        overlay = SensorBackgroundOverlay.SensorDetails,
+        modifier = Modifier.fillMaxSize(),
+    )
 }
 
 internal fun sensorCardUpdatedTextColor(
