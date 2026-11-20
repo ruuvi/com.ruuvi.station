@@ -20,7 +20,6 @@ import androidx.compose.ui.unit.dp
 import com.ruuvi.station.dashboard.ui.DashboardImage
 import com.ruuvi.station.tagdetails.ui.SensorCardImage
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
@@ -29,6 +28,10 @@ import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 import org.robolectric.annotation.GraphicsMode
 
+/**
+ * Expected alphas are sampled from the original design bitmaps (`tag_bg_layer_dashboard.png`
+ * and `tag_bg_layer.png`) at the given fractions of the design's width and height.
+ */
 @RunWith(RobolectricTestRunner::class)
 @Config(application = Application::class, sdk = [35], qualifiers = "mdpi")
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
@@ -36,21 +39,58 @@ class SensorBackgroundGradientLayerTest {
     @get:Rule val compose = createAndroidComposeRule<ComponentActivity>()
     @get:Rule val temporaryFolder = TemporaryFolder()
 
+    private data class Sample(val x: Float, val y: Float, val designAlpha: Int)
+
     @Test
-    fun `dashboard gradient covers the photo and keeps the right-side light spot`() {
-        verifyGradient(160, 90) { photo ->
-            DashboardImage(userBackground = photo, modifier = Modifier.fillMaxSize())
-        }
+    fun `dashboard overlay matches the design`() {
+        verifyOverlay(
+            width = 120,
+            height = 180,
+            samples = listOf(
+                Sample(0.97f, 0.34f, 3),
+                Sample(0.05f, 0.50f, 138),
+                Sample(0.50f, 0.95f, 149),
+                Sample(0.50f, 0.25f, 57),
+            ),
+        ) { photo -> DashboardImage(userBackground = photo, modifier = Modifier.fillMaxSize()) }
     }
 
     @Test
-    fun `sensor details gradient covers the photo and scales to a portrait layout`() {
-        verifyGradient(100, 180) { photo ->
+    fun `dashboard overlay is centre-cropped into a landscape card`() {
+        // 960x1440 design cropped into 160x90: the visible band is the design's middle,
+        // so the card's vertical centre is the design's vertical centre.
+        verifyOverlay(
+            width = 160,
+            height = 90,
+            samples = listOf(
+                Sample(0.05f, 0.50f, 138),
+                Sample(0.97f, 0.20f, 3), // design y = (18 + 75) / 240 ≈ 0.39, near the light spot
+            ),
+        ) { photo -> DashboardImage(userBackground = photo, modifier = Modifier.fillMaxSize()) }
+    }
+
+    @Test
+    fun `sensor details overlay matches the design`() {
+        verifyOverlay(
+            width = 150,
+            height = 280,
+            samples = listOf(
+                Sample(0.97f, 0.32f, 30),
+                Sample(0.05f, 0.32f, 176),
+                Sample(0.50f, 0.95f, 204),
+                Sample(0.60f, 0.30f, 89),
+            ),
+        ) { photo ->
             SensorCardImage(userBackground = photo, defaultBackground = android.R.color.black)
         }
     }
 
-    private fun verifyGradient(width: Int, height: Int, content: @Composable (Uri) -> Unit) {
+    private fun verifyOverlay(
+        width: Int,
+        height: Int,
+        samples: List<Sample>,
+        content: @Composable (Uri) -> Unit,
+    ) {
         val photo = temporaryFolder.newFile("sensor.png")
         val bitmap = Bitmap.createBitmap(16, 16, Bitmap.Config.ARGB_8888)
         bitmap.eraseColor(android.graphics.Color.rgb(240, 160, 80))
@@ -62,27 +102,28 @@ class SensorBackgroundGradientLayerTest {
             }
         }
 
-        val centerY = (height * 0.343f).toInt()
-        // Coil loads the local image asynchronously before the gradient can multiply its colors.
-        compose.waitUntil(timeoutMillis = 5_000) {
-            capture()[width - 1, centerY].red > 0.7f
-        }
-        val pixels = capture()
-        val lightSpot = pixels[width - 1, centerY]
-        val leftEdge = pixels[0, centerY]
-        val lowerRight = pixels[width - 1, height - 1]
+        fun pixelAt(pixels: androidx.compose.ui.graphics.PixelMap, sample: Sample) =
+            pixels[(sample.x * width).toInt(), (sample.y * height).toInt()]
 
-        assertMultiplier(lightSpot, 240f / 255)
-        assertMultiplier(leftEdge, 105f / 255)
-        assertMultiplier(lowerRight, 105f / 255)
-        assertTrue(pixels[width / 2, centerY].red in leftEdge.red..lightSpot.red)
+        val brightest = samples.minBy { it.designAlpha }
+        // Coil loads the local image asynchronously before the overlay darkens it.
+        compose.waitUntil(timeoutMillis = 5_000) { pixelAt(capture(), brightest).red > 0.7f }
+
+        val pixels = capture()
+        samples.forEach { sample ->
+            val keep = 1f - sample.designAlpha / 255f
+            val pixel = pixelAt(pixels, sample)
+            val message = "at (${sample.x}, ${sample.y})"
+            assertEquals(message, 240f / 255 * keep, pixel.red, TOLERANCE)
+            assertEquals(message, 160f / 255 * keep, pixel.green, TOLERANCE)
+            assertEquals(message, 80f / 255 * keep, pixel.blue, TOLERANCE)
+        }
     }
 
     private fun capture() = compose.onNodeWithTag("sensor_photo").captureToImage().toPixelMap()
 
-    private fun assertMultiplier(pixel: Color, multiplier: Float) {
-        assertEquals(240f / 255 * multiplier, pixel.red, 0.025f)
-        assertEquals(160f / 255 * multiplier, pixel.green, 0.025f)
-        assertEquals(80f / 255 * multiplier, pixel.blue, 0.025f)
+    private companion object {
+        // About 8/255 of overlay alpha on the brightest channel.
+        const val TOLERANCE = 0.035f
     }
 }
