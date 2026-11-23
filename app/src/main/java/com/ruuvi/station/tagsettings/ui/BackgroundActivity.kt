@@ -34,7 +34,7 @@ import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.RuuviTheme
 import com.ruuvi.station.util.extensions.enableRuuviEdgeToEdge
 import com.ruuvi.station.util.extensions.viewModel
-import com.ruuvi.station.util.ui.RuuviSnackbarHost
+import com.ruuvi.station.util.ui.showToast
 import org.kodein.di.DI
 import org.kodein.di.DIAware
 import org.kodein.di.android.closestDI
@@ -84,8 +84,8 @@ class BackgroundActivity : AppCompatActivity(), DIAware {
                     viewModel.uiEvent.collect { uiEvent ->
                         Timber.d("uiEvent $uiEvent")
                         when (uiEvent) {
-                            is UiEvent.ShowSnackbar -> {
-                                scaffoldState.snackbarHostState.showSnackbar(uiEvent.message.asString(context))
+                            is UiEvent.ShowToast -> {
+                                context.showToast(uiEvent.message.asString(context), uiEvent.duration)
                             }
                             is UiEvent.NavigateUp -> finish()
                             else -> {}
@@ -117,7 +117,6 @@ class BackgroundActivity : AppCompatActivity(), DIAware {
             backgroundColor = RuuviStationTheme.colors.background,
             topBar = { RuuviTopAppBar(title = stringResource(id = R.string.change_background)) },
             scaffoldState = scaffoldState,
-        snackbarHost = { RuuviSnackbarHost(it) },
         ) { paddingValues ->
 
             LazyVerticalGrid(

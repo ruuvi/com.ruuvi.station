@@ -42,7 +42,7 @@ import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.permissions.PermissionsInteractor
 import com.ruuvi.station.app.ui.RuuviTopAppBar
 import com.ruuvi.station.app.ui.UiEvent
-import com.ruuvi.station.util.ui.RuuviSnackbarHost
+import com.ruuvi.station.util.ui.showToast
 import timber.log.Timber
 
 class DfuUpdateActivity : AppCompatActivity() , DIAware {
@@ -129,11 +129,8 @@ class DfuUpdateActivity : AppCompatActivity() , DIAware {
                                             navController.navigate(uiEvent.route)
                                         }
                                     }
-                                    is UiEvent.ShowSnackbar -> {
-                                        scaffoldState.snackbarHostState.showSnackbar(
-                                            message = uiEvent.message.asString(this@DfuUpdateActivity),
-                                            actionLabel = getString(R.string.ok)
-                                        )
+                                    is UiEvent.ShowToast -> {
+                                        showToast(uiEvent.message.asString(this@DfuUpdateActivity))
                                     }
                                     is UiEvent.NavigateUp -> navController.navigateUp()
                                     else -> {}
@@ -150,7 +147,6 @@ class DfuUpdateActivity : AppCompatActivity() , DIAware {
                             backgroundColor = RuuviStationTheme.colors.background,
                             topBar = { RuuviTopAppBar(title = stringResource(R.string.title_activity_dfu_update)) },
                             scaffoldState = scaffoldState,
-        snackbarHost = { RuuviSnackbarHost(it) },
                         ) { padding ->
                             NavHost(
                                 modifier = Modifier.padding(padding).navigationBarsPadding(),

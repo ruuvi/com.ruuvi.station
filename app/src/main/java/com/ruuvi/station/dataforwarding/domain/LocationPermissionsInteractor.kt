@@ -4,16 +4,15 @@ import android.Manifest
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.net.Uri
 import android.os.Build
 import android.provider.Settings
 import androidx.activity.result.ActivityResultLauncher
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import com.google.android.material.snackbar.Snackbar
 import com.ruuvi.station.R
-import com.ruuvi.station.util.ui.showBottomSnackbar
+import com.ruuvi.station.util.ui.ToastDuration
+import com.ruuvi.station.util.ui.showToast
 import timber.log.Timber
 
 class LocationPermissionsInteractor(private val activity: Activity) {
@@ -63,19 +62,9 @@ class LocationPermissionsInteractor(private val activity: Activity) {
         }
     }
 
-    fun showLocationSnackbar() {
+    fun showLocationToast() {
         val messageText = activity.getString(R.string.data_forwarding_background_location_message_bloked)
-        activity.showBottomSnackbar(
-            message = messageText,
-            duration = Snackbar.LENGTH_LONG,
-            actionLabel = activity.getString(R.string.settings),
-        ) {
-            val intent = Intent()
-            val uri = Uri.fromParts("package", activity.packageName, null)
-            intent.action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
-            intent.data = uri
-            activity.startActivity(intent)
-        }
+        activity.showToast(messageText, ToastDuration.Long)
     }
 
     private fun getRequiredPermissions(permissions: List<String>): List<String> {

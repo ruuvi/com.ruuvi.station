@@ -9,7 +9,6 @@ import android.widget.AdapterView
 import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
-import com.google.android.material.snackbar.BaseTransientBottomBar.LENGTH_LONG
 import com.ruuvi.station.util.extensions.applyRuuviEdgeToEdgeInsets
 import com.ruuvi.station.util.extensions.enableRuuviEdgeToEdge
 import com.ruuvi.station.util.extensions.viewModel
@@ -22,7 +21,8 @@ import com.ruuvi.station.databinding.ActivityAddTagBinding
 import com.ruuvi.station.nfc.NfcScanReciever
 import com.ruuvi.station.tagdetails.ui.SensorCardActivity
 import com.ruuvi.station.util.base.NfcActivity
-import com.ruuvi.station.util.ui.showBottomSnackbar
+import com.ruuvi.station.util.ui.ToastDuration
+import com.ruuvi.station.util.ui.showToast
 import org.kodein.di.DI
 import org.kodein.di.DIAware
 import org.kodein.di.android.closestDI
@@ -73,7 +73,7 @@ class AddTagActivity : NfcActivity(R.layout.activity_add_tag), DIAware {
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     requestPermission()
                 } else {
-                    permissionsInteractor.showPermissionSnackbar()
+                    permissionsInteractor.showPermissionToast()
                 }
             }
         }
@@ -101,9 +101,9 @@ class AddTagActivity : NfcActivity(R.layout.activity_add_tag), DIAware {
                         viewModel.addSensor(response.sensorId)
                         SensorCardActivity.startAfterAddingNewSensor(this@AddTagActivity, response.sensorId)
                     } else {
-                        this@AddTagActivity.showBottomSnackbar(
-                            message = getText(R.string.nfc_enable_bt_to_add_sensor),
-                            duration = LENGTH_LONG,
+                        this@AddTagActivity.showToast(
+                            R.string.nfc_enable_bt_to_add_sensor,
+                            ToastDuration.Long,
                         )
                     }
                 }

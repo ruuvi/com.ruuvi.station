@@ -1,18 +1,15 @@
 package com.ruuvi.station.app.permissions
 
 import android.Manifest
-import android.content.Intent
 import android.content.pm.PackageManager
-import android.net.Uri
 import android.os.Build
-import android.provider.Settings
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import com.google.android.material.snackbar.Snackbar
 import com.ruuvi.station.R
-import com.ruuvi.station.util.ui.showBottomSnackbar
+import com.ruuvi.station.util.ui.ToastDuration
+import com.ruuvi.station.util.ui.showToast
 import timber.log.Timber
 
 class NotificationPermissionInteractor(val activity: AppCompatActivity): BasePermissionInteractor(activity) {
@@ -35,7 +32,7 @@ class NotificationPermissionInteractor(val activity: AppCompatActivity): BasePer
     }
 
     override fun onPermissionDenied() {
-        showPermissionSnackbar(activity.getString(R.string.notification_permission_needed))
+        showPermissionToast(activity.getString(R.string.notification_permission_needed))
     }
 
     companion object {
@@ -61,18 +58,8 @@ abstract class BasePermissionInteractor(private val activity: AppCompatActivity)
         requestPermissionLauncher.launch(permission)
     }
 
-    fun showPermissionSnackbar(message: String) {
-        activity.showBottomSnackbar(
-            message = message,
-            duration = Snackbar.LENGTH_LONG,
-            actionLabel = activity.getString(R.string.settings),
-        ) {
-            val intent = Intent()
-            val uri = Uri.fromParts("package", activity.packageName, null)
-            intent.action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
-            intent.data = uri
-            activity.startActivity(intent)
-        }
+    fun showPermissionToast(message: String) {
+        activity.showToast(message, ToastDuration.Long)
     }
 
     private val requestPermissionLauncher =

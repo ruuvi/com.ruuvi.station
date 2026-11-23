@@ -51,7 +51,7 @@ class ShareSensorViewModel (
 
     private val handler = CoroutineExceptionHandler { _, exception ->
         CoroutineScope(Dispatchers.Main).launch {
-            _uiEvent.emit(UiEvent.ShowSnackbar(UiText.DynamicString(exception.message ?: "")))
+            _uiEvent.emit(UiEvent.ShowToast(UiText.DynamicString(exception.message ?: "")))
         }
     }
 
@@ -131,13 +131,13 @@ class ShareSensorViewModel (
             if (response?.isSuccess() == true) {
                 if (response.data?.invited == true) {
                     CoroutineScope(Dispatchers.Main).launch{
-                        _uiEvent.emit(UiEvent.ShowSnackbar(UiText.StringResource(R.string.share_pending_message)))
+                        _uiEvent.emit(UiEvent.ShowToast(UiText.StringResource(R.string.share_pending_message)))
                     }
                     sensorShareListRepository.insertToShareList(sensorId, email, true)
                     setEmailsFromRepository()
                 } else {
                     CoroutineScope(Dispatchers.Main).launch{
-                        _uiEvent.emit(UiEvent.ShowSnackbar(UiText.StringResource(R.string.successfully_shared)))
+                        _uiEvent.emit(UiEvent.ShowToast(UiText.StringResource(R.string.successfully_shared)))
                     }
                     sensorShareListRepository.insertToShareList(sensorId, email, false)
                     setEmailsFromRepository()
@@ -145,7 +145,7 @@ class ShareSensorViewModel (
             } else {
                 val error = response?.error ?: "Unknown error"
                 CoroutineScope(Dispatchers.Main).launch{
-                    _uiEvent.emit(UiEvent.ShowSnackbar(UiText.DynamicString(error)))
+                    _uiEvent.emit(UiEvent.ShowToast(UiText.DynamicString(error)))
                 }
             }
         }
@@ -159,7 +159,7 @@ class ShareSensorViewModel (
             } else {
                 val error = response?.error ?: "Unknown error"
                 CoroutineScope(Dispatchers.Main).launch{
-                    _uiEvent.emit(UiEvent.ShowSnackbar(UiText.DynamicString(error)))
+                    _uiEvent.emit(UiEvent.ShowToast(UiText.DynamicString(error)))
                 }
             }
         }

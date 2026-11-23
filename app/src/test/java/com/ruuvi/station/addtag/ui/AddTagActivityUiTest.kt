@@ -1,5 +1,7 @@
 package com.ruuvi.station.addtag.ui
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Build
@@ -121,6 +123,21 @@ class AddTagActivityUiTest {
                 SensorCardActivity::class.java.name,
                 shadowOf(activity).nextStartedActivity.component?.className,
             )
+        }
+    }
+
+    @Test
+    @Config(sdk = [35])
+    fun `denied add-sensor permission requests toast feedback`() {
+        every { anyConstructed<PermissionsInteractor>().showPermissionToast() } just Runs
+
+        withActivity { activity ->
+            activity.onRequestPermissionsResult(
+                PermissionsInteractor.REQUEST_CODE_PERMISSIONS,
+                arrayOf(Manifest.permission.BLUETOOTH_SCAN),
+                intArrayOf(PackageManager.PERMISSION_DENIED),
+            )
+            verify(exactly = 1) { anyConstructed<PermissionsInteractor>().showPermissionToast() }
         }
     }
 

@@ -40,9 +40,9 @@ fun ViewModel.processStatus(
                             delay(it)
                         }
                         uiEventFlow.emit(
-                            UiEvent.ShowSnackbar(
+                            UiEvent.ShowToast(
                                 com.ruuvi.station.app.ui.UiText.StringResource(com.ruuvi.station.R.string.saving_success),
-                                androidx.compose.material.SnackbarDuration.Short
+                                com.ruuvi.station.util.ui.ToastDuration.Short
                             )
                         )
                         onSuccess?.invoke()
@@ -55,9 +55,9 @@ fun ViewModel.processStatus(
                             delay(it)
                         }
                         uiEventFlow.emit(
-                            UiEvent.ShowSnackbar(
+                            UiEvent.ShowToast(
                                 com.ruuvi.station.app.ui.UiText.StringResource(com.ruuvi.station.R.string.saving_fail),
-                                androidx.compose.material.SnackbarDuration.Short
+                                com.ruuvi.station.util.ui.ToastDuration.Short
                             )
                         )
                         onFail?.invoke()
@@ -70,9 +70,9 @@ fun ViewModel.processStatus(
 
                     (Dispatchers.Main) {
                         uiEventFlow.emit(
-                            UiEvent.ShowSnackbar(
+                            UiEvent.ShowToast(
                                 com.ruuvi.station.app.ui.UiText.StringResource(com.ruuvi.station.R.string.saving_to_cloud),
-                                androidx.compose.material.SnackbarDuration.Indefinite
+                                com.ruuvi.station.util.ui.ToastDuration.Long
                             )
                         )
                     }

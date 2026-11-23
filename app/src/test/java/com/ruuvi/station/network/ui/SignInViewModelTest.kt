@@ -122,7 +122,7 @@ class SignInViewModelTest {
 
         viewModel.verifyCode(CODE)
 
-        assertEquals(listOf(UiEvent.ShowSnackbar(error)), events.filterIsInstance<UiEvent.ShowSnackbar>())
+        assertEquals(listOf(UiEvent.ShowToast(error)), events.filterIsInstance<UiEvent.ShowToast>())
         assertTrue(events.none { it is UiEvent.Navigate || it is UiEvent.NavigateUp || it is UiEvent.Finish })
         assertEquals(UiEvent.Progress(false, null), events.last { it is UiEvent.Progress })
         assertEquals(listOf(true), tokenProcessed)

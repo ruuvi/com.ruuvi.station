@@ -25,7 +25,7 @@ import com.ruuvi.station.app.ui.components.dialog.CustomContentDialog
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.RuuviTheme
 import com.ruuvi.station.network.ui.SignInActivity
-import com.ruuvi.station.util.ui.RuuviSnackbarHost
+import com.ruuvi.station.util.ui.showToast
 import com.ruuvi.station.util.base.NfcActivity
 import com.ruuvi.station.util.extensions.enableRuuviEdgeToEdge
 import com.ruuvi.station.util.extensions.viewModel
@@ -81,8 +81,8 @@ class ClaimSensorActivity : NfcActivity(), DIAware {
                             navController.navigate(uiEvent.route)
                         }
                     }
-                    is UiEvent.ShowSnackbar -> {
-                        scaffoldState.snackbarHostState.showSnackbar(uiEvent.message.asString(context))
+                    is UiEvent.ShowToast -> {
+                        context.showToast(uiEvent.message.asString(context), uiEvent.duration)
                     }
                     is UiEvent.NavigateUp -> finish()
                     else -> {}
@@ -108,7 +108,6 @@ class ClaimSensorActivity : NfcActivity(), DIAware {
             backgroundColor = RuuviStationTheme.colors.background,
             topBar = { RuuviTopAppBar(title = title) },
             scaffoldState = scaffoldState,
-            snackbarHost = { RuuviSnackbarHost(it) },
         ) { padding ->
 
             AnimatedNavHost(

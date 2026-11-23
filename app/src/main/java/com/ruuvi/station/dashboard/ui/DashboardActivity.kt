@@ -94,8 +94,7 @@ import com.ruuvi.station.units.domain.aqi.AQI
 import com.ruuvi.station.units.model.UnitType
 import com.ruuvi.station.util.base.NfcActivity
 import com.ruuvi.station.util.extensions.*
-import com.ruuvi.station.util.ui.RuuviSnackbarHost
-import kotlinx.coroutines.CoroutineScope
+import com.ruuvi.station.util.ui.RuuviToast
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -119,37 +118,21 @@ internal fun UpdateSource.dashboardIconResource(
     isDarkTheme = isDarkDashboardCard(backgroundColor),
 )
 
-internal fun showSnackbarIfIdle(
-    scope: CoroutineScope,
-    hostState: SnackbarHostState,
-    message: String,
-    activeJob: Job?,
-): Job? {
-    if (activeJob?.isActive == true || hostState.currentSnackbarData != null) {
-        return activeJob
-    }
-    return scope.launch {
-        hostState.showSnackbar(message)
-    }
+/** Shows the stale-measurements toast unless another toast is already on screen. */
+internal fun showToastIfIdle(context: Context, message: String) {
+    if (RuuviToast.isShowing()) return
+    RuuviToast.show(context, message)
 }
 
-internal fun dismissDashboardSnackbar(activeJob: Job?) {
-    activeJob?.cancel()
-}
-
+/** Hides the stale-measurements toast when the dashboard leaves the screen. */
 @Composable
-internal fun DashboardSnackbarLifecycleEffect(
-    staleSnackbarJob: Job?,
-    onStopped: () -> Unit,
-) {
+internal fun DashboardToastLifecycleEffect(staleToastMessage: String) {
     val lifecycleOwner = LocalLifecycleOwner.current
-    val currentJob by rememberUpdatedState(staleSnackbarJob)
-    val currentOnStopped by rememberUpdatedState(onStopped)
+    val currentMessage by rememberUpdatedState(staleToastMessage)
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
             if (event == Lifecycle.Event.ON_STOP) {
-                dismissDashboardSnackbar(currentJob)
-                currentOnStopped()
+                RuuviToast.cancel(currentMessage)
             }
         }
         lifecycleOwner.lifecycle.addObserver(observer)
@@ -182,13 +165,10 @@ class DashboardActivity : NfcActivity(), DIAware {
                 val systemUiController = rememberSystemUiController()
                 val systemBarsColor = colors.dashboardBackground
                 val configuration = LocalConfiguration.current
-                val staleSnackbarMessage = stringResource(R.string.sensor_measurements_outdated)
+                val staleToastMessage = stringResource(R.string.sensor_measurements_outdated)
                 val isDarkTheme = isSystemInDarkTheme()
                 val scope = rememberCoroutineScope()
-                var staleSnackbarJob by remember { mutableStateOf<Job?>(null) }
-                DashboardSnackbarLifecycleEffect(staleSnackbarJob) {
-                    staleSnackbarJob = null
-                }
+                DashboardToastLifecycleEffect(staleToastMessage)
                 val userEmail by dashboardViewModel.userEmail.observeAsState()
                 val signedIn = !userEmail.isNullOrEmpty()
                 val marketingConsent by dashboardViewModel.marketingConsent.observeAsState(false)
@@ -259,12 +239,6 @@ class DashboardActivity : NfcActivity(), DIAware {
                 ) {
                     Scaffold(
                         scaffoldState = scaffoldState,
-                        snackbarHost = {
-                            RuuviSnackbarHost(
-                                hostState = it,
-                                modifier = Modifier.navigationBarsPadding(),
-                            )
-                        },
                         modifier = Modifier.fillMaxSize(),
                         backgroundColor = RuuviStationTheme.colors.dashboardBackground,
                         topBar = {
@@ -325,13 +299,8 @@ class DashboardActivity : NfcActivity(), DIAware {
                                             getDefaultImageResource = dashboardViewModel::getDefaultImageResource,
                                             refreshing = refreshing,
                                             dragDropListState = dragDropListState,
-                                            onShowStaleSnackbar = {
-                                                staleSnackbarJob = showSnackbarIfIdle(
-                                                    scope = scope,
-                                                    hostState = scaffoldState.snackbarHostState,
-                                                    message = staleSnackbarMessage,
-                                                    activeJob = staleSnackbarJob,
-                                                )
+                                            onShowStaleToast = {
+                                                showToastIfIdle(this@DashboardActivity, staleToastMessage)
                                             },
                                         )
                                     }
@@ -631,7 +600,7 @@ fun DashboardItems(
     getDefaultImageResource: (RuuviTag) -> Int,
     dragDropListState: ItemStaggeredGridDragAndDropState,
     refreshing: Boolean,
-    onShowStaleSnackbar: () -> Unit,
+    onShowStaleToast: () -> Unit,
 ) {
     val itemHeight = 160.dp * LocalDensity.current.fontScale
 
@@ -689,7 +658,7 @@ fun DashboardItems(
                             itemIsDragged = itemIsDragged,
                             isStale = sensor.id in staleSensorIds,
                             moveItem = onMove,
-                            onShowStaleSnackbar = onShowStaleSnackbar,
+                            onShowStaleToast = onShowStaleToast,
                         )
                     DashboardType.IMAGE_VIEW ->
                         DashboardItem(
@@ -703,7 +672,7 @@ fun DashboardItems(
                             setName = setName,
                             moveItem = onMove,
                             getDefaultImageResource = getDefaultImageResource,
-                            onShowStaleSnackbar = onShowStaleSnackbar,
+                            onShowStaleToast = onShowStaleToast,
                         )
                 }
             }
@@ -788,7 +757,7 @@ fun DashboardItem(
     modifier: Modifier = Modifier,
     interactionEnabled: Boolean = true,
     isStale: Boolean = false,
-    onShowStaleSnackbar: () -> Unit = {},
+    onShowStaleToast: () -> Unit = {},
 ) {
     val context = LocalContext.current
     val modifier = if (itemIsDragged) {
@@ -912,7 +881,7 @@ fun DashboardItem(
                                 isStale = isStale,
                                 modifier = Modifier,
                                 interactionEnabled = interactionEnabled,
-                                onShowStaleSnackbar = onShowStaleSnackbar,
+                                onShowStaleToast = onShowStaleToast,
                             )
                         } else {
                             Spacer(modifier = Modifier.height(RuuviStationTheme.dimensions.huge))
@@ -937,7 +906,7 @@ fun DashboardItemSimple(
     itemIsDragged: Boolean,
     interactionEnabled: Boolean = true,
     isStale: Boolean = false,
-    onShowStaleSnackbar: () -> Unit = {},
+    onShowStaleToast: () -> Unit = {},
 ) {
     val context = LocalContext.current
     val modifier = if (itemIsDragged) {
@@ -1007,7 +976,7 @@ fun DashboardItemSimple(
                     isStale = isStale,
                     modifier = Modifier,
                     interactionEnabled = interactionEnabled,
-                    onShowStaleSnackbar = onShowStaleSnackbar,
+                    onShowStaleToast = onShowStaleToast,
                 )
             }
         }
@@ -1165,7 +1134,7 @@ fun ItemBottom(
     isStale: Boolean = false,
     modifier: Modifier = Modifier,
     interactionEnabled: Boolean = true,
-    onShowStaleSnackbar: () -> Unit = {},
+    onShowStaleToast: () -> Unit = {},
 ) {
     if (sensor.latestMeasurement != null) {
         ItemBottomUpdatedInfo(
@@ -1173,7 +1142,7 @@ fun ItemBottom(
             isStale = isStale,
             modifier = modifier,
             interactionEnabled = interactionEnabled,
-            onShowStaleSnackbar = onShowStaleSnackbar,
+            onShowStaleToast = onShowStaleToast,
         )
     } else {
         ItemBottomNoData(modifier = modifier)
@@ -1205,7 +1174,7 @@ fun ItemBottomUpdatedInfo(
     isStale: Boolean = false,
     modifier: Modifier = Modifier,
     interactionEnabled: Boolean = true,
-    onShowStaleSnackbar: () -> Unit = {},
+    onShowStaleToast: () -> Unit = {},
 ) {
     if (sensor.latestMeasurement != null) {
 
@@ -1251,7 +1220,7 @@ fun ItemBottomUpdatedInfo(
                                 if (isStale) {
                                     Modifier.clickableSingle(
                                         enabled = interactionEnabled,
-                                        onClick = onShowStaleSnackbar,
+                                        onClick = onShowStaleToast,
                                     )
                                 } else {
                                     Modifier

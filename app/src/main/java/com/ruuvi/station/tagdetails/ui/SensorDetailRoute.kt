@@ -101,8 +101,7 @@ import com.ruuvi.station.tagsettings.ui.visible_measurements.VisibleMeasurements
 import com.ruuvi.station.tagsettings.ui.visible_measurements.VisibleMeasurementsViewModel
 import com.ruuvi.station.units.domain.UnitsConverter
 import com.ruuvi.station.util.Period
-import com.ruuvi.station.util.ui.RuuviSnackbarHost
-import kotlinx.coroutines.Job
+import com.ruuvi.station.util.ui.RuuviToast
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
@@ -236,22 +235,15 @@ private fun SensorDetailScreen(
     val pagerFlingBehavior = PagerDefaults.flingBehavior(state = pagerState)
     val titlePagePosition = pagerState.currentPage + pagerState.currentPageOffsetFraction
     val context = LocalContext.current
-    val staleSnackbarMessage = stringResource(R.string.sensor_measurements_outdated)
-    var staleSnackbarJob by remember { mutableStateOf<Job?>(null) }
+    val staleToastMessage = stringResource(R.string.sensor_measurements_outdated)
 
-    fun showStaleSnackbar() {
-        if (staleSnackbarJob?.isActive == true) return
-        staleSnackbarJob = coroutineScope.launch {
-            scaffoldState.snackbarHostState.showSnackbar(staleSnackbarMessage)
-        }
+    fun showStaleToast() {
+        if (RuuviToast.isShowing(staleToastMessage)) return
+        RuuviToast.show(context, staleToastMessage)
     }
 
-    fun dismissStaleSnackbar() {
-        staleSnackbarJob?.cancel()
-        staleSnackbarJob = null
-        scaffoldState.snackbarHostState.currentSnackbarData
-            ?.takeIf { it.message == staleSnackbarMessage }
-            ?.dismiss()
+    fun dismissStaleToast() {
+        RuuviToast.cancel(staleToastMessage)
     }
 
     // Match the activity transition used by Share Sensor (@anim/enter_right, exit_left).
@@ -279,9 +271,7 @@ private fun SensorDetailScreen(
     }
 
     LaunchedEffect(currentSensor?.id, destination) {
-        staleSnackbarJob?.cancel()
-        staleSnackbarJob = null
-        scaffoldState.snackbarHostState.currentSnackbarData?.dismiss()
+        dismissStaleToast()
     }
 
     BackHandler(enabled = nestedSettings) {
@@ -516,21 +506,14 @@ private fun SensorDetailScreen(
                                 staleTimeoutSeconds = staleTimeoutSeconds,
                                 useDarkBackground = useSensorBackground,
                                 modifier = Modifier.heightIn(min = 44.dp),
-                                onShowStaleSnackbar = ::showStaleSnackbar,
-                                onDismissStaleSnackbar = ::dismissStaleSnackbar,
+                                onShowStaleToast = ::showStaleToast,
+                                onDismissStaleToast = ::dismissStaleToast,
                             )
                         }
                     }
                 }
             }
         }
-
-        RuuviSnackbarHost(
-            hostState = scaffoldState.snackbarHostState,
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .windowInsetsPadding(WindowInsets.navigationBars),
-        )
     }
 }
 

@@ -7,11 +7,15 @@ import android.os.Build
 import android.os.Looper
 import android.provider.Settings
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.result.ActivityResultLauncher
 import androidx.appcompat.app.AlertDialog
 import com.ruuvi.station.R
+import com.ruuvi.station.util.ui.latestToast
+import com.ruuvi.station.util.ui.latestToastText
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -131,34 +135,19 @@ class LocationPermissionsInteractorTest {
     }
 
     @Test
-    fun `location snackbar opens application settings`() {
+    fun `location toast is long and does not open settings`() {
         val activity = createActivity()
         val interactor = LocationPermissionsInteractor(activity)
 
-        interactor.showLocationSnackbar()
+        interactor.showLocationToast()
         Shadows.shadowOf(Looper.getMainLooper()).idleFor(100, TimeUnit.MILLISECONDS)
 
-        val message = activity.findViewById<TextView>(
-            com.google.android.material.R.id.snackbar_text,
-        )
-        val action = activity.findViewById<TextView>(
-            com.google.android.material.R.id.snackbar_action,
-        )
         assertEquals(
             activity.getString(R.string.data_forwarding_background_location_message_bloked),
-            message.text.toString(),
+            latestToastText(),
         )
-        assertEquals(activity.getString(R.string.settings), action.text.toString())
-
-        action.performClick()
-
-        val startedIntent = Shadows.shadowOf(activity).nextStartedActivity
-        assertEquals(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, startedIntent.action)
-        assertEquals(
-            "package:${activity.packageName}",
-            startedIntent.data.toString(),
-        )
-        assertTrue(startedIntent.flags and Intent.FLAG_ACTIVITY_NEW_TASK == 0)
+        assertEquals(Toast.LENGTH_LONG, latestToast()?.duration)
+        assertNull(Shadows.shadowOf(activity).nextStartedActivity)
     }
 
     private fun createActivity(): ComponentActivity =

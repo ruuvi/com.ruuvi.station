@@ -1,5 +1,7 @@
 package com.ruuvi.station.tagsettings.ui.notes
 
+import com.ruuvi.station.util.ui.showToast
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -62,14 +64,8 @@ fun Notes(
     LaunchedEffect(uiEvent) {
         uiEvent.collect { event ->
             when (event) {
-                is UiEvent.ShowSnackbar -> {
-                    launch {
-                        scaffoldState.snackbarHostState.currentSnackbarData?.dismiss()
-                        scaffoldState.snackbarHostState.showSnackbar(
-                            message = event.message.asString(context),
-                            duration = event.duration
-                        )
-                    }
+                is UiEvent.ShowToast -> {
+                    context.showToast(event.message.asString(context), event.duration)
                 }
                 else -> {}
             }

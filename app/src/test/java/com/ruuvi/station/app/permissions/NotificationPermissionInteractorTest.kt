@@ -4,13 +4,14 @@ import android.Manifest
 import android.app.Application
 import android.os.Build
 import android.os.Looper
-import android.provider.Settings
 import android.widget.FrameLayout
-import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.ruuvi.station.R
+import com.ruuvi.station.util.ui.latestToast
+import com.ruuvi.station.util.ui.latestToastText
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
+import org.junit.Assert.assertNull
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.Robolectric
@@ -24,7 +25,7 @@ import java.util.concurrent.TimeUnit
 class NotificationPermissionInteractorTest {
 
     @Test
-    fun `onPermissionDenied shows permission snackbar and opens settings`() {
+    fun `onPermissionDenied shows a long permission toast without opening settings`() {
         val controller = Robolectric.buildActivity(AppCompatActivity::class.java).create()
         val activity = controller.get().apply {
             setTheme(R.style.AppTheme)
@@ -36,27 +37,12 @@ class NotificationPermissionInteractorTest {
         interactor.onPermissionDenied()
         Shadows.shadowOf(Looper.getMainLooper()).idleFor(100, TimeUnit.MILLISECONDS)
 
-        val message = activity.findViewById<TextView>(
-            com.google.android.material.R.id.snackbar_text,
-        )
-        val action = activity.findViewById<TextView>(
-            com.google.android.material.R.id.snackbar_action,
-        )
-
         assertEquals(
             activity.getString(R.string.notification_permission_needed),
-            message.text.toString(),
+            latestToastText(),
         )
-        assertEquals(activity.getString(R.string.settings), action.text.toString())
-
-        action.performClick()
-
-        val startedIntent = Shadows.shadowOf(activity).nextStartedActivity
-        assertEquals(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, startedIntent.action)
-        assertEquals(
-            "package:${activity.packageName}",
-            startedIntent.data.toString(),
-        )
+        assertEquals(Toast.LENGTH_LONG, latestToast()?.duration)
+        assertNull(Shadows.shadowOf(activity).nextStartedActivity)
     }
 
     @Test

@@ -1,5 +1,7 @@
 package com.ruuvi.station.settings.ui
 
+import com.ruuvi.station.util.ui.showToast
+
 import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Build
@@ -42,9 +44,7 @@ fun AlertNotificationsSettings(
             AlertNotificationInteractor.openNotificationChannelSettings(context)
         } else {
             Timber.d("Not granted")
-            CoroutineScope(Dispatchers.Main).launch {
-                scaffoldState.snackbarHostState.showSnackbar(context.getString(R.string.notification_permission_needed))
-            }
+            context.showToast(R.string.notification_permission_needed)
         }
     }
 

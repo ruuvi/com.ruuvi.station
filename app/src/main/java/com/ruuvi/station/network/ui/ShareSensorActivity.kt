@@ -41,7 +41,6 @@ import androidx.compose.material.IconButton
 import androidx.compose.material.LocalMinimumInteractiveComponentEnforcement
 import androidx.compose.material.Scaffold
 import androidx.compose.material.ScaffoldState
-import androidx.compose.material.SnackbarDuration
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -78,7 +77,8 @@ import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.RuuviTheme
 import com.ruuvi.station.util.extensions.enableRuuviEdgeToEdge
 import com.ruuvi.station.util.extensions.viewModel
-import com.ruuvi.station.util.ui.RuuviSnackbarHost
+import com.ruuvi.station.util.ui.ToastDuration
+import com.ruuvi.station.util.ui.showToast
 import org.kodein.di.DI
 import org.kodein.di.DIAware
 import org.kodein.di.android.closestDI
@@ -123,7 +123,6 @@ class ShareSensorActivity : AppCompatActivity() , DIAware {
                             backgroundColor = RuuviStationTheme.colors.background,
                             topBar = { RuuviTopAppBar(title = stringResource(id = R.string.share_sensor_title)) },
                             scaffoldState = scaffoldState,
-            snackbarHost = { RuuviSnackbarHost(it) },
                         ) { paddingValues ->
                             SharingWebView(
                                 scaffoldState,
@@ -156,11 +155,10 @@ class ShareSensorActivity : AppCompatActivity() , DIAware {
                     viewModel.uiEvent.collect { uiEvent ->
                         Timber.d("uiEvent $uiEvent")
                         when (uiEvent) {
-                            is UiEvent.ShowSnackbar -> {
-                                scaffoldState.snackbarHostState.showSnackbar(
-                                    message = uiEvent.message.asString(this@ShareSensorActivity),
-                                    actionLabel = getString(R.string.ok),
-                                    duration = SnackbarDuration.Long
+                            is UiEvent.ShowToast -> {
+                                showToast(
+                                    uiEvent.message.asString(this@ShareSensorActivity),
+                                    ToastDuration.Long,
                                 )
                             }
                             else -> {}
@@ -210,7 +208,6 @@ fun ShareBody(
         backgroundColor = RuuviStationTheme.colors.background,
         topBar = { RuuviTopAppBar(title = stringResource(id = R.string.share_sensor_title)) },
         scaffoldState = scaffoldState,
-        snackbarHost = { RuuviSnackbarHost(it) },
     ) { paddingValues ->
         LazyColumn(
             modifier = Modifier
