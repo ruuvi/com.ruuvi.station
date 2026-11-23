@@ -145,9 +145,16 @@ class ItemStaggeredGridDragAndDropState(
             }
 
             if (targetItem != null) {
-                currentIndexOfDraggedItem.let { current ->
-                    onMove.invoke(current, targetItem.index)
-                    currentIndexOfDraggedItem = targetItem.index
+                val current = currentIndexOfDraggedItem
+                val firstVisibleIndex = lazyListState.firstVisibleItemIndex
+                val firstVisibleOffset = lazyListState.firstVisibleItemScrollOffset
+                onMove.invoke(current, targetItem.index)
+                currentIndexOfDraggedItem = targetItem.index
+                // Items are keyed, so the grid keeps the first visible item's key anchored.
+                // Moving that item would make the grid scroll to follow it — neutralize this
+                // by restoring the pre-move scroll position on the next measure.
+                if (current == firstVisibleIndex || targetItem.index == firstVisibleIndex) {
+                    lazyListState.requestScrollToItem(firstVisibleIndex, firstVisibleOffset)
                 }
             }
         }
