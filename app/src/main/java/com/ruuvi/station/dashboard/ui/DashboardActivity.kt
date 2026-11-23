@@ -50,8 +50,6 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.whenStarted
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.ruuvi.station.R
 import com.ruuvi.station.addtag.ui.AddTagActivity
@@ -87,8 +85,9 @@ import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.tag.domain.UpdateSource
 import com.ruuvi.station.tag.domain.isLowBattery
 import com.ruuvi.station.tagdetails.ui.SensorCardActivity
-import com.ruuvi.station.app.ui.components.SensorBackgroundGradientLayer
+import com.ruuvi.station.app.ui.components.SensorBackgroundImage
 import com.ruuvi.station.app.ui.components.SensorBackgroundOverlay
+import timber.log.Timber
 import com.ruuvi.station.tagdetails.ui.SensorCardOpenType
 import com.ruuvi.station.tagsettings.ui.BackgroundActivity
 import com.ruuvi.station.tagsettings.ui.SetSensorName
@@ -1301,22 +1300,12 @@ fun DashboardImage(
     userBackground: Uri,
     modifier: Modifier = Modifier
 ) {
-    val context = LocalContext.current
-    Box(modifier = modifier) {
-        AsyncImage(
-            modifier = modifier.fillMaxSize(),
-            model = ImageRequest.Builder(context)
-                .data(userBackground)
-                .crossfade(false)
-                .build(),
-            contentDescription = null,
-            contentScale = ContentScale.Crop
-        )
-        SensorBackgroundGradientLayer(
-            overlay = SensorBackgroundOverlay.Dashboard,
-            modifier = Modifier.matchParentSize(),
-        )
-    }
+    SensorBackgroundImage(
+        model = userBackground,
+        overlay = SensorBackgroundOverlay.Dashboard,
+        modifier = modifier.fillMaxSize(),
+        onError = { Timber.e(it, "Failed to load dashboard background") },
+    )
 }
 
 @Composable
