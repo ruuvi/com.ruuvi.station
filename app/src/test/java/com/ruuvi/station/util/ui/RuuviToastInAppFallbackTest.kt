@@ -5,10 +5,12 @@ import android.app.Application
 import android.app.NotificationManager
 import android.content.Context
 import android.os.Looper
+import android.os.SystemClock
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.test.core.app.ApplicationProvider
 import com.ruuvi.station.R
@@ -28,7 +30,11 @@ import org.robolectric.annotation.Config
 import org.robolectric.shadows.ShadowToast
 import java.util.concurrent.TimeUnit
 
-/** Android 7–9 suppresses an app's toasts while its notifications are disabled. */
+/**
+ * Toasts are drawn inside the visible screen, so their position does not depend on how the
+ * platform places toast windows, and Android 7–9 cannot suppress them when the app's
+ * notifications are disabled.
+ */
 @RunWith(RobolectricTestRunner::class)
 @Config(application = Application::class, sdk = [28])
 class RuuviToastInAppFallbackTest {
@@ -38,11 +44,12 @@ class RuuviToastInAppFallbackTest {
     @Before
     fun setUp() {
         RuuviToast.cancel()
-        ShadowToast.reset()
+        resetToasts()
     }
 
     @After
     fun tearDown() {
+        RuuviToast.stopTracking()
         RuuviToast.cancel()
         setNotificationsEnabled(true)
         RuuviToast.recommendedTimeout = { _, millis -> millis }
@@ -111,35 +118,68 @@ class RuuviToastInAppFallbackTest {
     }
 
     @Test
-    fun `with notifications enabled the system toast is used`() {
+    fun `with notifications enabled the toast is still drawn inside the activity`() {
         setNotificationsEnabled(true)
         val activity = createActivity()
 
         activity.showToast("Saved")
 
+        assertNull(latestToast())
+        assertEquals("Saved", activity.inAppToastText())
         assertEquals("Saved", latestToastText())
-        assertNull(activity.inAppToast())
+    }
+
+    @Test
+    @Config(sdk = [35])
+    fun `current Android versions draw the toast inside the activity too`() {
+        val activity = createActivity()
+
+        activity.showToast("Saved", ToastDuration.Long)
+
+        assertNull(latestToast())
+        assertEquals("Saved", activity.inAppToastText())
+        assertEquals(Toast.LENGTH_LONG, latestToastDuration())
     }
 
     @Test
     fun `without an activity the system toast is used`() {
-        setNotificationsEnabled(false)
-
         context.showToast("Saved")
 
+        assertNotNull(latestToast())
         assertEquals("Saved", latestToastText())
     }
 
     @Test
-    @Config(sdk = [29])
-    fun `Android 10 and later keep the system toast even with notifications disabled`() {
-        setNotificationsEnabled(false)
+    @Config(sdk = [35])
+    fun `an app-context toast is drawn in the visible screen`() {
+        RuuviToast.init(context as Application)
         val activity = createActivity()
 
-        activity.showToast("Saved")
+        context.showToast("Measurements may be outdated")
 
-        assertEquals("Saved", latestToastText())
-        assertNull(activity.inAppToast())
+        assertNull(latestToast())
+        assertEquals("Measurements may be outdated", activity.inAppToastText())
+    }
+
+    @Test
+    @Config(sdk = [35])
+    fun `a visible toast follows the user to the next screen for the rest of its time`() {
+        RuuviToast.init(context as Application)
+        val first = createActivity()
+        val shownAt = SystemClock.uptimeMillis()
+        first.showToast("Saved", ToastDuration.Long)
+        Shadows.shadowOf(Looper.getMainLooper()).idleFor(1_000, TimeUnit.MILLISECONDS)
+
+        val second = createActivity()
+
+        assertNull(first.inAppToast())
+        assertEquals("Saved", second.inAppToastText())
+        // Opening the screen takes a little time, so measure what is left of the toast's time.
+        val remaining = shownAt + ToastDuration.Long.visibleMillis - SystemClock.uptimeMillis()
+        Shadows.shadowOf(Looper.getMainLooper()).idleFor(remaining - 100, TimeUnit.MILLISECONDS)
+        assertNotNull(second.inAppToast())
+        Shadows.shadowOf(Looper.getMainLooper()).idleFor(200, TimeUnit.MILLISECONDS)
+        assertNull(second.inAppToast())
     }
 
     private fun setNotificationsEnabled(enabled: Boolean) {

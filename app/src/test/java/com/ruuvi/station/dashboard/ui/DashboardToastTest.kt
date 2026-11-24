@@ -1,5 +1,7 @@
 package com.ruuvi.station.dashboard.ui
 
+import com.ruuvi.station.util.ui.resetToasts
+import com.ruuvi.station.util.ui.toastShownCount
 import android.app.Application
 import android.content.Context
 import androidx.compose.runtime.CompositionLocalProvider
@@ -38,6 +40,7 @@ class DashboardToastTest {
 
     @Before
     fun setUp() {
+        resetToasts()
         RuuviToast.cancel()
         RuuviToast.clock = { now }
     }
@@ -52,11 +55,11 @@ class DashboardToastTest {
     fun `repeated stale requests do not restart the visible toast`() {
         showToastIfIdle(context, STALE)
         showToastIfIdle(context, STALE)
-        assertEquals(1, ShadowToast.shownToastCount())
+        assertEquals(1, toastShownCount())
 
         now += ToastDuration.Short.visibleMillis
         showToastIfIdle(context, STALE)
-        assertEquals(2, ShadowToast.shownToastCount())
+        assertEquals(2, toastShownCount())
     }
 
     @Test
@@ -65,7 +68,7 @@ class DashboardToastTest {
 
         showToastIfIdle(context, STALE)
 
-        assertEquals(1, ShadowToast.shownToastCount())
+        assertEquals(1, toastShownCount())
         assertEquals("Another message", latestToastText())
     }
 

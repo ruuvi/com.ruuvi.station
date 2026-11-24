@@ -1,5 +1,6 @@
 package com.ruuvi.station.tagdetails.ui
 
+import com.ruuvi.station.util.ui.toastShownCount
 import com.ruuvi.station.util.ui.RuuviToast
 import com.ruuvi.station.util.ui.latestToastText
 import org.robolectric.shadows.ShadowToast
@@ -241,7 +242,7 @@ class SensorDetailRouteComposeTest {
         }
 
         RuuviToast.cancel()
-        val shownBefore = ShadowToast.shownToastCount()
+        val shownBefore = toastShownCount()
         compose.onNodeWithContentDescription(staleMessage).performClick()
         compose.runOnIdle {
             assertEquals(staleMessage, latestToastText())
@@ -250,7 +251,7 @@ class SensorDetailRouteComposeTest {
 
         // A second tap while the toast is visible does not show it again.
         compose.onNodeWithContentDescription(staleMessage).performClick()
-        compose.runOnIdle { assertEquals(shownBefore + 1, ShadowToast.shownToastCount()) }
+        compose.runOnIdle { assertEquals(shownBefore + 1, toastShownCount()) }
 
         compose.runOnIdle {
             sensors.value = listOf(

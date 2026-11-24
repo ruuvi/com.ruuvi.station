@@ -1,5 +1,6 @@
 package com.ruuvi.station.addtag.ui
 
+import com.ruuvi.station.util.ui.latestToastText
 import android.Manifest
 import android.content.pm.PackageManager
 import android.graphics.Color
@@ -114,7 +115,7 @@ class AddTagActivityUiTest {
         every { viewModel.getTagById(sensor.id!!) } returns sensor.copy(favorite = true)
         withActivity { activity ->
             activity.binding.content.tagListView.performItemClick(View(activity), 0, 0)
-            assertEquals(activity.getString(R.string.sensor_already_added), ShadowToast.getTextOfLatestToast())
+            assertEquals(activity.getString(R.string.sensor_already_added), latestToastText())
             verify(exactly = 0) { viewModel.makeSensorFavorite(any()) }
             every { viewModel.getTagById(sensor.id!!) } returns sensor
             activity.binding.content.tagListView.performItemClick(View(activity), 0, 0)

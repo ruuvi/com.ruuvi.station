@@ -38,6 +38,7 @@ class RuuviToastTest {
 
     @Before
     fun setUp() {
+        resetToasts()
         RuuviToast.cancel()
         RuuviToast.clock = { now }
     }
@@ -91,7 +92,7 @@ class RuuviToastTest {
         context.showToast(R.string.ok, ToastDuration.Long)
 
         assertEquals(context.getString(R.string.ok), latestToastText())
-        assertEquals(Toast.LENGTH_LONG, latestToast()?.duration)
+        assertEquals(Toast.LENGTH_LONG, latestToastDuration())
     }
 
     @Test
@@ -99,7 +100,7 @@ class RuuviToastTest {
         context.showToast(R.string.ok)
 
         assertEquals(context.getString(R.string.ok), latestToastText())
-        assertEquals(Toast.LENGTH_SHORT, latestToast()?.duration)
+        assertEquals(Toast.LENGTH_SHORT, latestToastDuration())
     }
 
     @Test
@@ -111,7 +112,7 @@ class RuuviToastTest {
 
         assertTrue(Shadows.shadowOf(first).isCancelled)
         assertEquals("Saved", latestToastText())
-        assertEquals(2, ShadowToast.shownToastCount())
+        assertEquals(2, toastShownCount())
     }
 
     @Test

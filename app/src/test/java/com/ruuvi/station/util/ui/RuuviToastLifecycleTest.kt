@@ -35,7 +35,7 @@ class RuuviToastLifecycleTest {
     @Before
     fun setUp() {
         RuuviToast.cancel()
-        ShadowToast.reset()
+        resetToasts()
         RuuviToast.clock = { now }
     }
 
@@ -53,12 +53,12 @@ class RuuviToastLifecycleTest {
 
         context.showToast("Share unavailable", ToastDuration.Long)
 
-        assertNull(latestToast())
+        assertNull(latestToastText())
         assertFalse(RuuviToast.isShowing())
 
         startActivity()
         assertEquals("Share unavailable", latestToastText())
-        assertEquals(Toast.LENGTH_LONG, latestToast()?.duration)
+        assertEquals(Toast.LENGTH_LONG, latestToastDuration())
         assertTrue(RuuviToast.isShowing("Share unavailable"))
     }
 
@@ -70,7 +70,7 @@ class RuuviToastLifecycleTest {
         context.showToast("Successfully shared sensor")
         startActivity()
 
-        assertEquals(1, ShadowToast.shownToastCount())
+        assertEquals(1, toastShownCount())
         assertEquals("Successfully shared sensor", latestToastText())
     }
 
@@ -83,7 +83,7 @@ class RuuviToastLifecycleTest {
         RuuviToast.cancel("Measurements may be outdated")
         startActivity()
 
-        assertNull(latestToast())
+        assertNull(latestToastText())
     }
 
     @Test

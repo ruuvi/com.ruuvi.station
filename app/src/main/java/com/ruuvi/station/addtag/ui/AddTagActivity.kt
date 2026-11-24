@@ -6,7 +6,6 @@ import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.MenuItem
 import android.widget.AdapterView
-import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import com.ruuvi.station.util.extensions.applyRuuviEdgeToEdgeInsets
@@ -120,8 +119,7 @@ class AddTagActivity : NfcActivity(R.layout.activity_add_tag), DIAware {
         binding.content.tagListView.onItemClickListener = AdapterView.OnItemClickListener { _, _, i, _ ->
             val tag = binding.content.tagListView.getItemAtPosition(i) as RuuviTagEntity
             if (tag.id?.let { viewModel.getTagById(it)?.favorite } == true) {
-                Toast.makeText(this, getString(R.string.sensor_already_added), Toast.LENGTH_SHORT)
-                        .show()
+                this.showToast(R.string.sensor_already_added)
                 return@OnItemClickListener
             }
             viewModel.makeSensorFavorite(tag)

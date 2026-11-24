@@ -3,9 +3,7 @@ package com.ruuvi.station.app.ui.components
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.navigationBars
-import androidx.compose.foundation.layout.union
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.padding
@@ -82,11 +80,13 @@ fun ShowStatusToast(uiEvent: SharedFlow<UiEvent>) {
  */
 @Composable
 fun SaveProgressIndicator(message: String) {
-    // The popup window can span the whole screen, so the navigation bar and keyboard are
-    // added to the margin to keep the indicator above them, where a toast sits.
+    // The popup window can span the whole screen, so the navigation bar is added to the margin
+    // to keep the indicator just above it, where a toast sits. The keyboard is deliberately left
+    // out: saves start as an edit dialog closes, and following the closing keyboard would show
+    // the indicator mid-screen first (most visibly on tablets and tall phones).
     val density = LocalDensity.current
     val bottomMargin = with(density) { 16.dp.roundToPx() } +
-        WindowInsets.navigationBars.union(WindowInsets.ime).getBottom(density)
+        WindowInsets.navigationBars.getBottom(density)
     val position = remember(bottomMargin) { BottomOfWindowPosition(bottomMargin) }
 
     Popup(

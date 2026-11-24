@@ -112,6 +112,9 @@ fun Notes(
         RuuviButton(
             text = stringResource(id = R.string.update),
             onClick = {
+                // Close the keyboard for good before saving, so the save feedback sits at the
+                // bottom of the screen rather than above a keyboard that is still on screen.
+                focusManager.clearFocus()
                 keyboardController?.hide()
                 onAction(NotesActions.UpdateNote)
             }

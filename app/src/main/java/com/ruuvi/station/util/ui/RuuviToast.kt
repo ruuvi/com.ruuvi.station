@@ -21,8 +21,8 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.StringRes
+import java.lang.ref.WeakReference
 import androidx.compose.ui.graphics.toArgb
-import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.TypefaceCompat
 import androidx.core.view.ViewCompat
@@ -54,35 +54,52 @@ private const val TEXT_SIZE_SP = 14f
  * Titan), shown at the bottom of the screen. It replaces the old snackbars. Showing a toast
  * replaces the one currently visible instead of queueing behind it.
  *
- * Android 11+ draws plain text toasts itself and ignores custom colours, fonts and gravity
- * for them, so this rebuilds the default toast layout as a custom toast view. Custom toast
- * views are shown while the app is in the foreground, which covers every toast in the app.
+ * While one of the app's screens is visible, the toast is drawn inside that screen's window
+ * rather than as a system toast window. Its position is then the app's own: just above the
+ * navigation bar, and above the keyboard only while the keyboard is open. System toast windows
+ * are placed by the platform, which on some devices (e.g. Samsung tablets and tall phones) first
+ * puts them where a just-closed keyboard was, mid-screen, before moving them down. Drawing it in
+ * the app also keeps it visible on Android 7–9 when the app's notifications are disabled (the
+ * platform suppresses toasts then, even in the foreground). If the screen changes while a toast
+ * is visible, it moves to the next screen for the rest of its time, as a system toast would.
  *
- * Android 7–9 (API 24–28) suppresses all of an app's toasts while its notifications are
- * disabled, even in the foreground (Android 10 added the foreground exception). In that case
- * the same view is drawn inside the visible activity's window instead, so error and
- * confirmation messages still reach the user.
+ * A system toast (a custom view rebuilding the default layout, as Android 11+ ignores colours,
+ * fonts and gravity of plain text toasts) is used only when no screen is available.
  *
- * Android 11+ also drops custom-view toasts shown while the app is in the background. Once
- * [init] has run, a message that arrives then (e.g. a network result) is kept and shown when
- * the user returns to the app.
+ * Once [init] has run, a message that arrives while the app is in the background (e.g. a
+ * network result) is kept and shown when the user returns, since Android 11+ drops custom
+ * toasts shown from the background.
  *
- * How long a toast counts as visible follows Android's accessibility "Time to take action"
- * setting, which the system also applies to toasts (Android 10+).
+ * How long a toast stays visible follows Android's accessibility "Time to take action" setting,
+ * which the system also applies to toasts (Android 10+).
  */
 object RuuviToast {
     private val mainHandler by lazy { Handler(Looper.getMainLooper()) }
     private var current: Toast? = null
     private var currentOverlay: View? = null
+    private var overlayHost: WeakReference<Activity>? = null
     private val overlayTimeout = Runnable { removeOverlay() }
+    private var currentText: CharSequence? = null
     private var currentMessage: String? = null
     private var hiddenAt = 0L
 
     private var trackedApplication: Application? = null
     private var startedActivities = 0
+    private var resumedActivity: WeakReference<Activity>? = null
     private var pending: Pair<CharSequence, ToastDuration>? = null
 
     internal var clock: () -> Long = SystemClock::uptimeMillis
+
+    /** The last toast shown and how many have been shown, whichever way they were drawn (tests). */
+    internal var lastShown: Pair<String, ToastDuration>? = null
+        private set
+    internal var shownCount = 0
+        private set
+
+    internal fun resetHistory() {
+        lastShown = null
+        shownCount = 0
+    }
 
     /** Android's accessibility-adjusted display time for a toast that would last [millis]. */
     internal var recommendedTimeout: (Context, Long) -> Long = { context, millis ->
@@ -101,9 +118,23 @@ object RuuviToast {
         }
 
         override fun onActivityResumed(activity: Activity) {
-            val (message, duration) = pending ?: return
-            pending = null
-            show(activity, message, duration)
+            resumedActivity = WeakReference(activity)
+            pending?.let { (message, duration) ->
+                pending = null
+                show(activity, message, duration)
+                return
+            }
+            // A toast drawn in the previous screen follows the user to this one.
+            val text = currentText
+            val remaining = hiddenAt - clock()
+            if (currentOverlay != null && overlayHost?.get() !== activity && text != null && remaining > 0) {
+                removeOverlay()
+                showInActivity(activity, text, remaining)
+            }
+        }
+
+        override fun onActivityPaused(activity: Activity) {
+            if (resumedActivity?.get() === activity) resumedActivity = null
         }
 
         override fun onActivityStopped(activity: Activity) {
@@ -111,34 +142,33 @@ object RuuviToast {
         }
 
         override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) = Unit
-        override fun onActivityPaused(activity: Activity) = Unit
         override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) = Unit
         override fun onActivityDestroyed(activity: Activity) = Unit
     }
 
     /**
-     * Starts tracking whether the app is in the foreground, so toasts requested in the
-     * background are delayed until the user returns. Call once from Application.onCreate.
+     * Starts tracking the app's screens, so toasts can be drawn in the visible one, follow the
+     * user between screens and wait while the app is in the background. Call once from
+     * Application.onCreate.
      */
     fun init(application: Application) {
         if (trackedApplication === application) return
-        trackedApplication?.unregisterActivityLifecycleCallbacks(lifecycleCallbacks)
+        stopTracking()
         trackedApplication = application
-        startedActivities = 0
-        pending = null
         application.registerActivityLifecycleCallbacks(lifecycleCallbacks)
     }
 
-    /** Stops foreground tracking and drops any delayed message (tests). */
+    /** Stops screen tracking and drops any delayed message (tests). */
     internal fun stopTracking() {
         trackedApplication?.unregisterActivityLifecycleCallbacks(lifecycleCallbacks)
         trackedApplication = null
         startedActivities = 0
+        resumedActivity = null
         pending = null
     }
 
-    private val inBackground: Boolean
-        get() = trackedApplication != null && startedActivities == 0
+    private fun inBackground(appContext: Context): Boolean =
+        trackedApplication != null && trackedApplication === appContext && startedActivities == 0
 
     fun show(context: Context, message: CharSequence, duration: ToastDuration = ToastDuration.Short) {
         if (Looper.myLooper() != Looper.getMainLooper()) {
@@ -147,22 +177,26 @@ object RuuviToast {
         }
         val appContext = context.applicationContext ?: context
         hideCurrent()
-        if (inBackground) {
+        if (inBackground(appContext)) {
             // Shown when an activity resumes; only the latest message is kept, as on screen.
             pending = message to duration
+            currentText = null
             currentMessage = null
             hiddenAt = 0L
             return
         }
         val visibleMillis = recommendedTimeout(appContext, duration.visibleMillis)
-        val activity = context.findActivity()
-        if (activity != null && toastsSuppressed(appContext)) {
+        val activity = context.findActivity() ?: resumedActivity?.get()?.takeIf { it.isUsable() }
+        if (activity != null) {
             showInActivity(activity, message, visibleMillis)
         } else {
             showSystemToast(appContext, message, duration)
         }
+        currentText = message
         currentMessage = message.toString()
         hiddenAt = clock() + visibleMillis
+        lastShown = message.toString() to duration
+        shownCount++
     }
 
     private fun showSystemToast(appContext: Context, message: CharSequence, duration: ToastDuration) {
@@ -179,33 +213,39 @@ object RuuviToast {
     }
 
     private fun showInActivity(activity: Activity, message: CharSequence, visibleMillis: Long) {
-        // The decor view spans the whole window, so the navigation bar (and keyboard) inset is
-        // added to the margin to keep the toast where a system toast would sit.
         val decor = activity.window.decorView as ViewGroup
-        val insets = ViewCompat.getRootWindowInsets(decor)
-            ?.getInsets(WindowInsetsCompat.Type.navigationBars() or WindowInsetsCompat.Type.ime())
-        val bottomMargin = (BOTTOM_MARGIN_DP * activity.resources.displayMetrics.density).toInt() +
-            (insets?.bottom ?: 0)
+        val baseMargin = (BOTTOM_MARGIN_DP * activity.resources.displayMetrics.density).toInt()
         val overlay = createView(activity, message).apply {
             tag = IN_APP_TOAST_TAG
             // Announced like a system toast; not clickable, so touches reach the screen below.
             accessibilityLiveRegion = View.ACCESSIBILITY_LIVE_REGION_POLITE
         }
-        decor.addView(
-            overlay,
-            FrameLayout.LayoutParams(
-                FrameLayout.LayoutParams.MATCH_PARENT,
-                FrameLayout.LayoutParams.WRAP_CONTENT,
-                Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL,
-            ).apply { this.bottomMargin = bottomMargin },
+        val params = FrameLayout.LayoutParams(
+            FrameLayout.LayoutParams.MATCH_PARENT,
+            FrameLayout.LayoutParams.WRAP_CONTENT,
+            Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL,
         )
+        // The decor view spans the whole window, so the navigation bar and an open keyboard are
+        // added to the margin; it is updated as they change so the toast tracks the keyboard.
+        fun applyInsets(insets: WindowInsetsCompat?) {
+            val bottom = insets?.getInsets(WindowInsetsCompat.Type.navigationBars() or WindowInsetsCompat.Type.ime())
+                ?.bottom ?: 0
+            if (params.bottomMargin != baseMargin + bottom) {
+                params.bottomMargin = baseMargin + bottom
+                overlay.layoutParams = params
+            }
+        }
+        params.bottomMargin = baseMargin
+        applyInsets(ViewCompat.getRootWindowInsets(decor))
+        ViewCompat.setOnApplyWindowInsetsListener(overlay) { _, insets ->
+            applyInsets(insets)
+            insets
+        }
+        decor.addView(overlay, params)
         currentOverlay = overlay
+        overlayHost = WeakReference(activity)
         mainHandler.postDelayed(overlayTimeout, visibleMillis)
     }
-
-    private fun toastsSuppressed(context: Context): Boolean =
-        Build.VERSION.SDK_INT < Build.VERSION_CODES.Q &&
-            !NotificationManagerCompat.from(context).areNotificationsEnabled()
 
     private fun hideCurrent() {
         current?.cancel()
@@ -217,6 +257,7 @@ object RuuviToast {
         mainHandler.removeCallbacks(overlayTimeout)
         currentOverlay?.let { (it.parent as? ViewGroup)?.removeView(it) }
         currentOverlay = null
+        overlayHost = null
     }
 
     /** Whether a toast (or the toast with [message], if given) is still on screen. */
@@ -229,6 +270,7 @@ object RuuviToast {
         if (message == null || message.toString() == pending?.first?.toString()) pending = null
         if (message != null && message.toString() != currentMessage) return
         hideCurrent()
+        currentText = null
         currentMessage = null
         hiddenAt = 0L
     }
@@ -293,13 +335,15 @@ object RuuviToast {
     }
 }
 
-/** Tag of the in-app toast view drawn on API 24–28 when the app's notifications are disabled. */
+/** Tag of the toast view drawn inside an activity's window. */
 internal const val IN_APP_TOAST_TAG = "ruuvi_in_app_toast"
+
+private fun Activity.isUsable(): Boolean = !isFinishing && !isDestroyed
 
 private fun Context.findActivity(): Activity? =
     generateSequence(this) { (it as? ContextWrapper)?.baseContext }
         .filterIsInstance<Activity>()
-        .firstOrNull { !it.isFinishing }
+        .firstOrNull { it.isUsable() }
 
 fun Context.showToast(message: CharSequence, duration: ToastDuration = ToastDuration.Short) =
     RuuviToast.show(this, message, duration)

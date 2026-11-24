@@ -1,5 +1,7 @@
 package com.ruuvi.station.app.ui.components
 
+import com.ruuvi.station.util.ui.resetToasts
+import com.ruuvi.station.util.ui.latestToastDuration
 import android.app.Application
 import android.content.Context
 import android.widget.Toast
@@ -42,7 +44,7 @@ class StatusToastTest {
     @After
     fun clearToast() {
         RuuviToast.cancel()
-        ShadowToast.reset()
+        resetToasts()
     }
 
     @Test
@@ -60,7 +62,7 @@ class StatusToastTest {
         compose.onNodeWithTag(SAVE_PROGRESS_TAG)
             .assertExists()
             .assert(hasText(context.getString(R.string.saving_to_cloud)))
-        assertNull(latestToast())
+        assertNull(latestToastText())
 
         // A slow save: well past a long toast's 3.5 s, the indicator is still there.
         ShadowLooper.idleMainLooper(10, TimeUnit.SECONDS)
@@ -72,7 +74,7 @@ class StatusToastTest {
         compose.waitForIdle()
         compose.onNodeWithTag(SAVE_PROGRESS_TAG).assertDoesNotExist()
         assertEquals(context.getString(R.string.saving_success), latestToastText())
-        assertEquals(Toast.LENGTH_SHORT, latestToast()?.duration)
+        assertEquals(Toast.LENGTH_SHORT, latestToastDuration())
         compose.runOnIdle { assertEquals(true, succeeded) }
     }
 
@@ -81,7 +83,7 @@ class StatusToastTest {
         val events = showStatusToasts()
         compose.runOnIdle { events.tryEmit(UiEvent.NavigateUp) }
         compose.waitForIdle()
-        assertNull(latestToast())
+        assertNull(latestToastText())
 
         val viewModel = object : ViewModel() {}
         compose.runOnIdle {
@@ -90,7 +92,7 @@ class StatusToastTest {
         compose.waitForIdle()
         compose.onNodeWithTag(SAVE_PROGRESS_TAG).assertDoesNotExist()
         assertEquals(context.getString(R.string.saving_fail), latestToastText())
-        assertEquals(Toast.LENGTH_SHORT, latestToast()?.duration)
+        assertEquals(Toast.LENGTH_SHORT, latestToastDuration())
     }
 
     @Test

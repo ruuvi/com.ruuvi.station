@@ -2,6 +2,7 @@
 
 package com.ruuvi.station.network.ui
 
+import com.ruuvi.station.util.ui.latestToastDuration
 import android.app.Activity
 import android.content.Intent
 import android.graphics.Color
@@ -124,7 +125,7 @@ class ShareSensorActivityComposeTest {
             compose.runOnIdle { viewModel.shareTag(email) }
             compose.waitForIdle()
             assertEquals(activity.getString(R.string.successfully_shared), latestToastText())
-            assertEquals(Toast.LENGTH_SHORT, latestToast()?.duration)
+            assertEquals(Toast.LENGTH_SHORT, latestToastDuration())
             // The account requirement and next steps stay readable in the pending section, which
             // is only shown once the invited email is listed as pending.
             compose.onNodeWithText(activity.getString(R.string.share_pending_section_title)).assertExists()
@@ -135,7 +136,7 @@ class ShareSensorActivityComposeTest {
             }
             compose.waitForIdle()
             assertEquals(activity.getString(R.string.successfully_shared), latestToastText())
-            assertEquals(Toast.LENGTH_SHORT, latestToast()?.duration)
+            assertEquals(Toast.LENGTH_SHORT, latestToastDuration())
 
             compose.runOnIdle {
                 response = ShareSensorResponse(RuuviNetworkResponse.errorResult, "Share unavailable", null, null)
@@ -143,12 +144,12 @@ class ShareSensorActivityComposeTest {
             }
             compose.waitForIdle()
             assertEquals("Share unavailable", latestToastText())
-            assertEquals(Toast.LENGTH_LONG, latestToast()?.duration)
+            assertEquals(Toast.LENGTH_LONG, latestToastDuration())
 
             compose.runOnIdle { viewModel.unshareTag(email) }
             compose.waitForIdle()
             assertEquals("Unshare unavailable", latestToastText())
-            assertEquals(Toast.LENGTH_LONG, latestToast()?.duration)
+            assertEquals(Toast.LENGTH_LONG, latestToastDuration())
         }
     }
 
@@ -167,7 +168,7 @@ class ShareSensorActivityComposeTest {
             compose.runOnIdle { viewModel.shareTag(email) }
             compose.waitForIdle()
             assertEquals("Sharing is offline", latestToastText())
-            assertEquals(Toast.LENGTH_LONG, latestToast()?.duration)
+            assertEquals(Toast.LENGTH_LONG, latestToastDuration())
 
             compose.runOnIdle {
                 failure = IllegalStateException()
