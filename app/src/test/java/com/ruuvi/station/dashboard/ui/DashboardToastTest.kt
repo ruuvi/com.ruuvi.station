@@ -1,5 +1,6 @@
 package com.ruuvi.station.dashboard.ui
 
+import com.ruuvi.station.app.ui.components.HideToastWhenScreenStopsEffect
 import com.ruuvi.station.util.ui.resetToasts
 import com.ruuvi.station.util.ui.toastShownCount
 import android.app.Application
@@ -99,7 +100,7 @@ class DashboardToastTest {
     private fun setContent() {
         compose.setContent {
             CompositionLocalProvider(LocalLifecycleOwner provides owner) {
-                DashboardToastLifecycleEffect(STALE)
+                HideToastWhenScreenStopsEffect(STALE)
             }
         }
         compose.waitForIdle()

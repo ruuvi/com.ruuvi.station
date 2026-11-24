@@ -182,6 +182,55 @@ class RuuviToastInAppFallbackTest {
         assertNull(second.inAppToast())
     }
 
+    @Test
+    @Config(sdk = [35])
+    fun `a toast about one screen stays with it when another screen opens`() {
+        RuuviToast.init(context as Application)
+        val first = createActivity()
+        RuuviToast.show(first, "Measurements may be outdated", followToNextScreen = false)
+
+        val second = createActivity()
+
+        assertEquals("Measurements may be outdated", first.inAppToastText())
+        assertNull(second.inAppToast())
+    }
+
+    @Test
+    @Config(sdk = [35])
+    fun `a result for a stopped screen is shown on the screen the user is on`() {
+        RuuviToast.init(context as Application)
+        val shareController = Robolectric.buildActivity(AppCompatActivity::class.java).setup()
+        val share = shareController.get()
+        val previous = createActivity()
+        shareController.pause().stop()
+
+        share.showToast("Invalid email address", ToastDuration.Long)
+
+        assertNull(share.inAppToast())
+        assertEquals("Invalid email address", previous.inAppToastText())
+        assertNull(latestToast())
+    }
+
+    @Test
+    @Config(sdk = [35])
+    fun `a result arriving between screens waits for the next one`() {
+        RuuviToast.init(context as Application)
+        val shareController = Robolectric.buildActivity(AppCompatActivity::class.java).setup()
+        val share = shareController.get()
+        val nextController = Robolectric.buildActivity(AppCompatActivity::class.java).create().start()
+        shareController.pause().stop()
+
+        share.showToast("Successfully shared sensor")
+
+        assertNull(share.inAppToast())
+        assertNull(latestToast())
+        assertFalse(RuuviToast.isShowing())
+
+        nextController.resume()
+        Shadows.shadowOf(Looper.getMainLooper()).idle()
+        assertEquals("Successfully shared sensor", nextController.get().inAppToastText())
+    }
+
     private fun setNotificationsEnabled(enabled: Boolean) {
         val manager = context.getSystemService(NotificationManager::class.java)
         Shadows.shadowOf(manager).setNotificationsEnabled(enabled)

@@ -61,6 +61,7 @@ import com.ruuvi.station.app.permissions.NotificationPermission
 import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.app.ui.DashboardMainMenu
 import com.ruuvi.station.app.ui.DashboardTopAppBar
+import com.ruuvi.station.app.ui.components.HideToastWhenScreenStopsEffect
 import com.ruuvi.station.app.ui.components.AlertBadgeIcon
 import com.ruuvi.station.app.ui.components.Paragraph
 import com.ruuvi.station.app.ui.components.RuuviButton
@@ -121,25 +122,8 @@ internal fun UpdateSource.dashboardIconResource(
 /** Shows the stale-measurements toast unless another toast is already on screen. */
 internal fun showToastIfIdle(context: Context, message: String) {
     if (RuuviToast.isShowing()) return
-    RuuviToast.show(context, message)
-}
-
-/** Hides the stale-measurements toast when the dashboard leaves the screen. */
-@Composable
-internal fun DashboardToastLifecycleEffect(staleToastMessage: String) {
-    val lifecycleOwner = LocalLifecycleOwner.current
-    val currentMessage by rememberUpdatedState(staleToastMessage)
-    DisposableEffect(lifecycleOwner) {
-        val observer = LifecycleEventObserver { _, event ->
-            if (event == Lifecycle.Event.ON_STOP) {
-                RuuviToast.cancel(currentMessage)
-            }
-        }
-        lifecycleOwner.lifecycle.addObserver(observer)
-        onDispose {
-            lifecycleOwner.lifecycle.removeObserver(observer)
-        }
-    }
+    // About the dashboard only, so it stays here rather than following the user.
+    RuuviToast.show(context, message, followToNextScreen = false)
 }
 
 class DashboardActivity : NfcActivity(), DIAware {
@@ -168,7 +152,7 @@ class DashboardActivity : NfcActivity(), DIAware {
                 val staleToastMessage = stringResource(R.string.sensor_measurements_outdated)
                 val isDarkTheme = isSystemInDarkTheme()
                 val scope = rememberCoroutineScope()
-                DashboardToastLifecycleEffect(staleToastMessage)
+                HideToastWhenScreenStopsEffect(staleToastMessage)
                 val userEmail by dashboardViewModel.userEmail.observeAsState()
                 val signedIn = !userEmail.isNullOrEmpty()
                 val marketingConsent by dashboardViewModel.marketingConsent.observeAsState(false)

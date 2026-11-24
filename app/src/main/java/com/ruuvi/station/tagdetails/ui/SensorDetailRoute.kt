@@ -73,6 +73,7 @@ import androidx.compose.ui.unit.toSize
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.ruuvi.station.app.ui.components.HideToastWhenScreenStopsEffect
 import com.ruuvi.station.R
 import com.ruuvi.station.alarm.domain.AlarmSensorStatus
 import com.ruuvi.station.alarm.ui.AlarmItemsViewModel
@@ -239,7 +240,8 @@ private fun SensorDetailScreen(
 
     fun showStaleToast() {
         if (RuuviToast.isShowing(staleToastMessage)) return
-        RuuviToast.show(context, staleToastMessage)
+        // About this sensor view only, so it stays here rather than following the user.
+        RuuviToast.show(context, staleToastMessage, followToNextScreen = false)
     }
 
     fun dismissStaleToast() {
@@ -273,6 +275,8 @@ private fun SensorDetailScreen(
     LaunchedEffect(currentSensor?.id, destination) {
         dismissStaleToast()
     }
+    // Also hide it when leaving sensor details with Back or Home.
+    HideToastWhenScreenStopsEffect(staleToastMessage)
 
     BackHandler(enabled = nestedSettings) {
         onNestedSettingsBack()

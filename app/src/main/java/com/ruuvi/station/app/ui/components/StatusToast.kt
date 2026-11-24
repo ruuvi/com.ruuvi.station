@@ -12,6 +12,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -21,6 +23,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.liveRegion
@@ -46,6 +51,29 @@ import kotlinx.coroutines.flow.SharedFlow
 import timber.log.Timber
 
 const val SAVE_PROGRESS_TAG = "save_progress_indicator"
+
+/**
+ * Hides the toast showing [message] when this screen stops (Back, Home or another screen opening)
+ * or leaves composition. A pause alone, such as a permission prompt over the screen, keeps it.
+ * Pair with `followToNextScreen = false` so the toast does not move to the next screen first.
+ */
+@Composable
+fun HideToastWhenScreenStopsEffect(message: String) {
+    val lifecycleOwner = LocalLifecycleOwner.current
+    val currentMessage by rememberUpdatedState(message)
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_STOP) {
+                RuuviToast.cancel(currentMessage)
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+            RuuviToast.cancel(currentMessage)
+        }
+    }
+}
 
 /**
  * Shows [UiEvent.ShowToast] messages as toasts, and keeps a progress indicator on screen for as

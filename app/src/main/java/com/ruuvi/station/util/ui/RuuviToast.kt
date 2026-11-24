@@ -27,6 +27,8 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.TypefaceCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleOwner
 import com.ruuvi.station.R
 import com.ruuvi.station.app.ui.theme.ToastBackground
 import com.ruuvi.station.app.ui.theme.Titan
@@ -80,6 +82,7 @@ object RuuviToast {
     private var overlayHost: WeakReference<Activity>? = null
     private val overlayTimeout = Runnable { removeOverlay() }
     private var currentText: CharSequence? = null
+    private var currentFollowsUser = true
     private var currentMessage: String? = null
     private var hiddenAt = 0L
 
@@ -127,7 +130,9 @@ object RuuviToast {
             // A toast drawn in the previous screen follows the user to this one.
             val text = currentText
             val remaining = hiddenAt - clock()
-            if (currentOverlay != null && overlayHost?.get() !== activity && text != null && remaining > 0) {
+            if (currentOverlay != null && currentFollowsUser && overlayHost?.get() !== activity &&
+                text != null && remaining > 0
+            ) {
                 removeOverlay()
                 showInActivity(activity, text, remaining)
             }
@@ -170,9 +175,19 @@ object RuuviToast {
     private fun inBackground(appContext: Context): Boolean =
         trackedApplication != null && trackedApplication === appContext && startedActivities == 0
 
-    fun show(context: Context, message: CharSequence, duration: ToastDuration = ToastDuration.Short) {
+    /**
+     * Shows [message], replacing any visible toast. With [followToNextScreen] false the toast
+     * stays with the screen it was shown on instead of moving when another screen opens; use it
+     * for messages about that screen only, such as a stale-measurements warning.
+     */
+    fun show(
+        context: Context,
+        message: CharSequence,
+        duration: ToastDuration = ToastDuration.Short,
+        followToNextScreen: Boolean = true,
+    ) {
         if (Looper.myLooper() != Looper.getMainLooper()) {
-            mainHandler.post { show(context, message, duration) }
+            mainHandler.post { show(context, message, duration, followToNextScreen) }
             return
         }
         val appContext = context.applicationContext ?: context
@@ -185,8 +200,20 @@ object RuuviToast {
             hiddenAt = 0L
             return
         }
+        // Draw it where the user is: the caller's screen if it is on screen, otherwise the visible
+        // one (e.g. a share result arriving after the user went back to the previous screen).
+        val ownActivity = context.findActivity()
+        val visibleActivity = resumedActivity?.get()?.takeIf { it.isUsable() }
+        val activity = ownActivity?.takeIf { it.isOnScreen() } ?: visibleActivity
+        if (activity == null && ownActivity != null && trackedApplication === appContext) {
+            // Between screens: keep it for the next one to resume rather than draw it unseen.
+            pending = message to duration
+            currentText = null
+            currentMessage = null
+            hiddenAt = 0L
+            return
+        }
         val visibleMillis = recommendedTimeout(appContext, duration.visibleMillis)
-        val activity = context.findActivity() ?: resumedActivity?.get()?.takeIf { it.isUsable() }
         if (activity != null) {
             showInActivity(activity, message, visibleMillis)
         } else {
@@ -194,6 +221,7 @@ object RuuviToast {
         }
         currentText = message
         currentMessage = message.toString()
+        currentFollowsUser = followToNextScreen
         hiddenAt = clock() + visibleMillis
         lastShown = message.toString() to duration
         shownCount++
@@ -339,6 +367,10 @@ object RuuviToast {
 internal const val IN_APP_TOAST_TAG = "ruuvi_in_app_toast"
 
 private fun Activity.isUsable(): Boolean = !isFinishing && !isDestroyed
+
+/** Started and not finishing; activities that are not lifecycle owners are assumed on screen. */
+private fun Activity.isOnScreen(): Boolean =
+    isUsable() && ((this as? LifecycleOwner)?.lifecycle?.currentState?.isAtLeast(Lifecycle.State.STARTED) ?: true)
 
 private fun Context.findActivity(): Activity? =
     generateSequence(this) { (it as? ContextWrapper)?.baseContext }
