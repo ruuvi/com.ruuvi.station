@@ -2,6 +2,7 @@ package com.ruuvi.station.dashboard.ui
 
 import android.app.Application
 import androidx.activity.ComponentActivity
+import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -9,7 +10,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridState
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
-import androidx.compose.foundation.lazy.staggeredgrid.items
+import androidx.compose.foundation.lazy.staggeredgrid.itemsIndexed
 import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -52,7 +53,8 @@ class ItemStaggeredGridDragAndDropStateTest {
     private lateinit var state: ItemStaggeredGridDragAndDropState
     private lateinit var gridState: LazyStaggeredGridState
 
-    private fun setContent(columns: Int = 1, count: Int = 10) {
+    /** [itemHeight] is per item (not per slot), so a card keeps its height when it is moved. */
+    private fun setContent(columns: Int = 1, count: Int = 10, itemHeight: (item: Int) -> Int = { 50 }) {
         items.addAll(0 until count)
         compose.setContent {
             gridState = rememberLazyStaggeredGridState()
@@ -76,8 +78,8 @@ class ItemStaggeredGridDragAndDropStateTest {
                     .testTag(GRID)
                     .dragGestureHandler(scope, state, overscrollJob)
             ) {
-                items(items, key = { it }) {
-                    Box(Modifier.fillMaxWidth().height(50.dp))
+                itemsIndexed(items, key = { index, item -> state.itemKey(index, item) }) { _, item ->
+                    Box(Modifier.fillMaxWidth().height(itemHeight(item).dp))
                 }
             }
         }
@@ -204,6 +206,117 @@ class ItemStaggeredGridDragAndDropStateTest {
         assertEquals(listOf(0 to 1, 1 to 2), moves)
         assertEquals(listOf(1, 2, 0), items.take(3))
         assertEquals(0, gridState.firstVisibleItemIndex)
+    }
+
+    @Test
+    fun `dragging the first visible card in a scrolled uneven grid keeps the other column in place`() {
+        // Regression for #1756: restoring a single index and offset reset the other column's
+        // offset, so its top card jumped (e.g. from y = -15 to y = -45) when the first visible
+        // card was dragged.
+        // Uneven cards; the two that swap (3 and 6, both in the left column) are the same height so
+        // the swap itself does not reflow any other card.
+        val heights = listOf(70, 40, 55, 80, 45, 90, 80, 50, 75, 65, 85, 40, 70, 55, 60, 80)
+        setContent(columns = 2, count = heights.size, itemHeight = { heights[it] })
+        compose.runOnIdle { runBlocking { gridState.scrollBy(135f) } }
+        compose.waitForIdle()
+
+        val before = compose.runOnIdle { gridState.layoutInfo.visibleItemsInfo.toList() }
+        val first = before.minBy { it.index }
+        val otherColumnTop = before.filter { it.offset.x != first.offset.x }.minBy { it.offset.y }
+        // The columns are scrolled by different amounts, which is what made the bug visible.
+        assertTrue(first.offset.y != otherColumnTop.offset.y)
+        val target = before.filter { it.offset.x == first.offset.x && it.index > first.index }.minBy { it.index }
+        assertEquals(first.size.height, target.size.height)
+
+        // Grab the card just above its bottom edge and drag until that edge passes the target's
+        // bottom; the finger then rests inside the target.
+        val start = Offset(first.offset.x + 10f, (first.offset.y + first.size.height - 2).toFloat())
+        val distance = (target.offset.y + target.size.height - first.offset.y - first.size.height + 1).toFloat()
+        onState { onDragStart(start) }
+        onState { onDrag(Offset(0f, distance)) }
+
+        assertEquals(listOf(first.index to target.index), moves)
+        val after = compose.runOnIdle { gridState.layoutInfo.visibleItemsInfo.toList() }
+        // Cards are matched by index: a swap leaves every other card's index unchanged.
+        val otherColumnTopAfter = after.firstOrNull { it.index == otherColumnTop.index }
+        assertEquals(otherColumnTop.offset, otherColumnTopAfter?.offset)
+        // No card other than the two that swapped moves, in either column.
+        val movedIndices = setOf(first.index, target.index)
+        before.filter { it.index !in movedIndices }.forEach { card ->
+            assertEquals("card ${card.index}", card.offset, after.firstOrNull { it.index == card.index }?.offset)
+        }
+
+        // Dropping the card brings back the real keys; the grid still does not move.
+        onState { onDragInterrupted(false) }
+        val dropped = compose.runOnIdle { gridState.layoutInfo.visibleItemsInfo.toList() }
+        after.forEach { card ->
+            assertEquals("card ${card.index} after drop", card.offset, dropped.firstOrNull { it.index == card.index }?.offset)
+        }
+        assertEquals(1, doneCount)
+    }
+
+    /**
+     * Drags the first visible card onto its neighbour in the same column (down onto the next one,
+     * or the next one up onto it) and returns where the other column's top card was before and
+     * after, or null when this scroll position has no such pair.
+     */
+    private fun otherColumnTopAroundFirstCardDrag(scroll: Int, down: Boolean): Pair<IntOffset, IntOffset?>? {
+        scrollTo(index = 0)
+        compose.runOnIdle { runBlocking { gridState.scrollBy(scroll.toFloat()) } }
+        compose.waitForIdle()
+        moves.clear()
+
+        val before = compose.runOnIdle { gridState.layoutInfo.visibleItemsInfo.toList() }
+        val first = before.minByOrNull { it.index } ?: return null
+        val otherColumn = before.filter { it.offset.x != first.offset.x }
+        val otherColumnTop = otherColumn.minByOrNull { it.offset.y } ?: return null
+        val next = before.filter { it.offset.x == first.offset.x && it.index > first.index }
+            .minByOrNull { it.index } ?: return null
+        // Only the case from the bug report: the columns are scrolled by different amounts.
+        if (first.offset.y == otherColumnTop.offset.y) return null
+
+        val (dragged, target) = if (down) first to next else next to first
+        val start: Offset
+        val distance: Float
+        if (down) {
+            // Grab just above the bottom edge; drag until it passes the target's bottom edge.
+            start = Offset(dragged.offset.x + 10f, (dragged.offset.y + dragged.size.height - 2).toFloat())
+            distance = (target.offset.y + target.size.height - dragged.offset.y - dragged.size.height + 1).toFloat()
+        } else {
+            // Grab just below the top edge; drag until it passes the target's top edge.
+            start = Offset(dragged.offset.x + 10f, (dragged.offset.y + 2).toFloat())
+            distance = (target.offset.y - dragged.offset.y - 1).toFloat()
+        }
+        // The grab point must be on screen for a real finger.
+        if (start.y < 0) return null
+        onState { onDragStart(start) }
+        onState { onDrag(Offset(0f, distance)) }
+        assertEquals("scroll $scroll", listOf(dragged.index to target.index), moves)
+
+        val after = compose.runOnIdle { gridState.layoutInfo.visibleItemsInfo.toList() }
+        onState { onDragInterrupted(true) }
+        // Put the cards back for the next scroll position.
+        compose.runOnIdle { items.sort() }
+        compose.waitForIdle()
+        return otherColumnTop.offset to after.firstOrNull { it.index == otherColumnTop.index }?.offset
+    }
+
+    @Test
+    fun `dragging the first visible card never moves the other column at any scroll position`() {
+        // Uneven cards, including swaps of cards with different heights, and scroll positions where
+        // the first visible card is in either column.
+        val heights = listOf(70, 40, 55, 80, 45, 90, 60, 50, 75, 65, 85, 40, 70, 55, 60, 80, 45, 95, 50, 70)
+        setContent(columns = 2, count = heights.size, itemHeight = { heights[it] })
+
+        var checked = 0
+        for (scroll in 15..400 step 15) {
+            for (down in listOf(true, false)) {
+                val (before, after) = otherColumnTopAroundFirstCardDrag(scroll, down) ?: continue
+                assertEquals("scroll $scroll, ${if (down) "down" else "up"}", before, after)
+                checked++
+            }
+        }
+        assertTrue("expected many reproduced cases, got $checked", checked >= 20)
     }
 
     @Test

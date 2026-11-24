@@ -668,7 +668,7 @@ fun DashboardItems(
         ) {
             itemsIndexed(
                 items = items,
-                key = { _, sensor -> sensor.id },
+                key = { index, sensor -> dragDropListState.itemKey(index, sensor.id) },
             ) { index, sensor ->
                 val displacementOffset = if (index == dragDropListState.getCurrentIndexOfDraggedListItem()) {
                     dragDropListState.elementDisplacement.takeIf { it != IntOffset.Zero }
