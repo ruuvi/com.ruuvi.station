@@ -15,8 +15,6 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.ruuvi.station.BuildConfig
 import com.ruuvi.station.R
-import com.ruuvi.station.util.ui.ToastDuration
-import com.ruuvi.station.util.ui.showToast
 import timber.log.Timber
 
 
@@ -90,9 +88,8 @@ class PermissionsInteractor(private val activity: Activity) {
         }
     }
 
-    fun showPermissionToast() {
-        val messageText = activity.getString(getPermissionsMissedMessage())
-        activity.showToast(messageText, ToastDuration.Long)
+    fun showPermissionSettingsDialog() {
+        activity.showPermissionSettingsDialog(getPermissionsMissedMessage())
     }
 
     private fun showLocationPermissionDialog(action: Runnable) {

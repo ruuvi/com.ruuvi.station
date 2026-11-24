@@ -8,8 +8,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.ruuvi.station.R
-import com.ruuvi.station.util.ui.ToastDuration
-import com.ruuvi.station.util.ui.showToast
 import timber.log.Timber
 
 class NotificationPermissionInteractor(val activity: AppCompatActivity): BasePermissionInteractor(activity) {
@@ -32,7 +30,7 @@ class NotificationPermissionInteractor(val activity: AppCompatActivity): BasePer
     }
 
     override fun onPermissionDenied() {
-        showPermissionToast(activity.getString(R.string.notification_permission_needed))
+        activity.showPermissionSettingsDialog(R.string.notification_permission_needed)
     }
 
     companion object {
@@ -56,10 +54,6 @@ abstract class BasePermissionInteractor(private val activity: AppCompatActivity)
     protected fun requestPermission(permission: String) {
         Timber.d("Request permission $permission")
         requestPermissionLauncher.launch(permission)
-    }
-
-    fun showPermissionToast(message: String) {
-        activity.showToast(message, ToastDuration.Long)
     }
 
     private val requestPermissionLauncher =

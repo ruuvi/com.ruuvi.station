@@ -1,6 +1,5 @@
 package com.ruuvi.station.tagsettings.ui.notes
 
-import com.ruuvi.station.util.ui.showToast
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -23,7 +22,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
@@ -38,6 +36,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
 import com.ruuvi.station.R
+import com.ruuvi.station.app.ui.components.ShowStatusToast
 
 @Composable
 fun Notes(
@@ -49,7 +48,6 @@ fun Notes(
     uiEvent: SharedFlow<UiEvent>,
     onNavigateBack: () -> Unit
 ) {
-    val context = LocalContext.current
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
 
@@ -61,16 +59,7 @@ fun Notes(
         }
     }
 
-    LaunchedEffect(uiEvent) {
-        uiEvent.collect { event ->
-            when (event) {
-                is UiEvent.ShowToast -> {
-                    context.showToast(event.message.asString(context), event.duration)
-                }
-                else -> {}
-            }
-        }
-    }
+    ShowStatusToast(uiEvent)
 
     Column(
         modifier = modifier

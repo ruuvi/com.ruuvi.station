@@ -11,8 +11,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.ruuvi.station.R
-import com.ruuvi.station.util.ui.ToastDuration
-import com.ruuvi.station.util.ui.showToast
+import com.ruuvi.station.app.permissions.showPermissionSettingsDialog
 import timber.log.Timber
 
 class LocationPermissionsInteractor(private val activity: Activity) {
@@ -62,9 +61,8 @@ class LocationPermissionsInteractor(private val activity: Activity) {
         }
     }
 
-    fun showLocationToast() {
-        val messageText = activity.getString(R.string.data_forwarding_background_location_message_bloked)
-        activity.showToast(messageText, ToastDuration.Long)
+    fun showLocationSettingsDialog() {
+        activity.showPermissionSettingsDialog(R.string.data_forwarding_background_location_message_bloked)
     }
 
     private fun getRequiredPermissions(permissions: List<String>): List<String> {

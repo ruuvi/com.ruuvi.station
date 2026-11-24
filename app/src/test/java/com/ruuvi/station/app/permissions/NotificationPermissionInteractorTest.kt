@@ -2,30 +2,27 @@ package com.ruuvi.station.app.permissions
 
 import android.Manifest
 import android.app.Application
+import android.content.DialogInterface
 import android.os.Build
 import android.os.Looper
 import android.widget.FrameLayout
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.ruuvi.station.R
-import com.ruuvi.station.util.ui.latestToast
-import com.ruuvi.station.util.ui.latestToastText
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.Shadows
 import org.robolectric.annotation.Config
-import java.util.concurrent.TimeUnit
 
 @RunWith(RobolectricTestRunner::class)
 @Config(application = NotificationPermissionsTestApplication::class, sdk = [Build.VERSION_CODES.TIRAMISU])
 class NotificationPermissionInteractorTest {
 
     @Test
-    fun `onPermissionDenied shows a long permission toast without opening settings`() {
+    fun `onPermissionDenied offers a route to app settings`() {
         val controller = Robolectric.buildActivity(AppCompatActivity::class.java).create()
         val activity = controller.get().apply {
             setTheme(R.style.AppTheme)
@@ -35,14 +32,11 @@ class NotificationPermissionInteractorTest {
         controller.start().resume().visible()
 
         interactor.onPermissionDenied()
-        Shadows.shadowOf(Looper.getMainLooper()).idleFor(100, TimeUnit.MILLISECONDS)
 
-        assertEquals(
-            activity.getString(R.string.notification_permission_needed),
-            latestToastText(),
-        )
-        assertEquals(Toast.LENGTH_LONG, latestToast()?.duration)
-        assertNull(Shadows.shadowOf(activity).nextStartedActivity)
+        val dialog = latestPermissionSettingsDialog()
+        assertTrue(dialog.isShowing)
+        assertEquals(activity.getString(R.string.notification_permission_needed), dialog.messageText())
+        assertEquals(activity.getString(R.string.open_settings), dialog.getButton(DialogInterface.BUTTON_POSITIVE).text.toString())
     }
 
     @Test

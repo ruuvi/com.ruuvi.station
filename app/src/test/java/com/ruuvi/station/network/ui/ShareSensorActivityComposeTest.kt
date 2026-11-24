@@ -99,7 +99,7 @@ class ShareSensorActivityComposeTest {
     }
 
     @Test
-    fun `share and unshare results appear as long toasts`() {
+    fun `invitations confirm briefly and keep the explanation on screen while errors stay long`() {
         val email = "recipient@example.com"
         val network = mockk<RuuviNetworkInteractor>()
         var response = ShareSensorResponse(
@@ -123,8 +123,11 @@ class ShareSensorActivityComposeTest {
         withActivity(SENSOR_ID) { activity ->
             compose.runOnIdle { viewModel.shareTag(email) }
             compose.waitForIdle()
-            assertEquals(activity.getString(R.string.share_pending_message), latestToastText())
-            assertEquals(Toast.LENGTH_LONG, latestToast()?.duration)
+            assertEquals(activity.getString(R.string.successfully_shared), latestToastText())
+            assertEquals(Toast.LENGTH_SHORT, latestToast()?.duration)
+            // The account requirement and next steps stay readable in the pending section, which
+            // is only shown once the invited email is listed as pending.
+            compose.onNodeWithText(activity.getString(R.string.share_pending_section_title)).assertExists()
 
             compose.runOnIdle {
                 response = response.copy(data = ShareSensorResponseBody(sensor = SENSOR_ID, invited = false))
@@ -132,6 +135,7 @@ class ShareSensorActivityComposeTest {
             }
             compose.waitForIdle()
             assertEquals(activity.getString(R.string.successfully_shared), latestToastText())
+            assertEquals(Toast.LENGTH_SHORT, latestToast()?.duration)
 
             compose.runOnIdle {
                 response = ShareSensorResponse(RuuviNetworkResponse.errorResult, "Share unavailable", null, null)
@@ -139,10 +143,12 @@ class ShareSensorActivityComposeTest {
             }
             compose.waitForIdle()
             assertEquals("Share unavailable", latestToastText())
+            assertEquals(Toast.LENGTH_LONG, latestToast()?.duration)
 
             compose.runOnIdle { viewModel.unshareTag(email) }
             compose.waitForIdle()
             assertEquals("Unshare unavailable", latestToastText())
+            assertEquals(Toast.LENGTH_LONG, latestToast()?.duration)
         }
     }
 
@@ -161,6 +167,7 @@ class ShareSensorActivityComposeTest {
             compose.runOnIdle { viewModel.shareTag(email) }
             compose.waitForIdle()
             assertEquals("Sharing is offline", latestToastText())
+            assertEquals(Toast.LENGTH_LONG, latestToast()?.duration)
 
             compose.runOnIdle {
                 failure = IllegalStateException()

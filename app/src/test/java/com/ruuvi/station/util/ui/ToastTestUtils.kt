@@ -14,7 +14,7 @@ internal fun latestToastText(): String? =
     @Suppress("DEPRECATION")
     latestToast()?.view?.findTextView()?.text?.toString()
 
-private fun View.findTextView(): TextView? = when (this) {
+internal fun View.findTextView(): TextView? = when (this) {
     is TextView -> this
     is ViewGroup -> (0 until childCount).firstNotNullOfOrNull { getChildAt(it).findTextView() }
     else -> null

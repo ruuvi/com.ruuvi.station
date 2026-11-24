@@ -9,6 +9,7 @@ import com.ruuvi.station.R
 import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.app.ui.UiEvent
 import com.ruuvi.station.app.ui.UiText
+import com.ruuvi.station.util.ui.ToastDuration
 import com.ruuvi.station.database.domain.SensorSettingsRepository
 import com.ruuvi.station.database.domain.SensorShareListRepository
 import com.ruuvi.station.network.data.request.SensorDenseRequest
@@ -51,7 +52,7 @@ class ShareSensorViewModel (
 
     private val handler = CoroutineExceptionHandler { _, exception ->
         CoroutineScope(Dispatchers.Main).launch {
-            _uiEvent.emit(UiEvent.ShowToast(UiText.DynamicString(exception.message ?: "")))
+            _uiEvent.emit(UiEvent.ShowToast(UiText.DynamicString(exception.message ?: ""), ToastDuration.Long))
         }
     }
 
@@ -130,8 +131,10 @@ class ShareSensorViewModel (
         ruuviNetworkInteractor.shareSensor(email, sensorId, handler) { response ->
             if (response?.isSuccess() == true) {
                 if (response.data?.invited == true) {
+                    // A short confirmation only: the pending-invitations section that now lists
+                    // this email explains the account requirement and stays on screen.
                     CoroutineScope(Dispatchers.Main).launch{
-                        _uiEvent.emit(UiEvent.ShowToast(UiText.StringResource(R.string.share_pending_message)))
+                        _uiEvent.emit(UiEvent.ShowToast(UiText.StringResource(R.string.successfully_shared)))
                     }
                     sensorShareListRepository.insertToShareList(sensorId, email, true)
                     setEmailsFromRepository()
@@ -145,7 +148,7 @@ class ShareSensorViewModel (
             } else {
                 val error = response?.error ?: "Unknown error"
                 CoroutineScope(Dispatchers.Main).launch{
-                    _uiEvent.emit(UiEvent.ShowToast(UiText.DynamicString(error)))
+                    _uiEvent.emit(UiEvent.ShowToast(UiText.DynamicString(error), ToastDuration.Long))
                 }
             }
         }
@@ -159,7 +162,7 @@ class ShareSensorViewModel (
             } else {
                 val error = response?.error ?: "Unknown error"
                 CoroutineScope(Dispatchers.Main).launch{
-                    _uiEvent.emit(UiEvent.ShowToast(UiText.DynamicString(error)))
+                    _uiEvent.emit(UiEvent.ShowToast(UiText.DynamicString(error), ToastDuration.Long))
                 }
             }
         }

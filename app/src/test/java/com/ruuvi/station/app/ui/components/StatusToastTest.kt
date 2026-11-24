@@ -3,11 +3,13 @@ package com.ruuvi.station.app.ui.components
 import android.app.Application
 import android.content.Context
 import android.widget.Toast
+import androidx.compose.ui.test.assert
+import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.v2.createComposeRule
+import androidx.compose.ui.test.onNodeWithTag
 import androidx.lifecycle.ViewModel
 import androidx.test.core.app.ApplicationProvider
 import com.ruuvi.station.R
-import com.ruuvi.station.app.permissions.permissionToast
 import com.ruuvi.station.app.ui.UiEvent
 import com.ruuvi.station.app.ui.UiText
 import com.ruuvi.station.network.domain.OperationStatus
@@ -25,7 +27,9 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
+import org.robolectric.shadows.ShadowLooper
 import org.robolectric.shadows.ShadowToast
+import java.util.concurrent.TimeUnit
 
 @RunWith(RobolectricTestRunner::class)
 @Config(application = Application::class, sdk = [35])
@@ -42,21 +46,31 @@ class StatusToastTest {
     }
 
     @Test
-    fun `save reports progress as a long toast then shows success`() {
+    fun `save progress stays visible for the whole save then success shows as a toast`() {
         val events = showStatusToasts()
+        val status = MutableSharedFlow<OperationStatus>(extraBufferCapacity = 1)
         val viewModel = object : ViewModel() {}
-        compose.runOnIdle {
-            viewModel.processStatus(flowOf(OperationStatus.InProgress), events)
-        }
-        compose.waitForIdle()
-        assertEquals(context.getString(R.string.saving_to_cloud), latestToastText())
-        assertEquals(Toast.LENGTH_LONG, latestToast()?.duration)
-
         var succeeded = false
         compose.runOnIdle {
-            viewModel.processStatus(flowOf(OperationStatus.Success), events, onSuccess = { succeeded = true })
+            viewModel.processStatus(status, events, onSuccess = { succeeded = true })
         }
+
+        compose.runOnIdle { status.tryEmit(OperationStatus.InProgress) }
         compose.waitForIdle()
+        compose.onNodeWithTag(SAVE_PROGRESS_TAG)
+            .assertExists()
+            .assert(hasText(context.getString(R.string.saving_to_cloud)))
+        assertNull(latestToast())
+
+        // A slow save: well past a long toast's 3.5 s, the indicator is still there.
+        ShadowLooper.idleMainLooper(10, TimeUnit.SECONDS)
+        compose.mainClock.advanceTimeBy(10_000)
+        compose.onNodeWithTag(SAVE_PROGRESS_TAG).assertExists()
+
+        compose.runOnIdle { status.tryEmit(OperationStatus.Success) }
+        ShadowLooper.idleMainLooper(1, TimeUnit.SECONDS)
+        compose.waitForIdle()
+        compose.onNodeWithTag(SAVE_PROGRESS_TAG).assertDoesNotExist()
         assertEquals(context.getString(R.string.saving_success), latestToastText())
         assertEquals(Toast.LENGTH_SHORT, latestToast()?.duration)
         compose.runOnIdle { assertEquals(true, succeeded) }
@@ -74,17 +88,27 @@ class StatusToastTest {
             viewModel.processStatus(flowOf(OperationStatus.Fail(UiText.DynamicString("Offline"))), events)
         }
         compose.waitForIdle()
+        compose.onNodeWithTag(SAVE_PROGRESS_TAG).assertDoesNotExist()
         assertEquals(context.getString(R.string.saving_fail), latestToastText())
         assertEquals(Toast.LENGTH_SHORT, latestToast()?.duration)
     }
 
     @Test
-    fun `permission guidance uses a long toast`() {
-        val message = context.getString(R.string.permission_location_needed_api31)
-        permissionToast(context, message)
+    fun `a failed save removes the progress indicator`() {
+        val events = showStatusToasts()
+        val status = MutableSharedFlow<OperationStatus>(extraBufferCapacity = 1)
+        val viewModel = object : ViewModel() {}
+        compose.runOnIdle { viewModel.processStatus(status, events) }
 
-        assertEquals(message, latestToastText())
-        assertEquals(Toast.LENGTH_LONG, latestToast()?.duration)
+        compose.runOnIdle { status.tryEmit(OperationStatus.InProgress) }
+        compose.waitForIdle()
+        compose.onNodeWithTag(SAVE_PROGRESS_TAG).assertExists()
+
+        compose.runOnIdle { status.tryEmit(OperationStatus.Fail(UiText.DynamicString("Offline"))) }
+        ShadowLooper.idleMainLooper(1, TimeUnit.SECONDS)
+        compose.waitForIdle()
+        compose.onNodeWithTag(SAVE_PROGRESS_TAG).assertDoesNotExist()
+        assertEquals(context.getString(R.string.saving_fail), latestToastText())
     }
 
     private fun showStatusToasts(): MutableSharedFlow<UiEvent> =

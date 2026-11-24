@@ -1,7 +1,5 @@
 package com.ruuvi.station.settings.ui
 
-import com.ruuvi.station.util.ui.showToast
-
 import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Build
@@ -19,6 +17,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.core.content.ContextCompat
 import com.ruuvi.station.R
 import com.ruuvi.station.alarm.domain.AlertNotificationInteractor
+import com.ruuvi.station.app.permissions.showPermissionSettingsDialog
 import com.ruuvi.station.app.ui.components.DividerRuuvi
 import com.ruuvi.station.app.ui.components.PageSurface
 import com.ruuvi.station.app.ui.components.Paragraph
@@ -44,7 +43,7 @@ fun AlertNotificationsSettings(
             AlertNotificationInteractor.openNotificationChannelSettings(context)
         } else {
             Timber.d("Not granted")
-            context.showToast(R.string.notification_permission_needed)
+            context.showPermissionSettingsDialog(R.string.notification_permission_needed)
         }
     }
 

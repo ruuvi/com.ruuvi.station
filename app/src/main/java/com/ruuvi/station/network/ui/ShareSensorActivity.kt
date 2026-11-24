@@ -77,7 +77,6 @@ import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.RuuviTheme
 import com.ruuvi.station.util.extensions.enableRuuviEdgeToEdge
 import com.ruuvi.station.util.extensions.viewModel
-import com.ruuvi.station.util.ui.ToastDuration
 import com.ruuvi.station.util.ui.showToast
 import org.kodein.di.DI
 import org.kodein.di.DIAware
@@ -158,7 +157,7 @@ class ShareSensorActivity : AppCompatActivity() , DIAware {
                             is UiEvent.ShowToast -> {
                                 showToast(
                                     uiEvent.message.asString(this@ShareSensorActivity),
-                                    ToastDuration.Long,
+                                    uiEvent.duration,
                                 )
                             }
                             else -> {}

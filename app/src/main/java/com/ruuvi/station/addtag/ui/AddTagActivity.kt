@@ -73,7 +73,7 @@ class AddTagActivity : NfcActivity(R.layout.activity_add_tag), DIAware {
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     requestPermission()
                 } else {
-                    permissionsInteractor.showPermissionToast()
+                    permissionsInteractor.showPermissionSettingsDialog()
                 }
             }
         }

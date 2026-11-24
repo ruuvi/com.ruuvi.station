@@ -16,8 +16,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import com.google.accompanist.permissions.*
 import com.ruuvi.station.R
-import com.ruuvi.station.util.ui.ToastDuration
-import com.ruuvi.station.util.ui.showToast
 import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.app.ui.components.dialog.RuuviPermissionDialog
 import com.ruuvi.station.util.extensions.locationEnabled
@@ -91,7 +89,7 @@ fun LocationBluetoothPermissions(
             }
         } else {
             Timber.d("LocationBluetoothPermissions are NOT granted")
-            permissionToast(context, context.getString(R.string.permission_location_needed))
+            context.showPermissionSettingsDialog(R.string.permission_location_needed)
         }
     }
 
@@ -169,7 +167,7 @@ fun LocationBluetoothPermissionsAndroid11(
     val backgroundBluetoothPermissionState = rememberPermissionState(permission = ACCESS_BACKGROUND_LOCATION) { result ->
         Timber.d("Background permission request result: $result")
         if (!result) {
-            permissionToast(context, context.getString(R.string.permission_location_needed))
+            context.showPermissionSettingsDialog(R.string.permission_location_needed)
         }
 
     }
@@ -201,7 +199,7 @@ fun LocationBluetoothPermissionsAndroid11(
             }
         } else {
             Timber.d("LocationBluetoothPermissions are NOT granted")
-            permissionToast(context, context.getString(R.string.permission_location_needed))
+            context.showPermissionSettingsDialog(R.string.permission_location_needed)
         }
     }
 
@@ -291,7 +289,7 @@ fun NearbyDevicesPermissions(
             }
         } else {
             Timber.d("NearbyDevicesPermissions are NOT granted")
-            permissionToast(context, context.getString(R.string.permission_location_needed_api31))
+            context.showPermissionSettingsDialog(R.string.permission_location_needed_api31)
         }
     }
 
@@ -342,7 +340,7 @@ fun NotificationPermission(
             Timber.d("NotificationPermission are granted!")
         } else {
             Timber.d("NotificationPermission are NOT granted")
-            permissionToast(context, context.getString(R.string.notification_permission_needed))
+            context.showPermissionSettingsDialog(R.string.notification_permission_needed)
         }
         nextCheckReady.invoke()
     }
@@ -361,10 +359,6 @@ fun NotificationPermission(
 
 }
 
-
-fun permissionToast(context: Context, message: String) {
-    context.showToast(message, ToastDuration.Long)
-}
 
 fun isBluetoothEnabled(context: Context): Boolean {
     val bluetoothManager: BluetoothManager = context.getSystemService(BluetoothManager::class.java)

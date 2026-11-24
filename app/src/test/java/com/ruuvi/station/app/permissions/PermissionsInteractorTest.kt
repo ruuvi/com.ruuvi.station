@@ -3,16 +3,13 @@ package com.ruuvi.station.app.permissions
 import android.Manifest
 import android.app.Activity
 import android.app.Application
+import android.content.DialogInterface
 import android.os.Build
-import android.os.Looper
 import android.provider.Settings
 import android.widget.FrameLayout
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.ruuvi.station.R
-import com.ruuvi.station.util.ui.latestToast
-import com.ruuvi.station.util.ui.latestToastText
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
@@ -23,7 +20,6 @@ import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.Shadows
 import org.robolectric.annotation.Config
-import java.util.concurrent.TimeUnit
 
 @RunWith(RobolectricTestRunner::class)
 @Config(application = PermissionsTestApplication::class, sdk = [Build.VERSION_CODES.S])
@@ -74,19 +70,16 @@ class PermissionsInteractorTest {
     }
 
     @Test
-    fun `showPermissionToast shows a long toast without opening settings`() {
+    fun `showPermissionSettingsDialog offers a route to app settings`() {
         val activity = createActivity()
         val interactor = PermissionsInteractor(activity)
 
-        interactor.showPermissionToast()
-        Shadows.shadowOf(Looper.getMainLooper()).idleFor(100, TimeUnit.MILLISECONDS)
+        interactor.showPermissionSettingsDialog()
 
-        assertEquals(
-            activity.getString(R.string.permission_location_needed_api31),
-            latestToastText(),
-        )
-        assertEquals(Toast.LENGTH_LONG, latestToast()?.duration)
-        assertNull(Shadows.shadowOf(activity).nextStartedActivity)
+        val dialog = latestPermissionSettingsDialog()
+        assertTrue(dialog.isShowing)
+        assertEquals(activity.getString(R.string.permission_location_needed_api31), dialog.messageText())
+        assertEquals(activity.getString(R.string.open_settings), dialog.getButton(DialogInterface.BUTTON_POSITIVE).text.toString())
     }
 
     private fun createActivity(): Activity =

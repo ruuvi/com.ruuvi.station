@@ -128,8 +128,8 @@ class AddTagActivityUiTest {
 
     @Test
     @Config(sdk = [35])
-    fun `denied add-sensor permission requests toast feedback`() {
-        every { anyConstructed<PermissionsInteractor>().showPermissionToast() } just Runs
+    fun `denied add-sensor permission offers the settings dialog`() {
+        every { anyConstructed<PermissionsInteractor>().showPermissionSettingsDialog() } just Runs
 
         withActivity { activity ->
             activity.onRequestPermissionsResult(
@@ -137,7 +137,7 @@ class AddTagActivityUiTest {
                 arrayOf(Manifest.permission.BLUETOOTH_SCAN),
                 intArrayOf(PackageManager.PERMISSION_DENIED),
             )
-            verify(exactly = 1) { anyConstructed<PermissionsInteractor>().showPermissionToast() }
+            verify(exactly = 1) { anyConstructed<PermissionsInteractor>().showPermissionSettingsDialog() }
         }
     }
 

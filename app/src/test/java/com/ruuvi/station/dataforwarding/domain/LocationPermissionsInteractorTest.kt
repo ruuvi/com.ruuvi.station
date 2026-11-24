@@ -2,18 +2,16 @@ package com.ruuvi.station.dataforwarding.domain
 
 import android.Manifest
 import android.app.Application
+import android.content.DialogInterface
 import android.content.Intent
 import android.os.Build
 import android.os.Looper
 import android.provider.Settings
 import android.widget.TextView
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.result.ActivityResultLauncher
 import androidx.appcompat.app.AlertDialog
 import com.ruuvi.station.R
-import com.ruuvi.station.util.ui.latestToast
-import com.ruuvi.station.util.ui.latestToastText
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
@@ -135,19 +133,19 @@ class LocationPermissionsInteractorTest {
     }
 
     @Test
-    fun `location toast is long and does not open settings`() {
+    fun `location settings dialog offers a route to app settings`() {
         val activity = createActivity()
         val interactor = LocationPermissionsInteractor(activity)
 
-        interactor.showLocationToast()
-        Shadows.shadowOf(Looper.getMainLooper()).idleFor(100, TimeUnit.MILLISECONDS)
+        interactor.showLocationSettingsDialog()
 
+        val dialog = ShadowDialog.getLatestDialog() as AlertDialog
+        assertTrue(dialog.isShowing)
         assertEquals(
             activity.getString(R.string.data_forwarding_background_location_message_bloked),
-            latestToastText(),
+            dialog.findViewById<TextView>(android.R.id.message)?.text?.toString(),
         )
-        assertEquals(Toast.LENGTH_LONG, latestToast()?.duration)
-        assertNull(Shadows.shadowOf(activity).nextStartedActivity)
+        assertEquals(activity.getString(R.string.open_settings), dialog.getButton(DialogInterface.BUTTON_POSITIVE).text.toString())
     }
 
     private fun createActivity(): ComponentActivity =
