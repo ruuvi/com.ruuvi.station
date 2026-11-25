@@ -18,7 +18,7 @@ import org.robolectric.Shadows
 import org.robolectric.annotation.Config
 
 @RunWith(RobolectricTestRunner::class)
-@Config(application = NotificationPermissionsTestApplication::class, sdk = [Build.VERSION_CODES.TIRAMISU])
+@Config(application = NotificationPermissionsTestApplication::class, sdk = [35])
 class NotificationPermissionInteractorTest {
 
     @Test
