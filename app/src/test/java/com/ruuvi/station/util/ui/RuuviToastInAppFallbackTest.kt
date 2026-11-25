@@ -25,6 +25,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
+import org.robolectric.android.controller.ActivityController
 import org.robolectric.Shadows
 import org.robolectric.annotation.Config
 import org.robolectric.shadows.ShadowToast
@@ -41,6 +42,13 @@ class RuuviToastInAppFallbackTest {
     private val context: Context
         get() = ApplicationProvider.getApplicationContext()
 
+    // Every activity a test creates, closed after the test. A live AppCompat activity stays
+    // registered with AppCompat, so a later test that changes the night mode would recreate it.
+    private val controllers = mutableListOf<ActivityController<AppCompatActivity>>()
+
+    private fun buildActivity(): ActivityController<AppCompatActivity> =
+        Robolectric.buildActivity(AppCompatActivity::class.java).also { controllers += it }
+
     @Before
     fun setUp() {
         RuuviToast.cancel()
@@ -49,6 +57,7 @@ class RuuviToastInAppFallbackTest {
 
     @After
     fun tearDown() {
+        controllers.forEach { it.close() }
         RuuviToast.stopTracking()
         RuuviToast.cancel()
         setNotificationsEnabled(true)
@@ -199,7 +208,7 @@ class RuuviToastInAppFallbackTest {
     @Config(sdk = [35])
     fun `a result for a stopped screen is shown on the screen the user is on`() {
         RuuviToast.init(context as Application)
-        val shareController = Robolectric.buildActivity(AppCompatActivity::class.java).setup()
+        val shareController = buildActivity().setup()
         val share = shareController.get()
         val previous = createActivity()
         shareController.pause().stop()
@@ -215,7 +224,7 @@ class RuuviToastInAppFallbackTest {
     @Config(sdk = [35])
     fun `a result arriving after the next screen resumes but before the old one stops is shown on the new screen`() {
         RuuviToast.init(context as Application)
-        val shareController = Robolectric.buildActivity(AppCompatActivity::class.java).setup()
+        val shareController = buildActivity().setup()
         val share = shareController.get()
         // Navigation order: the old screen pauses, the new one resumes, then the old one stops.
         shareController.pause()
@@ -237,7 +246,7 @@ class RuuviToastInAppFallbackTest {
     @Config(sdk = [35])
     fun `a toast about the outgoing screen stays on it while the next screen resumes`() {
         RuuviToast.init(context as Application)
-        val dashboardController = Robolectric.buildActivity(AppCompatActivity::class.java).setup()
+        val dashboardController = buildActivity().setup()
         val dashboard = dashboardController.get()
         dashboardController.pause()
         val next = createActivity()
@@ -252,7 +261,7 @@ class RuuviToastInAppFallbackTest {
     @Config(sdk = [35])
     fun `a delayed toast about one screen still stays with it after it is shown`() {
         RuuviToast.init(context as Application)
-        val firstController = Robolectric.buildActivity(AppCompatActivity::class.java).setup()
+        val firstController = buildActivity().setup()
         val first = firstController.get()
         firstController.pause().stop()
 
@@ -272,7 +281,7 @@ class RuuviToastInAppFallbackTest {
     fun `an app-context message while the only screen is paused waits for it to resume`() {
         setNotificationsEnabled(false)
         RuuviToast.init(context as Application)
-        val controller = Robolectric.buildActivity(AppCompatActivity::class.java).setup()
+        val controller = buildActivity().setup()
         val activity = controller.get()
         // Paused but still started, so the app is not in the background and nothing is resumed.
         controller.pause()
@@ -293,9 +302,9 @@ class RuuviToastInAppFallbackTest {
     @Config(sdk = [35])
     fun `a result arriving between screens waits for the next one`() {
         RuuviToast.init(context as Application)
-        val shareController = Robolectric.buildActivity(AppCompatActivity::class.java).setup()
+        val shareController = buildActivity().setup()
         val share = shareController.get()
-        val nextController = Robolectric.buildActivity(AppCompatActivity::class.java).create().start()
+        val nextController = buildActivity().create().start()
         shareController.pause().stop()
 
         share.showToast("Successfully shared sensor")
@@ -315,7 +324,7 @@ class RuuviToastInAppFallbackTest {
     }
 
     private fun createActivity(): Activity =
-        Robolectric.buildActivity(AppCompatActivity::class.java)
+        buildActivity()
             .setup()
             .get()
             .apply {

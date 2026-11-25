@@ -18,6 +18,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
+import org.robolectric.android.controller.ActivityController
 import org.robolectric.Shadows
 import org.robolectric.annotation.Config
 import org.robolectric.shadows.ShadowToast
@@ -32,6 +33,13 @@ class RuuviToastLifecycleTest {
 
     private var now = 0L
 
+    // Every activity a test creates, closed after the test. A live AppCompat activity stays
+    // registered with AppCompat, so a later test that changes the night mode would recreate it.
+    private val controllers = mutableListOf<ActivityController<AppCompatActivity>>()
+
+    private fun buildActivity(): ActivityController<AppCompatActivity> =
+        Robolectric.buildActivity(AppCompatActivity::class.java).also { controllers += it }
+
     @Before
     fun setUp() {
         RuuviToast.cancel()
@@ -41,6 +49,7 @@ class RuuviToastLifecycleTest {
 
     @After
     fun tearDown() {
+        controllers.forEach { it.close() }
         RuuviToast.stopTracking()
         RuuviToast.cancel()
         RuuviToast.clock = android.os.SystemClock::uptimeMillis
@@ -111,7 +120,7 @@ class RuuviToastLifecycleTest {
     }
 
     private fun startActivity(): AppCompatActivity =
-        Robolectric.buildActivity(AppCompatActivity::class.java)
+        buildActivity()
             .setup()
             .get()
             .apply {
