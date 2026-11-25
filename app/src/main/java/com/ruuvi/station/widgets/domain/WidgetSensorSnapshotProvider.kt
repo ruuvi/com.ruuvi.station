@@ -6,6 +6,7 @@ import com.ruuvi.station.bluetooth.contract.FoundRuuviTag
 import com.ruuvi.station.database.domain.TagRepository
 import com.ruuvi.station.network.data.response.SensorDenseResponse
 import com.ruuvi.station.network.data.response.SensorsDenseInfo
+import com.ruuvi.station.network.domain.CloudClock
 import com.ruuvi.station.network.domain.RuuviNetworkInteractor
 import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.widgets.data.WidgetSensorSnapshot
@@ -139,7 +140,7 @@ internal class WidgetSensorSnapshotProvider(
             sensor = sensor,
             decoded = decoded,
             sensorInfo = sensorInfo,
-            timestampEpochSeconds = measurement.timestamp,
+            timestampEpochSeconds = CloudClock.toDeviceTime(measurement.timestamp * MILLIS_PER_SECOND) / MILLIS_PER_SECOND,
         )
     }
 

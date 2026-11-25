@@ -258,7 +258,7 @@ class NetworkDataSyncInteractor (
                     var maxTimestamp = data.maxByOrNull { it.timestamp }?.timestamp
                     if (maxTimestamp != null) {
                         maxTimestamp++
-                        since = Date(maxTimestamp * 1000)
+                        since = Date(CloudClock.toDeviceTime(maxTimestamp * 1000))
                         if (since.diffGreaterThan(60*1000) && data.size > 1) {
                             result = getSince(sensorId, since, 5000)
                             count++
@@ -312,7 +312,9 @@ class NetworkDataSyncInteractor (
             if (measurement.data.isNotEmpty()) {
                 val reading = TagSensorReading(
                     BluetoothLibrary.decode(sensorSettings.id, measurement.data, measurement.rssi),
-                    Date(measurement.timestamp * 1000)
+                    // Cloud timestamps are real time; store them on the device clock like
+                    // Bluetooth readings, so a manually set device time is respected.
+                    Date(CloudClock.toDeviceTime(measurement.timestamp * 1000))
                 )
                 reading
             } else {
@@ -636,7 +638,7 @@ class NetworkDataSyncInteractor (
         Timber.d("benchmark-getSince-$tagId since $since")
         val request = GetSensorDataRequest(
             sensor = tagId,
-            since = since,
+            since = Date(CloudClock.toCloudTime(since.time)),
             sort = SortMode.ASCENDING,
             limit = limit,
             mode = SensorDataMode.MIXED

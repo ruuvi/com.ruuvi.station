@@ -25,7 +25,8 @@ fun Date.diffGreaterThan(diff: Long): Boolean {
 fun Date.describingTimeSince(context: Context): String {
     var output = ""
     val dateNow = Date()
-    val diffInMS: Long = dateNow.time - this.time
+    // A timestamp slightly ahead of the device clock must not show as negative seconds.
+    val diffInMS: Long = (dateNow.time - this.time).coerceAtLeast(0L)
     // show date if the tag has not been seen for 24h
     if (diffInMS > hours24) {
         output += this.localizedDateTime(context)

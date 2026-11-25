@@ -471,6 +471,25 @@ class NetworkDataSyncInteractorTest {
     }
 
     @Test
+    fun `cloud timestamps are converted to the device clock`() = runBlocking {
+        // Device clock is 5 hours ahead of the cloud.
+        CloudClock.update(serverTimeMillis = 0L, deviceTimeMillis = 5 * 3_600_000L)
+        try {
+            stubSensor(denseSensor().copy(measurements = listOf(measurement(3L))))
+
+            syncAndJoin()
+
+            val reading = argumentCaptor<TagSensorReading>()
+            verifyMockito(tagRepository).activateSensor(reading.capture())
+            val expected = Date(3_000L + 5 * 3_600_000L)
+            assertEquals(expected, reading.firstValue.createdAt)
+            verify(exactly = 1) { sensorSettingsRepository.updateNetworkLastSync(SYNC_SENSOR_ID, expected) }
+        } finally {
+            CloudClock.reset()
+        }
+    }
+
+    @Test
     fun `already synced latest measurement is not inserted into history again`() = runBlocking {
         stubSensor(
             denseSensor().copy(measurements = listOf(measurement(3L))),
