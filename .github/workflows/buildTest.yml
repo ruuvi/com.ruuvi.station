@@ -25,11 +25,15 @@ jobs:
     - name: Cache Gradle packages
       uses: actions/cache@2f8e54208210a422b2efd51efaa6bd6d7ca8920f # v3.4.3
       with:
+        # ~/.m2/repository/org/robolectric holds the Android SDK jars Robolectric downloads when
+        # tests start; cached so a Maven outage does not fail every Robolectric test.
         path: |
           ~/.gradle/caches
           ~/.gradle/wrapper
-        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          ~/.m2/repository/org/robolectric
+        key: ${{ runner.os }}-gradle-robolectric-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
         restore-keys: |
+          ${{ runner.os }}-gradle-robolectric-
           ${{ runner.os }}-gradle-
 
     - name: Run localization script
