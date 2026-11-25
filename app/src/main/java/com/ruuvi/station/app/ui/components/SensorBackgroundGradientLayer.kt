@@ -1,5 +1,6 @@
 package com.ruuvi.station.app.ui.components
 
+import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapShader
 import android.graphics.ComposeShader
@@ -29,6 +30,7 @@ import coil.imageLoader
 import coil.request.ErrorResult
 import coil.request.ImageRequest
 import coil.request.SuccessResult
+import coil.size.Precision
 import coil.size.Scale
 import kotlin.math.abs
 import kotlin.math.exp
@@ -90,6 +92,10 @@ enum class SensorBackgroundOverlay(internal val design: OverlayDesign) {
  * fraction of a colour level, so 1-level steps show as bands. Composing the image and the
  * overlay into one shader lets Skia compute the final opaque colour at full precision and
  * dither *that*, which hides the steps.
+ *
+ * Before Android 9 (API 28) hardware rendering cannot draw a ComposeShader that nests another
+ * one or combines two shaders of the same type, so there the image and each layer are drawn
+ * one after another instead (see [OverlayDesign.createPaints]).
  */
 @Composable
 fun SensorBackgroundImage(
@@ -104,13 +110,7 @@ fun SensorBackgroundImage(
 
     LaunchedEffect(model, viewSize) {
         if (model == null || viewSize == IntSize.Zero) return@LaunchedEffect
-        val request = ImageRequest.Builder(context)
-            .data(model)
-            .size(viewSize.width, viewSize.height)
-            .scale(Scale.FILL)
-            // A software bitmap can be sampled by a BitmapShader on every API level.
-            .allowHardware(false)
-            .build()
+        val request = backgroundImageRequest(context, model, viewSize)
         when (val result = context.imageLoader.execute(request)) {
             is SuccessResult -> background = (result.drawable as? BitmapDrawable)?.bitmap
             is ErrorResult -> onError(result.throwable)
@@ -123,21 +123,35 @@ fun SensorBackgroundImage(
             .drawWithCache {
                 val width = size.width
                 val height = size.height
-                val paint = if (width > 0f && height > 0f) {
-                    overlay.design.createPaint(width, height, background)
+                val paints = if (width > 0f && height > 0f) {
+                    overlay.design.createPaints(width, height, background)
                 } else {
-                    null
+                    emptyList()
                 }
                 onDrawBehind {
-                    if (paint != null) {
-                        drawIntoCanvas { canvas ->
-                            canvas.nativeCanvas.drawRect(0f, 0f, width, height, paint)
-                        }
+                    drawIntoCanvas { canvas ->
+                        paints.forEach { paint -> canvas.nativeCanvas.drawRect(0f, 0f, width, height, paint) }
                     }
                 }
             }
     )
 }
+
+/**
+ * Loads [model] for a view of [viewSize]. Inexact precision lets Coil decode a photo smaller
+ * than the view at its own size instead of enlarging it: the shader already scales the image
+ * to fill the view, so an 800x600 photo would otherwise become a ~4160x3120 bitmap (~52 MB) on
+ * a 1440x3120 screen. With an explicit size and no view target, Coil's default is exact.
+ */
+internal fun backgroundImageRequest(context: Context, model: Any, viewSize: IntSize): ImageRequest =
+    ImageRequest.Builder(context)
+        .data(model)
+        .size(viewSize.width, viewSize.height)
+        .scale(Scale.FILL)
+        .precision(Precision.INEXACT)
+        // A software bitmap can be sampled by a BitmapShader on every API level.
+        .allowHardware(false)
+        .build()
 
 internal class OverlayDesign(
     val width: Float,
@@ -145,11 +159,24 @@ internal class OverlayDesign(
     val layers: List<OverlayLayer>,
 ) {
     /**
-     * One paint for the whole stack. The layers are composed inside a single shader, so they
-     * are blended at full precision and quantised (and dithered) once, instead of each layer
-     * being rounded to 8 bits on its own and the rounding steps adding up.
+     * The paints that draw [background] (if any) and the overlay over the whole view, bottom
+     * first.
+     *
+     * From API 28 this is one paint for the whole stack. The layers are composed inside a
+     * single shader, so they are blended at full precision and quantised (and dithered) once,
+     * instead of each layer being rounded to 8 bits on its own and the rounding steps adding up.
+     *
+     * Hardware rendering before API 28 supports neither a ComposeShader nested in another nor
+     * one that combines two shaders of the same type (such as two radial gradients), so on
+     * older versions each shader gets a paint of its own. That rounds each layer separately,
+     * which can leave faint banding on dark backgrounds, but draws correctly.
      */
-    fun createPaint(viewWidth: Float, viewHeight: Float, background: Bitmap? = null): Paint {
+    fun createPaints(
+        viewWidth: Float,
+        viewHeight: Float,
+        background: Bitmap? = null,
+        sdkInt: Int = Build.VERSION.SDK_INT,
+    ): List<Paint> {
         // Centre-crop the design into the view; one design-width unit becomes `unit` px.
         val scale = max(viewWidth / width, viewHeight / height)
         val unit = width * scale
@@ -157,23 +184,26 @@ internal class OverlayDesign(
             setScale(unit, unit)
             postTranslate((viewWidth - width * scale) / 2f, (viewHeight - height * scale) / 2f)
         }
-        val overlayShader = layers
-            .map { it.createShader(placement) }
-            .reduce { below, above -> ComposeShader(below, above, PorterDuff.Mode.SRC_OVER) }
-        val shader = if (background == null) {
+        val backgroundShader = background?.let { createCropShader(it, viewWidth, viewHeight) }
+        val layerShaders = layers.map { it.createShader(placement) }
+        if (sdkInt < Build.VERSION_CODES.P) {
+            return (listOfNotNull(backgroundShader) + layerShaders).map(::paintWith)
+        }
+        val overlayShader = layerShaders.reduce { below, above ->
+            ComposeShader(below, above, PorterDuff.Mode.SRC_OVER)
+        }
+        val shader = if (backgroundShader == null) {
             overlayShader
         } else {
-            ComposeShader(
-                createCropShader(background, viewWidth, viewHeight),
-                overlayShader,
-                PorterDuff.Mode.SRC_OVER,
-            )
+            ComposeShader(backgroundShader, overlayShader, PorterDuff.Mode.SRC_OVER)
         }
-        return Paint().apply {
-            isDither = true
-            isFilterBitmap = true
-            this.shader = shader
-        }
+        return listOf(paintWith(shader))
+    }
+
+    private fun paintWith(shader: Shader) = Paint().apply {
+        isDither = true
+        isFilterBitmap = true
+        this.shader = shader
     }
 
     /** Like `ContentScale.Crop`: fill the view, keep the aspect ratio, centre the overflow. */

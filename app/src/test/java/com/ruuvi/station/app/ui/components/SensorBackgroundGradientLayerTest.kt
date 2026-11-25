@@ -33,7 +33,8 @@ import org.robolectric.annotation.GraphicsMode
  * and `tag_bg_layer.png`) at the given fractions of the design's width and height.
  */
 @RunWith(RobolectricTestRunner::class)
-@Config(application = Application::class, sdk = [35], qualifiers = "mdpi")
+// API 26 draws the image and each layer separately (before API 28), API 35 in one shader.
+@Config(application = Application::class, sdk = [26, 35], qualifiers = "mdpi")
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 class SensorBackgroundGradientLayerTest {
     @get:Rule val compose = createAndroidComposeRule<ComponentActivity>()
