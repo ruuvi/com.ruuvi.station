@@ -44,7 +44,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.zIndex
-import androidx.core.view.WindowCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.lifecycleScope
@@ -52,7 +51,6 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.whenStarted
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.ruuvi.station.R
 import com.ruuvi.station.addtag.ui.AddTagActivity
 import com.ruuvi.station.alarm.domain.AlarmSensorStatus
@@ -168,7 +166,7 @@ class DashboardActivity : NfcActivity(), DIAware {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        WindowCompat.setDecorFitsSystemWindows(window, false)
+        enableRuuviEdgeToEdge()
 
         observeSyncStatus()
 
@@ -179,11 +177,9 @@ class DashboardActivity : NfcActivity(), DIAware {
 
             RuuviTheme {
                 val scaffoldState = rememberScaffoldState()
-                val systemUiController = rememberSystemUiController()
                 val systemBarsColor = colors.dashboardBackground
                 val configuration = LocalConfiguration.current
                 val staleSnackbarMessage = stringResource(R.string.sensor_measurements_outdated)
-                val isDarkTheme = isSystemInDarkTheme()
                 val scope = rememberCoroutineScope()
                 var staleSnackbarJob by remember { mutableStateOf<Job?>(null) }
                 DashboardSnackbarLifecycleEffect(staleSnackbarJob) {
@@ -345,18 +341,6 @@ class DashboardActivity : NfcActivity(), DIAware {
                     getNfcScanResponse = dashboardViewModel::getNfcScanResponse,
                     addSensor = dashboardViewModel::addSensor
                 )
-
-                SideEffect {
-                    systemUiController.setStatusBarColor(
-                        color = systemBarsColor,
-                        darkIcons = !isDarkTheme
-                    )
-                    systemUiController.setNavigationBarColor(
-                        color = Color.Transparent,
-                        navigationBarContrastEnforced = false,
-                        darkIcons = !isDarkTheme
-                    )
-                }
 
                 LaunchedEffect(key1 = null) {
                     lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
