@@ -89,7 +89,13 @@ object RuuviToast {
     private var trackedApplication: Application? = null
     private var startedActivities = 0
     private var resumedActivity: WeakReference<Activity>? = null
-    private var pending: Pair<CharSequence, ToastDuration>? = null
+    private var pending: PendingToast? = null
+
+    private class PendingToast(
+        val message: CharSequence,
+        val duration: ToastDuration,
+        val followToNextScreen: Boolean,
+    )
 
     internal var clock: () -> Long = SystemClock::uptimeMillis
 
@@ -122,9 +128,9 @@ object RuuviToast {
 
         override fun onActivityResumed(activity: Activity) {
             resumedActivity = WeakReference(activity)
-            pending?.let { (message, duration) ->
+            pending?.let { toast ->
                 pending = null
-                show(activity, message, duration)
+                show(activity, toast.message, toast.duration, toast.followToNextScreen)
                 return
             }
             // A toast drawn in the previous screen follows the user to this one.
@@ -194,20 +200,28 @@ object RuuviToast {
         hideCurrent()
         if (inBackground(appContext)) {
             // Shown when an activity resumes; only the latest message is kept, as on screen.
-            pending = message to duration
+            pending = PendingToast(message, duration, followToNextScreen)
             currentText = null
             currentMessage = null
             hiddenAt = 0L
             return
         }
-        // Draw it where the user is: the caller's screen if it is on screen, otherwise the visible
-        // one (e.g. a share result arriving after the user went back to the previous screen).
+        // Draw it where the user is: the resumed screen if there is one (e.g. a share result
+        // arriving after the user went back to the previous screen), otherwise the caller's screen
+        // if it is still on screen. The resumed screen wins even while the caller is started:
+        // during navigation the new screen resumes before the old one stops, and a toast drawn on
+        // the outgoing screen would not move to the new one. A toast about the caller's screen
+        // only (followToNextScreen false) stays on that screen while it is on screen.
         val ownActivity = context.findActivity()
+        val ownOnScreen = ownActivity?.takeIf { it.isOnScreen() }
         val visibleActivity = resumedActivity?.get()?.takeIf { it.isUsable() }
-        val activity = ownActivity?.takeIf { it.isOnScreen() } ?: visibleActivity
-        if (activity == null && ownActivity != null && trackedApplication === appContext) {
-            // Between screens: keep it for the next one to resume rather than draw it unseen.
-            pending = message to duration
+        val activity = if (followToNextScreen) visibleActivity ?: ownOnScreen else ownOnScreen ?: visibleActivity
+        if (activity == null && trackedApplication === appContext) {
+            // No screen to draw it in, e.g. between screens or while the only started one is
+            // paused: keep it for the next one to resume rather than draw it unseen. This applies
+            // to application-context callers too, since a system toast can be suppressed (Android
+            // 7–9 with the app's notifications disabled) and would not be shown again on resume.
+            pending = PendingToast(message, duration, followToNextScreen)
             currentText = null
             currentMessage = null
             hiddenAt = 0L
@@ -295,7 +309,7 @@ object RuuviToast {
 
     /** Hides the visible toast; with [message], only if that is the toast being shown. */
     fun cancel(message: CharSequence? = null) {
-        if (message == null || message.toString() == pending?.first?.toString()) pending = null
+        if (message == null || message.toString() == pending?.message?.toString()) pending = null
         if (message != null && message.toString() != currentMessage) return
         hideCurrent()
         currentText = null

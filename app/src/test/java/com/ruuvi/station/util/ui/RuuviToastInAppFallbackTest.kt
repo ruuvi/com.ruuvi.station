@@ -213,6 +213,84 @@ class RuuviToastInAppFallbackTest {
 
     @Test
     @Config(sdk = [35])
+    fun `a result arriving after the next screen resumes but before the old one stops is shown on the new screen`() {
+        RuuviToast.init(context as Application)
+        val shareController = Robolectric.buildActivity(AppCompatActivity::class.java).setup()
+        val share = shareController.get()
+        // Navigation order: the old screen pauses, the new one resumes, then the old one stops.
+        shareController.pause()
+        val next = createActivity()
+
+        share.showToast("Successfully shared sensor")
+
+        assertNull(share.inAppToast())
+        assertEquals("Successfully shared sensor", next.inAppToastText())
+        assertNull(latestToast())
+
+        shareController.stop()
+        Shadows.shadowOf(Looper.getMainLooper()).idle()
+        assertNull(share.inAppToast())
+        assertEquals("Successfully shared sensor", next.inAppToastText())
+    }
+
+    @Test
+    @Config(sdk = [35])
+    fun `a toast about the outgoing screen stays on it while the next screen resumes`() {
+        RuuviToast.init(context as Application)
+        val dashboardController = Robolectric.buildActivity(AppCompatActivity::class.java).setup()
+        val dashboard = dashboardController.get()
+        dashboardController.pause()
+        val next = createActivity()
+
+        RuuviToast.show(dashboard, "Measurements may be outdated", followToNextScreen = false)
+
+        assertEquals("Measurements may be outdated", dashboard.inAppToastText())
+        assertNull(next.inAppToast())
+    }
+
+    @Test
+    @Config(sdk = [35])
+    fun `a delayed toast about one screen still stays with it after it is shown`() {
+        RuuviToast.init(context as Application)
+        val firstController = Robolectric.buildActivity(AppCompatActivity::class.java).setup()
+        val first = firstController.get()
+        firstController.pause().stop()
+
+        RuuviToast.show(first, "Measurements may be outdated", followToNextScreen = false)
+        assertFalse(RuuviToast.isShowing())
+
+        firstController.restart().start().resume()
+        Shadows.shadowOf(Looper.getMainLooper()).idle()
+        assertEquals("Measurements may be outdated", first.inAppToastText())
+
+        val second = createActivity()
+        assertEquals("Measurements may be outdated", first.inAppToastText())
+        assertNull(second.inAppToast())
+    }
+
+    @Test
+    fun `an app-context message while the only screen is paused waits for it to resume`() {
+        setNotificationsEnabled(false)
+        RuuviToast.init(context as Application)
+        val controller = Robolectric.buildActivity(AppCompatActivity::class.java).setup()
+        val activity = controller.get()
+        // Paused but still started, so the app is not in the background and nothing is resumed.
+        controller.pause()
+
+        context.showToast("CSV file created")
+
+        assertNull(latestToast())
+        assertNull(activity.inAppToast())
+        assertFalse(RuuviToast.isShowing())
+
+        controller.resume()
+        Shadows.shadowOf(Looper.getMainLooper()).idle()
+        assertEquals("CSV file created", activity.inAppToastText())
+        assertNull(latestToast())
+    }
+
+    @Test
+    @Config(sdk = [35])
     fun `a result arriving between screens waits for the next one`() {
         RuuviToast.init(context as Application)
         val shareController = Robolectric.buildActivity(AppCompatActivity::class.java).setup()
