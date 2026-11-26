@@ -201,7 +201,10 @@ class SettingsActivityComposeTest {
 
     @Test
     fun `dark theme configures dark status bar icons`() {
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+        // Use a dark system configuration rather than forcing AppCompat's night mode. Forcing it
+        // against the notnight test configuration makes AppCompat recreate the activity while
+        // Robolectric is still setting it up, which fails intermittently.
+        RuntimeEnvironment.setQualifiers("+night")
         withActivity { activity ->
             val icons = WindowCompat.getInsetsController(activity.window, activity.window.decorView)
             assertFalse(icons.isAppearanceLightStatusBars)
