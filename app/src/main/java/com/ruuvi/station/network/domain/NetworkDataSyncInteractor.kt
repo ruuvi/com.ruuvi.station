@@ -1,5 +1,6 @@
 package com.ruuvi.station.network.domain
 
+import com.ruuvi.station.util.extensions.isAheadOfDeviceClock
 import android.net.Uri
 import com.ruuvi.station.app.preferences.GlobalSettings
 import com.ruuvi.station.app.preferences.PreferencesRepository
@@ -234,7 +235,9 @@ class NetworkDataSyncInteractor (
             calendar.add(Calendar.HOUR, -period)
 
             var since = calendar.time
-            val lastSync = sensorSettings.networkHistoryLastSync ?: Date(Long.MIN_VALUE)
+            val lastSync = sensorSettings.networkHistoryLastSync
+                ?.takeUnless { it.isAheadOfDeviceClock() }
+                ?: Date(Long.MIN_VALUE)
             if (lastSync > since) {
                 calendar.time = lastSync
                 calendar.add(Calendar.SECOND, 1)
@@ -258,7 +261,7 @@ class NetworkDataSyncInteractor (
                     var maxTimestamp = data.maxByOrNull { it.timestamp }?.timestamp
                     if (maxTimestamp != null) {
                         maxTimestamp++
-                        since = Date(maxTimestamp * 1000)
+                        since = Date(CloudClock.toDeviceTime(maxTimestamp * 1000))
                         if (since.diffGreaterThan(60*1000) && data.size > 1) {
                             result = getSince(sensorId, since, 5000)
                             count++
@@ -312,7 +315,9 @@ class NetworkDataSyncInteractor (
             if (measurement.data.isNotEmpty()) {
                 val reading = TagSensorReading(
                     BluetoothLibrary.decode(sensorSettings.id, measurement.data, measurement.rssi),
-                    Date(measurement.timestamp * 1000)
+                    // Cloud timestamps are real time; store them on the device clock like
+                    // Bluetooth readings, so a manually set device time is respected.
+                    Date(CloudClock.toDeviceTime(measurement.timestamp * 1000))
                 )
                 reading
             } else {
@@ -556,7 +561,8 @@ class NetworkDataSyncInteractor (
     ) {
         val lastPoint = preparePoint(sensorSettings, measurement)
         if (lastPoint != null) {
-            val freshPoint = (sensorSettings.networkLastSync?.time ?: Long.MIN_VALUE) < lastPoint.createdAt.time
+            val previousSync = sensorSettings.networkLastSync?.takeUnless { it.isAheadOfDeviceClock() }
+            val freshPoint = (previousSync?.time ?: Long.MIN_VALUE) < lastPoint.createdAt.time
             tagRepository.activateSensor(lastPoint)
             sensorSettingsRepository.updateNetworkLastSync(sensorSettings.id, lastPoint.createdAt)
             if (saveToHistory && freshPoint) {
@@ -636,7 +642,7 @@ class NetworkDataSyncInteractor (
         Timber.d("benchmark-getSince-$tagId since $since")
         val request = GetSensorDataRequest(
             sensor = tagId,
-            since = since,
+            since = Date(CloudClock.toCloudTime(since.time)),
             sort = SortMode.ASCENDING,
             limit = limit,
             mode = SensorDataMode.MIXED

@@ -1,5 +1,6 @@
 package com.ruuvi.station.network.data.request
 
+import com.ruuvi.station.network.domain.CloudClock
 import java.util.*
 
 data class UpdateSensorRequest (
@@ -9,5 +10,5 @@ data class UpdateSensorRequest (
     val offsetTemperature: Double? = null,
     val offsetHumidity: Double? = null,
     val offsetPressure: Double? = null,
-    val timestamp: Long = Date().time / 1000
+    val timestamp: Long = CloudClock.nowSeconds()
 )

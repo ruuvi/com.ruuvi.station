@@ -45,6 +45,7 @@ class RuuviNetworkRepository
                     .build()
             )
         }
+        .addNetworkInterceptor(CloudClock.interceptor)
         .addInterceptor(interceptor)
         .build()
 

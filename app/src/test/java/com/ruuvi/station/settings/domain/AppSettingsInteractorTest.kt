@@ -5,10 +5,13 @@ import com.ruuvi.station.database.domain.SensorSettingsRepository
 import com.ruuvi.station.database.domain.TagRepository
 import com.ruuvi.station.database.tables.SensorSettings
 import com.ruuvi.station.dataforwarding.domain.DataForwardingSender
+import com.ruuvi.station.network.domain.CloudClock
 import com.ruuvi.station.network.domain.NetworkApplicationSettings
 import com.ruuvi.station.network.domain.NetworkSettingNames
 import com.ruuvi.station.units.domain.UnitsConverter
 import com.ruuvi.station.units.model.Accuracy
+import com.ruuvi.station.units.model.UnitType.HumidityUnit
+import com.ruuvi.station.units.model.UnitType.PressureUnit
 import com.ruuvi.station.units.model.UnitType.TemperatureUnit
 import com.ruuvi.station.util.BackgroundScanModes
 import io.mockk.every
@@ -91,6 +94,62 @@ class AppSettingsInteractorTest {
             )
         }
         verify { networkApplicationSettings.updateNetworkSetting(NetworkSettingNames.ACCURACY_VOLTAGE) }
+    }
+
+    @Test
+    fun `measurement resolutions are saved and queued using cloud time`() = withClockSkew {
+        val accuracy = Accuracy.Accuracy1
+        val settings = mapOf(
+            ResolutionSettingsTarget.Temperature to NetworkSettingNames.ACCURACY_TEMPERATURE,
+            ResolutionSettingsTarget.RelativeHumidity to NetworkSettingNames.ACCURACY_HUMIDITY_RELATIVE,
+            ResolutionSettingsTarget.AbsoluteHumidity to NetworkSettingNames.ACCURACY_HUMIDITY_ABSOLUTE,
+            ResolutionSettingsTarget.DewPoint to NetworkSettingNames.ACCURACY_HUMIDITY_DEW_POINT,
+            ResolutionSettingsTarget.Pressure to NetworkSettingNames.ACCURACY_PRESSURE,
+            ResolutionSettingsTarget.ParticulateMatter to NetworkSettingNames.ACCURACY_PM,
+            ResolutionSettingsTarget.Acceleration to NetworkSettingNames.ACCURACY_ACCELERATION,
+            ResolutionSettingsTarget.Voltage to NetworkSettingNames.ACCURACY_VOLTAGE,
+        )
+        val before = System.currentTimeMillis() / 1000
+
+        settings.keys.forEach { interactor.setAccuracy(it, accuracy) }
+
+        val cloudSeconds = expectedCloudSeconds(before)
+        settings.values.forEach { name ->
+            verifyCloudSetting(name, accuracy.code.toString(), cloudSeconds)
+        }
+    }
+
+    @Test
+    fun `unit cloud mode and chart changes use cloud time`() = withClockSkew {
+        val before = System.currentTimeMillis() / 1000
+
+        interactor.setHumidityUnit(HumidityUnit.Absolute)
+        interactor.setPressureUnit(PressureUnit.HectoPascal)
+        interactor.setIsCloudModeEnabled(true)
+        interactor.setIsShowAllGraphPoint(true)
+
+        val cloudSeconds = expectedCloudSeconds(before)
+        verifyCloudSetting(NetworkSettingNames.UNIT_HUMIDITY, HumidityUnit.Absolute.unitCode, cloudSeconds)
+        verifyCloudSetting(NetworkSettingNames.UNIT_PRESSURE, PressureUnit.HectoPascal.unitCode, cloudSeconds)
+        verifyCloudSetting(NetworkSettingNames.CLOUD_MODE_ENABLED, "true", cloudSeconds)
+        verifyCloudSetting(NetworkSettingNames.CHART_SHOW_ALL_POINTS, "true", cloudSeconds)
+    }
+
+    private fun withClockSkew(test: () -> Unit) {
+        CloudClock.update(serverTimeMillis = 3_600_000L, deviceTimeMillis = 0L)
+        try {
+            test()
+        } finally {
+            CloudClock.reset()
+        }
+    }
+
+    private fun expectedCloudSeconds(before: Long): LongRange =
+        (before + 3_600L)..(System.currentTimeMillis() / 1000 + 3_600L)
+
+    private fun verifyCloudSetting(name: String, value: String, cloudSeconds: LongRange) {
+        verify(exactly = 1) { preferencesRepository.setNetworkSetting(name, value, match { it in cloudSeconds }) }
+        verify(exactly = 1) { networkApplicationSettings.updateNetworkSetting(name) }
     }
 
     @Test

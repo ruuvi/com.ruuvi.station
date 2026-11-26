@@ -18,6 +18,17 @@ fun Date.getEpochSecond(): Long {
     return this.time / 1000L
 }
 
+/** Allowed lead over the device clock, covering Cloud clock offset rounding. */
+const val DEVICE_CLOCK_TOLERANCE_MILLIS = 60_000L
+
+/**
+ * True when this timestamp is ahead of the device clock. That happens when it was written while
+ * the device time was set ahead and the time was moved back later. Such a timestamp can't be
+ * the latest reading or a sync position, because new data would never be considered newer.
+ */
+fun Date.isAheadOfDeviceClock(now: Long = System.currentTimeMillis()): Boolean =
+    time - now > DEVICE_CLOCK_TOLERANCE_MILLIS
+
 fun Date.diffGreaterThan(diff: Long): Boolean {
     return abs(Date().time - this.time) > diff
 }
@@ -25,7 +36,8 @@ fun Date.diffGreaterThan(diff: Long): Boolean {
 fun Date.describingTimeSince(context: Context): String {
     var output = ""
     val dateNow = Date()
-    val diffInMS: Long = dateNow.time - this.time
+    // A timestamp slightly ahead of the device clock must not show as negative seconds.
+    val diffInMS: Long = (dateNow.time - this.time).coerceAtLeast(0L)
     // show date if the tag has not been seen for 24h
     if (diffInMS > hours24) {
         output += this.localizedDateTime(context)

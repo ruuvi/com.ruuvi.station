@@ -23,6 +23,16 @@ import java.util.Locale
 
 class DateTest {
     @Test
+    fun `timestamps more than a minute ahead of the device clock are detected`() {
+        val now = 1_000_000_000L
+
+        assertFalse(Date(now).isAheadOfDeviceClock(now))
+        assertFalse(Date(now + DEVICE_CLOCK_TOLERANCE_MILLIS).isAheadOfDeviceClock(now))
+        assertTrue(Date(now + DEVICE_CLOCK_TOLERANCE_MILLIS + 1).isAheadOfDeviceClock(now))
+        assertFalse(Date(now - 3_600_000L).isAheadOfDeviceClock(now))
+    }
+
+    @Test
     fun `returns epoch seconds and identifies the start of the day`() {
         val midnight = dateAt(hour = 0)
 
