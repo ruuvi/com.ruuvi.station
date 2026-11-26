@@ -145,12 +145,32 @@ class ItemStaggeredGridDragAndDropState(
             }
 
             if (targetItem != null) {
-                currentIndexOfDraggedItem.let { current ->
-                    onMove.invoke(current, targetItem.index)
-                    currentIndexOfDraggedItem = targetItem.index
-                }
+                // Items are keyed by slot while dragging (see itemKey), so this swap does not move
+                // the scroll position in any column.
+                onMove.invoke(currentIndexOfDraggedItem, targetItem.index)
+                currentIndexOfDraggedItem = targetItem.index
             }
         }
+    }
+
+    /**
+     * Key for the item at [index] whose own key is [key]. Use it as the grid's item key.
+     *
+     * A lazy grid keeps its scroll position anchored to the first visible item's key, so moving
+     * that item would make the grid scroll to follow it. Restoring the position afterwards is not
+     * enough for a staggered grid: each column keeps its own first item and offset, and the public
+     * scroll API can only set one offset and rebuild the columns from one item, so the other
+     * columns would still jump when cards have uneven heights. While a drag is in progress items
+     * are therefore keyed by slot: a move only changes which content two slots show, and every
+     * column stays exactly where it is. Real keys return when the drag ends; the last anchor key is
+     * then not found, so the grid again keeps its position.
+     */
+    fun itemKey(index: Int, key: Any): Any = if (isDragInProgress) "$DRAG_SLOT_KEY_PREFIX$index" else key
+
+    private companion object {
+        // Lazy layout keys must be storable in a Bundle, so slot keys are strings; the prefix
+        // cannot clash with sensor ids (MAC addresses).
+        const val DRAG_SLOT_KEY_PREFIX = "dashboard-drag-slot:"
     }
 
     // Handle interrupted drag gesture

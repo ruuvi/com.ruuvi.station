@@ -44,7 +44,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.zIndex
-import androidx.core.view.WindowCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.lifecycleScope
@@ -52,7 +51,6 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.whenStarted
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.ruuvi.station.R
 import com.ruuvi.station.addtag.ui.AddTagActivity
 import com.ruuvi.station.alarm.domain.AlarmSensorStatus
@@ -135,7 +133,7 @@ class DashboardActivity : NfcActivity(), DIAware {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        WindowCompat.setDecorFitsSystemWindows(window, false)
+        enableRuuviEdgeToEdge()
 
         observeSyncStatus()
 
@@ -146,11 +144,9 @@ class DashboardActivity : NfcActivity(), DIAware {
 
             RuuviTheme {
                 val scaffoldState = rememberScaffoldState()
-                val systemUiController = rememberSystemUiController()
                 val systemBarsColor = colors.dashboardBackground
                 val configuration = LocalConfiguration.current
-                val staleToastMessage = stringResource(R.string.sensor_measurements_outdated)
-                val isDarkTheme = isSystemInDarkTheme()
+                val staleSnackbarMessage = stringResource(R.string.sensor_measurements_outdated)
                 val scope = rememberCoroutineScope()
                 HideToastWhenScreenStopsEffect(staleToastMessage)
                 val userEmail by dashboardViewModel.userEmail.observeAsState()
@@ -298,18 +294,6 @@ class DashboardActivity : NfcActivity(), DIAware {
                     getNfcScanResponse = dashboardViewModel::getNfcScanResponse,
                     addSensor = dashboardViewModel::addSensor
                 )
-
-                SideEffect {
-                    systemUiController.setStatusBarColor(
-                        color = systemBarsColor,
-                        darkIcons = !isDarkTheme
-                    )
-                    systemUiController.setNavigationBarColor(
-                        color = Color.Transparent,
-                        navigationBarContrastEnforced = false,
-                        darkIcons = !isDarkTheme
-                    )
-                }
 
                 LaunchedEffect(key1 = null) {
                     lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -621,7 +605,7 @@ fun DashboardItems(
         ) {
             itemsIndexed(
                 items = items,
-                key = { _, sensor -> sensor.id },
+                key = { index, sensor -> dragDropListState.itemKey(index, sensor.id) },
             ) { index, sensor ->
                 val displacementOffset = if (index == dragDropListState.getCurrentIndexOfDraggedListItem()) {
                     dragDropListState.elementDisplacement.takeIf { it != IntOffset.Zero }
