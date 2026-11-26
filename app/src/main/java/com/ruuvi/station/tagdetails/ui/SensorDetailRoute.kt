@@ -7,6 +7,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.BackHandler
 import androidx.activity.enableEdgeToEdge
+import androidx.annotation.DrawableRes
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.animateColorAsState
@@ -73,6 +74,8 @@ import androidx.compose.ui.unit.toSize
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import coil.imageLoader
+import coil.request.ImageRequest
 import com.ruuvi.station.app.ui.components.HideToastWhenScreenStopsEffect
 import com.ruuvi.station.R
 import com.ruuvi.station.alarm.domain.AlarmSensorStatus
@@ -110,6 +113,8 @@ import kotlinx.coroutines.launch
 private const val SETTINGS_NAVIGATION_ANIMATION_MILLIS = 400
 private const val DESTINATION_CROSSFADE_MILLIS = 200
 private const val BACKGROUND_COLOR_ANIMATION_MILLIS = 300
+// Same as the iOS full sensor card background cross dissolve.
+internal const val SENSOR_BACKGROUND_CROSSFADE_MILLIS = 300
 private const val MINIMUM_CHARTS_BEFORE_SIZE_INCREASE = 3
 private val HISTORY_STATUS_BAR_COLOR = Color(0xE6001D1B)
 
@@ -303,7 +308,13 @@ private fun SensorDetailScreen(
             ),
     ) {
         SensorDetailBackground(
-            sensor = currentSensor,
+            // Like iOS, the background follows the page the swipe settles on, not the page that
+            // is more than half visible, so it fades once instead of switching mid-drag.
+            sensor = sensors.getOrNull(pagerState.settledPage),
+            neighbours = listOfNotNull(
+                sensors.getOrNull(pagerState.settledPage - 1),
+                sensors.getOrNull(pagerState.settledPage + 1),
+            ),
             destination = destination,
             enabled = useSensorBackground,
         )
@@ -824,20 +835,28 @@ private fun SensorSettingsNestedScreen(
 @Composable
 private fun SensorDetailBackground(
     sensor: RuuviTag?,
+    neighbours: List<RuuviTag>,
     destination: SensorDetailDestination,
     enabled: Boolean,
 ) {
     if (!enabled) return
 
-    val backgroundUri = sensor
-        ?.userBackground
-        ?.takeIf(String::isNotBlank)
-        ?.let(Uri::parse)
-        ?.takeIf { !it.path.isNullOrBlank() }
-    SensorCardImage(
-        userBackground = backgroundUri,
-        defaultBackground = if (sensor?.isAir() == true) R.drawable.new_bg_air else R.drawable.new_bg2,
-    )
+    PreloadSensorBackgrounds(neighbours)
+
+    // Cross-fade only when the image changes: sensors sharing the default background don't fade.
+    Crossfade(
+        targetState = sensorBackground(sensor),
+        modifier = Modifier.fillMaxSize(),
+        animationSpec = tween(durationMillis = SENSOR_BACKGROUND_CROSSFADE_MILLIS),
+        label = "sensor detail background",
+    ) { background ->
+        Box(modifier = Modifier.fillMaxSize()) {
+            SensorCardImage(
+                userBackground = background.userBackground,
+                defaultBackground = background.defaultBackground,
+            )
+        }
+    }
 
     val overlayColor by animateColorAsState(
         targetValue = when (destination) {
@@ -895,6 +914,42 @@ internal fun SensorDetailSystemBars(
         )
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             activity.window.isNavigationBarContrastEnforced = false
+        }
+    }
+}
+
+internal data class SensorBackground(
+    val userBackground: Uri?,
+    @DrawableRes val defaultBackground: Int,
+)
+
+internal fun sensorBackground(sensor: RuuviTag?): SensorBackground {
+    val userBackground = sensor
+        ?.userBackground
+        ?.takeIf(String::isNotBlank)
+        ?.let(Uri::parse)
+        ?.takeIf { !it.path.isNullOrBlank() }
+    return SensorBackground(
+        userBackground = userBackground,
+        defaultBackground = if (sensor?.isAir() == true) R.drawable.new_bg_air else R.drawable.new_bg2,
+    )
+}
+
+/**
+ * Loads the backgrounds of the neighbouring sensors into Coil's memory cache, so the next
+ * cross-fade starts from a ready image instead of fading through an empty frame.
+ */
+@Composable
+private fun PreloadSensorBackgrounds(sensors: List<RuuviTag>) {
+    val context = LocalContext.current
+    val backgrounds = remember(sensors) { sensors.map(::sensorBackground).distinct() }
+    LaunchedEffect(backgrounds) {
+        backgrounds.forEach { background ->
+            context.imageLoader.enqueue(
+                ImageRequest.Builder(context)
+                    .data(background.userBackground ?: background.defaultBackground)
+                    .build()
+            )
         }
     }
 }
