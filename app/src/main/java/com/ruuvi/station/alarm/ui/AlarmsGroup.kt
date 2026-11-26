@@ -145,10 +145,7 @@ fun AlarmsGroup(
         }
     }
 
-    ShowStatusSnackbar(
-        scaffoldState = scaffoldState,
-        uiEvent = viewModel.uiEvent
-    )
+    ShowStatusToast(uiEvent = viewModel.uiEvent)
 }
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)

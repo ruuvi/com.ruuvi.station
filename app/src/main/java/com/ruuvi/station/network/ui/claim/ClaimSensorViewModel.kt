@@ -78,7 +78,7 @@ class ClaimSensorViewModel (
                             if (it?.isSuccess() == true) {
                                 emitUiEvent(UiEvent.NavigateUp)
                             } else {
-                                emitUiEvent(UiEvent.ShowSnackbar(UiText.DynamicString(it?.error ?: "Error")))
+                                emitUiEvent(UiEvent.ShowToast(UiText.DynamicString(it?.error ?: "Error")))
                                 emitUiEvent(UiEvent.NavigateUp)
                             }
                         }
@@ -86,7 +86,7 @@ class ClaimSensorViewModel (
                 }
             } catch (e: Exception) {
                 Timber.d(e)
-                emitUiEvent(UiEvent.ShowSnackbar(UiText.DynamicString(e.message ?: "Error")))
+                emitUiEvent(UiEvent.ShowToast(UiText.DynamicString(e.message ?: "Error")))
             }
         }
     }
@@ -103,7 +103,7 @@ class ClaimSensorViewModel (
                             if (it?.isSuccess() == true) {
                                 emitUiEvent(UiEvent.NavigateUp)
                             } else {
-                                emitUiEvent(UiEvent.ShowSnackbar(UiText.DynamicString(it?.error ?: "Error")))
+                                emitUiEvent(UiEvent.ShowToast(UiText.DynamicString(it?.error ?: "Error")))
                                 emitUiEvent(UiEvent.NavigateUp)
                             }
                         }
@@ -111,7 +111,7 @@ class ClaimSensorViewModel (
                 }
             } catch (e: Exception) {
                 Timber.d(e)
-                emitUiEvent(UiEvent.ShowSnackbar(UiText.DynamicString(e.message ?: "Error")))
+                emitUiEvent(UiEvent.ShowToast(UiText.DynamicString(e.message ?: "Error")))
             }
         }
     }
@@ -128,7 +128,7 @@ class ClaimSensorViewModel (
                             if (it?.isSuccess() == true) {
                                 emitUiEvent(UiEvent.NavigateUp)
                             } else {
-                                emitUiEvent(UiEvent.ShowSnackbar(UiText.DynamicString(it?.error ?: "Error")))
+                                emitUiEvent(UiEvent.ShowToast(UiText.DynamicString(it?.error ?: "Error")))
                                 emitUiEvent(UiEvent.NavigateUp)
                             }
                         }
@@ -136,7 +136,7 @@ class ClaimSensorViewModel (
                 }
             } catch (e: Exception) {
                 Timber.d(e)
-                emitUiEvent(UiEvent.ShowSnackbar(UiText.DynamicString(e.message ?: "Error")))
+                emitUiEvent(UiEvent.ShowToast(UiText.DynamicString(e.message ?: "Error")))
             }
         }
     }
@@ -161,7 +161,7 @@ class ClaimSensorViewModel (
                 Timber.d("nfc scanned: $scanInfo")
                 if (scanInfo != null && scanInfo.mac != sensorId) {
                     viewModelScope.launch {
-                        _uiEvent.emit(UiEvent.ShowSnackbar(UiText.StringResource(R.string.claim_wrong_sensor_scanned)))
+                        _uiEvent.emit(UiEvent.ShowToast(UiText.StringResource(R.string.claim_wrong_sensor_scanned)))
                     }
                 }
                 if (scanInfo?.mac == sensorId && !scanInfo.id.isNullOrEmpty()) {

@@ -41,7 +41,7 @@ import com.ruuvi.station.app.ui.theme.Orange2
 import com.ruuvi.station.app.ui.theme.RuuviStationTheme
 import com.ruuvi.station.app.ui.theme.RuuviTheme
 import com.ruuvi.station.network.ui.components.SignInEmailTextField
-import com.ruuvi.station.util.ui.RuuviSnackbarHost
+import com.ruuvi.station.util.ui.showToast
 import com.ruuvi.station.onboarding.ui.*
 import com.ruuvi.station.startup.ui.StartupActivity
 import com.ruuvi.station.util.extensions.scaledSp
@@ -88,7 +88,6 @@ class SignInActivity: AppCompatActivity(), DIAware {
                         .systemBarsPadding(),
                     backgroundColor = Color.Transparent,
                     scaffoldState = scaffoldState,
-            snackbarHost = { RuuviSnackbarHost(it) },
                 ) { padding ->
                     NavHost(
                         navController = navController,
@@ -147,11 +146,8 @@ class SignInActivity: AppCompatActivity(), DIAware {
                                     navController.navigate(uiEvent.route)
                                 }
                             }
-                            is UiEvent.ShowSnackbar -> {
-                                scaffoldState.snackbarHostState.showSnackbar(
-                                    message = uiEvent.message.asString(this@SignInActivity),
-                                    actionLabel = getString(R.string.ok)
-                                )
+                            is UiEvent.ShowToast -> {
+                                showToast(uiEvent.message.asString(this@SignInActivity), uiEvent.duration)
                             }
                             is UiEvent.Finish -> closeActivity()
                             is UiEvent.NavigateUp -> navController.navigateUp()

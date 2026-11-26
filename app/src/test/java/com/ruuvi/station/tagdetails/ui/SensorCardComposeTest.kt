@@ -78,7 +78,7 @@ class SensorCardComposeTest {
     }
 
     @Test
-    fun `stale footer shows snackbar only after warning icon click`() {
+    fun `stale footer shows toast only after warning icon click`() {
         var clickWarnings = 0
         compose.setContent {
             RuuviTheme {
@@ -90,7 +90,7 @@ class SensorCardComposeTest {
                     ),
                     staleTimeoutSeconds = 60,
                     useDarkBackground = true,
-                    onShowStaleSnackbar = { clickWarnings++ },
+                    onShowStaleToast = { clickWarnings++ },
                 )
             }
         }
@@ -125,7 +125,7 @@ class SensorCardComposeTest {
                     sensor = sensor,
                     staleTimeoutSeconds = 60,
                     useDarkBackground = false,
-                    onDismissStaleSnackbar = { dismissals++ },
+                    onDismissStaleToast = { dismissals++ },
                 )
             }
         }

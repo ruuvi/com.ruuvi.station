@@ -164,7 +164,7 @@ class ClaimSensorViewModelTest {
     }
 
     @Test
-    fun `claimSensor shows error snackbar and NavigateUp on API failure`() = runBlocking {
+    fun `claimSensor shows error toast and NavigateUp on API failure`() = runBlocking {
         val sensorClaimInteractor = mockk<SensorClaimInteractor> {
             coEvery { claimSensor(SENSOR_ID, SENSOR_NAME, any()) } answers {
                 thirdArg<(ClaimSensorResponse?) -> Unit>()(
@@ -182,7 +182,7 @@ class ClaimSensorViewModelTest {
         assertEquals(
             listOf(
                 UiEvent.Navigate(ClaimRoutes.CLAIM_IN_PROGRESS, true),
-                UiEvent.ShowSnackbar(UiText.DynamicString("Claim error")),
+                UiEvent.ShowToast(UiText.DynamicString("Claim error")),
                 UiEvent.NavigateUp
             ),
             events.toList()
@@ -204,12 +204,12 @@ class ClaimSensorViewModelTest {
         viewModel.claimSensor()
         withTimeout(5.seconds) { while (events.size < 3) delay(10) }
 
-        assertEquals(UiEvent.ShowSnackbar(UiText.DynamicString("Error")), events[1])
+        assertEquals(UiEvent.ShowToast(UiText.DynamicString("Error")), events[1])
         collector.cancel()
     }
 
     @Test
-    fun `claimSensor shows error snackbar when exception occurs`() = runBlocking {
+    fun `claimSensor shows error toast when exception occurs`() = runBlocking {
         val tagSettingsInteractor = mock<TagSettingsInteractor> {
             on { getSensorSettings(SENSOR_ID) } doThrow RuntimeException("Settings error")
         }
@@ -223,7 +223,7 @@ class ClaimSensorViewModelTest {
         assertEquals(
             listOf(
                 UiEvent.Navigate(ClaimRoutes.CLAIM_IN_PROGRESS, true),
-                UiEvent.ShowSnackbar(UiText.DynamicString("Settings error"))
+                UiEvent.ShowToast(UiText.DynamicString("Settings error"))
             ),
             events.toList()
         )
@@ -258,7 +258,7 @@ class ClaimSensorViewModelTest {
     }
 
     @Test
-    fun `unclaimSensor shows error snackbar and NavigateUp on API failure`() = runBlocking {
+    fun `unclaimSensor shows error toast and NavigateUp on API failure`() = runBlocking {
         val sensorClaimInteractor = mockk<SensorClaimInteractor> {
             coEvery { unclaimSensor(SENSOR_ID, false, any()) } answers {
                 thirdArg<(ClaimSensorResponse?) -> Unit>()(
@@ -276,7 +276,7 @@ class ClaimSensorViewModelTest {
         assertEquals(
             listOf(
                 UiEvent.Navigate(ClaimRoutes.CLAIM_IN_PROGRESS, true),
-                UiEvent.ShowSnackbar(UiText.DynamicString("Unclaim error")),
+                UiEvent.ShowToast(UiText.DynamicString("Unclaim error")),
                 UiEvent.NavigateUp
             ),
             events.toList()
@@ -299,12 +299,12 @@ class ClaimSensorViewModelTest {
         viewModel.unclaimSensor(deleteData = true)
         withTimeout(5.seconds) { while (events.size < 3) delay(10) }
 
-        assertEquals(UiEvent.ShowSnackbar(UiText.DynamicString("Error")), events[1])
+        assertEquals(UiEvent.ShowToast(UiText.DynamicString("Error")), events[1])
         collector.cancel()
     }
 
     @Test
-    fun `unclaimSensor shows error snackbar when exception occurs`() = runBlocking {
+    fun `unclaimSensor shows error toast when exception occurs`() = runBlocking {
         val tagSettingsInteractor = mock<TagSettingsInteractor> {
             on { getSensorSettings(SENSOR_ID) } doThrow RuntimeException("Settings error")
         }
@@ -318,7 +318,7 @@ class ClaimSensorViewModelTest {
         assertEquals(
             listOf(
                 UiEvent.Navigate(ClaimRoutes.CLAIM_IN_PROGRESS, true),
-                UiEvent.ShowSnackbar(UiText.DynamicString("Settings error"))
+                UiEvent.ShowToast(UiText.DynamicString("Settings error"))
             ),
             events.toList()
         )
@@ -352,7 +352,7 @@ class ClaimSensorViewModelTest {
     }
 
     @Test
-    fun `contestSensor shows error snackbar and NavigateUp on API failure`() = runBlocking {
+    fun `contestSensor shows error toast and NavigateUp on API failure`() = runBlocking {
         val sensorClaimInteractor = mockk<SensorClaimInteractor> {
             coEvery { contestSensor(SENSOR_ID, SENSOR_NAME, SECRET, any()) } answers {
                 arg<(ContestSensorResponse?) -> Unit>(3)(
@@ -370,7 +370,7 @@ class ClaimSensorViewModelTest {
         assertEquals(
             listOf(
                 UiEvent.Navigate(ClaimRoutes.CLAIM_IN_PROGRESS, true),
-                UiEvent.ShowSnackbar(UiText.DynamicString("Contest error")),
+                UiEvent.ShowToast(UiText.DynamicString("Contest error")),
                 UiEvent.NavigateUp
             ),
             events.toList()
@@ -392,12 +392,12 @@ class ClaimSensorViewModelTest {
         viewModel.contestSensor(SECRET)
         withTimeout(5.seconds) { while (events.size < 3) delay(10) }
 
-        assertEquals(UiEvent.ShowSnackbar(UiText.DynamicString("Error")), events[1])
+        assertEquals(UiEvent.ShowToast(UiText.DynamicString("Error")), events[1])
         collector.cancel()
     }
 
     @Test
-    fun `contestSensor shows error snackbar when exception occurs`() = runBlocking {
+    fun `contestSensor shows error toast when exception occurs`() = runBlocking {
         val tagSettingsInteractor = mock<TagSettingsInteractor> {
             on { getSensorSettings(SENSOR_ID) } doThrow RuntimeException("Settings error")
         }
@@ -411,7 +411,7 @@ class ClaimSensorViewModelTest {
         assertEquals(
             listOf(
                 UiEvent.Navigate(ClaimRoutes.CLAIM_IN_PROGRESS, true),
-                UiEvent.ShowSnackbar(UiText.DynamicString("Settings error"))
+                UiEvent.ShowToast(UiText.DynamicString("Settings error"))
             ),
             events.toList()
         )
@@ -463,13 +463,13 @@ class ClaimSensorViewModelTest {
 
         assertEquals(
             3,
-            events.count { it == UiEvent.ShowSnackbar(UiText.DynamicString("Error")) },
+            events.count { it == UiEvent.ShowToast(UiText.DynamicString("Error")) },
         )
         collector.cancel()
     }
 
     @Test
-    fun `NFC scan with wrong MAC address shows wrong sensor scanned snackbar`() = runBlocking {
+    fun `NFC scan with wrong MAC address shows wrong sensor scanned toast`() = runBlocking {
         val sensorInfoInteractor = mockk<SensorInfoInteractor> {
             coEvery { getSensorFirmwareVersion(SENSOR_ID) } coAnswers { awaitCancellation() }
         }
@@ -484,7 +484,7 @@ class ClaimSensorViewModelTest {
         assertEquals(
             listOf(
                 UiEvent.Navigate(ClaimRoutes.FORCE_CLAIM_GETTING_ID, true),
-                UiEvent.ShowSnackbar(UiText.StringResource(R.string.claim_wrong_sensor_scanned))
+                UiEvent.ShowToast(UiText.StringResource(R.string.claim_wrong_sensor_scanned))
             ),
             events.toList()
         )

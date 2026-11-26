@@ -121,7 +121,7 @@ class SignInViewModel(
 
     private fun showError(message: UiText) {
         viewModelScope.launch {
-            _uiEvent.emit(UiEvent.ShowSnackbar(message))
+            _uiEvent.emit(UiEvent.ShowToast(message))
         }
     }
 

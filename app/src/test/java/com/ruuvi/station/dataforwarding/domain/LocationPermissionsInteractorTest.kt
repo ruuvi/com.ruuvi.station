@@ -2,6 +2,7 @@ package com.ruuvi.station.dataforwarding.domain
 
 import android.Manifest
 import android.app.Application
+import android.content.DialogInterface
 import android.content.Intent
 import android.os.Build
 import android.os.Looper
@@ -12,6 +13,7 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.appcompat.app.AlertDialog
 import com.ruuvi.station.R
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -131,34 +133,19 @@ class LocationPermissionsInteractorTest {
     }
 
     @Test
-    fun `location snackbar opens application settings`() {
+    fun `location settings dialog offers a route to app settings`() {
         val activity = createActivity()
         val interactor = LocationPermissionsInteractor(activity)
 
-        interactor.showLocationSnackbar()
-        Shadows.shadowOf(Looper.getMainLooper()).idleFor(100, TimeUnit.MILLISECONDS)
+        interactor.showLocationSettingsDialog()
 
-        val message = activity.findViewById<TextView>(
-            com.google.android.material.R.id.snackbar_text,
-        )
-        val action = activity.findViewById<TextView>(
-            com.google.android.material.R.id.snackbar_action,
-        )
+        val dialog = ShadowDialog.getLatestDialog() as AlertDialog
+        assertTrue(dialog.isShowing)
         assertEquals(
             activity.getString(R.string.data_forwarding_background_location_message_bloked),
-            message.text.toString(),
+            dialog.findViewById<TextView>(android.R.id.message)?.text?.toString(),
         )
-        assertEquals(activity.getString(R.string.settings), action.text.toString())
-
-        action.performClick()
-
-        val startedIntent = Shadows.shadowOf(activity).nextStartedActivity
-        assertEquals(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, startedIntent.action)
-        assertEquals(
-            "package:${activity.packageName}",
-            startedIntent.data.toString(),
-        )
-        assertTrue(startedIntent.flags and Intent.FLAG_ACTIVITY_NEW_TASK == 0)
+        assertEquals(activity.getString(R.string.open_settings), dialog.getButton(DialogInterface.BUTTON_POSITIVE).text.toString())
     }
 
     private fun createActivity(): ComponentActivity =

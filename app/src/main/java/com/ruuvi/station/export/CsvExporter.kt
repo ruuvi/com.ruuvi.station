@@ -2,9 +2,9 @@ package com.ruuvi.station.export
 
 import android.content.Context
 import android.net.Uri
-import android.widget.Toast
 import androidx.core.content.FileProvider
 import com.ruuvi.station.R
+import com.ruuvi.station.util.ui.showToast
 import com.ruuvi.station.util.extensions.prepareFilename
 import java.io.File
 import java.io.FileWriter
@@ -19,7 +19,7 @@ class CsvExporter(
     fun toCsv(sensorId: String): Uri? {
         val exportData = exportDataPreparator.prepareExportData(sensorId)
         if (exportData == null) {
-            Toast.makeText(context, context.getString(R.string.export_csv_failed), Toast.LENGTH_SHORT).show()
+            context.showToast(R.string.export_csv_failed)
             return null
         }
 
@@ -65,10 +65,10 @@ class CsvExporter(
                 fileWriter.flush()
             }
 
-            Toast.makeText(context, context.getString(R.string.export_csv_created), Toast.LENGTH_SHORT).show()
+            context.showToast(R.string.export_csv_created)
             return FileProvider.getUriForFile(context, "com.ruuvi.station.fileprovider", csvFile)
         } catch (e: Exception) {
-            Toast.makeText(context, context.getString(R.string.export_csv_failed), Toast.LENGTH_SHORT).show()
+            context.showToast(R.string.export_csv_failed)
             e.printStackTrace()
             return null
         }

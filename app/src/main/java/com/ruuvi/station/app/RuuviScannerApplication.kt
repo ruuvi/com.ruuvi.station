@@ -21,6 +21,7 @@ import com.ruuvi.station.feature.provider.RuntimeFeatureFlagProvider
 import com.ruuvi.station.network.domain.NetworkDataSyncInteractor
 import com.ruuvi.station.network.domain.RuuviNetworkInteractor
 import com.ruuvi.station.util.Foreground
+import com.ruuvi.station.util.ui.RuuviToast
 import com.ruuvi.station.util.ForegroundListener
 import com.ruuvi.station.util.ReleaseTree
 import com.ruuvi.station.util.extensions.registerReceiverCompat
@@ -82,6 +83,7 @@ class RuuviScannerApplication : Application(), DIAware {
 
     override fun onCreate() {
         super.onCreate()
+        RuuviToast.init(this)
 
         if (BuildConfig.FILE_LOGS_ENABLED) {
             Timber.plant(ReleaseTree())

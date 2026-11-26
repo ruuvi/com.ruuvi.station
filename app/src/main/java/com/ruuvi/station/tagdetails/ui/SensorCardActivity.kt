@@ -637,8 +637,8 @@ fun SensorCardBottom(
     staleTimeoutSeconds: Long,
     useDarkBackground: Boolean,
     modifier: Modifier = Modifier,
-    onShowStaleSnackbar: () -> Unit = {},
-    onDismissStaleSnackbar: () -> Unit = {},
+    onShowStaleToast: () -> Unit = {},
+    onDismissStaleToast: () -> Unit = {},
 ) {
     if (sensor.latestMeasurement != null) {
         val context = LocalContext.current
@@ -687,7 +687,7 @@ fun SensorCardBottom(
                         .width(sourceIconWidth)
                         .then(
                             if (isStale) {
-                                Modifier.clickable(onClick = onShowStaleSnackbar)
+                                Modifier.clickable(onClick = onShowStaleToast)
                             } else {
                                 Modifier
                             }
@@ -729,7 +729,7 @@ fun SensorCardBottom(
 
         LaunchedEffect(sensor.id, isStale) {
             if (!isStale) {
-                onDismissStaleSnackbar()
+                onDismissStaleToast()
             }
         }
 

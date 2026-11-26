@@ -2,8 +2,11 @@ package com.ruuvi.station.util.extensions
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.ruuvi.station.R
 import com.ruuvi.station.app.ui.UiEvent
+import com.ruuvi.station.app.ui.UiText
 import com.ruuvi.station.network.domain.OperationStatus
+import com.ruuvi.station.util.ui.ToastDuration
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -39,10 +42,11 @@ fun ViewModel.processStatus(
                         getDelay(inProgress)?.let {
                             delay(it)
                         }
+                        uiEventFlow.emit(UiEvent.Progress(inProgress = false, message = null))
                         uiEventFlow.emit(
-                            UiEvent.ShowSnackbar(
-                                com.ruuvi.station.app.ui.UiText.StringResource(com.ruuvi.station.R.string.saving_success),
-                                androidx.compose.material.SnackbarDuration.Short
+                            UiEvent.ShowToast(
+                                UiText.StringResource(R.string.saving_success),
+                                ToastDuration.Short
                             )
                         )
                         onSuccess?.invoke()
@@ -54,10 +58,11 @@ fun ViewModel.processStatus(
                         getDelay(inProgress)?.let {
                             delay(it)
                         }
+                        uiEventFlow.emit(UiEvent.Progress(inProgress = false, message = null))
                         uiEventFlow.emit(
-                            UiEvent.ShowSnackbar(
-                                com.ruuvi.station.app.ui.UiText.StringResource(com.ruuvi.station.R.string.saving_fail),
-                                androidx.compose.material.SnackbarDuration.Short
+                            UiEvent.ShowToast(
+                                UiText.StringResource(R.string.saving_fail),
+                                ToastDuration.Short
                             )
                         )
                         onFail?.invoke()
@@ -69,10 +74,11 @@ fun ViewModel.processStatus(
                     Timber.d("delayTimeout inProgress set $inProgress")
 
                     (Dispatchers.Main) {
+                        // Stays on screen until the save finishes, however long that takes.
                         uiEventFlow.emit(
-                            UiEvent.ShowSnackbar(
-                                com.ruuvi.station.app.ui.UiText.StringResource(com.ruuvi.station.R.string.saving_to_cloud),
-                                androidx.compose.material.SnackbarDuration.Indefinite
+                            UiEvent.Progress(
+                                inProgress = true,
+                                message = UiText.StringResource(R.string.saving_to_cloud),
                             )
                         )
                     }

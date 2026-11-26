@@ -6,14 +6,11 @@ import android.bluetooth.BluetoothManager
 import android.content.Context
 import android.content.Intent
 import android.location.LocationManager
-import android.net.Uri
 import android.os.Build
 import android.provider.Settings
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.material.ScaffoldState
-import androidx.compose.material.SnackbarDuration
-import androidx.compose.material.SnackbarResult
 import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -22,8 +19,6 @@ import com.ruuvi.station.R
 import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.app.ui.components.dialog.RuuviPermissionDialog
 import com.ruuvi.station.util.extensions.locationEnabled
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -94,7 +89,7 @@ fun LocationBluetoothPermissions(
             }
         } else {
             Timber.d("LocationBluetoothPermissions are NOT granted")
-            permissionSnackbar(context, scaffoldState, context.getString(R.string.permission_location_needed))
+            context.showPermissionSettingsDialog(R.string.permission_location_needed)
         }
     }
 
@@ -172,7 +167,7 @@ fun LocationBluetoothPermissionsAndroid11(
     val backgroundBluetoothPermissionState = rememberPermissionState(permission = ACCESS_BACKGROUND_LOCATION) { result ->
         Timber.d("Background permission request result: $result")
         if (!result) {
-            permissionSnackbar(context, scaffoldState, context.getString(R.string.permission_location_needed))
+            context.showPermissionSettingsDialog(R.string.permission_location_needed)
         }
 
     }
@@ -204,7 +199,7 @@ fun LocationBluetoothPermissionsAndroid11(
             }
         } else {
             Timber.d("LocationBluetoothPermissions are NOT granted")
-            permissionSnackbar(context, scaffoldState, context.getString(R.string.permission_location_needed))
+            context.showPermissionSettingsDialog(R.string.permission_location_needed)
         }
     }
 
@@ -294,7 +289,7 @@ fun NearbyDevicesPermissions(
             }
         } else {
             Timber.d("NearbyDevicesPermissions are NOT granted")
-            permissionSnackbar(context, scaffoldState, context.getString(R.string.permission_location_needed_api31))
+            context.showPermissionSettingsDialog(R.string.permission_location_needed_api31)
         }
     }
 
@@ -345,7 +340,7 @@ fun NotificationPermission(
             Timber.d("NotificationPermission are granted!")
         } else {
             Timber.d("NotificationPermission are NOT granted")
-            permissionSnackbar(context, scaffoldState, context.getString(R.string.notification_permission_needed))
+            context.showPermissionSettingsDialog(R.string.notification_permission_needed)
         }
         nextCheckReady.invoke()
     }
@@ -364,23 +359,6 @@ fun NotificationPermission(
 
 }
 
-
-fun permissionSnackbar(context: Context, scaffoldState: ScaffoldState, message: String) {
-    CoroutineScope(Dispatchers.Main).launch {
-        val actionResult = scaffoldState.snackbarHostState.showSnackbar(
-            message = message,
-            actionLabel = context.getString(R.string.settings),
-            duration = SnackbarDuration.Long
-        )
-        if (actionResult == SnackbarResult.ActionPerformed) {
-            val intent = Intent()
-            val uri = Uri.fromParts("package", context.packageName, null)
-            intent.action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
-            intent.data = uri
-            context.startActivity(intent)
-        }
-    }
-}
 
 fun isBluetoothEnabled(context: Context): Boolean {
     val bluetoothManager: BluetoothManager = context.getSystemService(BluetoothManager::class.java)
