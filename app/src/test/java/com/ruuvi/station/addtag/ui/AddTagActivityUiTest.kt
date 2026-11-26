@@ -1,5 +1,8 @@
 package com.ruuvi.station.addtag.ui
 
+import com.ruuvi.station.util.ui.latestToastText
+import android.Manifest
+import android.content.pm.PackageManager
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Build
@@ -112,7 +115,7 @@ class AddTagActivityUiTest {
         every { viewModel.getTagById(sensor.id!!) } returns sensor.copy(favorite = true)
         withActivity { activity ->
             activity.binding.content.tagListView.performItemClick(View(activity), 0, 0)
-            assertEquals(activity.getString(R.string.sensor_already_added), ShadowToast.getTextOfLatestToast())
+            assertEquals(activity.getString(R.string.sensor_already_added), latestToastText())
             verify(exactly = 0) { viewModel.makeSensorFavorite(any()) }
             every { viewModel.getTagById(sensor.id!!) } returns sensor
             activity.binding.content.tagListView.performItemClick(View(activity), 0, 0)
@@ -121,6 +124,21 @@ class AddTagActivityUiTest {
                 SensorCardActivity::class.java.name,
                 shadowOf(activity).nextStartedActivity.component?.className,
             )
+        }
+    }
+
+    @Test
+    @Config(sdk = [35])
+    fun `denied add-sensor permission offers the settings dialog`() {
+        every { anyConstructed<PermissionsInteractor>().showPermissionSettingsDialog() } just Runs
+
+        withActivity { activity ->
+            activity.onRequestPermissionsResult(
+                PermissionsInteractor.REQUEST_CODE_PERMISSIONS,
+                arrayOf(Manifest.permission.BLUETOOTH_SCAN),
+                intArrayOf(PackageManager.PERMISSION_DENIED),
+            )
+            verify(exactly = 1) { anyConstructed<PermissionsInteractor>().showPermissionSettingsDialog() }
         }
     }
 

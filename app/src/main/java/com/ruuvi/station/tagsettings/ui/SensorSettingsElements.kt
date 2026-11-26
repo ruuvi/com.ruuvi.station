@@ -184,10 +184,7 @@ fun SensorSettings(
         }
     }
 
-    ShowStatusSnackbar(
-        scaffoldState = scaffoldState,
-        uiEvent = viewModel.uiEvent
-    )
+    ShowStatusToast(uiEvent = viewModel.uiEvent)
 }
 
 @Composable

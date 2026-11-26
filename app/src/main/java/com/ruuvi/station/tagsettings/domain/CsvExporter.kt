@@ -2,9 +2,9 @@ package com.ruuvi.station.tagsettings.domain
 
 import android.content.Context
 import android.net.Uri
-import android.widget.Toast
 import androidx.core.content.FileProvider
 import com.ruuvi.station.R
+import com.ruuvi.station.util.ui.showToast
 import com.ruuvi.station.app.preferences.GlobalSettings
 import com.ruuvi.station.bluetooth.util.extensions.roundHalfUp
 import com.ruuvi.station.database.domain.SensorHistoryRepository
@@ -158,12 +158,12 @@ class CsvExporter_(
             fileWriter.flush()
             fileWriter.close()
         } catch (e: Exception) {
-            Toast.makeText(context, context.getString(R.string.export_csv_failed), Toast.LENGTH_SHORT).show()
+            context.showToast(R.string.export_csv_failed)
             e.printStackTrace()
             return null
         }
 
-        Toast.makeText(context, context.getString(R.string.export_csv_created), Toast.LENGTH_SHORT).show()
+        context.showToast(R.string.export_csv_created)
         return FileProvider.getUriForFile(context, "com.ruuvi.station.fileprovider", csvFile)
     }
 

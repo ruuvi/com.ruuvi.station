@@ -16,7 +16,7 @@ import com.ruuvi.station.util.extensions.applyRuuviEdgeToEdgeInsets
 import com.ruuvi.station.util.extensions.enableRuuviEdgeToEdge
 import com.ruuvi.station.util.extensions.makeWebLinks
 import com.ruuvi.station.util.extensions.viewModel
-import com.ruuvi.station.util.ui.showBottomSnackbar
+import com.ruuvi.station.util.ui.showToast
 import org.kodein.di.DI
 import org.kodein.di.DIAware
 import org.kodein.di.android.closestDI
@@ -90,14 +90,14 @@ class AboutActivity : AppCompatActivity(R.layout.activity_about), DIAware {
             counter++
             val developerSettingsEnabled = viewModel.isDeveloperSettingsEnabled()
             if (counter == 15 && !developerSettingsEnabled) {
-                showBottomSnackbar("You're almost there")
+                showToast("You're almost there")
             }
             if (counter == 20 && !developerSettingsEnabled) {
-                showBottomSnackbar("You can see developer settings now")
+                showToast("You can see developer settings now")
                 viewModel.enableDeveloperSettings()
             }
             if (counter == 15 && developerSettingsEnabled) {
-                showBottomSnackbar("You already can see settings options")
+                showToast("You already can see settings options")
             }
         }
     }

@@ -68,19 +68,22 @@ class SensorCardActivityComposeWiringTest {
 
     @Test
     fun `onCreate resolves dependencies and binds sensor id to the route view model`() {
-        val activity = Robolectric.buildActivity(
+        // Closed at the end so a later test that changes the night mode does not recreate it.
+        Robolectric.buildActivity(
             SensorCardActivity::class.java,
             Intent(application, SensorCardActivity::class.java)
                 .putExtra(SensorCardActivity.ARGUMENT_SENSOR_ID, SENSOR_ID),
-        ).setup().get()
+        ).use { controller ->
+            val activity = controller.setup().get()
 
-        composeRule.waitForIdle()
+            composeRule.waitForIdle()
 
-        assertEquals(SENSOR_ID, application.createdViewModelArguments?.sensorId)
-        assertFalse(activity.isFinishing)
-        verify(exactly = 1) { preferences.getDashboardTapAction() }
-        verify(exactly = 1) {
-            runtimeBehavior.isFeatureEnabled(FeatureFlag.NEW_SENSOR_CARD)
+            assertEquals(SENSOR_ID, application.createdViewModelArguments?.sensorId)
+            assertFalse(activity.isFinishing)
+            verify(exactly = 1) { preferences.getDashboardTapAction() }
+            verify(exactly = 1) {
+                runtimeBehavior.isFeatureEnabled(FeatureFlag.NEW_SENSOR_CARD)
+            }
         }
     }
 

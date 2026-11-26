@@ -1,6 +1,12 @@
 package com.ruuvi.station.tagdetails.ui
 
+import com.ruuvi.station.util.ui.toastShownCount
+import com.ruuvi.station.util.ui.RuuviToast
+import com.ruuvi.station.util.ui.latestToastText
+import org.robolectric.shadows.ShadowToast
+import org.junit.Assert.assertFalse
 import android.app.Application
+import androidx.lifecycle.Lifecycle
 import androidx.activity.ComponentActivity
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
@@ -217,7 +223,7 @@ class SensorDetailRouteComposeTest {
     }
 
     @Test
-    fun `refreshing a stale sensor dismisses only its active snackbar`() {
+    fun `refreshing a stale sensor hides its stale toast`() {
         val staleMessage = compose.activity.getString(R.string.sensor_measurements_outdated)
         val staleSensor = sensor("one", "Sensor One").copy(
             latestMeasurement = ruuviTagPreview.latestMeasurement?.copy(updatedAt = Date(0)),
@@ -236,12 +242,17 @@ class SensorDetailRouteComposeTest {
             )
         }
 
+        RuuviToast.cancel()
+        val shownBefore = toastShownCount()
         compose.onNodeWithContentDescription(staleMessage).performClick()
-        compose.onNodeWithText(staleMessage).assertExists()
+        compose.runOnIdle {
+            assertEquals(staleMessage, latestToastText())
+            assertTrue(RuuviToast.isShowing(staleMessage))
+        }
 
-        // A second tap exercises the active-job guard without creating another snackbar.
+        // A second tap while the toast is visible does not show it again.
         compose.onNodeWithContentDescription(staleMessage).performClick()
-        compose.onNodeWithText(staleMessage).assertExists()
+        compose.runOnIdle { assertEquals(shownBefore + 1, toastShownCount()) }
 
         compose.runOnIdle {
             sensors.value = listOf(
@@ -252,7 +263,37 @@ class SensorDetailRouteComposeTest {
         }
         compose.waitForIdle()
 
-        compose.onNodeWithText(staleMessage).assertDoesNotExist()
+        compose.runOnIdle { assertFalse(RuuviToast.isShowing()) }
+    }
+
+    @Test
+    fun `leaving sensor details hides its stale toast`() {
+        val staleMessage = compose.activity.getString(R.string.sensor_measurements_outdated)
+        val staleSensor = sensor("one", "Sensor One").copy(
+            latestMeasurement = ruuviTagPreview.latestMeasurement?.copy(updatedAt = Date(0)),
+        )
+        sensors.value = listOf(staleSensor)
+        selectedSensorFlow.value = staleSensor.id
+
+        compose.setContent {
+            SensorDetailRoute(
+                viewModel = viewModel,
+                startDestination = SensorDetailStartDestination(SensorDetailDestination.CARD),
+                viewModelProvider = viewModelProvider(),
+                unitsConverter = mockk(relaxed = true),
+                useNewSensorCard = true,
+                onFinish = {},
+            )
+        }
+
+        RuuviToast.cancel()
+        compose.onNodeWithContentDescription(staleMessage).performClick()
+        compose.runOnIdle { assertTrue(RuuviToast.isShowing(staleMessage)) }
+
+        // Back or Home stops the screen without changing the sensor or destination.
+        compose.activityRule.scenario.moveToState(Lifecycle.State.CREATED)
+
+        assertFalse(RuuviToast.isShowing(staleMessage))
     }
 
     @Test

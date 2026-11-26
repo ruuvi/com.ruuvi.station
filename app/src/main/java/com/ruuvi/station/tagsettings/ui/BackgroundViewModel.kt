@@ -37,7 +37,7 @@ class BackgroundViewModel(
             requestCloudSync()
         } else {
             viewModelScope.launch {
-                _uiEvent.emit(UiEvent.ShowSnackbar(UiText.StringResource(R.string.image_format_not_supported)))
+                _uiEvent.emit(UiEvent.ShowToast(UiText.StringResource(R.string.image_format_not_supported)))
             }
         }
         return result

@@ -73,6 +73,7 @@ import androidx.compose.ui.unit.toSize
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.ruuvi.station.app.ui.components.HideToastWhenScreenStopsEffect
 import com.ruuvi.station.R
 import com.ruuvi.station.alarm.domain.AlarmSensorStatus
 import com.ruuvi.station.alarm.ui.AlarmItemsViewModel
@@ -101,8 +102,7 @@ import com.ruuvi.station.tagsettings.ui.visible_measurements.VisibleMeasurements
 import com.ruuvi.station.tagsettings.ui.visible_measurements.VisibleMeasurementsViewModel
 import com.ruuvi.station.units.domain.UnitsConverter
 import com.ruuvi.station.util.Period
-import com.ruuvi.station.util.ui.RuuviSnackbarHost
-import kotlinx.coroutines.Job
+import com.ruuvi.station.util.ui.RuuviToast
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
@@ -236,22 +236,16 @@ private fun SensorDetailScreen(
     val pagerFlingBehavior = PagerDefaults.flingBehavior(state = pagerState)
     val titlePagePosition = pagerState.currentPage + pagerState.currentPageOffsetFraction
     val context = LocalContext.current
-    val staleSnackbarMessage = stringResource(R.string.sensor_measurements_outdated)
-    var staleSnackbarJob by remember { mutableStateOf<Job?>(null) }
+    val staleToastMessage = stringResource(R.string.sensor_measurements_outdated)
 
-    fun showStaleSnackbar() {
-        if (staleSnackbarJob?.isActive == true) return
-        staleSnackbarJob = coroutineScope.launch {
-            scaffoldState.snackbarHostState.showSnackbar(staleSnackbarMessage)
-        }
+    fun showStaleToast() {
+        if (RuuviToast.isShowing(staleToastMessage)) return
+        // About this sensor view only, so it stays here rather than following the user.
+        RuuviToast.show(context, staleToastMessage, followToNextScreen = false)
     }
 
-    fun dismissStaleSnackbar() {
-        staleSnackbarJob?.cancel()
-        staleSnackbarJob = null
-        scaffoldState.snackbarHostState.currentSnackbarData
-            ?.takeIf { it.message == staleSnackbarMessage }
-            ?.dismiss()
+    fun dismissStaleToast() {
+        RuuviToast.cancel(staleToastMessage)
     }
 
     // Match the activity transition used by Share Sensor (@anim/enter_right, exit_left).
@@ -279,10 +273,10 @@ private fun SensorDetailScreen(
     }
 
     LaunchedEffect(currentSensor?.id, destination) {
-        staleSnackbarJob?.cancel()
-        staleSnackbarJob = null
-        scaffoldState.snackbarHostState.currentSnackbarData?.dismiss()
+        dismissStaleToast()
     }
+    // Also hide it when leaving sensor details with Back or Home.
+    HideToastWhenScreenStopsEffect(staleToastMessage)
 
     BackHandler(enabled = nestedSettings) {
         onNestedSettingsBack()
@@ -516,21 +510,14 @@ private fun SensorDetailScreen(
                                 staleTimeoutSeconds = staleTimeoutSeconds,
                                 useDarkBackground = useSensorBackground,
                                 modifier = Modifier.heightIn(min = 44.dp),
-                                onShowStaleSnackbar = ::showStaleSnackbar,
-                                onDismissStaleSnackbar = ::dismissStaleSnackbar,
+                                onShowStaleToast = ::showStaleToast,
+                                onDismissStaleToast = ::dismissStaleToast,
                             )
                         }
                     }
                 }
             }
         }
-
-        RuuviSnackbarHost(
-            hostState = scaffoldState.snackbarHostState,
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .windowInsetsPadding(WindowInsets.navigationBars),
-        )
     }
 }
 

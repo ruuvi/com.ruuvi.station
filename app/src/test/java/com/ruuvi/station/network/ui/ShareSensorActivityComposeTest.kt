@@ -2,6 +2,7 @@
 
 package com.ruuvi.station.network.ui
 
+import com.ruuvi.station.util.ui.latestToastDuration
 import android.app.Activity
 import android.content.Intent
 import android.graphics.Color
@@ -10,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.ui.test.assertIsDisplayed
@@ -29,12 +31,19 @@ import com.ruuvi.station.app.ui.theme.RuuviTheme
 import com.ruuvi.station.database.domain.SensorSettingsRepository
 import com.ruuvi.station.database.domain.SensorShareListRepository
 import com.ruuvi.station.database.tables.SensorSettings
+import com.ruuvi.station.network.data.response.RuuviNetworkResponse
+import com.ruuvi.station.network.data.response.ShareSensorResponse
+import com.ruuvi.station.network.data.response.ShareSensorResponseBody
 import com.ruuvi.station.network.domain.NetworkShareListInteractor
 import com.ruuvi.station.network.domain.NetworkTokenRepository
 import com.ruuvi.station.network.domain.RuuviNetworkInteractor
+import com.ruuvi.station.util.ui.RuuviToast
 import com.ruuvi.station.util.ui.UiTestApplication
+import com.ruuvi.station.util.ui.latestToast
+import com.ruuvi.station.util.ui.latestToastText
 import io.mockk.every
 import io.mockk.mockk
+import kotlinx.coroutines.CoroutineExceptionHandler
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -48,6 +57,7 @@ import org.robolectric.RobolectricTestRunner
 import org.robolectric.RuntimeEnvironment
 import org.robolectric.Shadows.shadowOf
 import org.robolectric.annotation.Config
+import kotlin.coroutines.EmptyCoroutineContext
 
 @Suppress("DEPRECATION")
 @RunWith(RobolectricTestRunner::class)
@@ -68,6 +78,7 @@ class ShareSensorActivityComposeTest {
 
     @After
     fun tearDown() {
+        RuuviToast.cancel()
         AppCompatDelegate.setDefaultNightMode(oldMode)
     }
 
@@ -85,6 +96,86 @@ class ShareSensorActivityComposeTest {
             assertEquals(Color.TRANSPARENT, activity.window.statusBarColor)
             assertEquals(Color.TRANSPARENT, activity.window.navigationBarColor)
             assertFalse(activity.window.isNavigationBarContrastEnforced)
+        }
+    }
+
+    @Test
+    fun `invitations confirm briefly and keep the explanation on screen while errors stay long`() {
+        val email = "recipient@example.com"
+        val network = mockk<RuuviNetworkInteractor>()
+        var response = ShareSensorResponse(
+            result = RuuviNetworkResponse.successResult,
+            error = "",
+            data = ShareSensorResponseBody(sensor = SENSOR_ID, invited = true),
+            code = null,
+        )
+        every { network.shareSensor(email, SENSOR_ID, any(), any()) } answers {
+            arg<(ShareSensorResponse?) -> Unit>(3)(response)
+        }
+        every { network.unshareSensor(email, SENSOR_ID, any(), any()) } answers {
+            arg<(ShareSensorResponse?) -> Unit>(3)(
+                ShareSensorResponse(RuuviNetworkResponse.errorResult, "Unshare unavailable", null, null)
+            )
+        }
+
+        val viewModel = createViewModel(network = network)
+        (RuntimeEnvironment.getApplication() as UiTestApplication).shareSensorViewModel = viewModel
+
+        withActivity(SENSOR_ID) { activity ->
+            compose.runOnIdle { viewModel.shareTag(email) }
+            compose.waitForIdle()
+            assertEquals(activity.getString(R.string.successfully_shared), latestToastText())
+            assertEquals(Toast.LENGTH_SHORT, latestToastDuration())
+            // The account requirement and next steps stay readable in the pending section, which
+            // is only shown once the invited email is listed as pending.
+            compose.onNodeWithText(activity.getString(R.string.share_pending_section_title)).assertExists()
+
+            compose.runOnIdle {
+                response = response.copy(data = ShareSensorResponseBody(sensor = SENSOR_ID, invited = false))
+                viewModel.shareTag(email)
+            }
+            compose.waitForIdle()
+            assertEquals(activity.getString(R.string.successfully_shared), latestToastText())
+            assertEquals(Toast.LENGTH_SHORT, latestToastDuration())
+
+            compose.runOnIdle {
+                response = ShareSensorResponse(RuuviNetworkResponse.errorResult, "Share unavailable", null, null)
+                viewModel.shareTag(email)
+            }
+            compose.waitForIdle()
+            assertEquals("Share unavailable", latestToastText())
+            assertEquals(Toast.LENGTH_LONG, latestToastDuration())
+
+            compose.runOnIdle { viewModel.unshareTag(email) }
+            compose.waitForIdle()
+            assertEquals("Unshare unavailable", latestToastText())
+            assertEquals(Toast.LENGTH_LONG, latestToastDuration())
+        }
+    }
+
+    @Test
+    fun `sharing exceptions reach the toast even when they have no message`() {
+        val email = "recipient@example.com"
+        val network = mockk<RuuviNetworkInteractor>()
+        var failure = IllegalStateException("Sharing is offline")
+        every { network.shareSensor(email, SENSOR_ID, any(), any()) } answers {
+            thirdArg<CoroutineExceptionHandler>().handleException(EmptyCoroutineContext, failure)
+        }
+        val viewModel = createViewModel(network = network)
+        (RuntimeEnvironment.getApplication() as UiTestApplication).shareSensorViewModel = viewModel
+
+        withActivity(SENSOR_ID) {
+            compose.runOnIdle { viewModel.shareTag(email) }
+            compose.waitForIdle()
+            assertEquals("Sharing is offline", latestToastText())
+            assertEquals(Toast.LENGTH_LONG, latestToastDuration())
+
+            compose.runOnIdle {
+                failure = IllegalStateException()
+                viewModel.shareTag(email)
+            }
+            compose.waitForIdle()
+            assertEquals("", latestToastText())
         }
     }
 
@@ -262,7 +353,10 @@ class ShareSensorActivityComposeTest {
         else -> null
     }
 
-    private fun createViewModel(useWebShare: Boolean = false): ShareSensorViewModel {
+    private fun createViewModel(
+        useWebShare: Boolean = false,
+        network: RuuviNetworkInteractor = mockk(relaxed = true),
+    ): ShareSensorViewModel {
         val preferences = mockk<PreferencesRepository>()
         every { preferences.getSubscriptionMaxSharesPerSensor() } returns 5
         every { preferences.getSubscriptionMaxSharesTotal() } returns 10
@@ -279,7 +373,7 @@ class ShareSensorActivityComposeTest {
 
         return ShareSensorViewModel(
             sensorId = SENSOR_ID,
-            ruuviNetworkInteractor = mockk<RuuviNetworkInteractor>(relaxed = true),
+            ruuviNetworkInteractor = network,
             networkShareListInteractor = mockk<NetworkShareListInteractor>(relaxed = true),
             sensorShareListRepository = SensorShareListRepository(),
             sensorSettingsRepository = sensorSettingsRepository,

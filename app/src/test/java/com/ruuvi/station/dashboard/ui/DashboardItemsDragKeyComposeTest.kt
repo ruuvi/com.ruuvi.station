@@ -65,7 +65,7 @@ class DashboardItemsDragKeyComposeTest {
                         getDefaultImageResource = { R.drawable.new_bg2 },
                         dragDropListState = state,
                         refreshing = false,
-                        onShowStaleSnackbar = {},
+                        onShowStaleToast = {},
                     )
                 }
             }

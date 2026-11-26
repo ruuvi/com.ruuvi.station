@@ -1,5 +1,6 @@
 package com.ruuvi.station.tagsettings.ui.notes
 
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -21,7 +22,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
@@ -36,6 +36,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
 import com.ruuvi.station.R
+import com.ruuvi.station.app.ui.components.ShowStatusToast
 
 @Composable
 fun Notes(
@@ -47,7 +48,6 @@ fun Notes(
     uiEvent: SharedFlow<UiEvent>,
     onNavigateBack: () -> Unit
 ) {
-    val context = LocalContext.current
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
 
@@ -59,22 +59,7 @@ fun Notes(
         }
     }
 
-    LaunchedEffect(uiEvent) {
-        uiEvent.collect { event ->
-            when (event) {
-                is UiEvent.ShowSnackbar -> {
-                    launch {
-                        scaffoldState.snackbarHostState.currentSnackbarData?.dismiss()
-                        scaffoldState.snackbarHostState.showSnackbar(
-                            message = event.message.asString(context),
-                            duration = event.duration
-                        )
-                    }
-                }
-                else -> {}
-            }
-        }
-    }
+    ShowStatusToast(uiEvent)
 
     Column(
         modifier = modifier
@@ -127,6 +112,9 @@ fun Notes(
         RuuviButton(
             text = stringResource(id = R.string.update),
             onClick = {
+                // Close the keyboard for good before saving, so the save feedback sits at the
+                // bottom of the screen rather than above a keyboard that is still on screen.
+                focusManager.clearFocus()
                 keyboardController?.hide()
                 onAction(NotesActions.UpdateNote)
             }
