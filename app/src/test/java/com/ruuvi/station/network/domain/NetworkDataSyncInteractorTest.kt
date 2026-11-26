@@ -503,6 +503,20 @@ class NetworkDataSyncInteractorTest {
     }
 
     @Test
+    fun `latest sync left ahead of the device clock does not block new history points`() = runBlocking {
+        // Device clock was set ahead, then moved back: the stored sync time is now in the future.
+        stubSensor(
+            denseSensor().copy(measurements = listOf(measurement(3L))),
+            localSettings().copy(networkLastSync = Date(System.currentTimeMillis() + TimeUnit.HOURS.toMillis(5))),
+        )
+
+        syncAndJoin()
+
+        verify(exactly = 1) { sensorHistoryRepository.insertPoint(any()) }
+        verify(exactly = 1) { sensorSettingsRepository.updateNetworkLastSync(SYNC_SENSOR_ID, Date(3_000L)) }
+    }
+
+    @Test
     fun `subscribed sensor fetches history instead of separately inserting the latest point`() = runBlocking {
         val sensor = denseSensor()
         stubSensor(sensor.copy(
@@ -748,6 +762,21 @@ class NetworkDataSyncInteractorTest {
             ))
         }
         verifyNoHistoryWrites()
+    }
+
+    @Test
+    fun `history watermark ahead of the device clock is ignored`() = runBlocking {
+        every { sensorSettingsRepository.getSensorSettings(SYNC_SENSOR_ID) } returns localSettings().copy(
+            networkHistoryLastSync = Date(System.currentTimeMillis() + TimeUnit.HOURS.toMillis(5)),
+        )
+        val before = System.currentTimeMillis()
+
+        interactor.syncSensorDataForPeriod(SYNC_SENSOR_ID, 24)
+
+        val request = slot<GetSensorDataRequest>()
+        coVerify(exactly = 1) { networkInteractor.getSensorData(capture(request)) }
+        val day = TimeUnit.HOURS.toMillis(24)
+        assertTrue(requireNotNull(request.captured.since).time in (before - day)..(System.currentTimeMillis() - day))
     }
 
     @Test

@@ -1,5 +1,6 @@
 package com.ruuvi.station.database.domain
 
+import com.ruuvi.station.util.extensions.isAheadOfDeviceClock
 import androidx.annotation.NonNull
 import com.raizlabs.android.dbflow.config.DatabaseDefinition
 import com.raizlabs.android.dbflow.sql.language.SQLite
@@ -39,7 +40,9 @@ class TagRepository(
             } else {
                 tagEntry.favorite = true
                 val previousUpdate = tagEntry.updateAt
-                if (previousUpdate == null ||  previousUpdate < reading.createdAt) {
+                // A previous update ahead of the device clock is left over from a clock that was
+                // set ahead; keeping it would block every later reading.
+                if (previousUpdate == null || previousUpdate < reading.createdAt || previousUpdate.isAheadOfDeviceClock()) {
                     tagEntry.updateData(reading)
                     tagEntry.connectable = false
                 }

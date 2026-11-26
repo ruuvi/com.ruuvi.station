@@ -1,5 +1,6 @@
 package com.ruuvi.station.database.domain
 
+import com.ruuvi.station.network.domain.CloudClock
 import com.raizlabs.android.dbflow.sql.language.SQLite
 import com.ruuvi.station.database.tables.SensorSettings
 import com.ruuvi.station.database.tables.SensorSettings_Table
@@ -32,7 +33,7 @@ class SensorSettingsRepository {
     fun updateSensorName(sensorId: String, sensorName: String?) {
         var settings = getSensorSettingsOrCreate(sensorId)
         settings.name = sensorName
-        settings.lastUpdated = Date().time / 1000
+        settings.lastUpdated = CloudClock.nowSeconds()
         settings.update()
     }
 
@@ -40,7 +41,7 @@ class SensorSettingsRepository {
         var settings = getSensorSettingsOrCreate(sensorId)
         settings.temperatureOffset = temperatureOffset
         settings.temperatureOffsetDate = Date()
-        settings.lastUpdated = Date().time / 1000
+        settings.lastUpdated = CloudClock.nowSeconds()
         settings.update()
     }
 
@@ -49,7 +50,7 @@ class SensorSettingsRepository {
         settings?.let {
             it.temperatureOffset = null
             it.temperatureOffsetDate = null
-            settings.lastUpdated = Date().time / 1000
+            settings.lastUpdated = CloudClock.nowSeconds()
             it.update()
         }
     }
@@ -58,7 +59,7 @@ class SensorSettingsRepository {
         var settings = getSensorSettingsOrCreate(sensorId)
         settings.pressureOffset = offset
         settings.pressureOffsetDate = Date()
-        settings.lastUpdated = Date().time / 1000
+        settings.lastUpdated = CloudClock.nowSeconds()
         settings.update()
     }
 
@@ -67,7 +68,7 @@ class SensorSettingsRepository {
         settings?.let {
             it.pressureOffset = null
             it.pressureOffsetDate = null
-            it.lastUpdated = Date().time / 1000
+            it.lastUpdated = CloudClock.nowSeconds()
             it.update()
         }
     }
@@ -76,7 +77,7 @@ class SensorSettingsRepository {
         val settings = getSensorSettingsOrCreate(sensorId)
         settings.humidityOffset = offset
         settings.humidityOffsetDate = Date()
-        settings.lastUpdated = Date().time / 1000
+        settings.lastUpdated = CloudClock.nowSeconds()
         settings.update()
     }
 
@@ -85,7 +86,7 @@ class SensorSettingsRepository {
         settings?.let {
             it.humidityOffset = null
             it.humidityOffsetDate = null
-            it.lastUpdated = Date().time / 1000
+            it.lastUpdated = CloudClock.nowSeconds()
             it.update()
         }
     }
@@ -104,7 +105,7 @@ class SensorSettingsRepository {
         userBackground: String?,
         defaultBackground: Int?,
         networkBackground: String?,
-        timestamp: Long = Date().time / 1000,
+        timestamp: Long = CloudClock.nowSeconds(),
         imageUrl: String? = null,
     ) {
         val settings = getSensorSettingsOrCreate(sensorId)
@@ -122,7 +123,7 @@ class SensorSettingsRepository {
     fun updateNetworkBackground(sensorId: String, networkBackground: String?, timestamp: Long? = null) {
         Timber.d("updateNetworkBackground $sensorId $networkBackground")
         val settings = getSensorSettingsOrCreate(sensorId)
-        val updateTime = timestamp ?: (Date().time / 1000)
+        val updateTime = timestamp ?: (CloudClock.nowSeconds())
         settings.networkBackground = networkBackground
         settings.backgroundTimestamp = updateTime
         settings.lastUpdated = updateTime

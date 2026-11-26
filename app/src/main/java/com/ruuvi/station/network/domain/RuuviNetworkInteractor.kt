@@ -272,7 +272,7 @@ class RuuviNetworkInteractor (
         }
     }
 
-    fun updateUserSetting(name: String, value: String, timestamp: Long = Date().time / 1000) {
+    fun updateUserSetting(name: String, value: String, timestamp: Long = CloudClock.nowSeconds()) {
         val networkRequest = NetworkRequest(
             NetworkRequestType.SETTINGS,
             name,

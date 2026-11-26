@@ -1,5 +1,6 @@
 package com.ruuvi.station.dashboard.domain
 
+import com.ruuvi.station.network.domain.CloudClock
 import com.google.common.reflect.TypeToken
 import com.google.gson.Gson
 import com.ruuvi.station.app.preferences.PreferencesRepository
@@ -48,7 +49,7 @@ class SensorsSortingInteractor (
     }
 
     fun saveListOfSortedSensors(sortedSensors: List<String>) {
-        preferences.setNetworkSetting(NetworkSettingNames.SENSOR_ORDER, Gson().toJson(sortedSensors), System.currentTimeMillis() / 1000)
+        preferences.setNetworkSetting(NetworkSettingNames.SENSOR_ORDER, Gson().toJson(sortedSensors), CloudClock.nowSeconds())
     }
 
     fun isCustomOrderEnabled(): Boolean {

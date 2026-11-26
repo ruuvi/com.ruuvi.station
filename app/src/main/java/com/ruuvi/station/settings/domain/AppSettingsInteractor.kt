@@ -1,5 +1,6 @@
 package com.ruuvi.station.settings.domain
 
+import com.ruuvi.station.network.domain.CloudClock
 import androidx.lifecycle.LiveData
 import com.google.gson.JsonObject
 import com.koushikdutta.async.future.FutureCallback
@@ -33,7 +34,7 @@ class AppSettingsInteractor(
 
     fun setTemperatureUnit(unit: TemperatureUnit) {
         preferencesRepository.setNetworkSetting(NetworkSettingNames.UNIT_TEMPERATURE, unit.unitCode,
-            System.currentTimeMillis() / 1000)
+            CloudClock.nowSeconds())
         networkApplicationSettings.updateNetworkSetting(NetworkSettingNames.UNIT_TEMPERATURE)
     }
 
@@ -45,7 +46,7 @@ class AppSettingsInteractor(
 
     fun setTemperatureAccuracy(accuracy: Accuracy) {
         preferencesRepository.setNetworkSetting(NetworkSettingNames.ACCURACY_TEMPERATURE, accuracy.code.toString(),
-            System.currentTimeMillis() / 1000)
+            CloudClock.nowSeconds())
         networkApplicationSettings.updateNetworkSetting(NetworkSettingNames.ACCURACY_TEMPERATURE)
     }
 
@@ -57,7 +58,7 @@ class AppSettingsInteractor(
 
     fun setHumidityUnit(unit: HumidityUnit) {
         preferencesRepository.setNetworkSetting(NetworkSettingNames.UNIT_HUMIDITY, unit.unitCode,
-            System.currentTimeMillis() / 1000)
+            CloudClock.nowSeconds())
         networkApplicationSettings.updateNetworkSetting(NetworkSettingNames.UNIT_HUMIDITY)
     }
 
@@ -69,7 +70,7 @@ class AppSettingsInteractor(
 
     fun setHumidityAccuracy(accuracy: Accuracy) {
         preferencesRepository.setNetworkSetting(NetworkSettingNames.ACCURACY_HUMIDITY, accuracy.code.toString(),
-            System.currentTimeMillis() / 1000)
+            CloudClock.nowSeconds())
         networkApplicationSettings.updateNetworkSetting(NetworkSettingNames.ACCURACY_HUMIDITY)
         networkApplicationSettings.updateNetworkSetting(NetworkSettingNames.ACCURACY_HUMIDITY_RELATIVE)
         networkApplicationSettings.updateNetworkSetting(NetworkSettingNames.ACCURACY_HUMIDITY_ABSOLUTE)
@@ -84,7 +85,7 @@ class AppSettingsInteractor(
 
     fun setRelativeHumidityAccuracy(accuracy: Accuracy) {
         preferencesRepository.setNetworkSetting(NetworkSettingNames.ACCURACY_HUMIDITY_RELATIVE, accuracy.code.toString(),
-            System.currentTimeMillis() / 1000)
+            CloudClock.nowSeconds())
         networkApplicationSettings.updateNetworkSetting(NetworkSettingNames.ACCURACY_HUMIDITY_RELATIVE)
     }
 
@@ -96,7 +97,7 @@ class AppSettingsInteractor(
 
     fun setAbsoluteHumidityAccuracy(accuracy: Accuracy) {
         preferencesRepository.setNetworkSetting(NetworkSettingNames.ACCURACY_HUMIDITY_ABSOLUTE, accuracy.code.toString(),
-            System.currentTimeMillis() / 1000)
+            CloudClock.nowSeconds())
         networkApplicationSettings.updateNetworkSetting(NetworkSettingNames.ACCURACY_HUMIDITY_ABSOLUTE)
     }
 
@@ -108,7 +109,7 @@ class AppSettingsInteractor(
 
     fun setDewPointAccuracy(accuracy: Accuracy) {
         preferencesRepository.setNetworkSetting(NetworkSettingNames.ACCURACY_HUMIDITY_DEW_POINT, accuracy.code.toString(),
-            System.currentTimeMillis() / 1000)
+            CloudClock.nowSeconds())
         networkApplicationSettings.updateNetworkSetting(NetworkSettingNames.ACCURACY_HUMIDITY_DEW_POINT)
     }
 
@@ -165,7 +166,7 @@ class AppSettingsInteractor(
 
     fun setIsCloudModeEnabled(isEnabled: Boolean) {
         preferencesRepository.setNetworkSetting(NetworkSettingNames.CLOUD_MODE_ENABLED, isEnabled.toString(),
-            System.currentTimeMillis() / 1000)
+            CloudClock.nowSeconds())
         networkApplicationSettings.updateNetworkSetting(NetworkSettingNames.CLOUD_MODE_ENABLED)
     }
 
@@ -190,7 +191,7 @@ class AppSettingsInteractor(
     fun setIsShowAllGraphPoint(isShowAll: Boolean) {
         if (isShowAll != preferencesRepository.isShowAllGraphPoint()) {
             preferencesRepository.setNetworkSetting(NetworkSettingNames.CHART_SHOW_ALL_POINTS, isShowAll.toString(),
-                System.currentTimeMillis() / 1000)
+                CloudClock.nowSeconds())
             networkApplicationSettings.updateNetworkSetting(NetworkSettingNames.CHART_SHOW_ALL_POINTS)
         }
     }
@@ -201,7 +202,7 @@ class AppSettingsInteractor(
     fun setGraphDrawDots(isDrawDots: Boolean) {
         if (isDrawDots != preferencesRepository.graphDrawDots()) {
             preferencesRepository.setNetworkSetting(NetworkSettingNames.CHART_DRAW_DOTS, isDrawDots.toString(),
-                System.currentTimeMillis() / 1000)
+                CloudClock.nowSeconds())
             networkApplicationSettings.updateNetworkSetting(NetworkSettingNames.CHART_DRAW_DOTS)
         }
     }
@@ -236,7 +237,7 @@ class AppSettingsInteractor(
 
     fun setPressureUnit(unit: PressureUnit) {
         preferencesRepository.setNetworkSetting(NetworkSettingNames.UNIT_PRESSURE, unit.unitCode,
-            System.currentTimeMillis() / 1000)
+            CloudClock.nowSeconds())
         networkApplicationSettings.updateNetworkSetting(NetworkSettingNames.UNIT_PRESSURE)
     }
 
@@ -248,7 +249,7 @@ class AppSettingsInteractor(
 
     fun setPressureAccuracy(accuracy: Accuracy) {
         preferencesRepository.setNetworkSetting(NetworkSettingNames.ACCURACY_PRESSURE, accuracy.code.toString(),
-            System.currentTimeMillis() / 1000)
+            CloudClock.nowSeconds())
         networkApplicationSettings.updateNetworkSetting(NetworkSettingNames.ACCURACY_PRESSURE)
     }
 
@@ -260,7 +261,7 @@ class AppSettingsInteractor(
 
     fun setPmAccuracy(accuracy: Accuracy) {
         preferencesRepository.setNetworkSetting(NetworkSettingNames.ACCURACY_PM, accuracy.code.toString(),
-            System.currentTimeMillis() / 1000)
+            CloudClock.nowSeconds())
         networkApplicationSettings.updateNetworkSetting(NetworkSettingNames.ACCURACY_PM)
     }
 
@@ -272,7 +273,7 @@ class AppSettingsInteractor(
 
     fun setAccelerationAccuracy(accuracy: Accuracy) {
         preferencesRepository.setNetworkSetting(NetworkSettingNames.ACCURACY_ACCELERATION, accuracy.code.toString(),
-            System.currentTimeMillis() / 1000)
+            CloudClock.nowSeconds())
         networkApplicationSettings.updateNetworkSetting(NetworkSettingNames.ACCURACY_ACCELERATION)
     }
 
@@ -284,7 +285,7 @@ class AppSettingsInteractor(
 
     fun setVoltageAccuracy(accuracy: Accuracy) {
         preferencesRepository.setNetworkSetting(NetworkSettingNames.ACCURACY_VOLTAGE, accuracy.code.toString(),
-            System.currentTimeMillis() / 1000)
+            CloudClock.nowSeconds())
         networkApplicationSettings.updateNetworkSetting(NetworkSettingNames.ACCURACY_VOLTAGE)
     }
 
@@ -388,7 +389,7 @@ class AppSettingsInteractor(
 
     fun setEmailAlerts(enabled: Boolean) {
         preferencesRepository.setNetworkSetting(NetworkSettingNames.DISABLE_EMAIL_NOTIFICATIONS, (!enabled).toString(),
-            System.currentTimeMillis() / 1000)
+            CloudClock.nowSeconds())
         networkApplicationSettings.updateNetworkSetting(NetworkSettingNames.DISABLE_EMAIL_NOTIFICATIONS)
     }
 
@@ -396,7 +397,7 @@ class AppSettingsInteractor(
 
     fun setPushAlerts(enabled: Boolean) {
         preferencesRepository.setNetworkSetting(NetworkSettingNames.DISABLE_PUSH_NOTIFICATIONS, (!enabled).toString(),
-            System.currentTimeMillis() / 1000)
+            CloudClock.nowSeconds())
         networkApplicationSettings.updateNetworkSetting(NetworkSettingNames.DISABLE_PUSH_NOTIFICATIONS)
     }
 }

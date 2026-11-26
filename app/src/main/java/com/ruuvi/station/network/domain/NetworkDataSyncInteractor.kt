@@ -1,5 +1,6 @@
 package com.ruuvi.station.network.domain
 
+import com.ruuvi.station.util.extensions.isAheadOfDeviceClock
 import android.net.Uri
 import com.ruuvi.station.app.preferences.GlobalSettings
 import com.ruuvi.station.app.preferences.PreferencesRepository
@@ -234,7 +235,9 @@ class NetworkDataSyncInteractor (
             calendar.add(Calendar.HOUR, -period)
 
             var since = calendar.time
-            val lastSync = sensorSettings.networkHistoryLastSync ?: Date(Long.MIN_VALUE)
+            val lastSync = sensorSettings.networkHistoryLastSync
+                ?.takeUnless { it.isAheadOfDeviceClock() }
+                ?: Date(Long.MIN_VALUE)
             if (lastSync > since) {
                 calendar.time = lastSync
                 calendar.add(Calendar.SECOND, 1)
@@ -558,7 +561,8 @@ class NetworkDataSyncInteractor (
     ) {
         val lastPoint = preparePoint(sensorSettings, measurement)
         if (lastPoint != null) {
-            val freshPoint = (sensorSettings.networkLastSync?.time ?: Long.MIN_VALUE) < lastPoint.createdAt.time
+            val previousSync = sensorSettings.networkLastSync?.takeUnless { it.isAheadOfDeviceClock() }
+            val freshPoint = (previousSync?.time ?: Long.MIN_VALUE) < lastPoint.createdAt.time
             tagRepository.activateSensor(lastPoint)
             sensorSettingsRepository.updateNetworkLastSync(sensorSettings.id, lastPoint.createdAt)
             if (saveToHistory && freshPoint) {

@@ -1,5 +1,6 @@
 package com.ruuvi.station.network.data.request
 
+import com.ruuvi.station.network.domain.CloudClock
 import com.ruuvi.station.database.tables.Alarm
 import java.util.*
 
@@ -10,7 +11,7 @@ data class SetAlertRequest(
     val max: Double,
     val enabled: Boolean,
     val description: String,
-    val timestamp: Long = Date().time / 1000
+    val timestamp: Long = CloudClock.nowSeconds()
 ) {
     companion object {
         fun getAlarmRequest(alarm: Alarm): SetAlertRequest {

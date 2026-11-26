@@ -38,21 +38,52 @@ object CloudClock {
 
     fun toCloudTime(deviceTimeMillis: Long): Long = deviceTimeMillis + offsetMillis
 
+    /**
+     * Current time in Cloud seconds. Settings are synced last-write-wins against timestamps
+     * from other clients, so they must be stamped in real time, not on a manually set device clock.
+     */
+    fun nowSeconds(deviceTimeMillis: Long = System.currentTimeMillis()): Long =
+        toCloudTime(deviceTimeMillis) / 1000
+
     internal fun reset() {
         offsetMillis = 0L
+        wallClock = System::currentTimeMillis
+        monotonicClock = { System.nanoTime() / 1_000_000L }
     }
+
+    /** Device wall clock; the user can change it at any moment. */
+    internal var wallClock: () -> Long = System::currentTimeMillis
+
+    /** Monotonic clock, unaffected by device time changes. */
+    internal var monotonicClock: () -> Long = { System.nanoTime() / 1_000_000L }
 
     /** Network interceptor that measures the offset from each Cloud response. */
     val interceptor = Interceptor { chain ->
-        chain.proceed(chain.request()).also { response -> measure(response) }
+        val wallStart = wallClock()
+        val monotonicStart = monotonicClock()
+        val response = chain.proceed(chain.request())
+        measure(
+            response = response,
+            wallStart = wallStart,
+            wallEnd = wallClock(),
+            monotonicDuration = monotonicClock() - monotonicStart,
+        )
+        response
     }
 
-    internal fun measure(response: Response) {
+    internal fun measure(response: Response, wallStart: Long, wallEnd: Long, monotonicDuration: Long) {
         val serverDate = response.headers.getDate("Date") ?: return
+        // If the device time was changed while the request was in flight, the round trip spans
+        // two clocks and its midpoint is meaningless. Keep the previous offset until a clean
+        // measurement arrives.
+        if (abs((wallEnd - wallStart) - monotonicDuration) > CLOCK_JUMP_TOLERANCE_MILLIS) {
+            Timber.d("Device time changed during a Cloud request, skipping clock offset measurement")
+            return
+        }
         // The server stamps the Date header while handling the request, so compare it with the
         // middle of the round trip on the device clock.
-        val deviceTime = (response.sentRequestAtMillis + response.receivedResponseAtMillis) / 2
-        if (deviceTime <= 0L) return
-        update(serverDate.time, deviceTime)
+        update(serverDate.time, (wallStart + wallEnd) / 2)
     }
+
+    internal const val CLOCK_JUMP_TOLERANCE_MILLIS = 1_000L
 }

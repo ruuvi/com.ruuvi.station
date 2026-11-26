@@ -50,7 +50,7 @@ class NetworkApplicationSettings (
                     pushLocalSettingToCloud(settingName, localTimestamp)
                 }
                 cloudTimestamp == 0L -> {
-                    val currentTimestamp = System.currentTimeMillis() / 1000
+                    val currentTimestamp = CloudClock.nowSeconds()
                     applyCloudSetting(settingName, settings, currentTimestamp)
                 }
             }
@@ -91,7 +91,7 @@ class NetworkApplicationSettings (
     }
 
     private fun markLocalSettingUpdated(settingName: String): Long {
-        val timestamp = System.currentTimeMillis() / 1000
+        val timestamp = CloudClock.nowSeconds()
         val value = localSettingValue(settingName)
         preferencesRepository.setNetworkSetting(settingName, value, timestamp)
         return timestamp
