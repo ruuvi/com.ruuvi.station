@@ -146,7 +146,7 @@ class DashboardActivity : NfcActivity(), DIAware {
                 val scaffoldState = rememberScaffoldState()
                 val systemBarsColor = colors.dashboardBackground
                 val configuration = LocalConfiguration.current
-                val staleSnackbarMessage = stringResource(R.string.sensor_measurements_outdated)
+                val staleToastMessage = stringResource(R.string.sensor_measurements_outdated)
                 val scope = rememberCoroutineScope()
                 HideToastWhenScreenStopsEffect(staleToastMessage)
                 val userEmail by dashboardViewModel.userEmail.observeAsState()
