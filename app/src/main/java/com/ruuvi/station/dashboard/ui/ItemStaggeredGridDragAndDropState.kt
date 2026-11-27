@@ -1,8 +1,12 @@
 package com.ruuvi.station.dashboard.ui
 
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
 import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridItemInfo
+import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridLayoutInfo
 import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridState
 import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.runtime.Composable
@@ -11,16 +15,22 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.withFrameNanos
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.layout
+import androidx.compose.ui.layout.positionInParent
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
+import androidx.compose.ui.unit.round
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlin.math.abs
+import kotlin.math.roundToInt
 
 fun Modifier.dragGestureHandler(
     scope: CoroutineScope,
@@ -51,13 +61,9 @@ private fun handleOverscrollJob(
     itemStaggeredGridDragAndDropState: ItemStaggeredGridDragAndDropState
 ) {
     if (overscrollJob.value?.isActive == true) return
-    val overscrollOffset = itemStaggeredGridDragAndDropState.checkForOverScroll()
-    if (overscrollOffset != 0f) {
-        overscrollJob.value = scope.launch {
-            itemStaggeredGridDragAndDropState.getLazyListState().scrollBy(overscrollOffset)
-        }
-    } else {
-        overscrollJob.value?.cancel()
+    if (itemStaggeredGridDragAndDropState.checkForOverScroll() == 0f) return
+    overscrollJob.value = scope.launch {
+        itemStaggeredGridDragAndDropState.autoScroll()
     }
 }
 
@@ -66,14 +72,39 @@ fun rememberDragDropStaggeredGridState(
     lazyListState: LazyStaggeredGridState = rememberLazyStaggeredGridState(),
     onMove: (Int, Int) -> Unit,
     onDoneDragging: () -> Unit): ItemStaggeredGridDragAndDropState {
+    val animationScope = rememberCoroutineScope()
     return remember {
-        ItemStaggeredGridDragAndDropState(lazyListState, onMove, onDoneDragging)
+        ItemStaggeredGridDragAndDropState(lazyListState, onMove, onDoneDragging, animationScope)
     }
 }
+
+/**
+ * Places one dashboard card while cards are being reordered. Put it on the card's outermost
+ * layout, after any zIndex, and give it the card's own key (the sensor id), not the grid key.
+ *
+ * The dragged card is drawn under the finger. Every other card slides from where it was drawn to
+ * its new place whenever a move rearranges the grid, instead of jumping there.
+ */
+fun Modifier.dragAndDropPlacement(
+    state: ItemStaggeredGridDragAndDropState,
+    key: Any,
+): Modifier {
+    return this.layout { measurable, constraints ->
+        val placeable = measurable.measure(constraints)
+        layout(placeable.width, placeable.height) {
+            // Read the grid's placement and apply the offset in the same pass, so the frame that
+            // moves a card already draws it at its old position.
+            coordinates?.let { state.onItemPlaced(key, it.positionInParent().round()) }
+            placeable.place(state.itemOffset(key))
+        }
+    }
+}
+
 class ItemStaggeredGridDragAndDropState(
     private val lazyListState: LazyStaggeredGridState,
     private val onMove: (Int, Int) -> Unit,
-    private val onDoneDragging: () -> Unit
+    private val onDoneDragging: () -> Unit,
+    private val animationScope: CoroutineScope,
 ) {
     private var draggedDistance by mutableStateOf(Offset.Zero)
     private var dragStartPoint by mutableStateOf(Offset.Zero)
@@ -83,6 +114,20 @@ class ItemStaggeredGridDragAndDropState(
 
     var isDragInProgress by mutableStateOf(false)
         private set
+
+    // Card placement, keyed by the card's own key. Plain fields: they are written and read during
+    // placement of the same frame, so they must not trigger recomposition.
+    private val placements = mutableMapOf<Any, ItemPlacement>()
+    // Where each card was drawn just before the latest move, until the card is placed again.
+    private val positionsBeforeMove = mutableMapOf<Any, IntOffset>()
+    /**
+     * The own key of the dragged card. The card is matched by this key, not by its slot: the list
+     * a screen shows can update a frame after a move (a ViewModel flow, for example), and matching
+     * by slot would then treat the wrong card as dragged for that frame, so it would flash.
+     */
+    var draggedKey by mutableStateOf<Any?>(null)
+        private set
+    private var draggedOrigin: IntOffset? = null
 
     // Retrieve the currently dragged element's info
     private val currentElement: LazyStaggeredGridItemInfo?
@@ -113,6 +158,11 @@ class ItemStaggeredGridDragAndDropState(
             ?.also {
                 currentIndexOfDraggedItem = it.index
                 initiallyDraggedElement = it
+                // Items still have their own keys here: the slot keys only apply after this.
+                draggedKey = it.key
+                draggedOrigin = placements[it.key]?.let { placement ->
+                    placement.position?.plus(placement.currentOffset())
+                }
             }
     }
 
@@ -147,6 +197,7 @@ class ItemStaggeredGridDragAndDropState(
             if (targetItem != null) {
                 // Items are keyed by slot while dragging (see itemKey), so this swap does not move
                 // the scroll position in any column.
+                rememberPositionsBeforeMove()
                 onMove.invoke(currentIndexOfDraggedItem, targetItem.index)
                 currentIndexOfDraggedItem = targetItem.index
             }
@@ -173,9 +224,58 @@ class ItemStaggeredGridDragAndDropState(
         const val DRAG_SLOT_KEY_PREFIX = "dashboard-drag-slot:"
     }
 
+    /**
+     * A move swaps which cards the slots show, and cards of different heights make the staggered
+     * grid reflow, so cards can land far from where they were, even in another column. Remember
+     * where each card is drawn now, so it can slide from there once it is placed again.
+     */
+    private fun rememberPositionsBeforeMove() {
+        positionsBeforeMove.clear()
+        val currentLayoutInfo = lazyListState.layoutInfo
+        placements.forEach { (key, placement) ->
+            // Only cards placed in the latest layout are on screen; others have stale positions.
+            if (placement.layoutInfo !== currentLayoutInfo) return@forEach
+            val position = placement.position ?: return@forEach
+            positionsBeforeMove[key] = position + placement.currentOffset()
+        }
+    }
+
+    internal fun onItemPlaced(key: Any, position: IntOffset) {
+        val placement = placements.getOrPut(key) { ItemPlacement() }
+        placement.position = position
+        placement.layoutInfo = lazyListState.layoutInfo
+        val before = positionsBeforeMove.remove(key) ?: return
+        // The dragged card follows the finger instead.
+        if (key == draggedKey) return
+        val delta = before - position
+        if (delta != IntOffset.Zero) placement.slideFrom(delta, animationScope)
+    }
+
+    /** Whether the card whose own key is [key] is the one being dragged. */
+    fun isDraggedItem(key: Any): Boolean = key == draggedKey
+
+    internal fun itemOffset(key: Any): IntOffset {
+        val placement = placements[key] ?: return IntOffset.Zero
+        val position = placement.position ?: return IntOffset.Zero
+        val origin = draggedOrigin
+        if (key == draggedKey && origin != null) {
+            // Computed here, during placement, from this frame's position, so the card stays under
+            // the finger even in the frame where its slot moves.
+            return origin + IntOffset(draggedDistance.x.roundToInt(), draggedDistance.y.roundToInt()) - position
+        }
+        return placement.currentOffset()
+    }
+
     // Handle interrupted drag gesture
     fun onDragInterrupted(canceled: Boolean) {
         isDragInProgress = false
+        positionsBeforeMove.clear()
+        // Let the dropped card slide from under the finger into its slot instead of jumping there.
+        val dropped = draggedKey
+        val droppedPosition = dropped?.let { key -> placements[key]?.position?.plus(itemOffset(key)) }
+        if (dropped != null && droppedPosition != null) positionsBeforeMove[dropped] = droppedPosition
+        draggedKey = null
+        draggedOrigin = null
         dragStartPoint = Offset.Unspecified
         draggedDistance = Offset.Zero
         currentIndexOfDraggedItem = -1
@@ -194,6 +294,21 @@ class ItemStaggeredGridDragAndDropState(
     fun LazyStaggeredGridItemInfo.pointInside(offset: Offset): Boolean {
         return offset.x >= this.offset.x && offset.x < (this.offset.x + this.size.width) &&
                 offset.y >= this.offset.y && offset.y < (this.offset.y + this.size.height)
+    }
+
+    /**
+     * Scrolls a little every frame while the dragged card is past the top or bottom edge, faster
+     * the further past it is. Scrolling the whole overlap at once made the grid jump.
+     */
+    suspend fun autoScroll() {
+        while (isDragInProgress) {
+            val overscroll = checkForOverScroll()
+            if (overscroll == 0f) return
+            val step = (overscroll * AUTO_SCROLL_FRACTION_PER_FRAME)
+                .coerceIn(-MAX_AUTO_SCROLL_PER_FRAME, MAX_AUTO_SCROLL_PER_FRAME)
+            withFrameNanos { }
+            if (lazyListState.scrollBy(step) == 0f) return
+        }
     }
 
     fun checkForOverScroll(): Float {
@@ -222,8 +337,46 @@ class ItemStaggeredGridDragAndDropState(
     }
 }
 
+// The visible items of a staggered grid are not always a contiguous index range (a short card in
+// one column can scroll out while the next index is still visible in another), so look the
+// index up instead of computing its position in the list.
 fun LazyStaggeredGridState.getVisibleItemInfoFor(absoluteIndex: Int): LazyStaggeredGridItemInfo? {
-    return this.layoutInfo.visibleItemsInfo.getOrNull(
-        absoluteIndex - this.layoutInfo.visibleItemsInfo.first().index
-    )
+    return this.layoutInfo.visibleItemsInfo.firstOrNull { it.index == absoluteIndex }
+}
+
+private const val REORDER_SLIDE_MILLIS = 250
+private const val AUTO_SCROLL_FRACTION_PER_FRAME = 0.15f
+private const val MAX_AUTO_SCROLL_PER_FRAME = 40f
+
+/** One card's slide to a new place after a move. */
+private class ItemPlacement {
+    /** Where the card was last placed by the grid, without any offset. */
+    var position: IntOffset? = null
+    /** The grid layout the card was last placed in; a newer one means it scrolled out. */
+    var layoutInfo: LazyStaggeredGridLayoutInfo? = null
+    private var slideDelta = IntOffset.Zero
+    // Set until the animation has been reset, so the first frame already draws the old position.
+    private var startPending = false
+    private val progress = Animatable(1f)
+    private var job: Job? = null
+
+    fun currentOffset(): IntOffset {
+        // Always read the progress, also while the start is pending: placement only re-runs for
+        // state it read, so skipping the read would freeze the card until the slide ends.
+        val progressValue = progress.value
+        if (startPending) return slideDelta
+        val remaining = 1f - progressValue
+        return IntOffset((slideDelta.x * remaining).roundToInt(), (slideDelta.y * remaining).roundToInt())
+    }
+
+    fun slideFrom(delta: IntOffset, scope: CoroutineScope) {
+        slideDelta = delta
+        startPending = true
+        job?.cancel()
+        job = scope.launch {
+            progress.snapTo(0f)
+            startPending = false
+            progress.animateTo(1f, tween(REORDER_SLIDE_MILLIS, easing = FastOutSlowInEasing))
+        }
+    }
 }

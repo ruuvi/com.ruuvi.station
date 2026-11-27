@@ -27,11 +27,13 @@ import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.IntSize
 import coil.imageLoader
+import coil.memory.MemoryCache
 import coil.request.ErrorResult
 import coil.request.ImageRequest
 import coil.request.SuccessResult
 import coil.size.Precision
 import coil.size.Scale
+import java.util.concurrent.ConcurrentHashMap
 import kotlin.math.abs
 import kotlin.math.exp
 import kotlin.math.max
@@ -106,13 +108,19 @@ fun SensorBackgroundImage(
 ) {
     val context = LocalContext.current
     var viewSize by remember { mutableStateOf(IntSize.Zero) }
-    var background by remember(model) { mutableStateOf<Bitmap?>(null) }
+    // Start from the bitmap this model last loaded, if it is still in memory. Otherwise a card
+    // composed again (dashboard cards are, when a drag starts, ends, or moves a card to another
+    // slot) would draw only the overlay until the asynchronous load finishes: a visible flash.
+    var background by remember(model) { mutableStateOf(cachedBackground(context, model)) }
 
     LaunchedEffect(model, viewSize) {
         if (model == null || viewSize == IntSize.Zero) return@LaunchedEffect
         val request = backgroundImageRequest(context, model, viewSize)
         when (val result = context.imageLoader.execute(request)) {
-            is SuccessResult -> background = (result.drawable as? BitmapDrawable)?.bitmap
+            is SuccessResult -> {
+                background = (result.drawable as? BitmapDrawable)?.bitmap
+                rememberBackgroundKey(model, result.memoryCacheKey)
+            }
             is ErrorResult -> onError(result.throwable)
         }
     }
@@ -135,6 +143,22 @@ fun SensorBackgroundImage(
                 }
             }
     )
+}
+
+/**
+ * The memory cache key of the bitmap each background model last loaded. Only keys are kept, so
+ * this holds no bitmaps: an entry Coil has evicted simply misses.
+ */
+private val lastBackgroundKeys = ConcurrentHashMap<Any, MemoryCache.Key>()
+
+internal fun rememberBackgroundKey(model: Any, key: MemoryCache.Key?) {
+    if (key != null) lastBackgroundKeys[model] = key
+}
+
+/** The bitmap [model] last loaded, if Coil still has it in its memory cache. */
+internal fun cachedBackground(context: Context, model: Any?): Bitmap? {
+    val key = model?.let(lastBackgroundKeys::get) ?: return null
+    return context.imageLoader.memoryCache?.get(key)?.bitmap
 }
 
 /**

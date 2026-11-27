@@ -19,6 +19,7 @@ import com.ruuvi.station.app.ui.theme.RuuviTheme
 import com.ruuvi.station.dashboard.DashboardTapAction
 import com.ruuvi.station.dashboard.DashboardType
 import com.ruuvi.station.tag.domain.RuuviTag
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Rule
@@ -78,7 +79,8 @@ class DashboardItemsDragKeyComposeTest {
     @Test
     fun `cards keep showing the right sensor while keys switch to slots during a drag`() {
         setContent()
-        assertTrue(top("Sensor A") < top("Sensor B"))
+        val firstSlotTop = top("Sensor A")
+        assertTrue(firstSlotTop < top("Sensor B"))
 
         compose.runOnIdle {
             val first = gridState.layoutInfo.visibleItemsInfo.first()
@@ -86,16 +88,19 @@ class DashboardItemsDragKeyComposeTest {
         }
         compose.waitForIdle()
         assertTrue(state.isDragInProgress)
-        assertTrue(top("Sensor A") < top("Sensor B"))
+        val aTop = top("Sensor A")
+        assertTrue(aTop < top("Sensor B"))
 
-        // A swap while slot-keyed only changes which sensor each slot shows.
+        // A swap while slot-keyed only changes which sensor each slot shows: B moves into A's slot,
+        // while A, the dragged card, stays under the finger.
         compose.runOnIdle {
             val tmp = items[0]
             items[0] = items[1]
             items[1] = tmp
         }
         compose.waitForIdle()
-        assertTrue(top("Sensor B") < top("Sensor A"))
+        assertEquals(firstSlotTop, top("Sensor B"))
+        assertEquals(aTop, top("Sensor A"))
 
         compose.runOnIdle { state.onDragInterrupted(canceled = true) }
         compose.waitForIdle()

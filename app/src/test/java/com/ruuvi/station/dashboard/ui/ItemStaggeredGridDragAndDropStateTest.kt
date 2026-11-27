@@ -23,8 +23,11 @@ import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.round
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -52,6 +55,7 @@ class ItemStaggeredGridDragAndDropStateTest {
     private var doneCount = 0
     private lateinit var state: ItemStaggeredGridDragAndDropState
     private lateinit var gridState: LazyStaggeredGridState
+    private lateinit var compositionScope: CoroutineScope
 
     /** [itemHeight] is per item (not per slot), so a card keeps its height when it is moved. */
     private fun setContent(columns: Int = 1, count: Int = 10, itemHeight: (item: Int) -> Int = { 50 }) {
@@ -59,6 +63,7 @@ class ItemStaggeredGridDragAndDropStateTest {
         compose.setContent {
             gridState = rememberLazyStaggeredGridState()
             val scope = rememberCoroutineScope()
+            compositionScope = scope
             val overscrollJob = remember { mutableStateOf<Job?>(null) }
             state = rememberDragDropStaggeredGridState(
                 lazyListState = gridState,
@@ -79,7 +84,13 @@ class ItemStaggeredGridDragAndDropStateTest {
                     .dragGestureHandler(scope, state, overscrollJob)
             ) {
                 itemsIndexed(items, key = { index, item -> state.itemKey(index, item) }) { _, item ->
-                    Box(Modifier.fillMaxWidth().height(itemHeight(item).dp))
+                    Box(
+                        Modifier
+                            .dragAndDropPlacement(state = state, key = item)
+                            .testTag(itemTag(item))
+                            .fillMaxWidth()
+                            .height(itemHeight(item).dp)
+                    )
                 }
             }
         }
@@ -475,7 +486,158 @@ class ItemStaggeredGridDragAndDropStateTest {
         }
     }
 
+    // region placement
+
+    private fun drawnPosition(item: Int): IntOffset =
+        compose.onNodeWithTag(itemTag(item)).fetchSemanticsNode().positionInRoot.round()
+
+    private fun slotPosition(item: Int): IntOffset = compose.runOnIdle {
+        gridState.layoutInfo.visibleItemsInfo.first { it.index == items.indexOf(item) }.offset
+    }
+
+    @Test
+    fun `cards moved by a reflow slide from where they were drawn`() {
+        // Swapping the short card 0 with the tall card 2 reflows the grid: card 3 moves from the
+        // right column to the left one.
+        val heights = listOf(60, 100, 120, 70, 140, 65, 110, 90)
+        setContent(columns = 2, count = heights.size, itemHeight = { heights[it] })
+        val before = drawnPosition(3)
+        assertEquals(IntOffset(100, 100), before)
+
+        compose.mainClock.autoAdvance = false
+        onState { onDragStart(Offset(50f, 30f)) }
+        compose.mainClock.advanceTimeByFrame()
+        onState { onDrag(Offset(0f, 130f)) }
+        compose.mainClock.advanceTimeByFrame()
+        compose.waitForIdle()
+
+        assertEquals(listOf(0 to 2), moves)
+        val target = slotPosition(3)
+        assertTrue("card 3 changed column", target.x != before.x)
+        // The first frame after the move still draws the card where it was.
+        assertEquals(before, drawnPosition(3))
+
+        compose.mainClock.advanceTimeBy(120)
+        val midway = drawnPosition(3)
+        assertTrue("card 3 is sliding, at $midway", midway != before && midway != target)
+
+        compose.mainClock.advanceTimeBy(400)
+        assertEquals(target, drawnPosition(3))
+    }
+
+    @Test
+    fun `the dragged card stays under the finger when its slot moves`() {
+        val heights = listOf(60, 100, 120, 70, 140, 65, 110, 90)
+        setContent(columns = 2, count = heights.size, itemHeight = { heights[it] })
+
+        compose.mainClock.autoAdvance = false
+        onState { onDragStart(Offset(50f, 30f)) }
+        compose.mainClock.advanceTimeByFrame()
+        onState { onDrag(Offset(0f, 130f)) }
+        compose.mainClock.advanceTimeByFrame()
+        compose.waitForIdle()
+
+        assertEquals(listOf(0 to 2), moves)
+        // Card 0 now sits in a slot in the other column, but is drawn where the finger took it.
+        assertTrue(slotPosition(0).x != 0)
+        assertEquals(IntOffset(0, 130), drawnPosition(0))
+
+        compose.mainClock.advanceTimeBy(500)
+        assertEquals(IntOffset(0, 130), drawnPosition(0))
+    }
+
+    @Test
+    fun `cards that keep their place do not slide`() {
+        val heights = listOf(60, 100, 120, 70, 140, 65, 110, 90)
+        setContent(columns = 2, count = heights.size, itemHeight = { heights[it] })
+        val before = drawnPosition(1)
+
+        compose.mainClock.autoAdvance = false
+        onState { onDragStart(Offset(50f, 30f)) }
+        compose.mainClock.advanceTimeByFrame()
+        onState { onDrag(Offset(0f, 130f)) }
+        compose.mainClock.advanceTimeByFrame()
+        compose.waitForIdle()
+
+        assertEquals(before, slotPosition(1))
+        assertEquals(before, drawnPosition(1))
+    }
+
+    @Test
+    fun `the dragged card is matched by its own key, not by its slot`() {
+        setContent()
+        onState { onDragStart(Offset(50f, 25f)) }
+
+        assertTrue(state.isDraggedItem(0))
+        assertFalse(state.isDraggedItem(1))
+        // Even when the list has not caught up with a move yet, the same card stays dragged.
+        onState { onDrag(Offset(0f, 60f)) }
+        assertTrue(state.isDraggedItem(0))
+        assertFalse(state.isDraggedItem(1))
+
+        onState { onDragInterrupted(false) }
+        assertFalse(state.isDraggedItem(0))
+    }
+
+    @Test
+    fun `a dropped card slides from under the finger into its slot`() {
+        setContent()
+        compose.mainClock.autoAdvance = false
+        onState { onDragStart(Offset(50f, 25f)) }
+        compose.mainClock.advanceTimeByFrame()
+        onState { onDrag(Offset(0f, 30f)) }
+        compose.mainClock.advanceTimeByFrame()
+        compose.waitForIdle()
+        assertEquals(IntOffset(0, 30), drawnPosition(0))
+
+        onState { onDragInterrupted(false) }
+        compose.mainClock.advanceTimeByFrame()
+        compose.waitForIdle()
+        assertEquals(IntOffset(0, 30), drawnPosition(0))
+
+        compose.mainClock.advanceTimeBy(500)
+        assertEquals(IntOffset(0, 0), drawnPosition(0))
+    }
+
+    @Test
+    fun `auto scroll moves the grid a little every frame`() {
+        setContent(count = 30)
+        onState { onDragStart(Offset(50f, 25f)) }
+        onState { onDrag(Offset(0f, 250f)) }
+        // Item bottom 50 + 250 = 300, viewport ends at 200.
+        assertEquals(100f, state.checkForOverScroll())
+
+        compose.mainClock.autoAdvance = false
+        val job = compose.runOnIdle { compositionScope.launch { state.autoScroll() } }
+        compose.mainClock.advanceTimeByFrame()
+        compose.mainClock.advanceTimeByFrame()
+        compose.waitForIdle()
+        val firstSteps = compose.runOnIdle { gridState.firstVisibleItemScrollOffset + gridState.firstVisibleItemIndex * 50 }
+        // 15% of the overlap per frame, not the whole overlap at once.
+        assertTrue("scrolled $firstSteps", firstSteps in 1..40)
+
+        compose.mainClock.advanceTimeBy(1_000)
+        val later = compose.runOnIdle { gridState.firstVisibleItemScrollOffset + gridState.firstVisibleItemIndex * 50 }
+        assertTrue("kept scrolling: $later", later > firstSteps)
+
+        onState { onDragInterrupted(true) }
+        compose.mainClock.advanceTimeBy(100)
+        assertTrue(job.isCompleted)
+    }
+
+    @Test
+    fun `auto scroll stops at once when nothing is past the edge`() {
+        setContent()
+        onState { onDragStart(Offset(50f, 25f)) }
+        compose.runOnIdle { runBlocking { state.autoScroll() } }
+        assertEquals(0, gridState.firstVisibleItemIndex)
+        assertEquals(0, gridState.firstVisibleItemScrollOffset)
+    }
+
+    // endregion
+
     private companion object {
         const val GRID = "grid"
+        fun itemTag(item: Int) = "item-$item"
     }
 }
