@@ -8,6 +8,8 @@ import android.os.Looper
 import androidx.compose.ui.unit.IntSize
 import androidx.test.core.app.ApplicationProvider
 import coil.ImageLoader
+import coil.imageLoader
+import coil.memory.MemoryCache
 import coil.request.SuccessResult
 import coil.size.Precision
 import coil.size.Scale
@@ -18,6 +20,8 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNull
+import org.junit.Assert.assertSame
 import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
@@ -71,5 +75,27 @@ class SensorBackgroundImageRequestTest {
         val bitmap = ((result as SuccessResult).drawable as BitmapDrawable).bitmap
         assertEquals(80, bitmap.width)
         assertEquals(60, bitmap.height)
+    }
+
+    @Test
+    fun `a background loaded before is available at once from the memory cache`() {
+        val bitmap = Bitmap.createBitmap(8, 8, Bitmap.Config.ARGB_8888)
+        val key = MemoryCache.Key("cached-background-test")
+        context.imageLoader.memoryCache!![key] = MemoryCache.Value(bitmap)
+
+        assertNull(cachedBackground(context, "cached model"))
+        rememberBackgroundKey("cached model", key)
+        assertSame(bitmap, cachedBackground(context, "cached model"))
+    }
+
+    @Test
+    fun `no cached background without a model, a key, or a bitmap still in memory`() {
+        assertNull(cachedBackground(context, null))
+
+        rememberBackgroundKey("model without key", null)
+        assertNull(cachedBackground(context, "model without key"))
+
+        rememberBackgroundKey("evicted model", MemoryCache.Key("evicted-background-test"))
+        assertNull(cachedBackground(context, "evicted model"))
     }
 }

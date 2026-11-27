@@ -610,13 +610,14 @@ fun DashboardItems(
                 items = items,
                 key = { index, sensor -> dragDropListState.itemKey(index, sensor.id) },
             ) { index, sensor ->
-                val displacementOffset = if (index == dragDropListState.getCurrentIndexOfDraggedListItem()) {
-                    dragDropListState.elementDisplacement.takeIf { it != IntOffset.Zero }
-                } else {
-                    null
-                }
-
-                val itemIsDragged = dragDropListState.getCurrentIndexOfDraggedListItem() == index
+                // Matched by sensor, not by slot: the sensor list updates a frame after a move.
+                val itemIsDragged = dragDropListState.isDraggedItem(sensor.id)
+                // Places the dragged card under the finger and slides the other cards when a move
+                // reflows the grid; it replaces the displacement offset.
+                val placementModifier = Modifier.dragAndDropPlacement(
+                    state = dragDropListState,
+                    key = sensor.id,
+                )
                 when (dashboardType) {
                     DashboardType.SIMPLE_VIEW ->
                         DashboardItemSimple(
@@ -625,11 +626,12 @@ fun DashboardItems(
                             sensor = sensor,
                             userEmail = userEmail,
                             setName = setName,
-                            displacementOffset = displacementOffset,
+                            displacementOffset = null,
                             itemIsDragged = itemIsDragged,
                             isStale = sensor.id in staleSensorIds,
                             moveItem = onMove,
                             onShowStaleToast = onShowStaleToast,
+                            modifier = placementModifier,
                         )
                     DashboardType.IMAGE_VIEW ->
                         DashboardItem(
@@ -637,13 +639,14 @@ fun DashboardItems(
                             itemIndex = index,
                             sensor = sensor,
                             userEmail = userEmail,
-                            displacementOffset = displacementOffset,
+                            displacementOffset = null,
                             itemIsDragged = itemIsDragged,
                             isStale = sensor.id in staleSensorIds,
                             setName = setName,
                             moveItem = onMove,
                             getDefaultImageResource = getDefaultImageResource,
                             onShowStaleToast = onShowStaleToast,
+                            modifier = placementModifier,
                         )
                 }
             }
@@ -878,12 +881,13 @@ fun DashboardItemSimple(
     interactionEnabled: Boolean = true,
     isStale: Boolean = false,
     onShowStaleToast: () -> Unit = {},
+    modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
     val modifier = if (itemIsDragged) {
-        Modifier.zIndex(2f)
+        modifier.zIndex(2f)
     } else {
-        Modifier.zIndex(1f)
+        modifier.zIndex(1f)
     }
 
     Card(
@@ -1152,7 +1156,8 @@ fun ItemBottomUpdatedInfo(
         val context = LocalContext.current
         val lifecycle = LocalLifecycleOwner.current
 
-        var updatedText by remember {
+        // Keyed by sensor: while dragging, a card slot can show another sensor.
+        var updatedText by remember(sensor.id) {
             mutableStateOf(sensor.latestMeasurement.updatedAt?.describingTimeSince(context) ?: "")
         }
 
