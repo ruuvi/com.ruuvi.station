@@ -22,8 +22,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.ColorPainter
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.MeasurePolicy
 import androidx.compose.ui.layout.onGloballyPositioned
@@ -42,13 +40,13 @@ import androidx.core.content.IntentCompat
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.*
 import androidx.lifecycle.compose.LocalLifecycleOwner
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
 import com.ruuvi.station.R
 import com.ruuvi.station.alarm.ui.AlarmItemsViewModel
 import com.ruuvi.station.app.preferences.PreferencesRepository
 import com.ruuvi.station.app.ui.components.limitScaleTo
 import com.ruuvi.station.app.ui.components.modifier.fadingEdge
+import com.ruuvi.station.app.ui.components.SensorBackgroundImage
+import com.ruuvi.station.app.ui.components.SensorBackgroundOverlay
 import com.ruuvi.station.app.ui.components.scaleUpTo
 import com.ruuvi.station.app.ui.theme.*
 import com.ruuvi.station.dashboard.DashboardTapAction
@@ -620,28 +618,11 @@ fun SensorCardImage(
     userBackground: Uri?,
     @DrawableRes defaultBackground: Int,
 ) {
-    val context = LocalContext.current
-    val backgroundRequest = remember(context, userBackground, defaultBackground) {
-        ImageRequest.Builder(context)
-            .data(userBackground ?: defaultBackground)
-            .crossfade(userBackground != null)
-            .build()
-    }
-
-    AsyncImage(
+    SensorBackgroundImage(
+        model = userBackground ?: defaultBackground,
+        overlay = SensorBackgroundOverlay.SensorDetails,
         modifier = Modifier.fillMaxSize(),
-        model = backgroundRequest,
-        contentDescription = null,
-        contentScale = ContentScale.Crop,
-        onError = { Timber.e(it.result.throwable, "Failed to load sensor background") },
-    )
-    AsyncImage(
-        modifier = Modifier.fillMaxSize(),
-        model = R.drawable.tag_bg_layer,
-        placeholder = ColorPainter(DefaultSensorBackgroundDark),
-        contentDescription = null,
-        contentScale = ContentScale.Crop,
-        onError = { Timber.e(it.result.throwable, "Failed to load sensor background overlay") },
+        onError = { Timber.e(it, "Failed to load sensor background") },
     )
 }
 
