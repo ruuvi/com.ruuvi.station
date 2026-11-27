@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="history_downloading_progress">Pobieranie (%1$s)</string>
     <string name="air_quality">Jakość powietrza</string>
     <string name="aqi_with_unit">Jakość powietrza (%1$s)</string>
     <string name="aqi">Jakość powietrza</string>
@@ -98,7 +99,7 @@
     <string name="add_tag_not_found">Nie wykryto czujników</string>
     <string name="add_tag_title">Czujniki Ruuvi w pobliżu</string>
     <string name="ago">temu</string>
-    <string name="alarm_notification_disable">Wyłącz alarm</string>
+    <string name="alarm_notification_disable">Wyłącz ten alarm</string>
     <string name="alert_movement">Przesunięcia</string>
     <string name="alert_movement_description">Alarm ruchu jest wyzwalany w przypadku zmiany wartości wewnętrznego licznika ruchu czujnika. Alarm ten można wykorzystać na przykład do wykrycia ruchu drzwi lub wibracji w pobliżu czujnika.</string>
     <string name="alert_notification_humidity_high">Zbyt wysoka wilgotność powietrza!</string>
@@ -448,7 +449,13 @@
     <string name="remove_shared_sensor">Usunięcie czujnika spowoduje powiadomienie właściciela czujnika i uniemożliwi dostęp do czujnika.</string>
     <string name="owner_none">Brak właściciela</string>
     <string name="logged_in">Profil zalogowany:</string>
+    <string name="week">Tydzień</string>
+    <string name="weeks">Tygodnie</string>
+    <string name="month">Miesiąc</string>
+    <string name="months">Miesiące</string>
     <string name="hour">Godzina</string>
+    <string name="year">Rok</string>
+    <string name="years">Lata</string>
     <string name="rename_sensor_message">Czujniki wyświetlane są w kolejności alfabetycznej.</string>
     <string name="error_dfu_disconnected">Rozłączono urządzenie</string>
     <string name="error_dfu_update">Aktualizacja firmware nie powiodła się</string>
@@ -597,6 +604,7 @@
     <string name="main_view">Widok główny</string>
     <string name="full_image_view">Widok pełnego obrazu</string>
     <string name="history_view">Widok historii</string>
+    <string name="settings_and_alerts">Ustawienia i alerty</string>
     <string name="change_background">Zmień tło</string>
     <string name="check_claim_state">Sprawdzanie stanu przejęcia</string>
     <string name="claim_in_progress">Przejmowanie w toku</string>
@@ -705,6 +713,9 @@
     <string name="signing_in_is_optional">(Logowanie jest opcjonalne)</string>
     <string name="use_dev_server">Użyj serwera Dev</string>
     <string name="use_dev_server_description">Aby zastosować zmiany, po prostu zsynchronizuj dane z pulpitu nawigacyjnego lub poczekaj do następnej synchronizacji.</string>
+    <string name="use_nfc">Użyj NFC</string>
+    <string name="use_bluetooth">Użyj BT</string>
+    <string name="sensor_not_found_error">Nie znaleziono czujnika. Spróbuj ponownie.</string>
     <string name="sensor_details">Szczegóły czujnika</string>
     <string name="previous_sensor">Poprzedni czujnik</string>
     <string name="next_sensor">Następny czujnik</string>
@@ -862,7 +873,7 @@
     <string name="description_text_luminosity">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</string>
     <string name="description_text_sound_level">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</string>
     <string name="description_text_co2">Dwutlenek węgla to bezbarwny i bezwonny gaz powstający w wyniku oddychania i procesów spalania. W pomieszczeniach stężenie CO₂ mierzy się w [b]ppm (częściach na milion)[/b], czyli w milionowych częściach objętości powietrza. Dla porównania, poziom CO₂ na zewnątrz wynosi średnio około [b]420–430 ppm[/b].\n\n[title]Klasy stężenia[/title]\n[li][b]Doskonała:[/b] poniżej 600 ppm[/li][li][b]Dobra:[/b] 600 - 799 ppm[/li][li][b]Umiarkowana:[/b] 800 - 1349 ppm[/li][li][b]Zła:[/b] 1350 - 2099 ppm[/li][li][b]Bardzo zła:[/b] 2100 ppm lub więcej[/li]\n\n[title]Zakres docelowy[/title]\n[li][b]Ogólnie:[/b] wartości powyżej [b]1000 ppm[/b] wskazują na potrzebę poprawy wentylacji.[/li][li][b]Sypialnia:[/b] poziom CO₂ powinien pozostawać [b]znacznie poniżej 1000 ppm[/b], aby zapewnić dobry sen i regenerację.[/li][li][b]Miejsce pracy:[/b] optymalny poziom to [b]poniżej 800 ppm[/b], co wspiera koncentrację i dobre samopoczucie.[/li]\nPoziom CO₂ wzrasta, gdy w pomieszczeniu przebywa kilka osób lub wentylacja jest niewystarczająca.\n\n[title]Zalecane działania[/title]\n[li][b]Wietrz pomieszczenia dokładnie[/b], zwłaszcza gdy przebywa w nich więcej osób.[/li][li]Pozostaw [b]otwarte drzwi między pomieszczeniami[/b], aby umożliwić prawidłowy przepływ powietrza.[/li][li][b]Popraw wentylację[/b], jeśli to konieczne, i upewnij się, że system działa prawidłowo.[/li][li][b]Zmniejsz czas przebywania[/b] w pomieszczeniach, w których poziom CO₂ szybko rośnie.[/li][li][b]Rośliny[/b] mogą nieznacznie poprawić jakość powietrza, ale ich wpływ jest ograniczony.[/li]\n[b]Uwaga:[/b] Zwykłe oczyszczacze powietrza nie usuwają CO₂ — jedynie odpowiednia wentylacja może obniżyć jego stężenie.\n\n[title]Wpływ na samopoczucie[/title]\n\nWysokie stężenie CO₂ w pomieszczeniu może powodować [b]zmęczenie, bóle głowy, senność i trudności z koncentracją[/b]. Długotrwałe narażenie na podwyższone wartości może pogarszać wydajność i jakość snu.</string>
-    <string name="description_text_voc">Wskaźnik LZO (lotne związki organiczne, VOC) opisuje trend ilości lotnych związków organicznych obecnych w powietrzu. Substancje te uwalniane są z wielu produktów codziennego użytku, takich jak [b]środki czystości, farby, kleje, nowe meble, świece i perfumy[/b]. Wskaźnik VOC nie pokazuje bezwzględnych stężeń, lecz wskazuje [b]trend[/b] — czy ilość związków VOC wzrosła, czy zmalała w porównaniu z wcześniejszym poziomem.\n\n[title]Zakres docelowy[/title]\n\nSkala wskaźnika wynosi od 0 do 500, a długoterminowa średnia to [b]100[/b]. Gdy wskaźnik VOC przekracza 100, oznacza to, że poziom LZO w pomieszczeniu jest wyższy od średniego. Z kolei wartość poniżej 100 oznacza niższy poziom (np. po przewietrzeniu pomieszczenia lub użyciu oczyszczacza powietrza).\n\n[title]Zalecane działania[/title]\n[li]Jeśli wartości VOC rosną, [b]wietrz pomieszczenie[/b] lub użyj odpowiedniego oczyszczacza powietrza.[/li][li][b]Wybieraj produkty o niskiej emisji[/b], takie jak farby i środki czystości z certyfikatem ekologicznym.[/li][li]Unikaj nadmiernego użycia chemikaliów w pomieszczeniach.[/li]\n\nWartość VOC może znacznie się wahać w ciągu dnia. Na przykład po [b]sprzątaniu lub gotowaniu[/b] poziomy mogą znacząco wzrosnąć. Najlepiej obserwować pomiary przez kilka dni i notować, jakie czynności wykonywano, gdy wartości się zmieniały. Dzięki temu można zidentyfikować źródła zanieczyszczeń i w przyszłości je ograniczyć.\n\n[title]Wpływ na samopoczucie[/title]\n\nWysokie stężenia mogą powodować [b]podrażnienia oczu, nosa i gardła, bóle głowy[/b], a przy długotrwałej ekspozycji również [b]ryzyko zdrowotne[/b].\n\n[title]Wskazówki i dodatkowe informacje[/title]\n[li]Nie umieszczaj czujnika bezpośrednio przy źródłach emisji (np. kuchence lub aerozolu), aby wyniki były wiarygodne.[/li][li]Czujnik nie rozróżnia poszczególnych związków i nie określa, czy są one niebezpieczne, czy nieszkodliwe. Takie analizy są możliwe jedynie przy użyciu specjalistycznego sprzętu laboratoryjnego.[/li]</string>
+    <string name="description_text_voc">Wskaźnik LZO (lotne związki organiczne, VOC) opisuje trend ilości lotnych związków organicznych obecnych w powietrzu. Substancje te uwalniane są z wielu produktów codziennego użytku, takich jak [b]środki czystości, farby, kleje, nowe meble, świece i perfumy[/b]. Wskaźnik VOC nie pokazuje bezwzględnych stężeń, lecz wskazuje [b]trend[/b] — czy ilość związków VOC wzrosła, czy zmalała w porównaniu z wcześniejszym poziomem.\n\n[title]Zakres docelowy[/title]\n\nSkala wskaźnika wynosi od 1 do 500, a długoterminowa średnia to [b]100[/b]. Gdy wskaźnik VOC przekracza 100, oznacza to, że poziom LZO w pomieszczeniu jest wyższy od średniego. Z kolei wartość poniżej 100 oznacza niższy poziom (np. po przewietrzeniu pomieszczenia lub użyciu oczyszczacza powietrza).\n\n[title]Zalecane działania[/title]\n[li]Jeśli wartości VOC rosną, [b]wietrz pomieszczenie[/b] lub użyj odpowiedniego oczyszczacza powietrza.[/li][li][b]Wybieraj produkty o niskiej emisji[/b], takie jak farby i środki czystości z certyfikatem ekologicznym.[/li][li]Unikaj nadmiernego użycia chemikaliów w pomieszczeniach.[/li]\n\nWartość VOC może znacznie się wahać w ciągu dnia. Na przykład po [b]sprzątaniu lub gotowaniu[/b] poziomy mogą znacząco wzrosnąć. Najlepiej obserwować pomiary przez kilka dni i notować, jakie czynności wykonywano, gdy wartości się zmieniały. Dzięki temu można zidentyfikować źródła zanieczyszczeń i w przyszłości je ograniczyć.\n\n[title]Wpływ na samopoczucie[/title]\n\nWysokie stężenia mogą powodować [b]podrażnienia oczu, nosa i gardła, bóle głowy[/b], a przy długotrwałej ekspozycji również [b]ryzyko zdrowotne[/b].\n\n[title]Wskazówki i dodatkowe informacje[/title]\n[li]Nie umieszczaj czujnika bezpośrednio przy źródłach emisji (np. kuchence lub aerozolu), aby wyniki były wiarygodne.[/li][li]Czujnik nie rozróżnia poszczególnych związków i nie określa, czy są one niebezpieczne, czy nieszkodliwe. Takie analizy są możliwe jedynie przy użyciu specjalistycznego sprzętu laboratoryjnego.[/li]</string>
     <string name="description_text_nox">Wskaźnik NOx opisuje trend tlenków azotu w powietrzu. Te szkodliwe gazy powstają między innymi w wyniku emisji spalin samochodowych oraz podczas gotowania na kuchence gazowej. Wskaźnik NOx nie pokazuje bezwzględnych stężeń, lecz wskazuje [b]trend[/b] — czy ilość tlenków azotu wzrosła, czy zmalała w porównaniu z wcześniejszym poziomem.\n\n[title]Zakres docelowy[/title]\n\nSkala wskaźnika wynosi od 1 do 500, a długoterminowa średnia to [b]1[/b]. Gdy wskaźnik NOx przekracza 1, oznacza to, że poziom tlenków azotu w pomieszczeniu jest wyższy niż średni.\n\n[title]Zalecane działania[/title]\n[li][b]Wietrz pomieszczenie[/b], jeśli wartości NOx rosną. Należy jednak uwzględnić możliwe emisje z zewnątrz, np. z ruchu drogowego lub przemysłu.[/li][li]Używaj [b]okapu kuchennego[/b], aby usuwać tlenki azotu podczas gotowania na kuchence gazowej.[/li]\nNa przykład [b]podczas gotowania lub przy zwiększonym zanieczyszczeniu powietrza na zewnątrz[/b] wartości mogą szybko wzrosnąć. Najlepiej obserwować pomiary przez kilka dni i zwracać uwagę na to, co dzieje się w pomieszczeniu, gdy wartości się zmieniają. Dzięki temu można zidentyfikować źródła zanieczyszczeń i w przyszłości je ograniczyć.\n\n[title]Wpływ na samopoczucie[/title]\n\nNawet niewielkie ilości mogą [b]podrażniać drogi oddechowe[/b], nasilać objawy astmy i zwiększać podatność na infekcje. Długotrwała ekspozycja może negatywnie wpływać na płuca i układ krążenia.\n\n[title]Wskazówki i dodatkowe informacje[/title]\n\nNie umieszczaj czujnika bezpośrednio przy kuchence, kominku ani otworach wentylacyjnych, aby pomiary były wiarygodne.</string>
     <string name="description_text_pm">Pyły zawieszone (particulate matter, PM) to drobne, niewidoczne gołym okiem cząstki i zanieczyszczenia unoszące się w powietrzu. Najczęściej monitorowanym wskaźnikiem jest [b]PM2.5[/b], ale w ustawieniach aplikacji można również sprawdzić wartości [b]PM1, PM4 i PM10[/b].\n\n[title]Klasy stężenia[/title]\n[li][b]Doskonała:[/b] poniżej 5 µg/m³[/li][li][b]Dobra:[/b] 5 - 11.9 µg/m³[/li][li][b]Umiarkowana:[/b] 12 - 29.9 µg/m³[/li][li][b]Zła:[/b] 30 - 54.9 µg/m³[/li][li][b]Bardzo zła:[/b] 55 µg/m³ lub więcej[/li]\n[title]Zakres docelowy[/title]\n\nŚwiatowa Organizacja Zdrowia (WHO) zaleca następujące limity dla PM2.5: [b]5 µg/m³[/b] (średnia roczna) i [b]15 µg/m³[/b] (średnia dobowa).\n\n[title]Zalecane działania[/title]\n[li]Wietrz pomieszczenie lub użyj oczyszczacza powietrza, gdy wartości rosną.[/li][li]Unikaj czynności powodujących emisję pyłów, takich jak palenie świec lub palenie tytoniu w pomieszczeniu.[/li][li]Zapewnij odpowiednią wentylację, zwłaszcza podczas gotowania i sprzątania.[/li][li]Regularnie wymieniaj filtry wentylacyjne i upewnij się, że stosujesz właściwy typ filtra.[/li]\n[title]Wpływ na samopoczucie[/title]\n\nBardzo drobne cząstki (PM2.5 i mniejsze) przedostają się głęboko do płuc i mogą dostać się do krwiobiegu. Mogą [b]nasilać alergie[/b] oraz powodować [b]problemy z układem oddechowym i sercem[/b]. Stężenia mogą wzrastać w wyniku gotowania, palenia świec lub zanieczyszczenia powietrza na zewnątrz.\n\n[title]Wskazówki i dodatkowe informacje[/title]\n[li]Umieść czujnik z dala od bezpośrednich [b]źródeł emisji[/b], takich jak kuchenki lub wentylatory.[/li][li]Zapewnij swobodny przepływ powietrza wokół czujnika, aby uzyskać jak najdokładniejsze pomiary.[/li][li]Czujnik nie wykrywa pyłków ani zwykłego kurzu domowego, ponieważ ich cząstki są zwykle większe niż 10 mikrometrów. Nie rozpoznaje także zarodników pleśni, bakterii ani wirusów.[/li][li]Wartość PM2.5 obejmuje cząstki o średnicy 2,5 mikrometra i mniejsze. Na tej samej zasadzie wartość PM10 obejmuje cząstki o średnicy 10 µm i mniejsze.[/li][li]Rekomendacja WHO: [link url=https://www.who.int/teams/environment-climate-change-and-health/air-quality-and-health/health-impacts/types-of-pollutants]https://www.who.int/teams/environment-climate-change-and-health/air-quality-and-health/health-impacts/types-of-pollutants[/link][/li]</string>
     <string name="real_time">Czas rzeczywisty</string>
@@ -890,22 +901,16 @@
     <string name="newsletter_url">https://ruuvi.com/join</string>
     <string name="newsletter_subscription">Subskrypcja</string>
     <string name="newsletter_subscription_confirmation">Sprawdź swoją pocztę e-mail, aby potwierdzić subskrypcję newslettera.</string>
-    <string name="marketing_consent_prompt_title">Czy możemy wysyłać Ci e-maile?</string>
-    <string name="marketing_consent_prompt_message">Od czasu do czasu mamy wiadomości o aplikacji, naszych produktach i aktualnych ofertach.</string>
-    <string name="marketing_consent_prompt_decline">Nie, dziękuję</string>
-    <string name="marketing_consent_prompt_saved">Dziękujemy, zapisano pomyślnie.</string>
     <string name="communication_channels">Newsletter Ruuvi</string>
     <string name="communication_channels_description">Otrzymuj przydatne wskazówki Ruuvi, aktualizacje produktów, informacje o funkcjach i okazjonalne oferty specjalne prosto na swoją skrzynkę.</string>
     <string name="enable_background_service">Włącz usługę działającą w tle</string>
     <string name="use_web_version_of_share">Użyj internetowej wersji udostępniania</string>
     <string name="font_scaling">Skalowanie czcionki %1$s%%</string>
-    <string name="disable_developer_mode">Wyłącz tryb deweloperski</string>
+    <string name="disable_developer_mode">Disable developer mode</string>
+    <string name="registered_fcm_tokens">Registered FCM tokens</string>
+    <string name="marketing_consent_prompt_title">Czy możemy wysyłać Ci e-maile?</string>
+    <string name="marketing_consent_prompt_message">Od czasu do czasu mamy wiadomości o aplikacji, naszych produktach i aktualnych ofertach.</string>
+    <string name="marketing_consent_prompt_decline">Nie, dziękuję</string>
+    <string name="marketing_consent_prompt_saved">Dziękujemy, zapisano pomyślnie.</string>
     <string name="sensor_measurements_outdated">Pomiary mogą być nieaktualne.</string>
-    <string name="registered_fcm_tokens">Zarejestrowane tokeny FCM</string>
-    <string name="week">Tydzień</string>
-    <string name="weeks">Tygodnie</string>
-    <string name="month">Miesiąc</string>
-    <string name="months">Miesiące</string>
-    <string name="year">Rok</string>
-    <string name="years">Lata</string>
 </resources>

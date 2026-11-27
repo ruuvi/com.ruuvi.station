@@ -4,5 +4,4 @@
     <string name="history_preparing_export">Export wird vorbereitet</string>
     <string name="history_load_failed">Verlauf konnte nicht geladen werden</string>
     <string name="history_export_failed">Verlauf konnte nicht exportiert werden. Bitte versuche es erneut.</string>
-    <string name="history_downloading_progress">Wird geladen (%1$s)</string>
 </resources>

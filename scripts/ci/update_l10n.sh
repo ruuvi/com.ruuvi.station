@@ -6,12 +6,21 @@
 set -e
 
 
-# Clone the station localization repository if it does not exist yet
-if [ ! -d "station.localization" ]; then
-  git clone https://github.com/ruuvi/station.localization.git
+# Use the recorded revision so local and CI builds generate the same strings.
+localization_revision=$(cat "$(dirname "${BASH_SOURCE[0]}")/localization-revision")
+if [[ ! "$localization_revision" =~ ^[0-9a-f]{40}$ ]]; then
+  echo "Invalid localization revision" >&2
+  exit 1
 fi
 
-json_file="./station.localization/station.localization.json"
+localization_dir=$(mktemp -d "${TMPDIR:-/tmp}/ruuvi-localization.XXXXXX")
+trap 'rm -rf "$localization_dir"' EXIT
+git init --quiet "$localization_dir"
+git -C "$localization_dir" fetch --quiet --depth 1 \
+  https://github.com/ruuvi/station.localization.git "$localization_revision"
+git -C "$localization_dir" checkout --quiet --detach FETCH_HEAD
+
+json_file="$localization_dir/station.localization.json"
 
 append_xml() {
   local filename=$1
@@ -116,5 +125,3 @@ for lang in $languages; do
   append_required_language_strings "$filename"
   echo '</resources>' >> "$filename"
 done
-
-rm -r -f station.localization

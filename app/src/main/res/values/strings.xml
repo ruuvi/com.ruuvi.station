@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="history_downloading_progress">Downloading (%1$s)</string>
     <string name="air_quality">Air Quality</string>
     <string name="aqi_with_unit">Air quality (%1$s)</string>
     <string name="aqi">Air quality</string>
@@ -98,7 +99,7 @@
     <string name="add_tag_not_found">No sensors found</string>
     <string name="add_tag_title">Nearby Ruuvi sensors</string>
     <string name="ago">ago</string>
-    <string name="alarm_notification_disable">Disable this alarm</string>
+    <string name="alarm_notification_disable">Disable this alert</string>
     <string name="alert_movement">Movement</string>
     <string name="alert_movement_description">Movement alert is triggered if the value of the sensor\'s internal motion counter changes. This alert can be used, for example, to detect door movement or vibration in the vicinity of the sensor.</string>
     <string name="alert_notification_humidity_high">Humidity too high!</string>
@@ -448,7 +449,13 @@ Total used shares for your account: %3$,d/%4$,d</string>
     <string name="remove_shared_sensor">If you remove the sensor, the owner of the sensor will be notified and you will not be able to access the sensor anymore.</string>
     <string name="owner_none">No owner</string>
     <string name="logged_in">Signed in:</string>
+    <string name="week">Week</string>
+    <string name="weeks">Weeks</string>
+    <string name="month">Month</string>
+    <string name="months">Months</string>
     <string name="hour">Hour</string>
+    <string name="year">Year</string>
+    <string name="years">Years</string>
     <string name="rename_sensor_message">Your sensors are displayed in alphabetical order.</string>
     <string name="error_dfu_disconnected">Device disconnected</string>
     <string name="error_dfu_update">Firmware update failed</string>
@@ -597,6 +604,7 @@ Total used shares for your account: %3$,d/%4$,d</string>
     <string name="main_view">Main view</string>
     <string name="full_image_view">Full image view</string>
     <string name="history_view">History view</string>
+    <string name="settings_and_alerts">Settings \u0026 alerts</string>
     <string name="change_background">Change background</string>
     <string name="check_claim_state">Checking claim state</string>
     <string name="claim_in_progress">Claiming in progress</string>
@@ -705,6 +713,9 @@ Total used shares for your account: %3$,d/%4$,d</string>
     <string name="signing_in_is_optional">(Signing in is optional)</string>
     <string name="use_dev_server">Use Dev server</string>
     <string name="use_dev_server_description">To apply changes simply sync data from dashboard or wait till next sync.</string>
+    <string name="use_nfc">Use NFC</string>
+    <string name="use_bluetooth">Use BT</string>
+    <string name="sensor_not_found_error">Sensor not found. Try again.</string>
     <string name="sensor_details">Sensor details</string>
     <string name="previous_sensor">Previous sensor</string>
     <string name="next_sensor">Next sensor</string>
@@ -858,7 +869,7 @@ Total used shares for your account: %3$,d/%4$,d</string>
     <string name="description_text_luminosity">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</string>
     <string name="description_text_sound_level">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</string>
     <string name="description_text_co2">Carbon dioxide is a colorless and odorless gas produced by respiration and combustion processes. Indoors, CO₂ concentration is measured in [b]ppm (parts per million)[/b], meaning millionths of the air volume. For reference, outdoor CO₂ levels average around [b]420–430 ppm[/b].\n\n[title]Concentration Classes[/title]\n[li][b]Excellent:[/b] below 600 ppm[/li][li][b]Good:[/b] 600 - 799 ppm[/li][li][b]Moderate:[/b] 800 - 1349 ppm[/li][li][b]Poor:[/b] 1350 - 2099 ppm[/li][li][b]Very poor:[/b] 2100 ppm or more[/li]\n\n[title]Target Range[/title]\n[li][b]General:[/b] values above [b]1000 ppm[/b] indicate a need to improve ventilation.[/li][li][b]Bedroom:[/b] CO₂ should stay [b]well below 1000 ppm[/b] to support good sleep and recovery.[/li][li][b]Workspaces:[/b] the optimal level is [b]below 800 ppm[/b], which supports focus and well-being.[/li]\nCO₂ levels rise when several people are present in the same room or ventilation is insufficient.\n\n[title]General Actions[/title]\n[li][b]Ventilate effectively[/b], especially when multiple people are in the room.[/li][li]Keep [b]doors between rooms open[/b] to allow proper air circulation.[/li][li][b]Enhance ventilation[/b] when necessary and ensure the system works correctly.[/li][li][b]Rotate occupancy[/b] between rooms where CO₂ tends to build up.[/li][li][b]Plants[/b] can slightly improve air quality, but their effect is limited.[/li]\n[b]Note:[/b] Regular air purifiers do not remove CO₂; only adequate ventilation reduces its concentration.\n\n[title]Effects on Well-being[/title]\n\nHigh indoor CO₂ levels can cause [b]fatigue, headaches, drowsiness, and difficulty concentrating[/b]. Long-term exposure to elevated values can reduce performance and sleep quality.</string>
-    <string name="description_text_voc">The VOC index describes the trend of volatile organic compounds present in the air. These chemicals are released from many everyday products such as [b]cleaning agents, paints, adhesives, new furniture, candles, and perfumes[/b]. The VOC index does not show absolute concentrations but indicates a [b]trend[/b]—whether the amount of VOCs has increased or decreased compared to previous levels.\n\n[title]Target Range[/title]\n\nThe index scale ranges from 0–500, with a long-term average fixed at [b]100[/b]. When the VOC index exceeds 100, it means that the level of VOCs in the space is higher than average. Conversely, a VOC index below 100 indicates fewer VOCs than usual (for example, after airing the room or using an air purifier).\n\n[title]General Actions[/title]\n[li]If VOC values rise, [b]ventilate the area[/b] or use a suitable air purifier.[/li][li][b]Choose low-emission products[/b] such as eco-labeled paints and cleaning agents.[/li][li]Avoid unnecessary chemical exposure indoors.[/li]\nThe VOC value can fluctuate significantly during the day. For example, [b]after cleaning or cooking[/b], readings may increase noticeably. The best approach is to monitor the measurements over several days and take note of the activities that coincide with changes in values. This helps identify pollution sources, which can then be removed or minimized.\n\n[title]Effects on Well-being[/title]\n\nHigh concentrations can cause [b]eye, nose, and throat irritation, headaches[/b], and long-term [b]health risks[/b].\n\n[title]Tips and Additional Information[/title]\n[li]Do not place the sensor directly near emission sources (such as stoves or sprays) to keep readings reliable.[/li][li]The sensor cannot distinguish between compounds, identify them individually, or determine how hazardous or harmless they are. Such detailed VOC analysis is only possible with specialized laboratory equipment.[/li]</string>
+    <string name="description_text_voc">The VOC index describes the trend of volatile organic compounds present in the air. These chemicals are released from many everyday products such as [b]cleaning agents, paints, adhesives, new furniture, candles, and perfumes[/b]. The VOC index does not show absolute concentrations but indicates a [b]trend[/b]—whether the amount of VOCs has increased or decreased compared to previous levels.\n\n[title]Target Range[/title]\n\nThe index scale ranges from 1–500, with a long-term average fixed at [b]100[/b]. When the VOC index exceeds 100, it means that the level of VOCs in the space is higher than average. Conversely, a VOC index below 100 indicates fewer VOCs than usual (for example, after airing the room or using an air purifier).\n\n[title]General Actions[/title]\n[li]If VOC values rise, [b]ventilate the area[/b] or use a suitable air purifier.[/li][li][b]Choose low-emission products[/b] such as eco-labeled paints and cleaning agents.[/li][li]Avoid unnecessary chemical exposure indoors.[/li]\nThe VOC value can fluctuate significantly during the day. For example, [b]after cleaning or cooking[/b], readings may increase noticeably. The best approach is to monitor the measurements over several days and take note of the activities that coincide with changes in values. This helps identify pollution sources, which can then be removed or minimized.\n\n[title]Effects on Well-being[/title]\n\nHigh concentrations can cause [b]eye, nose, and throat irritation, headaches[/b], and long-term [b]health risks[/b].\n\n[title]Tips and Additional Information[/title]\n[li]Do not place the sensor directly near emission sources (such as stoves or sprays) to keep readings reliable.[/li][li]The sensor cannot distinguish between compounds, identify them individually, or determine how hazardous or harmless they are. Such detailed VOC analysis is only possible with specialized laboratory equipment.[/li]</string>
     <string name="description_text_nox">The NOx index describes the trend of nitrogen oxides in the air. These harmful gases are produced, for example, by traffic emissions and gas stoves. The NOx index does not show absolute concentrations but indicates a trend — whether the amount of nitrogen oxides has increased or decreased compared to previous levels.\n\n[title]Target Range[/title]\n\nThe index scale ranges from 1–500, with a long-term average fixed at [b]1[/b]. When the NOx index exceeds 1, it means that nitrogen oxides are higher than average in the space.\n\n[title]General Actions[/title]\n[li][b]Ventilate the room[/b] if NOx values rise. However, consider possible outdoor emissions from traffic or industry.[/li][li]Use a [b]range hood[/b] to remove nitrogen oxides when cooking with a gas stove.[/li]\nFor example, [b]during cooking or when outdoor pollution increases[/b], the index can rise quickly. The best approach is to monitor the measurements over several days and take note of what happens when values change. This helps identify pollution sources and reduce or eliminate them in the future.\n\n[title]Effects on Well-being[/title]\n\nEven small amounts can [b]irritate the respiratory tract[/b], worsen asthma, and increase susceptibility to infections. Long-term exposure can harm the lungs and the circulatory system.\n\n[title]Tips and Additional Information[/title]\n\nDo not place the sensor directly next to stoves, fireplaces, or ventilation outlets to ensure reliable measurements.</string>
     <string name="description_text_pm">Particulate matter (PM) consists of tiny, invisible particles and impurities suspended in the air. The most commonly monitored value is [b]PM2.5[/b], but in the app settings you can also view [b]PM1, PM4, and PM10[/b] values.\n\n[title]Concentration Classes[/title]\n[li][b]Excellent:[/b] below 5 µg/m³[/li][li][b]Good:[/b] 5 - 11.9 µg/m³[/li][li][b]Moderate:[/b] 12 - 29.9 µg/m³[/li][li][b]Poor:[/b] 30 - 54.9 µg/m³[/li][li][b]Very poor:[/b] 55 µg/m³ or more[/li]\n[title]Target Range[/title]\n\nThe World Health Organization (WHO) recommends the following limits for PM2.5: [b]5 µg/m³[/b] (annual mean) and [b]15 µg/m³[/b] (daily mean).\n\n[title]General Actions[/title]\n[li]Ventilate the room or use an air purifier when values rise.[/li][li]Avoid activities that produce particles, such as burning candles or smoking indoors.[/li][li]Ensure adequate ventilation, especially during cooking and cleaning.[/li][li]Replace air filters on time and make sure the correct filter type is used.[/li]\n[title]Effects on Well-being[/title]\n\nVery small particles (PM2.5 and smaller) travel deep into the lungs and may enter the bloodstream. They can [b]worsen allergies[/b] and cause [b]respiratory symptoms and heart disease[/b]. Concentrations can rise from cooking, burning candles, or outdoor pollution.\n\n[title]Tips and Additional Information[/title]\n[li]Place the sensor away from direct [b]pollution sources[/b] such as stoves or fans.[/li][li]Allow free airflow around the sensor for the most accurate readings.[/li][li]The particle sensor cannot measure pollen or ordinary house dust, as these particles are typically larger than 10 micrometers. It also does not detect mold spores, bacteria, or viruses.[/li][li]The PM2.5 value includes particles with a diameter of 2.5 micrometers or smaller. Similarly, PM10 includes particles of 10 µm and smaller.[/li][li]WHO recommendation: [link url=https://www.who.int/teams/environment-climate-change-and-health/air-quality-and-health/health-impacts/types-of-pollutants]https://www.who.int/teams/environment-climate-change-and-health/air-quality-and-health/health-impacts/types-of-pollutants[/link][/li]</string>
     <string name="real_time">Real time</string>
@@ -886,22 +897,16 @@ Total used shares for your account: %3$,d/%4$,d</string>
     <string name="newsletter_url">https://ruuvi.com/join</string>
     <string name="newsletter_subscription">Subscription</string>
     <string name="newsletter_subscription_confirmation">Check your email to confirm your newsletter subscription.</string>
-    <string name="marketing_consent_prompt_title">May we send you emails?</string>
-    <string name="marketing_consent_prompt_message">From time to time, we have news to share about the app, our products and current offers.</string>
-    <string name="marketing_consent_prompt_decline">No thanks</string>
-    <string name="marketing_consent_prompt_saved">Thank you, saved successfully.</string>
     <string name="communication_channels">Ruuvi newsletter</string>
     <string name="communication_channels_description">Get useful Ruuvi tips, product updates, feature news, and occasional special offers straight to your inbox.</string>
     <string name="enable_background_service">Enable background service</string>
     <string name="use_web_version_of_share">Use web version of share</string>
     <string name="font_scaling">Font scaling %1$s%%</string>
     <string name="disable_developer_mode">Disable developer mode</string>
-    <string name="sensor_measurements_outdated">Measurements may be outdated.</string>
     <string name="registered_fcm_tokens">Registered FCM tokens</string>
-    <string name="week">Week</string>
-    <string name="weeks">Weeks</string>
-    <string name="month">Month</string>
-    <string name="months">Months</string>
-    <string name="year">Year</string>
-    <string name="years">Years</string>
+    <string name="marketing_consent_prompt_title">May we send you emails?</string>
+    <string name="marketing_consent_prompt_message">From time to time, we have news to share about the app, our products and current offers.</string>
+    <string name="marketing_consent_prompt_decline">No thanks</string>
+    <string name="marketing_consent_prompt_saved">Thank you, saved successfully.</string>
+    <string name="sensor_measurements_outdated">Measurements may be outdated.</string>
 </resources>

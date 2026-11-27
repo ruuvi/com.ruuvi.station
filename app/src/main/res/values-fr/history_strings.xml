@@ -4,5 +4,4 @@
     <string name="history_preparing_export">Préparation de l’exportation</string>
     <string name="history_load_failed">Impossible de charger l’historique</string>
     <string name="history_export_failed">Impossible d’exporter l’historique. Veuillez réessayer.</string>
-    <string name="history_downloading_progress">Téléchargement (%1$s)</string>
 </resources>
