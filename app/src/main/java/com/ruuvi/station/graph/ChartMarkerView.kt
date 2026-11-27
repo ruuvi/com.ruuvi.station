@@ -56,7 +56,7 @@ constructor(
     }
 
     override fun refreshContent(e: Entry, highlight: Highlight) {
-        val date = Date(e.x.toLong() + getFrom.invoke())
+        val date = Date((e.data as? com.ruuvi.station.history.HistorySample)?.timestamp?.times(1000) ?: (e.x.toLong() + getFrom.invoke()))
         val timeText = DateFormat.getTimeInstance(DateFormat.SHORT).format(date).replace(" ","")
 
         val dateText = date.localizedDate(context, includeYear = false)

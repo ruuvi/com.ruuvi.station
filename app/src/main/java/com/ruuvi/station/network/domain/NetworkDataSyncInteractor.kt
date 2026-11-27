@@ -53,7 +53,8 @@ class NetworkDataSyncInteractor (
     private val tagSettingsInteractor: TagSettingsInteractor,
     private val pushRegisterInteractor: PushRegisterInteractor,
     private val networkShareListInteractor: NetworkShareListInteractor,
-    private val subscriptionInfoSyncInteractor: SubscriptionInfoSyncInteractor
+    private val subscriptionInfoSyncInteractor: SubscriptionInfoSyncInteractor,
+    private val progressiveHistory: com.ruuvi.station.history.ProgressiveHistoryRepository? = null
 ) {
     @Volatile
     private var syncJob: Job = Job().also { it.complete() }
@@ -166,6 +167,8 @@ class NetworkDataSyncInteractor (
                 Timber.d("updateSensors")
                 val sensorForBackgroundUpdate = updateSensors(sensorsInfo.data)
                 updateSensorSettings(sensorsInfo.data)
+                sensorHistoryRepository.schedulePruning()
+                progressiveHistory?.pruneCache()
                 sendSyncEvent(NetworkSyncEvent.SensorsSynced)
                 firebaseInteractor.logSync(userEmail, sensorsInfo.data)
                 val benchUpdate2 = Date()
@@ -384,7 +387,8 @@ class NetworkDataSyncInteractor (
             sensorSettings.owner != owner ||
                     !sensorSettings.networkSensor ||
                     sensorSettings.canShare != sensor.canShare ||
-                    sensorSettings.subscriptionName != subscriptionName
+                    sensorSettings.subscriptionName != subscriptionName ||
+                    sensorSettings.maxHistoryDays != sensor.subscription.maxHistoryDays
 
         if (!hasChanges) return
 
@@ -393,6 +397,7 @@ class NetworkDataSyncInteractor (
             networkSensor = true
             canShare = sensor.canShare
             this.subscriptionName = subscriptionName
+            maxHistoryDays = sensor.subscription.maxHistoryDays
 
             update()
         }

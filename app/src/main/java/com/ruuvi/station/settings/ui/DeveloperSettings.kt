@@ -84,6 +84,11 @@ fun DeveloperSettings(
             )
             Paragraph(text = "Show a warning icon when dashboard card measurements are not updated within this period.")
 
+            FeatureSwitch(feature = FeatureFlag.LONGER_HISTORY, checked = viewModel::getFeatureState,
+                onCheckedChange = viewModel::setFeatureValue)
+            FeatureSwitch(feature = FeatureFlag.HISTORY_DURATION_PRESETS, checked = viewModel::getFeatureState,
+                onCheckedChange = viewModel::setFeatureValue)
+
             Spacer(modifier = Modifier.height(48.dp))
             Subtitle("Debug info")
             val scale = LocalDensity.current.fontScale

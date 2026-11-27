@@ -63,7 +63,7 @@ class XlsxExporter(
                 }
             }
 
-            return FileProvider.getUriForFile(context, "com.ruuvi.station.fileprovider", filePath)
+            return FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", filePath)
         } catch (e: Exception) {
             e.printStackTrace()
             return null

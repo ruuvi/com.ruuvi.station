@@ -910,4 +910,10 @@ Wenn die Beanspruchung nicht erfolgreich war oder NFC auf Ihrem Gerät nicht ver
     <string name="disable_developer_mode">Entwicklermodus deaktivieren</string>
     <string name="sensor_measurements_outdated">Die Messwerte sind möglicherweise veraltet.</string>
     <string name="registered_fcm_tokens">Registrierte FCM-Token</string>
+    <string name="week">Woche</string>
+    <string name="weeks">Wochen</string>
+    <string name="month">Monat</string>
+    <string name="months">Monate</string>
+    <string name="year">Jahr</string>
+    <string name="years">Jahre</string>
 </resources>

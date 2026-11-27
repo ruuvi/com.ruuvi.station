@@ -11,7 +11,6 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
@@ -33,7 +32,6 @@ import com.ruuvi.station.tag.domain.RuuviTag
 import com.ruuvi.station.units.domain.UnitsConverter
 import com.ruuvi.station.units.model.UnitType
 import com.ruuvi.station.util.Period
-import com.ruuvi.station.util.ui.pxToDp
 import com.ruuvi.station.util.ui.scrollbar
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
@@ -54,7 +52,6 @@ fun ChartsView(
     showChartStats: Boolean,
     chartCleared: Flow<String>,
     viewPeriod: Period,
-    size: Size,
     chartSizeLevel: Int,
     scrollToChartEvent: Flow<UnitType>,
     historyUpdater: (String) -> Flow<MutableList<ChartContainer>>,
@@ -73,13 +70,6 @@ fun ChartsView(
 
     var chartsInitialized by remember { mutableStateOf(false) }
 
-    var chartsPerScreen by remember {
-        mutableIntStateOf(3)
-    }
-
-    var needsScroll by remember {
-        mutableStateOf(true)
-    }
 
     var isLoading by remember {
         mutableStateOf(true)
@@ -87,8 +77,9 @@ fun ChartsView(
 
     val sharedX = rememberSaveable { mutableStateOf<Float?>(null) }
 
-    LaunchedEffect(key1 = sensor.id) {
-        Timber.d("ChartView - chart containers fill ${sensor.id}")
+    LaunchedEffect(sensor.id, selected) {
+        if (!selected) return@LaunchedEffect
+        Timber.d("ChartView - chart containers fill")
         chartsInitialized = false
 
         historyUpdater(sensor.id).collectLatest { data ->
@@ -115,7 +106,8 @@ fun ChartsView(
                     chartsInitialSetup(
                         charts = chartContainers.mapNotNull { container -> container.uiComponent?.let { container.unitType to it } },
                         unitsConverter = unitsConverter,
-                        context = context
+                        context = context,
+                        historyModel = { chart -> chartContainers.firstOrNull { it.uiComponent === chart }?.history }
                     )
                     chartsInitialized = true
                 }
@@ -124,18 +116,14 @@ fun ChartsView(
         }
     }
 
-    LaunchedEffect(key1 = chartContainers.size, chartSizeLevel) {
-        if (chartContainers.size < 3) {
-            chartsPerScreen = chartContainers.size
-        } else {
-            chartsPerScreen = when (chartSizeLevel) {
-                CHART_SIZE_LEVEL_MAX -> 1
-                CHART_SIZE_LEVEL_INCREASED -> 2
-                else -> 3
-            }
-        }
-        needsScroll = chartsPerScreen < chartContainers.size
+    // Derive geometry in the same composition as the data. An effect previously
+    // left a new non-empty list with the preceding empty list's zero slot count.
+    val chartsPerScreen = if (chartContainers.size < 3) chartContainers.size else when (chartSizeLevel) {
+        CHART_SIZE_LEVEL_MAX -> 1
+        CHART_SIZE_LEVEL_INCREASED -> 2
+        else -> 3
     }
+    val needsScroll = chartsPerScreen < chartContainers.size
 
     LaunchedEffect(key1 = sensor.id) {
         chartCleared.collect{
@@ -161,8 +149,7 @@ fun ChartsView(
 
     if (isLoading) {
         Box(
-            modifier = Modifier
-                .fillMaxSize(),
+            modifier = modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
         ) {
             LoadingAnimation3dots()
@@ -180,10 +167,11 @@ fun ChartsView(
                sharedX = sharedX
             )
         } else {
-            Box (modifier = modifier.fillMaxSize()) {
-                val height = if (chartsPerScreen > 0) (size.height / chartsPerScreen).pxToDp() else 0.dp
-
-                if (!size.isEmpty())
+            BoxWithConstraints(modifier = modifier.fillMaxSize()) {
+                // Use this frame's constraints, without an onGloballyPositioned
+                // round trip through a zero-sized state in the parent.
+                val height = if (chartsPerScreen > 0) maxHeight / chartsPerScreen else maxHeight
+                if (maxHeight > 0.dp)
                     VerticalChartsPrototype(
                         modifier = Modifier,
                         chartContainers = chartContainers,
@@ -214,7 +202,7 @@ fun VerticalChartsPrototype(
     sharedX: MutableState<Float?>,
     needsScroll: Boolean
 ) {
-    if (chartContainers.firstOrNull()?.data.isNullOrEmpty()) {
+    if (isEmptyHistoryWindow(chartContainers)) {
         EmptyCharts(modifier)
     } else {
         Timber.d("chart height $height $needsScroll")
@@ -260,6 +248,7 @@ fun VerticalChartsPrototype(
                                 from = from,
                                 to = to,
                                 sharedX = sharedX,
+                                history = chartContainer.history,
                             )
                         }
                     }
@@ -290,6 +279,7 @@ fun VerticalChartsPrototype(
                             from = from,
                             to = to,
                             sharedX = sharedX,
+                                history = chartContainer.history,
                         )
                     }
                 }
@@ -309,6 +299,10 @@ fun LandscapeChartsPrototype(
     sharedX: MutableState<Float?>,
     showChartStats: Boolean
 ) {
+    if (isEmptyHistoryWindow(chartContainers)) {
+        EmptyCharts(modifier)
+        return
+    }
     val pagerState = rememberPagerState {
         return@rememberPagerState chartContainers.size
     }
@@ -345,9 +339,20 @@ fun LandscapeChartsPrototype(
                 from = from,
                 to = to,
                 sharedX = sharedX,
+                                history = chartContainer.history,
             )
         }
     }
+}
+
+/** A completed selected period is empty only after cloud and local coverage is known.
+ * Keep charts during loading/errors and when zoomed, so the user can pan back out.
+ */
+internal fun isEmptyHistoryWindow(charts: List<ChartContainer>): Boolean {
+    if (charts.any { !it.data.isNullOrEmpty() }) return false
+    val state = charts.firstOrNull()?.history?.state ?: return true
+    return !state.zoomed && !state.moving && !state.lostAccess && state.error == 0L &&
+        state.overview?.let { it.complete && !it.statisticsPartial } == true
 }
 
 @Composable

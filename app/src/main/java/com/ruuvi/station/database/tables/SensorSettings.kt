@@ -43,6 +43,8 @@ data class SensorSettings(
     @Column
     var subscriptionName: String? = null,
     @Column
+    var maxHistoryDays: Int? = null,
+    @Column
     var lastSync: Date? = null,
     @Column
     var networkLastSync: Date? = null,
@@ -82,6 +84,7 @@ data class SensorSettings(
         temperatureOffset = sensor.offsetTemperature
         networkSensor = true
         subscriptionName = sensor.subscription.subscriptionName
+        maxHistoryDays = sensor.subscription.maxHistoryDays
         lastUpdated = sensor.lastUpdated
         update()
     }

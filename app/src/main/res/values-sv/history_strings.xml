@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="history_custom_dates">Anpassade datum</string>
+    <string name="history_preparing_export">Förbereder export</string>
+    <string name="history_load_failed">Kunde inte ladda historik</string>
+    <string name="history_export_failed">Kunde inte exportera historik. Försök igen.</string>
+    <string name="history_downloading_progress">Laddar ned (%1$s)</string>
+</resources>

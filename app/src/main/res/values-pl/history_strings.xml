@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="history_custom_dates">Niestandardowe daty</string>
+    <string name="history_preparing_export">Przygotowywanie eksportu</string>
+    <string name="history_load_failed">Nie udało się wczytać historii</string>
+    <string name="history_export_failed">Nie udało się wyeksportować historii. Spróbuj ponownie.</string>
+    <string name="history_downloading_progress">Pobieranie (%1$s)</string>
+</resources>

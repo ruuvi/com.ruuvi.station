@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="history_custom_dates">Mukautetut päivämäärät</string>
+    <string name="history_preparing_export">Valmistellaan vientiä</string>
+    <string name="history_load_failed">Historiaa ei voitu ladata</string>
+    <string name="history_export_failed">Historiaa ei voitu viedä. Yritä uudelleen.</string>
+    <string name="history_downloading_progress">Ladataan (%1$s)</string>
+</resources>

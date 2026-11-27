@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="history_custom_dates">Custom dates</string>
+    <string name="history_preparing_export">Preparing export</string>
+    <string name="history_load_failed">Could not load history</string>
+    <string name="history_export_failed">Could not export history. Please try again.</string>
+    <string name="history_downloading_progress">Downloading (%1$s)</string>
+</resources>

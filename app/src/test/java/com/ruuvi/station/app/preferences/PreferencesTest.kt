@@ -27,6 +27,15 @@ class PreferencesTest {
         unmockkStatic(PreferenceManager::class)
     }
 
+    @Test fun `graph defaults to ten days and preserves explicitly selected All`() {
+        val saved = mockk<SharedPreferences>(relaxed = true)
+        every { saved.getInt(any(), any()) } answers { secondArg<Int>() }
+        val preferences = preferencesUsing(saved)
+        assertEquals(240, preferences.graphViewPeriodHours)
+        every { saved.getInt("pref_graph_view_period_hours", any()) } returns 0
+        assertEquals(0, preferences.graphViewPeriodHours)
+    }
+
     @Test
     fun `uses the OS Fahrenheit preference as the default temperature unit`() {
         assertEquals(

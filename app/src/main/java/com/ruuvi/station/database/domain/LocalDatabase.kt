@@ -13,7 +13,20 @@ import com.ruuvi.station.database.tables.*
 class LocalDatabase {
     companion object {
         const val NAME = "LocalDatabase"
-        const val VERSION = 43
+        const val VERSION = 46
+    }
+
+    // Additive migration, also safe for previous experimental history builds (44/45).
+    @Migration(version = 46, database = LocalDatabase::class)
+    class Migration46HistoryAllowance : BaseMigration() {
+        override fun migrate(database: DatabaseWrapper) {
+            val columns = mutableSetOf<String>()
+            database.rawQuery("PRAGMA table_info(SensorSettings)", null).use { cursor ->
+                while (cursor.moveToNext()) columns += cursor.getString(cursor.getColumnIndex("name"))
+            }
+            if ("maxHistoryDays" !in columns) database.execSQL("ALTER TABLE SensorSettings ADD COLUMN maxHistoryDays INTEGER")
+            if ("imageUrl" !in columns) database.execSQL("ALTER TABLE SensorSettings ADD COLUMN imageUrl TEXT")
+        }
     }
 
     @Migration(version = 43, database = LocalDatabase::class)

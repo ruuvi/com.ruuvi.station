@@ -29,7 +29,7 @@ class TagDetailsInteractor(
 
     fun getTagReadings(sensorId: String, hours: Int): List<TagSensorReading> {
         val sensorSettings = sensorSettingsRepository.getSensorSettings(sensorId)
-        val viewPeriod = if (hours == 0) 24 * 10 else hours
+        val viewPeriod = (if (hours == 0) 240 else hours).coerceIn(1, 240)
         val history =  if (preferences.isShowAllGraphPoint()) {
             sensorHistoryRepository.getHistory(sensorId, viewPeriod)
         } else {

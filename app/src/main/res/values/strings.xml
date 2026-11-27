@@ -898,4 +898,10 @@ Total used shares for your account: %3$,d/%4$,d</string>
     <string name="disable_developer_mode">Disable developer mode</string>
     <string name="sensor_measurements_outdated">Measurements may be outdated.</string>
     <string name="registered_fcm_tokens">Registered FCM tokens</string>
+    <string name="week">Week</string>
+    <string name="weeks">Weeks</string>
+    <string name="month">Month</string>
+    <string name="months">Months</string>
+    <string name="year">Year</string>
+    <string name="years">Years</string>
 </resources>

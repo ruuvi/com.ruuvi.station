@@ -905,4 +905,10 @@ Total des partages utilisés pour votre compte : %3$,d/%4$,d</string>
     <string name="disable_developer_mode">Désactiver le mode développeur</string>
     <string name="sensor_measurements_outdated">Les données de mesure ne sont peut-être plus à jour.</string>
     <string name="registered_fcm_tokens">Jetons FCM enregistrés</string>
+    <string name="week">Semaine</string>
+    <string name="weeks">Semaines</string>
+    <string name="month">Mois</string>
+    <string name="months">Mois</string>
+    <string name="year">Année</string>
+    <string name="years">Années</string>
 </resources>

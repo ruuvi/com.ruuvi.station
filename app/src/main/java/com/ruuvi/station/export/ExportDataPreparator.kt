@@ -63,6 +63,20 @@ class ExportDataPreparator(
         )
     }
 
+    data class StreamingSchema(val sensorName: String, val columns: List<ExportColumn>,
+                               val row: (TagSensorReading) -> List<Any?>)
+
+    /** The caller calibrates once; formatting is page-wise and captures a stable schema. */
+    fun prepareStreamingExport(sensorId: String): StreamingSchema? {
+        val tag = repository.getTagById(sensorId) ?: return null
+        val name = sensorSettingsRepository.getSensorSettings(sensorId)?.name.orEmpty()
+        val air = dataFormatIsAir(tag.dataFormat)
+        val formatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+        return StreamingSchema(name, buildColumns(tag, tag.dataFormat, air)) {
+            buildRow(tag, it, tag.dataFormat, air, formatter)
+        }
+    }
+
     private fun buildColumns(tagEntity: RuuviTagEntity, dataFormat: Int, isAir: Boolean): List<ExportColumn> {
         val columns = mutableListOf<ExportColumn>()
 
@@ -133,11 +147,11 @@ class ExportDataPreparator(
         return columns
     }
 
-    private fun buildRow(tagEntity: RuuviTagEntity, reading: TagSensorReading, dataFormat: Int, isAir: Boolean): List<Any?> {
+    private fun buildRow(tagEntity: RuuviTagEntity, reading: TagSensorReading, dataFormat: Int, isAir: Boolean, formatter: SimpleDateFormat = dateFormat): List<Any?> {
         val row = mutableListOf<Any?>()
 
         // Date
-        row.add(dateFormat.format(reading.createdAt))
+        row.add(formatter.format(reading.createdAt))
 
         // Air Quality values
         if (isAir) {

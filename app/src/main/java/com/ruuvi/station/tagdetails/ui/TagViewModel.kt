@@ -221,7 +221,7 @@ class TagViewModel(
         _chartViewPeriod.value = getGraphViewPeriod()
     }
 
-    private fun getGraphViewPeriod() = Period.getInstance(appSettingsInteractor.getGraphViewPeriod())
+    private fun getGraphViewPeriod() = Period.getInstance(appSettingsInteractor.getGraphViewPeriod().coerceIn(0, 240))
 
     override fun onCleared() {
         super.onCleared()

@@ -26,7 +26,14 @@ object TagDetailsInjectionModule {
         }
 
         bind<SensorCardViewModel>() with factory { arguments: SensorCardViewModelArguments ->
-            SensorCardViewModel(arguments, instance(), instance(), instance(), instance(), instance(), instance(), instance(), instance(), instance(), instance(), instance(), instance())
+            SensorCardViewModel(arguments, instance(), instance(), instance(), instance(), instance(), instance(), instance(), instance(), instance(), instance(), instance(), instance(), instance(), instance())
+        }
+
+        bind<com.ruuvi.station.history.ProgressiveHistoryRepository>() with singleton {
+            com.ruuvi.station.history.ProgressiveHistoryRepository(instance(), instance(), instance(), instance(), instance(), instance())
+        }
+        bind<com.ruuvi.station.export.HistoryRecordExporter>() with singleton {
+            com.ruuvi.station.export.HistoryRecordExporter(instance(), instance(), instance())
         }
 
         bind<ExportDataPreparator>() with singleton { ExportDataPreparator(instance(), instance(), instance(), instance(), instance()) }

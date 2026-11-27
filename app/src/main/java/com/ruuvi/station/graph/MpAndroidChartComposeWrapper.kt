@@ -3,6 +3,9 @@ package com.ruuvi.station.graph
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Color
+import java.text.SimpleDateFormat
+import java.util.Locale
+import com.github.mikephil.charting.renderer.LineChartRenderer
 import android.graphics.Matrix
 import android.graphics.Paint
 import android.view.GestureDetector
@@ -122,11 +125,13 @@ fun ChartViewPrototype(
     from: Long,
     to: Long,
     sharedX: MutableState<Float?>,
+    history: HistoryChartData? = null,
 ) {
     val context = LocalContext.current
     val title = stringResource(id = unitType.measurementName).substringBefore(" (")
     val icon = unitType.iconRes
     var description by remember(lineChart, unitsConverter, unitType) { mutableStateOf("") }
+    var renderedHistory by remember(lineChart) { mutableStateOf<HistoryChartData?>(null) }
     val getRawValue = remember(unitsConverter, unitType) { unitsConverter.rawValueFormatter(unitType) }
 
     val latestPoint = chartData.lastOrNull()
@@ -202,16 +207,14 @@ fun ChartViewPrototype(
                 }
 
                 if (showChartStats) {
-                    Text(
-                        modifier = Modifier.padding(
-                            top = RuuviStationTheme.dimensions.tiny,
-                            bottom = RuuviStationTheme.dimensions.small
-                        ),
-                        color = White50,
+                    val statsModifier = Modifier.fillMaxWidth().padding(
+                        top = RuuviStationTheme.dimensions.tiny, bottom = RuuviStationTheme.dimensions.small)
+                    if (history != null) HistoryStatisticsText(history.statisticsDisplay(), getRawValue,
+                        androidx.compose.ui.text.TextStyle(fontFamily = ruuviStationFonts.mulishRegular,
+                            fontSize = ruuviStationFontsSizes.petite.limitScaleTo(1.5f)), statsModifier)
+                    else Text(modifier = statsModifier, color = White50,
                         fontFamily = ruuviStationFonts.mulishRegular,
-                        fontSize = ruuviStationFontsSizes.petite.limitScaleTo(1.5f),
-                        text = description,
-                    )
+                        fontSize = ruuviStationFontsSizes.petite.limitScaleTo(1.5f), text = description)
                 }
             }
         }
@@ -230,7 +233,7 @@ fun ChartViewPrototype(
                 .onGloballyPositioned {
                     Timber.d("setLabelCount onGloballyPositioned")
                     setLabelCount(context, lineChart)
-                    description = getChartDescription(
+                    if (history == null) description = getChartDescription(
                         context,
                         lineChart,
                         chartData,
@@ -319,7 +322,26 @@ fun ChartViewPrototype(
             update = { view ->
                 Timber.d("ChartView AndroidView - update $from pointsCount = ${chartData.size}")
 
-                if (view.data == null || view.highestVisibleX >= view.data.xMax) {
+                if (history != null && renderedHistory !== history) {
+                    val matrix = Matrix(view.viewPortHandler.matrixTouch)
+                    val previous = renderedHistory
+                    val oldY = view.axisLeft.axisMinimum to view.axisLeft.axisMaximum
+                    val preserveY = view.viewPortHandler.scaleY > 1.001f
+                    addDataToChart(context, chartData, view, "", graphDrawDots, limits, from, to, history)
+                    val sameSelection = previous?.state?.timeline == history.state.timeline ||
+                        (previous?.state?.zoomed == false && history.state.zoomed == false &&
+                            previous.state.timeline?.seconds == history.state.timeline?.seconds)
+                    if (sameSelection) {
+                        if (preserveY) {
+                            view.axisLeft.axisMinimum = oldY.first; view.axisLeft.axisMaximum = oldY.second
+                            view.notifyDataSetChanged()
+                        }
+                        view.viewPortHandler.refresh(matrix, view, false)
+                    } else view.fitScreen()
+                    (view.marker as ChartMarkerView).getFrom = { from }
+                    renderedHistory = history
+                    view.invalidate()
+                } else if (history == null && (view.data == null || view.highestVisibleX >= view.data.xMax)) {
                     addDataToChart(context, chartData, view, "", graphDrawDots, limits, from, to)
                     (view.marker as ChartMarkerView).getFrom = { from }
                 }
@@ -334,7 +356,7 @@ fun ChartViewPrototype(
                 }
 
                 view.post {
-                    description = getChartDescription(
+                    if (history == null) description = getChartDescription(
                         context,
                         view,
                         chartData,
@@ -398,7 +420,8 @@ fun getChartDescription(
 fun chartsInitialSetup(
     context: Context,
     unitsConverter: UnitsConverter,
-    charts: List<Pair<UnitType, LineChart>>
+    charts: List<Pair<UnitType, LineChart>>,
+    historyModel: (LineChart) -> HistoryChartData? = { null }
 ) {
     for (chartPair in charts) {
         setupChart(chartPair.second, unitsConverter, chartPair.first)
@@ -409,7 +432,7 @@ fun chartsInitialSetup(
     }
 
     normalizeOffsets(charts)
-    synchronizeChartGestures(charts.map { it.second }.toSet())
+    synchronizeChartGestures(charts.map { it.second }.toSet(), historyModel)
 }
 
 
@@ -492,26 +515,46 @@ private fun addDataToChart(
     graphDrawDots: Boolean,
     limits: Pair<Double,Double>?,
     from: Long,
-    to: Long
+    to: Long,
+    history: HistoryChartData? = null
 ) {
     Timber.d("ChartView - addDataToChart")
-    val set = LineDataSet(data, label)
-    set.setDrawCircles(graphDrawDots)
-    set.setDrawValues(false)
-    set.setDrawFilled(true)
-    set.maximumGapBetweenPoints = 3_600_000F
-    set.lineWidth = 1f
-    set.circleRadius = 1.5f
-    set.color = ContextCompat.getColor(context, R.color.chartLineColor)
-    set.setCircleColor(ContextCompat.getColor(context, R.color.chartLineColor))
-    set.setDrawCircleHole(false)
-    set.fillColor = ContextCompat.getColor(context, R.color.chartFillColor)
-    set.enableDashedHighlightLine(10f, 5f, 0f)
-    set.setDrawHighlightIndicators(true)
-    set.highLightColor = ContextCompat.getColor(context, R.color.chartLineColor)
+    fun makeSet(entries: List<Entry>): LineDataSet = if (history == null) LineDataSet(entries, label) else object : LineDataSet(entries, label) {
+        // The fork indexes circle colors by dataset; every coverage segment has one color.
+        override fun getCircleColor(index: Int): Int = super.getCircleColor(0)
+    }
+    fun style(set: LineDataSet) {
+        set.setDrawCircles(graphDrawDots)
+        set.setDrawValues(false)
+        set.setDrawFilled(true)
+        set.maximumGapBetweenPoints = 3_600_000F
+        set.lineWidth = 1f
+        set.circleRadius = 1.5f
+        set.color = ContextCompat.getColor(context, R.color.chartLineColor)
+        set.setCircleColor(ContextCompat.getColor(context, R.color.chartLineColor))
+        set.setDrawCircleHole(false)
+        set.fillColor = ContextCompat.getColor(context, R.color.chartFillColor)
+        set.enableDashedHighlightLine(10f, 5f, 0f)
+        set.setDrawHighlightIndicators(true)
+        set.highLightColor = ContextCompat.getColor(context, R.color.chartLineColor)
 
+    }
+    val sets = (history?.groups?.takeIf { it.isNotEmpty() } ?: listOf(data)).map { makeSet(it).also(::style) }
+    val set = sets.first()
+    if (history != null) {
+        // Drop the fork's per-dataset bitmap cache when replacing datasets.
+        (chart.renderer as? LineChartRenderer)?.releaseBitmap()
+        chart.renderer = HistoryLineChartRenderer(chart)
+        chart.setDragDecelerationEnabled(false)
+        chart.viewPortHandler.setMaximumScaleX(maxOf(1f, (to - from) / 60_000f))
+    } else if (chart.renderer is HistoryLineChartRenderer) {
+        (chart.renderer as LineChartRenderer).releaseBitmap()
+        chart.renderer = LineChartRenderer(chart, chart.animator, chart.viewPortHandler)
+        chart.setDragDecelerationEnabled(true)
+        chart.viewPortHandler.setMaximumScaleX(5000f)
+    }
     chart.setXAxisRenderer(
-        CustomXAxisRenderer(
+        if (history != null) HistoryXAxisRenderer(from, chart.viewPortHandler, chart.xAxis, chart.getTransformer(YAxis.AxisDependency.LEFT)) else CustomXAxisRenderer(
             from,
             chart.viewPortHandler,
             chart.xAxis,
@@ -533,8 +576,9 @@ private fun addDataToChart(
     }
 
     chart.description.text = label
-    chart.axisLeft.axisMinimum = set.yMin - 1f
-    chart.axisLeft.axisMaximum = set.yMax + 1f
+    val bounds = history?.bounds()
+    chart.axisLeft.axisMinimum = bounds?.first?.toFloat()?.minus(1f) ?: if (data.isEmpty()) 0f else set.yMin - 1f
+    chart.axisLeft.axisMaximum = bounds?.second?.toFloat()?.plus(1f) ?: if (data.isEmpty()) 1f else set.yMax + 1f
     chart.axisLeft.setDrawTopYLabelEntry(false)
     chart.axisLeft.valueFormatter = object : IAxisValueFormatter {
         override fun getFormattedValue(p0: Double, p1: AxisBase?): String {
@@ -542,12 +586,16 @@ private fun addDataToChart(
         }
     }
 
-    chart.data = LineData(set)
+    chart.data = LineData(sets)
     chart.data.isHighlightEnabled = true
     chart.xAxis.valueFormatter = object : IAxisValueFormatter {
         override fun getFormattedValue(value: Double, p1: AxisBase?): String {
             val date = Date(value.toLong() + from)
-            return if (date.isStartOfTheDay()) {
+            return if (history != null && chart.visibleXRange >= 60L * 86400_000) {
+                SimpleDateFormat("MMM yyyy", Locale.getDefault()).format(date)
+            } else if (history != null && chart.visibleXRange >= 2L * 86400_000) {
+                date.localizedDate(context, includeYear = chart.visibleXRange > 365L * 86400_000)
+            } else if (date.isStartOfTheDay()) {
                 date.localizedDate(context, includeYear = false)
             } else {
                 DateFormat.getTimeInstance(DateFormat.SHORT).format(date).replace(" ","")
@@ -621,7 +669,7 @@ fun normalizeOffsets(charts: List<Pair<UnitType, LineChart>>) {
     }
 }
 
-fun synchronizeChartGestures(charts: Set<LineChart>) {
+fun synchronizeChartGestures(charts: Set<LineChart>, historyModel: (LineChart) -> HistoryChartData? = { null }) {
     fun synchronizeCharts(sourceChart: LineChart) {
         val sourceMatrixValues = FloatArray(9)
         sourceChart.viewPortHandler.matrixTouch.getValues(sourceMatrixValues)
@@ -650,6 +698,11 @@ fun synchronizeChartGestures(charts: Set<LineChart>) {
                     it.setTouchEnabled(true)
                 }
                 synchronizeCharts(chart)
+                historyModel(chart)?.let { model ->
+                    val origin = (model.state.timeline?.since ?: return@let) * 1000.0
+                    model.onViewport(origin + chart.lowestVisibleX, origin + chart.highestVisibleX)
+                    model.onInteraction(false)
+                }
             }
 
             override fun onChartFling(me1: MotionEvent?, me2: MotionEvent?, velocityX: Float, velocityY: Float) {}
@@ -658,6 +711,7 @@ fun synchronizeChartGestures(charts: Set<LineChart>) {
                 me: MotionEvent?,
                 lastPerformedGesture: ChartTouchListener.ChartGesture?
             ) {
+                historyModel(chart)?.onInteraction?.invoke(true)
                 charts.minus(chart).forEach {
                     it.setTouchEnabled(false)
                 }

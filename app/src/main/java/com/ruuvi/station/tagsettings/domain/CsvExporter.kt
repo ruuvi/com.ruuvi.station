@@ -164,7 +164,7 @@ class CsvExporter_(
         }
 
         context.showToast(R.string.export_csv_created)
-        return FileProvider.getUriForFile(context, "com.ruuvi.station.fileprovider", csvFile)
+        return FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", csvFile)
     }
 
     companion object {

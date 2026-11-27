@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools">
+    <!-- Opt-in synthetic sandbox only. No account, telemetry, Bluetooth or scheduled workers. -->
+    <application android:name="android.app.Application" tools:replace="android:name">
+        <service tools:node="removeAll" />
+        <receiver tools:node="removeAll" />
+        <provider android:name="com.google.firebase.provider.FirebaseInitProvider" tools:node="remove" />
+        <provider android:name="androidx.startup.InitializationProvider" tools:node="remove" />
+    </application>
+</manifest>

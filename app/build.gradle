@@ -99,13 +99,13 @@ tasks.register('jacocoTestReport', JacocoReport) {
 android {
 
     defaultConfig {
-        applicationId "com.ruuvi.station"
+        applicationId project.hasProperty("isolatedHistoryTest") ? "com.ruuvi.station.historytest" : "com.ruuvi.station"
         minSdkVersion 24
         targetSdkVersion 37
         compileSdk 37
         versionCode = (releaseEnv("ANDROID_VERSION_CODE") ?: "1").toInteger()
         versionName "3.10.0"
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner project.findProperty("testRunner") ?: "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
     }
 
@@ -273,6 +273,7 @@ dependencies {
     testImplementation libs.junit
     testImplementation libs.mockk
     testImplementation libs.kotlinx.coroutines.test
+    androidTestImplementation libs.ui.test.junit4
     testImplementation libs.ui.test.junit4
     testImplementation "org.robolectric:robolectric:4.16.1"
     testRuntimeOnly "org.ow2.asm:asm:9.10"
@@ -320,4 +321,10 @@ dependencies {
     implementation(libs.vico.compose)
 
     implementation libs.glide
+}
+
+// Offline history instrumentation uses a separate app sandbox and never starts account services.
+if (project.hasProperty("isolatedHistoryTest")) {
+    android.sourceSets.debug.manifest.srcFile "src/historyTest/AndroidManifest.xml"
+    tasks.matching { it.name.endsWith("GoogleServices") }.configureEach { enabled = false }
 }

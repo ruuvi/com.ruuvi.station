@@ -900,4 +900,10 @@ Totalt antal använda delningar för ditt konto: %3$,d/%4$,d</string>
     <string name="disable_developer_mode">Inaktivera utvecklarläge</string>
     <string name="sensor_measurements_outdated">Mätvärdena kan vara inaktuella.</string>
     <string name="registered_fcm_tokens">Registrerade FCM-token</string>
+    <string name="week">Vecka</string>
+    <string name="weeks">Veckor</string>
+    <string name="month">Månad</string>
+    <string name="months">Månader</string>
+    <string name="year">år</string>
+    <string name="years">år</string>
 </resources>

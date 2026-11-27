@@ -231,7 +231,7 @@ class ImageInteractor (
         val image = createFile(sensorId, ImageSource.CAMERA)
         return image to FileProvider.getUriForFile(
             context,
-            "com.ruuvi.station.fileprovider",
+            "${context.packageName}.fileprovider",
             image
         )
     }

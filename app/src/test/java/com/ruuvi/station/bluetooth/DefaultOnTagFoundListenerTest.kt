@@ -286,7 +286,7 @@ class DefaultOnTagFoundListenerTest {
         scope.advanceUntilIdle()
 
         verify(exactly = 1) {
-            sensorHistoryRepository.removeOlderThan(GlobalSettings.historyLengthHours)
+            sensorHistoryRepository.schedulePruning(any())
         }
     }
 

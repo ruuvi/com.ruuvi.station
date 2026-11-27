@@ -902,4 +902,10 @@
     <string name="disable_developer_mode">Wyłącz tryb deweloperski</string>
     <string name="sensor_measurements_outdated">Pomiary mogą być nieaktualne.</string>
     <string name="registered_fcm_tokens">Zarejestrowane tokeny FCM</string>
+    <string name="week">Tydzień</string>
+    <string name="weeks">Tygodnie</string>
+    <string name="month">Miesiąc</string>
+    <string name="months">Miesiące</string>
+    <string name="year">Rok</string>
+    <string name="years">Lata</string>
 </resources>

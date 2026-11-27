@@ -19,5 +19,7 @@ enum class FeatureFlag (
         "Marketing consent",
         "Enable newsletter consent in My Ruuvi account",
         true
-    )
+    ),
+    LONGER_HISTORY("android_longer_history", "Enable longer history", "Progressive current-cloud history", false),
+    HISTORY_DURATION_PRESETS("android_history_duration_presets", "Use preset history durations", "Use production duration steps", true)
 }

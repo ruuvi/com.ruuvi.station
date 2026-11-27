@@ -127,7 +127,7 @@ class DefaultOnTagFoundListener(
         val cleaningThreshold = now - CLEANUP_INTERVAL_MILLIS
         if (lastCleanedDate < cleaningThreshold) {
             Timber.d("Cleaning DB from old tag readings")
-            sensorHistoryRepository.removeOlderThan(GlobalSettings.historyLengthHours)
+            sensorHistoryRepository.schedulePruning()
             lastCleanedDate = now
         }
     }

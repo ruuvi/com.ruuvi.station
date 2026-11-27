@@ -59,17 +59,16 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.toSize
+import androidx.lifecycle.repeatOnLifecycle
+import com.ruuvi.station.graph.HistoryStatus
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -711,6 +710,18 @@ private fun ColumnScope.SensorHistoryContent(
     val hideIncreaseChartSize = chartCount < MINIMUM_CHARTS_BEFORE_SIZE_INCREASE
 
     val lifecycleOwner = LocalLifecycleOwner.current
+    val longerHistory = viewModel.usesLongerHistory(sensor)
+    val historyDays by viewModel.historyDays.collectAsStateWithLifecycle()
+    val historyState by viewModel.historyState.collectAsStateWithLifecycle()
+    val historySetupError by viewModel.historySetupError.collectAsStateWithLifecycle()
+    val historyCustom by viewModel.customHistorySelection.collectAsStateWithLifecycle()
+    val exporting by viewModel.historyExporting.collectAsStateWithLifecycle()
+    LaunchedEffect(sensor.id, selected, longerHistory, lifecycleOwner) {
+        if (selected && longerHistory) lifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED) {
+            viewModel.observeLongerHistory(sensor.id)
+        }
+    }
+
 
     LaunchedEffect(sensor.id, selected) {
         if (selected) {
@@ -724,7 +735,7 @@ private fun ColumnScope.SensorHistoryContent(
     ChartControlElement2(
         sensorId = sensor.id,
         showChartStats = showChartStats,
-        viewPeriod = viewPeriod,
+        viewPeriod = if (!longerHistory || historyDays == 0) Period.getInstance(viewPeriod.value.coerceIn(0, 240)) else viewPeriod,
         syncStatus = viewModel.getGattEvents(sensor.id),
         disconnectGattAction = viewModel::disconnectGatt,
         shouldSkipGattSyncDialog = viewModel::shouldSkipGattSyncDialog,
@@ -740,26 +751,32 @@ private fun ColumnScope.SensorHistoryContent(
         hideIncreaseChartSize = hideIncreaseChartSize,
         increaseChartSize = viewModel::increaseChartSize,
         decreaseChartSize = viewModel::decreaseChartSize,
+        historyEnabled = longerHistory && historyDays > 0,
+        historyDays = historyDays,
+        historyPresets = viewModel.useHistoryDurationPresets(),
+        historyCustom = historyCustom,
+        historyTimeline = historyState.timeline.takeIf { historyState.sensor == sensor.id },
+        historySelect = viewModel::selectCustomHistory,
+        exporting = exporting,
+        historyProgress = historyState.progress.takeIf { longerHistory && historyState.sensor == sensor.id },
     )
 
-    var chartSize by remember { mutableStateOf(Size.Zero) }
+    if (longerHistory && (historyDays > 0 || historySetupError)) HistoryStatus(
+        historySetupError || historyState.error > 0 && historyState.progress == null,
+        exporting, historyCustom, viewModel::retryLongerHistory, viewModel::cancelHistoryExport)
+
     ChartsView(
-        modifier = Modifier
-            .weight(1f)
-            .onGloballyPositioned { coordinates ->
-                chartSize = coordinates.size.toSize()
-            },
+        modifier = Modifier.weight(1f),
         sensor = sensor,
         unitsConverter = unitsConverter,
         graphDrawDots = viewModel.graphDrawDots,
         selected = selected,
-        viewPeriod = viewPeriod,
+        viewPeriod = if (!longerHistory || historyDays == 0) Period.getInstance(viewPeriod.value.coerceIn(0, 240)) else viewPeriod,
         chartCleared = viewModel.getChartCleared(sensor.id),
         showChartStats = showChartStats,
         historyUpdater = viewModel::historyUpdater,
         chartSizeLevel = chartSizeLevel,
         scrollToChartEvent = viewModel.scrollToChartEvent,
-        size = chartSize,
         onChartCountChanged = { count -> chartCount = count },
     )
 }

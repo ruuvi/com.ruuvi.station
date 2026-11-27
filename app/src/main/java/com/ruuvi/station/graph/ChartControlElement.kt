@@ -31,6 +31,9 @@ import com.ruuvi.station.app.ui.theme.RuuviTheme
 import com.ruuvi.station.bluetooth.model.SyncProgress
 import com.ruuvi.station.tagdetails.ui.SyncStatus
 import com.ruuvi.station.util.Period
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.CancellationException
+import com.ruuvi.station.history.HistoryWindow
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import timber.log.Timber
@@ -53,12 +56,20 @@ fun ChartControlElement2(
     shouldSkipGattSyncDialog: () -> Boolean,
     syncGatt: (String) -> Unit,
     setViewPeriod: (Int) -> Unit,
-    exportToCsv: (String) -> Uri?,
-    exportToXlsx: (String) -> Uri?,
+    exportToCsv: suspend (String) -> Uri?,
+    exportToXlsx: suspend (String) -> Uri?,
     removeTagData: (String) -> Unit,
     refreshStatus: () -> Unit,
     dontShowGattSyncDescription: () -> Unit,
-    changeShowStats: () -> Unit
+    changeShowStats: () -> Unit,
+    historyEnabled: Boolean = false,
+    historyDays: Int = 0,
+    historyPresets: Boolean = true,
+    historyCustom: HistoryWindow? = null,
+    historyTimeline: HistoryWindow? = null,
+    historySelect: (HistoryWindow) -> Unit = {},
+    exporting: Boolean = false,
+    historyProgress: Float? = null
 ) {
     val lifecycleOwner = LocalLifecycleOwner.current
 
@@ -103,58 +114,30 @@ fun ChartControlElement2(
     }
 
     Row(
-        modifier = Modifier.height(ChartToolbarHeight),
+        modifier = Modifier.fillMaxWidth().height(ChartToolbarHeight),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        if (syncInProgress) {
-            IconButton(onClick = {
-                disconnectDialogOpened = true
-            }) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_baseline_clear_24),
-                    contentDescription = null,
-                    tint = RuuviStationTheme.colors.buttonText
-                )
-            }
-            Text(
-                style = RuuviStationTheme.typography.syncStatusText,
-                text = syncMessage.asString(context)
-            )
-        } else {
-            IconButton(onClick = {
-                if (!shouldSkipGattSyncDialog()) {
-                    gattSyncDialogOpened = true
-                }
+        HistorySyncControl(
+            modifier = Modifier.weight(1f),
+            bluetoothSyncing = syncInProgress,
+            bluetoothMessage = syncMessage.asString(context),
+            cloudProgress = historyProgress,
+            cancelBluetooth = { disconnectDialogOpened = true },
+            sync = {
+                if (!shouldSkipGattSyncDialog()) gattSyncDialogOpened = true
                 syncGatt(sensorId)
-            }) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.padding(start = RuuviStationTheme.dimensions.extended)
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.gatt_sync),
-                        contentDescription = null,
-                        tint = RuuviStationTheme.colors.buttonText
-                    )
-                    Spacer(modifier = Modifier.width(RuuviStationTheme.dimensions.medium))
-                    Text(
-                        style = RuuviStationTheme.typography.subtitle,
-                        text = stringResource(id = R.string.sync),
-                        color = RuuviStationTheme.colors.buttonText
-                    )
-                }
             }
-        }
+        )
 
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.wrapContentWidth(),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.End
         ) {
-            ViewPeriodMenu(
-                viewPeriod = viewPeriod,
-                setViewPeriod = setViewPeriod
-            )
+            if (historyEnabled) {
+                HistoryCalendar(historyDays, historyCustom ?: historyTimeline, historySelect)
+                HistoryDurationMenu(viewPeriod, historyDays, historyPresets, historyCustom, setViewPeriod)
+            } else ViewPeriodMenu(viewPeriod, setViewPeriod)
 
             ThreeDotsMenu(
                 sensorId = sensorId,
@@ -166,7 +149,8 @@ fun ChartControlElement2(
                 exportToCsv = { exportToCsv(sensorId) },
                 exportToXlsx = { exportToXlsx(sensorId) },
                 clearHistory = { removeTagData(sensorId) },
-                changeShowStats = changeShowStats
+                changeShowStats = changeShowStats,
+                exportEnabled = !exporting && (!historyEnabled || historyTimeline != null)
             )
         }
     }
@@ -332,11 +316,14 @@ fun ThreeDotsMenu(
     hideIncreaseChartSize: Boolean,
     increaseChartSize: () -> Unit,
     decreaseChartSize: () -> Unit,
-    exportToCsv: () -> Uri?,
-    exportToXlsx: () -> Uri?,
+    exportToCsv: suspend () -> Uri?,
+    exportToXlsx: suspend () -> Uri?,
     clearHistory: () -> Unit,
-    changeShowStats: () -> Unit
+    changeShowStats: () -> Unit,
+    exportEnabled: Boolean = true
 ) {
+    val scope = rememberCoroutineScope()
+    var exportFailed by remember { mutableStateOf(false) }
     val context = LocalContext.current
     var clearConfirmOpened by remember {
         mutableStateOf(false)
@@ -361,24 +348,26 @@ fun ThreeDotsMenu(
             expanded = threeDotsMenuExpanded,
             onDismissRequest = { threeDotsMenuExpanded = false },
         ) {
-            DropdownMenuItem(onClick = {
-                val uri = exportToCsv.invoke()
-                if (uri != null) {
-                    sendCsv(sensorId, uri, context)
-                }
+            DropdownMenuItem(enabled = exportEnabled, onClick = {
                 threeDotsMenuExpanded = false
+                scope.launch {
+                    try { exportToCsv()?.let { sendCsv(sensorId, it, context) } }
+                    catch (cancelled: CancellationException) { throw cancelled }
+                    catch (_: Exception) { exportFailed = true }
+                }
             }) {
                 Paragraph(text = stringResource(id = R.string.export_history))
             }
-            DropdownMenuItem(onClick = {
+            DropdownMenuItem(enabled = exportEnabled, onClick = {
                 if (VERSION.SDK_INT < 26) {
                     android26RequiredDialog = true
                 } else {
-                    val uri = exportToXlsx.invoke()
-                    if (uri != null) {
-                        sendXlsx(sensorId, uri, context)
-                    }
                     threeDotsMenuExpanded = false
+                    scope.launch {
+                        try { exportToXlsx()?.let { sendXlsx(sensorId, it, context) } }
+                        catch (cancelled: CancellationException) { throw cancelled }
+                        catch (_: Exception) { exportFailed = true }
+                    }
                 }
             }) {
                 Paragraph(text = stringResource(id = R.string.export_history_xlsx))
@@ -421,6 +410,8 @@ fun ThreeDotsMenu(
         }
     }
 
+    if (exportFailed) MessageDialog(message = stringResource(R.string.history_export_failed)) { exportFailed = false }
+
     if (clearConfirmOpened) {
         ClearHistoryDialog(
             clearHistory = clearHistory,
@@ -437,7 +428,7 @@ fun ThreeDotsMenu(
 }
 
 @Composable
-private fun DarkChartDropdownMenu(
+internal fun DarkChartDropdownMenu(
     expanded: Boolean,
     onDismissRequest: () -> Unit,
     content: @Composable ColumnScope.() -> Unit,

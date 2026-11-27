@@ -10,9 +10,49 @@ import com.ruuvi.station.database.tables.TagSensorReading
 import com.ruuvi.station.database.tables.TagSensorReading_Table
 import timber.log.Timber
 import java.util.*
+import kotlinx.coroutines.*
+import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.math.abs
 
 class SensorHistoryRepository {
+    private val pruningScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+    private val pruning = AtomicBoolean(false)
+    @Volatile private var lastPrunedAt = 0L
+
+    fun schedulePruning(nowMillis: Long = System.currentTimeMillis()) {
+        if (nowMillis - lastPrunedAt < 3_600_000 || !pruning.compareAndSet(false, true)) return
+        pruningScope.launch {
+            try { pruneExpired(nowMillis); lastPrunedAt = nowMillis }
+            catch (_: Exception) { currentCoroutineContext().ensureActive(); Timber.w("History cleanup failed; will retry") }
+            finally { pruning.set(false) }
+        }
+    }
+
+    /** One bounded write transaction per batch; resolve the current owner allowance inside every delete. */
+    internal suspend fun pruneExpired(nowMillis: Long) {
+        val database = FlowManager.getDatabase(LocalDatabase::class.java).writableDatabase
+        while (true) {
+            currentCoroutineContext().ensureActive()
+            var deleted = 0
+            database.beginTransaction()
+            try {
+                database.execSQL("""DELETE FROM TagSensorReading WHERE id IN (
+                    SELECT r.id FROM TagSensorReading r LEFT JOIN SensorSettings s ON s.id = r.ruuviTagId
+                    WHERE r.createdAt < $nowMillis - 86400000 * CASE
+                        WHEN s.networkSensor = 1 THEN CASE
+                            WHEN s.maxHistoryDays > 0 THEN s.maxHistoryDays
+                            WHEN s.maxHistoryDays = 0 THEN 10 ELSE NULL END
+                        ELSE 10 END LIMIT 5000)""")
+                database.rawQuery("SELECT changes()", null).use { cursor ->
+                    if (cursor.moveToFirst()) deleted = cursor.getInt(0)
+                }
+                database.setTransactionSuccessful()
+            } finally { database.endTransaction() }
+            if (deleted < 5000) return
+            yield()
+        }
+    }
+
     fun getCompositeHistory(sensorId: String, hoursPeriod: Int, interval: Int): List<TagSensorReading> {
         val fromDate = Calendar.getInstance()
         fromDate.time = Date()
@@ -27,6 +67,30 @@ class SensorHistoryRepository {
         } else {
             getPrunedHistory(sensorId, fromDate, interval)
         }
+    }
+
+    /** Indexed, descending keyset pages; never materialize all local history for graph/export. */
+    fun readHistoryPage(sensorId: String, window: com.ruuvi.station.history.HistoryWindow, cursor: String?): com.ruuvi.station.history.HistoryLocalPage<TagSensorReading> {
+        val before = cursor?.split(":")?.let {
+            require(it.size == 2)
+            it[0].toLong() to it[1].toInt()
+        }
+        var query = SQLite.select().from(TagSensorReading::class.java)
+            .where(TagSensorReading_Table.ruuviTagId.eq(sensorId))
+            .and(TagSensorReading_Table.createdAt.greaterThanOrEq(Date(window.since * 1000)))
+            .and(TagSensorReading_Table.createdAt.lessThan(Date((window.until + 1) * 1000)))
+        if (before != null) {
+            query = query.and(com.raizlabs.android.dbflow.sql.language.OperatorGroup.clause()
+                .and(TagSensorReading_Table.createdAt.lessThan(Date(before.first)))
+                .or(com.raizlabs.android.dbflow.sql.language.OperatorGroup.clause()
+                    .and(TagSensorReading_Table.createdAt.eq(Date(before.first)))
+                    .and(TagSensorReading_Table.id.lessThan(before.second))))
+        }
+        val rows = query.orderBy(TagSensorReading_Table.createdAt, false).orderBy(TagSensorReading_Table.id, false)
+            .limit(com.ruuvi.station.history.HistoryQuery.PAGE_SIZE).queryList()
+        val next = rows.lastOrNull()?.takeIf { rows.size == com.ruuvi.station.history.HistoryQuery.PAGE_SIZE }
+            ?.let { "${it.createdAt.time}:${it.id}" }
+        return com.ruuvi.station.history.HistoryLocalPage(rows, next)
     }
 
     fun getHistory(sensorId: String, hoursPeriod: Int): List<TagSensorReading> {
@@ -73,18 +137,6 @@ class SensorHistoryRepository {
             .orderBy(TagSensorReading_Table.createdAt, false)
             .limit(limit)
             .queryList()
-
-    fun removeOlderThan(historyLengthHours: Int) {
-        val cal = Calendar.getInstance()
-        cal.time = Date()
-        cal.add(Calendar.HOUR, -historyLengthHours)
-        SQLite
-            .delete()
-            .from(TagSensorReading::class.java)
-            .where(TagSensorReading_Table.createdAt.lessThan(cal.time))
-            .async()
-            .execute()
-    }
 
     fun removeForSensor(sensorId: String) {
         SQLite.delete()

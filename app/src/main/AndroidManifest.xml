@@ -161,7 +161,7 @@ xmlns:tools="http://schemas.android.com/tools">
 
     <provider
         android:name="androidx.core.content.FileProvider"
-        android:authorities="com.ruuvi.station.fileprovider"
+        android:authorities="${applicationId}.fileprovider"
         android:exported="false"
         android:grantUriPermissions="true">
         <meta-data
