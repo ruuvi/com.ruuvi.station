@@ -1,6 +1,13 @@
 package com.ruuvi.station.tagdetails.ui
 
+import android.content.Context
 import android.net.Uri
+import androidx.compose.ui.unit.IntSize
+import androidx.test.core.app.ApplicationProvider
+import coil.size.Scale
+import coil.transition.Transition
+import coil.size.Size
+import kotlinx.coroutines.runBlocking
 import com.ruuvi.station.R
 import com.ruuvi.station.alarm.domain.AlarmSensorStatus
 import com.ruuvi.station.tag.domain.RuuviTag
@@ -37,6 +44,19 @@ class SensorDetailBackgroundTest {
     }
 
     @Test
+    fun `first Air measurement keeps the same custom background key`() {
+        val photo = "file:///data/background_a.jpg"
+        val before = sensor("air", userBackground = photo)
+        val after = sensor(
+            "air",
+            userBackground = photo,
+            latestMeasurement = mockk { every { dataFormat } returns 0xE1 },
+        )
+
+        assertEquals(sensorBackground(before), sensorBackground(after))
+    }
+
+    @Test
     fun `air sensors use the air default background`() {
         val air = sensor("air", latestMeasurement = mockk { every { dataFormat } returns 0xE1 })
 
@@ -49,6 +69,23 @@ class SensorDetailBackgroundTest {
         assertNull(sensorBackground(sensor("blank", userBackground = " ")).userBackground)
         assertNull(sensorBackground(sensor("no path", userBackground = "file://")).userBackground)
         assertEquals(R.drawable.new_bg2, sensorBackground(null).defaultBackground)
+    }
+
+    @Test
+    fun `background request decodes at the card size with crop scaling`() = runBlocking {
+        val context = ApplicationProvider.getApplicationContext<Context>()
+        val request = sensorBackgroundRequest(
+            context = context,
+            userBackground = Uri.parse("file:///data/background_a.jpg"),
+            defaultBackground = R.drawable.new_bg2,
+            size = IntSize(1080, 2400),
+        )
+
+        assertEquals(Size(1080, 2400), request.sizeResolver.size())
+        assertEquals(Scale.FILL, request.scale)
+        assertEquals(Uri.parse("file:///data/background_a.jpg"), request.data)
+        // Coil's own fade is off: the background transition is the only animation.
+        assertEquals(Transition.Factory.NONE, request.transitionFactory)
     }
 
     private fun sensor(

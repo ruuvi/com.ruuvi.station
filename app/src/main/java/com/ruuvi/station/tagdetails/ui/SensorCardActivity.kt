@@ -34,6 +34,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.constrainHeight
 import androidx.compose.ui.unit.constrainWidth
 import androidx.compose.ui.unit.dp
@@ -44,6 +45,7 @@ import androidx.lifecycle.*
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import coil.size.Scale
 import com.ruuvi.station.R
 import com.ruuvi.station.alarm.ui.AlarmItemsViewModel
 import com.ruuvi.station.app.preferences.PreferencesRepository
@@ -615,26 +617,36 @@ fun SensorCardLowBattery(
     }
 }
 
+/** The sensor's background photo, without the dark overlay drawn over it. */
 @Composable
-fun SensorCardImage(
+fun SensorCardBackgroundPhoto(
     userBackground: Uri?,
     @DrawableRes defaultBackground: Int,
+    size: IntSize,
+    modifier: Modifier = Modifier,
+    onLoaded: () -> Unit = {},
 ) {
     val context = LocalContext.current
-    val backgroundRequest = remember(context, userBackground, defaultBackground) {
-        ImageRequest.Builder(context)
-            .data(userBackground ?: defaultBackground)
-            .crossfade(userBackground != null)
-            .build()
+    val backgroundRequest = remember(context, userBackground, defaultBackground, size) {
+        sensorBackgroundRequest(context, userBackground, defaultBackground, size)
     }
 
     AsyncImage(
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier.fillMaxSize(),
         model = backgroundRequest,
         contentDescription = null,
         contentScale = ContentScale.Crop,
-        onError = { Timber.e(it.result.throwable, "Failed to load sensor background") },
+        onSuccess = { onLoaded() },
+        onError = {
+            Timber.e(it.result.throwable, "Failed to load sensor background")
+            onLoaded()
+        },
     )
+}
+
+/** The dark overlay drawn once over the sensor background photos. */
+@Composable
+fun SensorCardBackgroundOverlay() {
     AsyncImage(
         modifier = Modifier.fillMaxSize(),
         model = R.drawable.tag_bg_layer,
@@ -644,6 +656,25 @@ fun SensorCardImage(
         onError = { Timber.e(it.result.throwable, "Failed to load sensor background overlay") },
     )
 }
+
+/**
+ * The request for a sensor card background. Preloading must use this same request, with the
+ * same size and scale as the card, so Coil can reuse the preloaded bitmap from its memory cache
+ * instead of decoding the file again.
+ */
+internal fun sensorBackgroundRequest(
+    context: Context,
+    userBackground: Uri?,
+    @DrawableRes defaultBackground: Int,
+    size: IntSize,
+): ImageRequest = ImageRequest.Builder(context)
+    .data(userBackground ?: defaultBackground)
+    .size(size.width, size.height)
+    .scale(Scale.FILL)
+    // The sensor detail background runs its own fade between photos; a second Coil fade on the
+    // incoming image would make the two layers fade independently and dip in brightness.
+    .crossfade(false)
+    .build()
 
 internal fun sensorCardUpdatedTextColor(
     useDarkBackground: Boolean,

@@ -9,6 +9,11 @@ import androidx.activity.compose.BackHandler
 import androidx.activity.enableEdgeToEdge
 import androidx.annotation.DrawableRes
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.core.Animatable
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.ui.graphics.graphicsLayer
+import kotlinx.coroutines.flow.first
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.Easing
@@ -24,6 +29,7 @@ import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.draggable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.WindowInsets
@@ -68,6 +74,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
@@ -75,7 +82,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.imageLoader
-import coil.request.ImageRequest
 import com.ruuvi.station.app.ui.components.HideToastWhenScreenStopsEffect
 import com.ruuvi.station.R
 import com.ruuvi.station.alarm.domain.AlarmSensorStatus
@@ -841,21 +847,17 @@ private fun SensorDetailBackground(
 ) {
     if (!enabled) return
 
-    PreloadSensorBackgrounds(neighbours)
+    BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+        // The card and the preload decode at this size, so the preloaded bitmap is reusable.
+        val imageSize = IntSize(constraints.maxWidth, constraints.maxHeight)
+        if (!constraints.hasBoundedWidth || !constraints.hasBoundedHeight ||
+            imageSize.width <= 0 || imageSize.height <= 0
+        ) return@BoxWithConstraints
 
-    // Cross-fade only when the image changes: sensors sharing the default background don't fade.
-    Crossfade(
-        targetState = sensorBackground(sensor),
-        modifier = Modifier.fillMaxSize(),
-        animationSpec = tween(durationMillis = SENSOR_BACKGROUND_CROSSFADE_MILLIS),
-        label = "sensor detail background",
-    ) { background ->
-        Box(modifier = Modifier.fillMaxSize()) {
-            SensorCardImage(
-                userBackground = background.userBackground,
-                defaultBackground = background.defaultBackground,
-            )
-        }
+        PreloadSensorBackgrounds(neighbours, imageSize)
+
+        SensorBackgroundLayers(target = sensorBackground(sensor), size = imageSize)
+        SensorCardBackgroundOverlay()
     }
 
     val overlayColor by animateColorAsState(
@@ -918,6 +920,58 @@ internal fun SensorDetailSystemBars(
     }
 }
 
+private class SensorBackgroundLayer(val id: Long, val background: SensorBackground, alpha: Float) {
+    val alpha = Animatable(alpha)
+    var loaded by mutableStateOf(false)
+}
+
+/**
+ * Stacks the sensor backgrounds so a new photo fades in over the old one, which stays fully
+ * visible underneath and is removed once the fade finishes. Fading both photos would let the dark
+ * backdrop show through mid-fade.
+ *
+ * The fade starts only after the new photo has loaded: fading in a layer that is still empty
+ * would just fade in nothing and then pop the photo in. Sensors sharing the same background
+ * don't fade at all.
+ */
+@Composable
+private fun SensorBackgroundLayers(target: SensorBackground, size: IntSize) {
+    var nextId by remember { mutableLongStateOf(1L) }
+    val layers = remember { mutableStateListOf(SensorBackgroundLayer(0L, target, alpha = 1f)) }
+
+    LaunchedEffect(target) {
+        if (layers.last().background != target) {
+            layers += SensorBackgroundLayer(nextId++, target, alpha = 0f)
+        }
+    }
+
+    Box(modifier = Modifier.fillMaxSize()) {
+        layers.forEach { layer ->
+            key(layer.id) {
+                SensorCardBackgroundPhoto(
+                    userBackground = layer.background.userBackground,
+                    defaultBackground = layer.background.defaultBackground,
+                    size = size,
+                    modifier = Modifier.graphicsLayer { alpha = layer.alpha.value },
+                    onLoaded = { layer.loaded = true },
+                )
+                LaunchedEffect(Unit) {
+                    if (layer.alpha.value < 1f) {
+                        snapshotFlow { layer.loaded }.first { it }
+                        layer.alpha.animateTo(
+                            targetValue = 1f,
+                            animationSpec = tween(durationMillis = SENSOR_BACKGROUND_CROSSFADE_MILLIS),
+                        )
+                    }
+                    // This layer now fully covers the ones below it.
+                    val index = layers.indexOf(layer)
+                    if (index > 0) layers.removeRange(0, index)
+                }
+            }
+        }
+    }
+}
+
 internal data class SensorBackground(
     val userBackground: Uri?,
     @DrawableRes val defaultBackground: Int,
@@ -931,7 +985,12 @@ internal fun sensorBackground(sensor: RuuviTag?): SensorBackground {
         ?.takeIf { !it.path.isNullOrBlank() }
     return SensorBackground(
         userBackground = userBackground,
-        defaultBackground = if (sensor?.isAir() == true) R.drawable.new_bg_air else R.drawable.new_bg2,
+        // The drawable is unused when a custom photo is present. Keep the transition key stable.
+        defaultBackground = if (userBackground == null && sensor?.isAir() == true) {
+            R.drawable.new_bg_air
+        } else {
+            R.drawable.new_bg2
+        },
     )
 }
 
@@ -940,15 +999,18 @@ internal fun sensorBackground(sensor: RuuviTag?): SensorBackground {
  * cross-fade starts from a ready image instead of fading through an empty frame.
  */
 @Composable
-private fun PreloadSensorBackgrounds(sensors: List<RuuviTag>) {
+private fun PreloadSensorBackgrounds(sensors: List<RuuviTag>, size: IntSize) {
     val context = LocalContext.current
     val backgrounds = remember(sensors) { sensors.map(::sensorBackground).distinct() }
-    LaunchedEffect(backgrounds) {
+    LaunchedEffect(backgrounds, size) {
         backgrounds.forEach { background ->
             context.imageLoader.enqueue(
-                ImageRequest.Builder(context)
-                    .data(background.userBackground ?: background.defaultBackground)
-                    .build()
+                sensorBackgroundRequest(
+                    context = context,
+                    userBackground = background.userBackground,
+                    defaultBackground = background.defaultBackground,
+                    size = size,
+                )
             )
         }
     }
